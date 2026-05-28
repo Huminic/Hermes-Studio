@@ -65,8 +65,8 @@ services:
     volumes:
       # Persist file-based sessions across container restarts (fallback store)
       - studio-sessions:/app/.runtime
-    expose:
-      - '3000'
+    ports:
+      - '127.0.0.1:8009:3000'
 
   # ─── Optional: Redis session persistence ──────────────────────────────────
   # Activate with: docker compose --profile redis up
