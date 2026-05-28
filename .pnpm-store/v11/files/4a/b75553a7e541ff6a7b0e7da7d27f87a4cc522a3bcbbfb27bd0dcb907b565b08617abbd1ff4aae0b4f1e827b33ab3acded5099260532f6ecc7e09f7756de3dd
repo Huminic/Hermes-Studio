@@ -1,0 +1,8 @@
+import { SyntaxHighlighterProps } from "../type.mjs";
+import * as react32 from "react";
+
+//#region src/Highlighter/SyntaxHighlighter/index.d.ts
+declare const SyntaxHighlighter: react32.NamedExoticComponent<SyntaxHighlighterProps>;
+//#endregion
+export { SyntaxHighlighter };
+//# sourceMappingURL=index.d.mts.map

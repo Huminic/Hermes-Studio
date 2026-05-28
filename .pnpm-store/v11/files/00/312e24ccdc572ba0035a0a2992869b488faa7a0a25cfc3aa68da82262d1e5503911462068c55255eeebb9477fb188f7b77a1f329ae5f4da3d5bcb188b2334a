@@ -1,0 +1,87 @@
+import { PopoverPlacement } from "./type.mjs";
+import * as react118 from "react";
+import { ComponentProps, ComponentPropsWithRef } from "react";
+import * as react_jsx_runtime20 from "react/jsx-runtime";
+import * as _base_ui_react_popover0 from "@base-ui/react/popover";
+import { Popover } from "@base-ui/react/popover";
+
+//#region src/base-ui/Popover/atoms.d.ts
+declare const PopoverRoot: typeof Popover.Root;
+declare const PopoverBackdrop: react118.ForwardRefExoticComponent<_base_ui_react_popover0.PopoverBackdropProps & react118.RefAttributes<HTMLDivElement>>;
+type PopoverTriggerElementProps = Omit<ComponentPropsWithRef<typeof Popover.Trigger>, 'children' | 'render'> & {
+  children: ComponentProps<typeof Popover.Trigger>['children'];
+};
+declare const PopoverTriggerElement: {
+  ({
+    children,
+    className,
+    nativeButton,
+    ref: refProp,
+    ...rest
+  }: PopoverTriggerElementProps): react_jsx_runtime20.JSX.Element;
+  displayName: string;
+};
+type PopoverPortalAtomProps = Omit<ComponentProps<typeof Popover.Portal>, 'container'> & {
+  /**
+   * Portal container. When not provided, it uses the shared container created by `usePopoverPortalContainer`.
+   */
+  container?: HTMLElement | null;
+  /**
+   * Root element used by `usePopoverPortalContainer` to create the default container.
+   */
+  root?: HTMLElement | ShadowRoot | null;
+};
+declare const PopoverPortal: {
+  ({
+    container,
+    root,
+    children,
+    ...rest
+  }: PopoverPortalAtomProps): react_jsx_runtime20.JSX.Element | null;
+  displayName: string;
+};
+type PopoverPositionerAtomProps = ComponentProps<typeof Popover.Positioner> & {
+  hoverTrigger?: boolean;
+  placement?: PopoverPlacement;
+};
+declare const PopoverPositioner: {
+  ({
+    children,
+    className,
+    hoverTrigger,
+    placement,
+    align,
+    side,
+    sideOffset,
+    ...rest
+  }: PopoverPositionerAtomProps): react_jsx_runtime20.JSX.Element;
+  displayName: string;
+};
+type PopoverPopupAtomProps = ComponentProps<typeof Popover.Popup>;
+declare const PopoverPopup: {
+  ({
+    className,
+    ...rest
+  }: PopoverPopupAtomProps): react_jsx_runtime20.JSX.Element;
+  displayName: string;
+};
+type PopoverArrowAtomProps = ComponentProps<typeof Popover.Arrow>;
+declare const PopoverArrow: {
+  ({
+    className,
+    children,
+    ...rest
+  }: PopoverArrowAtomProps): react_jsx_runtime20.JSX.Element;
+  displayName: string;
+};
+type PopoverViewportAtomProps = ComponentProps<typeof Popover.Viewport>;
+declare const PopoverViewport: {
+  ({
+    className,
+    ...rest
+  }: PopoverViewportAtomProps): react_jsx_runtime20.JSX.Element;
+  displayName: string;
+};
+//#endregion
+export { PopoverArrow, PopoverArrowAtomProps, PopoverBackdrop, PopoverPopup, PopoverPopupAtomProps, PopoverPortal, PopoverPortalAtomProps, PopoverPositioner, PopoverPositionerAtomProps, PopoverRoot, PopoverTriggerElement, PopoverTriggerElementProps, PopoverViewport, PopoverViewportAtomProps };
+//# sourceMappingURL=atoms.d.mts.map

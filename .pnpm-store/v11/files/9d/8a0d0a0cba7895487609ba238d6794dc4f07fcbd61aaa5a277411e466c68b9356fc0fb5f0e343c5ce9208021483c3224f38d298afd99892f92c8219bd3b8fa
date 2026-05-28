@@ -1,0 +1,14 @@
+import { Root } from "hast";
+
+//#region src/Markdown/plugins/rehypeStreamAnimated.d.ts
+interface StreamAnimatedOptions {
+  baseCharCount?: number;
+  charDelay?: number;
+  fadeDuration?: number;
+  revealed?: boolean;
+  timelineElapsedMs?: number;
+}
+declare const rehypeStreamAnimated: (options?: StreamAnimatedOptions) => (tree: Root) => void;
+//#endregion
+export { rehypeStreamAnimated };
+//# sourceMappingURL=rehypeStreamAnimated.d.mts.map

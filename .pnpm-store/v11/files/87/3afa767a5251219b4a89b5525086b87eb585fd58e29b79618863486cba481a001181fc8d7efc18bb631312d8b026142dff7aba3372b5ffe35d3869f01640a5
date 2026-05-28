@@ -1,0 +1,8 @@
+import { ModalProps } from "./type.mjs";
+import * as react13 from "react";
+
+//#region src/Modal/Modal.d.ts
+declare const Modal: react13.NamedExoticComponent<ModalProps>;
+//#endregion
+export { Modal };
+//# sourceMappingURL=Modal.d.mts.map

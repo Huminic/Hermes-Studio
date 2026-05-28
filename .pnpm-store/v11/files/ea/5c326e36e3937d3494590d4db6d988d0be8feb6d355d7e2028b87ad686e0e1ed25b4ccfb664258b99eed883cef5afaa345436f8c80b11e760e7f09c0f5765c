@@ -1,0 +1,67 @@
+import { createStaticStyles } from "antd-style";
+
+//#region src/Accordion/style.ts
+const styles = createStaticStyles(({ css: css$1, cssVar: cssVar$1 }) => {
+	return {
+		action: css$1`
+      opacity: 0;
+      transition: opacity 150ms ${cssVar$1.motionEaseOut};
+    `,
+		actionVisible: css$1`
+      opacity: 1;
+    `,
+		base: css$1`
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    `,
+		content: css$1`
+      overflow: hidden;
+    `,
+		contentInner: css$1`
+      /* Content wrapper for animation */
+    `,
+		divider: css$1`
+      margin-block: 0;
+    `,
+		header: css$1`
+      &:hover .accordion-action {
+        opacity: 1;
+      }
+
+      &:focus-visible {
+        border-radius: ${cssVar$1.borderRadiusLG};
+        outline: 2px solid ${cssVar$1.colorPrimary};
+        outline-offset: 2px;
+      }
+    `,
+		icon: css$1`
+      transition: transform 200ms ${cssVar$1.motionEaseOut};
+    `,
+		iconRotate: css$1`
+      transform: rotate(90deg);
+    `,
+		indicator: css$1`
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+
+      font-size: 18px;
+      color: ${cssVar$1.colorTextDescription};
+
+      transition: transform 200ms ${cssVar$1.motionEaseOut};
+    `,
+		item: css$1`
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    `,
+		titleWrapper: css$1`
+      user-select: none;
+    `
+	};
+});
+
+//#endregion
+export { styles };
+//# sourceMappingURL=style.mjs.map
