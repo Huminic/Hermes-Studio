@@ -1,8 +1,0 @@
-import { DatePickerProps } from "./type.mjs";
-import * as react44 from "react";
-
-//#region src/DatePicker/DatePicker.d.ts
-declare const DatePicker: react44.NamedExoticComponent<DatePickerProps>;
-//#endregion
-export { DatePicker };
-//# sourceMappingURL=DatePicker.d.mts.map

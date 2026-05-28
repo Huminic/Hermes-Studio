@@ -1,8 +1,0 @@
-import { ImageSelectProps } from "./type.mjs";
-import * as react77 from "react";
-
-//#region src/ImageSelect/ImageSelect.d.ts
-declare const ImageSelect: react77.NamedExoticComponent<ImageSelectProps>;
-//#endregion
-export { ImageSelect };
-//# sourceMappingURL=ImageSelect.d.mts.map

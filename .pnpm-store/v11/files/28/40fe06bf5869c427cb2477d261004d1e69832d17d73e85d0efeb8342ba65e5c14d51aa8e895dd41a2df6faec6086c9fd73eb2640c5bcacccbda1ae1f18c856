@@ -1,8 +1,0 @@
-import * as react88 from "react";
-import * as lucide_react4 from "lucide-react";
-
-//#region src/icons/lucideExtra/GlobeOffIcon.d.ts
-declare const GlobeOffIcon: react88.ForwardRefExoticComponent<Omit<lucide_react4.LucideProps, "ref"> & react88.RefAttributes<SVGSVGElement>>;
-//#endregion
-export { GlobeOffIcon };
-//# sourceMappingURL=GlobeOffIcon.d.mts.map

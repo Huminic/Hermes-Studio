@@ -1,8 +1,0 @@
-import { CodeEditorProps } from "./type.mjs";
-import * as react9 from "react";
-
-//#region src/CodeEditor/CodeEditor.d.ts
-declare const CodeEditor: react9.NamedExoticComponent<CodeEditorProps>;
-//#endregion
-export { CodeEditor };
-//# sourceMappingURL=CodeEditor.d.mts.map

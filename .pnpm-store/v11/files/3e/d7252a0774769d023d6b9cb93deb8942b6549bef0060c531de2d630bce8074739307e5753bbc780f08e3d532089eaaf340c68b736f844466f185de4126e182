@@ -1,8 +1,0 @@
-import { MarkdownProps } from "./type.mjs";
-import * as react19 from "react";
-
-//#region src/Markdown/Markdown.d.ts
-declare const Markdown: react19.NamedExoticComponent<MarkdownProps>;
-//#endregion
-export { Markdown };
-//# sourceMappingURL=Markdown.d.mts.map

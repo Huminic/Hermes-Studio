@@ -1,8 +1,0 @@
-import { SelectProps } from "./type.mjs";
-import * as react152 from "react";
-
-//#region src/base-ui/Select/Select.d.ts
-declare const Select: react152.NamedExoticComponent<SelectProps<any>>;
-//#endregion
-export { Select };
-//# sourceMappingURL=Select.d.mts.map

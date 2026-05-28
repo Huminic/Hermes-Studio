@@ -1,7 +1,0 @@
-//#region src/icons/QQ/style.ts
-const TITLE = "QQ";
-const COLOR_PRIMARY = "#fff";
-
-//#endregion
-export { COLOR_PRIMARY, TITLE };
-//# sourceMappingURL=style.mjs.map

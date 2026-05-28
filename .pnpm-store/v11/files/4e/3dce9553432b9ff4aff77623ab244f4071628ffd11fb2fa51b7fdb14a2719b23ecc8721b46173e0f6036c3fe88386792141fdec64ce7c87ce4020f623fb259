@@ -1,8 +1,0 @@
-import { FeaturesProps } from "./type.mjs";
-import * as react140 from "react";
-
-//#region src/awesome/Features/Features.d.ts
-declare const Features: react140.NamedExoticComponent<FeaturesProps>;
-//#endregion
-export { Features };
-//# sourceMappingURL=Features.d.mts.map

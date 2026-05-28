@@ -1,8 +1,0 @@
-import { FooterProps } from "./type.mjs";
-import * as react33 from "react";
-
-//#region src/Footer/Footer.d.ts
-declare const Footer: react33.NamedExoticComponent<FooterProps>;
-//#endregion
-export { Footer };
-//# sourceMappingURL=Footer.d.mts.map

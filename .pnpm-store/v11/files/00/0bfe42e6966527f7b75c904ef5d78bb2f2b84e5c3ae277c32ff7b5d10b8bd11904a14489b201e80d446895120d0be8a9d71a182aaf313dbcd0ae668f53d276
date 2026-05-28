@@ -1,8 +1,0 @@
-import * as react86 from "react";
-import * as lucide_react3 from "lucide-react";
-
-//#region src/icons/lucideExtra/DiscordIcon.d.ts
-declare const DiscordIcon: react86.ForwardRefExoticComponent<Omit<lucide_react3.LucideProps, "ref"> & react86.RefAttributes<SVGSVGElement>>;
-//#endregion
-export { DiscordIcon };
-//# sourceMappingURL=DiscordIcon.d.mts.map

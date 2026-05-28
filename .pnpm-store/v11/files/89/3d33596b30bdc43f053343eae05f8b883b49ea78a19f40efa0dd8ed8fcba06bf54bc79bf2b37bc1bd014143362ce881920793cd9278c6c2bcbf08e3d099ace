@@ -1,8 +1,0 @@
-import { FormItemProps } from "../type.mjs";
-import * as react74 from "react";
-
-//#region src/Form/components/FormItem.d.ts
-declare const FormItem: react74.NamedExoticComponent<FormItemProps>;
-//#endregion
-export { FormItem };
-//# sourceMappingURL=FormItem.d.mts.map

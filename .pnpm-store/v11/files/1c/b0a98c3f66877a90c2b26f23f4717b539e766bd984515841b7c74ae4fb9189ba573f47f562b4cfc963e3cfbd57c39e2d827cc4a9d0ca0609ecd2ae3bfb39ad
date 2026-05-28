@@ -1,8 +1,0 @@
-import { AlertProps } from "./type.mjs";
-import * as react47 from "react";
-
-//#region src/Alert/Alert.d.ts
-declare const Alert: react47.NamedExoticComponent<AlertProps>;
-//#endregion
-export { Alert };
-//# sourceMappingURL=Alert.d.mts.map
