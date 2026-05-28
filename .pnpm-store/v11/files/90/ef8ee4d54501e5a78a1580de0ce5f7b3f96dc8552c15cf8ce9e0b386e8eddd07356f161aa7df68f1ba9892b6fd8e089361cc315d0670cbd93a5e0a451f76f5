@@ -1,8 +1,0 @@
-import { AccordionProps } from "./type.mjs";
-import * as react56 from "react";
-
-//#region src/Accordion/Accordion.d.ts
-declare const Accordion: react56.NamedExoticComponent<AccordionProps>;
-//#endregion
-export { Accordion };
-//# sourceMappingURL=Accordion.d.mts.map

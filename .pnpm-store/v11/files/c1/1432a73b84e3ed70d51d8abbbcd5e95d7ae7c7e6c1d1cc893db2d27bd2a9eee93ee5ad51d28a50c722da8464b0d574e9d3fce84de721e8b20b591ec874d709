@@ -1,7 +1,0 @@
-import * as react_jsx_runtime19 from "react/jsx-runtime";
-
-//#region src/base-ui/Popover/ArrowIcon.d.ts
-declare const PopoverArrowIcon: react_jsx_runtime19.JSX.Element;
-//#endregion
-export { PopoverArrowIcon };
-//# sourceMappingURL=ArrowIcon.d.mts.map

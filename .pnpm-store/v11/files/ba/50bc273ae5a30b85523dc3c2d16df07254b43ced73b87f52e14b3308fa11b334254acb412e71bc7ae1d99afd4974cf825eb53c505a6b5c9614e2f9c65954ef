@@ -1,8 +1,0 @@
-import { GridShowcaseProps } from "./type.mjs";
-import * as react144 from "react";
-
-//#region src/awesome/GridBackground/GridShowcase.d.ts
-declare const GridShowcase: react144.NamedExoticComponent<GridShowcaseProps>;
-//#endregion
-export { GridShowcase };
-//# sourceMappingURL=GridShowcase.d.mts.map

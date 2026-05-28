@@ -1,8 +1,0 @@
-import * as react82 from "react";
-import * as lucide_react1 from "lucide-react";
-
-//#region src/icons/lucideExtra/BrainOffIcon.d.ts
-declare const BrainOffIcon: react82.ForwardRefExoticComponent<Omit<lucide_react1.LucideProps, "ref"> & react82.RefAttributes<SVGSVGElement>>;
-//#endregion
-export { BrainOffIcon };
-//# sourceMappingURL=BrainOffIcon.d.mts.map

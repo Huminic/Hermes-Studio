@@ -1,9 +1,0 @@
-import { DivProps } from "../../types/index.mjs";
-import "../../index.mjs";
-import * as react20 from "react";
-
-//#region src/Layout/components/LayoutFooter.d.ts
-declare const LayoutFooter: react20.NamedExoticComponent<DivProps>;
-//#endregion
-export { LayoutFooter };
-//# sourceMappingURL=LayoutFooter.d.mts.map

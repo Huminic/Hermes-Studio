@@ -1,8 +1,0 @@
-import { BackBottomProps } from "./type.mjs";
-import * as react129 from "react";
-
-//#region src/chat/BackBottom/BackBottom.d.ts
-declare const BackBottom: react129.NamedExoticComponent<BackBottomProps>;
-//#endregion
-export { BackBottom };
-//# sourceMappingURL=BackBottom.d.mts.map

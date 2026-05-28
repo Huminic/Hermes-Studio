@@ -1,8 +1,0 @@
-import * as react110 from "react";
-import * as lucide_react15 from "lucide-react";
-
-//#region src/icons/lucideExtra/ThinkIcon.d.ts
-declare const ThinkIcon: react110.ForwardRefExoticComponent<Omit<lucide_react15.LucideProps, "ref"> & react110.RefAttributes<SVGSVGElement>>;
-//#endregion
-export { ThinkIcon };
-//# sourceMappingURL=ThinkIcon.d.mts.map

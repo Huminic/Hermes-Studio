@@ -1,8 +1,0 @@
-import { SearchBarProps } from "./type.mjs";
-import * as react6 from "react";
-
-//#region src/SearchBar/SearchBar.d.ts
-declare const SearchBar: react6.NamedExoticComponent<SearchBarProps>;
-//#endregion
-export { SearchBar };
-//# sourceMappingURL=SearchBar.d.mts.map

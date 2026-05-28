@@ -1,8 +1,0 @@
-import { SwitchProps } from "./type.mjs";
-import * as react159 from "react";
-
-//#region src/base-ui/Switch/Switch.d.ts
-declare const Switch: react159.NamedExoticComponent<SwitchProps>;
-//#endregion
-export { Switch };
-//# sourceMappingURL=Switch.d.mts.map

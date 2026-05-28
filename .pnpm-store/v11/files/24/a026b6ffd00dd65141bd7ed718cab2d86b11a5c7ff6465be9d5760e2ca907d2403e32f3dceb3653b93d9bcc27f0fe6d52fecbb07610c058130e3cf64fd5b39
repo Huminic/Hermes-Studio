@@ -1,8 +1,0 @@
-import * as react106 from "react";
-import * as lucide_react13 from "lucide-react";
-
-//#region src/icons/lucideExtra/ShapesUploadIcon.d.ts
-declare const ShapesUploadIcon: react106.ForwardRefExoticComponent<Omit<lucide_react13.LucideProps, "ref"> & react106.RefAttributes<SVGSVGElement>>;
-//#endregion
-export { ShapesUploadIcon };
-//# sourceMappingURL=ShapesUploadIcon.d.mts.map

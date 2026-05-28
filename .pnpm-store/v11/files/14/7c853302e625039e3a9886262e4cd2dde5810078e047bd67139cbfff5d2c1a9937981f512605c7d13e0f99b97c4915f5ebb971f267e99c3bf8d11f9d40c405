@@ -1,9 +1,0 @@
-import { SplineProps } from "./type.mjs";
-import * as react146 from "react";
-import "@splinetool/runtime";
-
-//#region src/awesome/Spline/Spine.d.ts
-declare const Spline: react146.NamedExoticComponent<SplineProps>;
-//#endregion
-export { Spline };
-//# sourceMappingURL=Spine.d.mts.map
