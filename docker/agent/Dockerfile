@@ -9,7 +9,7 @@ RUN git clone https://github.com/NousResearch/hermes-agent.git /app \
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir -e .
+RUN pip install --no-cache-dir -e . aiohttp==3.13.3
 
 EXPOSE 8642
 
