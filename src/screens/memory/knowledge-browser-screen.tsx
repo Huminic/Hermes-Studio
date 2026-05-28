@@ -54,6 +54,12 @@ type KnowledgeSearchResponse = {
   results?: Array<KnowledgeSearchResult>
 }
 
+type ProfileSummary = {
+  name: string
+  exists: boolean
+  active: boolean
+}
+
 type KnowledgeGraphNode = {
   id: string
   title: string
@@ -85,6 +91,17 @@ async function readJson<T>(url: string): Promise<T> {
     throw new Error(text || `Request failed (${response.status})`)
   }
   return (await response.json()) as T
+}
+
+function knowledgeApiUrl(
+  path: string,
+  profileName: string,
+  params?: Record<string, string>,
+): string {
+  const query = new URLSearchParams(params)
+  if (profileName) query.set('profile', profileName)
+  const suffix = query.toString()
+  return suffix ? `${path}?${suffix}` : path
 }
 
 function formatBytes(size: number): string {
@@ -521,6 +538,7 @@ export function KnowledgeBrowserScreen() {
   const [selectedPath, setSelectedPath] = useState<string | null>(null)
   const [searchInput, setSearchInput] = useState('')
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
+  const [selectedProfile, setSelectedProfile] = useState('')
   const [focusLine, setFocusLine] = useState<number | null>(null)
   const [focusedResult, setFocusedResult] =
     useState<KnowledgeSearchResult | null>(null)
@@ -529,10 +547,21 @@ export function KnowledgeBrowserScreen() {
   const deferredSearch = useDeferredValue(searchInput)
   const searchTerm = deferredSearch.trim()
 
-  const listQuery = useQuery({
-    queryKey: ['knowledge', 'list'],
-    queryFn: () => readJson<KnowledgeListResponse>('/api/knowledge/list'),
+  const profilesQuery = useQuery({
+    queryKey: ['profiles', 'knowledge-list'],
+    queryFn: () =>
+      readJson<{ profiles: Array<ProfileSummary> }>('/api/profiles/list'),
   })
+
+  const listQuery = useQuery({
+    queryKey: ['knowledge', 'list', selectedProfile],
+    queryFn: () =>
+      readJson<KnowledgeListResponse>(
+        knowledgeApiUrl('/api/knowledge/list', selectedProfile),
+      ),
+  })
+
+  const profiles = profilesQuery.data?.profiles ?? []
 
   const pages = listQuery.data?.pages ?? []
   const knowledgeRoot = listQuery.data?.knowledgeRoot ?? '~/.hermes/knowledge/'
@@ -571,32 +600,63 @@ export function KnowledgeBrowserScreen() {
   }, [pages])
 
   useEffect(() => {
+    if (selectedProfile) return
+    if (profilesQuery.isLoading || listQuery.isLoading) return
+    if (listQuery.data?.exists) return
+
+    const firstOrgProfile = profiles.find(
+      (profile) => profile.name !== 'default' && profile.exists,
+    )
+    if (firstOrgProfile) setSelectedProfile(firstOrgProfile.name)
+  }, [
+    listQuery.data?.exists,
+    listQuery.isLoading,
+    profiles,
+    profilesQuery.isLoading,
+    selectedProfile,
+  ])
+
+  useEffect(() => {
+    setSelectedPath(null)
+    setSelectedTag(null)
+    setFocusLine(null)
+    setFocusedResult(null)
+  }, [selectedProfile])
+
+  useEffect(() => {
     if (!pages.length) return
     if (selectedPath && pages.some((page) => page.path === selectedPath)) return
     setSelectedPath(pages[0]?.path ?? null)
   }, [pages, selectedPath])
 
   const readQuery = useQuery({
-    queryKey: ['knowledge', 'read', selectedPath],
+    queryKey: ['knowledge', 'read', selectedProfile, selectedPath],
     queryFn: () =>
       readJson<KnowledgeReadResponse>(
-        `/api/knowledge/read?path=${encodeURIComponent(selectedPath || '')}`,
+        knowledgeApiUrl('/api/knowledge/read', selectedProfile, {
+          path: selectedPath || '',
+        }),
       ),
     enabled: Boolean(selectedPath),
   })
 
   const searchQuery = useQuery({
-    queryKey: ['knowledge', 'search', searchTerm],
+    queryKey: ['knowledge', 'search', selectedProfile, searchTerm],
     queryFn: () =>
       readJson<KnowledgeSearchResponse>(
-        `/api/knowledge/search?q=${encodeURIComponent(searchTerm)}`,
+        knowledgeApiUrl('/api/knowledge/search', selectedProfile, {
+          q: searchTerm,
+        }),
       ),
     enabled: searchTerm.length > 0,
   })
 
   const graphQuery = useQuery({
-    queryKey: ['knowledge', 'graph'],
-    queryFn: () => readJson<KnowledgeGraphResponse>('/api/knowledge/graph'),
+    queryKey: ['knowledge', 'graph', selectedProfile],
+    queryFn: () =>
+      readJson<KnowledgeGraphResponse>(
+        knowledgeApiUrl('/api/knowledge/graph', selectedProfile),
+      ),
   })
 
   const page = readQuery.data?.page ?? null
@@ -672,6 +732,29 @@ export function KnowledgeBrowserScreen() {
               />
             </div>
           </div>
+
+          {profiles.length > 0 ? (
+            <select
+              value={selectedProfile}
+              onChange={(event) => setSelectedProfile(event.target.value)}
+              className="rounded-xl px-3 py-2 text-sm outline-none transition-colors focus:border-accent-500"
+              style={{
+                border: '1px solid var(--theme-border)',
+                backgroundColor: 'var(--theme-card)',
+                color: 'var(--theme-text)',
+              }}
+              aria-label="Knowledge profile"
+            >
+              <option value="">Global knowledge</option>
+              {profiles
+                .filter((profile) => profile.name !== 'default')
+                .map((profile) => (
+                  <option key={profile.name} value={profile.name}>
+                    {profile.name}
+                  </option>
+                ))}
+            </select>
+          ) : null}
 
           <div
             className="inline-flex overflow-hidden rounded-xl"

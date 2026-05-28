@@ -100,12 +100,12 @@ export const Route = createRootRoute({
           'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-visual',
       },
       {
-        title: 'Hermes Studio',
+        title: 'Huminic Studio',
       },
       {
         name: 'description',
         content:
-          'Hermes Studio — premium AI agent operating system for chat, tools, files, memory, and jobs.',
+          'Huminic Studio — premium AI agent operating system for chat, tools, files, memory, and jobs.',
       },
       {
         property: 'og:image',
@@ -299,8 +299,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             var d = document.createElement('div');
             d.id = 'splash-screen';
             d.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:'+bg+';transition:opacity 0.5s ease;';
-            d.innerHTML = '<img src="/hermes-avatar.webp" alt="Hermes" style="width:80px;height:80px;margin-bottom:20px;border-radius:16px;filter:drop-shadow(0 8px 32px color-mix(in srgb,'+accent+' 45%, transparent))" />'
-              + '<img src="'+(isDark ? '/hermes-banner.png' : '/hermes-banner-light.png')+'" alt="Hermes Studio" style="width:280px;height:auto;margin-bottom:8px;filter:drop-shadow(0 4px 16px '+(isDark ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.1)')+')" />'
+            d.innerHTML = '<div aria-label="Huminic" style="width:80px;height:80px;margin-bottom:20px;border-radius:16px;border:1px solid rgba(255,255,255,0.16);display:flex;align-items:center;justify-content:center;font:700 54px/1 Arial,Helvetica,sans-serif;color:'+txt+';background:rgba(255,255,255,0.04);filter:drop-shadow(0 8px 32px color-mix(in srgb,'+accent+' 45%, transparent))">h</div>'
+              + '<div style="font:700 34px/1.1 Arial,Helvetica,sans-serif;letter-spacing:-0.04em;color:'+txt+';margin-bottom:8px">Huminic</div>'
               + '<div style="font:400 14px/1 system-ui,-apple-system,sans-serif;letter-spacing:0.04em;color:'+muted+'">Studio</div>'
               + '<div style="margin-top:28px;width:140px;height:3px;background:'+(isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)')+';border-radius:3px;overflow:hidden;position:relative"><div id=splash-bar style="width:0%;height:100%;background:'+accent+';border-radius:3px;transition:width 0.4s ease"></div></div>';
             document.body.prepend(d);

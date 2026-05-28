@@ -19,6 +19,7 @@ import { DialogContent, DialogRoot, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/toast'
 import { cn } from '@/lib/utils'
+import { BrandMark } from '@/components/brand-mark'
 
 type ProfileSummary = {
   name: string
@@ -221,6 +222,7 @@ export function ProfilesScreen() {
       await postJson('/api/profiles/activate', { name })
       toast(`Activated profile ${name}`, { type: 'success' })
       await refreshProfiles()
+      await queryClient.invalidateQueries({ queryKey: ['active-profile'] })
     } catch (error) {
       toast(
         error instanceof Error ? error.message : 'Failed to activate profile',
@@ -285,7 +287,7 @@ export function ProfilesScreen() {
             <h1 className="text-lg font-semibold text-primary-900">Profiles</h1>
           </div>
           <p className="mt-1 text-sm text-[var(--theme-muted)]">
-            Browse and manage Hermes profiles stored under{' '}
+            Browse and manage Huminic profiles stored under{' '}
             <span className="font-mono">~/.hermes/profiles</span>.
           </p>
         </div>
@@ -319,20 +321,14 @@ export function ProfilesScreen() {
                         : 'bg-gradient-to-br from-primary-200 to-primary-300 dark:from-neutral-700 dark:to-neutral-600',
                     )}
                   >
-                    <img
-                      src="/hermes-avatar.webp"
-                      alt={profile.name}
+                    <BrandMark
+                      label={profile.name}
                       className={cn(
-                        'size-20 rounded-full border-2 object-cover',
+                        'size-20 rounded-full border-2 text-5xl',
                         profile.active
                           ? 'border-[var(--theme-border)] dark:border-neutral-950'
                           : 'border-[var(--theme-border)] dark:border-neutral-950',
                       )}
-                      style={{
-                        filter: profile.active
-                          ? 'none'
-                          : 'grayscale(0.5) brightness(0.9)',
-                      }}
                     />
                   </div>
                   {profile.active && (
@@ -829,10 +825,9 @@ export function ProfilesScreen() {
           {/* Header */}
           <div className="shrink-0 border-b border-[var(--theme-border)] px-6 pb-4 pt-5 dark:border-neutral-800">
             <div className="flex items-center gap-3">
-              <img
-                src="/hermes-avatar.webp"
-                alt={detailsName || ''}
-                className="size-12 rounded-full border-2 border-[var(--theme-border)] object-cover dark:border-neutral-700"
+              <BrandMark
+                label={detailsName || 'Profile'}
+                className="size-12 rounded-full border-2 border-[var(--theme-border)] text-3xl dark:border-neutral-700"
               />
               <div className="min-w-0">
                 <DialogTitle className="text-base font-semibold">

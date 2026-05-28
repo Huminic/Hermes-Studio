@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WidgetsRouteImport } from './routes/widgets'
 import { Route as TerminalRouteImport } from './routes/terminal'
 import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as SkillsRouteImport } from './routes/skills'
@@ -26,6 +27,7 @@ import { Route as DocsRouteImport } from './routes/docs'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ConductorRouteImport } from './routes/conductor'
 import { Route as AuditRouteImport } from './routes/audit'
+import { Route as ArtifactsRouteImport } from './routes/artifacts'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as SplatRouteImport } from './routes/$'
@@ -72,11 +74,15 @@ import { Route as ApiConductorSpawnRouteImport } from './routes/api/conductor-sp
 import { Route as ApiChatEventsRouteImport } from './routes/api/chat-events'
 import { Route as ApiAuthCheckRouteImport } from './routes/api/auth-check'
 import { Route as ApiAuthRouteImport } from './routes/api/auth'
+import { Route as ApiWidgetsIndexRouteImport } from './routes/api/widgets/index'
 import { Route as ApiTasksIndexRouteImport } from './routes/api/tasks/index'
 import { Route as ApiOperationsIndexRouteImport } from './routes/api/operations/index'
 import { Route as ApiCrewsIndexRouteImport } from './routes/api/crews/index'
 import { Route as ApiAuditIndexRouteImport } from './routes/api/audit/index'
+import { Route as ApiArtifactsIndexRouteImport } from './routes/api/artifacts/index'
 import { Route as ApiAgentsIndexRouteImport } from './routes/api/agents/index'
+import { Route as ApiAgentMigrationsIndexRouteImport } from './routes/api/agent-migrations/index'
+import { Route as ApiWidgetsProfileRouteImport } from './routes/api/widgets/$profile'
 import { Route as ApiTasksTaskIdRouteImport } from './routes/api/tasks/$taskId'
 import { Route as ApiSkillsUninstallRouteImport } from './routes/api/skills/uninstall'
 import { Route as ApiSkillsSettingsRouteImport } from './routes/api/skills/settings'
@@ -105,20 +111,32 @@ import { Route as ApiHermesProxySplatRouteImport } from './routes/api/hermes-pro
 import { Route as ApiHermesJobsJobIdRouteImport } from './routes/api/hermes-jobs.$jobId'
 import { Route as ApiEventsReplayRouteImport } from './routes/api/events/replay'
 import { Route as ApiCrewsCrewIdRouteImport } from './routes/api/crews/$crewId'
+import { Route as ApiArtifactsArtifactIdRouteImport } from './routes/api/artifacts/$artifactId'
 import { Route as ApiAgentsAgentIdRouteImport } from './routes/api/agents/$agentId'
 import { Route as ApiCrewsTemplatesIndexRouteImport } from './routes/api/crews/templates/index'
 import { Route as ApiTasksTaskIdMoveRouteImport } from './routes/api/tasks/$taskId.move'
 import { Route as ApiSessionsSessionKeyStatusRouteImport } from './routes/api/sessions/$sessionKey.status'
 import { Route as ApiSessionsSessionKeyActiveRunRouteImport } from './routes/api/sessions/$sessionKey.active-run'
+import { Route as ApiPublicWidgetsWidgetKeyRouteImport } from './routes/api/public/widgets/$widgetKey'
+import { Route as ApiPublicWidgetJsRouteImport } from './routes/api/public/widget.js'
+import { Route as ApiPublicArtifactsPublicIdRouteImport } from './routes/api/public/artifacts/$publicId'
 import { Route as ApiHermesRunsRunIdEventsRouteImport } from './routes/api/hermes-runs.$runId.events'
 import { Route as ApiCrewsTemplatesIdRouteImport } from './routes/api/crews/templates/$id'
 import { Route as ApiCrewsCrewIdWorkflowRouteImport } from './routes/api/crews/$crewId.workflow'
 import { Route as ApiCrewsCrewIdUsageRouteImport } from './routes/api/crews/$crewId.usage'
 import { Route as ApiCrewsCrewIdDispatchRouteImport } from './routes/api/crews/$crewId.dispatch'
 import { Route as ApiCrewsCrewIdCloneRouteImport } from './routes/api/crews/$crewId.clone'
+import { Route as ApiArtifactsArtifactIdSendRouteImport } from './routes/api/artifacts/$artifactId/send'
 import { Route as ApiApprovalsApprovalIdDenyRouteImport } from './routes/api/approvals.$approvalId.deny'
 import { Route as ApiApprovalsApprovalIdApproveRouteImport } from './routes/api/approvals.$approvalId.approve'
+import { Route as ApiPublicWidgetsWidgetKeySessionsRouteImport } from './routes/api/public/widgets/$widgetKey/sessions'
+import { Route as ApiPublicArtifactsPublicIdDownloadFilenameRouteImport } from './routes/api/public/artifacts/$publicId/download/$filename'
 
+const WidgetsRoute = WidgetsRouteImport.update({
+  id: '/widgets',
+  path: '/widgets',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TerminalRoute = TerminalRouteImport.update({
   id: '/terminal',
   path: '/terminal',
@@ -202,6 +220,11 @@ const ConductorRoute = ConductorRouteImport.update({
 const AuditRoute = AuditRouteImport.update({
   id: '/audit',
   path: '/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArtifactsRoute = ArtifactsRouteImport.update({
+  id: '/artifacts',
+  path: '/artifacts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
@@ -434,6 +457,11 @@ const ApiAuthRoute = ApiAuthRouteImport.update({
   path: '/api/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiWidgetsIndexRoute = ApiWidgetsIndexRouteImport.update({
+  id: '/api/widgets/',
+  path: '/api/widgets/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTasksIndexRoute = ApiTasksIndexRouteImport.update({
   id: '/api/tasks/',
   path: '/api/tasks/',
@@ -454,9 +482,24 @@ const ApiAuditIndexRoute = ApiAuditIndexRouteImport.update({
   path: '/api/audit/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiArtifactsIndexRoute = ApiArtifactsIndexRouteImport.update({
+  id: '/api/artifacts/',
+  path: '/api/artifacts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAgentsIndexRoute = ApiAgentsIndexRouteImport.update({
   id: '/api/agents/',
   path: '/api/agents/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAgentMigrationsIndexRoute = ApiAgentMigrationsIndexRouteImport.update({
+  id: '/api/agent-migrations/',
+  path: '/api/agent-migrations/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWidgetsProfileRoute = ApiWidgetsProfileRouteImport.update({
+  id: '/api/widgets/$profile',
+  path: '/api/widgets/$profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiTasksTaskIdRoute = ApiTasksTaskIdRouteImport.update({
@@ -599,6 +642,11 @@ const ApiCrewsCrewIdRoute = ApiCrewsCrewIdRouteImport.update({
   path: '/api/crews/$crewId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiArtifactsArtifactIdRoute = ApiArtifactsArtifactIdRouteImport.update({
+  id: '/api/artifacts/$artifactId',
+  path: '/api/artifacts/$artifactId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAgentsAgentIdRoute = ApiAgentsAgentIdRouteImport.update({
   id: '/api/agents/$agentId',
   path: '/api/agents/$agentId',
@@ -625,6 +673,23 @@ const ApiSessionsSessionKeyActiveRunRoute =
     id: '/$sessionKey/active-run',
     path: '/$sessionKey/active-run',
     getParentRoute: () => ApiSessionsRoute,
+  } as any)
+const ApiPublicWidgetsWidgetKeyRoute =
+  ApiPublicWidgetsWidgetKeyRouteImport.update({
+    id: '/api/public/widgets/$widgetKey',
+    path: '/api/public/widgets/$widgetKey',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicWidgetJsRoute = ApiPublicWidgetJsRouteImport.update({
+  id: '/api/public/widget/js',
+  path: '/api/public/widget/js',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicArtifactsPublicIdRoute =
+  ApiPublicArtifactsPublicIdRouteImport.update({
+    id: '/api/public/artifacts/$publicId',
+    path: '/api/public/artifacts/$publicId',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const ApiHermesRunsRunIdEventsRoute =
   ApiHermesRunsRunIdEventsRouteImport.update({
@@ -657,6 +722,12 @@ const ApiCrewsCrewIdCloneRoute = ApiCrewsCrewIdCloneRouteImport.update({
   path: '/clone',
   getParentRoute: () => ApiCrewsCrewIdRoute,
 } as any)
+const ApiArtifactsArtifactIdSendRoute =
+  ApiArtifactsArtifactIdSendRouteImport.update({
+    id: '/send',
+    path: '/send',
+    getParentRoute: () => ApiArtifactsArtifactIdRoute,
+  } as any)
 const ApiApprovalsApprovalIdDenyRoute =
   ApiApprovalsApprovalIdDenyRouteImport.update({
     id: '/api/approvals/$approvalId/deny',
@@ -669,12 +740,25 @@ const ApiApprovalsApprovalIdApproveRoute =
     path: '/api/approvals/$approvalId/approve',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicWidgetsWidgetKeySessionsRoute =
+  ApiPublicWidgetsWidgetKeySessionsRouteImport.update({
+    id: '/sessions',
+    path: '/sessions',
+    getParentRoute: () => ApiPublicWidgetsWidgetKeyRoute,
+  } as any)
+const ApiPublicArtifactsPublicIdDownloadFilenameRoute =
+  ApiPublicArtifactsPublicIdDownloadFilenameRouteImport.update({
+    id: '/download/$filename',
+    path: '/download/$filename',
+    getParentRoute: () => ApiPublicArtifactsPublicIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/agents': typeof AgentsRoute
   '/analytics': typeof AnalyticsRoute
+  '/artifacts': typeof ArtifactsRoute
   '/audit': typeof AuditRoute
   '/conductor': typeof ConductorRoute
   '/dashboard': typeof DashboardRoute
@@ -692,6 +776,7 @@ export interface FileRoutesByFullPath {
   '/skills': typeof SkillsRoute
   '/tasks': typeof TasksRoute
   '/terminal': typeof TerminalRoute
+  '/widgets': typeof WidgetsRoute
   '/api/auth': typeof ApiAuthRoute
   '/api/auth-check': typeof ApiAuthCheckRoute
   '/api/chat-events': typeof ApiChatEventsRoute
@@ -735,6 +820,7 @@ export interface FileRoutesByFullPath {
   '/crews/': typeof CrewsIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
+  '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
@@ -763,29 +849,40 @@ export interface FileRoutesByFullPath {
   '/api/skills/settings': typeof ApiSkillsSettingsRoute
   '/api/skills/uninstall': typeof ApiSkillsUninstallRoute
   '/api/tasks/$taskId': typeof ApiTasksTaskIdRouteWithChildren
+  '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
+  '/api/agent-migrations/': typeof ApiAgentMigrationsIndexRoute
   '/api/agents/': typeof ApiAgentsIndexRoute
+  '/api/artifacts/': typeof ApiArtifactsIndexRoute
   '/api/audit/': typeof ApiAuditIndexRoute
   '/api/crews/': typeof ApiCrewsIndexRoute
   '/api/operations/': typeof ApiOperationsIndexRoute
   '/api/tasks/': typeof ApiTasksIndexRoute
+  '/api/widgets/': typeof ApiWidgetsIndexRoute
   '/api/approvals/$approvalId/approve': typeof ApiApprovalsApprovalIdApproveRoute
   '/api/approvals/$approvalId/deny': typeof ApiApprovalsApprovalIdDenyRoute
+  '/api/artifacts/$artifactId/send': typeof ApiArtifactsArtifactIdSendRoute
   '/api/crews/$crewId/clone': typeof ApiCrewsCrewIdCloneRoute
   '/api/crews/$crewId/dispatch': typeof ApiCrewsCrewIdDispatchRoute
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
   '/api/hermes-runs/$runId/events': typeof ApiHermesRunsRunIdEventsRoute
+  '/api/public/artifacts/$publicId': typeof ApiPublicArtifactsPublicIdRouteWithChildren
+  '/api/public/widget/js': typeof ApiPublicWidgetJsRoute
+  '/api/public/widgets/$widgetKey': typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
   '/api/crews/templates/': typeof ApiCrewsTemplatesIndexRoute
+  '/api/public/widgets/$widgetKey/sessions': typeof ApiPublicWidgetsWidgetKeySessionsRoute
+  '/api/public/artifacts/$publicId/download/$filename': typeof ApiPublicArtifactsPublicIdDownloadFilenameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/agents': typeof AgentsRoute
   '/analytics': typeof AnalyticsRoute
+  '/artifacts': typeof ArtifactsRoute
   '/audit': typeof AuditRoute
   '/conductor': typeof ConductorRoute
   '/dashboard': typeof DashboardRoute
@@ -802,6 +899,7 @@ export interface FileRoutesByTo {
   '/skills': typeof SkillsRoute
   '/tasks': typeof TasksRoute
   '/terminal': typeof TerminalRoute
+  '/widgets': typeof WidgetsRoute
   '/api/auth': typeof ApiAuthRoute
   '/api/auth-check': typeof ApiAuthCheckRoute
   '/api/chat-events': typeof ApiChatEventsRoute
@@ -845,6 +943,7 @@ export interface FileRoutesByTo {
   '/crews': typeof CrewsIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
+  '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
@@ -873,23 +972,33 @@ export interface FileRoutesByTo {
   '/api/skills/settings': typeof ApiSkillsSettingsRoute
   '/api/skills/uninstall': typeof ApiSkillsUninstallRoute
   '/api/tasks/$taskId': typeof ApiTasksTaskIdRouteWithChildren
+  '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
+  '/api/agent-migrations': typeof ApiAgentMigrationsIndexRoute
   '/api/agents': typeof ApiAgentsIndexRoute
+  '/api/artifacts': typeof ApiArtifactsIndexRoute
   '/api/audit': typeof ApiAuditIndexRoute
   '/api/crews': typeof ApiCrewsIndexRoute
   '/api/operations': typeof ApiOperationsIndexRoute
   '/api/tasks': typeof ApiTasksIndexRoute
+  '/api/widgets': typeof ApiWidgetsIndexRoute
   '/api/approvals/$approvalId/approve': typeof ApiApprovalsApprovalIdApproveRoute
   '/api/approvals/$approvalId/deny': typeof ApiApprovalsApprovalIdDenyRoute
+  '/api/artifacts/$artifactId/send': typeof ApiArtifactsArtifactIdSendRoute
   '/api/crews/$crewId/clone': typeof ApiCrewsCrewIdCloneRoute
   '/api/crews/$crewId/dispatch': typeof ApiCrewsCrewIdDispatchRoute
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
   '/api/hermes-runs/$runId/events': typeof ApiHermesRunsRunIdEventsRoute
+  '/api/public/artifacts/$publicId': typeof ApiPublicArtifactsPublicIdRouteWithChildren
+  '/api/public/widget/js': typeof ApiPublicWidgetJsRoute
+  '/api/public/widgets/$widgetKey': typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
   '/api/crews/templates': typeof ApiCrewsTemplatesIndexRoute
+  '/api/public/widgets/$widgetKey/sessions': typeof ApiPublicWidgetsWidgetKeySessionsRoute
+  '/api/public/artifacts/$publicId/download/$filename': typeof ApiPublicArtifactsPublicIdDownloadFilenameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -897,6 +1006,7 @@ export interface FileRoutesById {
   '/$': typeof SplatRoute
   '/agents': typeof AgentsRoute
   '/analytics': typeof AnalyticsRoute
+  '/artifacts': typeof ArtifactsRoute
   '/audit': typeof AuditRoute
   '/conductor': typeof ConductorRoute
   '/dashboard': typeof DashboardRoute
@@ -914,6 +1024,7 @@ export interface FileRoutesById {
   '/skills': typeof SkillsRoute
   '/tasks': typeof TasksRoute
   '/terminal': typeof TerminalRoute
+  '/widgets': typeof WidgetsRoute
   '/api/auth': typeof ApiAuthRoute
   '/api/auth-check': typeof ApiAuthCheckRoute
   '/api/chat-events': typeof ApiChatEventsRoute
@@ -957,6 +1068,7 @@ export interface FileRoutesById {
   '/crews/': typeof CrewsIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
+  '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
@@ -985,23 +1097,33 @@ export interface FileRoutesById {
   '/api/skills/settings': typeof ApiSkillsSettingsRoute
   '/api/skills/uninstall': typeof ApiSkillsUninstallRoute
   '/api/tasks/$taskId': typeof ApiTasksTaskIdRouteWithChildren
+  '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
+  '/api/agent-migrations/': typeof ApiAgentMigrationsIndexRoute
   '/api/agents/': typeof ApiAgentsIndexRoute
+  '/api/artifacts/': typeof ApiArtifactsIndexRoute
   '/api/audit/': typeof ApiAuditIndexRoute
   '/api/crews/': typeof ApiCrewsIndexRoute
   '/api/operations/': typeof ApiOperationsIndexRoute
   '/api/tasks/': typeof ApiTasksIndexRoute
+  '/api/widgets/': typeof ApiWidgetsIndexRoute
   '/api/approvals/$approvalId/approve': typeof ApiApprovalsApprovalIdApproveRoute
   '/api/approvals/$approvalId/deny': typeof ApiApprovalsApprovalIdDenyRoute
+  '/api/artifacts/$artifactId/send': typeof ApiArtifactsArtifactIdSendRoute
   '/api/crews/$crewId/clone': typeof ApiCrewsCrewIdCloneRoute
   '/api/crews/$crewId/dispatch': typeof ApiCrewsCrewIdDispatchRoute
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
   '/api/hermes-runs/$runId/events': typeof ApiHermesRunsRunIdEventsRoute
+  '/api/public/artifacts/$publicId': typeof ApiPublicArtifactsPublicIdRouteWithChildren
+  '/api/public/widget/js': typeof ApiPublicWidgetJsRoute
+  '/api/public/widgets/$widgetKey': typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
   '/api/crews/templates/': typeof ApiCrewsTemplatesIndexRoute
+  '/api/public/widgets/$widgetKey/sessions': typeof ApiPublicWidgetsWidgetKeySessionsRoute
+  '/api/public/artifacts/$publicId/download/$filename': typeof ApiPublicArtifactsPublicIdDownloadFilenameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -1010,6 +1132,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/agents'
     | '/analytics'
+    | '/artifacts'
     | '/audit'
     | '/conductor'
     | '/dashboard'
@@ -1027,6 +1150,7 @@ export interface FileRouteTypes {
     | '/skills'
     | '/tasks'
     | '/terminal'
+    | '/widgets'
     | '/api/auth'
     | '/api/auth-check'
     | '/api/chat-events'
@@ -1070,6 +1194,7 @@ export interface FileRouteTypes {
     | '/crews/'
     | '/settings/'
     | '/api/agents/$agentId'
+    | '/api/artifacts/$artifactId'
     | '/api/crews/$crewId'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
@@ -1098,29 +1223,40 @@ export interface FileRouteTypes {
     | '/api/skills/settings'
     | '/api/skills/uninstall'
     | '/api/tasks/$taskId'
+    | '/api/widgets/$profile'
+    | '/api/agent-migrations/'
     | '/api/agents/'
+    | '/api/artifacts/'
     | '/api/audit/'
     | '/api/crews/'
     | '/api/operations/'
     | '/api/tasks/'
+    | '/api/widgets/'
     | '/api/approvals/$approvalId/approve'
     | '/api/approvals/$approvalId/deny'
+    | '/api/artifacts/$artifactId/send'
     | '/api/crews/$crewId/clone'
     | '/api/crews/$crewId/dispatch'
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
     | '/api/hermes-runs/$runId/events'
+    | '/api/public/artifacts/$publicId'
+    | '/api/public/widget/js'
+    | '/api/public/widgets/$widgetKey'
     | '/api/sessions/$sessionKey/active-run'
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
     | '/api/crews/templates/'
+    | '/api/public/widgets/$widgetKey/sessions'
+    | '/api/public/artifacts/$publicId/download/$filename'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/$'
     | '/agents'
     | '/analytics'
+    | '/artifacts'
     | '/audit'
     | '/conductor'
     | '/dashboard'
@@ -1137,6 +1273,7 @@ export interface FileRouteTypes {
     | '/skills'
     | '/tasks'
     | '/terminal'
+    | '/widgets'
     | '/api/auth'
     | '/api/auth-check'
     | '/api/chat-events'
@@ -1180,6 +1317,7 @@ export interface FileRouteTypes {
     | '/crews'
     | '/settings'
     | '/api/agents/$agentId'
+    | '/api/artifacts/$artifactId'
     | '/api/crews/$crewId'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
@@ -1208,29 +1346,40 @@ export interface FileRouteTypes {
     | '/api/skills/settings'
     | '/api/skills/uninstall'
     | '/api/tasks/$taskId'
+    | '/api/widgets/$profile'
+    | '/api/agent-migrations'
     | '/api/agents'
+    | '/api/artifacts'
     | '/api/audit'
     | '/api/crews'
     | '/api/operations'
     | '/api/tasks'
+    | '/api/widgets'
     | '/api/approvals/$approvalId/approve'
     | '/api/approvals/$approvalId/deny'
+    | '/api/artifacts/$artifactId/send'
     | '/api/crews/$crewId/clone'
     | '/api/crews/$crewId/dispatch'
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
     | '/api/hermes-runs/$runId/events'
+    | '/api/public/artifacts/$publicId'
+    | '/api/public/widget/js'
+    | '/api/public/widgets/$widgetKey'
     | '/api/sessions/$sessionKey/active-run'
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
     | '/api/crews/templates'
+    | '/api/public/widgets/$widgetKey/sessions'
+    | '/api/public/artifacts/$publicId/download/$filename'
   id:
     | '__root__'
     | '/'
     | '/$'
     | '/agents'
     | '/analytics'
+    | '/artifacts'
     | '/audit'
     | '/conductor'
     | '/dashboard'
@@ -1248,6 +1397,7 @@ export interface FileRouteTypes {
     | '/skills'
     | '/tasks'
     | '/terminal'
+    | '/widgets'
     | '/api/auth'
     | '/api/auth-check'
     | '/api/chat-events'
@@ -1291,6 +1441,7 @@ export interface FileRouteTypes {
     | '/crews/'
     | '/settings/'
     | '/api/agents/$agentId'
+    | '/api/artifacts/$artifactId'
     | '/api/crews/$crewId'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
@@ -1319,23 +1470,33 @@ export interface FileRouteTypes {
     | '/api/skills/settings'
     | '/api/skills/uninstall'
     | '/api/tasks/$taskId'
+    | '/api/widgets/$profile'
+    | '/api/agent-migrations/'
     | '/api/agents/'
+    | '/api/artifacts/'
     | '/api/audit/'
     | '/api/crews/'
     | '/api/operations/'
     | '/api/tasks/'
+    | '/api/widgets/'
     | '/api/approvals/$approvalId/approve'
     | '/api/approvals/$approvalId/deny'
+    | '/api/artifacts/$artifactId/send'
     | '/api/crews/$crewId/clone'
     | '/api/crews/$crewId/dispatch'
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
     | '/api/hermes-runs/$runId/events'
+    | '/api/public/artifacts/$publicId'
+    | '/api/public/widget/js'
+    | '/api/public/widgets/$widgetKey'
     | '/api/sessions/$sessionKey/active-run'
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
     | '/api/crews/templates/'
+    | '/api/public/widgets/$widgetKey/sessions'
+    | '/api/public/artifacts/$publicId/download/$filename'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1343,6 +1504,7 @@ export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
   AgentsRoute: typeof AgentsRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  ArtifactsRoute: typeof ArtifactsRoute
   AuditRoute: typeof AuditRoute
   ConductorRoute: typeof ConductorRoute
   DashboardRoute: typeof DashboardRoute
@@ -1360,6 +1522,7 @@ export interface RootRouteChildren {
   SkillsRoute: typeof SkillsRoute
   TasksRoute: typeof TasksRoute
   TerminalRoute: typeof TerminalRoute
+  WidgetsRoute: typeof WidgetsRoute
   ApiAuthRoute: typeof ApiAuthRoute
   ApiAuthCheckRoute: typeof ApiAuthCheckRoute
   ApiChatEventsRoute: typeof ApiChatEventsRoute
@@ -1400,6 +1563,7 @@ export interface RootRouteChildren {
   ChatIndexRoute: typeof ChatIndexRoute
   CrewsIndexRoute: typeof CrewsIndexRoute
   ApiAgentsAgentIdRoute: typeof ApiAgentsAgentIdRoute
+  ApiArtifactsArtifactIdRoute: typeof ApiArtifactsArtifactIdRouteWithChildren
   ApiCrewsCrewIdRoute: typeof ApiCrewsCrewIdRouteWithChildren
   ApiHermesProxySplatRoute: typeof ApiHermesProxySplatRoute
   ApiKnowledgeGraphRoute: typeof ApiKnowledgeGraphRoute
@@ -1417,19 +1581,33 @@ export interface RootRouteChildren {
   ApiProfilesReadRoute: typeof ApiProfilesReadRoute
   ApiProfilesRenameRoute: typeof ApiProfilesRenameRoute
   ApiTasksTaskIdRoute: typeof ApiTasksTaskIdRouteWithChildren
+  ApiWidgetsProfileRoute: typeof ApiWidgetsProfileRoute
+  ApiAgentMigrationsIndexRoute: typeof ApiAgentMigrationsIndexRoute
   ApiAgentsIndexRoute: typeof ApiAgentsIndexRoute
+  ApiArtifactsIndexRoute: typeof ApiArtifactsIndexRoute
   ApiAuditIndexRoute: typeof ApiAuditIndexRoute
   ApiCrewsIndexRoute: typeof ApiCrewsIndexRoute
   ApiOperationsIndexRoute: typeof ApiOperationsIndexRoute
   ApiTasksIndexRoute: typeof ApiTasksIndexRoute
+  ApiWidgetsIndexRoute: typeof ApiWidgetsIndexRoute
   ApiApprovalsApprovalIdApproveRoute: typeof ApiApprovalsApprovalIdApproveRoute
   ApiApprovalsApprovalIdDenyRoute: typeof ApiApprovalsApprovalIdDenyRoute
   ApiCrewsTemplatesIdRoute: typeof ApiCrewsTemplatesIdRoute
+  ApiPublicArtifactsPublicIdRoute: typeof ApiPublicArtifactsPublicIdRouteWithChildren
+  ApiPublicWidgetJsRoute: typeof ApiPublicWidgetJsRoute
+  ApiPublicWidgetsWidgetKeyRoute: typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
   ApiCrewsTemplatesIndexRoute: typeof ApiCrewsTemplatesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/widgets': {
+      id: '/widgets'
+      path: '/widgets'
+      fullPath: '/widgets'
+      preLoaderRoute: typeof WidgetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terminal': {
       id: '/terminal'
       path: '/terminal'
@@ -1547,6 +1725,13 @@ declare module '@tanstack/react-router' {
       path: '/audit'
       fullPath: '/audit'
       preLoaderRoute: typeof AuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/artifacts': {
+      id: '/artifacts'
+      path: '/artifacts'
+      fullPath: '/artifacts'
+      preLoaderRoute: typeof ArtifactsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/analytics': {
@@ -1871,6 +2056,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/widgets/': {
+      id: '/api/widgets/'
+      path: '/api/widgets'
+      fullPath: '/api/widgets/'
+      preLoaderRoute: typeof ApiWidgetsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/tasks/': {
       id: '/api/tasks/'
       path: '/api/tasks'
@@ -1899,11 +2091,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuditIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/artifacts/': {
+      id: '/api/artifacts/'
+      path: '/api/artifacts'
+      fullPath: '/api/artifacts/'
+      preLoaderRoute: typeof ApiArtifactsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/agents/': {
       id: '/api/agents/'
       path: '/api/agents'
       fullPath: '/api/agents/'
       preLoaderRoute: typeof ApiAgentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/agent-migrations/': {
+      id: '/api/agent-migrations/'
+      path: '/api/agent-migrations'
+      fullPath: '/api/agent-migrations/'
+      preLoaderRoute: typeof ApiAgentMigrationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/widgets/$profile': {
+      id: '/api/widgets/$profile'
+      path: '/api/widgets/$profile'
+      fullPath: '/api/widgets/$profile'
+      preLoaderRoute: typeof ApiWidgetsProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/tasks/$taskId': {
@@ -2102,6 +2315,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCrewsCrewIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/artifacts/$artifactId': {
+      id: '/api/artifacts/$artifactId'
+      path: '/api/artifacts/$artifactId'
+      fullPath: '/api/artifacts/$artifactId'
+      preLoaderRoute: typeof ApiArtifactsArtifactIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/agents/$agentId': {
       id: '/api/agents/$agentId'
       path: '/api/agents/$agentId'
@@ -2136,6 +2356,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/sessions/$sessionKey/active-run'
       preLoaderRoute: typeof ApiSessionsSessionKeyActiveRunRouteImport
       parentRoute: typeof ApiSessionsRoute
+    }
+    '/api/public/widgets/$widgetKey': {
+      id: '/api/public/widgets/$widgetKey'
+      path: '/api/public/widgets/$widgetKey'
+      fullPath: '/api/public/widgets/$widgetKey'
+      preLoaderRoute: typeof ApiPublicWidgetsWidgetKeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/widget/js': {
+      id: '/api/public/widget/js'
+      path: '/api/public/widget/js'
+      fullPath: '/api/public/widget/js'
+      preLoaderRoute: typeof ApiPublicWidgetJsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/artifacts/$publicId': {
+      id: '/api/public/artifacts/$publicId'
+      path: '/api/public/artifacts/$publicId'
+      fullPath: '/api/public/artifacts/$publicId'
+      preLoaderRoute: typeof ApiPublicArtifactsPublicIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/hermes-runs/$runId/events': {
       id: '/api/hermes-runs/$runId/events'
@@ -2179,6 +2420,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCrewsCrewIdCloneRouteImport
       parentRoute: typeof ApiCrewsCrewIdRoute
     }
+    '/api/artifacts/$artifactId/send': {
+      id: '/api/artifacts/$artifactId/send'
+      path: '/send'
+      fullPath: '/api/artifacts/$artifactId/send'
+      preLoaderRoute: typeof ApiArtifactsArtifactIdSendRouteImport
+      parentRoute: typeof ApiArtifactsArtifactIdRoute
+    }
     '/api/approvals/$approvalId/deny': {
       id: '/api/approvals/$approvalId/deny'
       path: '/api/approvals/$approvalId/deny'
@@ -2192,6 +2440,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/approvals/$approvalId/approve'
       preLoaderRoute: typeof ApiApprovalsApprovalIdApproveRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/api/public/widgets/$widgetKey/sessions': {
+      id: '/api/public/widgets/$widgetKey/sessions'
+      path: '/sessions'
+      fullPath: '/api/public/widgets/$widgetKey/sessions'
+      preLoaderRoute: typeof ApiPublicWidgetsWidgetKeySessionsRouteImport
+      parentRoute: typeof ApiPublicWidgetsWidgetKeyRoute
+    }
+    '/api/public/artifacts/$publicId/download/$filename': {
+      id: '/api/public/artifacts/$publicId/download/$filename'
+      path: '/download/$filename'
+      fullPath: '/api/public/artifacts/$publicId/download/$filename'
+      preLoaderRoute: typeof ApiPublicArtifactsPublicIdDownloadFilenameRouteImport
+      parentRoute: typeof ApiPublicArtifactsPublicIdRoute
     }
   }
 }
@@ -2300,6 +2562,20 @@ const ApiSkillsRouteWithChildren = ApiSkillsRoute._addFileChildren(
   ApiSkillsRouteChildren,
 )
 
+interface ApiArtifactsArtifactIdRouteChildren {
+  ApiArtifactsArtifactIdSendRoute: typeof ApiArtifactsArtifactIdSendRoute
+}
+
+const ApiArtifactsArtifactIdRouteChildren: ApiArtifactsArtifactIdRouteChildren =
+  {
+    ApiArtifactsArtifactIdSendRoute: ApiArtifactsArtifactIdSendRoute,
+  }
+
+const ApiArtifactsArtifactIdRouteWithChildren =
+  ApiArtifactsArtifactIdRoute._addFileChildren(
+    ApiArtifactsArtifactIdRouteChildren,
+  )
+
 interface ApiCrewsCrewIdRouteChildren {
   ApiCrewsCrewIdCloneRoute: typeof ApiCrewsCrewIdCloneRoute
   ApiCrewsCrewIdDispatchRoute: typeof ApiCrewsCrewIdDispatchRoute
@@ -2330,11 +2606,42 @@ const ApiTasksTaskIdRouteWithChildren = ApiTasksTaskIdRoute._addFileChildren(
   ApiTasksTaskIdRouteChildren,
 )
 
+interface ApiPublicArtifactsPublicIdRouteChildren {
+  ApiPublicArtifactsPublicIdDownloadFilenameRoute: typeof ApiPublicArtifactsPublicIdDownloadFilenameRoute
+}
+
+const ApiPublicArtifactsPublicIdRouteChildren: ApiPublicArtifactsPublicIdRouteChildren =
+  {
+    ApiPublicArtifactsPublicIdDownloadFilenameRoute:
+      ApiPublicArtifactsPublicIdDownloadFilenameRoute,
+  }
+
+const ApiPublicArtifactsPublicIdRouteWithChildren =
+  ApiPublicArtifactsPublicIdRoute._addFileChildren(
+    ApiPublicArtifactsPublicIdRouteChildren,
+  )
+
+interface ApiPublicWidgetsWidgetKeyRouteChildren {
+  ApiPublicWidgetsWidgetKeySessionsRoute: typeof ApiPublicWidgetsWidgetKeySessionsRoute
+}
+
+const ApiPublicWidgetsWidgetKeyRouteChildren: ApiPublicWidgetsWidgetKeyRouteChildren =
+  {
+    ApiPublicWidgetsWidgetKeySessionsRoute:
+      ApiPublicWidgetsWidgetKeySessionsRoute,
+  }
+
+const ApiPublicWidgetsWidgetKeyRouteWithChildren =
+  ApiPublicWidgetsWidgetKeyRoute._addFileChildren(
+    ApiPublicWidgetsWidgetKeyRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AgentsRoute: AgentsRoute,
   AnalyticsRoute: AnalyticsRoute,
+  ArtifactsRoute: ArtifactsRoute,
   AuditRoute: AuditRoute,
   ConductorRoute: ConductorRoute,
   DashboardRoute: DashboardRoute,
@@ -2352,6 +2659,7 @@ const rootRouteChildren: RootRouteChildren = {
   SkillsRoute: SkillsRoute,
   TasksRoute: TasksRoute,
   TerminalRoute: TerminalRoute,
+  WidgetsRoute: WidgetsRoute,
   ApiAuthRoute: ApiAuthRoute,
   ApiAuthCheckRoute: ApiAuthCheckRoute,
   ApiChatEventsRoute: ApiChatEventsRoute,
@@ -2392,6 +2700,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChatIndexRoute: ChatIndexRoute,
   CrewsIndexRoute: CrewsIndexRoute,
   ApiAgentsAgentIdRoute: ApiAgentsAgentIdRoute,
+  ApiArtifactsArtifactIdRoute: ApiArtifactsArtifactIdRouteWithChildren,
   ApiCrewsCrewIdRoute: ApiCrewsCrewIdRouteWithChildren,
   ApiHermesProxySplatRoute: ApiHermesProxySplatRoute,
   ApiKnowledgeGraphRoute: ApiKnowledgeGraphRoute,
@@ -2409,14 +2718,21 @@ const rootRouteChildren: RootRouteChildren = {
   ApiProfilesReadRoute: ApiProfilesReadRoute,
   ApiProfilesRenameRoute: ApiProfilesRenameRoute,
   ApiTasksTaskIdRoute: ApiTasksTaskIdRouteWithChildren,
+  ApiWidgetsProfileRoute: ApiWidgetsProfileRoute,
+  ApiAgentMigrationsIndexRoute: ApiAgentMigrationsIndexRoute,
   ApiAgentsIndexRoute: ApiAgentsIndexRoute,
+  ApiArtifactsIndexRoute: ApiArtifactsIndexRoute,
   ApiAuditIndexRoute: ApiAuditIndexRoute,
   ApiCrewsIndexRoute: ApiCrewsIndexRoute,
   ApiOperationsIndexRoute: ApiOperationsIndexRoute,
   ApiTasksIndexRoute: ApiTasksIndexRoute,
+  ApiWidgetsIndexRoute: ApiWidgetsIndexRoute,
   ApiApprovalsApprovalIdApproveRoute: ApiApprovalsApprovalIdApproveRoute,
   ApiApprovalsApprovalIdDenyRoute: ApiApprovalsApprovalIdDenyRoute,
   ApiCrewsTemplatesIdRoute: ApiCrewsTemplatesIdRoute,
+  ApiPublicArtifactsPublicIdRoute: ApiPublicArtifactsPublicIdRouteWithChildren,
+  ApiPublicWidgetJsRoute: ApiPublicWidgetJsRoute,
+  ApiPublicWidgetsWidgetKeyRoute: ApiPublicWidgetsWidgetKeyRouteWithChildren,
   ApiCrewsTemplatesIndexRoute: ApiCrewsTemplatesIndexRoute,
 }
 export const routeTree = rootRouteImport

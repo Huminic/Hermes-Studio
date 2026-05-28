@@ -1,0 +1,14 @@
+---
+description: Persistent Huminic Studio implementation context
+alwaysApply: true
+---
+
+# Huminic Studio Context
+
+- This repo is Hermes Studio rebranded as Huminic Studio. User-facing labels should say Huminic Studio/Huminic OS unless referring to the underlying Hermes Agent/Gateway runtime.
+- Current implementation target is Studio first. Persanabox is a future adapter after it becomes multi-tenant.
+- Key planning docs live in `/Users/dw/Documents/misc_store`: `HERMES_STUDIO_PORTABLE_CAPABILITY_PLAN.md`, `HERMES_STUDIO_PORTABLE_BACKLOG.md`, `UNIFIED_WIDGET_BUILDER_PLAN.md`, and `HERMES_OPERATING_MANUAL.md`.
+- Keep new capabilities portable: typed schemas, server services/stores, API routes, UI adapters, skill/tool instructions, and import/export paths.
+- Existing MVP includes artifacts, Resend link delivery, agent migration metadata, widget config/public script, and Huminic branding.
+- Vapi/Tavus session minting is intentionally stubbed until real persona mappings and server credentials are provided.
+- Keep all integration secrets server-side and never expose them in public widget config, artifacts, or browser code.

@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { BrandMark } from '@/components/brand-mark'
 
 export type LogoLoaderProps = {
   className?: string
@@ -9,11 +10,7 @@ export type LogoLoaderProps = {
 function LogoLoader({ className }: LogoLoaderProps) {
   return (
     <span className="logo-loader-track" aria-hidden="true">
-      <img
-        src="/hermes-avatar.webp"
-        alt=""
-        className={cn('logo-loader-icon size-4 rounded', className)}
-      />
+      <BrandMark className={cn('logo-loader-icon size-4 rounded text-[11px]', className)} />
     </span>
   )
 }

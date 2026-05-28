@@ -59,10 +59,10 @@ export function HelpScreen() {
     <div className="flex h-full flex-col overflow-y-auto" style={{ background: 'var(--theme-bg)' }}>
       <div className="mx-auto w-full max-w-4xl px-6 py-10">
         <h1 style={{ color: 'var(--theme-text)', fontSize: '2.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-          Hermes Studio Help
+          Huminic Studio Help
         </h1>
         <p style={{ color: 'var(--theme-muted)', fontSize: '1.1rem', marginBottom: '2.5rem' }}>
-          A comprehensive guide to every feature in Hermes Studio. Use the table of contents below to jump to any section.
+          A comprehensive guide to every feature in Huminic Studio. Use the table of contents below to jump to any section.
         </p>
 
         {/* Table of Contents */}
@@ -92,7 +92,7 @@ export function HelpScreen() {
 
           <h3 style={h3Style}>Connecting to Hermes Gateway</h3>
           <p style={pStyle}>
-            Hermes Studio communicates with your AI agents through the Hermes Gateway server. Before you can use any features, you need to establish a connection.
+            Huminic Studio communicates with your AI agents through the Hermes Gateway server. Before you can use any features, you need to establish a connection.
           </p>
           <ol style={olStyle}>
             <li>Open the Settings screen by clicking the gear icon in the sidebar or pressing <kbd style={kbdStyle}>Ctrl+,</kbd>.</li>
@@ -107,7 +107,7 @@ export function HelpScreen() {
 
           <h3 style={h3Style}>First-time Setup</h3>
           <p style={pStyle}>
-            When you first launch Hermes Studio, a setup wizard may appear to guide you through initial configuration. If it does not appear, follow these steps:
+            When you first launch Huminic Studio, a setup wizard may appear to guide you through initial configuration. If it does not appear, follow these steps:
           </p>
           <ol style={olStyle}>
             <li>Configure your gateway connection (see above).</li>
@@ -659,7 +659,7 @@ export function HelpScreen() {
 
           <h3 style={h3Style}>Terminal Usage</h3>
           <p style={pStyle}>
-            The integrated terminal gives you a shell directly within Hermes Studio:
+            The integrated terminal gives you a shell directly within Huminic Studio:
           </p>
           <ol style={olStyle}>
             <li>Navigate to the <strong>Terminal</strong> screen from the sidebar, or press <kbd style={kbdStyle}>Ctrl+`</kbd> to toggle it as a bottom panel.</li>
@@ -726,7 +726,7 @@ export function HelpScreen() {
 
           <h3 style={h3Style}>Connection Settings</h3>
           <p style={pStyle}>
-            Configure how Hermes Studio connects to your gateway:
+            Configure how Huminic Studio connects to your gateway:
           </p>
           <ul style={ulStyle}>
             <li><strong>Gateway URL</strong> - The HTTP address of your Hermes Gateway server.</li>
@@ -737,7 +737,7 @@ export function HelpScreen() {
 
           <h3 style={h3Style}>Appearance (Themes, Accent Colors)</h3>
           <p style={pStyle}>
-            Customize the visual appearance of Hermes Studio:
+            Customize the visual appearance of Huminic Studio:
           </p>
           <ul style={ulStyle}>
             <li><strong>Theme</strong> - Choose from available dark themes. The app is designed as dark-mode only for optimal readability during extended use.</li>
@@ -808,7 +808,7 @@ export function HelpScreen() {
         <section id="keyboard-shortcuts" style={sectionStyle}>
           <h2 style={h2Style}>13. Keyboard Shortcuts</h2>
           <p style={pStyle}>
-            Hermes Studio supports keyboard shortcuts for quick navigation and common actions. Below is the full reference:
+            Huminic Studio supports keyboard shortcuts for quick navigation and common actions. Below is the full reference:
           </p>
 
           <h3 style={h3Style}>Global Navigation</h3>
@@ -1040,7 +1040,7 @@ export function HelpScreen() {
         </section>
 
         <footer style={{ textAlign: 'center', padding: '2rem 0', borderTop: '1px solid var(--theme-border-subtle)', color: 'var(--theme-muted)', fontSize: '0.85rem' }}>
-          <p>Hermes Studio Help - Last updated April 2026</p>
+          <p>Huminic Studio Help - Last updated April 2026</p>
         </footer>
       </div>
     </div>

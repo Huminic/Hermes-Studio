@@ -13,9 +13,13 @@ export const Route = createFileRoute('/api/knowledge/read')({
 
         const url = new URL(request.url)
         const pathParam = url.searchParams.get('path') || ''
+        const profile = url.searchParams.get('profile')
 
         try {
-          const { meta, content, backlinks } = readKnowledgePage(pathParam)
+          const { meta, content, backlinks } = readKnowledgePage(
+            pathParam,
+            profile,
+          )
           return json({ page: meta, content, backlinks })
         } catch (error) {
           const message =

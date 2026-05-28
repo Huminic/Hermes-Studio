@@ -90,6 +90,30 @@ function readYamlConfig(configPath: string): Record<string, unknown> {
   }
 }
 
+function readModelName(config: Record<string, unknown>): string | undefined {
+  const model = config.model
+  if (typeof model === 'string') return model
+  if (model && typeof model === 'object') {
+    const modelConfig = model as Record<string, unknown>
+    const value = modelConfig.default ?? modelConfig.model
+    return typeof value === 'string' ? value : undefined
+  }
+  return undefined
+}
+
+function readProviderName(config: Record<string, unknown>): string | undefined {
+  const provider = config.provider
+  if (typeof provider === 'string') return provider
+  const model = config.model
+  if (model && typeof model === 'object') {
+    const modelConfig = model as Record<string, unknown>
+    return typeof modelConfig.provider === 'string'
+      ? modelConfig.provider
+      : undefined
+  }
+  return undefined
+}
+
 function countFilesRecursive(
   rootPath: string,
   predicate: (fullPath: string) => boolean,
@@ -176,9 +200,8 @@ export function listProfiles(): Array<ProfileSummary> {
         path: profilePath,
         active: name === activeProfile,
         exists: true,
-        model: typeof config.model === 'string' ? config.model : undefined,
-        provider:
-          typeof config.provider === 'string' ? config.provider : undefined,
+        model: readModelName(config),
+        provider: readProviderName(config),
         skillCount,
         sessionCount,
         hasEnv: fs.existsSync(envPath),
@@ -193,28 +216,25 @@ export function listProfiles(): Array<ProfileSummary> {
     }
   }
 
-  if (activeProfile === 'default') {
-    const root = getHermesRoot()
-    const config = readYamlConfig(path.join(root, 'config.yaml'))
-    results.unshift({
-      name: 'default',
-      path: root,
-      active: true,
-      exists: true,
-      model: typeof config.model === 'string' ? config.model : undefined,
-      provider:
-        typeof config.provider === 'string' ? config.provider : undefined,
-      skillCount: countFilesRecursive(
-        path.join(root, 'skills'),
-        (full) => path.basename(full) === 'SKILL.md',
-      ),
-      sessionCount: countFilesRecursive(path.join(root, 'sessions'), (full) =>
-        /\.(jsonl|json|sqlite|db)$/i.test(full),
-      ),
-      hasEnv: fs.existsSync(path.join(root, '.env')),
-      updatedAt: latestMtime([root, path.join(root, 'config.yaml')]),
-    })
-  }
+  const root = getHermesRoot()
+  const config = readYamlConfig(path.join(root, 'config.yaml'))
+  results.unshift({
+    name: 'default',
+    path: root,
+    active: activeProfile === 'default',
+    exists: true,
+    model: readModelName(config),
+    provider: readProviderName(config),
+    skillCount: countFilesRecursive(
+      path.join(root, 'skills'),
+      (full) => path.basename(full) === 'SKILL.md',
+    ),
+    sessionCount: countFilesRecursive(path.join(root, 'sessions'), (full) =>
+      /\.(jsonl|json|sqlite|db)$/i.test(full),
+    ),
+    hasEnv: fs.existsSync(path.join(root, '.env')),
+    updatedAt: latestMtime([root, path.join(root, 'config.yaml')]),
+  })
 
   results.sort((a, b) => {
     if (a.active && !b.active) return -1

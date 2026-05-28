@@ -1,6 +1,7 @@
 import { HugeiconsIcon } from '@hugeicons/react'
 import { BrainIcon, CodeIcon, PuzzleIcon } from '@hugeicons/core-free-icons'
 import { motion } from 'motion/react'
+import { BrandMark } from '@/components/brand-mark'
 
 type SuggestionChip = {
   label: string
@@ -54,14 +55,9 @@ export function ChatEmptyState({
               transform: 'scale(1.6)',
             }}
           />
-          <img
-            src="/hermes-avatar.webp"
-            alt="Hermes"
-            className="relative size-20 rounded-2xl"
-            style={{
-              boxShadow:
-                '0 8px 32px color-mix(in srgb, var(--theme-accent) 30%, transparent)',
-            }}
+          <BrandMark
+            className="relative size-20 rounded-2xl text-5xl"
+            label="Huminic"
           />
         </div>
 
@@ -70,7 +66,7 @@ export function ChatEmptyState({
           className="text-xl font-semibold tracking-tight"
           style={{ color: 'var(--theme-text)' }}
         >
-          Hermes Studio
+          Huminic Studio
         </h2>
 
         {!compact && (

@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test'
 
+const port = process.env.PLAYWRIGHT_PORT ?? '3000'
+const baseURL = `http://localhost:${port}`
+
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: false,
@@ -7,7 +10,7 @@ export default defineConfig({
   workers: 1,
   reporter: process.env.CI ? 'github' : 'list',
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL,
     trace: 'on-first-retry',
   },
   projects: [
@@ -17,8 +20,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'node server-entry.js',
-    url: 'http://localhost:3000',
+    command: `PORT=${port} node server-entry.js`,
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,
   },

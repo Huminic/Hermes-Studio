@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import { cn } from '@/lib/utils'
+import { BrandMark } from '@/components/brand-mark'
 
 type AvatarProps = {
   size?: number
@@ -7,13 +8,12 @@ type AvatarProps = {
 }
 
 /**
- * Assistant avatar — Hermes Agent caduceus on Nous blue.
+ * Assistant avatar — Huminic mark.
  */
 function AssistantAvatarComponent({ size = 28, className }: AvatarProps) {
   return (
-    <img
-      src="/hermes-avatar.webp"
-      alt="Hermes"
+    <BrandMark
+      label="Huminic"
       className={cn('shrink-0', className)}
       style={{
         width: size,

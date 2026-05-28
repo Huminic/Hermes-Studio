@@ -8,6 +8,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import { BrandMark } from '@/components/brand-mark'
 
 export type AgentAvatarPreference = 'lobster' | 'logo'
 export type AgentAvatarSize = 'sm' | 'md' | 'lg'
@@ -141,13 +142,11 @@ function AgentAvatar({
               🦞
             </span>
           ) : (
-            <img
-              src="/hermes-avatar.webp"
-              alt="Hermes"
+            <BrandMark
               className={cn(
                 getLogoSizeClassName(size),
                 iconClassName,
-                'rounded-xl',
+                'rounded-xl text-base',
               )}
             />
           )}

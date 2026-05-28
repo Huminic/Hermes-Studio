@@ -136,7 +136,7 @@ export function SkillsScreen() {
   const [actionType, setActionType] = useState<'install' | 'uninstall' | 'toggle' | null>(null)
   const [selectedSkill, setSelectedSkill] = useState<SkillSummary | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
-  // clawhubHint removed — not applicable in Hermes Studio local deployment
+  // clawhubHint removed — not applicable in Huminic Studio local deployment
 
   useEffect(() => {
     if (tab !== 'marketplace') return
@@ -410,7 +410,7 @@ export function SkillsScreen() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="space-y-1.5">
               <p className="text-xs font-medium uppercase text-[var(--theme-muted)] tabular-nums">
-                Hermes Studio Marketplace
+                Huminic Studio Marketplace
               </p>
               <h1 className="text-2xl font-medium text-ink text-balance sm:text-3xl">
                 Skills Browser
@@ -873,7 +873,7 @@ function SecurityScanCard({ security }: { security: SecurityRisk }) {
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <span className="text-[var(--theme-muted)] font-medium w-16 shrink-0">
-              Hermes Studio
+              Huminic Studio
             </span>
             <span
               className={cn(

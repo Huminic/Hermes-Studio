@@ -13,6 +13,7 @@ import { ONBOARDING_STEPS } from './onboarding-steps'
 import { useOnboardingStore } from '@/hooks/use-onboarding'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { BrandMark } from '@/components/brand-mark'
 
 export function OnboardingWizard() {
   const navigate = useNavigate()
@@ -145,11 +146,7 @@ export function OnboardingWizard() {
                         )}
                       >
                         {step.id === 'welcome' ? (
-                          <img
-                            src="/hermes-avatar.webp"
-                            alt="Hermes"
-                            className="size-16 rounded-2xl"
-                          />
+                          <BrandMark className="size-16 rounded-2xl text-4xl" />
                         ) : (
                           <HugeiconsIcon
                             icon={step.icon}

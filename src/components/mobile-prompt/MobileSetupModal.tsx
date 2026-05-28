@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Cancel01Icon } from '@hugeicons/core-free-icons'
 import { writeTextToClipboard } from '@/lib/clipboard'
+import { BrandMark } from '@/components/brand-mark'
 
 const STORAGE_KEY_SEEN = 'hermes-mobile-setup-seen'
 
@@ -62,7 +63,7 @@ export function MobileSetupModal({ isOpen, onClose }: MobileSetupModalProps) {
   const steps = [
     {
       title: 'Install Tailscale on your desktop',
-      body: 'Install Tailscale on the machine running Hermes Studio, then sign in.',
+      body: 'Install Tailscale on the machine running Huminic Studio, then sign in.',
       showTailscaleIcon: true,
       action: (
         <a
@@ -77,7 +78,7 @@ export function MobileSetupModal({ isOpen, onClose }: MobileSetupModalProps) {
     },
     {
       title: 'Keep your backend reachable',
-      body: 'Hermes Studio can talk to any OpenAI-compatible backend on mobile too. Make sure both the workspace and backend stay reachable over Tailscale or your local network.',
+      body: 'Huminic Studio can talk to any OpenAI-compatible backend on mobile too. Make sure both the workspace and backend stay reachable over Tailscale or your local network.',
       showTailscaleIcon: false,
       action: (
         <div className="rounded-lg border border-primary-700 bg-primary-950 px-4 py-3 text-sm text-primary-200">
@@ -112,7 +113,7 @@ export function MobileSetupModal({ isOpen, onClose }: MobileSetupModalProps) {
       ),
     },
     {
-      title: 'Open Hermes Studio on your phone',
+      title: 'Open Huminic Studio on your phone',
       body:
         networkUrl?.source === 'tailscale'
           ? 'Your Tailscale address. Open this on your phone browser to use the same workspace.'
@@ -220,11 +221,7 @@ export function MobileSetupModal({ isOpen, onClose }: MobileSetupModalProps) {
         </button>
 
         <div className="mb-4 flex items-center gap-3 pr-10">
-          <img
-            src="/hermes-avatar.webp"
-            alt="Hermes"
-            className="size-9 rounded-xl"
-          />
+          <BrandMark className="size-9 rounded-xl text-2xl" />
           <div className="flex-1">
             <h2 className="text-lg font-semibold text-white">Mobile Setup</h2>
             <div className="mt-1 flex items-center gap-1.5">

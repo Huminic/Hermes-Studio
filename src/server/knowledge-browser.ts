@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import YAML from 'yaml'
+import { getProfileWorkspaceRoot } from './profiles-browser'
 
 export type WikiPageMeta = {
   path: string
@@ -113,7 +114,10 @@ function extractWikilinks(content: string): Array<string> {
   return Array.from(links)
 }
 
-export function getKnowledgeRoot(): string {
+export function getKnowledgeRoot(profileName?: string | null): string {
+  if (profileName && profileName !== 'default') {
+    return path.join(getProfileWorkspaceRoot(profileName), 'knowledge')
+  }
   if (process.env.KNOWLEDGE_DIR) return path.resolve(process.env.KNOWLEDGE_DIR)
   const hermesHome = path.join(os.homedir(), '.hermes')
   const hermesKnowledge = path.join(hermesHome, 'knowledge')
@@ -123,9 +127,9 @@ export function getKnowledgeRoot(): string {
   return hermesKnowledge
 }
 
-export function knowledgeRootExists(): boolean {
+export function knowledgeRootExists(profileName?: string | null): boolean {
   try {
-    return fs.existsSync(getKnowledgeRoot())
+    return fs.existsSync(getKnowledgeRoot(profileName))
   } catch {
     return false
   }
@@ -143,12 +147,15 @@ function normalizeRelativeKnowledgePath(input: string): string {
   return normalized
 }
 
-function resolveKnowledgeFilePath(relativePath: string): {
+function resolveKnowledgeFilePath(
+  relativePath: string,
+  profileName?: string | null,
+): {
   fullPath: string
   relativePath: string
 } {
   const safeRelativePath = normalizeRelativeKnowledgePath(relativePath)
-  const knowledgeRoot = path.resolve(getKnowledgeRoot())
+  const knowledgeRoot = path.resolve(getKnowledgeRoot(profileName))
   const fullPath = path.resolve(knowledgeRoot, safeRelativePath)
   const relativeFromRoot = path.relative(knowledgeRoot, fullPath)
   if (relativeFromRoot.startsWith('..') || path.isAbsolute(relativeFromRoot)) {
@@ -247,8 +254,10 @@ function walkKnowledgeDir(
   }
 }
 
-function getParsedKnowledgePages(): Array<ParsedKnowledgePage> {
-  const knowledgeRoot = path.resolve(getKnowledgeRoot())
+function getParsedKnowledgePages(
+  profileName?: string | null,
+): Array<ParsedKnowledgePage> {
+  const knowledgeRoot = path.resolve(getKnowledgeRoot(profileName))
   if (!fs.existsSync(knowledgeRoot)) return []
 
   const results: Array<ParsedKnowledgePage> = []
@@ -295,27 +304,35 @@ function createWikilinkResolver(
   }
 }
 
-export function listKnowledgePages(): Array<WikiPageMeta> {
-  return getParsedKnowledgePages().map((page) => page.meta)
+export function listKnowledgePages(
+  profileName?: string | null,
+): Array<WikiPageMeta> {
+  return getParsedKnowledgePages(profileName).map((page) => page.meta)
 }
 
-export function resolveWikilink(linkText: string): string | null {
-  return createWikilinkResolver(getParsedKnowledgePages())(linkText)
+export function resolveWikilink(
+  linkText: string,
+  profileName?: string | null,
+): string | null {
+  return createWikilinkResolver(getParsedKnowledgePages(profileName))(linkText)
 }
 
-export function readKnowledgePage(relativePath: string): {
+export function readKnowledgePage(
+  relativePath: string,
+  profileName?: string | null,
+): {
   meta: WikiPageMeta
   content: string
   backlinks: Array<string>
 } {
   const { fullPath, relativePath: safeRelativePath } =
-    resolveKnowledgeFilePath(relativePath)
+    resolveKnowledgeFilePath(relativePath, profileName)
   const parsed = readParsedKnowledgeFile(fullPath, safeRelativePath)
   if (!parsed) {
     throw new Error(`ENOENT: Knowledge page not found: ${safeRelativePath}`)
   }
 
-  const pages = getParsedKnowledgePages()
+  const pages = getParsedKnowledgePages(profileName)
   const resolveLink = createWikilinkResolver(pages)
   const backlinks = pages
     .filter((page) => page.meta.path !== safeRelativePath)
@@ -339,6 +356,7 @@ function escapeRegex(s: string): string {
 
 export function searchKnowledgePages(
   query: string,
+  profileName?: string | null,
 ): Array<{ path: string; title: string; line: number; text: string }> {
   const needle = query.trim()
   if (!needle) return []
@@ -350,7 +368,7 @@ export function searchKnowledgePages(
     line: number
     text: string
   }> = []
-  const pages = getParsedKnowledgePages()
+  const pages = getParsedKnowledgePages(profileName)
 
   for (const page of pages) {
     const lines = page.raw.split(/\r?\n/)
@@ -370,8 +388,8 @@ export function searchKnowledgePages(
   return matches
 }
 
-export function buildKnowledgeGraph(): KnowledgeGraph {
-  const pages = getParsedKnowledgePages()
+export function buildKnowledgeGraph(profileName?: string | null): KnowledgeGraph {
+  const pages = getParsedKnowledgePages(profileName)
   const resolveLink = createWikilinkResolver(pages)
   const edges = new Map<string, WikiLink>()
 

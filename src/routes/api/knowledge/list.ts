@@ -16,12 +16,15 @@ export const Route = createFileRoute('/api/knowledge/list')({
         }
 
         try {
-          const knowledgeRoot = getKnowledgeRoot()
-          const exists = knowledgeRootExists()
+          const url = new URL(request.url)
+          const profile = url.searchParams.get('profile')
+          const knowledgeRoot = getKnowledgeRoot(profile)
+          const exists = knowledgeRootExists(profile)
           return json({
-            pages: exists ? listKnowledgePages() : [],
+            pages: exists ? listKnowledgePages(profile) : [],
             knowledgeRoot,
             exists,
+            profile,
           })
         } catch (error) {
           return json(

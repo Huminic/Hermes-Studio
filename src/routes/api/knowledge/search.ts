@@ -13,9 +13,10 @@ export const Route = createFileRoute('/api/knowledge/search')({
 
         const url = new URL(request.url)
         const query = url.searchParams.get('q') || ''
+        const profile = url.searchParams.get('profile')
 
         try {
-          return json({ results: searchKnowledgePages(query) })
+          return json({ results: searchKnowledgePages(query, profile) })
         } catch (error) {
           return json(
             {

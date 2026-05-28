@@ -1,5 +1,6 @@
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { BrandMark } from '@/components/brand-mark'
 import {
   BrainIcon,
   Cancel01Icon,
@@ -172,17 +173,13 @@ export function MobileHamburgerMenu() {
           style={{ borderBottom: '1px solid var(--color-border, #e5e7eb)' }}
         >
           <div className="flex items-center gap-2.5">
-            <img
-              src="/hermes-avatar.webp"
-              alt="Hermes"
-              className="size-8 rounded-xl shrink-0"
-            />
+            <BrandMark className="size-8 rounded-xl text-xl" />
             <div className="flex flex-col leading-tight">
               <span
                 className="font-bold text-[15px] tracking-tight"
                 style={{ color: 'var(--color-ink, #111)' }}
               >
-                Hermes
+                Huminic
               </span>
               <span
                 className="text-[11px]"

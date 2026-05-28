@@ -716,7 +716,7 @@ code {
   position: relative;
 }
 
-/* ── Hermes Workspace Themes ── */
+/* ── Huminic Workspace Themes ── */
 [data-theme='hermes-os'] {
   --statusbar-h: 30px;
   --theme-bg: #080c14;
@@ -1032,7 +1032,7 @@ code {
   transition-duration: 0.05s !important;
 }
 
-/* ── Hermes OS Theme Overrides ──────────────────────────────────────────
+/* ── Huminic OS Theme Overrides ──────────────────────────────────────────
    Premium cinematic overrides for the hermes-os theme.
    All rules below only apply when [data-theme='hermes-os'] is active.
    ─────────────────────────────────────────────────────────────────────── */

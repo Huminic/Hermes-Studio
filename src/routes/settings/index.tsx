@@ -921,7 +921,7 @@ function IntegrationsSection() {
     <>
     <SettingsSection
       title="Integrations"
-      description="Connect external services used by Hermes Studio features."
+      description="Connect external services used by Huminic Studio features."
       icon={SparklesIcon}
     >
       <SettingsRow
@@ -1446,7 +1446,7 @@ function ChatDisplaySection() {
           />
         </SettingsRow>
       </SettingsSection>
-      {/* Mobile Navigation removed — not relevant for Hermes Studio */}
+      {/* Mobile Navigation removed — not relevant for Huminic Studio */}
     </>
   )
 }
@@ -3379,7 +3379,7 @@ function SystemdAutoStartSection() {
           }}
         >
           <p style={{ ...headingStyle, fontWeight: 400, ...muteStyle }}>
-            You can still start Hermes Studio manually:
+            You can still start Huminic Studio manually:
           </p>
           <pre
             style={{

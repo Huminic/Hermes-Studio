@@ -13,6 +13,7 @@ import {
 import type { ReactNode } from 'react'
 import type { HermesSession } from '@/server/hermes-api'
 import { cn } from '@/lib/utils'
+import { BrandMark } from '@/components/brand-mark'
 
 // ── Helpers ──────────────────────────────────────────────────────
 
@@ -353,6 +354,12 @@ function ModelCard() {
     configBlock?.base_url ??
     '') as string
   const connected = connectionQuery.data?.chatReady ?? false
+  const connectionDetail =
+    connectionQuery.data?.status === 'enhanced'
+      ? 'Gateway health and enhanced APIs are available.'
+      : connectionQuery.data?.chatReady
+        ? 'Gateway health is reachable; core chat is ready.'
+        : 'Gateway health or chat readiness is not available.'
   const fallbackBlock = config?.fallback_model as
     | Record<string, unknown>
     | undefined
@@ -360,7 +367,7 @@ function ModelCard() {
 
   return (
     <GlassCard
-      title="Model"
+      title="Model & Gateway Health"
       titleRight={
         <span
           className={cn(
@@ -396,6 +403,9 @@ function ModelCard() {
               {baseUrl ? ` · ${baseUrl}` : ''}
             </div>
           </div>
+        </div>
+        <div className="rounded-lg border border-[var(--theme-border)] bg-[var(--theme-card2)] px-3 py-2 text-xs text-muted">
+          {connectionDetail}
         </div>
         {fallbackModel && (
           <div className="flex items-center gap-3 rounded-lg p-2.5 bg-[var(--theme-card2)] border border-[var(--theme-border)]">
@@ -652,15 +662,11 @@ export function DashboardScreen() {
 
   return (
     <div className="min-h-full px-4 py-4 md:px-8 md:py-6 lg:px-10 space-y-5 pb-28">
-      {/* ── Header: Hermes Logo + Quick Actions ── */}
+      {/* ── Header: Huminic mark + Quick Actions ── */}
       <div className="flex flex-col items-center gap-3 py-3">
-        <img
-          src="/hermes-avatar.webp"
-          alt="Hermes"
-          className="size-12 md:size-14 rounded-xl shadow-md shadow-indigo-500/10 border border-[var(--theme-border)]"
-        />
+        <BrandMark className="size-12 text-3xl md:size-14 md:text-4xl" />
         <h1 className="text-sm font-semibold text-ink tracking-wide">
-          Hermes Studio
+          Huminic Studio
         </h1>
         <div className="mt-1 grid w-full max-w-2xl grid-cols-2 gap-2 sm:grid-cols-4">
           <QuickAction

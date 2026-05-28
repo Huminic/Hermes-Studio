@@ -1,7 +1,7 @@
 {
-  "name": "Hermes Studio",
-  "short_name": "Hermes",
-  "description": "Native web control surface for Hermes Agent",
+  "name": "Huminic Studio",
+  "short_name": "Huminic",
+  "description": "Native web control surface for Huminic agents",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0A0E1A",

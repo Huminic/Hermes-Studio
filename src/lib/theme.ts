@@ -13,19 +13,19 @@ export const THEMES: Array<{
 }> = [
   {
     id: 'hermes-os',
-    label: 'Hermes OS',
+    label: 'Huminic OS',
     description: 'Electric blue cinematic agent OS theme',
     icon: '◈',
   },
   {
     id: 'hermes-official',
-    label: 'Hermes Official',
+    label: 'Huminic Official',
     description: 'Navy and indigo flagship theme',
     icon: '⚕',
   },
   {
     id: 'hermes-classic',
-    label: 'Hermes Classic',
+    label: 'Huminic Classic',
     description: 'Bronze accents on dark charcoal',
     icon: '🔶',
   },

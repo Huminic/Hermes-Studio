@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Cancel01Icon } from '@hugeicons/core-free-icons'
 import { MobileSetupModal } from './MobileSetupModal'
+import { BrandMark } from '@/components/brand-mark'
 
 export function MobilePromptTrigger() {
   const [showPrompt, setShowPrompt] = useState(false)
@@ -100,11 +101,7 @@ export function MobilePromptTrigger() {
             <div className="px-4 py-3">
               <div className="flex items-center gap-3">
                 <div className="flex shrink-0 items-center gap-1.5">
-                  <img
-                    src="/hermes-avatar.webp"
-                    alt="Hermes"
-                    className="size-8 rounded-lg"
-                  />
+                  <BrandMark className="size-8 rounded-lg text-xl" />
                   <span className="text-xs text-primary-600">+</span>
                   <div className="flex size-8 items-center justify-center rounded-lg bg-[#232b3b]">
                     <svg viewBox="0 0 100 100" className="size-5">
@@ -180,7 +177,7 @@ export function MobilePromptTrigger() {
                     className="text-xs"
                     style={{ color: 'var(--theme-muted)' }}
                   >
-                    Connect your phone to this Hermes Studio instance in a
+                    Connect your phone to this Huminic Studio instance in a
                     few steps.
                   </p>
                 </div>

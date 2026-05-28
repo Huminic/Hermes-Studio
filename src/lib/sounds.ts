@@ -1,5 +1,5 @@
 /**
- * Sound Notification System for Hermes Studio
+ * Sound Notification System for Huminic Studio
  * Uses Web Audio API to synthesize unique sounds without audio files.
  */
 

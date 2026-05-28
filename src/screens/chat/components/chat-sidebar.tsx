@@ -58,6 +58,7 @@ import {
   useChatSettingsStore,
 } from '@/hooks/use-chat-settings'
 import { StatusDot } from '@/components/status-indicator'
+import { BrandMark } from '@/components/brand-mark'
 import {
   MenuContent,
   MenuItem,
@@ -534,6 +535,8 @@ function ChatSidebarComponent({
   const isOperationsActive = pathname === '/operations'
   const isTasksActive = pathname === '/tasks'
   const isAgentsActive = pathname === '/agents'
+  const isArtifactsActive = pathname === '/artifacts'
+  const isWidgetsActive = pathname === '/widgets'
   const isPatternsActive = pathname === '/patterns'
   const isAnalyticsActive = pathname === '/analytics'
   const isSessionHistoryActive = pathname === '/session-history'
@@ -541,7 +544,7 @@ function ChatSidebarComponent({
   const isLogsActive = pathname === '/logs'
   const isHelpActive = pathname === '/help'
   const isDocsActive = pathname === '/docs'
-  const mainRoutes = ['/chat', '/new', '/files', '/terminal']
+  const mainRoutes = ['/chat', '/new', '/files', '/terminal', '/artifacts', '/widgets']
   const knowledgeRoutes = ['/memory', '/skills']
   const systemRoutes = ['/settings', '/logs']
 
@@ -816,6 +819,20 @@ function ChatSidebarComponent({
     },
     {
       kind: 'link',
+      to: '/artifacts',
+      icon: File01Icon,
+      label: 'Artifacts',
+      active: isArtifactsActive,
+    },
+    {
+      kind: 'link',
+      to: '/widgets',
+      icon: Chat01Icon,
+      label: 'Widget',
+      active: isWidgetsActive,
+    },
+    {
+      kind: 'link',
       to: '/patterns',
       icon: BrainIcon,
       label: 'Patterns',
@@ -945,16 +962,12 @@ function ChatSidebarComponent({
                   'w-full pl-1.5 justify-start gap-2',
                 )}
               >
-                <img
-                  src="/hermes-avatar.webp"
-                  alt="Hermes"
-                  className="size-6 rounded-lg"
-                />
+                <BrandMark className="size-6 text-base" />
                 <span
                   className="text-sm font-semibold tracking-tight"
                   style={{ color: 'var(--theme-text)' }}
                 >
-                  Hermes Studio
+                  Huminic Studio
                 </span>
               </Link>
             </motion.div>

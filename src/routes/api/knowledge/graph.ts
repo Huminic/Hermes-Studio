@@ -12,7 +12,9 @@ export const Route = createFileRoute('/api/knowledge/graph')({
         }
 
         try {
-          return json(buildKnowledgeGraph())
+          const url = new URL(request.url)
+          const profile = url.searchParams.get('profile')
+          return json(buildKnowledgeGraph(profile))
         } catch (error) {
           return json(
             {
