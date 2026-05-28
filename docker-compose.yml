@@ -65,6 +65,8 @@ services:
     volumes:
       # Persist file-based sessions across container restarts (fallback store)
       - studio-sessions:/app/.runtime
+      # Profiles/skills/kanban — shared with hermes-agent so the Studio file listings work
+      - hermes-state:/root/.hermes
     ports:
       - '127.0.0.1:8009:3000'
 
