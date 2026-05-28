@@ -1,0 +1,7 @@
+services:
+  hermes-agent:
+    volumes:
+      - hermes-state:/root/.hermes
+
+volumes:
+  hermes-state:
