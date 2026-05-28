@@ -1,0 +1,8 @@
+import { PatchDiffProps } from "./type.mjs";
+import * as react67 from "react";
+
+//#region src/CodeDiff/PatchDiff.d.ts
+declare const PatchDiff: react67.NamedExoticComponent<PatchDiffProps>;
+//#endregion
+export { PatchDiff };
+//# sourceMappingURL=PatchDiff.d.mts.map

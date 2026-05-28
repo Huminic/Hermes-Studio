@@ -1,0 +1,8 @@
+import { GuideCardProps } from "./type.mjs";
+import * as react123 from "react";
+
+//#region src/GuideCard/GuideCard.d.ts
+declare const GuideCard: react123.NamedExoticComponent<GuideCardProps>;
+//#endregion
+export { GuideCard };
+//# sourceMappingURL=GuideCard.d.mts.map

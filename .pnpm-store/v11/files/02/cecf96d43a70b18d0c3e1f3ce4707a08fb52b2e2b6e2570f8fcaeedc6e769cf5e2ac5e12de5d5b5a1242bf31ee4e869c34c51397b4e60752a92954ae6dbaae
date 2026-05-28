@@ -1,0 +1,8 @@
+import * as react102 from "react";
+import * as lucide_react11 from "lucide-react";
+
+//#region src/icons/lucideExtra/RightClickIcon.d.ts
+declare const RightClickIcon: react102.ForwardRefExoticComponent<Omit<lucide_react11.LucideProps, "ref"> & react102.RefAttributes<SVGSVGElement>>;
+//#endregion
+export { RightClickIcon };
+//# sourceMappingURL=RightClickIcon.d.mts.map

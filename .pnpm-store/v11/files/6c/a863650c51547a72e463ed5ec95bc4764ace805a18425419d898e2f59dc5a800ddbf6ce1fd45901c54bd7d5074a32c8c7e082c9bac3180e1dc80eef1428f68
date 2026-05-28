@@ -1,0 +1,8 @@
+import * as react84 from "react";
+import * as lucide_react2 from "lucide-react";
+
+//#region src/icons/lucideExtra/CreateBotIcon.d.ts
+declare const CreateBotIcon: react84.ForwardRefExoticComponent<Omit<lucide_react2.LucideProps, "ref"> & react84.RefAttributes<SVGSVGElement>>;
+//#endregion
+export { CreateBotIcon };
+//# sourceMappingURL=CreateBotIcon.d.mts.map

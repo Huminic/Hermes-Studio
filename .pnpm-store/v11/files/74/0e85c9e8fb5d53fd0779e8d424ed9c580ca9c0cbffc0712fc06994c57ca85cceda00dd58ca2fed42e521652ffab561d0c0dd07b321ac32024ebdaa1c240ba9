@@ -1,0 +1,325 @@
+import { staticStylish } from "../../styles/theme/customStylishStatic.mjs";
+import { createStaticStyles, cx } from "antd-style";
+import { cva } from "class-variance-authority";
+
+//#region src/base-ui/Select/style.ts
+const styles = createStaticStyles(({ css: css$1, cssVar: cssVar$1 }) => ({
+	arrow: css$1`
+    display: flex;
+    width: 12px;
+    height: 6px;
+
+    & > svg {
+      width: 100%;
+      height: 100%;
+    }
+  `,
+	borderless: cx(staticStylish.variantBorderless, css$1`
+      --lobe-select-open-bg: ${cssVar$1.colorFillTertiary};
+      --lobe-select-readonly-bg: color-mix(in srgb, ${cssVar$1.colorFillTertiary} 70%, transparent);
+      --lobe-select-disabled-bg: color-mix(in srgb, ${cssVar$1.colorFillTertiary} 55%, transparent);
+    `),
+	clear: css$1`
+    display: inline-flex;
+    align-items: center;
+
+    color: ${cssVar$1.colorTextTertiary};
+
+    opacity: 0;
+
+    transition: opacity 150ms ${cssVar$1.motionEaseOut};
+
+    &:hover {
+      color: ${cssVar$1.colorTextSecondary};
+    }
+  `,
+	empty: css$1``,
+	filled: cx(staticStylish.variantFilled, css$1`
+      --lobe-select-open-bg: ${cssVar$1.colorFillSecondary};
+      --lobe-select-readonly-bg: color-mix(in srgb, ${cssVar$1.colorFillTertiary} 70%, transparent);
+      --lobe-select-disabled-bg: color-mix(in srgb, ${cssVar$1.colorFillTertiary} 55%, transparent);
+    `),
+	group: css$1``,
+	groupLabel: css$1``,
+	icon: css$1`
+    display: inline-flex;
+    align-items: center;
+    transition: transform 150ms ${cssVar$1.motionEaseOut};
+
+    &[data-popup-open] {
+      transform: rotate(180deg);
+    }
+  `,
+	item: css$1``,
+	itemBoldSelected: css$1`
+    &[data-selected] {
+      font-weight: 600;
+    }
+  `,
+	itemIndicator: css$1`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-inline-start: auto;
+    padding-inline-start: 8px;
+
+    color: ${cssVar$1.colorPrimary};
+  `,
+	itemText: css$1``,
+	list: css$1`
+    overflow-y: auto;
+    flex: 1;
+
+    min-height: 0;
+    max-height: var(--lobe-select-available-height, var(--available-height));
+    padding-block: 0;
+  `,
+	outlined: cx(staticStylish.variantOutlined, css$1`
+      --lobe-select-open-bg: ${cssVar$1.colorFillTertiary};
+      --lobe-select-readonly-bg: color-mix(in srgb, ${cssVar$1.colorBgContainer} 75%, transparent);
+      --lobe-select-disabled-bg: color-mix(in srgb, ${cssVar$1.colorBgContainer} 60%, transparent);
+    `),
+	popup: css$1`
+    --lobe-select-available-height: min(
+      var(--available-height),
+      var(--lobe-select-popup-max-height, var(--available-height))
+    );
+
+    transform-origin: var(--transform-origin);
+
+    display: flex;
+    flex-direction: column;
+
+    box-sizing: border-box;
+
+    transition:
+      opacity 150ms ${cssVar$1.motionEaseOut},
+      transform 150ms ${cssVar$1.motionEaseOut};
+
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: scaleY(0.92);
+      opacity: 0;
+    }
+  `,
+	positioner: css$1`
+    z-index: 1100;
+    outline: none;
+  `,
+	prefix: css$1`
+    display: inline-flex;
+    align-items: center;
+    color: ${cssVar$1.colorTextSecondary};
+  `,
+	scrollArrow: css$1`
+    cursor: default;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 16px;
+
+    color: ${cssVar$1.colorTextSecondary};
+
+    background: ${cssVar$1.colorBgElevated};
+  `,
+	search: css$1`
+    cursor: text;
+
+    display: flex;
+    align-items: center;
+
+    min-height: 36px;
+    margin-inline: -4px;
+    padding-block: 8px;
+    padding-inline: 12px;
+    border-block-end: 1px solid ${cssVar$1.colorFillSecondary};
+  `,
+	searchInput: css$1`
+    flex: 1;
+
+    min-width: 0;
+    padding-block: 0;
+    padding-inline: 4px;
+    border: 0;
+
+    font-size: 14px;
+    line-height: 20px;
+    color: ${cssVar$1.colorText};
+
+    background: transparent;
+    outline: none;
+
+    &::placeholder {
+      color: ${cssVar$1.colorTextPlaceholder};
+    }
+  `,
+	shadow: staticStylish.shadow,
+	suffix: css$1`
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    color: ${cssVar$1.colorTextSecondary};
+  `,
+	tag: css$1`
+    display: inline-flex;
+    align-items: center;
+
+    max-width: 100%;
+    padding-block: 0;
+    padding-inline: 6px;
+    border-radius: ${cssVar$1.borderRadiusSM};
+
+    font-size: 12px;
+    line-height: 20px;
+    color: ${cssVar$1.colorText};
+
+    background: ${cssVar$1.colorFillTertiary};
+  `,
+	tags: css$1`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  `,
+	trigger: css$1`
+    cursor: pointer;
+    user-select: none;
+
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+
+    box-sizing: border-box;
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: ${cssVar$1.borderRadius};
+
+    font-family: inherit;
+    color: ${cssVar$1.colorText};
+
+    background: transparent;
+    outline: none;
+
+    transition: all 150ms ${cssVar$1.motionEaseOut};
+
+    &:not([data-disabled], [data-readonly])[data-popup-open],
+    &:not([data-disabled], [data-readonly])[data-open],
+    &:not([data-disabled], [data-readonly])[data-state='open'],
+    &:not([data-disabled], [data-readonly])[aria-expanded='true'] {
+      background: var(--lobe-select-open-bg, ${cssVar$1.colorFillTertiary});
+    }
+
+    &:focus-visible {
+      outline: 2px solid ${cssVar$1.colorPrimaryBorder};
+      outline-offset: 1px;
+    }
+
+    &:hover [data-role='lobe-select-clear'] {
+      opacity: 1;
+    }
+
+    &[data-placeholder] [data-role='lobe-select-clear'] {
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    &[data-disabled] {
+      cursor: not-allowed;
+      color: ${cssVar$1.colorTextDisabled};
+      background: var(--lobe-select-disabled-bg, transparent);
+
+      &:hover {
+        background: var(--lobe-select-disabled-bg, transparent);
+      }
+    }
+
+    &[data-readonly] {
+      cursor: default;
+      color: ${cssVar$1.colorTextSecondary};
+      background: var(--lobe-select-readonly-bg, transparent);
+
+      &:hover {
+        background: var(--lobe-select-readonly-bg, transparent);
+      }
+    }
+
+    &[data-disabled] [data-role='lobe-select-clear'] {
+      pointer-events: none;
+      opacity: 0;
+    }
+  `,
+	triggerLarge: css$1`
+    min-height: 40px;
+    padding-block: 6px;
+    padding-inline: 12px;
+
+    font-size: 16px;
+    line-height: 24px;
+  `,
+	triggerMiddle: css$1`
+    min-height: 32px;
+    padding-block: 4px;
+    padding-inline: 11px;
+
+    font-size: 14px;
+    line-height: 20px;
+  `,
+	triggerSmall: css$1`
+    min-height: 24px;
+    padding-block: 0;
+    padding-inline: 8px;
+
+    font-size: 12px;
+    line-height: 18px;
+  `,
+	value: css$1`
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+
+    min-width: 0;
+
+    color: inherit;
+
+    &[data-placeholder] {
+      color: ${cssVar$1.colorTextPlaceholder};
+    }
+  `,
+	valueText: css$1`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  `
+}));
+const triggerVariants = cva(styles.trigger, {
+	defaultVariants: {
+		shadow: false,
+		size: "middle",
+		variant: "outlined"
+	},
+	variants: {
+		shadow: {
+			false: null,
+			true: styles.shadow
+		},
+		size: {
+			large: styles.triggerLarge,
+			middle: styles.triggerMiddle,
+			small: styles.triggerSmall
+		},
+		variant: {
+			borderless: styles.borderless,
+			filled: styles.filled,
+			outlined: styles.outlined
+		}
+	}
+});
+
+//#endregion
+export { styles, triggerVariants };
+//# sourceMappingURL=style.mjs.map

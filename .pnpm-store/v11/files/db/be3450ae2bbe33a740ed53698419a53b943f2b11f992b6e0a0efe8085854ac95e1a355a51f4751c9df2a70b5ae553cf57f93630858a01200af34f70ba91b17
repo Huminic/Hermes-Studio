@@ -1,0 +1,8 @@
+import * as react94 from "react";
+import * as lucide_react7 from "lucide-react";
+
+//#region src/icons/lucideExtra/LeftClickIcon.d.ts
+declare const LeftClickIcon: react94.ForwardRefExoticComponent<Omit<lucide_react7.LucideProps, "ref"> & react94.RefAttributes<SVGSVGElement>>;
+//#endregion
+export { LeftClickIcon };
+//# sourceMappingURL=LeftClickIcon.d.mts.map

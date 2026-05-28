@@ -1,0 +1,8 @@
+import { LayoutSidebarProps } from "../type.mjs";
+import * as react23 from "react";
+
+//#region src/Layout/components/LayoutSidebar.d.ts
+declare const LayoutSidebar: react23.NamedExoticComponent<LayoutSidebarProps>;
+//#endregion
+export { LayoutSidebar };
+//# sourceMappingURL=LayoutSidebar.d.mts.map

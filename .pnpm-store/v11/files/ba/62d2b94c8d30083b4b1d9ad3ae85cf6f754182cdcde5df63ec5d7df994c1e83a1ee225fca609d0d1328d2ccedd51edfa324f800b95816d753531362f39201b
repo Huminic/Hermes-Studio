@@ -1,0 +1,8 @@
+import { CodeDiffProps } from "./type.mjs";
+import * as react66 from "react";
+
+//#region src/CodeDiff/CodeDiff.d.ts
+declare const CodeDiff: react66.NamedExoticComponent<CodeDiffProps>;
+//#endregion
+export { CodeDiff };
+//# sourceMappingURL=CodeDiff.d.mts.map
