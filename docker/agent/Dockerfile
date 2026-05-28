@@ -4,7 +4,8 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends curl git \
     && rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/outsourc-e/hermes-agent.git /app
+RUN git clone https://github.com/NousResearch/hermes-agent.git /app \
+    && cd /app && git checkout 9ed751b96706ffd343ae26531cd0e2152a1c7036
 
 WORKDIR /app
 
