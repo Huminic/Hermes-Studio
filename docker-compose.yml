@@ -35,8 +35,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 15s
-    ports:
-      - '8642:8642'
+    expose:
+      - '8642'
     volumes:
       - hermes-state:/root/.hermes
 
@@ -65,8 +65,8 @@ services:
     volumes:
       # Persist file-based sessions across container restarts (fallback store)
       - studio-sessions:/app/.runtime
-    ports:
-      - '3000:3000'
+    expose:
+      - '3000'
 
   # ─── Optional: Redis session persistence ──────────────────────────────────
   # Activate with: docker compose --profile redis up
