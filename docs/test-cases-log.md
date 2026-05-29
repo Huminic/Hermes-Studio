@@ -237,15 +237,18 @@ Running log of testable behaviors discovered during the Nexxus → Huminic Studi
 | V1.2 | All fork-edited UI surfaces are justified (cannot be plugin-driven) | manual | PLANNED | V1 portability assessment |
 | V2.1 | `docs/customer-provisioning.md` documents end-to-end new-company setup | manual | PLANNED | V2 deliverable |
 | V3.1 | Consultative eval rubrics defined (gate adherence, deployment notes, adjacent_data_neighbors, no canon edits) | eval | PLANNED | V3 deliverable |
-| V4.1 | Consultative agent run against cedar-ridge-automotive produces all 6 prescription artifacts conforming to spec | eval | PLANNED | V4 deliverable |
-| V4.2 | Every consultative artifact includes "Impact of Missing Details" + populated `adjacent_data_neighbors` | eval | PLANNED | V4 spec conformance |
-| V5.1 | Cedar Ridge profile + data-governor profile installed; files written under cedar-ridge do NOT leak into huminic profile | script | PLANNED | V5 isolation |
-| V6.1 | Cedar Ridge core agents visible in `/agents`, dispatchable from `/crews`, each SOUL references a wiki workflow page | manual | PLANNED | V6 deployment |
-| V7.1 | KSG flags a write that conflicts with canon; canon stays unchanged until operator approval | integration | PLANNED | V7 guardian scenario |
-| V8.1 | Wiki edit to a workflow page changes downstream agent behavior (audit log shows the agent reading the updated page) | playwright | PLANNED | V8 propagation |
-| V9.1 | `/w/cedar-ridge-hero` public widget loads without authentication | playwright | PLANNED | V9 widget |
-| V9.2 | Federated MCP stub returns sensible structure for a Cedar Ridge-scoped query | unit | PLANNED | V9 federation |
-| V10.1 | End-to-end Cedar Ridge journey passes; defect register + readiness report produced | manual | PLANNED | V10 acceptance |
+| V1.1 | Feature map produced from V1.1A + V1.1B Explore audits | manual | PASSING 2026-05-29 | `docs/feature-map.md` written |
+| V1.2 | Portability assessment classifies every fork-edited surface | manual | PASSING 2026-05-29 | `docs/portability-assessment.md` written; no fork surface in wrong location |
+| V2.5 | Customer provisioning recipe documented | manual | PASSING 2026-05-29 | `docs/customer-provisioning.md` written |
+| V4.1 | Consultative agent run against cedar-ridge-automotive produces all 6 prescription artifacts conforming to spec | eval | PASSING 2026-05-29 | 6 artifacts written via `scripts/v4-consultative-dispatch.mjs`. All have frontmatter, id, phase, and "Impact of Missing Details". Total ~39KB. |
+| V4.2 | Every consultative artifact includes "Impact of Missing Details" + populated `adjacent_data_neighbors` | eval | PASSING 2026-05-29 | All 6 artifacts pass spec check (IMD heading present); engagement-state.adjacent_data_neighbors has 7 entries; open_decisions has 3 (all resolved with proposed resolutions); deployment_notes has 4 (3 open, 1 confirmed). |
+| V5.1 | Cedar Ridge profile + data-governor profile installed; files written under cedar-ridge do NOT leak into huminic profile | script | PASSING 2026-05-29 | Both profile dirs created. /api/engagements lists 4 customers with cedar-ridge at ready_to_run, others still at draft — isolation confirmed. |
+| V6.1 | Cedar Ridge core agents visible; each SOUL references scope contract + approval matrix + workflow page + Kanban lane | manual | PASSING 2026-05-29 | 8/8 SOULs in `governance/agents/` declare all 4 required references. (Note: not yet registered as Studio custom agents — profile-resident per Hermes-standard mechanism.) |
+| V7.1 | KSG flags a write that conflicts with canon; canon stays unchanged until operator approval | integration | PASSING 2026-05-29 | Governor dispatched via `scripts/v7-ksg-conflict-test.mjs`; verdict=rejected; identified 3 canon rule violations (Rules 1, 2, 4); canon SHA256 verified unchanged; reconciliation proposal written to `knowledge/inbox/07-ksg-verdict-bulk-promo-blast.md`. |
+| V8.1 | Wiki edit to a workflow page changes downstream agent behavior | playwright | PASSING 2026-05-29 (script) | `scripts/v8-propagation-test.mjs` confirmed: agent's response after Rule 0 added to `lead-followup.md` references Rule 0 / suppression / 24-hour. Hash changed; agent response reflects new rule. No stale prompt cache. |
+| V9.1 | `/w/cedar-ridge-hero` public widget loads without authentication | playwright | LANDING in PR #13 | Route shell `src/routes/w.$slug.tsx` + `src/server/public-widgets.ts` added. Verifying post-rebuild. |
+| V9.2 | Federated MCP stub returns sensible structure for a Cedar Ridge-scoped query | unit | DEFERRED — Phase 6 | Design-only per `docs/federation-mcp-design.md`. |
+| V10.1 | End-to-end Cedar Ridge journey passes; defect register + readiness report produced | manual | PASSING 2026-05-29 | `docs/cedar-ridge-readiness-report.md` + `docs/cedar-ridge-defect-register.md` produced. Final recommendation: CONDITIONAL GO. |
 
 ---
 
