@@ -1,0 +1,24 @@
+{
+  "servers": [
+    {
+      "name": "central-mcp",
+      "description": "Platform-wide service hub. Governor-scope: audit-alert emails only.",
+      "url": "http://localhost:4002/mcp",
+      "transport": "http",
+      "auth": {
+        "type": "bearer",
+        "token_env": "CENTRAL_MCP_TOKEN"
+      },
+      "enabled": false,
+      "tool_allowlist": [
+        "resend_send_email"
+      ],
+      "notes": "Set CENTRAL_MCP_TOKEN env in .env after operator provisions a governor-scope token in central-mcp config. Then flip enabled to true."
+    },
+    {
+      "name": "placeholder-local",
+      "description": "Replace with local MCP servers the governor needs (Data Brain endpoints once Pillar 2 is online).",
+      "enabled": false
+    }
+  ]
+}

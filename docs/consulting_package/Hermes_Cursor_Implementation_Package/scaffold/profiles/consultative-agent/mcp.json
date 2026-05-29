@@ -1,0 +1,26 @@
+{
+  "servers": [
+    {
+      "name": "central-mcp",
+      "description": "Platform-wide service hub. Architect-scope access for engagement notifications + Coolify awareness.",
+      "url": "http://localhost:4002/mcp",
+      "transport": "http",
+      "auth": {
+        "type": "bearer",
+        "token_env": "CENTRAL_MCP_TOKEN"
+      },
+      "enabled": false,
+      "tool_allowlist": [
+        "resend_send_email",
+        "resend_get_email",
+        "coolify_request"
+      ],
+      "notes": "Set CENTRAL_MCP_TOKEN env in .env after operator provisions a consultative-agent token in central-mcp config. Then flip enabled to true."
+    },
+    {
+      "name": "placeholder-local",
+      "description": "Replace with local MCP servers needed for consultative work (document stores, codebase access, etc).",
+      "enabled": false
+    }
+  ]
+}

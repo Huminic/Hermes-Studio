@@ -23,6 +23,7 @@ import { Route as LogsRouteImport } from './routes/logs'
 import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as FilesRouteImport } from './routes/files'
+import { Route as EngagementsRouteImport } from './routes/engagements'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ConductorRouteImport } from './routes/conductor'
@@ -37,7 +38,9 @@ import { Route as CrewsIndexRouteImport } from './routes/crews/index'
 import { Route as ChatIndexRouteImport } from './routes/chat/index'
 import { Route as SettingsProvidersRouteImport } from './routes/settings/providers'
 import { Route as SettingsMcpRouteImport } from './routes/settings/mcp'
+import { Route as EngagementsCustomerRouteImport } from './routes/engagements.$customer'
 import { Route as CrewsCrewIdRouteImport } from './routes/crews/$crewId'
+import { Route as ConsoleProfileRouteImport } from './routes/console.$profile'
 import { Route as ChatSessionKeyRouteImport } from './routes/chat/$sessionKey'
 import { Route as ApiWorkspaceRouteImport } from './routes/api/workspace'
 import { Route as ApiTerminalStreamRouteImport } from './routes/api/terminal-stream'
@@ -47,6 +50,7 @@ import { Route as ApiTerminalCloseRouteImport } from './routes/api/terminal-clos
 import { Route as ApiSystemdStatusRouteImport } from './routes/api/systemd-status'
 import { Route as ApiSystemdControlRouteImport } from './routes/api/systemd-control'
 import { Route as ApiSystemHealthRouteImport } from './routes/api/system-health'
+import { Route as ApiStudioConfigRouteImport } from './routes/api/studio-config'
 import { Route as ApiStateAnalyticsRouteImport } from './routes/api/state-analytics'
 import { Route as ApiStartHermesRouteImport } from './routes/api/start-hermes'
 import { Route as ApiStartAgentRouteImport } from './routes/api/start-agent'
@@ -56,6 +60,7 @@ import { Route as ApiSessionStatusRouteImport } from './routes/api/session-statu
 import { Route as ApiSendStreamRouteImport } from './routes/api/send-stream'
 import { Route as ApiSendRouteImport } from './routes/api/send'
 import { Route as ApiProviderUsageRouteImport } from './routes/api/provider-usage'
+import { Route as ApiPluginsRouteImport } from './routes/api/plugins'
 import { Route as ApiPingRouteImport } from './routes/api/ping'
 import { Route as ApiPathsRouteImport } from './routes/api/paths'
 import { Route as ApiModelsRouteImport } from './routes/api/models'
@@ -67,11 +72,13 @@ import { Route as ApiHermesConfigRouteImport } from './routes/api/hermes-config'
 import { Route as ApiGatewayStatusRouteImport } from './routes/api/gateway-status'
 import { Route as ApiFilesRouteImport } from './routes/api/files'
 import { Route as ApiEventsRouteImport } from './routes/api/events'
+import { Route as ApiEngagementsRouteImport } from './routes/api/engagements'
 import { Route as ApiContextUsageRouteImport } from './routes/api/context-usage'
 import { Route as ApiConnectionStatusRouteImport } from './routes/api/connection-status'
 import { Route as ApiConductorStopRouteImport } from './routes/api/conductor-stop'
 import { Route as ApiConductorSpawnRouteImport } from './routes/api/conductor-spawn'
 import { Route as ApiChatEventsRouteImport } from './routes/api/chat-events'
+import { Route as ApiAuthSessionRouteImport } from './routes/api/auth-session'
 import { Route as ApiAuthCheckRouteImport } from './routes/api/auth-check'
 import { Route as ApiAuthRouteImport } from './routes/api/auth'
 import { Route as ApiWidgetsIndexRouteImport } from './routes/api/widgets/index'
@@ -82,6 +89,7 @@ import { Route as ApiAuditIndexRouteImport } from './routes/api/audit/index'
 import { Route as ApiArtifactsIndexRouteImport } from './routes/api/artifacts/index'
 import { Route as ApiAgentsIndexRouteImport } from './routes/api/agents/index'
 import { Route as ApiAgentMigrationsIndexRouteImport } from './routes/api/agent-migrations/index'
+import { Route as ConsoleProfileTabRouteImport } from './routes/console.$profile.$tab'
 import { Route as ApiWidgetsProfileRouteImport } from './routes/api/widgets/$profile'
 import { Route as ApiTasksTaskIdRouteImport } from './routes/api/tasks/$taskId'
 import { Route as ApiSkillsUninstallRouteImport } from './routes/api/skills/uninstall'
@@ -202,6 +210,11 @@ const FilesRoute = FilesRouteImport.update({
   path: '/files',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EngagementsRoute = EngagementsRouteImport.update({
+  id: '/engagements',
+  path: '/engagements',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DocsRoute = DocsRouteImport.update({
   id: '/docs',
   path: '/docs',
@@ -272,9 +285,19 @@ const SettingsMcpRoute = SettingsMcpRouteImport.update({
   path: '/mcp',
   getParentRoute: () => SettingsRoute,
 } as any)
+const EngagementsCustomerRoute = EngagementsCustomerRouteImport.update({
+  id: '/$customer',
+  path: '/$customer',
+  getParentRoute: () => EngagementsRoute,
+} as any)
 const CrewsCrewIdRoute = CrewsCrewIdRouteImport.update({
   id: '/crews/$crewId',
   path: '/crews/$crewId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConsoleProfileRoute = ConsoleProfileRouteImport.update({
+  id: '/console/$profile',
+  path: '/console/$profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChatSessionKeyRoute = ChatSessionKeyRouteImport.update({
@@ -322,6 +345,11 @@ const ApiSystemHealthRoute = ApiSystemHealthRouteImport.update({
   path: '/api/system-health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiStudioConfigRoute = ApiStudioConfigRouteImport.update({
+  id: '/api/studio-config',
+  path: '/api/studio-config',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiStateAnalyticsRoute = ApiStateAnalyticsRouteImport.update({
   id: '/api/state-analytics',
   path: '/api/state-analytics',
@@ -365,6 +393,11 @@ const ApiSendRoute = ApiSendRouteImport.update({
 const ApiProviderUsageRoute = ApiProviderUsageRouteImport.update({
   id: '/api/provider-usage',
   path: '/api/provider-usage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPluginsRoute = ApiPluginsRouteImport.update({
+  id: '/api/plugins',
+  path: '/api/plugins',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPingRoute = ApiPingRouteImport.update({
@@ -422,6 +455,11 @@ const ApiEventsRoute = ApiEventsRouteImport.update({
   path: '/api/events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiEngagementsRoute = ApiEngagementsRouteImport.update({
+  id: '/api/engagements',
+  path: '/api/engagements',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiContextUsageRoute = ApiContextUsageRouteImport.update({
   id: '/api/context-usage',
   path: '/api/context-usage',
@@ -445,6 +483,11 @@ const ApiConductorSpawnRoute = ApiConductorSpawnRouteImport.update({
 const ApiChatEventsRoute = ApiChatEventsRouteImport.update({
   id: '/api/chat-events',
   path: '/api/chat-events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
+  id: '/api/auth-session',
+  path: '/api/auth-session',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthCheckRoute = ApiAuthCheckRouteImport.update({
@@ -496,6 +539,11 @@ const ApiAgentMigrationsIndexRoute = ApiAgentMigrationsIndexRouteImport.update({
   id: '/api/agent-migrations/',
   path: '/api/agent-migrations/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ConsoleProfileTabRoute = ConsoleProfileTabRouteImport.update({
+  id: '/$tab',
+  path: '/$tab',
+  getParentRoute: () => ConsoleProfileRoute,
 } as any)
 const ApiWidgetsProfileRoute = ApiWidgetsProfileRouteImport.update({
   id: '/api/widgets/$profile',
@@ -763,6 +811,7 @@ export interface FileRoutesByFullPath {
   '/conductor': typeof ConductorRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
+  '/engagements': typeof EngagementsRouteWithChildren
   '/files': typeof FilesRoute
   '/help': typeof HelpRoute
   '/jobs': typeof JobsRoute
@@ -779,11 +828,13 @@ export interface FileRoutesByFullPath {
   '/widgets': typeof WidgetsRoute
   '/api/auth': typeof ApiAuthRoute
   '/api/auth-check': typeof ApiAuthCheckRoute
+  '/api/auth-session': typeof ApiAuthSessionRoute
   '/api/chat-events': typeof ApiChatEventsRoute
   '/api/conductor-spawn': typeof ApiConductorSpawnRoute
   '/api/conductor-stop': typeof ApiConductorStopRoute
   '/api/connection-status': typeof ApiConnectionStatusRoute
   '/api/context-usage': typeof ApiContextUsageRoute
+  '/api/engagements': typeof ApiEngagementsRoute
   '/api/events': typeof ApiEventsRouteWithChildren
   '/api/files': typeof ApiFilesRoute
   '/api/gateway-status': typeof ApiGatewayStatusRoute
@@ -795,6 +846,7 @@ export interface FileRoutesByFullPath {
   '/api/models': typeof ApiModelsRoute
   '/api/paths': typeof ApiPathsRoute
   '/api/ping': typeof ApiPingRoute
+  '/api/plugins': typeof ApiPluginsRoute
   '/api/provider-usage': typeof ApiProviderUsageRoute
   '/api/send': typeof ApiSendRoute
   '/api/send-stream': typeof ApiSendStreamRoute
@@ -804,6 +856,7 @@ export interface FileRoutesByFullPath {
   '/api/start-agent': typeof ApiStartAgentRoute
   '/api/start-hermes': typeof ApiStartHermesRoute
   '/api/state-analytics': typeof ApiStateAnalyticsRoute
+  '/api/studio-config': typeof ApiStudioConfigRoute
   '/api/system-health': typeof ApiSystemHealthRoute
   '/api/systemd-control': typeof ApiSystemdControlRoute
   '/api/systemd-status': typeof ApiSystemdStatusRoute
@@ -813,7 +866,9 @@ export interface FileRoutesByFullPath {
   '/api/terminal-stream': typeof ApiTerminalStreamRoute
   '/api/workspace': typeof ApiWorkspaceRoute
   '/chat/$sessionKey': typeof ChatSessionKeyRoute
+  '/console/$profile': typeof ConsoleProfileRouteWithChildren
   '/crews/$crewId': typeof CrewsCrewIdRoute
+  '/engagements/$customer': typeof EngagementsCustomerRoute
   '/settings/mcp': typeof SettingsMcpRoute
   '/settings/providers': typeof SettingsProvidersRoute
   '/chat/': typeof ChatIndexRoute
@@ -850,6 +905,7 @@ export interface FileRoutesByFullPath {
   '/api/skills/uninstall': typeof ApiSkillsUninstallRoute
   '/api/tasks/$taskId': typeof ApiTasksTaskIdRouteWithChildren
   '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
+  '/console/$profile/$tab': typeof ConsoleProfileTabRoute
   '/api/agent-migrations/': typeof ApiAgentMigrationsIndexRoute
   '/api/agents/': typeof ApiAgentsIndexRoute
   '/api/artifacts/': typeof ApiArtifactsIndexRoute
@@ -887,6 +943,7 @@ export interface FileRoutesByTo {
   '/conductor': typeof ConductorRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
+  '/engagements': typeof EngagementsRouteWithChildren
   '/files': typeof FilesRoute
   '/help': typeof HelpRoute
   '/jobs': typeof JobsRoute
@@ -902,11 +959,13 @@ export interface FileRoutesByTo {
   '/widgets': typeof WidgetsRoute
   '/api/auth': typeof ApiAuthRoute
   '/api/auth-check': typeof ApiAuthCheckRoute
+  '/api/auth-session': typeof ApiAuthSessionRoute
   '/api/chat-events': typeof ApiChatEventsRoute
   '/api/conductor-spawn': typeof ApiConductorSpawnRoute
   '/api/conductor-stop': typeof ApiConductorStopRoute
   '/api/connection-status': typeof ApiConnectionStatusRoute
   '/api/context-usage': typeof ApiContextUsageRoute
+  '/api/engagements': typeof ApiEngagementsRoute
   '/api/events': typeof ApiEventsRouteWithChildren
   '/api/files': typeof ApiFilesRoute
   '/api/gateway-status': typeof ApiGatewayStatusRoute
@@ -918,6 +977,7 @@ export interface FileRoutesByTo {
   '/api/models': typeof ApiModelsRoute
   '/api/paths': typeof ApiPathsRoute
   '/api/ping': typeof ApiPingRoute
+  '/api/plugins': typeof ApiPluginsRoute
   '/api/provider-usage': typeof ApiProviderUsageRoute
   '/api/send': typeof ApiSendRoute
   '/api/send-stream': typeof ApiSendStreamRoute
@@ -927,6 +987,7 @@ export interface FileRoutesByTo {
   '/api/start-agent': typeof ApiStartAgentRoute
   '/api/start-hermes': typeof ApiStartHermesRoute
   '/api/state-analytics': typeof ApiStateAnalyticsRoute
+  '/api/studio-config': typeof ApiStudioConfigRoute
   '/api/system-health': typeof ApiSystemHealthRoute
   '/api/systemd-control': typeof ApiSystemdControlRoute
   '/api/systemd-status': typeof ApiSystemdStatusRoute
@@ -936,7 +997,9 @@ export interface FileRoutesByTo {
   '/api/terminal-stream': typeof ApiTerminalStreamRoute
   '/api/workspace': typeof ApiWorkspaceRoute
   '/chat/$sessionKey': typeof ChatSessionKeyRoute
+  '/console/$profile': typeof ConsoleProfileRouteWithChildren
   '/crews/$crewId': typeof CrewsCrewIdRoute
+  '/engagements/$customer': typeof EngagementsCustomerRoute
   '/settings/mcp': typeof SettingsMcpRoute
   '/settings/providers': typeof SettingsProvidersRoute
   '/chat': typeof ChatIndexRoute
@@ -973,6 +1036,7 @@ export interface FileRoutesByTo {
   '/api/skills/uninstall': typeof ApiSkillsUninstallRoute
   '/api/tasks/$taskId': typeof ApiTasksTaskIdRouteWithChildren
   '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
+  '/console/$profile/$tab': typeof ConsoleProfileTabRoute
   '/api/agent-migrations': typeof ApiAgentMigrationsIndexRoute
   '/api/agents': typeof ApiAgentsIndexRoute
   '/api/artifacts': typeof ApiArtifactsIndexRoute
@@ -1011,6 +1075,7 @@ export interface FileRoutesById {
   '/conductor': typeof ConductorRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
+  '/engagements': typeof EngagementsRouteWithChildren
   '/files': typeof FilesRoute
   '/help': typeof HelpRoute
   '/jobs': typeof JobsRoute
@@ -1027,11 +1092,13 @@ export interface FileRoutesById {
   '/widgets': typeof WidgetsRoute
   '/api/auth': typeof ApiAuthRoute
   '/api/auth-check': typeof ApiAuthCheckRoute
+  '/api/auth-session': typeof ApiAuthSessionRoute
   '/api/chat-events': typeof ApiChatEventsRoute
   '/api/conductor-spawn': typeof ApiConductorSpawnRoute
   '/api/conductor-stop': typeof ApiConductorStopRoute
   '/api/connection-status': typeof ApiConnectionStatusRoute
   '/api/context-usage': typeof ApiContextUsageRoute
+  '/api/engagements': typeof ApiEngagementsRoute
   '/api/events': typeof ApiEventsRouteWithChildren
   '/api/files': typeof ApiFilesRoute
   '/api/gateway-status': typeof ApiGatewayStatusRoute
@@ -1043,6 +1110,7 @@ export interface FileRoutesById {
   '/api/models': typeof ApiModelsRoute
   '/api/paths': typeof ApiPathsRoute
   '/api/ping': typeof ApiPingRoute
+  '/api/plugins': typeof ApiPluginsRoute
   '/api/provider-usage': typeof ApiProviderUsageRoute
   '/api/send': typeof ApiSendRoute
   '/api/send-stream': typeof ApiSendStreamRoute
@@ -1052,6 +1120,7 @@ export interface FileRoutesById {
   '/api/start-agent': typeof ApiStartAgentRoute
   '/api/start-hermes': typeof ApiStartHermesRoute
   '/api/state-analytics': typeof ApiStateAnalyticsRoute
+  '/api/studio-config': typeof ApiStudioConfigRoute
   '/api/system-health': typeof ApiSystemHealthRoute
   '/api/systemd-control': typeof ApiSystemdControlRoute
   '/api/systemd-status': typeof ApiSystemdStatusRoute
@@ -1061,7 +1130,9 @@ export interface FileRoutesById {
   '/api/terminal-stream': typeof ApiTerminalStreamRoute
   '/api/workspace': typeof ApiWorkspaceRoute
   '/chat/$sessionKey': typeof ChatSessionKeyRoute
+  '/console/$profile': typeof ConsoleProfileRouteWithChildren
   '/crews/$crewId': typeof CrewsCrewIdRoute
+  '/engagements/$customer': typeof EngagementsCustomerRoute
   '/settings/mcp': typeof SettingsMcpRoute
   '/settings/providers': typeof SettingsProvidersRoute
   '/chat/': typeof ChatIndexRoute
@@ -1098,6 +1169,7 @@ export interface FileRoutesById {
   '/api/skills/uninstall': typeof ApiSkillsUninstallRoute
   '/api/tasks/$taskId': typeof ApiTasksTaskIdRouteWithChildren
   '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
+  '/console/$profile/$tab': typeof ConsoleProfileTabRoute
   '/api/agent-migrations/': typeof ApiAgentMigrationsIndexRoute
   '/api/agents/': typeof ApiAgentsIndexRoute
   '/api/artifacts/': typeof ApiArtifactsIndexRoute
@@ -1137,6 +1209,7 @@ export interface FileRouteTypes {
     | '/conductor'
     | '/dashboard'
     | '/docs'
+    | '/engagements'
     | '/files'
     | '/help'
     | '/jobs'
@@ -1153,11 +1226,13 @@ export interface FileRouteTypes {
     | '/widgets'
     | '/api/auth'
     | '/api/auth-check'
+    | '/api/auth-session'
     | '/api/chat-events'
     | '/api/conductor-spawn'
     | '/api/conductor-stop'
     | '/api/connection-status'
     | '/api/context-usage'
+    | '/api/engagements'
     | '/api/events'
     | '/api/files'
     | '/api/gateway-status'
@@ -1169,6 +1244,7 @@ export interface FileRouteTypes {
     | '/api/models'
     | '/api/paths'
     | '/api/ping'
+    | '/api/plugins'
     | '/api/provider-usage'
     | '/api/send'
     | '/api/send-stream'
@@ -1178,6 +1254,7 @@ export interface FileRouteTypes {
     | '/api/start-agent'
     | '/api/start-hermes'
     | '/api/state-analytics'
+    | '/api/studio-config'
     | '/api/system-health'
     | '/api/systemd-control'
     | '/api/systemd-status'
@@ -1187,7 +1264,9 @@ export interface FileRouteTypes {
     | '/api/terminal-stream'
     | '/api/workspace'
     | '/chat/$sessionKey'
+    | '/console/$profile'
     | '/crews/$crewId'
+    | '/engagements/$customer'
     | '/settings/mcp'
     | '/settings/providers'
     | '/chat/'
@@ -1224,6 +1303,7 @@ export interface FileRouteTypes {
     | '/api/skills/uninstall'
     | '/api/tasks/$taskId'
     | '/api/widgets/$profile'
+    | '/console/$profile/$tab'
     | '/api/agent-migrations/'
     | '/api/agents/'
     | '/api/artifacts/'
@@ -1261,6 +1341,7 @@ export interface FileRouteTypes {
     | '/conductor'
     | '/dashboard'
     | '/docs'
+    | '/engagements'
     | '/files'
     | '/help'
     | '/jobs'
@@ -1276,11 +1357,13 @@ export interface FileRouteTypes {
     | '/widgets'
     | '/api/auth'
     | '/api/auth-check'
+    | '/api/auth-session'
     | '/api/chat-events'
     | '/api/conductor-spawn'
     | '/api/conductor-stop'
     | '/api/connection-status'
     | '/api/context-usage'
+    | '/api/engagements'
     | '/api/events'
     | '/api/files'
     | '/api/gateway-status'
@@ -1292,6 +1375,7 @@ export interface FileRouteTypes {
     | '/api/models'
     | '/api/paths'
     | '/api/ping'
+    | '/api/plugins'
     | '/api/provider-usage'
     | '/api/send'
     | '/api/send-stream'
@@ -1301,6 +1385,7 @@ export interface FileRouteTypes {
     | '/api/start-agent'
     | '/api/start-hermes'
     | '/api/state-analytics'
+    | '/api/studio-config'
     | '/api/system-health'
     | '/api/systemd-control'
     | '/api/systemd-status'
@@ -1310,7 +1395,9 @@ export interface FileRouteTypes {
     | '/api/terminal-stream'
     | '/api/workspace'
     | '/chat/$sessionKey'
+    | '/console/$profile'
     | '/crews/$crewId'
+    | '/engagements/$customer'
     | '/settings/mcp'
     | '/settings/providers'
     | '/chat'
@@ -1347,6 +1434,7 @@ export interface FileRouteTypes {
     | '/api/skills/uninstall'
     | '/api/tasks/$taskId'
     | '/api/widgets/$profile'
+    | '/console/$profile/$tab'
     | '/api/agent-migrations'
     | '/api/agents'
     | '/api/artifacts'
@@ -1384,6 +1472,7 @@ export interface FileRouteTypes {
     | '/conductor'
     | '/dashboard'
     | '/docs'
+    | '/engagements'
     | '/files'
     | '/help'
     | '/jobs'
@@ -1400,11 +1489,13 @@ export interface FileRouteTypes {
     | '/widgets'
     | '/api/auth'
     | '/api/auth-check'
+    | '/api/auth-session'
     | '/api/chat-events'
     | '/api/conductor-spawn'
     | '/api/conductor-stop'
     | '/api/connection-status'
     | '/api/context-usage'
+    | '/api/engagements'
     | '/api/events'
     | '/api/files'
     | '/api/gateway-status'
@@ -1416,6 +1507,7 @@ export interface FileRouteTypes {
     | '/api/models'
     | '/api/paths'
     | '/api/ping'
+    | '/api/plugins'
     | '/api/provider-usage'
     | '/api/send'
     | '/api/send-stream'
@@ -1425,6 +1517,7 @@ export interface FileRouteTypes {
     | '/api/start-agent'
     | '/api/start-hermes'
     | '/api/state-analytics'
+    | '/api/studio-config'
     | '/api/system-health'
     | '/api/systemd-control'
     | '/api/systemd-status'
@@ -1434,7 +1527,9 @@ export interface FileRouteTypes {
     | '/api/terminal-stream'
     | '/api/workspace'
     | '/chat/$sessionKey'
+    | '/console/$profile'
     | '/crews/$crewId'
+    | '/engagements/$customer'
     | '/settings/mcp'
     | '/settings/providers'
     | '/chat/'
@@ -1471,6 +1566,7 @@ export interface FileRouteTypes {
     | '/api/skills/uninstall'
     | '/api/tasks/$taskId'
     | '/api/widgets/$profile'
+    | '/console/$profile/$tab'
     | '/api/agent-migrations/'
     | '/api/agents/'
     | '/api/artifacts/'
@@ -1509,6 +1605,7 @@ export interface RootRouteChildren {
   ConductorRoute: typeof ConductorRoute
   DashboardRoute: typeof DashboardRoute
   DocsRoute: typeof DocsRoute
+  EngagementsRoute: typeof EngagementsRouteWithChildren
   FilesRoute: typeof FilesRoute
   HelpRoute: typeof HelpRoute
   JobsRoute: typeof JobsRoute
@@ -1525,11 +1622,13 @@ export interface RootRouteChildren {
   WidgetsRoute: typeof WidgetsRoute
   ApiAuthRoute: typeof ApiAuthRoute
   ApiAuthCheckRoute: typeof ApiAuthCheckRoute
+  ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiChatEventsRoute: typeof ApiChatEventsRoute
   ApiConductorSpawnRoute: typeof ApiConductorSpawnRoute
   ApiConductorStopRoute: typeof ApiConductorStopRoute
   ApiConnectionStatusRoute: typeof ApiConnectionStatusRoute
   ApiContextUsageRoute: typeof ApiContextUsageRoute
+  ApiEngagementsRoute: typeof ApiEngagementsRoute
   ApiEventsRoute: typeof ApiEventsRouteWithChildren
   ApiFilesRoute: typeof ApiFilesRoute
   ApiGatewayStatusRoute: typeof ApiGatewayStatusRoute
@@ -1541,6 +1640,7 @@ export interface RootRouteChildren {
   ApiModelsRoute: typeof ApiModelsRoute
   ApiPathsRoute: typeof ApiPathsRoute
   ApiPingRoute: typeof ApiPingRoute
+  ApiPluginsRoute: typeof ApiPluginsRoute
   ApiProviderUsageRoute: typeof ApiProviderUsageRoute
   ApiSendRoute: typeof ApiSendRoute
   ApiSendStreamRoute: typeof ApiSendStreamRoute
@@ -1550,6 +1650,7 @@ export interface RootRouteChildren {
   ApiStartAgentRoute: typeof ApiStartAgentRoute
   ApiStartHermesRoute: typeof ApiStartHermesRoute
   ApiStateAnalyticsRoute: typeof ApiStateAnalyticsRoute
+  ApiStudioConfigRoute: typeof ApiStudioConfigRoute
   ApiSystemHealthRoute: typeof ApiSystemHealthRoute
   ApiSystemdControlRoute: typeof ApiSystemdControlRoute
   ApiSystemdStatusRoute: typeof ApiSystemdStatusRoute
@@ -1559,6 +1660,7 @@ export interface RootRouteChildren {
   ApiTerminalStreamRoute: typeof ApiTerminalStreamRoute
   ApiWorkspaceRoute: typeof ApiWorkspaceRoute
   ChatSessionKeyRoute: typeof ChatSessionKeyRoute
+  ConsoleProfileRoute: typeof ConsoleProfileRouteWithChildren
   CrewsCrewIdRoute: typeof CrewsCrewIdRoute
   ChatIndexRoute: typeof ChatIndexRoute
   CrewsIndexRoute: typeof CrewsIndexRoute
@@ -1699,6 +1801,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FilesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/engagements': {
+      id: '/engagements'
+      path: '/engagements'
+      fullPath: '/engagements'
+      preLoaderRoute: typeof EngagementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/docs': {
       id: '/docs'
       path: '/docs'
@@ -1797,11 +1906,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsMcpRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/engagements/$customer': {
+      id: '/engagements/$customer'
+      path: '/$customer'
+      fullPath: '/engagements/$customer'
+      preLoaderRoute: typeof EngagementsCustomerRouteImport
+      parentRoute: typeof EngagementsRoute
+    }
     '/crews/$crewId': {
       id: '/crews/$crewId'
       path: '/crews/$crewId'
       fullPath: '/crews/$crewId'
       preLoaderRoute: typeof CrewsCrewIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/console/$profile': {
+      id: '/console/$profile'
+      path: '/console/$profile'
+      fullPath: '/console/$profile'
+      preLoaderRoute: typeof ConsoleProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat/$sessionKey': {
@@ -1867,6 +1990,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSystemHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/studio-config': {
+      id: '/api/studio-config'
+      path: '/api/studio-config'
+      fullPath: '/api/studio-config'
+      preLoaderRoute: typeof ApiStudioConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/state-analytics': {
       id: '/api/state-analytics'
       path: '/api/state-analytics'
@@ -1928,6 +2058,13 @@ declare module '@tanstack/react-router' {
       path: '/api/provider-usage'
       fullPath: '/api/provider-usage'
       preLoaderRoute: typeof ApiProviderUsageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/plugins': {
+      id: '/api/plugins'
+      path: '/api/plugins'
+      fullPath: '/api/plugins'
+      preLoaderRoute: typeof ApiPluginsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/ping': {
@@ -2007,6 +2144,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/engagements': {
+      id: '/api/engagements'
+      path: '/api/engagements'
+      fullPath: '/api/engagements'
+      preLoaderRoute: typeof ApiEngagementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/context-usage': {
       id: '/api/context-usage'
       path: '/api/context-usage'
@@ -2040,6 +2184,13 @@ declare module '@tanstack/react-router' {
       path: '/api/chat-events'
       fullPath: '/api/chat-events'
       preLoaderRoute: typeof ApiChatEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth-session': {
+      id: '/api/auth-session'
+      path: '/api/auth-session'
+      fullPath: '/api/auth-session'
+      preLoaderRoute: typeof ApiAuthSessionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth-check': {
@@ -2111,6 +2262,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/agent-migrations/'
       preLoaderRoute: typeof ApiAgentMigrationsIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/console/$profile/$tab': {
+      id: '/console/$profile/$tab'
+      path: '/$tab'
+      fullPath: '/console/$profile/$tab'
+      preLoaderRoute: typeof ConsoleProfileTabRouteImport
+      parentRoute: typeof ConsoleProfileRoute
     }
     '/api/widgets/$profile': {
       id: '/api/widgets/$profile'
@@ -2458,6 +2616,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface EngagementsRouteChildren {
+  EngagementsCustomerRoute: typeof EngagementsCustomerRoute
+}
+
+const EngagementsRouteChildren: EngagementsRouteChildren = {
+  EngagementsCustomerRoute: EngagementsCustomerRoute,
+}
+
+const EngagementsRouteWithChildren = EngagementsRoute._addFileChildren(
+  EngagementsRouteChildren,
+)
+
 interface SettingsRouteChildren {
   SettingsMcpRoute: typeof SettingsMcpRoute
   SettingsProvidersRoute: typeof SettingsProvidersRoute
@@ -2562,6 +2732,18 @@ const ApiSkillsRouteWithChildren = ApiSkillsRoute._addFileChildren(
   ApiSkillsRouteChildren,
 )
 
+interface ConsoleProfileRouteChildren {
+  ConsoleProfileTabRoute: typeof ConsoleProfileTabRoute
+}
+
+const ConsoleProfileRouteChildren: ConsoleProfileRouteChildren = {
+  ConsoleProfileTabRoute: ConsoleProfileTabRoute,
+}
+
+const ConsoleProfileRouteWithChildren = ConsoleProfileRoute._addFileChildren(
+  ConsoleProfileRouteChildren,
+)
+
 interface ApiArtifactsArtifactIdRouteChildren {
   ApiArtifactsArtifactIdSendRoute: typeof ApiArtifactsArtifactIdSendRoute
 }
@@ -2646,6 +2828,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConductorRoute: ConductorRoute,
   DashboardRoute: DashboardRoute,
   DocsRoute: DocsRoute,
+  EngagementsRoute: EngagementsRouteWithChildren,
   FilesRoute: FilesRoute,
   HelpRoute: HelpRoute,
   JobsRoute: JobsRoute,
@@ -2662,11 +2845,13 @@ const rootRouteChildren: RootRouteChildren = {
   WidgetsRoute: WidgetsRoute,
   ApiAuthRoute: ApiAuthRoute,
   ApiAuthCheckRoute: ApiAuthCheckRoute,
+  ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiChatEventsRoute: ApiChatEventsRoute,
   ApiConductorSpawnRoute: ApiConductorSpawnRoute,
   ApiConductorStopRoute: ApiConductorStopRoute,
   ApiConnectionStatusRoute: ApiConnectionStatusRoute,
   ApiContextUsageRoute: ApiContextUsageRoute,
+  ApiEngagementsRoute: ApiEngagementsRoute,
   ApiEventsRoute: ApiEventsRouteWithChildren,
   ApiFilesRoute: ApiFilesRoute,
   ApiGatewayStatusRoute: ApiGatewayStatusRoute,
@@ -2678,6 +2863,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiModelsRoute: ApiModelsRoute,
   ApiPathsRoute: ApiPathsRoute,
   ApiPingRoute: ApiPingRoute,
+  ApiPluginsRoute: ApiPluginsRoute,
   ApiProviderUsageRoute: ApiProviderUsageRoute,
   ApiSendRoute: ApiSendRoute,
   ApiSendStreamRoute: ApiSendStreamRoute,
@@ -2687,6 +2873,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiStartAgentRoute: ApiStartAgentRoute,
   ApiStartHermesRoute: ApiStartHermesRoute,
   ApiStateAnalyticsRoute: ApiStateAnalyticsRoute,
+  ApiStudioConfigRoute: ApiStudioConfigRoute,
   ApiSystemHealthRoute: ApiSystemHealthRoute,
   ApiSystemdControlRoute: ApiSystemdControlRoute,
   ApiSystemdStatusRoute: ApiSystemdStatusRoute,
@@ -2696,6 +2883,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTerminalStreamRoute: ApiTerminalStreamRoute,
   ApiWorkspaceRoute: ApiWorkspaceRoute,
   ChatSessionKeyRoute: ChatSessionKeyRoute,
+  ConsoleProfileRoute: ConsoleProfileRouteWithChildren,
   CrewsCrewIdRoute: CrewsCrewIdRoute,
   ChatIndexRoute: ChatIndexRoute,
   CrewsIndexRoute: CrewsIndexRoute,

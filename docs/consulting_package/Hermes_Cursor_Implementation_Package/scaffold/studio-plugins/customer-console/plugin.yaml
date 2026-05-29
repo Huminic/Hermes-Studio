@@ -1,0 +1,126 @@
+id: customer-console
+version: 0.1.0
+display_name: Customer Console
+requires_studio_version: ">=1.20.0"
+
+routes:
+  - path: /console/$profile/chat
+    renderer: customer-console.chat
+    profile_scoped: true
+    auth: required
+  - path: /console/$profile/dashboard
+    renderer: customer-console.dashboard-grid
+    profile_scoped: true
+    auth: required
+  - path: /console/$profile/widget
+    renderer: customer-console.widget-editor
+    profile_scoped: true
+    auth: required
+  - path: /console/$profile/service
+    renderer: customer-console.service-kanban
+    profile_scoped: true
+    auth: required
+  - path: /w/$slug
+    renderer: customer-console.widget-public
+    profile_scoped: false
+    auth: public
+  - path: /p/$slug
+    renderer: customer-console.widget-public
+    profile_scoped: false
+    auth: public
+
+right_pane_slots:
+  - slot_id: console-assistant
+    renderer: customer-console.assistant-pane
+    applies_to_routes:
+      - /console/$profile/chat
+      - /console/$profile/dashboard
+      - /console/$profile/widget
+      - /console/$profile/service
+
+hosted_bundles:
+  - path: /customer-console/embed.js
+    entry: src/embed/customer-console/widget-loader.ts
+    cors: "*"
+    cache_control: "public, max-age=300"
+  - path: /customer-console/embed.css
+    entry: src/embed/customer-console/widget-loader.css
+    cors: "*"
+    cache_control: "public, max-age=300"
+
+studio_config_schema:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  type: object
+  properties:
+    branding:
+      type: object
+      properties:
+        logo_path:
+          type: string
+        accent_color:
+          type: string
+          pattern: "^#[0-9a-fA-F]{6}$"
+        persona_name:
+          type: string
+      required:
+        - persona_name
+    menu:
+      type: object
+      properties:
+        chat:
+          type: boolean
+          default: true
+        dashboard:
+          type: boolean
+          default: true
+        widget:
+          type: boolean
+          default: true
+        service:
+          type: boolean
+          default: true
+    dashboards:
+      type: array
+      items:
+        type: object
+        properties:
+          slug:
+            type: string
+          title:
+            type: string
+          artifact_path:
+            type: string
+        required:
+          - slug
+          - artifact_path
+    widgets:
+      type: array
+      items:
+        type: object
+        properties:
+          slug:
+            type: string
+          mode:
+            type: string
+            enum: [chat, voice, video, form]
+          agent:
+            type: string
+        required:
+          - slug
+          - mode
+          - agent
+    federation:
+      type: object
+      properties:
+        read_scopes:
+          type: array
+          items:
+            type: string
+  required:
+    - branding
+
+skill_dependencies:
+  - web-artifact
+  - live-web-artifact
+
+mcp_dependencies: []

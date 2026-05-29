@@ -1,0 +1,9 @@
+name: serra-automotive-data-governor
+version: 0.1.0
+author: Duane Wells / implementation package
+license: Proprietary - implementation scaffold
+description: Hermes profile scaffold for serra-automotive-data-governor
+env:
+  required:
+    - OPENAI_API_KEY
+    - ANTHROPIC_API_KEY

@@ -1,6 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import {
+  getSessionMetadata,
+  getSessionTokenFromCookie,
+  isAuthenticated,
+} from '../../../server/auth-middleware'
+import { hasAnyProfileAuth } from '../../../server/profile-auth'
 import { setActiveProfile } from '../../../server/profiles-browser'
 import { requireJsonContentType } from '../../../server/rate-limit'
 
@@ -11,6 +16,22 @@ export const Route = createFileRoute('/api/profiles/activate')({
         if (!isAuthenticated(request)) {
           return json({ error: 'Unauthorized' }, { status: 401 })
         }
+
+        // Profile-auth mode: switching the global active profile requires
+        // is_admin. Non-admin sessions are pinned to their own profile.
+        if (hasAnyProfileAuth()) {
+          const token = getSessionTokenFromCookie(
+            request.headers.get('cookie'),
+          )
+          const meta = token ? getSessionMetadata(token) : null
+          if (!meta || !meta.is_admin) {
+            return json(
+              { error: 'Profile switching requires admin role' },
+              { status: 403 },
+            )
+          }
+        }
+
         const csrfCheck = requireJsonContentType(request)
         if (csrfCheck) return csrfCheck
         try {

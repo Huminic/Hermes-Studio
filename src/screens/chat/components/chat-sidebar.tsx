@@ -535,6 +535,7 @@ function ChatSidebarComponent({
   const isOperationsActive = pathname === '/operations'
   const isTasksActive = pathname === '/tasks'
   const isAgentsActive = pathname === '/agents'
+  const isEngagementsActive = pathname.startsWith('/engagements')
   const isArtifactsActive = pathname === '/artifacts'
   const isWidgetsActive = pathname === '/widgets'
   const isPatternsActive = pathname === '/patterns'
@@ -816,6 +817,13 @@ function ChatSidebarComponent({
       icon: AiUserIcon,
       label: 'Agents',
       active: isAgentsActive,
+    },
+    {
+      kind: 'link',
+      to: '/engagements',
+      icon: TimelineIcon,
+      label: 'Engagements',
+      active: isEngagementsActive,
     },
     {
       kind: 'link',

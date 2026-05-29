@@ -2,20 +2,51 @@ import { randomBytes, timingSafeEqual } from 'node:crypto'
 import { getRedisClient, getRedisClientSync } from './redis-client'
 
 const TOKENS_KEY = 'hermes:studio:tokens'
+const TOKEN_META_PREFIX = 'hermes:studio:token-meta:'
 const TOKEN_TTL_S = 30 * 24 * 60 * 60 // 30 days
+
+export type SessionMetadata = {
+  /** Profile this session is authenticated as. Null in legacy (HERMES_PASSWORD) mode. */
+  profile: string | null
+  /** Whether the session can switch the global active profile and access admin operations. */
+  is_admin: boolean
+  /** Username from the profile's auth.yaml. Null in legacy mode. */
+  username: string | null
+  /** Creation epoch ms. */
+  created_at: number
+}
+
+const LEGACY_METADATA: SessionMetadata = {
+  profile: null,
+  is_admin: true,
+  username: null,
+  created_at: 0,
+}
 
 /**
  * In-memory session store — source of truth for the current process.
- * Backed by a Redis SET when REDIS_URL is set so tokens survive restarts.
+ * Each token maps to its session metadata. Backed by Redis when REDIS_URL is
+ * set so tokens + metadata survive restarts.
  */
-const validTokens = new Set<string>()
+const sessionStore = new Map<string, SessionMetadata>()
 
-// On startup load persisted tokens from Redis into the in-memory Set
+// On startup load persisted tokens + metadata from Redis
 void getRedisClient().then(async (client) => {
   if (!client) return
   try {
     const tokens = await client.smembers(TOKENS_KEY)
-    for (const t of tokens) validTokens.add(t)
+    for (const t of tokens) {
+      const metaRaw = await client.get(TOKEN_META_PREFIX + t)
+      if (metaRaw) {
+        try {
+          sessionStore.set(t, JSON.parse(metaRaw) as SessionMetadata)
+          continue
+        } catch {
+          /* fall through to legacy */
+        }
+      }
+      sessionStore.set(t, { ...LEGACY_METADATA })
+    }
     if (tokens.length > 0) {
       console.log(`[auth] Loaded ${tokens.length} session token(s) from Redis`)
     }
@@ -32,14 +63,30 @@ export function generateSessionToken(): string {
 }
 
 /**
- * Store a session token as valid.
+ * Store a session token as valid. Backward-compatible: when called with one
+ * argument, treats the session as legacy (HERMES_PASSWORD) with implicit
+ * admin privileges. The two-argument form attaches profile-aware metadata.
  */
-export function storeSessionToken(token: string): void {
-  validTokens.add(token)
+export function storeSessionToken(
+  token: string,
+  metadata?: Partial<SessionMetadata>,
+): void {
+  const meta: SessionMetadata = {
+    ...LEGACY_METADATA,
+    ...metadata,
+    created_at: Date.now(),
+  }
+  sessionStore.set(token, meta)
   const client = getRedisClientSync()
   if (client) {
     void client.sadd(TOKENS_KEY, token).then(() =>
       client.expire(TOKENS_KEY, TOKEN_TTL_S),
+    )
+    void client.set(
+      TOKEN_META_PREFIX + token,
+      JSON.stringify(meta),
+      'EX',
+      TOKEN_TTL_S,
     )
   }
 }
@@ -48,16 +95,26 @@ export function storeSessionToken(token: string): void {
  * Check if a session token is valid.
  */
 export function isValidSessionToken(token: string): boolean {
-  return validTokens.has(token)
+  return sessionStore.has(token)
+}
+
+/**
+ * Look up the session metadata for a token. Returns null if the token is unknown.
+ */
+export function getSessionMetadata(token: string): SessionMetadata | null {
+  return sessionStore.get(token) ?? null
 }
 
 /**
  * Remove a session token (logout).
  */
 export function revokeSessionToken(token: string): void {
-  validTokens.delete(token)
+  sessionStore.delete(token)
   const client = getRedisClientSync()
-  if (client) void client.srem(TOKENS_KEY, token)
+  if (client) {
+    void client.srem(TOKENS_KEY, token)
+    void client.del(TOKEN_META_PREFIX + token)
+  }
 }
 
 /**
