@@ -139,6 +139,7 @@ export function WorkspaceShell() {
     if (pathname.startsWith('/analytics')) return 'Analytics'
     if (pathname.startsWith('/session-history')) return 'Session History'
     if (pathname.startsWith('/audit')) return 'Audit Trail'
+    if (pathname.startsWith('/engagements')) return 'Engagements'
     if (pathname.startsWith('/logs')) return 'Logs'
     if (pathname.startsWith('/profiles')) return 'Profiles'
     if (pathname.startsWith('/settings')) return 'Settings'

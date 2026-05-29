@@ -1,0 +1,9 @@
+model: default
+reasoning: medium
+temperature: 0.2
+platforms:
+  email:
+    skip_attachments: false
+notes:
+  - This is a scaffold config to be adapted locally.
+  - Keep important agent behavior grounded in wiki pages and templates.

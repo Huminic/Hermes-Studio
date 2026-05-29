@@ -1,0 +1,28 @@
+{
+  "servers": [
+    {
+      "name": "central-mcp",
+      "description": "Platform-wide service hub. Resend (email), VinSolutions, Vapi, Tavus, Coolify.",
+      "url": "http://localhost:4002/mcp",
+      "transport": "http",
+      "auth": {
+        "type": "bearer",
+        "token_env": "CENTRAL_MCP_TOKEN"
+      },
+      "enabled": false,
+      "tool_allowlist": [
+        "resend_send_email",
+        "resend_get_email",
+        "vin_solutions_request",
+        "vapi_request",
+        "tavus_request"
+      ],
+      "notes": "Set CENTRAL_MCP_TOKEN env in this profile's .env after the operator provisions a per-profile token in central-mcp config. Then flip enabled to true."
+    },
+    {
+      "name": "placeholder-local",
+      "description": "Replace with local MCP servers for CRM, docs, and operational systems specific to this profile.",
+      "enabled": false
+    }
+  ]
+}

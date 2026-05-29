@@ -1,0 +1,29 @@
+{
+  "package_name": "Hermes Cursor Implementation Package",
+  "date": "2026-05-28",
+  "purpose": "Local implementation handoff for Cursor or Claude Code",
+  "profiles": [
+    "consultative-agent",
+    "huminic",
+    "huminic-data-governor",
+    "serra-automotive",
+    "serra-automotive-data-governor",
+    "strukture",
+    "strukture-data-governor"
+  ],
+  "artifacts": {
+    "A": "artifacts/Artifact_A_Methodology_Revised_v2.md",
+    "B": "artifacts/Artifact_B_Spec_Revised_v1_1.md",
+    "C": "artifacts/consultative-agent-wiki-revised.zip",
+    "D": "artifacts/Artifact_D_Data_Brain_Schema_v1.md"
+  },
+  "key_docs": [
+    "00_README_START_HERE.md",
+    "01_CURSOR_AGENT_README.md",
+    "implementation/IMPLEMENTATION_SEQUENCE.md",
+    "implementation/AGENT_TOPOLOGY.md",
+    "implementation/PILLAR_SUPPORT_COMPONENTS.md",
+    "implementation/ENV_AND_CONNECTORS.md",
+    "implementation/ACCEPTANCE_CRITERIA.md"
+  ]
+}
