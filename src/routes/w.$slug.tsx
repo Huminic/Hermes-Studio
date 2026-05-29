@@ -6,8 +6,10 @@ import { findPublicWidget } from '../server/public-widgets'
  *   /w/$slug  →  customer-console.widget-public
  *
  * Resolves the slug across all profiles (no profile context in the URL by
- * design — the widget knows its own profile via frontmatter). Serves the
- * widget's frontmatter + body so a public visitor can interact without auth.
+ * design — the widget knows its own profile via frontmatter) and serves a
+ * functional widget per the declared mode. Currently:
+ *   - chat: live chat UI POSTing to /api/public/widget-chat
+ *   - voice/video/form: stub with a "coming soon" note (Phase 5 v2)
  */
 export const Route = createFileRoute('/w/$slug')({
   server: {
@@ -20,45 +22,7 @@ export const Route = createFileRoute('/w/$slug')({
             headers: { 'Content-Type': 'text/plain' },
           })
         }
-        const fm = widget.frontmatter as Record<string, unknown>
-        const title = String(fm.title ?? params.slug)
-        const greeting = String(fm.greeting ?? '')
-        const mode = String(fm.mode ?? 'chat')
-        const brand = (fm.brand as Record<string, unknown>) || {}
-        const accent = String(brand.accent_color ?? '#0a7dff')
-        const primary = String(brand.primary_color ?? '#222')
-        const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<title>${escapeHtml(title)}</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<style>
-  body { font-family: system-ui, sans-serif; margin: 0; background: #f7f7f8; color: ${escapeHtml(primary)}; }
-  .widget { max-width: 480px; margin: 40px auto; background: white; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.08); overflow: hidden; }
-  .header { background: ${escapeHtml(primary)}; color: white; padding: 16px 20px; }
-  .header h1 { margin: 0; font-size: 1.05rem; font-weight: 600; }
-  .header .mode { font-size: 0.75rem; opacity: .7; text-transform: uppercase; letter-spacing: 0.04em; }
-  .greet { padding: 18px 20px; line-height: 1.45; font-size: 0.95rem; }
-  .meta { padding: 12px 20px; border-top: 1px solid #eee; font-size: 0.75rem; color: #777; }
-  .cta { padding: 0 20px 18px; }
-  .cta button { background: ${escapeHtml(accent)}; color: white; border: 0; border-radius: 8px; padding: 10px 16px; font-weight: 600; cursor: pointer; }
-</style>
-</head>
-<body>
-<div class="widget" data-profile="${escapeHtml(widget.profile)}" data-slug="${escapeHtml(widget.slug)}" data-mode="${escapeHtml(mode)}">
-  <div class="header">
-    <div class="mode">${escapeHtml(mode)} widget</div>
-    <h1>${escapeHtml(title)}</h1>
-  </div>
-  <div class="greet">${escapeHtml(greeting)}</div>
-  <div class="cta">
-    <button onclick="alert('Chat handoff stub. Widget plugin renderer will live-wire this in Phase 5 v2.')">Start chat</button>
-  </div>
-  <div class="meta">Served by Huminic Studio · profile: ${escapeHtml(widget.profile)}</div>
-</div>
-</body>
-</html>`
+        const html = renderWidgetHtml(widget)
         return new Response(html, {
           status: 200,
           headers: {
@@ -71,6 +35,159 @@ export const Route = createFileRoute('/w/$slug')({
   },
   loader: () => notFound(),
 })
+
+function renderWidgetHtml(widget: {
+  profile: string
+  slug: string
+  frontmatter: Record<string, unknown>
+  body: string
+}): string {
+  const fm = widget.frontmatter
+  const title = String(fm.title ?? widget.slug)
+  const greeting = String(fm.greeting ?? '')
+  const mode = String(fm.mode ?? 'chat')
+  const agent = String(fm.agent ?? '')
+  const brand = (fm.brand as Record<string, unknown>) || {}
+  const accent = String(brand.accent_color ?? '#0a7dff')
+  const primary = String(brand.primary_color ?? '#222')
+
+  const body = mode === 'chat' ? chatModeBody(widget) : stubBody(mode)
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>${escapeHtml(title)}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root { --accent: ${escapeHtml(accent)}; --primary: ${escapeHtml(primary)}; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: #f5f5f7; color: var(--primary); min-height: 100vh; }
+  .frame { max-width: 560px; margin: 32px auto; padding: 0 16px; }
+  .card { background: white; border-radius: 12px; box-shadow: 0 6px 28px rgba(0,0,0,.08); overflow: hidden; }
+  .header { background: var(--primary); color: white; padding: 18px 22px; }
+  .header .mode { font-size: 0.7rem; opacity: .7; text-transform: uppercase; letter-spacing: 0.05em; }
+  .header h1 { margin: 4px 0 0; font-size: 1.1rem; font-weight: 600; }
+  .greet { padding: 18px 22px; line-height: 1.5; font-size: 0.95rem; }
+  .chat { padding: 0 22px 16px; }
+  .messages { display: flex; flex-direction: column; gap: 10px; min-height: 80px; max-height: 50vh; overflow-y: auto; padding: 8px 0 12px; }
+  .msg { padding: 10px 14px; border-radius: 12px; max-width: 80%; line-height: 1.4; font-size: 0.92rem; white-space: pre-wrap; }
+  .msg.you { background: #eef0f3; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .msg.agent { background: #f7f0e8; align-self: flex-start; border-bottom-left-radius: 4px; }
+  .msg.error { background: #fde8e8; color: #b21212; align-self: stretch; font-size: 0.85rem; }
+  .composer { display: flex; gap: 8px; border-top: 1px solid #ececec; padding: 14px 0 0; }
+  .composer input { flex: 1; border: 1px solid #d8d8d8; border-radius: 8px; padding: 10px 12px; font-size: 0.95rem; outline: none; }
+  .composer input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+  .composer button { background: var(--accent); color: white; border: 0; border-radius: 8px; padding: 0 18px; font-weight: 600; cursor: pointer; min-width: 80px; }
+  .composer button:disabled { opacity: .55; cursor: not-allowed; }
+  .meta { padding: 12px 22px; border-top: 1px solid #ececec; font-size: 0.72rem; color: #888; display: flex; justify-content: space-between; }
+  .stub { padding: 22px; text-align: center; color: #777; font-size: 0.95rem; }
+  .typing { font-style: italic; opacity: .65; font-size: 0.88rem; padding: 4px 4px 0; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="card" data-profile="${escapeHtml(widget.profile)}" data-slug="${escapeHtml(widget.slug)}" data-mode="${escapeHtml(mode)}" data-agent="${escapeHtml(agent)}">
+    <div class="header">
+      <div class="mode">${escapeHtml(mode)} widget</div>
+      <h1>${escapeHtml(title)}</h1>
+    </div>
+    ${body}
+    <div class="meta">
+      <span>Served by Huminic Studio</span>
+      <span>${escapeHtml(widget.profile)}</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>`
+}
+
+function chatModeBody(widget: {
+  profile: string
+  slug: string
+  frontmatter: Record<string, unknown>
+}): string {
+  const greeting = String(widget.frontmatter.greeting ?? '')
+  return `<div class="chat">
+  <div class="greet">${escapeHtml(greeting)}</div>
+  <div class="messages" id="msgs"></div>
+  <div class="typing" id="typing" style="display:none">Assistant is typing…</div>
+  <form class="composer" id="composer" autocomplete="off">
+    <input type="text" id="msg" placeholder="Type a message…" required />
+    <button type="submit" id="send">Send</button>
+  </form>
+</div>
+<script>
+(function() {
+  var profile = ${JSON.stringify(widget.profile)};
+  var slug = ${JSON.stringify(widget.slug)};
+  var sessionId = (function() {
+    try {
+      var k = 'huminic-widget-' + slug + '-session';
+      var s = sessionStorage.getItem(k);
+      if (s) return s;
+      s = (crypto && crypto.randomUUID ? crypto.randomUUID() : (Date.now() + '-' + Math.random().toString(36).slice(2)));
+      sessionStorage.setItem(k, s);
+      return s;
+    } catch (e) { return 'anon-' + Date.now(); }
+  })();
+  var msgs = document.getElementById('msgs');
+  var form = document.getElementById('composer');
+  var input = document.getElementById('msg');
+  var send = document.getElementById('send');
+  var typing = document.getElementById('typing');
+  var history = [];
+  function append(role, text, cls) {
+    var div = document.createElement('div');
+    div.className = 'msg ' + (cls || (role === 'user' ? 'you' : 'agent'));
+    div.textContent = text;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var text = input.value.trim();
+    if (!text) return;
+    append('user', text);
+    history.push({ role: 'user', content: text });
+    input.value = '';
+    send.disabled = true;
+    typing.style.display = 'block';
+    fetch('/api/public/widget-chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ profile: profile, slug: slug, session_id: sessionId, history: history }),
+    })
+      .then(function(r) { return r.json().then(function(d) { return { status: r.status, body: d }; }); })
+      .then(function(res) {
+        typing.style.display = 'none';
+        send.disabled = false;
+        if (res.status !== 200 || !res.body || !res.body.ok) {
+          var msg = (res.body && res.body.error) ? res.body.error : 'Sorry, something went wrong.';
+          append('agent', msg, 'error');
+          return;
+        }
+        var reply = res.body.reply || '';
+        history.push({ role: 'assistant', content: reply });
+        append('agent', reply);
+      })
+      .catch(function(err) {
+        typing.style.display = 'none';
+        send.disabled = false;
+        append('agent', 'Network error: ' + (err && err.message ? err.message : 'unknown'), 'error');
+      });
+  });
+})();
+</script>`
+}
+
+function stubBody(mode: string): string {
+  return `<div class="stub">
+  <p><strong>${escapeHtml(mode)} mode</strong> is declared on this widget but not yet implemented.</p>
+  <p>Phase 5 v2 — coming soon.</p>
+</div>`
+}
 
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) =>

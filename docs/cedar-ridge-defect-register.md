@@ -65,6 +65,34 @@ Running list of issues discovered during V0–V10. Each entry records phase, sev
 - **Smallest portable fix:** add the two route files; they consult the customer-console renderer registry and the widget frontmatter (slug, mode, agent) from `~/.hermes/profiles/<profile>/knowledge/widgets/`. Scan all profiles for a matching slug since the path doesn't carry profile context — this is per the public route semantics where customers reach a widget without knowing which profile hosts it.
 - **Status:** FIXING — V9.3.
 
+### D-V0-008 — Auth-required pages are SSR-served to anonymous visitors
+
+- **Phase:** post-V9 operator review
+- **Severity:** **important — operator-visible bug**, not classified blocker only because the API data is gated, but the chrome leak is wrong and the operator surfaced it specifically
+- **Discovered:** 2026-05-29 (operator: "it just took me to an internal page with all the regular back d links with no password protection")
+- **Description:** `GET /engagements/$customer` (and likely all other auth-required UI routes) returns the full SSR HTML shell — sidebar, page title, layout — to any anonymous visitor. The LoginScreen is rendered ONLY client-side by workspace-shell.tsx after `useAuth` resolves. So:
+  - Anonymous visitor briefly sees the sidebar + page title before the JS loads and the LoginScreen overlay mounts.
+  - A visitor who disables JavaScript sees the full chrome without ever being prompted to log in.
+  - The API data is correctly 401-gated (verified via curl) so no engagement state leaks, but the LAYOUT and ROUTE LIST do leak.
+  - The login overlay we tested in V0.3 only appeared because the page mounted JS, called /api/auth-session, and the workspace-shell guard kicked in. The server itself was happy to serve.
+- **Smallest portable fix:** Studio's TanStack Start handler should redirect to `/?next=<path>` (or return a 401 HTML page) for auth-required paths when `/api/auth-session.authenticated` is false. The cleanest place is `src/server/auth-middleware.ts` — extend the request guard to also catch UI route SSR. Alternative: add a `beforeLoad` to the relevant Routes that throws `redirect('/')` when the auth-session check fails. Apply to: `/engagements`, `/engagements/$customer`, `/console/$profile/*`, and the other admin routes (the upstream Hermes Studio routes have the same gap by design — they assume client-side auth — but the fork should improve on that for our admin surfaces).
+- **Status:** FIXING — see follow-up PR.
+
+### D-V0-009 — Public widget at /w/$slug is a non-functional static card
+
+- **Phase:** V9.3 (operator review)
+- **Severity:** **important — failed user expectation on what V9.3 actually delivers**
+- **Discovered:** 2026-05-29 (operator: "should show a page with test entry for each type of widget, or a landing page that has the universal widget on it")
+- **Description:** The current `/w/cedar-ridge-hero` page renders Cedar Ridge brand colors, the greeting, and a "Start chat" button. The button is `<button onclick="alert(...)">` — a stub. There is no chat input, no streaming response, no actual routing to the declared agent (`cedarridge-consultative-primary` from the frontmatter). I declared V9.3 PASSING based on the thin criterion "loads anonymously" — which is true but misses the actual operator intent: a public visitor should be able to INTERACT with the widget per its declared mode (chat / voice / video / form) and have that route to the agent named in the frontmatter. Per Nexxus precedent (operator's intake), customers expect a real conversational entry point.
+- **Operator's two suggested interpretations (both legitimate):**
+  - (a) `/w/` (no slug) should list all widgets across all profiles with a test entry for each declared mode. Useful for QA / operator preview.
+  - (b) `/w/$slug` should be a working customer-facing landing page with the actual widget wired to the agent.
+- **Smallest portable fix:**
+  1. Add `/w/` index route listing every widget found across `~/.hermes/profiles/*/knowledge/widgets/*.md` — slug, profile, mode, agent. This becomes a test/preview surface.
+  2. For `/w/$slug` chat mode (the only mode declared today): replace the static card with a chat shell that POSTS visitor messages to a NEW public endpoint `/api/public/widget-chat` which scopes the chat session to the widget's declared agent + profile and streams responses. No auth required (per `auth: public` in manifest); session is anonymized + rate-limited.
+  3. Voice / video / form modes — stub for now, mark as future via wiki workflow page references. Declare which Nexxus equivalent each maps to.
+- **Status:** FIXING — see follow-up PR.
+
 ### D-V0-005 — Hermes gateway reports "portable" mode with missing APIs
 
 - **Phase:** V0.3
