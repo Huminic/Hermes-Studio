@@ -134,6 +134,8 @@ import { Route as ApiCrewsCrewIdRouteImport } from './routes/api/crews/$crewId'
 import { Route as ApiArtifactsArtifactIdRouteImport } from './routes/api/artifacts/$artifactId'
 import { Route as ApiAgentsAgentIdRouteImport } from './routes/api/agents/$agentId'
 import { Route as ApiCustomerWidgetsIndexRouteImport } from './routes/api/customer/widgets/index'
+import { Route as ApiCustomerCampaignsIndexRouteImport } from './routes/api/customer/campaigns/index'
+import { Route as ApiCustomerAudiencesIndexRouteImport } from './routes/api/customer/audiences/index'
 import { Route as ApiCrewsTemplatesIndexRouteImport } from './routes/api/crews/templates/index'
 import { Route as ApiTasksTaskIdMoveRouteImport } from './routes/api/tasks/$taskId.move'
 import { Route as ApiSessionsSessionKeyStatusRouteImport } from './routes/api/sessions/$sessionKey.status'
@@ -148,6 +150,7 @@ import { Route as ApiCustomerWikiSaveRouteImport } from './routes/api/customer/w
 import { Route as ApiCustomerWikiReadRouteImport } from './routes/api/customer/wiki/read'
 import { Route as ApiCustomerWikiPromoteRouteImport } from './routes/api/customer/wiki/promote'
 import { Route as ApiCustomerWidgetsSaveRouteImport } from './routes/api/customer/widgets/save'
+import { Route as ApiCustomerCampaignsTickRouteImport } from './routes/api/customer/campaigns/tick'
 import { Route as ApiCrewsTemplatesIdRouteImport } from './routes/api/crews/templates/$id'
 import { Route as ApiCrewsCrewIdWorkflowRouteImport } from './routes/api/crews/$crewId.workflow'
 import { Route as ApiCrewsCrewIdUsageRouteImport } from './routes/api/crews/$crewId.usage'
@@ -786,6 +789,18 @@ const ApiCustomerWidgetsIndexRoute = ApiCustomerWidgetsIndexRouteImport.update({
   path: '/api/customer/widgets/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerCampaignsIndexRoute =
+  ApiCustomerCampaignsIndexRouteImport.update({
+    id: '/api/customer/campaigns/',
+    path: '/api/customer/campaigns/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiCustomerAudiencesIndexRoute =
+  ApiCustomerAudiencesIndexRouteImport.update({
+    id: '/api/customer/audiences/',
+    path: '/api/customer/audiences/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCrewsTemplatesIndexRoute = ApiCrewsTemplatesIndexRouteImport.update({
   id: '/api/crews/templates/',
   path: '/api/crews/templates/',
@@ -862,6 +877,12 @@ const ApiCustomerWidgetsSaveRoute = ApiCustomerWidgetsSaveRouteImport.update({
   path: '/api/customer/widgets/save',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerCampaignsTickRoute =
+  ApiCustomerCampaignsTickRouteImport.update({
+    id: '/api/customer/campaigns/tick',
+    path: '/api/customer/campaigns/tick',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCrewsTemplatesIdRoute = ApiCrewsTemplatesIdRouteImport.update({
   id: '/api/crews/templates/$id',
   path: '/api/crews/templates/$id',
@@ -1063,6 +1084,7 @@ export interface FileRoutesByFullPath {
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
+  '/api/customer/campaigns/tick': typeof ApiCustomerCampaignsTickRoute
   '/api/customer/widgets/save': typeof ApiCustomerWidgetsSaveRoute
   '/api/customer/wiki/promote': typeof ApiCustomerWikiPromoteRoute
   '/api/customer/wiki/read': typeof ApiCustomerWikiReadRoute
@@ -1077,6 +1099,8 @@ export interface FileRoutesByFullPath {
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
   '/api/crews/templates/': typeof ApiCrewsTemplatesIndexRoute
+  '/api/customer/audiences/': typeof ApiCustomerAudiencesIndexRoute
+  '/api/customer/campaigns/': typeof ApiCustomerCampaignsIndexRoute
   '/api/customer/widgets/': typeof ApiCustomerWidgetsIndexRoute
   '/api/messaging/threads/$threadId/reply': typeof ApiMessagingThreadsThreadIdReplyRoute
   '/api/messaging/threads/$threadId/subscriptions': typeof ApiMessagingThreadsThreadIdSubscriptionsRoute
@@ -1215,6 +1239,7 @@ export interface FileRoutesByTo {
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
+  '/api/customer/campaigns/tick': typeof ApiCustomerCampaignsTickRoute
   '/api/customer/widgets/save': typeof ApiCustomerWidgetsSaveRoute
   '/api/customer/wiki/promote': typeof ApiCustomerWikiPromoteRoute
   '/api/customer/wiki/read': typeof ApiCustomerWikiReadRoute
@@ -1229,6 +1254,8 @@ export interface FileRoutesByTo {
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
   '/api/crews/templates': typeof ApiCrewsTemplatesIndexRoute
+  '/api/customer/audiences': typeof ApiCustomerAudiencesIndexRoute
+  '/api/customer/campaigns': typeof ApiCustomerCampaignsIndexRoute
   '/api/customer/widgets': typeof ApiCustomerWidgetsIndexRoute
   '/api/messaging/threads/$threadId/reply': typeof ApiMessagingThreadsThreadIdReplyRoute
   '/api/messaging/threads/$threadId/subscriptions': typeof ApiMessagingThreadsThreadIdSubscriptionsRoute
@@ -1369,6 +1396,7 @@ export interface FileRoutesById {
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
+  '/api/customer/campaigns/tick': typeof ApiCustomerCampaignsTickRoute
   '/api/customer/widgets/save': typeof ApiCustomerWidgetsSaveRoute
   '/api/customer/wiki/promote': typeof ApiCustomerWikiPromoteRoute
   '/api/customer/wiki/read': typeof ApiCustomerWikiReadRoute
@@ -1383,6 +1411,8 @@ export interface FileRoutesById {
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
   '/api/crews/templates/': typeof ApiCrewsTemplatesIndexRoute
+  '/api/customer/audiences/': typeof ApiCustomerAudiencesIndexRoute
+  '/api/customer/campaigns/': typeof ApiCustomerCampaignsIndexRoute
   '/api/customer/widgets/': typeof ApiCustomerWidgetsIndexRoute
   '/api/messaging/threads/$threadId/reply': typeof ApiMessagingThreadsThreadIdReplyRoute
   '/api/messaging/threads/$threadId/subscriptions': typeof ApiMessagingThreadsThreadIdSubscriptionsRoute
@@ -1524,6 +1554,7 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
+    | '/api/customer/campaigns/tick'
     | '/api/customer/widgets/save'
     | '/api/customer/wiki/promote'
     | '/api/customer/wiki/read'
@@ -1538,6 +1569,8 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
     | '/api/crews/templates/'
+    | '/api/customer/audiences/'
+    | '/api/customer/campaigns/'
     | '/api/customer/widgets/'
     | '/api/messaging/threads/$threadId/reply'
     | '/api/messaging/threads/$threadId/subscriptions'
@@ -1676,6 +1709,7 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
+    | '/api/customer/campaigns/tick'
     | '/api/customer/widgets/save'
     | '/api/customer/wiki/promote'
     | '/api/customer/wiki/read'
@@ -1690,6 +1724,8 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
     | '/api/crews/templates'
+    | '/api/customer/audiences'
+    | '/api/customer/campaigns'
     | '/api/customer/widgets'
     | '/api/messaging/threads/$threadId/reply'
     | '/api/messaging/threads/$threadId/subscriptions'
@@ -1829,6 +1865,7 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
+    | '/api/customer/campaigns/tick'
     | '/api/customer/widgets/save'
     | '/api/customer/wiki/promote'
     | '/api/customer/wiki/read'
@@ -1843,6 +1880,8 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
     | '/api/crews/templates/'
+    | '/api/customer/audiences/'
+    | '/api/customer/campaigns/'
     | '/api/customer/widgets/'
     | '/api/messaging/threads/$threadId/reply'
     | '/api/messaging/threads/$threadId/subscriptions'
@@ -1961,6 +2000,7 @@ export interface RootRouteChildren {
   ApiApprovalsApprovalIdApproveRoute: typeof ApiApprovalsApprovalIdApproveRoute
   ApiApprovalsApprovalIdDenyRoute: typeof ApiApprovalsApprovalIdDenyRoute
   ApiCrewsTemplatesIdRoute: typeof ApiCrewsTemplatesIdRoute
+  ApiCustomerCampaignsTickRoute: typeof ApiCustomerCampaignsTickRoute
   ApiCustomerWidgetsSaveRoute: typeof ApiCustomerWidgetsSaveRoute
   ApiCustomerWikiPromoteRoute: typeof ApiCustomerWikiPromoteRoute
   ApiCustomerWikiReadRoute: typeof ApiCustomerWikiReadRoute
@@ -1970,6 +2010,8 @@ export interface RootRouteChildren {
   ApiPublicWidgetJsRoute: typeof ApiPublicWidgetJsRoute
   ApiPublicWidgetsWidgetKeyRoute: typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
   ApiCrewsTemplatesIndexRoute: typeof ApiCrewsTemplatesIndexRoute
+  ApiCustomerAudiencesIndexRoute: typeof ApiCustomerAudiencesIndexRoute
+  ApiCustomerCampaignsIndexRoute: typeof ApiCustomerCampaignsIndexRoute
   ApiCustomerWidgetsIndexRoute: typeof ApiCustomerWidgetsIndexRoute
 }
 
@@ -2850,6 +2892,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerWidgetsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/campaigns/': {
+      id: '/api/customer/campaigns/'
+      path: '/api/customer/campaigns'
+      fullPath: '/api/customer/campaigns/'
+      preLoaderRoute: typeof ApiCustomerCampaignsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/customer/audiences/': {
+      id: '/api/customer/audiences/'
+      path: '/api/customer/audiences'
+      fullPath: '/api/customer/audiences/'
+      preLoaderRoute: typeof ApiCustomerAudiencesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/crews/templates/': {
       id: '/api/crews/templates/'
       path: '/api/crews/templates'
@@ -2946,6 +3002,13 @@ declare module '@tanstack/react-router' {
       path: '/api/customer/widgets/save'
       fullPath: '/api/customer/widgets/save'
       preLoaderRoute: typeof ApiCustomerWidgetsSaveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/customer/campaigns/tick': {
+      id: '/api/customer/campaigns/tick'
+      path: '/api/customer/campaigns/tick'
+      fullPath: '/api/customer/campaigns/tick'
+      preLoaderRoute: typeof ApiCustomerCampaignsTickRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/crews/templates/$id': {
@@ -3390,6 +3453,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiApprovalsApprovalIdApproveRoute: ApiApprovalsApprovalIdApproveRoute,
   ApiApprovalsApprovalIdDenyRoute: ApiApprovalsApprovalIdDenyRoute,
   ApiCrewsTemplatesIdRoute: ApiCrewsTemplatesIdRoute,
+  ApiCustomerCampaignsTickRoute: ApiCustomerCampaignsTickRoute,
   ApiCustomerWidgetsSaveRoute: ApiCustomerWidgetsSaveRoute,
   ApiCustomerWikiPromoteRoute: ApiCustomerWikiPromoteRoute,
   ApiCustomerWikiReadRoute: ApiCustomerWikiReadRoute,
@@ -3399,6 +3463,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWidgetJsRoute: ApiPublicWidgetJsRoute,
   ApiPublicWidgetsWidgetKeyRoute: ApiPublicWidgetsWidgetKeyRouteWithChildren,
   ApiCrewsTemplatesIndexRoute: ApiCrewsTemplatesIndexRoute,
+  ApiCustomerAudiencesIndexRoute: ApiCustomerAudiencesIndexRoute,
+  ApiCustomerCampaignsIndexRoute: ApiCustomerCampaignsIndexRoute,
   ApiCustomerWidgetsIndexRoute: ApiCustomerWidgetsIndexRoute,
 }
 export const routeTree = rootRouteImport

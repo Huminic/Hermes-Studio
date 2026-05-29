@@ -111,8 +111,10 @@ describe('console-renderers registry', () => {
     const { container } = render(
       <Renderer profile="huminic" config={config} params={{}} />,
     )
-    expect(container.textContent).toMatch(/Sales/)
-    expect(container.textContent).toMatch(/Service/)
+    // C.7 segment switcher labels (capitalize via CSS; text content
+    // matches the lowercase source). Both terms must appear.
+    expect(container.textContent).toMatch(/sales/i)
+    expect(container.textContent).toMatch(/service/i)
   })
 
   it('campaigns renderer surfaces the Service-only decision', () => {

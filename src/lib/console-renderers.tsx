@@ -21,6 +21,8 @@ import type { StudioConfig } from './studio-config'
 import { CustomerChatRenderer } from '../components/customer-console/chat-renderer'
 import { CustomerKnowledgeRenderer } from '../components/customer-console/knowledge-renderer'
 import { CustomerToolsWidgetRenderer } from '../components/customer-console/tools-widget-renderer'
+import { CustomerCommsRenderer } from '../components/customer-console/comms-renderer'
+import { CustomerCampaignsRenderer } from '../components/customer-console/campaigns-renderer'
 
 export type ConsoleRendererProps = {
   profile: string
@@ -120,58 +122,15 @@ function DataRenderer(props: ConsoleRendererProps) {
 }
 
 function CommsRenderer(props: ConsoleRendererProps) {
-  // Comms page hosts Sales/Service segment switcher. C.7 ships the real
-  // threaded inbox; C.0 shows the structure.
-  const [segment, setSegment] = useState<'sales' | 'service'>('sales')
-  return (
-    <div className="flex flex-col gap-3">
-      <nav className="flex gap-2 text-xs">
-        {(['sales', 'service'] as const).map((s) => (
-          <button
-            key={s}
-            type="button"
-            className={
-              'rounded px-2 py-1 ' +
-              (segment === s
-                ? 'bg-emerald-500/20 font-semibold'
-                : 'opacity-60 hover:opacity-100')
-            }
-            onClick={() => setSegment(s)}
-          >
-            {s === 'sales' ? 'Sales' : 'Service'}
-          </button>
-        ))}
-      </nav>
-      <StubFrame
-        title={`customer-console.comms · ${props.profile} · ${segment}`}
-      >
-        <div className="text-xs opacity-70">
-          Phase C.5–C.7 — unified inbox over chat/email/SMS/phone/video, domain
-          filter = {segment}. Threaded merge across channels per contact.
-          Agent-autonomous reply (AC.5.8) gated by autonomous_reply_defaults +
-          per-thread rules.
-        </div>
-      </StubFrame>
-    </div>
-  )
+  return <CustomerCommsRenderer profile={props.profile} config={props.config} />
 }
 
 function CampaignsRenderer(props: ConsoleRendererProps) {
   return (
-    <StubFrame title={`customer-console.campaigns · ${props.profile}`}>
-      <div className="text-xs opacity-70">
-        Phase C.8 — Service campaigns: Service Recall / Service Due /
-        Follow-up Lead templates seeded under
-        <code className="px-1 opacity-90">
-          ~/.hermes/profiles/{props.profile}/campaigns/templates/
-        </code>
-        . Audiences + scheduled-send worker. Replies route back into Comms.
-      </div>
-      <div className="mt-2 text-xs opacity-60">
-        Per operator decision 2026-05-29: Service-only sub-page (no Sales
-        campaigns symmetry).
-      </div>
-    </StubFrame>
+    <CustomerCampaignsRenderer
+      profile={props.profile}
+      config={props.config}
+    />
   )
 }
 
