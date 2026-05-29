@@ -1,9 +1,34 @@
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { findPublicWidget, readAgentSoul } from '../../../server/public-widgets'
 
 const HERMES_URL = process.env.HERMES_API_URL || 'http://hermes-agent:8642'
-const HERMES_KEY = process.env.API_SERVER_KEY || process.env.HERMES_API_KEY
+
+function readHermesKey(): string | null {
+  const fromEnv = process.env.API_SERVER_KEY || process.env.HERMES_API_KEY
+  if (fromEnv) return fromEnv
+  // Fallback: read from the agent profile .env (volume-mounted at /root/.hermes)
+  try {
+    const envPath = path.join(os.homedir(), '.hermes', '.env')
+    const raw = fs.readFileSync(envPath, 'utf8')
+    for (const line of raw.split('\n')) {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith('#')) continue
+      const eq = trimmed.indexOf('=')
+      if (eq === -1) continue
+      const k = trimmed.slice(0, eq).trim()
+      if (k === 'API_SERVER_KEY') return trimmed.slice(eq + 1).trim()
+    }
+  } catch {
+    // missing or unreadable — fall through
+  }
+  return null
+}
+
+const HERMES_KEY = readHermesKey()
 const MODEL = process.env.HERMES_MODEL || 'gpt-4.1'
 
 const buckets = new Map<string, { count: number; resetAt: number }>()
