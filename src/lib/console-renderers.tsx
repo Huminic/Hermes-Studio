@@ -23,6 +23,7 @@ import { CustomerKnowledgeRenderer } from '../components/customer-console/knowle
 import { CustomerToolsWidgetRenderer } from '../components/customer-console/tools-widget-renderer'
 import { CustomerCommsRenderer } from '../components/customer-console/comms-renderer'
 import { CustomerCampaignsRenderer } from '../components/customer-console/campaigns-renderer'
+import { ConsultPanel } from '../components/customer-console/consult-panel'
 
 export type ConsoleRendererProps = {
   profile: string
@@ -65,25 +66,23 @@ function KnowledgeRenderer(props: ConsoleRendererProps) {
 }
 
 function ToolsRenderer(props: ConsoleRendererProps) {
-  // Tools page hosts a sub-nav. C.4 ships the real sub-pages; for C.0 the
-  // Widget sub-page is the only one declared. Future sub-pages (e.g. MCP
-  // wiring panel, integration toggles) land here too.
-  const [sub, setSub] = useState<'widget'>('widget')
+  const consultEnabled = props.config.tools_widget.consult === true
+  type SubPage = 'widget' | 'consult'
+  const [sub, setSub] = useState<SubPage>('widget')
   return (
     <div className="flex flex-col gap-3">
       <nav className="flex gap-2 text-xs">
-        <button
-          type="button"
-          className={
-            'rounded px-2 py-1 ' +
-            (sub === 'widget'
-              ? 'bg-emerald-500/20 font-semibold'
-              : 'opacity-60 hover:opacity-100')
-          }
-          onClick={() => setSub('widget')}
-        >
+        <SubButton active={sub === 'widget'} onClick={() => setSub('widget')}>
           Widget
-        </button>
+        </SubButton>
+        {consultEnabled && (
+          <SubButton
+            active={sub === 'consult'}
+            onClick={() => setSub('consult')}
+          >
+            Consult
+          </SubButton>
+        )}
       </nav>
       {sub === 'widget' && (
         <ToolsWidgetRenderer
@@ -92,7 +91,35 @@ function ToolsRenderer(props: ConsoleRendererProps) {
           params={props.params}
         />
       )}
+      {sub === 'consult' && consultEnabled && (
+        <ConsultPanel profile={props.profile} config={props.config} />
+      )}
     </div>
+  )
+}
+
+function SubButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      className={
+        'rounded px-2 py-1 ' +
+        (active
+          ? 'bg-emerald-500/20 font-semibold'
+          : 'opacity-60 hover:opacity-100')
+      }
+      onClick={onClick}
+    >
+      {children}
+    </button>
   )
 }
 

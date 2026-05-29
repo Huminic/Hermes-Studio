@@ -56,6 +56,8 @@ const ToolsWidgetSchema = z
     show_embed_snippet: z.boolean().optional().default(true),
     /** Whether the live demo iframe is visible. */
     show_live_demo: z.boolean().optional().default(true),
+    /** Whether the Consult sub-page is exposed under Tools (AC.13.1). */
+    consult: z.boolean().optional().default(false),
   })
   .optional()
   .default({})
@@ -140,7 +142,7 @@ export function defaultStudioConfig(profile: string): StudioConfig {
       campaigns: true,
     },
     agent_picker: { visible_agents: [] },
-    tools_widget: { show_embed_snippet: true, show_live_demo: true },
+    tools_widget: { show_embed_snippet: true, show_live_demo: true, consult: false },
     widgets: [],
     autonomous_reply_defaults: {
       enabled: false,
