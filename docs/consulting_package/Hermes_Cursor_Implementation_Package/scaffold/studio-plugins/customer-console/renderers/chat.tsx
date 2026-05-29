@@ -4,9 +4,16 @@
 import type { ConsoleRendererProps } from '@/lib/console-renderers'
 
 export default function ChatRenderer(props: ConsoleRendererProps) {
-  const { profile } = props
-  // Real implementation in Phase 5: opens a Studio session against the
-  // profile's primary agent (read from ~/.hermes/profiles/<profile>/config.yaml
-  // or studio.yaml) and renders the existing chat panel scoped to that session.
-  return <div>customer-console.chat for {profile}</div>
+  const { profile, config } = props
+  // Real implementation in Phase C.2:
+  // - Reads config.agent_picker.visible_agents (or all profile agents if empty)
+  // - Renders picker; on selection opens a Studio session against agent's SOUL
+  // - Loads governance/agents/<agent>/personas/chat.md if present
+  // - Conversation persists in Hermes SessionDB with channel=chat metadata
+  //   so it surfaces in the Comms inbox later
+  return (
+    <div>
+      customer-console.chat for {profile} ({config.branding.persona_name})
+    </div>
+  )
 }

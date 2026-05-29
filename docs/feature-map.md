@@ -46,19 +46,20 @@ Inventory of every user-facing surface in the Huminic Studio fork as of 2026-05-
 
 ### Plugin-declared but not yet wired in fork
 
-These are part of the customer-console plugin's manifest at `~/.hermes/studio-plugins/customer-console/plugin.yaml`. Fork has the route shells for 4 of 6 but does NOT yet have route handlers for the public widget routes nor hosted-bundle serving.
+These are part of the customer-console plugin's manifest at `~/.hermes/studio-plugins/customer-console/plugin.yaml` (v0.2.0 as of Phase C.0). The plugin now declares the 6-page IA per operator-locked decision 2026-05-29. Fork has the route shells for all 6 page routes + the public widget route; renderers are stubs that read from per-profile `studio.yaml` so navigation differs per profile.
 
-| Manifest declaration | Fork status | Gap |
+| Manifest declaration | Fork status | Gap (resolved in phase) |
 |---------------------|-------------|-----|
-| `/console/$profile/chat` (renderer customer-console.chat) | route registered, renderer is STUB | renderer needs to open Studio session against profile's primary agent |
-| `/console/$profile/dashboard` (renderer customer-console.dashboard-grid) | route registered, renderer is STUB | renderer needs to embed `web-artifact`/`live-web-artifact` outputs from `knowledge/dashboards/` |
-| `/console/$profile/widget` (renderer customer-console.widget-editor) | route registered, renderer is STUB | renderer needs CRUD over `knowledge/widgets/*.md` |
-| `/console/$profile/service` (renderer customer-console.service-kanban) | route registered, renderer is STUB | renderer needs to reuse `/tasks` board with `service-*` lane filter |
-| `/w/$slug` (renderer customer-console.widget-public, auth: public) | **route NOT registered** | needs `src/routes/w.$slug.tsx` route handler |
-| `/p/$slug` (renderer customer-console.widget-public, auth: public) | **route NOT registered** | needs `src/routes/p.$slug.tsx` route handler |
-| Right-pane slot `console-assistant` → `customer-console.assistant-pane` | mounted in console parent layout | renderer is STUB — needs to wrap `/api/sessions` against profile primary agent |
-| Hosted bundle `/customer-console/embed.js` (cors *, cache 5min) | **NOT served** | needs Vite multi-build config + server handler |
-| Hosted bundle `/customer-console/embed.css` | **NOT served** | needs same as above |
+| `/console/$profile/chat` (renderer customer-console.chat) | route registered, stub renders agent_picker config | C.2 — Studio session against picked agent's SOUL + channel persona |
+| `/console/$profile/knowledge` (renderer customer-console.knowledge) | route registered, stub shows profile-scoped knowledge path | C.3 — Monaco editor + frontmatter panel + KSG-gated Promote flow |
+| `/console/$profile/tools` (renderer customer-console.tools) | route registered, hosts Widget sub-page nav (customer-console.tools-widget) | C.4 — widget embed code, live demo iframe, customer-admin editable widget config |
+| `/console/$profile/data` (renderer customer-console.data) | route registered, stub shows federation read_scopes | C.10 — Metabase React SDK + per-profile DuckDB + signed-JWT scoping |
+| `/console/$profile/comms` (renderer customer-console.comms) | route registered, stub hosts Sales/Service segment switcher | C.7 — threaded unified inbox over messaging-hub channels |
+| `/console/$profile/campaigns` (renderer customer-console.campaigns) | route registered, stub shows Service-only sub-page | C.8 — Service Recall / Service Due / Follow-up Lead templates + scheduled-send |
+| `/w/$slug` (renderer customer-console.widget-public, auth: public) | route exists at `src/routes/w.$slug.tsx`; chat mode production-working via `/api/public/widget-chat`; voice/video/form modes are stubs | C.4 — voice (Vapi), video (Tavus), form (inbound-to-Comms) modes |
+| Right-pane slot `console-assistant` → `customer-console.assistant-pane` | mounted in console parent layout on all 6 tab routes | C.2 — wraps `/api/sessions` against profile primary agent |
+| Hosted bundle `/customer-console/embed.js` (cors *, cache 5min) | **NOT served** | C.4 — needs Vite multi-build config + server handler |
+| Hosted bundle `/customer-console/embed.css` | **NOT served** | same as above |
 
 ## API routes
 
