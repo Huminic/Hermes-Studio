@@ -36,6 +36,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as CrewsIndexRouteImport } from './routes/crews/index'
 import { Route as ChatIndexRouteImport } from './routes/chat/index'
+import { Route as WSlugRouteImport } from './routes/w.$slug'
 import { Route as SettingsProvidersRouteImport } from './routes/settings/providers'
 import { Route as SettingsMcpRouteImport } from './routes/settings/mcp'
 import { Route as EngagementsCustomerRouteImport } from './routes/engagements.$customer'
@@ -273,6 +274,11 @@ const CrewsIndexRoute = CrewsIndexRouteImport.update({
 const ChatIndexRoute = ChatIndexRouteImport.update({
   id: '/chat/',
   path: '/chat/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WSlugRoute = WSlugRouteImport.update({
+  id: '/w/$slug',
+  path: '/w/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsProvidersRoute = SettingsProvidersRouteImport.update({
@@ -871,6 +877,7 @@ export interface FileRoutesByFullPath {
   '/engagements/$customer': typeof EngagementsCustomerRoute
   '/settings/mcp': typeof SettingsMcpRoute
   '/settings/providers': typeof SettingsProvidersRoute
+  '/w/$slug': typeof WSlugRoute
   '/chat/': typeof ChatIndexRoute
   '/crews/': typeof CrewsIndexRoute
   '/settings/': typeof SettingsIndexRoute
@@ -1002,6 +1009,7 @@ export interface FileRoutesByTo {
   '/engagements/$customer': typeof EngagementsCustomerRoute
   '/settings/mcp': typeof SettingsMcpRoute
   '/settings/providers': typeof SettingsProvidersRoute
+  '/w/$slug': typeof WSlugRoute
   '/chat': typeof ChatIndexRoute
   '/crews': typeof CrewsIndexRoute
   '/settings': typeof SettingsIndexRoute
@@ -1135,6 +1143,7 @@ export interface FileRoutesById {
   '/engagements/$customer': typeof EngagementsCustomerRoute
   '/settings/mcp': typeof SettingsMcpRoute
   '/settings/providers': typeof SettingsProvidersRoute
+  '/w/$slug': typeof WSlugRoute
   '/chat/': typeof ChatIndexRoute
   '/crews/': typeof CrewsIndexRoute
   '/settings/': typeof SettingsIndexRoute
@@ -1269,6 +1278,7 @@ export interface FileRouteTypes {
     | '/engagements/$customer'
     | '/settings/mcp'
     | '/settings/providers'
+    | '/w/$slug'
     | '/chat/'
     | '/crews/'
     | '/settings/'
@@ -1400,6 +1410,7 @@ export interface FileRouteTypes {
     | '/engagements/$customer'
     | '/settings/mcp'
     | '/settings/providers'
+    | '/w/$slug'
     | '/chat'
     | '/crews'
     | '/settings'
@@ -1532,6 +1543,7 @@ export interface FileRouteTypes {
     | '/engagements/$customer'
     | '/settings/mcp'
     | '/settings/providers'
+    | '/w/$slug'
     | '/chat/'
     | '/crews/'
     | '/settings/'
@@ -1662,6 +1674,7 @@ export interface RootRouteChildren {
   ChatSessionKeyRoute: typeof ChatSessionKeyRoute
   ConsoleProfileRoute: typeof ConsoleProfileRouteWithChildren
   CrewsCrewIdRoute: typeof CrewsCrewIdRoute
+  WSlugRoute: typeof WSlugRoute
   ChatIndexRoute: typeof ChatIndexRoute
   CrewsIndexRoute: typeof CrewsIndexRoute
   ApiAgentsAgentIdRoute: typeof ApiAgentsAgentIdRoute
@@ -1890,6 +1903,13 @@ declare module '@tanstack/react-router' {
       path: '/chat'
       fullPath: '/chat/'
       preLoaderRoute: typeof ChatIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/w/$slug': {
+      id: '/w/$slug'
+      path: '/w/$slug'
+      fullPath: '/w/$slug'
+      preLoaderRoute: typeof WSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings/providers': {
@@ -2885,6 +2905,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChatSessionKeyRoute: ChatSessionKeyRoute,
   ConsoleProfileRoute: ConsoleProfileRouteWithChildren,
   CrewsCrewIdRoute: CrewsCrewIdRoute,
+  WSlugRoute: WSlugRoute,
   ChatIndexRoute: ChatIndexRoute,
   CrewsIndexRoute: CrewsIndexRoute,
   ApiAgentsAgentIdRoute: ApiAgentsAgentIdRoute,
