@@ -20,6 +20,7 @@ import { useState } from 'react'
 import type { StudioConfig } from './studio-config'
 import { CustomerChatRenderer } from '../components/customer-console/chat-renderer'
 import { CustomerKnowledgeRenderer } from '../components/customer-console/knowledge-renderer'
+import { CustomerToolsWidgetRenderer } from '../components/customer-console/tools-widget-renderer'
 
 export type ConsoleRendererProps = {
   profile: string
@@ -94,38 +95,11 @@ function ToolsRenderer(props: ConsoleRendererProps) {
 }
 
 function ToolsWidgetRenderer(props: ConsoleRendererProps) {
-  const widgets = props.config.widgets
-  const settings = props.config.tools_widget
   return (
-    <StubFrame title={`customer-console.tools-widget · ${props.profile}`}>
-      <div className="text-xs opacity-70">
-        Phase C.4 — widget embed code, live demo (iframe of /w/$slug), and
-        customer-admin editable widget config.
-      </div>
-      <div className="mt-2 text-xs opacity-60">
-        Embed snippet: {settings.show_embed_snippet ? 'on' : 'off'} · Live demo:{' '}
-        {settings.show_live_demo ? 'on' : 'off'}
-      </div>
-      {widgets.length === 0 ? (
-        <div className="mt-2 text-xs opacity-50">
-          No widgets declared in studio.yaml for this profile.
-        </div>
-      ) : (
-        <ul className="mt-2 flex flex-col gap-1 text-xs">
-          {widgets.map((w) => (
-            <li
-              key={w.slug}
-              className="flex items-baseline justify-between gap-2 border-b border-white/10 pb-1"
-            >
-              <span className="font-medium">{w.slug}</span>
-              <span className="opacity-60">
-                {w.mode} · agent: {w.agent}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </StubFrame>
+    <CustomerToolsWidgetRenderer
+      profile={props.profile}
+      config={props.config}
+    />
   )
 }
 
