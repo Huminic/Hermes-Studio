@@ -18,6 +18,7 @@
 
 import { useState } from 'react'
 import type { StudioConfig } from './studio-config'
+import { CustomerChatRenderer } from '../components/customer-console/chat-renderer'
 
 export type ConsoleRendererProps = {
   profile: string
@@ -47,32 +48,7 @@ function StubFrame({
 }
 
 function ChatRenderer(props: ConsoleRendererProps) {
-  const picker = props.config.agent_picker
-  return (
-    <StubFrame title={`customer-console.chat · ${props.profile}`}>
-      <div className="text-xs opacity-70">
-        Phase C.2 — agent picker + Studio chat session against the selected
-        agent's SOUL + channel persona (chat).
-      </div>
-      <div className="mt-2 text-xs">
-        <div>
-          Persona:{' '}
-          <span className="font-medium">
-            {props.config.branding.persona_name}
-          </span>
-        </div>
-        <div className="opacity-60">
-          Visible agents:{' '}
-          {picker.visible_agents.length === 0
-            ? '(all profile agents)'
-            : picker.visible_agents.join(', ')}
-        </div>
-        {picker.default_agent && (
-          <div className="opacity-60">Default: {picker.default_agent}</div>
-        )}
-      </div>
-    </StubFrame>
-  )
+  return <CustomerChatRenderer profile={props.profile} config={props.config} />
 }
 
 function KnowledgeRenderer(props: ConsoleRendererProps) {

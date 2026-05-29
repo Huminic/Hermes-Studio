@@ -110,6 +110,9 @@ import { Route as ApiProfilesCreateRouteImport } from './routes/api/profiles/cre
 import { Route as ApiProfilesActivateRouteImport } from './routes/api/profiles/activate'
 import { Route as ApiOauthPollTokenRouteImport } from './routes/api/oauth.poll-token'
 import { Route as ApiOauthDeviceCodeRouteImport } from './routes/api/oauth.device-code'
+import { Route as ApiMessagingThreadsRouteImport } from './routes/api/messaging/threads'
+import { Route as ApiMessagingStreamRouteImport } from './routes/api/messaging/stream'
+import { Route as ApiMessagingContactsRouteImport } from './routes/api/messaging/contacts'
 import { Route as ApiMemoryWriteRouteImport } from './routes/api/memory/write'
 import { Route as ApiMemorySearchRouteImport } from './routes/api/memory/search'
 import { Route as ApiMemoryReadRouteImport } from './routes/api/memory/read'
@@ -123,6 +126,8 @@ import { Route as ApiKnowledgeGraphRouteImport } from './routes/api/knowledge/gr
 import { Route as ApiHermesProxySplatRouteImport } from './routes/api/hermes-proxy/$'
 import { Route as ApiHermesJobsJobIdRouteImport } from './routes/api/hermes-jobs.$jobId'
 import { Route as ApiEventsReplayRouteImport } from './routes/api/events/replay'
+import { Route as ApiCustomerChatRouteImport } from './routes/api/customer/chat'
+import { Route as ApiCustomerAgentsRouteImport } from './routes/api/customer/agents'
 import { Route as ApiCrewsCrewIdRouteImport } from './routes/api/crews/$crewId'
 import { Route as ApiArtifactsArtifactIdRouteImport } from './routes/api/artifacts/$artifactId'
 import { Route as ApiAgentsAgentIdRouteImport } from './routes/api/agents/$agentId'
@@ -133,6 +138,7 @@ import { Route as ApiSessionsSessionKeyActiveRunRouteImport } from './routes/api
 import { Route as ApiPublicWidgetsWidgetKeyRouteImport } from './routes/api/public/widgets/$widgetKey'
 import { Route as ApiPublicWidgetJsRouteImport } from './routes/api/public/widget.js'
 import { Route as ApiPublicArtifactsPublicIdRouteImport } from './routes/api/public/artifacts/$publicId'
+import { Route as ApiMessagingThreadsThreadIdRouteImport } from './routes/api/messaging/threads.$threadId'
 import { Route as ApiHermesRunsRunIdEventsRouteImport } from './routes/api/hermes-runs.$runId.events'
 import { Route as ApiCrewsTemplatesIdRouteImport } from './routes/api/crews/templates/$id'
 import { Route as ApiCrewsCrewIdWorkflowRouteImport } from './routes/api/crews/$crewId.workflow'
@@ -143,6 +149,7 @@ import { Route as ApiArtifactsArtifactIdSendRouteImport } from './routes/api/art
 import { Route as ApiApprovalsApprovalIdDenyRouteImport } from './routes/api/approvals.$approvalId.deny'
 import { Route as ApiApprovalsApprovalIdApproveRouteImport } from './routes/api/approvals.$approvalId.approve'
 import { Route as ApiPublicWidgetsWidgetKeySessionsRouteImport } from './routes/api/public/widgets/$widgetKey/sessions'
+import { Route as ApiMessagingThreadsThreadIdReplyRouteImport } from './routes/api/messaging/threads.$threadId.reply'
 import { Route as ApiPublicArtifactsPublicIdDownloadFilenameRouteImport } from './routes/api/public/artifacts/$publicId/download/$filename'
 
 const WidgetsRoute = WidgetsRouteImport.update({
@@ -650,6 +657,21 @@ const ApiOauthDeviceCodeRoute = ApiOauthDeviceCodeRouteImport.update({
   path: '/api/oauth/device-code',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMessagingThreadsRoute = ApiMessagingThreadsRouteImport.update({
+  id: '/api/messaging/threads',
+  path: '/api/messaging/threads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMessagingStreamRoute = ApiMessagingStreamRouteImport.update({
+  id: '/api/messaging/stream',
+  path: '/api/messaging/stream',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMessagingContactsRoute = ApiMessagingContactsRouteImport.update({
+  id: '/api/messaging/contacts',
+  path: '/api/messaging/contacts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiMemoryWriteRoute = ApiMemoryWriteRouteImport.update({
   id: '/write',
   path: '/write',
@@ -715,6 +737,16 @@ const ApiEventsReplayRoute = ApiEventsReplayRouteImport.update({
   path: '/replay',
   getParentRoute: () => ApiEventsRoute,
 } as any)
+const ApiCustomerChatRoute = ApiCustomerChatRouteImport.update({
+  id: '/api/customer/chat',
+  path: '/api/customer/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCustomerAgentsRoute = ApiCustomerAgentsRouteImport.update({
+  id: '/api/customer/agents',
+  path: '/api/customer/agents',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCrewsCrewIdRoute = ApiCrewsCrewIdRouteImport.update({
   id: '/api/crews/$crewId',
   path: '/api/crews/$crewId',
@@ -768,6 +800,12 @@ const ApiPublicArtifactsPublicIdRoute =
     id: '/api/public/artifacts/$publicId',
     path: '/api/public/artifacts/$publicId',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiMessagingThreadsThreadIdRoute =
+  ApiMessagingThreadsThreadIdRouteImport.update({
+    id: '/$threadId',
+    path: '/$threadId',
+    getParentRoute: () => ApiMessagingThreadsRoute,
   } as any)
 const ApiHermesRunsRunIdEventsRoute =
   ApiHermesRunsRunIdEventsRouteImport.update({
@@ -823,6 +861,12 @@ const ApiPublicWidgetsWidgetKeySessionsRoute =
     id: '/sessions',
     path: '/sessions',
     getParentRoute: () => ApiPublicWidgetsWidgetKeyRoute,
+  } as any)
+const ApiMessagingThreadsThreadIdReplyRoute =
+  ApiMessagingThreadsThreadIdReplyRouteImport.update({
+    id: '/reply',
+    path: '/reply',
+    getParentRoute: () => ApiMessagingThreadsThreadIdRoute,
   } as any)
 const ApiPublicArtifactsPublicIdDownloadFilenameRoute =
   ApiPublicArtifactsPublicIdDownloadFilenameRouteImport.update({
@@ -910,6 +954,8 @@ export interface FileRoutesByFullPath {
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
+  '/api/customer/agents': typeof ApiCustomerAgentsRoute
+  '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
   '/api/hermes-proxy/$': typeof ApiHermesProxySplatRoute
@@ -923,6 +969,9 @@ export interface FileRoutesByFullPath {
   '/api/memory/read': typeof ApiMemoryReadRoute
   '/api/memory/search': typeof ApiMemorySearchRoute
   '/api/memory/write': typeof ApiMemoryWriteRoute
+  '/api/messaging/contacts': typeof ApiMessagingContactsRoute
+  '/api/messaging/stream': typeof ApiMessagingStreamRoute
+  '/api/messaging/threads': typeof ApiMessagingThreadsRouteWithChildren
   '/api/oauth/device-code': typeof ApiOauthDeviceCodeRoute
   '/api/oauth/poll-token': typeof ApiOauthPollTokenRoute
   '/api/profiles/activate': typeof ApiProfilesActivateRoute
@@ -958,6 +1007,7 @@ export interface FileRoutesByFullPath {
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
   '/api/hermes-runs/$runId/events': typeof ApiHermesRunsRunIdEventsRoute
+  '/api/messaging/threads/$threadId': typeof ApiMessagingThreadsThreadIdRouteWithChildren
   '/api/public/artifacts/$publicId': typeof ApiPublicArtifactsPublicIdRouteWithChildren
   '/api/public/widget/js': typeof ApiPublicWidgetJsRoute
   '/api/public/widgets/$widgetKey': typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
@@ -965,6 +1015,7 @@ export interface FileRoutesByFullPath {
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
   '/api/crews/templates/': typeof ApiCrewsTemplatesIndexRoute
+  '/api/messaging/threads/$threadId/reply': typeof ApiMessagingThreadsThreadIdReplyRoute
   '/api/public/widgets/$widgetKey/sessions': typeof ApiPublicWidgetsWidgetKeySessionsRoute
   '/api/public/artifacts/$publicId/download/$filename': typeof ApiPublicArtifactsPublicIdDownloadFilenameRoute
 }
@@ -1046,6 +1097,8 @@ export interface FileRoutesByTo {
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
+  '/api/customer/agents': typeof ApiCustomerAgentsRoute
+  '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
   '/api/hermes-proxy/$': typeof ApiHermesProxySplatRoute
@@ -1059,6 +1112,9 @@ export interface FileRoutesByTo {
   '/api/memory/read': typeof ApiMemoryReadRoute
   '/api/memory/search': typeof ApiMemorySearchRoute
   '/api/memory/write': typeof ApiMemoryWriteRoute
+  '/api/messaging/contacts': typeof ApiMessagingContactsRoute
+  '/api/messaging/stream': typeof ApiMessagingStreamRoute
+  '/api/messaging/threads': typeof ApiMessagingThreadsRouteWithChildren
   '/api/oauth/device-code': typeof ApiOauthDeviceCodeRoute
   '/api/oauth/poll-token': typeof ApiOauthPollTokenRoute
   '/api/profiles/activate': typeof ApiProfilesActivateRoute
@@ -1094,6 +1150,7 @@ export interface FileRoutesByTo {
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
   '/api/hermes-runs/$runId/events': typeof ApiHermesRunsRunIdEventsRoute
+  '/api/messaging/threads/$threadId': typeof ApiMessagingThreadsThreadIdRouteWithChildren
   '/api/public/artifacts/$publicId': typeof ApiPublicArtifactsPublicIdRouteWithChildren
   '/api/public/widget/js': typeof ApiPublicWidgetJsRoute
   '/api/public/widgets/$widgetKey': typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
@@ -1101,6 +1158,7 @@ export interface FileRoutesByTo {
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
   '/api/crews/templates': typeof ApiCrewsTemplatesIndexRoute
+  '/api/messaging/threads/$threadId/reply': typeof ApiMessagingThreadsThreadIdReplyRoute
   '/api/public/widgets/$widgetKey/sessions': typeof ApiPublicWidgetsWidgetKeySessionsRoute
   '/api/public/artifacts/$publicId/download/$filename': typeof ApiPublicArtifactsPublicIdDownloadFilenameRoute
 }
@@ -1184,6 +1242,8 @@ export interface FileRoutesById {
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
+  '/api/customer/agents': typeof ApiCustomerAgentsRoute
+  '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
   '/api/hermes-proxy/$': typeof ApiHermesProxySplatRoute
@@ -1197,6 +1257,9 @@ export interface FileRoutesById {
   '/api/memory/read': typeof ApiMemoryReadRoute
   '/api/memory/search': typeof ApiMemorySearchRoute
   '/api/memory/write': typeof ApiMemoryWriteRoute
+  '/api/messaging/contacts': typeof ApiMessagingContactsRoute
+  '/api/messaging/stream': typeof ApiMessagingStreamRoute
+  '/api/messaging/threads': typeof ApiMessagingThreadsRouteWithChildren
   '/api/oauth/device-code': typeof ApiOauthDeviceCodeRoute
   '/api/oauth/poll-token': typeof ApiOauthPollTokenRoute
   '/api/profiles/activate': typeof ApiProfilesActivateRoute
@@ -1232,6 +1295,7 @@ export interface FileRoutesById {
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
   '/api/hermes-runs/$runId/events': typeof ApiHermesRunsRunIdEventsRoute
+  '/api/messaging/threads/$threadId': typeof ApiMessagingThreadsThreadIdRouteWithChildren
   '/api/public/artifacts/$publicId': typeof ApiPublicArtifactsPublicIdRouteWithChildren
   '/api/public/widget/js': typeof ApiPublicWidgetJsRoute
   '/api/public/widgets/$widgetKey': typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
@@ -1239,6 +1303,7 @@ export interface FileRoutesById {
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
   '/api/crews/templates/': typeof ApiCrewsTemplatesIndexRoute
+  '/api/messaging/threads/$threadId/reply': typeof ApiMessagingThreadsThreadIdReplyRoute
   '/api/public/widgets/$widgetKey/sessions': typeof ApiPublicWidgetsWidgetKeySessionsRoute
   '/api/public/artifacts/$publicId/download/$filename': typeof ApiPublicArtifactsPublicIdDownloadFilenameRoute
 }
@@ -1323,6 +1388,8 @@ export interface FileRouteTypes {
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
     | '/api/crews/$crewId'
+    | '/api/customer/agents'
+    | '/api/customer/chat'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
     | '/api/hermes-proxy/$'
@@ -1336,6 +1403,9 @@ export interface FileRouteTypes {
     | '/api/memory/read'
     | '/api/memory/search'
     | '/api/memory/write'
+    | '/api/messaging/contacts'
+    | '/api/messaging/stream'
+    | '/api/messaging/threads'
     | '/api/oauth/device-code'
     | '/api/oauth/poll-token'
     | '/api/profiles/activate'
@@ -1371,6 +1441,7 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
     | '/api/hermes-runs/$runId/events'
+    | '/api/messaging/threads/$threadId'
     | '/api/public/artifacts/$publicId'
     | '/api/public/widget/js'
     | '/api/public/widgets/$widgetKey'
@@ -1378,6 +1449,7 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
     | '/api/crews/templates/'
+    | '/api/messaging/threads/$threadId/reply'
     | '/api/public/widgets/$widgetKey/sessions'
     | '/api/public/artifacts/$publicId/download/$filename'
   fileRoutesByTo: FileRoutesByTo
@@ -1459,6 +1531,8 @@ export interface FileRouteTypes {
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
     | '/api/crews/$crewId'
+    | '/api/customer/agents'
+    | '/api/customer/chat'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
     | '/api/hermes-proxy/$'
@@ -1472,6 +1546,9 @@ export interface FileRouteTypes {
     | '/api/memory/read'
     | '/api/memory/search'
     | '/api/memory/write'
+    | '/api/messaging/contacts'
+    | '/api/messaging/stream'
+    | '/api/messaging/threads'
     | '/api/oauth/device-code'
     | '/api/oauth/poll-token'
     | '/api/profiles/activate'
@@ -1507,6 +1584,7 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
     | '/api/hermes-runs/$runId/events'
+    | '/api/messaging/threads/$threadId'
     | '/api/public/artifacts/$publicId'
     | '/api/public/widget/js'
     | '/api/public/widgets/$widgetKey'
@@ -1514,6 +1592,7 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
     | '/api/crews/templates'
+    | '/api/messaging/threads/$threadId/reply'
     | '/api/public/widgets/$widgetKey/sessions'
     | '/api/public/artifacts/$publicId/download/$filename'
   id:
@@ -1596,6 +1675,8 @@ export interface FileRouteTypes {
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
     | '/api/crews/$crewId'
+    | '/api/customer/agents'
+    | '/api/customer/chat'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
     | '/api/hermes-proxy/$'
@@ -1609,6 +1690,9 @@ export interface FileRouteTypes {
     | '/api/memory/read'
     | '/api/memory/search'
     | '/api/memory/write'
+    | '/api/messaging/contacts'
+    | '/api/messaging/stream'
+    | '/api/messaging/threads'
     | '/api/oauth/device-code'
     | '/api/oauth/poll-token'
     | '/api/profiles/activate'
@@ -1644,6 +1728,7 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
     | '/api/hermes-runs/$runId/events'
+    | '/api/messaging/threads/$threadId'
     | '/api/public/artifacts/$publicId'
     | '/api/public/widget/js'
     | '/api/public/widgets/$widgetKey'
@@ -1651,6 +1736,7 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
     | '/api/crews/templates/'
+    | '/api/messaging/threads/$threadId/reply'
     | '/api/public/widgets/$widgetKey/sessions'
     | '/api/public/artifacts/$publicId/download/$filename'
   fileRoutesById: FileRoutesById
@@ -1730,6 +1816,8 @@ export interface RootRouteChildren {
   ApiAgentsAgentIdRoute: typeof ApiAgentsAgentIdRoute
   ApiArtifactsArtifactIdRoute: typeof ApiArtifactsArtifactIdRouteWithChildren
   ApiCrewsCrewIdRoute: typeof ApiCrewsCrewIdRouteWithChildren
+  ApiCustomerAgentsRoute: typeof ApiCustomerAgentsRoute
+  ApiCustomerChatRoute: typeof ApiCustomerChatRoute
   ApiHermesProxySplatRoute: typeof ApiHermesProxySplatRoute
   ApiKnowledgeGraphRoute: typeof ApiKnowledgeGraphRoute
   ApiKnowledgeListRoute: typeof ApiKnowledgeListRoute
@@ -1737,6 +1825,9 @@ export interface RootRouteChildren {
   ApiKnowledgeSearchRoute: typeof ApiKnowledgeSearchRoute
   ApiMcpReloadRoute: typeof ApiMcpReloadRoute
   ApiMcpServersRoute: typeof ApiMcpServersRoute
+  ApiMessagingContactsRoute: typeof ApiMessagingContactsRoute
+  ApiMessagingStreamRoute: typeof ApiMessagingStreamRoute
+  ApiMessagingThreadsRoute: typeof ApiMessagingThreadsRouteWithChildren
   ApiOauthDeviceCodeRoute: typeof ApiOauthDeviceCodeRoute
   ApiOauthPollTokenRoute: typeof ApiOauthPollTokenRoute
   ApiProfilesActivateRoute: typeof ApiProfilesActivateRoute
@@ -2474,6 +2565,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiOauthDeviceCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/messaging/threads': {
+      id: '/api/messaging/threads'
+      path: '/api/messaging/threads'
+      fullPath: '/api/messaging/threads'
+      preLoaderRoute: typeof ApiMessagingThreadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/messaging/stream': {
+      id: '/api/messaging/stream'
+      path: '/api/messaging/stream'
+      fullPath: '/api/messaging/stream'
+      preLoaderRoute: typeof ApiMessagingStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/messaging/contacts': {
+      id: '/api/messaging/contacts'
+      path: '/api/messaging/contacts'
+      fullPath: '/api/messaging/contacts'
+      preLoaderRoute: typeof ApiMessagingContactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/memory/write': {
       id: '/api/memory/write'
       path: '/write'
@@ -2565,6 +2677,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiEventsReplayRouteImport
       parentRoute: typeof ApiEventsRoute
     }
+    '/api/customer/chat': {
+      id: '/api/customer/chat'
+      path: '/api/customer/chat'
+      fullPath: '/api/customer/chat'
+      preLoaderRoute: typeof ApiCustomerChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/customer/agents': {
+      id: '/api/customer/agents'
+      path: '/api/customer/agents'
+      fullPath: '/api/customer/agents'
+      preLoaderRoute: typeof ApiCustomerAgentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/crews/$crewId': {
       id: '/api/crews/$crewId'
       path: '/api/crews/$crewId'
@@ -2635,6 +2761,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicArtifactsPublicIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/messaging/threads/$threadId': {
+      id: '/api/messaging/threads/$threadId'
+      path: '/$threadId'
+      fullPath: '/api/messaging/threads/$threadId'
+      preLoaderRoute: typeof ApiMessagingThreadsThreadIdRouteImport
+      parentRoute: typeof ApiMessagingThreadsRoute
+    }
     '/api/hermes-runs/$runId/events': {
       id: '/api/hermes-runs/$runId/events'
       path: '/$runId/events'
@@ -2704,6 +2837,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/widgets/$widgetKey/sessions'
       preLoaderRoute: typeof ApiPublicWidgetsWidgetKeySessionsRouteImport
       parentRoute: typeof ApiPublicWidgetsWidgetKeyRoute
+    }
+    '/api/messaging/threads/$threadId/reply': {
+      id: '/api/messaging/threads/$threadId/reply'
+      path: '/reply'
+      fullPath: '/api/messaging/threads/$threadId/reply'
+      preLoaderRoute: typeof ApiMessagingThreadsThreadIdReplyRouteImport
+      parentRoute: typeof ApiMessagingThreadsThreadIdRoute
     }
     '/api/public/artifacts/$publicId/download/$filename': {
       id: '/api/public/artifacts/$publicId/download/$filename'
@@ -2887,6 +3027,33 @@ const ApiCrewsCrewIdRouteWithChildren = ApiCrewsCrewIdRoute._addFileChildren(
   ApiCrewsCrewIdRouteChildren,
 )
 
+interface ApiMessagingThreadsThreadIdRouteChildren {
+  ApiMessagingThreadsThreadIdReplyRoute: typeof ApiMessagingThreadsThreadIdReplyRoute
+}
+
+const ApiMessagingThreadsThreadIdRouteChildren: ApiMessagingThreadsThreadIdRouteChildren =
+  {
+    ApiMessagingThreadsThreadIdReplyRoute:
+      ApiMessagingThreadsThreadIdReplyRoute,
+  }
+
+const ApiMessagingThreadsThreadIdRouteWithChildren =
+  ApiMessagingThreadsThreadIdRoute._addFileChildren(
+    ApiMessagingThreadsThreadIdRouteChildren,
+  )
+
+interface ApiMessagingThreadsRouteChildren {
+  ApiMessagingThreadsThreadIdRoute: typeof ApiMessagingThreadsThreadIdRouteWithChildren
+}
+
+const ApiMessagingThreadsRouteChildren: ApiMessagingThreadsRouteChildren = {
+  ApiMessagingThreadsThreadIdRoute:
+    ApiMessagingThreadsThreadIdRouteWithChildren,
+}
+
+const ApiMessagingThreadsRouteWithChildren =
+  ApiMessagingThreadsRoute._addFileChildren(ApiMessagingThreadsRouteChildren)
+
 interface ApiTasksTaskIdRouteChildren {
   ApiTasksTaskIdMoveRoute: typeof ApiTasksTaskIdMoveRoute
 }
@@ -3004,6 +3171,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAgentsAgentIdRoute: ApiAgentsAgentIdRoute,
   ApiArtifactsArtifactIdRoute: ApiArtifactsArtifactIdRouteWithChildren,
   ApiCrewsCrewIdRoute: ApiCrewsCrewIdRouteWithChildren,
+  ApiCustomerAgentsRoute: ApiCustomerAgentsRoute,
+  ApiCustomerChatRoute: ApiCustomerChatRoute,
   ApiHermesProxySplatRoute: ApiHermesProxySplatRoute,
   ApiKnowledgeGraphRoute: ApiKnowledgeGraphRoute,
   ApiKnowledgeListRoute: ApiKnowledgeListRoute,
@@ -3011,6 +3180,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiKnowledgeSearchRoute: ApiKnowledgeSearchRoute,
   ApiMcpReloadRoute: ApiMcpReloadRoute,
   ApiMcpServersRoute: ApiMcpServersRoute,
+  ApiMessagingContactsRoute: ApiMessagingContactsRoute,
+  ApiMessagingStreamRoute: ApiMessagingStreamRoute,
+  ApiMessagingThreadsRoute: ApiMessagingThreadsRouteWithChildren,
   ApiOauthDeviceCodeRoute: ApiOauthDeviceCodeRoute,
   ApiOauthPollTokenRoute: ApiOauthPollTokenRoute,
   ApiProfilesActivateRoute: ApiProfilesActivateRoute,
