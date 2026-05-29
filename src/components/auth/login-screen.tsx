@@ -1,10 +1,29 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 
 export function LoginScreen() {
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [profileAuthMode, setProfileAuthMode] = useState<boolean | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/auth-session', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((d) => {
+        if (cancelled) return
+        setProfileAuthMode(Boolean(d?.profile_auth_mode))
+      })
+      .catch(() => {
+        if (cancelled) return
+        setProfileAuthMode(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -12,19 +31,22 @@ export function LoginScreen() {
     setLoading(true)
 
     try {
+      const body =
+        profileAuthMode === true
+          ? { username, password }
+          : { password }
       const res = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify(body),
       })
 
       const data = await res.json()
 
       if (data.ok) {
-        // Success! Reload to trigger auth check
         window.location.reload()
       } else {
-        setError(data.error || 'Invalid password')
+        setError(data.error || 'Invalid credentials')
         setLoading(false)
       }
     } catch (err) {
@@ -68,23 +90,40 @@ export function LoginScreen() {
 
           {/* Title */}
           <h2 className="mb-2 text-center text-lg font-semibold text-primary-900">
-            Enter Password
+            {profileAuthMode === true ? 'Sign in' : 'Enter Password'}
           </h2>
           <p className="mb-6 text-center text-sm text-primary-600">
-            This workspace is password-protected
+            {profileAuthMode === true
+              ? 'Sign in with your profile credentials'
+              : 'This workspace is password-protected'}
           </p>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {profileAuthMode === true && (
+              <div>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Username"
+                  autoComplete="username"
+                  className="w-full rounded-lg border border-primary-200 bg-white px-4 py-2.5 text-primary-900 placeholder-primary-400 outline-none transition-all focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20"
+                  disabled={loading}
+                  autoFocus
+                />
+              </div>
+            )}
             <div>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
+                autoComplete="current-password"
                 className="w-full rounded-lg border border-primary-200 bg-white px-4 py-2.5 text-primary-900 placeholder-primary-400 outline-none transition-all focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20"
                 disabled={loading}
-                autoFocus
+                autoFocus={profileAuthMode !== true}
               />
             </div>
 
@@ -96,7 +135,12 @@ export function LoginScreen() {
 
             <button
               type="submit"
-              disabled={loading || !password}
+              disabled={
+                loading ||
+                !password ||
+                (profileAuthMode === true && !username) ||
+                profileAuthMode === null
+              }
               className="w-full rounded-lg bg-accent-500 px-4 py-2.5 font-medium text-white transition-all hover:bg-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-500/50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? 'Authenticating...' : 'Continue'}
