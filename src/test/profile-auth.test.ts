@@ -21,6 +21,7 @@ async function seedAuth(
   username: string,
   password: string,
   isAdmin: boolean,
+  isCustomerAdmin = false,
 ): Promise<string> {
   const dir = path.join(tmpHome, '.hermes', 'profiles', profile)
   fs.mkdirSync(dir, { recursive: true })
@@ -29,6 +30,7 @@ async function seedAuth(
     `username: ${username}`,
     `password_hash: ${hash}`,
     `is_admin: ${isAdmin ? 'true' : 'false'}`,
+    `is_customer_admin: ${isCustomerAdmin ? 'true' : 'false'}`,
     '',
   ].join('\n')
   fs.writeFileSync(path.join(dir, 'auth.yaml'), yaml)
@@ -114,6 +116,7 @@ describe('loginWithProfileCredentials', () => {
       profile: 'huminic',
       username: 'duane',
       is_admin: true,
+      is_customer_admin: false,
     })
   })
 
@@ -125,6 +128,30 @@ describe('loginWithProfileCredentials', () => {
     if (result.ok) {
       expect(result.profile).toBe('strukture')
       expect(result.is_admin).toBe(false)
+      expect(result.is_customer_admin).toBe(false)
+    }
+  })
+
+  it('returns is_customer_admin=true when the profile auth.yaml sets it', async () => {
+    await seedAuth('huminic', 'carla', 'pw3', false, true)
+    const { loginWithProfileCredentials } = await import('@/server/profile-auth')
+    const result = await loginWithProfileCredentials('carla', 'pw3')
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.profile).toBe('huminic')
+      expect(result.is_admin).toBe(false)
+      expect(result.is_customer_admin).toBe(true)
+    }
+  })
+
+  it('returns both is_admin and is_customer_admin true when both set', async () => {
+    await seedAuth('huminic', 'duane', 'pw4', true, true)
+    const { loginWithProfileCredentials } = await import('@/server/profile-auth')
+    const result = await loginWithProfileCredentials('duane', 'pw4')
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.is_admin).toBe(true)
+      expect(result.is_customer_admin).toBe(true)
     }
   })
 })

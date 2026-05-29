@@ -310,6 +310,24 @@ export function WorkspaceShell() {
     return <LoginScreen />
   }
 
+  // Storefront /p/$profile/* routes bypass the Studio admin chrome (sidebar,
+  // header, page-title bar) and render in their own self-contained branded
+  // shell. They handle their own auth via customer-admin login at the route
+  // level (AC.1.2). Render the Outlet directly without the workspace wrap.
+  if (pathname.startsWith('/p/')) {
+    return (
+      <div className="theme-bg theme-text min-h-dvh">
+        <ErrorBoundary
+          className="h-full min-h-0 flex-1"
+          title="Storefront error"
+          description="This page failed to render. Reload to try again."
+        >
+          <Outlet />
+        </ErrorBoundary>
+      </div>
+    )
+  }
+
   const shellStyle: React.CSSProperties & Record<'--titlebar-h', string> = {
     height: 'var(--vvh, 100dvh)',
     paddingTop: isElectron ? 40 : 0,
