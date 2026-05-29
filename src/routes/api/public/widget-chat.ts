@@ -7,10 +7,7 @@ import { findPublicWidget, readAgentSoul } from '../../../server/public-widgets'
 
 const HERMES_URL = process.env.HERMES_API_URL || 'http://hermes-agent:8642'
 
-function readHermesKey(): string | null {
-  const fromEnv = process.env.API_SERVER_KEY || process.env.HERMES_API_KEY
-  if (fromEnv) return fromEnv
-  // Fallback: read from the agent profile .env (volume-mounted at /root/.hermes)
+function readKeyFromHermesEnv(varName: string): string | null {
   try {
     const envPath = path.join(os.homedir(), '.hermes', '.env')
     const raw = fs.readFileSync(envPath, 'utf8')
@@ -20,7 +17,7 @@ function readHermesKey(): string | null {
       const eq = trimmed.indexOf('=')
       if (eq === -1) continue
       const k = trimmed.slice(0, eq).trim()
-      if (k === 'API_SERVER_KEY') return trimmed.slice(eq + 1).trim()
+      if (k === varName) return trimmed.slice(eq + 1).trim()
     }
   } catch {
     // missing or unreadable — fall through
@@ -28,7 +25,12 @@ function readHermesKey(): string | null {
   return null
 }
 
-const HERMES_KEY = readHermesKey()
+const HERMES_KEY =
+  process.env.API_SERVER_KEY ||
+  process.env.HERMES_API_KEY ||
+  readKeyFromHermesEnv('API_SERVER_KEY')
+const OPENAI_KEY =
+  process.env.OPENAI_API_KEY || readKeyFromHermesEnv('OPENAI_API_KEY')
 const MODEL = process.env.HERMES_MODEL || 'gpt-4.1'
 
 const buckets = new Map<string, { count: number; resetAt: number }>()
@@ -151,35 +153,78 @@ export const Route = createFileRoute('/api/public/widget-chat')({
           })),
         ]
 
+        // Try Hermes chat-completions first (preferred — keeps the request
+        // on-network and routes through the profile's primary agent). Fall
+        // back to direct OpenAI when Hermes reports inference-not-configured
+        // (the gateway's portable mode is finicky about provider auth — see
+        // D-V0-005). The fallback uses the OPENAI_API_KEY that lives in the
+        // Hermes .env on the shared volume.
         try {
-          const res = await fetch(`${HERMES_URL}/v1/chat/completions`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${HERMES_KEY}`,
-            },
-            body: JSON.stringify({
-              model: MODEL,
-              messages,
-              temperature: 0.5,
-              max_tokens: 400,
-            }),
-          })
-          const data = (await res.json()) as {
-            error?: { message?: string }
-            choices?: Array<{ message?: { content?: string } }>
-          }
-          if (!res.ok || data.error) {
-            return json(
-              {
-                ok: false,
-                error: data.error?.message || 'Upstream error.',
+          if (HERMES_KEY) {
+            const res = await fetch(`${HERMES_URL}/v1/chat/completions`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${HERMES_KEY}`,
               },
-              { status: 502 },
-            )
+              body: JSON.stringify({
+                model: MODEL,
+                messages,
+                temperature: 0.5,
+                max_tokens: 400,
+              }),
+            })
+            const data = (await res.json()) as {
+              error?: { message?: string }
+              choices?: Array<{ message?: { content?: string } }>
+            }
+            if (res.ok && !data.error) {
+              const reply = data.choices?.[0]?.message?.content ?? ''
+              return json({ ok: true, reply, via: 'hermes' })
+            }
+            // fall through to OpenAI fallback if Hermes returns an error
           }
-          const reply = data.choices?.[0]?.message?.content ?? ''
-          return json({ ok: true, reply })
+          if (OPENAI_KEY) {
+            const res = await fetch(
+              'https://api.openai.com/v1/chat/completions',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${OPENAI_KEY}`,
+                },
+                body: JSON.stringify({
+                  model: MODEL,
+                  messages,
+                  temperature: 0.5,
+                  max_tokens: 400,
+                }),
+              },
+            )
+            const data = (await res.json()) as {
+              error?: { message?: string }
+              choices?: Array<{ message?: { content?: string } }>
+            }
+            if (!res.ok || data.error) {
+              return json(
+                {
+                  ok: false,
+                  error: data.error?.message || 'OpenAI upstream error.',
+                },
+                { status: 502 },
+              )
+            }
+            const reply = data.choices?.[0]?.message?.content ?? ''
+            return json({ ok: true, reply, via: 'openai-direct' })
+          }
+          return json(
+            {
+              ok: false,
+              error:
+                'No inference provider configured. Set API_SERVER_KEY (Hermes) or OPENAI_API_KEY.',
+            },
+            { status: 503 },
+          )
         } catch (err) {
           return json(
             {
