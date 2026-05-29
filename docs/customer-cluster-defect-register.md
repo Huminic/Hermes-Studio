@@ -24,6 +24,9 @@ Each row records the smallest portable fix.
 | D-C-010 | D | C.4 | tools-widget renderer "live preview" iframe points at production `studio.huminic.app` even in local dev. | Add a `?dev=1` URL param that overrides the iframe origin to `localhost:5176`. | Deferred — dev quality of life |
 | D-C-011 | D | C.13 | Engagement-state advance allows skipping stages; the schema permits this (`skipped: false` is per-entry, not enforced). Customer-admin could leap from `draft` to `ready_to_run` and the API would write it. | Add an explicit ordering check in the advance handler, or rely on the data-governor agent to flag out-of-order advances. | Deferred — governance-rule check |
 | D-C-012 | D | C.11 | C.11 validation harness is build-time (vitest integration), not browser Playwright. | Coolify-redeploy required before Playwright e2e against studio.huminic.app is meaningful. After redeploy, add `e2e/customer-cluster.spec.ts` walking the six pages. | Deferred — environment-gated |
+| D-C-013 | D | C.5 | `agent-autonomous-reply.isWithinBusinessHours()` uses hardcoded UTC 13-22 (≈ US-Eastern 9-5) — no per-profile timezone. | Add a `timezone` field to `studio.yaml.autonomous_reply_defaults` and use `Intl.DateTimeFormat` to compute the hour. | Deferred — surfaced by AC.12.2 reviewer |
+| D-C-014 | D | C.8 | `campaign-worker.tickCampaigns()` marks a campaign `complete` even when every delivery failed. There is no `failed` rollup status when sent=0 && failed>0. | Compute aggregate at end of loop; set status to `failed` when sent=0 && failed>0. | Deferred — surfaced by AC.12.2 reviewer |
+| D-C-015 | D | C.7 | React `act(...)` warnings in `console-renderers.test.tsx` when the comms renderer mounts — async state updates after render. Tests still pass. | Wrap the mount in `await waitFor(...)` or use `act` directly. | Deferred — test hygiene |
 
 ## Notes
 
