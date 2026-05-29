@@ -10,6 +10,8 @@ export type SessionMetadata = {
   profile: string | null
   /** Whether the session can switch the global active profile and access admin operations. */
   is_admin: boolean
+  /** Whether the session is a customer-admin for the scoped profile (storefront /p/$profile/* surfaces). */
+  is_customer_admin: boolean
   /** Username from the profile's auth.yaml. Null in legacy mode. */
   username: string | null
   /** Creation epoch ms. */
@@ -19,6 +21,7 @@ export type SessionMetadata = {
 const LEGACY_METADATA: SessionMetadata = {
   profile: null,
   is_admin: true,
+  is_customer_admin: false,
   username: null,
   created_at: 0,
 }

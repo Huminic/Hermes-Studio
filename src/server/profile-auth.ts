@@ -5,14 +5,23 @@
  *   ~/.hermes/profiles/<profile>/auth.yaml
  *
  * Schema:
- *   username: <string>          # required; unique across all profiles
- *   password_hash: <scrypt$...> # required; produced by password-hash.ts
- *   is_admin: <bool>            # optional; defaults to false
+ *   username: <string>            # required; unique across all profiles
+ *   password_hash: <scrypt$...>   # required; produced by password-hash.ts
+ *   is_admin: <bool>              # optional; defaults to false (Studio admin)
+ *   is_customer_admin: <bool>     # optional; defaults to false (customer storefront admin)
  *
  * Login flow: scan all profile auth.yaml files, find the one matching the
  * submitted username, verify the password against its hash, return the
  * matched identity. The session token is later associated with that
- * {profile, is_admin} in auth-middleware.ts.
+ * {profile, is_admin, is_customer_admin} in auth-middleware.ts.
+ *
+ * Role distinction:
+ *   - is_admin           — Studio operator; can switch active profile, see
+ *                          /console/$profile/* (operator-side admin views).
+ *   - is_customer_admin  — customer-org admin for THIS profile; can log in
+ *                          to the public storefront at /p/$profile/* and
+ *                          edit delegated config (widgets, branding,
+ *                          autonomous-reply defaults). Cannot switch profiles.
  *
  * Migration: if no profile has auth.yaml, the system continues to accept the
  * legacy HERMES_PASSWORD-based flow (single shared password, implicit admin).
@@ -29,6 +38,7 @@ export const ProfileAuthSchema = z.object({
   username: z.string().min(1),
   password_hash: z.string().refine(isHashString, 'invalid password_hash format'),
   is_admin: z.boolean().optional().default(false),
+  is_customer_admin: z.boolean().optional().default(false),
 })
 
 export type ProfileAuth = z.infer<typeof ProfileAuthSchema>
@@ -78,6 +88,7 @@ export type LoginResult =
       profile: string
       username: string
       is_admin: boolean
+      is_customer_admin: boolean
     }
   | { ok: false; reason: 'not_found' | 'bad_password' | 'no_users' }
 
@@ -100,5 +111,6 @@ export async function loginWithProfileCredentials(
     profile: match.profile,
     username: match.auth.username,
     is_admin: match.auth.is_admin ?? false,
+    is_customer_admin: match.auth.is_customer_admin ?? false,
   }
 }

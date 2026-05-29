@@ -81,6 +81,7 @@ export const Route = createFileRoute('/api/auth')({
               profile: result.profile,
               username: result.username,
               is_admin: result.is_admin,
+              is_customer_admin: result.is_customer_admin,
             })
 
             return json(
@@ -89,6 +90,7 @@ export const Route = createFileRoute('/api/auth')({
                 profile: result.profile,
                 username: result.username,
                 is_admin: result.is_admin,
+                is_customer_admin: result.is_customer_admin,
               },
               {
                 status: 200,

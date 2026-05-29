@@ -20,6 +20,7 @@ function parseArgs(argv: Array<string>): {
   profile?: string
   username?: string
   admin: boolean
+  customerAdmin: boolean
   force: boolean
   help: boolean
 } {
@@ -27,6 +28,7 @@ function parseArgs(argv: Array<string>): {
     profile: undefined as string | undefined,
     username: undefined as string | undefined,
     admin: false,
+    customerAdmin: false,
     force: false,
     help: false,
   }
@@ -35,6 +37,7 @@ function parseArgs(argv: Array<string>): {
     if (a === '--profile') out.profile = argv[++i]
     else if (a === '--username') out.username = argv[++i]
     else if (a === '--admin') out.admin = true
+    else if (a === '--customer-admin') out.customerAdmin = true
     else if (a === '--force') out.force = true
     else if (a === '--help' || a === '-h') out.help = true
   }
@@ -78,12 +81,15 @@ function promptHidden(prompt: string): Promise<string> {
 
 function usage() {
   console.log(
-    `Usage: pnpm tsx scripts/create-user.ts --profile <profile> --username <name> [--admin] [--force]\n` +
+    `Usage: pnpm tsx scripts/create-user.ts --profile <profile> --username <name> [--admin] [--customer-admin] [--force]\n` +
       `\n` +
-      `  --profile   profile name under ~/.hermes/profiles/\n` +
-      `  --username  login username\n` +
-      `  --admin     mark as admin (allows global active-profile switching)\n` +
-      `  --force     overwrite an existing auth.yaml\n`,
+      `  --profile          profile name under ~/.hermes/profiles/\n` +
+      `  --username         login username\n` +
+      `  --admin            Studio operator (allows global active-profile switching, /console/* access)\n` +
+      `  --customer-admin   customer storefront admin (allows /p/<profile>/* access)\n` +
+      `  --force            overwrite an existing auth.yaml\n` +
+      `\n` +
+      `--admin and --customer-admin are independent flags; a user may have either, both, or neither.\n`,
   )
 }
 
@@ -128,6 +134,7 @@ async function main() {
     `username: ${args.username}`,
     `password_hash: ${hash}`,
     `is_admin: ${args.admin ? 'true' : 'false'}`,
+    `is_customer_admin: ${args.customerAdmin ? 'true' : 'false'}`,
     '',
   ].join('\n')
   fs.writeFileSync(authPath, yaml, { mode: 0o600 })
@@ -135,6 +142,7 @@ async function main() {
   console.log(`User: ${args.username}`)
   console.log(`Profile: ${args.profile}`)
   console.log(`Admin: ${args.admin ? 'yes' : 'no'}`)
+  console.log(`Customer admin: ${args.customerAdmin ? 'yes' : 'no'}`)
 }
 
 void main().catch((err) => {

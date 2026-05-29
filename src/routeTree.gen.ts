@@ -40,6 +40,7 @@ import { Route as ChatIndexRouteImport } from './routes/chat/index'
 import { Route as WSlugRouteImport } from './routes/w.$slug'
 import { Route as SettingsProvidersRouteImport } from './routes/settings/providers'
 import { Route as SettingsMcpRouteImport } from './routes/settings/mcp'
+import { Route as PProfileRouteImport } from './routes/p.$profile'
 import { Route as EngagementsCustomerRouteImport } from './routes/engagements.$customer'
 import { Route as CrewsCrewIdRouteImport } from './routes/crews/$crewId'
 import { Route as ConsoleProfileRouteImport } from './routes/console.$profile'
@@ -91,6 +92,7 @@ import { Route as ApiAuditIndexRouteImport } from './routes/api/audit/index'
 import { Route as ApiArtifactsIndexRouteImport } from './routes/api/artifacts/index'
 import { Route as ApiAgentsIndexRouteImport } from './routes/api/agents/index'
 import { Route as ApiAgentMigrationsIndexRouteImport } from './routes/api/agent-migrations/index'
+import { Route as PProfileTabRouteImport } from './routes/p.$profile.$tab'
 import { Route as ConsoleProfileTabRouteImport } from './routes/console.$profile.$tab'
 import { Route as ApiWidgetsProfileRouteImport } from './routes/api/widgets/$profile'
 import { Route as ApiTasksTaskIdRouteImport } from './routes/api/tasks/$taskId'
@@ -297,6 +299,11 @@ const SettingsMcpRoute = SettingsMcpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
   getParentRoute: () => SettingsRoute,
+} as any)
+const PProfileRoute = PProfileRouteImport.update({
+  id: '/p/$profile',
+  path: '/p/$profile',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EngagementsCustomerRoute = EngagementsCustomerRouteImport.update({
   id: '/$customer',
@@ -552,6 +559,11 @@ const ApiAgentMigrationsIndexRoute = ApiAgentMigrationsIndexRouteImport.update({
   id: '/api/agent-migrations/',
   path: '/api/agent-migrations/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PProfileTabRoute = PProfileTabRouteImport.update({
+  id: '/$tab',
+  path: '/$tab',
+  getParentRoute: () => PProfileRoute,
 } as any)
 const ConsoleProfileTabRoute = ConsoleProfileTabRouteImport.update({
   id: '/$tab',
@@ -887,6 +899,7 @@ export interface FileRoutesByFullPath {
   '/console/$profile': typeof ConsoleProfileRouteWithChildren
   '/crews/$crewId': typeof CrewsCrewIdRoute
   '/engagements/$customer': typeof EngagementsCustomerRoute
+  '/p/$profile': typeof PProfileRouteWithChildren
   '/settings/mcp': typeof SettingsMcpRoute
   '/settings/providers': typeof SettingsProvidersRoute
   '/w/$slug': typeof WSlugRoute
@@ -927,6 +940,7 @@ export interface FileRoutesByFullPath {
   '/api/tasks/$taskId': typeof ApiTasksTaskIdRouteWithChildren
   '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
   '/console/$profile/$tab': typeof ConsoleProfileTabRoute
+  '/p/$profile/$tab': typeof PProfileTabRoute
   '/api/agent-migrations/': typeof ApiAgentMigrationsIndexRoute
   '/api/agents/': typeof ApiAgentsIndexRoute
   '/api/artifacts/': typeof ApiArtifactsIndexRoute
@@ -1021,6 +1035,7 @@ export interface FileRoutesByTo {
   '/console/$profile': typeof ConsoleProfileRouteWithChildren
   '/crews/$crewId': typeof CrewsCrewIdRoute
   '/engagements/$customer': typeof EngagementsCustomerRoute
+  '/p/$profile': typeof PProfileRouteWithChildren
   '/settings/mcp': typeof SettingsMcpRoute
   '/settings/providers': typeof SettingsProvidersRoute
   '/w/$slug': typeof WSlugRoute
@@ -1061,6 +1076,7 @@ export interface FileRoutesByTo {
   '/api/tasks/$taskId': typeof ApiTasksTaskIdRouteWithChildren
   '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
   '/console/$profile/$tab': typeof ConsoleProfileTabRoute
+  '/p/$profile/$tab': typeof PProfileTabRoute
   '/api/agent-migrations': typeof ApiAgentMigrationsIndexRoute
   '/api/agents': typeof ApiAgentsIndexRoute
   '/api/artifacts': typeof ApiArtifactsIndexRoute
@@ -1157,6 +1173,7 @@ export interface FileRoutesById {
   '/console/$profile': typeof ConsoleProfileRouteWithChildren
   '/crews/$crewId': typeof CrewsCrewIdRoute
   '/engagements/$customer': typeof EngagementsCustomerRoute
+  '/p/$profile': typeof PProfileRouteWithChildren
   '/settings/mcp': typeof SettingsMcpRoute
   '/settings/providers': typeof SettingsProvidersRoute
   '/w/$slug': typeof WSlugRoute
@@ -1197,6 +1214,7 @@ export interface FileRoutesById {
   '/api/tasks/$taskId': typeof ApiTasksTaskIdRouteWithChildren
   '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
   '/console/$profile/$tab': typeof ConsoleProfileTabRoute
+  '/p/$profile/$tab': typeof PProfileTabRoute
   '/api/agent-migrations/': typeof ApiAgentMigrationsIndexRoute
   '/api/agents/': typeof ApiAgentsIndexRoute
   '/api/artifacts/': typeof ApiArtifactsIndexRoute
@@ -1294,6 +1312,7 @@ export interface FileRouteTypes {
     | '/console/$profile'
     | '/crews/$crewId'
     | '/engagements/$customer'
+    | '/p/$profile'
     | '/settings/mcp'
     | '/settings/providers'
     | '/w/$slug'
@@ -1334,6 +1353,7 @@ export interface FileRouteTypes {
     | '/api/tasks/$taskId'
     | '/api/widgets/$profile'
     | '/console/$profile/$tab'
+    | '/p/$profile/$tab'
     | '/api/agent-migrations/'
     | '/api/agents/'
     | '/api/artifacts/'
@@ -1428,6 +1448,7 @@ export interface FileRouteTypes {
     | '/console/$profile'
     | '/crews/$crewId'
     | '/engagements/$customer'
+    | '/p/$profile'
     | '/settings/mcp'
     | '/settings/providers'
     | '/w/$slug'
@@ -1468,6 +1489,7 @@ export interface FileRouteTypes {
     | '/api/tasks/$taskId'
     | '/api/widgets/$profile'
     | '/console/$profile/$tab'
+    | '/p/$profile/$tab'
     | '/api/agent-migrations'
     | '/api/agents'
     | '/api/artifacts'
@@ -1563,6 +1585,7 @@ export interface FileRouteTypes {
     | '/console/$profile'
     | '/crews/$crewId'
     | '/engagements/$customer'
+    | '/p/$profile'
     | '/settings/mcp'
     | '/settings/providers'
     | '/w/$slug'
@@ -1603,6 +1626,7 @@ export interface FileRouteTypes {
     | '/api/tasks/$taskId'
     | '/api/widgets/$profile'
     | '/console/$profile/$tab'
+    | '/p/$profile/$tab'
     | '/api/agent-migrations/'
     | '/api/agents/'
     | '/api/artifacts/'
@@ -1698,6 +1722,7 @@ export interface RootRouteChildren {
   ChatSessionKeyRoute: typeof ChatSessionKeyRoute
   ConsoleProfileRoute: typeof ConsoleProfileRouteWithChildren
   CrewsCrewIdRoute: typeof CrewsCrewIdRoute
+  PProfileRoute: typeof PProfileRouteWithChildren
   WSlugRoute: typeof WSlugRoute
   ChatIndexRoute: typeof ChatIndexRoute
   CrewsIndexRoute: typeof CrewsIndexRoute
@@ -1958,6 +1983,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/mcp'
       preLoaderRoute: typeof SettingsMcpRouteImport
       parentRoute: typeof SettingsRoute
+    }
+    '/p/$profile': {
+      id: '/p/$profile'
+      path: '/p/$profile'
+      fullPath: '/p/$profile'
+      preLoaderRoute: typeof PProfileRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/engagements/$customer': {
       id: '/engagements/$customer'
@@ -2315,6 +2347,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/agent-migrations/'
       preLoaderRoute: typeof ApiAgentMigrationsIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/p/$profile/$tab': {
+      id: '/p/$profile/$tab'
+      path: '/$tab'
+      fullPath: '/p/$profile/$tab'
+      preLoaderRoute: typeof PProfileTabRouteImport
+      parentRoute: typeof PProfileRoute
     }
     '/console/$profile/$tab': {
       id: '/console/$profile/$tab'
@@ -2804,6 +2843,18 @@ const ConsoleProfileRouteWithChildren = ConsoleProfileRoute._addFileChildren(
   ConsoleProfileRouteChildren,
 )
 
+interface PProfileRouteChildren {
+  PProfileTabRoute: typeof PProfileTabRoute
+}
+
+const PProfileRouteChildren: PProfileRouteChildren = {
+  PProfileTabRoute: PProfileTabRoute,
+}
+
+const PProfileRouteWithChildren = PProfileRoute._addFileChildren(
+  PProfileRouteChildren,
+)
+
 interface ApiArtifactsArtifactIdRouteChildren {
   ApiArtifactsArtifactIdSendRoute: typeof ApiArtifactsArtifactIdSendRoute
 }
@@ -2945,6 +2996,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChatSessionKeyRoute: ChatSessionKeyRoute,
   ConsoleProfileRoute: ConsoleProfileRouteWithChildren,
   CrewsCrewIdRoute: CrewsCrewIdRoute,
+  PProfileRoute: PProfileRouteWithChildren,
   WSlugRoute: WSlugRoute,
   ChatIndexRoute: ChatIndexRoute,
   CrewsIndexRoute: CrewsIndexRoute,
