@@ -140,17 +140,36 @@ export const Route = createFileRoute('/api/customer/engagement-state')({
               { status: 400 },
             )
           }
+          const isTopologyGate = gate === 'topology_decided'
           gates[gate].status = 'approved'
           gates[gate].approved_by =
             typeof body.approver === 'string'
               ? body.approver
               : session?.username ?? 'unknown'
           gates[gate].approved_at = nowIso()
-          if (typeof body.notes === 'string') {
+          // topology_decided gate omits `notes` per the schema; only set
+          // `decision`. The decision must be one of the schema's enum
+          // values. All other gates carry `notes` but not `decision`.
+          const TOPOLOGY_VALUES = [
+            'we-host',
+            'hybrid',
+            'external-consumes-projections',
+          ]
+          if (isTopologyGate) {
+            if (typeof body.decision === 'string') {
+              if (!TOPOLOGY_VALUES.includes(body.decision)) {
+                return json(
+                  {
+                    ok: false,
+                    error: `topology_decided decision must be one of ${TOPOLOGY_VALUES.join(', ')}`,
+                  },
+                  { status: 400 },
+                )
+              }
+              gates[gate].decision = body.decision
+            }
+          } else if (typeof body.notes === 'string') {
             gates[gate].notes = body.notes
-          }
-          if (typeof body.decision === 'string') {
-            gates[gate].decision = body.decision
           }
           data.readiness_gates = gates
           saveYaml(profile, data)
