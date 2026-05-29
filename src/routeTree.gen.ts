@@ -101,6 +101,7 @@ import { Route as ApiSkillsSettingsRouteImport } from './routes/api/skills/setti
 import { Route as ApiSkillsInstallRouteImport } from './routes/api/skills/install'
 import { Route as ApiSkillsHubSearchRouteImport } from './routes/api/skills/hub-search'
 import { Route as ApiSessionsSendRouteImport } from './routes/api/sessions/send'
+import { Route as ApiPublicWidgetFormRouteImport } from './routes/api/public/widget-form'
 import { Route as ApiPublicWidgetChatRouteImport } from './routes/api/public/widget-chat'
 import { Route as ApiProfilesRenameRouteImport } from './routes/api/profiles/rename'
 import { Route as ApiProfilesReadRouteImport } from './routes/api/profiles/read'
@@ -112,6 +113,7 @@ import { Route as ApiOauthPollTokenRouteImport } from './routes/api/oauth.poll-t
 import { Route as ApiOauthDeviceCodeRouteImport } from './routes/api/oauth.device-code'
 import { Route as ApiMessagingThreadsRouteImport } from './routes/api/messaging/threads'
 import { Route as ApiMessagingStreamRouteImport } from './routes/api/messaging/stream'
+import { Route as ApiMessagingInboundRouteImport } from './routes/api/messaging/inbound'
 import { Route as ApiMessagingContactsRouteImport } from './routes/api/messaging/contacts'
 import { Route as ApiMemoryWriteRouteImport } from './routes/api/memory/write'
 import { Route as ApiMemorySearchRouteImport } from './routes/api/memory/search'
@@ -131,6 +133,7 @@ import { Route as ApiCustomerAgentsRouteImport } from './routes/api/customer/age
 import { Route as ApiCrewsCrewIdRouteImport } from './routes/api/crews/$crewId'
 import { Route as ApiArtifactsArtifactIdRouteImport } from './routes/api/artifacts/$artifactId'
 import { Route as ApiAgentsAgentIdRouteImport } from './routes/api/agents/$agentId'
+import { Route as ApiCustomerWidgetsIndexRouteImport } from './routes/api/customer/widgets/index'
 import { Route as ApiCrewsTemplatesIndexRouteImport } from './routes/api/crews/templates/index'
 import { Route as ApiTasksTaskIdMoveRouteImport } from './routes/api/tasks/$taskId.move'
 import { Route as ApiSessionsSessionKeyStatusRouteImport } from './routes/api/sessions/$sessionKey.status'
@@ -144,6 +147,7 @@ import { Route as ApiCustomerWikiTreeRouteImport } from './routes/api/customer/w
 import { Route as ApiCustomerWikiSaveRouteImport } from './routes/api/customer/wiki/save'
 import { Route as ApiCustomerWikiReadRouteImport } from './routes/api/customer/wiki/read'
 import { Route as ApiCustomerWikiPromoteRouteImport } from './routes/api/customer/wiki/promote'
+import { Route as ApiCustomerWidgetsSaveRouteImport } from './routes/api/customer/widgets/save'
 import { Route as ApiCrewsTemplatesIdRouteImport } from './routes/api/crews/templates/$id'
 import { Route as ApiCrewsCrewIdWorkflowRouteImport } from './routes/api/crews/$crewId.workflow'
 import { Route as ApiCrewsCrewIdUsageRouteImport } from './routes/api/crews/$crewId.usage'
@@ -153,6 +157,7 @@ import { Route as ApiArtifactsArtifactIdSendRouteImport } from './routes/api/art
 import { Route as ApiApprovalsApprovalIdDenyRouteImport } from './routes/api/approvals.$approvalId.deny'
 import { Route as ApiApprovalsApprovalIdApproveRouteImport } from './routes/api/approvals.$approvalId.approve'
 import { Route as ApiPublicWidgetsWidgetKeySessionsRouteImport } from './routes/api/public/widgets/$widgetKey/sessions'
+import { Route as ApiMessagingThreadsThreadIdSubscriptionsRouteImport } from './routes/api/messaging/threads.$threadId.subscriptions'
 import { Route as ApiMessagingThreadsThreadIdReplyRouteImport } from './routes/api/messaging/threads.$threadId.reply'
 import { Route as ApiPublicArtifactsPublicIdDownloadFilenameRouteImport } from './routes/api/public/artifacts/$publicId/download/$filename'
 
@@ -616,6 +621,11 @@ const ApiSessionsSendRoute = ApiSessionsSendRouteImport.update({
   path: '/send',
   getParentRoute: () => ApiSessionsRoute,
 } as any)
+const ApiPublicWidgetFormRoute = ApiPublicWidgetFormRouteImport.update({
+  id: '/api/public/widget-form',
+  path: '/api/public/widget-form',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicWidgetChatRoute = ApiPublicWidgetChatRouteImport.update({
   id: '/api/public/widget-chat',
   path: '/api/public/widget-chat',
@@ -669,6 +679,11 @@ const ApiMessagingThreadsRoute = ApiMessagingThreadsRouteImport.update({
 const ApiMessagingStreamRoute = ApiMessagingStreamRouteImport.update({
   id: '/api/messaging/stream',
   path: '/api/messaging/stream',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMessagingInboundRoute = ApiMessagingInboundRouteImport.update({
+  id: '/api/messaging/inbound',
+  path: '/api/messaging/inbound',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiMessagingContactsRoute = ApiMessagingContactsRouteImport.update({
@@ -766,6 +781,11 @@ const ApiAgentsAgentIdRoute = ApiAgentsAgentIdRouteImport.update({
   path: '/api/agents/$agentId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerWidgetsIndexRoute = ApiCustomerWidgetsIndexRouteImport.update({
+  id: '/api/customer/widgets/',
+  path: '/api/customer/widgets/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCrewsTemplatesIndexRoute = ApiCrewsTemplatesIndexRouteImport.update({
   id: '/api/crews/templates/',
   path: '/api/crews/templates/',
@@ -837,6 +857,11 @@ const ApiCustomerWikiPromoteRoute = ApiCustomerWikiPromoteRouteImport.update({
   path: '/api/customer/wiki/promote',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerWidgetsSaveRoute = ApiCustomerWidgetsSaveRouteImport.update({
+  id: '/api/customer/widgets/save',
+  path: '/api/customer/widgets/save',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCrewsTemplatesIdRoute = ApiCrewsTemplatesIdRouteImport.update({
   id: '/api/crews/templates/$id',
   path: '/api/crews/templates/$id',
@@ -885,6 +910,12 @@ const ApiPublicWidgetsWidgetKeySessionsRoute =
     id: '/sessions',
     path: '/sessions',
     getParentRoute: () => ApiPublicWidgetsWidgetKeyRoute,
+  } as any)
+const ApiMessagingThreadsThreadIdSubscriptionsRoute =
+  ApiMessagingThreadsThreadIdSubscriptionsRouteImport.update({
+    id: '/subscriptions',
+    path: '/subscriptions',
+    getParentRoute: () => ApiMessagingThreadsThreadIdRoute,
   } as any)
 const ApiMessagingThreadsThreadIdReplyRoute =
   ApiMessagingThreadsThreadIdReplyRouteImport.update({
@@ -994,6 +1025,7 @@ export interface FileRoutesByFullPath {
   '/api/memory/search': typeof ApiMemorySearchRoute
   '/api/memory/write': typeof ApiMemoryWriteRoute
   '/api/messaging/contacts': typeof ApiMessagingContactsRoute
+  '/api/messaging/inbound': typeof ApiMessagingInboundRoute
   '/api/messaging/stream': typeof ApiMessagingStreamRoute
   '/api/messaging/threads': typeof ApiMessagingThreadsRouteWithChildren
   '/api/oauth/device-code': typeof ApiOauthDeviceCodeRoute
@@ -1005,6 +1037,7 @@ export interface FileRoutesByFullPath {
   '/api/profiles/read': typeof ApiProfilesReadRoute
   '/api/profiles/rename': typeof ApiProfilesRenameRoute
   '/api/public/widget-chat': typeof ApiPublicWidgetChatRoute
+  '/api/public/widget-form': typeof ApiPublicWidgetFormRoute
   '/api/sessions/send': typeof ApiSessionsSendRoute
   '/api/skills/hub-search': typeof ApiSkillsHubSearchRoute
   '/api/skills/install': typeof ApiSkillsInstallRoute
@@ -1030,6 +1063,7 @@ export interface FileRoutesByFullPath {
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
+  '/api/customer/widgets/save': typeof ApiCustomerWidgetsSaveRoute
   '/api/customer/wiki/promote': typeof ApiCustomerWikiPromoteRoute
   '/api/customer/wiki/read': typeof ApiCustomerWikiReadRoute
   '/api/customer/wiki/save': typeof ApiCustomerWikiSaveRoute
@@ -1043,7 +1077,9 @@ export interface FileRoutesByFullPath {
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
   '/api/crews/templates/': typeof ApiCrewsTemplatesIndexRoute
+  '/api/customer/widgets/': typeof ApiCustomerWidgetsIndexRoute
   '/api/messaging/threads/$threadId/reply': typeof ApiMessagingThreadsThreadIdReplyRoute
+  '/api/messaging/threads/$threadId/subscriptions': typeof ApiMessagingThreadsThreadIdSubscriptionsRoute
   '/api/public/widgets/$widgetKey/sessions': typeof ApiPublicWidgetsWidgetKeySessionsRoute
   '/api/public/artifacts/$publicId/download/$filename': typeof ApiPublicArtifactsPublicIdDownloadFilenameRoute
 }
@@ -1141,6 +1177,7 @@ export interface FileRoutesByTo {
   '/api/memory/search': typeof ApiMemorySearchRoute
   '/api/memory/write': typeof ApiMemoryWriteRoute
   '/api/messaging/contacts': typeof ApiMessagingContactsRoute
+  '/api/messaging/inbound': typeof ApiMessagingInboundRoute
   '/api/messaging/stream': typeof ApiMessagingStreamRoute
   '/api/messaging/threads': typeof ApiMessagingThreadsRouteWithChildren
   '/api/oauth/device-code': typeof ApiOauthDeviceCodeRoute
@@ -1152,6 +1189,7 @@ export interface FileRoutesByTo {
   '/api/profiles/read': typeof ApiProfilesReadRoute
   '/api/profiles/rename': typeof ApiProfilesRenameRoute
   '/api/public/widget-chat': typeof ApiPublicWidgetChatRoute
+  '/api/public/widget-form': typeof ApiPublicWidgetFormRoute
   '/api/sessions/send': typeof ApiSessionsSendRoute
   '/api/skills/hub-search': typeof ApiSkillsHubSearchRoute
   '/api/skills/install': typeof ApiSkillsInstallRoute
@@ -1177,6 +1215,7 @@ export interface FileRoutesByTo {
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
+  '/api/customer/widgets/save': typeof ApiCustomerWidgetsSaveRoute
   '/api/customer/wiki/promote': typeof ApiCustomerWikiPromoteRoute
   '/api/customer/wiki/read': typeof ApiCustomerWikiReadRoute
   '/api/customer/wiki/save': typeof ApiCustomerWikiSaveRoute
@@ -1190,7 +1229,9 @@ export interface FileRoutesByTo {
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
   '/api/crews/templates': typeof ApiCrewsTemplatesIndexRoute
+  '/api/customer/widgets': typeof ApiCustomerWidgetsIndexRoute
   '/api/messaging/threads/$threadId/reply': typeof ApiMessagingThreadsThreadIdReplyRoute
+  '/api/messaging/threads/$threadId/subscriptions': typeof ApiMessagingThreadsThreadIdSubscriptionsRoute
   '/api/public/widgets/$widgetKey/sessions': typeof ApiPublicWidgetsWidgetKeySessionsRoute
   '/api/public/artifacts/$publicId/download/$filename': typeof ApiPublicArtifactsPublicIdDownloadFilenameRoute
 }
@@ -1290,6 +1331,7 @@ export interface FileRoutesById {
   '/api/memory/search': typeof ApiMemorySearchRoute
   '/api/memory/write': typeof ApiMemoryWriteRoute
   '/api/messaging/contacts': typeof ApiMessagingContactsRoute
+  '/api/messaging/inbound': typeof ApiMessagingInboundRoute
   '/api/messaging/stream': typeof ApiMessagingStreamRoute
   '/api/messaging/threads': typeof ApiMessagingThreadsRouteWithChildren
   '/api/oauth/device-code': typeof ApiOauthDeviceCodeRoute
@@ -1301,6 +1343,7 @@ export interface FileRoutesById {
   '/api/profiles/read': typeof ApiProfilesReadRoute
   '/api/profiles/rename': typeof ApiProfilesRenameRoute
   '/api/public/widget-chat': typeof ApiPublicWidgetChatRoute
+  '/api/public/widget-form': typeof ApiPublicWidgetFormRoute
   '/api/sessions/send': typeof ApiSessionsSendRoute
   '/api/skills/hub-search': typeof ApiSkillsHubSearchRoute
   '/api/skills/install': typeof ApiSkillsInstallRoute
@@ -1326,6 +1369,7 @@ export interface FileRoutesById {
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
+  '/api/customer/widgets/save': typeof ApiCustomerWidgetsSaveRoute
   '/api/customer/wiki/promote': typeof ApiCustomerWikiPromoteRoute
   '/api/customer/wiki/read': typeof ApiCustomerWikiReadRoute
   '/api/customer/wiki/save': typeof ApiCustomerWikiSaveRoute
@@ -1339,7 +1383,9 @@ export interface FileRoutesById {
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
   '/api/crews/templates/': typeof ApiCrewsTemplatesIndexRoute
+  '/api/customer/widgets/': typeof ApiCustomerWidgetsIndexRoute
   '/api/messaging/threads/$threadId/reply': typeof ApiMessagingThreadsThreadIdReplyRoute
+  '/api/messaging/threads/$threadId/subscriptions': typeof ApiMessagingThreadsThreadIdSubscriptionsRoute
   '/api/public/widgets/$widgetKey/sessions': typeof ApiPublicWidgetsWidgetKeySessionsRoute
   '/api/public/artifacts/$publicId/download/$filename': typeof ApiPublicArtifactsPublicIdDownloadFilenameRoute
 }
@@ -1440,6 +1486,7 @@ export interface FileRouteTypes {
     | '/api/memory/search'
     | '/api/memory/write'
     | '/api/messaging/contacts'
+    | '/api/messaging/inbound'
     | '/api/messaging/stream'
     | '/api/messaging/threads'
     | '/api/oauth/device-code'
@@ -1451,6 +1498,7 @@ export interface FileRouteTypes {
     | '/api/profiles/read'
     | '/api/profiles/rename'
     | '/api/public/widget-chat'
+    | '/api/public/widget-form'
     | '/api/sessions/send'
     | '/api/skills/hub-search'
     | '/api/skills/install'
@@ -1476,6 +1524,7 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
+    | '/api/customer/widgets/save'
     | '/api/customer/wiki/promote'
     | '/api/customer/wiki/read'
     | '/api/customer/wiki/save'
@@ -1489,7 +1538,9 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
     | '/api/crews/templates/'
+    | '/api/customer/widgets/'
     | '/api/messaging/threads/$threadId/reply'
+    | '/api/messaging/threads/$threadId/subscriptions'
     | '/api/public/widgets/$widgetKey/sessions'
     | '/api/public/artifacts/$publicId/download/$filename'
   fileRoutesByTo: FileRoutesByTo
@@ -1587,6 +1638,7 @@ export interface FileRouteTypes {
     | '/api/memory/search'
     | '/api/memory/write'
     | '/api/messaging/contacts'
+    | '/api/messaging/inbound'
     | '/api/messaging/stream'
     | '/api/messaging/threads'
     | '/api/oauth/device-code'
@@ -1598,6 +1650,7 @@ export interface FileRouteTypes {
     | '/api/profiles/read'
     | '/api/profiles/rename'
     | '/api/public/widget-chat'
+    | '/api/public/widget-form'
     | '/api/sessions/send'
     | '/api/skills/hub-search'
     | '/api/skills/install'
@@ -1623,6 +1676,7 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
+    | '/api/customer/widgets/save'
     | '/api/customer/wiki/promote'
     | '/api/customer/wiki/read'
     | '/api/customer/wiki/save'
@@ -1636,7 +1690,9 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
     | '/api/crews/templates'
+    | '/api/customer/widgets'
     | '/api/messaging/threads/$threadId/reply'
+    | '/api/messaging/threads/$threadId/subscriptions'
     | '/api/public/widgets/$widgetKey/sessions'
     | '/api/public/artifacts/$publicId/download/$filename'
   id:
@@ -1735,6 +1791,7 @@ export interface FileRouteTypes {
     | '/api/memory/search'
     | '/api/memory/write'
     | '/api/messaging/contacts'
+    | '/api/messaging/inbound'
     | '/api/messaging/stream'
     | '/api/messaging/threads'
     | '/api/oauth/device-code'
@@ -1746,6 +1803,7 @@ export interface FileRouteTypes {
     | '/api/profiles/read'
     | '/api/profiles/rename'
     | '/api/public/widget-chat'
+    | '/api/public/widget-form'
     | '/api/sessions/send'
     | '/api/skills/hub-search'
     | '/api/skills/install'
@@ -1771,6 +1829,7 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
+    | '/api/customer/widgets/save'
     | '/api/customer/wiki/promote'
     | '/api/customer/wiki/read'
     | '/api/customer/wiki/save'
@@ -1784,7 +1843,9 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
     | '/api/crews/templates/'
+    | '/api/customer/widgets/'
     | '/api/messaging/threads/$threadId/reply'
+    | '/api/messaging/threads/$threadId/subscriptions'
     | '/api/public/widgets/$widgetKey/sessions'
     | '/api/public/artifacts/$publicId/download/$filename'
   fileRoutesById: FileRoutesById
@@ -1874,6 +1935,7 @@ export interface RootRouteChildren {
   ApiMcpReloadRoute: typeof ApiMcpReloadRoute
   ApiMcpServersRoute: typeof ApiMcpServersRoute
   ApiMessagingContactsRoute: typeof ApiMessagingContactsRoute
+  ApiMessagingInboundRoute: typeof ApiMessagingInboundRoute
   ApiMessagingStreamRoute: typeof ApiMessagingStreamRoute
   ApiMessagingThreadsRoute: typeof ApiMessagingThreadsRouteWithChildren
   ApiOauthDeviceCodeRoute: typeof ApiOauthDeviceCodeRoute
@@ -1885,6 +1947,7 @@ export interface RootRouteChildren {
   ApiProfilesReadRoute: typeof ApiProfilesReadRoute
   ApiProfilesRenameRoute: typeof ApiProfilesRenameRoute
   ApiPublicWidgetChatRoute: typeof ApiPublicWidgetChatRoute
+  ApiPublicWidgetFormRoute: typeof ApiPublicWidgetFormRoute
   ApiTasksTaskIdRoute: typeof ApiTasksTaskIdRouteWithChildren
   ApiWidgetsProfileRoute: typeof ApiWidgetsProfileRoute
   ApiAgentMigrationsIndexRoute: typeof ApiAgentMigrationsIndexRoute
@@ -1898,6 +1961,7 @@ export interface RootRouteChildren {
   ApiApprovalsApprovalIdApproveRoute: typeof ApiApprovalsApprovalIdApproveRoute
   ApiApprovalsApprovalIdDenyRoute: typeof ApiApprovalsApprovalIdDenyRoute
   ApiCrewsTemplatesIdRoute: typeof ApiCrewsTemplatesIdRoute
+  ApiCustomerWidgetsSaveRoute: typeof ApiCustomerWidgetsSaveRoute
   ApiCustomerWikiPromoteRoute: typeof ApiCustomerWikiPromoteRoute
   ApiCustomerWikiReadRoute: typeof ApiCustomerWikiReadRoute
   ApiCustomerWikiSaveRoute: typeof ApiCustomerWikiSaveRoute
@@ -1906,6 +1970,7 @@ export interface RootRouteChildren {
   ApiPublicWidgetJsRoute: typeof ApiPublicWidgetJsRoute
   ApiPublicWidgetsWidgetKeyRoute: typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
   ApiCrewsTemplatesIndexRoute: typeof ApiCrewsTemplatesIndexRoute
+  ApiCustomerWidgetsIndexRoute: typeof ApiCustomerWidgetsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -2554,6 +2619,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSessionsSendRouteImport
       parentRoute: typeof ApiSessionsRoute
     }
+    '/api/public/widget-form': {
+      id: '/api/public/widget-form'
+      path: '/api/public/widget-form'
+      fullPath: '/api/public/widget-form'
+      preLoaderRoute: typeof ApiPublicWidgetFormRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/widget-chat': {
       id: '/api/public/widget-chat'
       path: '/api/public/widget-chat'
@@ -2629,6 +2701,13 @@ declare module '@tanstack/react-router' {
       path: '/api/messaging/stream'
       fullPath: '/api/messaging/stream'
       preLoaderRoute: typeof ApiMessagingStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/messaging/inbound': {
+      id: '/api/messaging/inbound'
+      path: '/api/messaging/inbound'
+      fullPath: '/api/messaging/inbound'
+      preLoaderRoute: typeof ApiMessagingInboundRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/messaging/contacts': {
@@ -2764,6 +2843,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAgentsAgentIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/widgets/': {
+      id: '/api/customer/widgets/'
+      path: '/api/customer/widgets'
+      fullPath: '/api/customer/widgets/'
+      preLoaderRoute: typeof ApiCustomerWidgetsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/crews/templates/': {
       id: '/api/crews/templates/'
       path: '/api/crews/templates'
@@ -2855,6 +2941,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerWikiPromoteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/widgets/save': {
+      id: '/api/customer/widgets/save'
+      path: '/api/customer/widgets/save'
+      fullPath: '/api/customer/widgets/save'
+      preLoaderRoute: typeof ApiCustomerWidgetsSaveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/crews/templates/$id': {
       id: '/api/crews/templates/$id'
       path: '/api/crews/templates/$id'
@@ -2917,6 +3010,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/widgets/$widgetKey/sessions'
       preLoaderRoute: typeof ApiPublicWidgetsWidgetKeySessionsRouteImport
       parentRoute: typeof ApiPublicWidgetsWidgetKeyRoute
+    }
+    '/api/messaging/threads/$threadId/subscriptions': {
+      id: '/api/messaging/threads/$threadId/subscriptions'
+      path: '/subscriptions'
+      fullPath: '/api/messaging/threads/$threadId/subscriptions'
+      preLoaderRoute: typeof ApiMessagingThreadsThreadIdSubscriptionsRouteImport
+      parentRoute: typeof ApiMessagingThreadsThreadIdRoute
     }
     '/api/messaging/threads/$threadId/reply': {
       id: '/api/messaging/threads/$threadId/reply'
@@ -3109,12 +3209,15 @@ const ApiCrewsCrewIdRouteWithChildren = ApiCrewsCrewIdRoute._addFileChildren(
 
 interface ApiMessagingThreadsThreadIdRouteChildren {
   ApiMessagingThreadsThreadIdReplyRoute: typeof ApiMessagingThreadsThreadIdReplyRoute
+  ApiMessagingThreadsThreadIdSubscriptionsRoute: typeof ApiMessagingThreadsThreadIdSubscriptionsRoute
 }
 
 const ApiMessagingThreadsThreadIdRouteChildren: ApiMessagingThreadsThreadIdRouteChildren =
   {
     ApiMessagingThreadsThreadIdReplyRoute:
       ApiMessagingThreadsThreadIdReplyRoute,
+    ApiMessagingThreadsThreadIdSubscriptionsRoute:
+      ApiMessagingThreadsThreadIdSubscriptionsRoute,
   }
 
 const ApiMessagingThreadsThreadIdRouteWithChildren =
@@ -3261,6 +3364,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiMcpReloadRoute: ApiMcpReloadRoute,
   ApiMcpServersRoute: ApiMcpServersRoute,
   ApiMessagingContactsRoute: ApiMessagingContactsRoute,
+  ApiMessagingInboundRoute: ApiMessagingInboundRoute,
   ApiMessagingStreamRoute: ApiMessagingStreamRoute,
   ApiMessagingThreadsRoute: ApiMessagingThreadsRouteWithChildren,
   ApiOauthDeviceCodeRoute: ApiOauthDeviceCodeRoute,
@@ -3272,6 +3376,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiProfilesReadRoute: ApiProfilesReadRoute,
   ApiProfilesRenameRoute: ApiProfilesRenameRoute,
   ApiPublicWidgetChatRoute: ApiPublicWidgetChatRoute,
+  ApiPublicWidgetFormRoute: ApiPublicWidgetFormRoute,
   ApiTasksTaskIdRoute: ApiTasksTaskIdRouteWithChildren,
   ApiWidgetsProfileRoute: ApiWidgetsProfileRoute,
   ApiAgentMigrationsIndexRoute: ApiAgentMigrationsIndexRoute,
@@ -3285,6 +3390,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiApprovalsApprovalIdApproveRoute: ApiApprovalsApprovalIdApproveRoute,
   ApiApprovalsApprovalIdDenyRoute: ApiApprovalsApprovalIdDenyRoute,
   ApiCrewsTemplatesIdRoute: ApiCrewsTemplatesIdRoute,
+  ApiCustomerWidgetsSaveRoute: ApiCustomerWidgetsSaveRoute,
   ApiCustomerWikiPromoteRoute: ApiCustomerWikiPromoteRoute,
   ApiCustomerWikiReadRoute: ApiCustomerWikiReadRoute,
   ApiCustomerWikiSaveRoute: ApiCustomerWikiSaveRoute,
@@ -3293,6 +3399,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWidgetJsRoute: ApiPublicWidgetJsRoute,
   ApiPublicWidgetsWidgetKeyRoute: ApiPublicWidgetsWidgetKeyRouteWithChildren,
   ApiCrewsTemplatesIndexRoute: ApiCrewsTemplatesIndexRoute,
+  ApiCustomerWidgetsIndexRoute: ApiCustomerWidgetsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
