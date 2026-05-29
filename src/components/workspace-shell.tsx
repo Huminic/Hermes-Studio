@@ -297,10 +297,14 @@ export function WorkspaceShell() {
   // form as the SSR output instead of seeing the sidebar + page layout
   // through the connection-startup overlay (D-V0-008). Authenticated users
   // will see a brief LoginScreen flash before the client auth-session check
-  // resolves; that is the accepted trade-off until full server-side cookie
-  // auth lands.
+  // resolves and replaces it; that is the accepted trade-off until full
+  // server-side cookie auth lands.
+  //
+  // We gate on `authStatus === null` rather than `authState.checked` because
+  // `checked` is artificially `true` on the server (defaults to true when
+  // !isClient) so it would never trigger this guard during SSR.
   if (
-    !authState.checked &&
+    authStatus === null &&
     PROTECTED_PATH_PREFIXES.some((p) => pathname.startsWith(p))
   ) {
     return <LoginScreen />
