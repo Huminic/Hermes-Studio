@@ -22,6 +22,14 @@ Huminic Studio's web interface and the consultative pipeline are **operational e
 
 **Recommendation:** **Conditional go** for Nexxus decommission. Cutover-blocking items are zero. Important-but-not-blocking items are tracked in the defect register and can land in a focused production-hardening pass.
 
+### Post-V10 operator review (2026-05-29)
+
+Operator surfaced two real defects on first review of the V10 evidence that I had missed:
+- **D-V0-008** — admin routes were SSR'd to anonymous visitors. Fixed in PR #16 + #18: workspace-shell now renders LoginScreen as the SSR output for protected paths when `authStatus === null`. Verified via anonymous curl — body content reduced to login form only, no sidebar leak.
+- **D-V0-009** — V9.3 widget was a static branded card with an `alert()` stub button. Fixed in PR #16 + #19 + #22: `/w/$slug` chat mode now renders a live composer that POSTs to `/api/public/widget-chat`; the endpoint grounds responses in the widget frontmatter + declared agent SOUL, falls back to direct OpenAI when Hermes inference is misconfigured, rate-limits per IP. `/w/` index lists every widget across profiles for operator preview.
+
+Both fixes shipped and re-verified. The defect register is the ground truth — every entry tells the smallest portable fix.
+
 ## B. Feature map
 
 See `docs/feature-map.md`. 34 UI routes (24 native, 10 fork), ~110 API routes (~25 fork-touched). The plugin layer declares 6 routes + 2 hosted bundles; 4 of 6 routes are wired; 2 hosted bundles and the public widget renderer are deferred to Phase 5 v2.
