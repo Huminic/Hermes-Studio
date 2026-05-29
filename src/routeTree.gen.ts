@@ -140,6 +140,10 @@ import { Route as ApiPublicWidgetJsRouteImport } from './routes/api/public/widge
 import { Route as ApiPublicArtifactsPublicIdRouteImport } from './routes/api/public/artifacts/$publicId'
 import { Route as ApiMessagingThreadsThreadIdRouteImport } from './routes/api/messaging/threads.$threadId'
 import { Route as ApiHermesRunsRunIdEventsRouteImport } from './routes/api/hermes-runs.$runId.events'
+import { Route as ApiCustomerWikiTreeRouteImport } from './routes/api/customer/wiki/tree'
+import { Route as ApiCustomerWikiSaveRouteImport } from './routes/api/customer/wiki/save'
+import { Route as ApiCustomerWikiReadRouteImport } from './routes/api/customer/wiki/read'
+import { Route as ApiCustomerWikiPromoteRouteImport } from './routes/api/customer/wiki/promote'
 import { Route as ApiCrewsTemplatesIdRouteImport } from './routes/api/crews/templates/$id'
 import { Route as ApiCrewsCrewIdWorkflowRouteImport } from './routes/api/crews/$crewId.workflow'
 import { Route as ApiCrewsCrewIdUsageRouteImport } from './routes/api/crews/$crewId.usage'
@@ -813,6 +817,26 @@ const ApiHermesRunsRunIdEventsRoute =
     path: '/$runId/events',
     getParentRoute: () => ApiHermesRunsRoute,
   } as any)
+const ApiCustomerWikiTreeRoute = ApiCustomerWikiTreeRouteImport.update({
+  id: '/api/customer/wiki/tree',
+  path: '/api/customer/wiki/tree',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCustomerWikiSaveRoute = ApiCustomerWikiSaveRouteImport.update({
+  id: '/api/customer/wiki/save',
+  path: '/api/customer/wiki/save',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCustomerWikiReadRoute = ApiCustomerWikiReadRouteImport.update({
+  id: '/api/customer/wiki/read',
+  path: '/api/customer/wiki/read',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCustomerWikiPromoteRoute = ApiCustomerWikiPromoteRouteImport.update({
+  id: '/api/customer/wiki/promote',
+  path: '/api/customer/wiki/promote',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCrewsTemplatesIdRoute = ApiCrewsTemplatesIdRouteImport.update({
   id: '/api/crews/templates/$id',
   path: '/api/crews/templates/$id',
@@ -1006,6 +1030,10 @@ export interface FileRoutesByFullPath {
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
+  '/api/customer/wiki/promote': typeof ApiCustomerWikiPromoteRoute
+  '/api/customer/wiki/read': typeof ApiCustomerWikiReadRoute
+  '/api/customer/wiki/save': typeof ApiCustomerWikiSaveRoute
+  '/api/customer/wiki/tree': typeof ApiCustomerWikiTreeRoute
   '/api/hermes-runs/$runId/events': typeof ApiHermesRunsRunIdEventsRoute
   '/api/messaging/threads/$threadId': typeof ApiMessagingThreadsThreadIdRouteWithChildren
   '/api/public/artifacts/$publicId': typeof ApiPublicArtifactsPublicIdRouteWithChildren
@@ -1149,6 +1177,10 @@ export interface FileRoutesByTo {
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
+  '/api/customer/wiki/promote': typeof ApiCustomerWikiPromoteRoute
+  '/api/customer/wiki/read': typeof ApiCustomerWikiReadRoute
+  '/api/customer/wiki/save': typeof ApiCustomerWikiSaveRoute
+  '/api/customer/wiki/tree': typeof ApiCustomerWikiTreeRoute
   '/api/hermes-runs/$runId/events': typeof ApiHermesRunsRunIdEventsRoute
   '/api/messaging/threads/$threadId': typeof ApiMessagingThreadsThreadIdRouteWithChildren
   '/api/public/artifacts/$publicId': typeof ApiPublicArtifactsPublicIdRouteWithChildren
@@ -1294,6 +1326,10 @@ export interface FileRoutesById {
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
+  '/api/customer/wiki/promote': typeof ApiCustomerWikiPromoteRoute
+  '/api/customer/wiki/read': typeof ApiCustomerWikiReadRoute
+  '/api/customer/wiki/save': typeof ApiCustomerWikiSaveRoute
+  '/api/customer/wiki/tree': typeof ApiCustomerWikiTreeRoute
   '/api/hermes-runs/$runId/events': typeof ApiHermesRunsRunIdEventsRoute
   '/api/messaging/threads/$threadId': typeof ApiMessagingThreadsThreadIdRouteWithChildren
   '/api/public/artifacts/$publicId': typeof ApiPublicArtifactsPublicIdRouteWithChildren
@@ -1440,6 +1476,10 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
+    | '/api/customer/wiki/promote'
+    | '/api/customer/wiki/read'
+    | '/api/customer/wiki/save'
+    | '/api/customer/wiki/tree'
     | '/api/hermes-runs/$runId/events'
     | '/api/messaging/threads/$threadId'
     | '/api/public/artifacts/$publicId'
@@ -1583,6 +1623,10 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
+    | '/api/customer/wiki/promote'
+    | '/api/customer/wiki/read'
+    | '/api/customer/wiki/save'
+    | '/api/customer/wiki/tree'
     | '/api/hermes-runs/$runId/events'
     | '/api/messaging/threads/$threadId'
     | '/api/public/artifacts/$publicId'
@@ -1727,6 +1771,10 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
+    | '/api/customer/wiki/promote'
+    | '/api/customer/wiki/read'
+    | '/api/customer/wiki/save'
+    | '/api/customer/wiki/tree'
     | '/api/hermes-runs/$runId/events'
     | '/api/messaging/threads/$threadId'
     | '/api/public/artifacts/$publicId'
@@ -1850,6 +1898,10 @@ export interface RootRouteChildren {
   ApiApprovalsApprovalIdApproveRoute: typeof ApiApprovalsApprovalIdApproveRoute
   ApiApprovalsApprovalIdDenyRoute: typeof ApiApprovalsApprovalIdDenyRoute
   ApiCrewsTemplatesIdRoute: typeof ApiCrewsTemplatesIdRoute
+  ApiCustomerWikiPromoteRoute: typeof ApiCustomerWikiPromoteRoute
+  ApiCustomerWikiReadRoute: typeof ApiCustomerWikiReadRoute
+  ApiCustomerWikiSaveRoute: typeof ApiCustomerWikiSaveRoute
+  ApiCustomerWikiTreeRoute: typeof ApiCustomerWikiTreeRoute
   ApiPublicArtifactsPublicIdRoute: typeof ApiPublicArtifactsPublicIdRouteWithChildren
   ApiPublicWidgetJsRoute: typeof ApiPublicWidgetJsRoute
   ApiPublicWidgetsWidgetKeyRoute: typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
@@ -2775,6 +2827,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiHermesRunsRunIdEventsRouteImport
       parentRoute: typeof ApiHermesRunsRoute
     }
+    '/api/customer/wiki/tree': {
+      id: '/api/customer/wiki/tree'
+      path: '/api/customer/wiki/tree'
+      fullPath: '/api/customer/wiki/tree'
+      preLoaderRoute: typeof ApiCustomerWikiTreeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/customer/wiki/save': {
+      id: '/api/customer/wiki/save'
+      path: '/api/customer/wiki/save'
+      fullPath: '/api/customer/wiki/save'
+      preLoaderRoute: typeof ApiCustomerWikiSaveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/customer/wiki/read': {
+      id: '/api/customer/wiki/read'
+      path: '/api/customer/wiki/read'
+      fullPath: '/api/customer/wiki/read'
+      preLoaderRoute: typeof ApiCustomerWikiReadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/customer/wiki/promote': {
+      id: '/api/customer/wiki/promote'
+      path: '/api/customer/wiki/promote'
+      fullPath: '/api/customer/wiki/promote'
+      preLoaderRoute: typeof ApiCustomerWikiPromoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/crews/templates/$id': {
       id: '/api/crews/templates/$id'
       path: '/api/crews/templates/$id'
@@ -3205,6 +3285,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiApprovalsApprovalIdApproveRoute: ApiApprovalsApprovalIdApproveRoute,
   ApiApprovalsApprovalIdDenyRoute: ApiApprovalsApprovalIdDenyRoute,
   ApiCrewsTemplatesIdRoute: ApiCrewsTemplatesIdRoute,
+  ApiCustomerWikiPromoteRoute: ApiCustomerWikiPromoteRoute,
+  ApiCustomerWikiReadRoute: ApiCustomerWikiReadRoute,
+  ApiCustomerWikiSaveRoute: ApiCustomerWikiSaveRoute,
+  ApiCustomerWikiTreeRoute: ApiCustomerWikiTreeRoute,
   ApiPublicArtifactsPublicIdRoute: ApiPublicArtifactsPublicIdRouteWithChildren,
   ApiPublicWidgetJsRoute: ApiPublicWidgetJsRoute,
   ApiPublicWidgetsWidgetKeyRoute: ApiPublicWidgetsWidgetKeyRouteWithChildren,

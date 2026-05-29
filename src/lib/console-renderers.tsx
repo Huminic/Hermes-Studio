@@ -19,6 +19,7 @@
 import { useState } from 'react'
 import type { StudioConfig } from './studio-config'
 import { CustomerChatRenderer } from '../components/customer-console/chat-renderer'
+import { CustomerKnowledgeRenderer } from '../components/customer-console/knowledge-renderer'
 
 export type ConsoleRendererProps = {
   profile: string
@@ -53,15 +54,10 @@ function ChatRenderer(props: ConsoleRendererProps) {
 
 function KnowledgeRenderer(props: ConsoleRendererProps) {
   return (
-    <StubFrame title={`customer-console.knowledge · ${props.profile}`}>
-      <div className="text-xs opacity-70">
-        Phase C.3 — wiki edit + frontmatter panel, KSG-gated Promote flow
-        (inbox → drafts → published). Reads from
-        <code className="px-1 opacity-90">
-          ~/.hermes/profiles/{props.profile}/knowledge/
-        </code>
-      </div>
-    </StubFrame>
+    <CustomerKnowledgeRenderer
+      profile={props.profile}
+      config={props.config}
+    />
   )
 }
 
