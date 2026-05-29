@@ -51,6 +51,37 @@ type SessionsListResponse = Array<SessionMeta>
 export const DESKTOP_SIDEBAR_BACKDROP_CLASS =
   'fixed left-0 bottom-0 top-[var(--titlebar-h,0px)] w-[300px] z-10 bg-black/10 backdrop-blur-[1px]'
 
+/**
+ * Paths that must NOT render workspace chrome (sidebar, page content)
+ * until auth state is verified. SSR returns LoginScreen for these paths
+ * when no auth-session check has resolved yet (fork-added admin surfaces
+ * + customer console). Other Studio routes keep the upstream behavior.
+ */
+const PROTECTED_PATH_PREFIXES = [
+  '/engagements',
+  '/console/',
+  '/profiles',
+  '/agents',
+  '/crews',
+  '/files',
+  '/jobs',
+  '/memory',
+  '/skills',
+  '/tasks',
+  '/terminal',
+  '/widgets',
+  '/artifacts',
+  '/operations',
+  '/conductor',
+  '/audit',
+  '/analytics',
+  '/session-history',
+  '/logs',
+  '/patterns',
+  '/dashboard',
+  '/settings',
+]
+
 async function fetchSessions(): Promise<SessionsListResponse> {
   const res = await fetch('/api/sessions')
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
@@ -258,6 +289,20 @@ export function WorkspaceShell() {
 
   // Show login screen if auth is required and not authenticated
   if (authState.authRequired && !authState.authenticated) {
+    return <LoginScreen />
+  }
+
+  // SSR + pre-auth-check: for protected paths, render LoginScreen rather than
+  // the workspace chrome. Anonymous visitors to these paths get the login
+  // form as the SSR output instead of seeing the sidebar + page layout
+  // through the connection-startup overlay (D-V0-008). Authenticated users
+  // will see a brief LoginScreen flash before the client auth-session check
+  // resolves; that is the accepted trade-off until full server-side cookie
+  // auth lands.
+  if (
+    !authState.checked &&
+    PROTECTED_PATH_PREFIXES.some((p) => pathname.startsWith(p))
+  ) {
     return <LoginScreen />
   }
 

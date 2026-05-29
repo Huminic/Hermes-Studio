@@ -33,6 +33,7 @@ import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as WIndexRouteImport } from './routes/w.index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as CrewsIndexRouteImport } from './routes/crews/index'
 import { Route as ChatIndexRouteImport } from './routes/chat/index'
@@ -98,6 +99,7 @@ import { Route as ApiSkillsSettingsRouteImport } from './routes/api/skills/setti
 import { Route as ApiSkillsInstallRouteImport } from './routes/api/skills/install'
 import { Route as ApiSkillsHubSearchRouteImport } from './routes/api/skills/hub-search'
 import { Route as ApiSessionsSendRouteImport } from './routes/api/sessions/send'
+import { Route as ApiPublicWidgetChatRouteImport } from './routes/api/public/widget-chat'
 import { Route as ApiProfilesRenameRouteImport } from './routes/api/profiles/rename'
 import { Route as ApiProfilesReadRouteImport } from './routes/api/profiles/read'
 import { Route as ApiProfilesListRouteImport } from './routes/api/profiles/list'
@@ -259,6 +261,11 @@ const SplatRoute = SplatRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WIndexRoute = WIndexRouteImport.update({
+  id: '/w/',
+  path: '/w/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
@@ -586,6 +593,11 @@ const ApiSessionsSendRoute = ApiSessionsSendRouteImport.update({
   path: '/send',
   getParentRoute: () => ApiSessionsRoute,
 } as any)
+const ApiPublicWidgetChatRoute = ApiPublicWidgetChatRouteImport.update({
+  id: '/api/public/widget-chat',
+  path: '/api/public/widget-chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProfilesRenameRoute = ApiProfilesRenameRouteImport.update({
   id: '/api/profiles/rename',
   path: '/api/profiles/rename',
@@ -881,6 +893,7 @@ export interface FileRoutesByFullPath {
   '/chat/': typeof ChatIndexRoute
   '/crews/': typeof CrewsIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/w/': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
@@ -905,6 +918,7 @@ export interface FileRoutesByFullPath {
   '/api/profiles/list': typeof ApiProfilesListRoute
   '/api/profiles/read': typeof ApiProfilesReadRoute
   '/api/profiles/rename': typeof ApiProfilesRenameRoute
+  '/api/public/widget-chat': typeof ApiPublicWidgetChatRoute
   '/api/sessions/send': typeof ApiSessionsSendRoute
   '/api/skills/hub-search': typeof ApiSkillsHubSearchRoute
   '/api/skills/install': typeof ApiSkillsInstallRoute
@@ -1013,6 +1027,7 @@ export interface FileRoutesByTo {
   '/chat': typeof ChatIndexRoute
   '/crews': typeof CrewsIndexRoute
   '/settings': typeof SettingsIndexRoute
+  '/w': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
@@ -1037,6 +1052,7 @@ export interface FileRoutesByTo {
   '/api/profiles/list': typeof ApiProfilesListRoute
   '/api/profiles/read': typeof ApiProfilesReadRoute
   '/api/profiles/rename': typeof ApiProfilesRenameRoute
+  '/api/public/widget-chat': typeof ApiPublicWidgetChatRoute
   '/api/sessions/send': typeof ApiSessionsSendRoute
   '/api/skills/hub-search': typeof ApiSkillsHubSearchRoute
   '/api/skills/install': typeof ApiSkillsInstallRoute
@@ -1147,6 +1163,7 @@ export interface FileRoutesById {
   '/chat/': typeof ChatIndexRoute
   '/crews/': typeof CrewsIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/w/': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
@@ -1171,6 +1188,7 @@ export interface FileRoutesById {
   '/api/profiles/list': typeof ApiProfilesListRoute
   '/api/profiles/read': typeof ApiProfilesReadRoute
   '/api/profiles/rename': typeof ApiProfilesRenameRoute
+  '/api/public/widget-chat': typeof ApiPublicWidgetChatRoute
   '/api/sessions/send': typeof ApiSessionsSendRoute
   '/api/skills/hub-search': typeof ApiSkillsHubSearchRoute
   '/api/skills/install': typeof ApiSkillsInstallRoute
@@ -1282,6 +1300,7 @@ export interface FileRouteTypes {
     | '/chat/'
     | '/crews/'
     | '/settings/'
+    | '/w/'
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
     | '/api/crews/$crewId'
@@ -1306,6 +1325,7 @@ export interface FileRouteTypes {
     | '/api/profiles/list'
     | '/api/profiles/read'
     | '/api/profiles/rename'
+    | '/api/public/widget-chat'
     | '/api/sessions/send'
     | '/api/skills/hub-search'
     | '/api/skills/install'
@@ -1414,6 +1434,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/crews'
     | '/settings'
+    | '/w'
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
     | '/api/crews/$crewId'
@@ -1438,6 +1459,7 @@ export interface FileRouteTypes {
     | '/api/profiles/list'
     | '/api/profiles/read'
     | '/api/profiles/rename'
+    | '/api/public/widget-chat'
     | '/api/sessions/send'
     | '/api/skills/hub-search'
     | '/api/skills/install'
@@ -1547,6 +1569,7 @@ export interface FileRouteTypes {
     | '/chat/'
     | '/crews/'
     | '/settings/'
+    | '/w/'
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
     | '/api/crews/$crewId'
@@ -1571,6 +1594,7 @@ export interface FileRouteTypes {
     | '/api/profiles/list'
     | '/api/profiles/read'
     | '/api/profiles/rename'
+    | '/api/public/widget-chat'
     | '/api/sessions/send'
     | '/api/skills/hub-search'
     | '/api/skills/install'
@@ -1677,6 +1701,7 @@ export interface RootRouteChildren {
   WSlugRoute: typeof WSlugRoute
   ChatIndexRoute: typeof ChatIndexRoute
   CrewsIndexRoute: typeof CrewsIndexRoute
+  WIndexRoute: typeof WIndexRoute
   ApiAgentsAgentIdRoute: typeof ApiAgentsAgentIdRoute
   ApiArtifactsArtifactIdRoute: typeof ApiArtifactsArtifactIdRouteWithChildren
   ApiCrewsCrewIdRoute: typeof ApiCrewsCrewIdRouteWithChildren
@@ -1695,6 +1720,7 @@ export interface RootRouteChildren {
   ApiProfilesListRoute: typeof ApiProfilesListRoute
   ApiProfilesReadRoute: typeof ApiProfilesReadRoute
   ApiProfilesRenameRoute: typeof ApiProfilesRenameRoute
+  ApiPublicWidgetChatRoute: typeof ApiPublicWidgetChatRoute
   ApiTasksTaskIdRoute: typeof ApiTasksTaskIdRouteWithChildren
   ApiWidgetsProfileRoute: typeof ApiWidgetsProfileRoute
   ApiAgentMigrationsIndexRoute: typeof ApiAgentMigrationsIndexRoute
@@ -1882,6 +1908,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/w/': {
+      id: '/w/'
+      path: '/w'
+      fullPath: '/w/'
+      preLoaderRoute: typeof WIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings/': {
@@ -2338,6 +2371,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/sessions/send'
       preLoaderRoute: typeof ApiSessionsSendRouteImport
       parentRoute: typeof ApiSessionsRoute
+    }
+    '/api/public/widget-chat': {
+      id: '/api/public/widget-chat'
+      path: '/api/public/widget-chat'
+      fullPath: '/api/public/widget-chat'
+      preLoaderRoute: typeof ApiPublicWidgetChatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/profiles/rename': {
       id: '/api/profiles/rename'
@@ -2908,6 +2948,7 @@ const rootRouteChildren: RootRouteChildren = {
   WSlugRoute: WSlugRoute,
   ChatIndexRoute: ChatIndexRoute,
   CrewsIndexRoute: CrewsIndexRoute,
+  WIndexRoute: WIndexRoute,
   ApiAgentsAgentIdRoute: ApiAgentsAgentIdRoute,
   ApiArtifactsArtifactIdRoute: ApiArtifactsArtifactIdRouteWithChildren,
   ApiCrewsCrewIdRoute: ApiCrewsCrewIdRouteWithChildren,
@@ -2926,6 +2967,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiProfilesListRoute: ApiProfilesListRoute,
   ApiProfilesReadRoute: ApiProfilesReadRoute,
   ApiProfilesRenameRoute: ApiProfilesRenameRoute,
+  ApiPublicWidgetChatRoute: ApiPublicWidgetChatRoute,
   ApiTasksTaskIdRoute: ApiTasksTaskIdRouteWithChildren,
   ApiWidgetsProfileRoute: ApiWidgetsProfileRoute,
   ApiAgentMigrationsIndexRoute: ApiAgentMigrationsIndexRoute,
