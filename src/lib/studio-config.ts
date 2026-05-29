@@ -3,10 +3,11 @@
  *
  * Each customer profile under ~/.hermes/profiles/<name>/ may include a
  * studio.yaml that the customer-console plugin reads to drive branding,
- * menu visibility, dashboard list, widget list, and federation scopes.
+ * menu visibility, widget list, agent picker, and federation scopes.
  *
- * The schema mirrors plugin.yaml's studio_config_schema (customer-console
- * plugin). When new plugins ship more fields, this schema grows accordingly.
+ * Phase C IA (6 pages): Chat, Knowledge, Tools (with Widget sub-page),
+ * Data, Comms (Sales/Service segments), Campaigns (Service sub-page).
+ * The previous IA (Chat/Dashboard/Widget/Service) was retired in C.0.
  */
 
 import { parse as parseYaml } from 'yaml'
@@ -24,24 +25,61 @@ const BrandingSchema = z.object({
 const MenuSchema = z
   .object({
     chat: z.boolean().optional().default(true),
-    dashboard: z.boolean().optional().default(true),
-    widget: z.boolean().optional().default(true),
-    service: z.boolean().optional().default(true),
+    knowledge: z.boolean().optional().default(true),
+    tools: z.boolean().optional().default(true),
+    data: z.boolean().optional().default(true),
+    comms: z.boolean().optional().default(true),
+    campaigns: z.boolean().optional().default(true),
   })
   .optional()
   .default({})
-
-const DashboardEntrySchema = z.object({
-  slug: z.string().min(1),
-  title: z.string().optional(),
-  artifact_path: z.string().min(1),
-})
 
 const WidgetEntrySchema = z.object({
   slug: z.string().min(1),
   mode: z.enum(['chat', 'voice', 'video', 'form']),
   agent: z.string().min(1),
 })
+
+const AgentPickerSchema = z
+  .object({
+    /** Agent IDs (SOUL fragment basenames) eligible to appear in the Chat picker. Empty = all profile agents. */
+    visible_agents: z.array(z.string()).optional().default([]),
+    /** Default-selected agent when the page loads. */
+    default_agent: z.string().optional(),
+  })
+  .optional()
+  .default({ visible_agents: [] })
+
+const ToolsWidgetSchema = z
+  .object({
+    /** Whether the embed-code copy block is visible to customer-admin. */
+    show_embed_snippet: z.boolean().optional().default(true),
+    /** Whether the live demo iframe is visible. */
+    show_live_demo: z.boolean().optional().default(true),
+  })
+  .optional()
+  .default({})
+
+/**
+ * Lookahead schema for AC.5.8 (agent-autonomous two-way reply). Per-thread
+ * rule overrides live in the messaging-hub plugin; this is the per-profile
+ * default set referenced when an agent subscribes to a thread with no
+ * explicit per-thread rule.
+ */
+const AutonomousReplyDefaultsSchema = z
+  .object({
+    enabled: z.boolean().optional().default(false),
+    business_hours_only: z.boolean().optional().default(false),
+    /** Max consecutive agent turns before escalating to human. 0 = no limit. */
+    max_agent_turns: z.number().int().min(0).optional().default(3),
+    /** Per-channel allowlist; empty = all channels permitted. */
+    channels: z
+      .array(z.enum(['chat', 'email', 'sms', 'phone', 'video']))
+      .optional()
+      .default([]),
+  })
+  .optional()
+  .default({})
 
 const FederationSchema = z
   .object({
@@ -53,8 +91,10 @@ const FederationSchema = z
 export const StudioConfigSchema = z.object({
   branding: BrandingSchema,
   menu: MenuSchema,
-  dashboards: z.array(DashboardEntrySchema).optional().default([]),
+  agent_picker: AgentPickerSchema,
+  tools_widget: ToolsWidgetSchema,
   widgets: z.array(WidgetEntrySchema).optional().default([]),
+  autonomous_reply_defaults: AutonomousReplyDefaultsSchema,
   federation: FederationSchema,
 })
 
@@ -91,9 +131,23 @@ export function parseStudioConfig(yamlText: string): ParseResult {
 export function defaultStudioConfig(profile: string): StudioConfig {
   return {
     branding: { persona_name: profile },
-    menu: { chat: true, dashboard: true, widget: true, service: true },
-    dashboards: [],
+    menu: {
+      chat: true,
+      knowledge: true,
+      tools: true,
+      data: true,
+      comms: true,
+      campaigns: true,
+    },
+    agent_picker: { visible_agents: [] },
+    tools_widget: { show_embed_snippet: true, show_live_demo: true },
     widgets: [],
+    autonomous_reply_defaults: {
+      enabled: false,
+      business_hours_only: false,
+      max_agent_turns: 3,
+      channels: [],
+    },
     federation: { read_scopes: [] },
   }
 }

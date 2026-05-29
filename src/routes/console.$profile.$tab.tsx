@@ -10,11 +10,16 @@ export const Route = createFileRoute('/console/$profile/$tab')({
   component: ConsoleTabRoute,
 })
 
+// Phase C 6-page IA. Each tab maps to the customer-console plugin's
+// top-level page renderer. Sub-pages (Tools → Widget, Campaigns → Service)
+// are internal to their parent renderer per AC.0.4.
 const TAB_TO_RENDERER: Record<string, string> = {
   chat: 'customer-console.chat',
-  dashboard: 'customer-console.dashboard-grid',
-  widget: 'customer-console.widget-editor',
-  service: 'customer-console.service-kanban',
+  knowledge: 'customer-console.knowledge',
+  tools: 'customer-console.tools',
+  data: 'customer-console.data',
+  comms: 'customer-console.comms',
+  campaigns: 'customer-console.campaigns',
 }
 
 type StudioConfigResponse = {
@@ -22,7 +27,9 @@ type StudioConfigResponse = {
   source: 'file' | 'default'
 }
 
-async function fetchStudioConfig(profile: string): Promise<StudioConfigResponse> {
+async function fetchStudioConfig(
+  profile: string,
+): Promise<StudioConfigResponse> {
   const response = await fetch(
     `/api/studio-config?profile=${encodeURIComponent(profile)}`,
   )

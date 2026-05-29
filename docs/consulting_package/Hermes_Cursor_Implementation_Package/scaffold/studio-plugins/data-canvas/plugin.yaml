@@ -1,0 +1,43 @@
+id: data-canvas
+version: 0.1.0
+display_name: Data Canvas
+requires_studio_version: ">=1.20.0"
+
+# Phase C.9–C.10 plugin. Owns the federation-MCP query layer, per-profile
+# DuckDB analytics writer, and Metabase React SDK embedding that backs
+# the customer-console Data page.
+#
+# This stub manifest reserves the plugin id, declares the spec compatibility,
+# and provides the scaffold for the upcoming achievements:
+#
+# C.9: data-canvas backend (engine, no UI yet)
+#   - mcp-federation skill becomes real (federated_search tool)
+#   - Per-profile DuckDB writer (~/.hermes/profiles/<profile>/analytics.duckdb)
+#   - Metabase Coolify deployment, per-profile Collection ACLs
+#   - Signed-JWT embedding with profile-locked params
+#   - federation.read_scopes enforcement (hard cross-profile leak block)
+#
+# C.10: Data page renderer — consumed by customer-console's
+#       customer-console.data renderer; mounts Metabase Embedding SDK
+#       components inline with the customer-admin's signed JWT
+#
+# Phase C boundary: agent owns the runway (federation + DuckDB writer +
+# Metabase provisioning). Operator owns the actual Nexxus -> Data Brain
+# migration. Per the locked /goal scope statement, agent stops at the
+# runway-ready boundary.
+
+routes: []
+
+right_pane_slots: []
+
+hosted_bundles: []
+
+studio_config_schema:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  type: object
+  properties: {}
+
+skill_dependencies:
+  - mcp-federation
+
+mcp_dependencies: []

@@ -179,6 +179,24 @@ export function loadPlugins(opts: LoadPluginsOptions): PluginLoadResult {
           message: 'profile_scoped routes must contain $profile in path',
         })
       }
+      if (!route.renderer.includes('.')) {
+        issues.push({
+          pluginId: manifest.id,
+          pluginDir,
+          field: `routes.${route.path}.renderer`,
+          message: `renderer key "${route.renderer}" is not plugin-namespaced (expected format <plugin-id>.<name>)`,
+        })
+      }
+    }
+    for (const slot of manifest.right_pane_slots) {
+      if (!slot.renderer.includes('.')) {
+        issues.push({
+          pluginId: manifest.id,
+          pluginDir,
+          field: `right_pane_slots.${slot.slot_id}.renderer`,
+          message: `renderer key "${slot.renderer}" is not plugin-namespaced (expected format <plugin-id>.<name>)`,
+        })
+      }
     }
 
     for (const bundle of manifest.hosted_bundles) {
@@ -219,7 +237,40 @@ export function loadPlugins(opts: LoadPluginsOptions): PluginLoadResult {
     plugins.push({ manifest, pluginDir })
   }
 
-  return { plugins, issues }
+  // Cross-plugin pass: detect route collisions across plugins. Two plugins
+  // cannot claim the same URL path; if they do, both are rejected per
+  // plugin-manifest-spec.md "Route disjointness" section.
+  const routeOwners = new Map<
+    string,
+    Array<{ pluginId: string; pluginDir: string }>
+  >()
+  for (const lp of plugins) {
+    for (const route of lp.manifest.routes) {
+      const owners = routeOwners.get(route.path) ?? []
+      owners.push({ pluginId: lp.manifest.id, pluginDir: lp.pluginDir })
+      routeOwners.set(route.path, owners)
+    }
+  }
+  const collidingPluginIds = new Set<string>()
+  for (const [routePath, owners] of routeOwners) {
+    if (owners.length > 1) {
+      const ownerIds = owners.map((o) => o.pluginId).join(', ')
+      for (const o of owners) {
+        collidingPluginIds.add(o.pluginId)
+        issues.push({
+          pluginId: o.pluginId,
+          pluginDir: o.pluginDir,
+          field: `routes.${routePath}`,
+          message: `route_collision: path "${routePath}" claimed by multiple plugins: ${ownerIds}`,
+        })
+      }
+    }
+  }
+  const finalPlugins = plugins.filter(
+    (p) => !collidingPluginIds.has(p.manifest.id),
+  )
+
+  return { plugins: finalPlugins, issues }
 }
 
 export function registerPlugins(

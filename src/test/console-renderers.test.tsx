@@ -8,22 +8,35 @@ import {
 } from '@/lib/console-renderers'
 import { defaultStudioConfig } from '@/lib/studio-config'
 
+// Phase C 6-page IA. 9 renderer keys total: 6 page renderers + tools-widget
+// sub-page + widget-public (public unauthenticated /w/$slug) + assistant-pane
+// (right-pane slot).
 const EXPECTED_KEYS = [
   'customer-console.chat',
-  'customer-console.dashboard-grid',
-  'customer-console.widget-editor',
-  'customer-console.service-kanban',
+  'customer-console.knowledge',
+  'customer-console.tools',
+  'customer-console.tools-widget',
+  'customer-console.data',
+  'customer-console.comms',
+  'customer-console.campaigns',
   'customer-console.widget-public',
   'customer-console.assistant-pane',
 ]
 
 describe('console-renderers registry', () => {
-  it('contains all 6 expected renderer keys', () => {
+  it('contains all 9 expected renderer keys', () => {
     const keys = listRendererKeys()
     for (const key of EXPECTED_KEYS) {
       expect(keys).toContain(key)
     }
     expect(keys).toHaveLength(EXPECTED_KEYS.length)
+  })
+
+  it('does not retain old IA renderer keys', () => {
+    const keys = listRendererKeys()
+    expect(keys).not.toContain('customer-console.dashboard-grid')
+    expect(keys).not.toContain('customer-console.widget-editor')
+    expect(keys).not.toContain('customer-console.service-kanban')
   })
 
   it('getRenderer returns the registered component for each expected key', () => {
@@ -50,24 +63,6 @@ describe('console-renderers registry', () => {
     }
   })
 
-  it('dashboard-grid renderer shows empty state when no dashboards configured', () => {
-    const config = defaultStudioConfig('huminic')
-    const Renderer = consoleRenderers['customer-console.dashboard-grid']
-    const { container } = render(
-      <Renderer profile="huminic" config={config} params={{}} />,
-    )
-    expect(container.textContent).toContain('No dashboards declared')
-  })
-
-  it('widget-editor renderer shows empty state when no widgets configured', () => {
-    const config = defaultStudioConfig('huminic')
-    const Renderer = consoleRenderers['customer-console.widget-editor']
-    const { container } = render(
-      <Renderer profile="huminic" config={config} params={{}} />,
-    )
-    expect(container.textContent).toContain('No widgets declared')
-  })
-
   it('chat renderer surfaces the persona_name from config', () => {
     const config = defaultStudioConfig('strukture')
     config.branding.persona_name = 'Automa'
@@ -76,6 +71,64 @@ describe('console-renderers registry', () => {
       <Renderer profile="strukture" config={config} params={{}} />,
     )
     expect(container.textContent).toContain('Automa')
+  })
+
+  it('chat renderer surfaces visible_agents from agent_picker', () => {
+    const config = defaultStudioConfig('huminic')
+    config.agent_picker.visible_agents = ['caroline', 'lead-followup-agent']
+    config.agent_picker.default_agent = 'caroline'
+    const Renderer = consoleRenderers['customer-console.chat']
+    const { container } = render(
+      <Renderer profile="huminic" config={config} params={{}} />,
+    )
+    expect(container.textContent).toContain('caroline')
+  })
+
+  it('knowledge renderer references the profile-scoped knowledge path', () => {
+    const config = defaultStudioConfig('cedar-ridge')
+    const Renderer = consoleRenderers['customer-console.knowledge']
+    const { container } = render(
+      <Renderer profile="cedar-ridge" config={config} params={{}} />,
+    )
+    expect(container.textContent).toContain('cedar-ridge')
+  })
+
+  it('tools-widget renderer shows empty state when no widgets configured', () => {
+    const config = defaultStudioConfig('huminic')
+    const Renderer = consoleRenderers['customer-console.tools-widget']
+    const { container } = render(
+      <Renderer profile="huminic" config={config} params={{}} />,
+    )
+    expect(container.textContent).toContain('No widgets declared')
+  })
+
+  it('data renderer surfaces federation read_scopes', () => {
+    const config = defaultStudioConfig('huminic')
+    config.federation.read_scopes = ['serra:knowledge/reports/published/*']
+    const Renderer = consoleRenderers['customer-console.data']
+    const { container } = render(
+      <Renderer profile="huminic" config={config} params={{}} />,
+    )
+    expect(container.textContent).toContain('serra:')
+  })
+
+  it('comms renderer shows the sales/service segment structure', () => {
+    const config = defaultStudioConfig('huminic')
+    const Renderer = consoleRenderers['customer-console.comms']
+    const { container } = render(
+      <Renderer profile="huminic" config={config} params={{}} />,
+    )
+    expect(container.textContent).toMatch(/Sales/)
+    expect(container.textContent).toMatch(/Service/)
+  })
+
+  it('campaigns renderer surfaces the Service-only decision', () => {
+    const config = defaultStudioConfig('huminic')
+    const Renderer = consoleRenderers['customer-console.campaigns']
+    const { container } = render(
+      <Renderer profile="huminic" config={config} params={{}} />,
+    )
+    expect(container.textContent).toContain('Service')
   })
 
   it('assistant-pane renderer surfaces persona_name', () => {
@@ -99,5 +152,11 @@ describe('console-renderers registry', () => {
       />,
     )
     expect(container.textContent).toContain('huminic-hero')
+  })
+
+  it('all customer-console renderer keys are plugin-namespaced', () => {
+    for (const key of listRendererKeys()) {
+      expect(key.startsWith('customer-console.')).toBe(true)
+    }
   })
 })

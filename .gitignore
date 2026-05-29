@@ -140,3 +140,6 @@ __pycache__/
 .runtime/
 workspace-final-markdown-review.md
 .worktrees/
+
+# Playwright MCP scratch dir
+.playwright-mcp/

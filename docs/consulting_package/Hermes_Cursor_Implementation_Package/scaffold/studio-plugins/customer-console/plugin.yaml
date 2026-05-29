@@ -1,30 +1,40 @@
 id: customer-console
-version: 0.1.0
+version: 0.2.0
 display_name: Customer Console
 requires_studio_version: ">=1.20.0"
+
+# Phase C 6-page IA: Chat / Knowledge / Tools / Data / Comms / Campaigns.
+# Replaces the prior 4-page IA (Chat/Dashboard/Widget/Service) in plugin v0.1.0.
+# Tools page hosts a Widget sub-page (customer-console.tools-widget) navigated
+# inside the tools renderer; Campaigns page renders the Service-only sub-page
+# inline per operator decision 2026-05-29.
 
 routes:
   - path: /console/$profile/chat
     renderer: customer-console.chat
     profile_scoped: true
     auth: required
-  - path: /console/$profile/dashboard
-    renderer: customer-console.dashboard-grid
+  - path: /console/$profile/knowledge
+    renderer: customer-console.knowledge
     profile_scoped: true
     auth: required
-  - path: /console/$profile/widget
-    renderer: customer-console.widget-editor
+  - path: /console/$profile/tools
+    renderer: customer-console.tools
     profile_scoped: true
     auth: required
-  - path: /console/$profile/service
-    renderer: customer-console.service-kanban
+  - path: /console/$profile/data
+    renderer: customer-console.data
+    profile_scoped: true
+    auth: required
+  - path: /console/$profile/comms
+    renderer: customer-console.comms
+    profile_scoped: true
+    auth: required
+  - path: /console/$profile/campaigns
+    renderer: customer-console.campaigns
     profile_scoped: true
     auth: required
   - path: /w/$slug
-    renderer: customer-console.widget-public
-    profile_scoped: false
-    auth: public
-  - path: /p/$slug
     renderer: customer-console.widget-public
     profile_scoped: false
     auth: public
@@ -34,9 +44,11 @@ right_pane_slots:
     renderer: customer-console.assistant-pane
     applies_to_routes:
       - /console/$profile/chat
-      - /console/$profile/dashboard
-      - /console/$profile/widget
-      - /console/$profile/service
+      - /console/$profile/knowledge
+      - /console/$profile/tools
+      - /console/$profile/data
+      - /console/$profile/comms
+      - /console/$profile/campaigns
 
 hosted_bundles:
   - path: /customer-console/embed.js
@@ -70,29 +82,39 @@ studio_config_schema:
         chat:
           type: boolean
           default: true
-        dashboard:
+        knowledge:
           type: boolean
           default: true
-        widget:
+        tools:
           type: boolean
           default: true
-        service:
+        data:
           type: boolean
           default: true
-    dashboards:
-      type: array
-      items:
-        type: object
-        properties:
-          slug:
+        comms:
+          type: boolean
+          default: true
+        campaigns:
+          type: boolean
+          default: true
+    agent_picker:
+      type: object
+      properties:
+        visible_agents:
+          type: array
+          items:
             type: string
-          title:
-            type: string
-          artifact_path:
-            type: string
-        required:
-          - slug
-          - artifact_path
+        default_agent:
+          type: string
+    tools_widget:
+      type: object
+      properties:
+        show_embed_snippet:
+          type: boolean
+          default: true
+        show_live_demo:
+          type: boolean
+          default: true
     widgets:
       type: array
       items:
@@ -109,6 +131,24 @@ studio_config_schema:
           - slug
           - mode
           - agent
+    autonomous_reply_defaults:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: false
+        business_hours_only:
+          type: boolean
+          default: false
+        max_agent_turns:
+          type: integer
+          minimum: 0
+          default: 3
+        channels:
+          type: array
+          items:
+            type: string
+            enum: [chat, email, sms, phone, video]
     federation:
       type: object
       properties:
