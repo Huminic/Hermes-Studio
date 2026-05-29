@@ -1,8 +1,12 @@
 # Huminic Studio Plugin Manifest Spec
 
-**Version:** 0.1.0
-**Status:** Phase-0 draft. Subject to amendment before Phase 5.
+**Version:** 0.2.0
+**Status:** Phase-C active. Multi-plugin coexistence added.
 **Owner:** platform-architect
+
+**Changelog:**
+- 0.2.0 (2026-05-29) — Phase C.0 AC.0.7: multi-plugin coexistence rules; renderer-key namespacing convention; route disjointness validation. Customer-console plugin manifest moves to v0.2.0 with the 6-page IA (Chat/Knowledge/Tools/Data/Comms/Campaigns).
+- 0.1.0 (2026-05-28) — Phase 0 initial draft. Single customer-console plugin with 4-page IA.
 
 This document defines `plugin.yaml`, the portable manifest for adding customer-facing surfaces to Huminic Studio without forking the repo. Plugins live under `~/.hermes/studio-plugins/<plugin-id>/` and are loaded at Studio boot by `src/lib/plugin-loader.ts`.
 
@@ -50,7 +54,7 @@ The implementation package ships canonical plugins under `docs/consulting_packag
 ```yaml
 # Identity
 id: customer-console              # kebab-case, unique across plugins
-version: 0.1.0                    # semver, plugin's own version
+version: 0.2.0                    # semver, plugin's own version
 display_name: Customer Console    # human-readable
 requires_studio_version: ">=1.20.0"   # semver range; loader rejects if mismatched
 
@@ -61,16 +65,24 @@ routes:
     renderer: customer-console.chat       # registry key; resolved by fork
     profile_scoped: true                  # path contains $profile param
     auth: required                        # required | public
-  - path: /console/$profile/dashboard
-    renderer: customer-console.dashboard-grid
+  - path: /console/$profile/knowledge
+    renderer: customer-console.knowledge
     profile_scoped: true
     auth: required
-  - path: /console/$profile/widget
-    renderer: customer-console.widget-editor
+  - path: /console/$profile/tools
+    renderer: customer-console.tools      # tools renderer hosts Widget sub-page
     profile_scoped: true
     auth: required
-  - path: /console/$profile/service
-    renderer: customer-console.service-kanban
+  - path: /console/$profile/data
+    renderer: customer-console.data
+    profile_scoped: true
+    auth: required
+  - path: /console/$profile/comms
+    renderer: customer-console.comms      # comms renderer hosts Sales/Service segments
+    profile_scoped: true
+    auth: required
+  - path: /console/$profile/campaigns
+    renderer: customer-console.campaigns  # Service-only sub-page per operator decision
     profile_scoped: true
     auth: required
   - path: /w/$slug
@@ -83,9 +95,11 @@ right_pane_slots:
     renderer: customer-console.assistant-pane
     applies_to_routes:
       - /console/$profile/chat
-      - /console/$profile/dashboard
-      - /console/$profile/widget
-      - /console/$profile/service
+      - /console/$profile/knowledge
+      - /console/$profile/tools
+      - /console/$profile/data
+      - /console/$profile/comms
+      - /console/$profile/campaigns
 
 # Hosted JavaScript bundles served from this Studio for third-party embedding
 # (e.g. a customer's website pastes <script src="https://studio.huminic.app/customer-console/embed.js"></script>).
@@ -118,18 +132,23 @@ studio_config_schema:
       type: object
       properties:
         chat: { type: boolean, default: true }
-        dashboard: { type: boolean, default: true }
-        widget: { type: boolean, default: true }
-        service: { type: boolean, default: true }
-    dashboards:
-      type: array
-      items:
-        type: object
-        properties:
-          slug: { type: string }
-          title: { type: string }
-          artifact_path: { type: string }  # path under profile root, e.g. knowledge/dashboards/sales.md
-        required: [slug, artifact_path]
+        knowledge: { type: boolean, default: true }
+        tools: { type: boolean, default: true }
+        data: { type: boolean, default: true }
+        comms: { type: boolean, default: true }
+        campaigns: { type: boolean, default: true }
+    agent_picker:
+      type: object
+      properties:
+        visible_agents:
+          type: array
+          items: { type: string }
+        default_agent: { type: string }
+    tools_widget:
+      type: object
+      properties:
+        show_embed_snippet: { type: boolean, default: true }
+        show_live_demo: { type: boolean, default: true }
     widgets:
       type: array
       items:
@@ -139,6 +158,15 @@ studio_config_schema:
           mode: { type: string, enum: [chat, voice, video, form] }
           agent: { type: string }
         required: [slug, mode, agent]
+    autonomous_reply_defaults:
+      type: object
+      properties:
+        enabled: { type: boolean, default: false }
+        business_hours_only: { type: boolean, default: false }
+        max_agent_turns: { type: integer, minimum: 0, default: 3 }
+        channels:
+          type: array
+          items: { type: string, enum: [chat, email, sms, phone, video] }
     federation:
       type: object
       properties:
@@ -202,21 +230,29 @@ The loader validates that the `entry` file exists in the fork. It does NOT execu
 The fork holds a registry mapping renderer keys (strings) to React components. The registry is the authoritative list of what renderers exist; plugins **select** from it, they do not contribute to it.
 
 ```ts
-// src/lib/console-renderers.ts (added in Phase 5)
+// src/lib/console-renderers.tsx (customer-console-owned keys; Phase C.0)
 export type ConsoleRendererProps = {
   profile: string             // resolved from path
-  config: unknown             // validated subset of studio.yaml owned by this plugin
+  config: StudioConfig        // validated subset of studio.yaml
   params: Record<string, string>
 }
 
 export type ConsoleRenderer = (props: ConsoleRendererProps) => JSX.Element
 
 export const consoleRenderers: Record<string, ConsoleRenderer> = {
-  // populated in Phase 5
+  'customer-console.chat': ChatRenderer,
+  'customer-console.knowledge': KnowledgeRenderer,
+  'customer-console.tools': ToolsRenderer,
+  'customer-console.tools-widget': ToolsWidgetRenderer,
+  'customer-console.data': DataRenderer,
+  'customer-console.comms': CommsRenderer,
+  'customer-console.campaigns': CampaignsRenderer,
+  'customer-console.widget-public': WidgetPublicRenderer,
+  'customer-console.assistant-pane': AssistantPaneRenderer,
 }
 ```
 
-Adding a new renderer key is a fork change. Adding a new plugin is not.
+Adding a new renderer key is a fork change. Adding a new plugin is not. Each plugin owns its own registry file under `src/lib/` (customer-console, messaging-hub, data-canvas), and the loader is given the union of all registered keys.
 
 ## Per-profile `studio.yaml`
 
@@ -230,17 +266,28 @@ branding:
   persona_name: Automa
 menu:
   chat: true
-  dashboard: true
-  widget: true
-  service: false
-dashboards:
-  - slug: sales-overview
-    title: Sales Overview
-    artifact_path: knowledge/dashboards/sales-overview.md
+  knowledge: true
+  tools: true
+  data: true
+  comms: true
+  campaigns: false
+agent_picker:
+  visible_agents:
+    - caroline
+    - lead-followup-agent
+  default_agent: caroline
+tools_widget:
+  show_embed_snippet: true
+  show_live_demo: true
 widgets:
   - slug: huminic-hero
     mode: chat
     agent: huminic-lead-response
+autonomous_reply_defaults:
+  enabled: false
+  business_hours_only: false
+  max_agent_turns: 3
+  channels: []
 federation:
   read_scopes: []
 ```
@@ -257,6 +304,52 @@ Profiles without a `studio.yaml` get the schema defaults. Required fields withou
 6. **Register.** Hand the validated plugin set to the route-shell components (in `src/routes/console/`) and the right-pane mounter, both added in Phase 5.
 
 Loader errors are logged to stderr with the plugin id and field path. They never crash Studio.
+
+## Multi-plugin coexistence
+
+Phase C introduces three plugins:
+
+| Plugin | Owns |
+|---|---|
+| `customer-console` | Storefront SPA shell, 6-page IA renderers, `/p/$profile` (Phase C.1), `/w/$slug`, customer-admin login |
+| `messaging-hub` | Backend messaging engine, channel adapters, Studio-side admin views, renderer keys consumed by customer-console's Comms + Campaigns pages |
+| `data-canvas` | Federation-MCP query layer, per-profile DuckDB writer, Metabase React SDK embedding, renderer keys consumed by customer-console's Data page |
+
+All three plugins live side-by-side under `~/.hermes/studio-plugins/`. The loader merges their manifests and validates the combined set.
+
+### Renderer-key namespacing
+
+Renderer keys are namespaced by plugin id. Convention: `<plugin-id>.<renderer-name>`. Examples:
+
+- `customer-console.chat` — customer-console plugin owns this renderer
+- `messaging-hub.thread-detail` — owned by messaging-hub
+- `data-canvas.dashboard-frame` — owned by data-canvas
+
+A plugin's manifest MAY reference renderer keys owned by another plugin (cross-plugin composition — e.g., customer-console's Comms page may mount a `messaging-hub.thread-detail` renderer). The loader does not enforce same-plugin ownership of renderer keys, but every referenced key must exist in the registry; unknown keys are rejected.
+
+The loader emits a warning (not a rejection) if a renderer key does not contain `.` — keys are expected to be plugin-namespaced strings.
+
+### Route disjointness
+
+No two plugins may declare the same URL path in their `routes[]`. The loader collects all routes across plugins; duplicates cause both plugins to be rejected with a `route_collision` issue.
+
+If a plugin needs to extend another plugin's route (add a right-pane slot to an existing page, for example), it does so via `right_pane_slots[].applies_to_routes[]` referencing the existing route path. The slot mounts alongside the existing renderer; no route is replaced.
+
+### Hosted-bundle path namespacing
+
+`hosted_bundles[].path` must start with `/<plugin-id>/` so two plugins cannot collide on `/embed.js`. This is enforced by the loader already (Phase 0).
+
+### Studio config schema merge
+
+Each plugin's `studio_config_schema` is keyed by its plugin id in the merged validation set. A per-profile `studio.yaml` is validated against the union — required fields from any plugin contribute to the union's required set, and that plugin's routes are unavailable for a profile that fails its piece of the schema (other plugins' routes are not affected).
+
+### Loader pass ordering
+
+1. **Parse + per-plugin validation** (existing — Phase 0).
+2. **Renderer-key registry check** (existing — Phase 0).
+3. **Cross-plugin pass** (new — AC.0.7): collect routes across plugins, detect collisions. Reject colliding plugins.
+4. **Schema merge** (existing — Phase 0).
+5. **Register** with the route-shell components.
 
 ## Versioning policy
 

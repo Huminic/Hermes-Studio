@@ -157,7 +157,7 @@ display_name: Bad Path
 requires_studio_version: ">=1.0.0"
 routes:
   - path: /console/chat
-    renderer: anything
+    renderer: bad-path-plugin.anything
     profile_scoped: true
     auth: required
 `,
@@ -170,6 +170,167 @@ routes:
     expect(
       result.issues.some((i) => i.message.includes('must contain $profile')),
     ).toBe(true)
+  })
+
+  it('warns when a route renderer key is not plugin-namespaced (no dot)', () => {
+    writePlugin(
+      root,
+      'unnamespaced-plugin',
+      `
+id: unnamespaced-plugin
+version: 0.1.0
+display_name: Unnamespaced
+requires_studio_version: ">=1.0.0"
+routes:
+  - path: /console/$profile/x
+    renderer: barerenderer
+    profile_scoped: true
+    auth: required
+`,
+    )
+    const result = loadPlugins({
+      pluginsRoot: root,
+      studioVersion: '1.20.0',
+    })
+    expect(result.plugins).toHaveLength(1)
+    expect(
+      result.issues.some((i) =>
+        i.message.includes('is not plugin-namespaced'),
+      ),
+    ).toBe(true)
+  })
+
+  it('warns when a slot renderer key is not plugin-namespaced (no dot)', () => {
+    writePlugin(
+      root,
+      'unnamespaced-slot-plugin',
+      `
+id: unnamespaced-slot-plugin
+version: 0.1.0
+display_name: Unnamespaced Slot
+requires_studio_version: ">=1.0.0"
+routes:
+  - path: /console/$profile/x
+    renderer: unnamespaced-slot-plugin.x
+    profile_scoped: true
+    auth: required
+right_pane_slots:
+  - slot_id: side
+    renderer: bareslot
+    applies_to_routes:
+      - /console/$profile/x
+`,
+    )
+    const result = loadPlugins({
+      pluginsRoot: root,
+      studioVersion: '1.20.0',
+    })
+    expect(result.plugins).toHaveLength(1)
+    expect(
+      result.issues.some(
+        (i) =>
+          i.field === 'right_pane_slots.side.renderer' &&
+          i.message.includes('is not plugin-namespaced'),
+      ),
+    ).toBe(true)
+  })
+
+  it('rejects both plugins when two plugins claim the same route path (route collision)', () => {
+    writePlugin(
+      root,
+      'plugin-a',
+      `
+id: plugin-a
+version: 0.1.0
+display_name: A
+requires_studio_version: ">=1.0.0"
+routes:
+  - path: /console/$profile/chat
+    renderer: plugin-a.chat
+    profile_scoped: true
+    auth: required
+`,
+    )
+    writePlugin(
+      root,
+      'plugin-b',
+      `
+id: plugin-b
+version: 0.1.0
+display_name: B
+requires_studio_version: ">=1.0.0"
+routes:
+  - path: /console/$profile/chat
+    renderer: plugin-b.chat
+    profile_scoped: true
+    auth: required
+`,
+    )
+    const result = loadPlugins({
+      pluginsRoot: root,
+      studioVersion: '1.20.0',
+    })
+    // Both should be rejected
+    expect(result.plugins).toEqual([])
+    // Collision should be reported against both
+    const collisionIssues = result.issues.filter((i) =>
+      i.message.includes('route_collision'),
+    )
+    expect(collisionIssues.length).toBe(2)
+    const pluginIds = new Set(collisionIssues.map((i) => i.pluginId))
+    expect(pluginIds.has('plugin-a')).toBe(true)
+    expect(pluginIds.has('plugin-b')).toBe(true)
+  })
+
+  it('loads multiple non-colliding plugins side by side', () => {
+    writePlugin(
+      root,
+      'customer-console',
+      `
+id: customer-console
+version: 0.2.0
+display_name: Customer Console
+requires_studio_version: ">=1.20.0"
+routes:
+  - path: /console/$profile/chat
+    renderer: customer-console.chat
+    profile_scoped: true
+    auth: required
+`,
+    )
+    writePlugin(
+      root,
+      'messaging-hub',
+      `
+id: messaging-hub
+version: 0.1.0
+display_name: Messaging Hub
+requires_studio_version: ">=1.20.0"
+routes: []
+`,
+    )
+    writePlugin(
+      root,
+      'data-canvas',
+      `
+id: data-canvas
+version: 0.1.0
+display_name: Data Canvas
+requires_studio_version: ">=1.20.0"
+routes: []
+`,
+    )
+    const result = loadPlugins({
+      pluginsRoot: root,
+      studioVersion: '1.20.0',
+    })
+    expect(result.plugins).toHaveLength(3)
+    const ids = result.plugins.map((p) => p.manifest.id).sort()
+    expect(ids).toEqual(['customer-console', 'data-canvas', 'messaging-hub'])
+    // No collisions
+    expect(
+      result.issues.filter((i) => i.message.includes('route_collision')),
+    ).toEqual([])
   })
 
   it('rejects plugin routes that reference an unknown renderer when registry is provided', () => {

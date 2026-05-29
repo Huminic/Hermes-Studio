@@ -1,0 +1,47 @@
+id: messaging-hub
+version: 0.1.0
+display_name: Messaging Hub
+requires_studio_version: ">=1.20.0"
+
+# Phase C.5–C.8 plugin. Owns the unified messaging engine that backs the
+# customer-console Comms + Campaigns pages, plus an operator-side admin
+# view for cross-profile triage.
+#
+# This stub manifest reserves the plugin id, declares the spec compatibility,
+# and provides the scaffold for the upcoming achievements:
+#
+# C.5: messaging-hub backend (engine, no UI yet)
+#   - inbox_routing, contacts, audiences, campaigns tables (SQLite extensions)
+#   - BasePlatformAdapter subclasses for TextMagic, Vapi, Tavus
+#   - Studio APIs: /api/messaging/threads, /messages, /reply, /contacts
+#   - SSE stream: /api/messaging/stream
+#   - Contact dedup across channels
+#   - AC.5.8 agent-autonomous two-way reply engine
+#
+# C.6: channel adapters round-trip with real providers; agent channel personas
+#   - AC.6.7/6.8: Serra ADF XML inbound/outbound
+#
+# C.7: Comms page renderers (Sales + Service segments) — consumed by
+#      customer-console's customer-console.comms renderer
+#
+# C.8: Campaigns page renderers — consumed by customer-console's
+#      customer-console.campaigns renderer; Service sub-page only
+
+routes: []
+
+right_pane_slots: []
+
+hosted_bundles: []
+
+studio_config_schema:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  type: object
+  properties: {}
+
+skill_dependencies: []
+
+mcp_dependencies:
+  - textmagic
+  - vapi
+  - tavus
+  - resend

@@ -18,7 +18,9 @@ type StudioConfigResponse = {
   parseErrors?: Array<string>
 }
 
-async function fetchStudioConfig(profile: string): Promise<StudioConfigResponse> {
+async function fetchStudioConfig(
+  profile: string,
+): Promise<StudioConfigResponse> {
   const response = await fetch(
     `/api/studio-config?profile=${encodeURIComponent(profile)}`,
   )
@@ -47,12 +49,18 @@ function ConsoleLayoutRoute() {
   const tabs = [
     { id: 'chat', label: 'Chat', enabled: config.menu.chat ?? true },
     {
-      id: 'dashboard',
-      label: 'Dashboard',
-      enabled: config.menu.dashboard ?? true,
+      id: 'knowledge',
+      label: 'Knowledge',
+      enabled: config.menu.knowledge ?? true,
     },
-    { id: 'widget', label: 'Widget', enabled: config.menu.widget ?? true },
-    { id: 'service', label: 'Service', enabled: config.menu.service ?? true },
+    { id: 'tools', label: 'Tools', enabled: config.menu.tools ?? true },
+    { id: 'data', label: 'Data', enabled: config.menu.data ?? true },
+    { id: 'comms', label: 'Comms', enabled: config.menu.comms ?? true },
+    {
+      id: 'campaigns',
+      label: 'Campaigns',
+      enabled: config.menu.campaigns ?? true,
+    },
   ]
 
   const AssistantRenderer = getRenderer('customer-console.assistant-pane')
