@@ -1,17 +1,44 @@
-FROM node:22-slim
+# Hermes Studio workspace (production)
+#
+# Builds the SSR bundle (`pnpm build` → /app/dist) and runs the
+# production server-entry.js. The old version ran `pnpm dev` which
+# served raw /src paths to the browser and leaked server-only
+# modules (gateway-capabilities) into the client — see CY.10.
 
-RUN npm install -g pnpm@10
+# ─── Build stage ──────────────────────────────────────────────────────
+FROM node:22-alpine AS builder
+
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml* ./
+# python/make/g++ for better-sqlite3 native addon build
+RUN apk add --no-cache python3 make g++
 
-RUN pnpm install --no-frozen-lockfile
+COPY package.json pnpm-lock.yaml* .npmrc* ./
+RUN npm install -g pnpm@10 && pnpm install --no-frozen-lockfile
 
 COPY . .
+RUN pnpm build
+
+# ─── Runtime stage ────────────────────────────────────────────────────
+FROM node:22-alpine AS runner
+
+ENV NODE_ENV=production
+
+WORKDIR /app
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/server-entry.js ./
+
+# Hermes profile data + .env live on the shared hermes-state volume
+# mounted at /root/.hermes by docker-compose. Keep the runtime user as
+# root so the existing volume permissions continue to work.
 
 ENV HERMES_API_URL=http://hermes-agent:8642
 
 EXPOSE 3000
 
-CMD ["pnpm", "dev", "--host", "0.0.0.0", "--port", "3000"]
+CMD ["node", "server-entry.js"]
