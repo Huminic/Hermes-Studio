@@ -1,4 +1,10 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRoute,
+  useRouterState,
+} from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import appCss from '../styles.css?url'
@@ -209,16 +215,43 @@ function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <Toaster />
+      <RootRouteSwitch />
+    </QueryClientProvider>
+  )
+}
+
+/**
+ * Storefront /p/<profile>/* routes render their own self-contained
+ * branded shell with their own customer-admin login (AC.1.2). We
+ * decide here — at the route root — whether to mount the Studio
+ * admin chrome (WorkspaceShell + onboarding + global shortcuts) or
+ * skip straight to the storefront Outlet. Doing it at the workspace
+ * shell level didn't work — hydration mismatched between the SSR
+ * /p/ bypass and the client-side full chrome render (CY.13).
+ */
+function RootRouteSwitch() {
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
+  if (pathname.startsWith('/p/')) {
+    return (
+      <div className="theme-bg theme-text min-h-dvh">
+        <Outlet />
+      </div>
+    )
+  }
+  return (
+    <>
       <HermesOnboarding />
       <GlobalShortcutListener />
       <TerminalShortcutListener />
       <MobilePromptTrigger />
-      <Toaster />
       <WorkspaceShell />
       <SearchModal />
       <OnboardingTour />
       <KeyboardShortcutsModal />
-    </QueryClientProvider>
+    </>
   )
 }
 
