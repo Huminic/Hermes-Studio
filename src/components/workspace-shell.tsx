@@ -287,6 +287,26 @@ export function WorkspaceShell() {
       window.removeEventListener(SIDEBAR_TOGGLE_EVENT, handleToggleEvent)
   }, [isMobile, setSidebarCollapsed, toggleSidebar])
 
+  // Storefront /p/$profile/* routes bypass the Studio admin chrome (sidebar,
+  // header, page-title bar) and the Studio admin LoginScreen entirely.
+  // They render in their own self-contained branded shell and handle their
+  // own customer-admin login at the route level (AC.1.2). MUST be checked
+  // BEFORE the Studio admin auth gate below, otherwise unauthenticated
+  // storefront visitors get the wrong login form.
+  if (pathname.startsWith('/p/')) {
+    return (
+      <div className="theme-bg theme-text min-h-dvh">
+        <ErrorBoundary
+          className="h-full min-h-0 flex-1"
+          title="Storefront error"
+          description="This page failed to render. Reload to try again."
+        >
+          <Outlet />
+        </ErrorBoundary>
+      </div>
+    )
+  }
+
   // Show login screen if auth is required and not authenticated
   if (authState.authRequired && !authState.authenticated) {
     return <LoginScreen />
@@ -308,24 +328,6 @@ export function WorkspaceShell() {
     PROTECTED_PATH_PREFIXES.some((p) => pathname.startsWith(p))
   ) {
     return <LoginScreen />
-  }
-
-  // Storefront /p/$profile/* routes bypass the Studio admin chrome (sidebar,
-  // header, page-title bar) and render in their own self-contained branded
-  // shell. They handle their own auth via customer-admin login at the route
-  // level (AC.1.2). Render the Outlet directly without the workspace wrap.
-  if (pathname.startsWith('/p/')) {
-    return (
-      <div className="theme-bg theme-text min-h-dvh">
-        <ErrorBoundary
-          className="h-full min-h-0 flex-1"
-          title="Storefront error"
-          description="This page failed to render. Reload to try again."
-        >
-          <Outlet />
-        </ErrorBoundary>
-      </div>
-    )
   }
 
   const shellStyle: React.CSSProperties & Record<'--titlebar-h', string> = {
