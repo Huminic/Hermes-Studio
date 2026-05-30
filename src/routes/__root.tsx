@@ -236,7 +236,10 @@ function RootRouteSwitch() {
   })
   if (pathname.startsWith('/p/')) {
     return (
-      <div className="theme-bg theme-text min-h-dvh">
+      <div
+        data-storefront="true"
+        className="theme-bg theme-text min-h-dvh"
+      >
         <Outlet />
       </div>
     )
@@ -376,7 +379,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           (function(){
             var start = Date.now();
             function check() {
-              var el = document.querySelector('nav, aside, .workspace-shell, [data-testid]');
+              var el = document.querySelector('nav, aside, .workspace-shell, [data-testid], [data-storefront]');
               var elapsed = Date.now() - start;
               if (el && elapsed > 2500) { window.__dismissSplash && window.__dismissSplash(); }
               else { setTimeout(check, 200); }
