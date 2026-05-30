@@ -3,20 +3,44 @@ import { json } from '@tanstack/react-start'
 import { isAuthenticated } from '../../server/auth-middleware'
 import { readStudioConfig } from '../../server/studio-config'
 
+/**
+ * GET /api/studio-config?profile=X
+ *
+ * Returns the per-profile studio.yaml. Unauthenticated visitors get the
+ * PUBLIC subset (branding + menu visibility) so the storefront landing
+ * page can render brand chrome before login. Authenticated callers get
+ * the full config including agent_picker, federation scopes, etc.
+ */
 export const Route = createFileRoute('/api/studio-config')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
-          return json({ error: 'Unauthorized' }, { status: 401 })
-        }
         try {
           const url = new URL(request.url)
           const profile = url.searchParams.get('profile')
           if (!profile) {
             return json({ error: 'profile query param required' }, { status: 400 })
           }
-          return json(readStudioConfig(profile))
+          const full = readStudioConfig(profile)
+          if (isAuthenticated(request)) {
+            return json(full)
+          }
+          // Public subset: branding + menu only. Anything that reveals
+          // agent rosters, federation scopes, autonomous-reply defaults
+          // or widget configuration stays behind auth.
+          return json({
+            config: {
+              branding: full.config.branding,
+              menu: full.config.menu,
+              agent_picker: { visible_agents: [], default_agent: undefined },
+              tools_widget: full.config.tools_widget,
+              widgets: [],
+              autonomous_reply_defaults: { enabled: false, business_hours_only: false, max_agent_turns: 0, channels: [] },
+              federation: { read_scopes: [] },
+              lead_notifications: {},
+            },
+            source: full.source,
+          })
         } catch (error) {
           return json(
             {
