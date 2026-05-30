@@ -93,62 +93,64 @@ describe('listAgentsForProfile', () => {
 })
 
 describe('filterByVisibleAgents', () => {
-  it('returns full roster when visible list is empty', async () => {
+  const mk = (id: string, enabled = true) => ({
+    id,
+    name: id.toUpperCase(),
+    summary: '',
+    scope: null,
+    source: 'governance/agents' as const,
+    soulPath: '/x',
+    hasChatPersona: false,
+    enabled,
+  })
+
+  it('returns full enabled roster when visible list is empty', async () => {
     const { filterByVisibleAgents } = await import('@/server/customer-agents')
-    const roster = {
-      profile: 'x',
-      agents: [
-        {
-          id: 'a',
-          name: 'A',
-          summary: '',
-          scope: null,
-          source: 'governance/agents' as const,
-          soulPath: '/x',
-          hasChatPersona: false,
-        },
-        {
-          id: 'b',
-          name: 'B',
-          summary: '',
-          scope: null,
-          source: 'governance/agents' as const,
-          soulPath: '/x',
-          hasChatPersona: false,
-        },
-      ],
-    }
-    const out = filterByVisibleAgents(roster, [])
+    const out = filterByVisibleAgents(
+      { profile: 'x', agents: [mk('a'), mk('b')] },
+      [],
+    )
     expect(out.agents.map((a) => a.id)).toEqual(['a', 'b'])
   })
 
   it('filters out agents not in the allowlist', async () => {
     const { filterByVisibleAgents } = await import('@/server/customer-agents')
-    const roster = {
-      profile: 'x',
-      agents: [
-        {
-          id: 'a',
-          name: 'A',
-          summary: '',
-          scope: null,
-          source: 'governance/agents' as const,
-          soulPath: '/x',
-          hasChatPersona: false,
-        },
-        {
-          id: 'b',
-          name: 'B',
-          summary: '',
-          scope: null,
-          source: 'governance/agents' as const,
-          soulPath: '/x',
-          hasChatPersona: false,
-        },
-      ],
-    }
-    const out = filterByVisibleAgents(roster, ['b'])
+    const out = filterByVisibleAgents(
+      { profile: 'x', agents: [mk('a'), mk('b')] },
+      ['b'],
+    )
     expect(out.agents.map((a) => a.id)).toEqual(['b'])
+  })
+
+  it('always drops agents whose SOUL is enabled: false', async () => {
+    const { filterByVisibleAgents } = await import('@/server/customer-agents')
+    const out = filterByVisibleAgents(
+      { profile: 'x', agents: [mk('a'), mk('b', false), mk('c')] },
+      [],
+    )
+    expect(out.agents.map((a) => a.id)).toEqual(['a', 'c'])
+  })
+})
+
+describe('SOUL frontmatter enabled flag', () => {
+  it('reads enabled: false from SOUL frontmatter', async () => {
+    const dir = seedProfile('huminic')
+    const agentsDir = path.join(dir, 'governance', 'agents')
+    fs.mkdirSync(agentsDir, { recursive: true })
+    fs.writeFileSync(
+      path.join(agentsDir, 'caroline.md'),
+      `---\nname: Caroline\nenabled: false\n---\nCaroline.\n`,
+    )
+    fs.writeFileSync(
+      path.join(agentsDir, 'duane.md'),
+      `---\nname: Duane\n---\nDuane.\n`,
+    )
+    const { listAgentsForProfile } = await import('@/server/customer-agents')
+    const roster = listAgentsForProfile('huminic')
+    const caroline = roster.agents.find((a) => a.id === 'caroline')
+    const duane = roster.agents.find((a) => a.id === 'duane')
+    expect(caroline?.enabled).toBe(false)
+    expect(duane?.enabled).toBe(true)
   })
 })
 

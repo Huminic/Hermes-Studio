@@ -11,6 +11,13 @@ export type CustomerAgent = {
   source: 'governance/agents' | 'profile-SOUL'
   soulPath: string
   hasChatPersona: boolean
+  /**
+   * Frontmatter `enabled: false` marks the SOUL as present on disk but
+   * NOT exposed to the customer-facing roster. Used during the
+   * Nexxus → Huminic cutover so the agent set mirrors prod but stays
+   * dark until the operator flips it.
+   */
+  enabled: boolean
 }
 
 export type AgentRoster = {
@@ -134,6 +141,7 @@ export function listAgentsForProfile(profile: string): AgentRoster {
         source: 'governance/agents',
         soulPath,
         hasChatPersona: fs.existsSync(chatPersonaPath(profile, id)),
+        enabled: fm.enabled === false ? false : true,
       })
     }
   }
@@ -157,6 +165,7 @@ export function listAgentsForProfile(profile: string): AgentRoster {
         source: 'profile-SOUL',
         soulPath: profileSoul,
         hasChatPersona: fs.existsSync(chatPersonaPath(profile, id)),
+        enabled: fm.enabled === false ? false : true,
       })
     }
   }
@@ -189,15 +198,21 @@ export function readAgentSoulForProfile(
 
 /**
  * Filter a roster by a studio.yaml agent_picker.visible_agents allowlist.
- * Empty allowlist means "all profile agents".
+ * Empty allowlist means "all profile agents". Disabled agents
+ * (enabled:false in SOUL frontmatter) are always dropped from the
+ * customer-facing surface — they remain on disk for cutover but the
+ * customer never sees them until the operator flips them on.
  */
 export function filterByVisibleAgents(
   roster: AgentRoster,
   visible: ReadonlyArray<string>,
 ): AgentRoster {
-  if (visible.length === 0) return roster
+  const enabledOnly = roster.agents.filter((a) => a.enabled)
+  if (visible.length === 0) {
+    return { profile: roster.profile, agents: enabledOnly }
+  }
   return {
     profile: roster.profile,
-    agents: roster.agents.filter((a) => visible.includes(a.id)),
+    agents: enabledOnly.filter((a) => visible.includes(a.id)),
   }
 }

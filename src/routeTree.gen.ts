@@ -138,6 +138,8 @@ import { Route as ApiCustomerWidgetsIndexRouteImport } from './routes/api/custom
 import { Route as ApiCustomerCampaignsIndexRouteImport } from './routes/api/customer/campaigns/index'
 import { Route as ApiCustomerAudiencesIndexRouteImport } from './routes/api/customer/audiences/index'
 import { Route as ApiCrewsTemplatesIndexRouteImport } from './routes/api/crews/templates/index'
+import { Route as ApiWebhooksVapiProfileRouteImport } from './routes/api/webhooks/vapi.$profile'
+import { Route as ApiWebhooksTextmagicProfileRouteImport } from './routes/api/webhooks/textmagic.$profile'
 import { Route as ApiTasksTaskIdMoveRouteImport } from './routes/api/tasks/$taskId.move'
 import { Route as ApiSessionsSessionKeyStatusRouteImport } from './routes/api/sessions/$sessionKey.status'
 import { Route as ApiSessionsSessionKeyActiveRunRouteImport } from './routes/api/sessions/$sessionKey.active-run'
@@ -813,6 +815,17 @@ const ApiCrewsTemplatesIndexRoute = ApiCrewsTemplatesIndexRouteImport.update({
   path: '/api/crews/templates/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiWebhooksVapiProfileRoute = ApiWebhooksVapiProfileRouteImport.update({
+  id: '/api/webhooks/vapi/$profile',
+  path: '/api/webhooks/vapi/$profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWebhooksTextmagicProfileRoute =
+  ApiWebhooksTextmagicProfileRouteImport.update({
+    id: '/api/webhooks/textmagic/$profile',
+    path: '/api/webhooks/textmagic/$profile',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiTasksTaskIdMoveRoute = ApiTasksTaskIdMoveRouteImport.update({
   id: '/move',
   path: '/move',
@@ -1106,6 +1119,8 @@ export interface FileRoutesByFullPath {
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
+  '/api/webhooks/textmagic/$profile': typeof ApiWebhooksTextmagicProfileRoute
+  '/api/webhooks/vapi/$profile': typeof ApiWebhooksVapiProfileRoute
   '/api/crews/templates/': typeof ApiCrewsTemplatesIndexRoute
   '/api/customer/audiences/': typeof ApiCustomerAudiencesIndexRoute
   '/api/customer/campaigns/': typeof ApiCustomerCampaignsIndexRoute
@@ -1262,6 +1277,8 @@ export interface FileRoutesByTo {
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
+  '/api/webhooks/textmagic/$profile': typeof ApiWebhooksTextmagicProfileRoute
+  '/api/webhooks/vapi/$profile': typeof ApiWebhooksVapiProfileRoute
   '/api/crews/templates': typeof ApiCrewsTemplatesIndexRoute
   '/api/customer/audiences': typeof ApiCustomerAudiencesIndexRoute
   '/api/customer/campaigns': typeof ApiCustomerCampaignsIndexRoute
@@ -1420,6 +1437,8 @@ export interface FileRoutesById {
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
+  '/api/webhooks/textmagic/$profile': typeof ApiWebhooksTextmagicProfileRoute
+  '/api/webhooks/vapi/$profile': typeof ApiWebhooksVapiProfileRoute
   '/api/crews/templates/': typeof ApiCrewsTemplatesIndexRoute
   '/api/customer/audiences/': typeof ApiCustomerAudiencesIndexRoute
   '/api/customer/campaigns/': typeof ApiCustomerCampaignsIndexRoute
@@ -1579,6 +1598,8 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/active-run'
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
+    | '/api/webhooks/textmagic/$profile'
+    | '/api/webhooks/vapi/$profile'
     | '/api/crews/templates/'
     | '/api/customer/audiences/'
     | '/api/customer/campaigns/'
@@ -1735,6 +1756,8 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/active-run'
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
+    | '/api/webhooks/textmagic/$profile'
+    | '/api/webhooks/vapi/$profile'
     | '/api/crews/templates'
     | '/api/customer/audiences'
     | '/api/customer/campaigns'
@@ -1892,6 +1915,8 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/active-run'
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
+    | '/api/webhooks/textmagic/$profile'
+    | '/api/webhooks/vapi/$profile'
     | '/api/crews/templates/'
     | '/api/customer/audiences/'
     | '/api/customer/campaigns/'
@@ -2023,6 +2048,8 @@ export interface RootRouteChildren {
   ApiPublicArtifactsPublicIdRoute: typeof ApiPublicArtifactsPublicIdRouteWithChildren
   ApiPublicWidgetJsRoute: typeof ApiPublicWidgetJsRoute
   ApiPublicWidgetsWidgetKeyRoute: typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
+  ApiWebhooksTextmagicProfileRoute: typeof ApiWebhooksTextmagicProfileRoute
+  ApiWebhooksVapiProfileRoute: typeof ApiWebhooksVapiProfileRoute
   ApiCrewsTemplatesIndexRoute: typeof ApiCrewsTemplatesIndexRoute
   ApiCustomerAudiencesIndexRoute: typeof ApiCustomerAudiencesIndexRoute
   ApiCustomerCampaignsIndexRoute: typeof ApiCustomerCampaignsIndexRoute
@@ -2934,6 +2961,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCrewsTemplatesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/webhooks/vapi/$profile': {
+      id: '/api/webhooks/vapi/$profile'
+      path: '/api/webhooks/vapi/$profile'
+      fullPath: '/api/webhooks/vapi/$profile'
+      preLoaderRoute: typeof ApiWebhooksVapiProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/webhooks/textmagic/$profile': {
+      id: '/api/webhooks/textmagic/$profile'
+      path: '/api/webhooks/textmagic/$profile'
+      fullPath: '/api/webhooks/textmagic/$profile'
+      preLoaderRoute: typeof ApiWebhooksTextmagicProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/tasks/$taskId/move': {
       id: '/api/tasks/$taskId/move'
       path: '/move'
@@ -3484,6 +3525,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicArtifactsPublicIdRoute: ApiPublicArtifactsPublicIdRouteWithChildren,
   ApiPublicWidgetJsRoute: ApiPublicWidgetJsRoute,
   ApiPublicWidgetsWidgetKeyRoute: ApiPublicWidgetsWidgetKeyRouteWithChildren,
+  ApiWebhooksTextmagicProfileRoute: ApiWebhooksTextmagicProfileRoute,
+  ApiWebhooksVapiProfileRoute: ApiWebhooksVapiProfileRoute,
   ApiCrewsTemplatesIndexRoute: ApiCrewsTemplatesIndexRoute,
   ApiCustomerAudiencesIndexRoute: ApiCustomerAudiencesIndexRoute,
   ApiCustomerCampaignsIndexRoute: ApiCustomerCampaignsIndexRoute,
