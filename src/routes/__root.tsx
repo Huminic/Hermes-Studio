@@ -6,7 +6,7 @@ import {
   useRouterState,
 } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import appCss from '../styles.css?url'
 import { SearchModal } from '@/components/search/search-modal'
 import { TerminalShortcutListener } from '@/components/terminal-shortcut-listener'
@@ -18,6 +18,8 @@ import { OnboardingTour } from '@/components/onboarding/onboarding-tour'
 import { KeyboardShortcutsModal } from '@/components/keyboard-shortcuts-modal'
 import { initializeSettingsAppearance } from '@/hooks/use-settings'
 import { HermesOnboarding } from '@/components/onboarding/hermes-onboarding'
+import { PortalLogin } from '@/components/portal-login'
+import { isPortalHost } from '@/lib/portal-host'
 
 const APP_CSP = [
   "default-src 'self'",
@@ -234,6 +236,28 @@ function RootRouteSwitch() {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   })
+
+  // Hostname-aware switch. Server-side has no window; we render the studio
+  // shell during SSR and let the client correct after hydration if we're
+  // actually on the portal host. The hydration mismatch is contained — the
+  // first client render matches SSR, then useEffect flips the flag and the
+  // second render swaps shells. The splash screen covers the transition.
+  const [portalHost, setPortalHost] = useState(false)
+  useEffect(() => {
+    setPortalHost(
+      isPortalHost(
+        typeof window !== 'undefined' ? window.location.hostname : null,
+      ),
+    )
+  }, [])
+
+  // Storefront /p/<profile>/* routes render their own self-contained
+  // branded shell with their own customer-admin login (AC.1.2). We decide
+  // here — at the route root — whether to mount the Studio admin chrome
+  // (WorkspaceShell + onboarding + global shortcuts) or skip straight to
+  // the storefront Outlet. Doing it at the workspace shell level didn't
+  // work — hydration mismatched between the SSR /p/ bypass and the
+  // client-side full chrome render (CY.13).
   if (pathname.startsWith('/p/')) {
     return (
       <div
@@ -244,6 +268,32 @@ function RootRouteSwitch() {
       </div>
     )
   }
+
+  // Portal hostname, bare path → generic Huminic-branded login form.
+  // After successful auth, PortalLogin redirects to /p/<profile>/chat.
+  if (portalHost) {
+    if (pathname === '/' || pathname === '') {
+      return (
+        <div data-storefront="true" className="theme-bg theme-text min-h-dvh">
+          <PortalLogin />
+        </div>
+      )
+    }
+    // Allow public /reset/* and /api/* pass-throughs on the portal host.
+    if (pathname.startsWith('/reset') || pathname.startsWith('/api/')) {
+      return (
+        <div data-storefront="true" className="theme-bg theme-text min-h-dvh">
+          <Outlet />
+        </div>
+      )
+    }
+    // Any other path on the portal host bounces back to the login page.
+    if (typeof window !== 'undefined') {
+      window.location.replace('/')
+    }
+    return null
+  }
+
   return (
     <>
       <HermesOnboarding />
