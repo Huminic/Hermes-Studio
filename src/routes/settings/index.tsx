@@ -240,9 +240,9 @@ type SettingsSectionId =
   | 'advanced'
 
 type SettingsNavItem = {
-  id: SettingsSectionId | 'mcp'
+  id: SettingsSectionId | 'mcp' | 'mcp-tokens'
   label: string
-  to?: '/settings/mcp'
+  to?: '/settings/mcp' | '/settings/mcp-tokens'
 }
 
 const SETTINGS_NAV_ITEMS: Array<SettingsNavItem> = [
@@ -259,6 +259,7 @@ const SETTINGS_NAV_ITEMS: Array<SettingsNavItem> = [
   { id: 'identity', label: 'Identity' },
   { id: 'autostart', label: 'Auto-start' },
   { id: 'mcp', label: 'MCP Servers', to: '/settings/mcp' },
+  { id: 'mcp-tokens', label: 'MCP Tokens', to: '/settings/mcp-tokens' },
 ]
 
 function SettingsRoute() {

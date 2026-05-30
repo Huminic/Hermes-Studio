@@ -63,25 +63,18 @@ describe('console-renderers registry', () => {
     }
   })
 
-  it('chat renderer surfaces the persona_name from config', () => {
+  it('chat renderer initially shows a loading state while fetching agents', () => {
+    // C.2: chat renderer now fetches /api/customer/agents on mount.
+    // Synchronous render shows "Loading agents…" until the network
+    // resolves; full round-trip is covered by customer-chat-api.test.ts.
     const config = defaultStudioConfig('strukture')
     config.branding.persona_name = 'Automa'
     const Renderer = consoleRenderers['customer-console.chat']
     const { container } = render(
       <Renderer profile="strukture" config={config} params={{}} />,
     )
-    expect(container.textContent).toContain('Automa')
-  })
-
-  it('chat renderer surfaces visible_agents from agent_picker', () => {
-    const config = defaultStudioConfig('huminic')
-    config.agent_picker.visible_agents = ['caroline', 'lead-followup-agent']
-    config.agent_picker.default_agent = 'caroline'
-    const Renderer = consoleRenderers['customer-console.chat']
-    const { container } = render(
-      <Renderer profile="huminic" config={config} params={{}} />,
-    )
-    expect(container.textContent).toContain('caroline')
+    expect(container.textContent).toContain('Loading agents')
+    expect(container.textContent).toContain('strukture')
   })
 
   it('knowledge renderer references the profile-scoped knowledge path', () => {
@@ -118,8 +111,10 @@ describe('console-renderers registry', () => {
     const { container } = render(
       <Renderer profile="huminic" config={config} params={{}} />,
     )
-    expect(container.textContent).toMatch(/Sales/)
-    expect(container.textContent).toMatch(/Service/)
+    // C.7 segment switcher labels (capitalize via CSS; text content
+    // matches the lowercase source). Both terms must appear.
+    expect(container.textContent).toMatch(/sales/i)
+    expect(container.textContent).toMatch(/service/i)
   })
 
   it('campaigns renderer surfaces the Service-only decision', () => {

@@ -56,6 +56,8 @@ const ToolsWidgetSchema = z
     show_embed_snippet: z.boolean().optional().default(true),
     /** Whether the live demo iframe is visible. */
     show_live_demo: z.boolean().optional().default(true),
+    /** Whether the Consult sub-page is exposed under Tools (AC.13.1). */
+    consult: z.boolean().optional().default(false),
   })
   .optional()
   .default({})
@@ -88,6 +90,22 @@ const FederationSchema = z
   .optional()
   .default({ read_scopes: [] })
 
+/**
+ * Lead notification destination per profile. When an inbound channel
+ * adapter creates a "lead" thread (Vapi end-of-call summary, ADF email,
+ * form submission), the messaging hub emits an ADF XML email to this
+ * address via central-mcp Resend. Empty adf_email disables ADF emit.
+ */
+const LeadNotificationsSchema = z
+  .object({
+    adf_email: z.string().email().optional(),
+    sender_name: z.string().optional(),
+    /** Name of the env var (in the profile .env or central-mcp tokens) that holds the Resend token used to send this profile's ADF emails. Defaults to CENTRAL_MCP_TOKEN. */
+    resend_token_var: z.string().optional(),
+  })
+  .optional()
+  .default({})
+
 export const StudioConfigSchema = z.object({
   branding: BrandingSchema,
   menu: MenuSchema,
@@ -96,6 +114,7 @@ export const StudioConfigSchema = z.object({
   widgets: z.array(WidgetEntrySchema).optional().default([]),
   autonomous_reply_defaults: AutonomousReplyDefaultsSchema,
   federation: FederationSchema,
+  lead_notifications: LeadNotificationsSchema,
 })
 
 export type StudioConfig = z.infer<typeof StudioConfigSchema>
@@ -140,7 +159,7 @@ export function defaultStudioConfig(profile: string): StudioConfig {
       campaigns: true,
     },
     agent_picker: { visible_agents: [] },
-    tools_widget: { show_embed_snippet: true, show_live_demo: true },
+    tools_widget: { show_embed_snippet: true, show_live_demo: true, consult: false },
     widgets: [],
     autonomous_reply_defaults: {
       enabled: false,
@@ -149,5 +168,6 @@ export function defaultStudioConfig(profile: string): StudioConfig {
       channels: [],
     },
     federation: { read_scopes: [] },
+    lead_notifications: {},
   }
 }

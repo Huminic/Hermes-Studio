@@ -18,6 +18,12 @@
 
 import { useState } from 'react'
 import type { StudioConfig } from './studio-config'
+import { CustomerChatRenderer } from '../components/customer-console/chat-renderer'
+import { CustomerKnowledgeRenderer } from '../components/customer-console/knowledge-renderer'
+import { CustomerToolsWidgetRenderer } from '../components/customer-console/tools-widget-renderer'
+import { CustomerCommsRenderer } from '../components/customer-console/comms-renderer'
+import { CustomerCampaignsRenderer } from '../components/customer-console/campaigns-renderer'
+import { ConsultPanel } from '../components/customer-console/consult-panel'
 
 export type ConsoleRendererProps = {
   profile: string
@@ -47,68 +53,36 @@ function StubFrame({
 }
 
 function ChatRenderer(props: ConsoleRendererProps) {
-  const picker = props.config.agent_picker
-  return (
-    <StubFrame title={`customer-console.chat · ${props.profile}`}>
-      <div className="text-xs opacity-70">
-        Phase C.2 — agent picker + Studio chat session against the selected
-        agent's SOUL + channel persona (chat).
-      </div>
-      <div className="mt-2 text-xs">
-        <div>
-          Persona:{' '}
-          <span className="font-medium">
-            {props.config.branding.persona_name}
-          </span>
-        </div>
-        <div className="opacity-60">
-          Visible agents:{' '}
-          {picker.visible_agents.length === 0
-            ? '(all profile agents)'
-            : picker.visible_agents.join(', ')}
-        </div>
-        {picker.default_agent && (
-          <div className="opacity-60">Default: {picker.default_agent}</div>
-        )}
-      </div>
-    </StubFrame>
-  )
+  return <CustomerChatRenderer profile={props.profile} config={props.config} />
 }
 
 function KnowledgeRenderer(props: ConsoleRendererProps) {
   return (
-    <StubFrame title={`customer-console.knowledge · ${props.profile}`}>
-      <div className="text-xs opacity-70">
-        Phase C.3 — wiki edit + frontmatter panel, KSG-gated Promote flow
-        (inbox → drafts → published). Reads from
-        <code className="px-1 opacity-90">
-          ~/.hermes/profiles/{props.profile}/knowledge/
-        </code>
-      </div>
-    </StubFrame>
+    <CustomerKnowledgeRenderer
+      profile={props.profile}
+      config={props.config}
+    />
   )
 }
 
 function ToolsRenderer(props: ConsoleRendererProps) {
-  // Tools page hosts a sub-nav. C.4 ships the real sub-pages; for C.0 the
-  // Widget sub-page is the only one declared. Future sub-pages (e.g. MCP
-  // wiring panel, integration toggles) land here too.
-  const [sub, setSub] = useState<'widget'>('widget')
+  const consultEnabled = props.config.tools_widget.consult === true
+  type SubPage = 'widget' | 'consult'
+  const [sub, setSub] = useState<SubPage>('widget')
   return (
     <div className="flex flex-col gap-3">
       <nav className="flex gap-2 text-xs">
-        <button
-          type="button"
-          className={
-            'rounded px-2 py-1 ' +
-            (sub === 'widget'
-              ? 'bg-emerald-500/20 font-semibold'
-              : 'opacity-60 hover:opacity-100')
-          }
-          onClick={() => setSub('widget')}
-        >
+        <SubButton active={sub === 'widget'} onClick={() => setSub('widget')}>
           Widget
-        </button>
+        </SubButton>
+        {consultEnabled && (
+          <SubButton
+            active={sub === 'consult'}
+            onClick={() => setSub('consult')}
+          >
+            Consult
+          </SubButton>
+        )}
       </nav>
       {sub === 'widget' && (
         <ToolsWidgetRenderer
@@ -117,43 +91,44 @@ function ToolsRenderer(props: ConsoleRendererProps) {
           params={props.params}
         />
       )}
+      {sub === 'consult' && consultEnabled && (
+        <ConsultPanel profile={props.profile} config={props.config} />
+      )}
     </div>
   )
 }
 
-function ToolsWidgetRenderer(props: ConsoleRendererProps) {
-  const widgets = props.config.widgets
-  const settings = props.config.tools_widget
+function SubButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
   return (
-    <StubFrame title={`customer-console.tools-widget · ${props.profile}`}>
-      <div className="text-xs opacity-70">
-        Phase C.4 — widget embed code, live demo (iframe of /w/$slug), and
-        customer-admin editable widget config.
-      </div>
-      <div className="mt-2 text-xs opacity-60">
-        Embed snippet: {settings.show_embed_snippet ? 'on' : 'off'} · Live demo:{' '}
-        {settings.show_live_demo ? 'on' : 'off'}
-      </div>
-      {widgets.length === 0 ? (
-        <div className="mt-2 text-xs opacity-50">
-          No widgets declared in studio.yaml for this profile.
-        </div>
-      ) : (
-        <ul className="mt-2 flex flex-col gap-1 text-xs">
-          {widgets.map((w) => (
-            <li
-              key={w.slug}
-              className="flex items-baseline justify-between gap-2 border-b border-white/10 pb-1"
-            >
-              <span className="font-medium">{w.slug}</span>
-              <span className="opacity-60">
-                {w.mode} · agent: {w.agent}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </StubFrame>
+    <button
+      type="button"
+      className={
+        'rounded px-2 py-1 ' +
+        (active
+          ? 'bg-emerald-500/20 font-semibold'
+          : 'opacity-60 hover:opacity-100')
+      }
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  )
+}
+
+function ToolsWidgetRenderer(props: ConsoleRendererProps) {
+  return (
+    <CustomerToolsWidgetRenderer
+      profile={props.profile}
+      config={props.config}
+    />
   )
 }
 
@@ -174,58 +149,15 @@ function DataRenderer(props: ConsoleRendererProps) {
 }
 
 function CommsRenderer(props: ConsoleRendererProps) {
-  // Comms page hosts Sales/Service segment switcher. C.7 ships the real
-  // threaded inbox; C.0 shows the structure.
-  const [segment, setSegment] = useState<'sales' | 'service'>('sales')
-  return (
-    <div className="flex flex-col gap-3">
-      <nav className="flex gap-2 text-xs">
-        {(['sales', 'service'] as const).map((s) => (
-          <button
-            key={s}
-            type="button"
-            className={
-              'rounded px-2 py-1 ' +
-              (segment === s
-                ? 'bg-emerald-500/20 font-semibold'
-                : 'opacity-60 hover:opacity-100')
-            }
-            onClick={() => setSegment(s)}
-          >
-            {s === 'sales' ? 'Sales' : 'Service'}
-          </button>
-        ))}
-      </nav>
-      <StubFrame
-        title={`customer-console.comms · ${props.profile} · ${segment}`}
-      >
-        <div className="text-xs opacity-70">
-          Phase C.5–C.7 — unified inbox over chat/email/SMS/phone/video, domain
-          filter = {segment}. Threaded merge across channels per contact.
-          Agent-autonomous reply (AC.5.8) gated by autonomous_reply_defaults +
-          per-thread rules.
-        </div>
-      </StubFrame>
-    </div>
-  )
+  return <CustomerCommsRenderer profile={props.profile} config={props.config} />
 }
 
 function CampaignsRenderer(props: ConsoleRendererProps) {
   return (
-    <StubFrame title={`customer-console.campaigns · ${props.profile}`}>
-      <div className="text-xs opacity-70">
-        Phase C.8 — Service campaigns: Service Recall / Service Due /
-        Follow-up Lead templates seeded under
-        <code className="px-1 opacity-90">
-          ~/.hermes/profiles/{props.profile}/campaigns/templates/
-        </code>
-        . Audiences + scheduled-send worker. Replies route back into Comms.
-      </div>
-      <div className="mt-2 text-xs opacity-60">
-        Per operator decision 2026-05-29: Service-only sub-page (no Sales
-        campaigns symmetry).
-      </div>
-    </StubFrame>
+    <CustomerCampaignsRenderer
+      profile={props.profile}
+      config={props.config}
+    />
   )
 }
 

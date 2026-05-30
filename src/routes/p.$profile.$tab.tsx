@@ -131,74 +131,118 @@ function StorefrontTabRoute() {
 
   const accent = config.branding.accent_color ?? '#1e40af'
 
-  return (
-    <div className="flex min-h-dvh flex-col">
-      <header
-        className="flex items-center justify-between border-b border-white/10 p-4"
-        style={{ borderColor: accent }}
-      >
-        <div className="flex items-baseline gap-3">
-          <Link
-            to="/p/$profile"
-            params={{ profile }}
-            className="text-xs opacity-60 hover:opacity-100"
-          >
-            ← {config.branding.persona_name}
-          </Link>
-          <span className="rounded bg-white/10 px-2 py-0.5 text-xs uppercase tracking-wide">
-            {profile}
-          </span>
-        </div>
-        <div className="text-xs opacity-60">
-          Signed in as <span className="font-medium">{session?.username}</span>
-          {session?.is_admin ? ' (Studio admin)' : ' (customer admin)'}
-        </div>
-      </header>
+  // Nexxus-style icon sidebar items. Each label sits below its glyph.
+  const tabsList: Array<{ id: string; label: string; glyph: string }> = [
+    { id: 'chat', label: 'Chat', glyph: '💬' },
+    { id: 'knowledge', label: 'Knowledge', glyph: '📚' },
+    { id: 'tools', label: 'Tools', glyph: '🛠️' },
+    { id: 'data', label: 'Data', glyph: '📊' },
+    { id: 'comms', label: 'Comms', glyph: '📥' },
+    { id: 'campaigns', label: 'Campaigns', glyph: '📣' },
+  ]
 
-      <nav className="flex gap-1 border-b border-white/10 px-4 pt-3">
-        {Object.keys(TAB_TO_RENDERER).map((id) => {
+  const initial = config.branding.persona_name.slice(0, 1).toUpperCase()
+
+  return (
+    <div className="flex min-h-dvh bg-[#0a0f1c] text-slate-100">
+      <aside className="flex w-[88px] shrink-0 flex-col items-center gap-1 border-r border-white/10 bg-[#080c14] py-3">
+        <Link
+          to="/p/$profile"
+          params={{ profile }}
+          className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg text-sm font-semibold text-white"
+          style={{ background: accent }}
+          title={config.branding.persona_name}
+        >
+          {initial}
+        </Link>
+        <div className="my-2 h-px w-8 bg-white/10" />
+        {tabsList.map((item) => {
           const enabled =
-            config.menu[id as keyof StudioConfig['menu']] ?? true
-          const active = id === tab
+            config.menu[item.id as keyof StudioConfig['menu']] ?? true
+          const active = item.id === tab
           return (
             <Link
-              key={id}
+              key={item.id}
               to="/p/$profile/$tab"
-              params={{ profile, tab: id }}
+              params={{ profile, tab: item.id }}
               disabled={!enabled}
               className={
-                'rounded-t border-b-2 px-3 py-2 text-sm capitalize ' +
+                'group relative flex w-full flex-col items-center gap-0.5 px-1 py-2 text-[10px] transition-colors ' +
                 (active
-                  ? 'font-semibold'
-                  : 'border-transparent opacity-70 hover:opacity-100') +
+                  ? 'text-white'
+                  : 'text-slate-400 hover:text-slate-100') +
                 (enabled ? '' : ' pointer-events-none opacity-30')
               }
-              style={active ? { borderColor: accent } : undefined}
+              title={item.label}
             >
-              {id}
+              {active && (
+                <span
+                  aria-hidden
+                  className="absolute left-0 top-1 h-10 w-1 rounded-r"
+                  style={{ background: accent }}
+                />
+              )}
+              <span className="text-lg leading-none">{item.glyph}</span>
+              <span className="leading-tight">{item.label}</span>
             </Link>
           )
         })}
-      </nav>
+      </aside>
 
-      <div className="flex flex-1 flex-row gap-4 p-4">
-        <main className="flex-1">
-          <Renderer profile={profile} config={config} params={{ tab }} />
-        </main>
-        {AssistantRenderer && (
-          <aside className="w-64 shrink-0">
-            <AssistantRenderer
-              profile={profile}
-              config={config}
-              params={{}}
-            />
-          </aside>
-        )}
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="flex items-center justify-between border-b border-white/10 bg-[#0d1424] px-4 py-2">
+          <div className="flex items-center gap-3">
+            <div
+              className="flex h-8 w-8 items-center justify-center rounded text-xs font-semibold text-white"
+              style={{ background: accent }}
+            >
+              {initial}
+            </div>
+            <div>
+              <div className="text-sm font-semibold">
+                {config.branding.persona_name}
+              </div>
+              <div className="text-[10px] uppercase tracking-wide text-slate-500">
+                {profile} · {tab}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-slate-400">
+              {session?.username ?? 'guest'}
+            </span>
+            <span
+              className="rounded px-1.5 py-0.5 text-[10px] uppercase"
+              style={{ background: `${accent}33`, color: '#fff' }}
+            >
+              {session?.is_admin
+                ? 'studio admin'
+                : session?.is_customer_admin
+                  ? 'customer admin'
+                  : 'guest'}
+            </span>
+          </div>
+        </header>
+
+        <div className="flex min-h-0 flex-1 flex-row">
+          <main className="flex-1 overflow-y-auto px-4 py-4">
+            <Renderer profile={profile} config={config} params={{ tab }} />
+          </main>
+          {AssistantRenderer && (
+            <aside className="hidden w-72 shrink-0 border-l border-white/10 bg-[#0d1424] p-3 lg:block">
+              <AssistantRenderer
+                profile={profile}
+                config={config}
+                params={{}}
+              />
+            </aside>
+          )}
+        </div>
+
+        <footer className="border-t border-white/10 bg-[#080c14] px-4 py-2 text-[10px] text-slate-500">
+          Powered by Huminic · brand chip {accent}
+        </footer>
       </div>
-
-      <footer className="border-t border-white/10 p-3 text-[10px] opacity-50">
-        Powered by Huminic
-      </footer>
     </div>
   )
 }
