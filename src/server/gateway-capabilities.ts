@@ -8,7 +8,15 @@
  *   - Enhanced: Hermes-native extras (sessions, skills, memory, config, jobs)
  */
 
-export let HERMES_API = process.env.HERMES_API_URL || 'http://127.0.0.1:8642'
+// On the server we resolve from HERMES_API_URL (Docker network or localhost).
+// In the browser the gateway is reached via Studio's own /api/hermes-proxy
+// rewrite — pointing the BROWSER at the raw gateway URL would always fail
+// (CORS + private-network restrictions). Default to '' in the browser so
+// downstream callers fall back to the relative /api routes.
+export let HERMES_API =
+  typeof window !== 'undefined'
+    ? ''
+    : process.env.HERMES_API_URL || 'http://127.0.0.1:8642'
 
 export const HERMES_UPGRADE_INSTRUCTIONS =
   'Update Hermes: cd hermes-agent && git pull && pip install -e . && hermes --gateway'
@@ -323,4 +331,11 @@ export function isHermesConnected(): boolean {
   return capabilities.health
 }
 
-void ensureGatewayProbed()
+// Only kick off the auto-probe on the SERVER side. When this module is
+// imported into a client bundle (gateway calls happen via /api proxies),
+// firing fetches at the gateway URL from the browser triggers CORS
+// failures and crashes hydration on routes that have nothing to do with
+// the gateway (e.g. the storefront /p/$profile pages).
+if (typeof window === 'undefined') {
+  void ensureGatewayProbed()
+}
