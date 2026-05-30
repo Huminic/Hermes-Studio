@@ -39,6 +39,7 @@ import { Route as CrewsIndexRouteImport } from './routes/crews/index'
 import { Route as ChatIndexRouteImport } from './routes/chat/index'
 import { Route as WSlugRouteImport } from './routes/w.$slug'
 import { Route as SettingsProvidersRouteImport } from './routes/settings/providers'
+import { Route as SettingsMcpTokensRouteImport } from './routes/settings/mcp-tokens'
 import { Route as SettingsMcpRouteImport } from './routes/settings/mcp'
 import { Route as PProfileRouteImport } from './routes/p.$profile'
 import { Route as EngagementsCustomerRouteImport } from './routes/engagements.$customer'
@@ -68,6 +69,7 @@ import { Route as ApiPingRouteImport } from './routes/api/ping'
 import { Route as ApiPathsRouteImport } from './routes/api/paths'
 import { Route as ApiModelsRouteImport } from './routes/api/models'
 import { Route as ApiMemoryRouteImport } from './routes/api/memory'
+import { Route as ApiMcpTokensRouteImport } from './routes/api/mcp-tokens'
 import { Route as ApiHistoryRouteImport } from './routes/api/history'
 import { Route as ApiHermesRunsRouteImport } from './routes/api/hermes-runs'
 import { Route as ApiHermesJobsRouteImport } from './routes/api/hermes-jobs'
@@ -119,6 +121,7 @@ import { Route as ApiMemoryWriteRouteImport } from './routes/api/memory/write'
 import { Route as ApiMemorySearchRouteImport } from './routes/api/memory/search'
 import { Route as ApiMemoryReadRouteImport } from './routes/api/memory/read'
 import { Route as ApiMemoryListRouteImport } from './routes/api/memory/list'
+import { Route as ApiMcpWikiRouteImport } from './routes/api/mcp/wiki'
 import { Route as ApiMcpServersRouteImport } from './routes/api/mcp/servers'
 import { Route as ApiMcpReloadRouteImport } from './routes/api/mcp/reload'
 import { Route as ApiKnowledgeSearchRouteImport } from './routes/api/knowledge/search'
@@ -317,6 +320,11 @@ const SettingsProvidersRoute = SettingsProvidersRouteImport.update({
   path: '/providers',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsMcpTokensRoute = SettingsMcpTokensRouteImport.update({
+  id: '/mcp-tokens',
+  path: '/mcp-tokens',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsMcpRoute = SettingsMcpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
@@ -460,6 +468,11 @@ const ApiModelsRoute = ApiModelsRouteImport.update({
 const ApiMemoryRoute = ApiMemoryRouteImport.update({
   id: '/api/memory',
   path: '/api/memory',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMcpTokensRoute = ApiMcpTokensRouteImport.update({
+  id: '/api/mcp-tokens',
+  path: '/api/mcp-tokens',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHistoryRoute = ApiHistoryRouteImport.update({
@@ -716,6 +729,11 @@ const ApiMemoryListRoute = ApiMemoryListRouteImport.update({
   id: '/list',
   path: '/list',
   getParentRoute: () => ApiMemoryRoute,
+} as any)
+const ApiMcpWikiRoute = ApiMcpWikiRouteImport.update({
+  id: '/api/mcp/wiki',
+  path: '/api/mcp/wiki',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiMcpServersRoute = ApiMcpServersRouteImport.update({
   id: '/api/mcp/servers',
@@ -1012,6 +1030,7 @@ export interface FileRoutesByFullPath {
   '/api/hermes-jobs': typeof ApiHermesJobsRouteWithChildren
   '/api/hermes-runs': typeof ApiHermesRunsRouteWithChildren
   '/api/history': typeof ApiHistoryRoute
+  '/api/mcp-tokens': typeof ApiMcpTokensRoute
   '/api/memory': typeof ApiMemoryRouteWithChildren
   '/api/models': typeof ApiModelsRoute
   '/api/paths': typeof ApiPathsRoute
@@ -1041,6 +1060,7 @@ export interface FileRoutesByFullPath {
   '/engagements/$customer': typeof EngagementsCustomerRoute
   '/p/$profile': typeof PProfileRouteWithChildren
   '/settings/mcp': typeof SettingsMcpRoute
+  '/settings/mcp-tokens': typeof SettingsMcpTokensRoute
   '/settings/providers': typeof SettingsProvidersRoute
   '/w/$slug': typeof WSlugRoute
   '/chat/': typeof ChatIndexRoute
@@ -1062,6 +1082,7 @@ export interface FileRoutesByFullPath {
   '/api/knowledge/search': typeof ApiKnowledgeSearchRoute
   '/api/mcp/reload': typeof ApiMcpReloadRoute
   '/api/mcp/servers': typeof ApiMcpServersRoute
+  '/api/mcp/wiki': typeof ApiMcpWikiRoute
   '/api/memory/list': typeof ApiMemoryListRoute
   '/api/memory/read': typeof ApiMemoryReadRoute
   '/api/memory/search': typeof ApiMemorySearchRoute
@@ -1170,6 +1191,7 @@ export interface FileRoutesByTo {
   '/api/hermes-jobs': typeof ApiHermesJobsRouteWithChildren
   '/api/hermes-runs': typeof ApiHermesRunsRouteWithChildren
   '/api/history': typeof ApiHistoryRoute
+  '/api/mcp-tokens': typeof ApiMcpTokensRoute
   '/api/memory': typeof ApiMemoryRouteWithChildren
   '/api/models': typeof ApiModelsRoute
   '/api/paths': typeof ApiPathsRoute
@@ -1199,6 +1221,7 @@ export interface FileRoutesByTo {
   '/engagements/$customer': typeof EngagementsCustomerRoute
   '/p/$profile': typeof PProfileRouteWithChildren
   '/settings/mcp': typeof SettingsMcpRoute
+  '/settings/mcp-tokens': typeof SettingsMcpTokensRoute
   '/settings/providers': typeof SettingsProvidersRoute
   '/w/$slug': typeof WSlugRoute
   '/chat': typeof ChatIndexRoute
@@ -1220,6 +1243,7 @@ export interface FileRoutesByTo {
   '/api/knowledge/search': typeof ApiKnowledgeSearchRoute
   '/api/mcp/reload': typeof ApiMcpReloadRoute
   '/api/mcp/servers': typeof ApiMcpServersRoute
+  '/api/mcp/wiki': typeof ApiMcpWikiRoute
   '/api/memory/list': typeof ApiMemoryListRoute
   '/api/memory/read': typeof ApiMemoryReadRoute
   '/api/memory/search': typeof ApiMemorySearchRoute
@@ -1330,6 +1354,7 @@ export interface FileRoutesById {
   '/api/hermes-jobs': typeof ApiHermesJobsRouteWithChildren
   '/api/hermes-runs': typeof ApiHermesRunsRouteWithChildren
   '/api/history': typeof ApiHistoryRoute
+  '/api/mcp-tokens': typeof ApiMcpTokensRoute
   '/api/memory': typeof ApiMemoryRouteWithChildren
   '/api/models': typeof ApiModelsRoute
   '/api/paths': typeof ApiPathsRoute
@@ -1359,6 +1384,7 @@ export interface FileRoutesById {
   '/engagements/$customer': typeof EngagementsCustomerRoute
   '/p/$profile': typeof PProfileRouteWithChildren
   '/settings/mcp': typeof SettingsMcpRoute
+  '/settings/mcp-tokens': typeof SettingsMcpTokensRoute
   '/settings/providers': typeof SettingsProvidersRoute
   '/w/$slug': typeof WSlugRoute
   '/chat/': typeof ChatIndexRoute
@@ -1380,6 +1406,7 @@ export interface FileRoutesById {
   '/api/knowledge/search': typeof ApiKnowledgeSearchRoute
   '/api/mcp/reload': typeof ApiMcpReloadRoute
   '/api/mcp/servers': typeof ApiMcpServersRoute
+  '/api/mcp/wiki': typeof ApiMcpWikiRoute
   '/api/memory/list': typeof ApiMemoryListRoute
   '/api/memory/read': typeof ApiMemoryReadRoute
   '/api/memory/search': typeof ApiMemorySearchRoute
@@ -1491,6 +1518,7 @@ export interface FileRouteTypes {
     | '/api/hermes-jobs'
     | '/api/hermes-runs'
     | '/api/history'
+    | '/api/mcp-tokens'
     | '/api/memory'
     | '/api/models'
     | '/api/paths'
@@ -1520,6 +1548,7 @@ export interface FileRouteTypes {
     | '/engagements/$customer'
     | '/p/$profile'
     | '/settings/mcp'
+    | '/settings/mcp-tokens'
     | '/settings/providers'
     | '/w/$slug'
     | '/chat/'
@@ -1541,6 +1570,7 @@ export interface FileRouteTypes {
     | '/api/knowledge/search'
     | '/api/mcp/reload'
     | '/api/mcp/servers'
+    | '/api/mcp/wiki'
     | '/api/memory/list'
     | '/api/memory/read'
     | '/api/memory/search'
@@ -1649,6 +1679,7 @@ export interface FileRouteTypes {
     | '/api/hermes-jobs'
     | '/api/hermes-runs'
     | '/api/history'
+    | '/api/mcp-tokens'
     | '/api/memory'
     | '/api/models'
     | '/api/paths'
@@ -1678,6 +1709,7 @@ export interface FileRouteTypes {
     | '/engagements/$customer'
     | '/p/$profile'
     | '/settings/mcp'
+    | '/settings/mcp-tokens'
     | '/settings/providers'
     | '/w/$slug'
     | '/chat'
@@ -1699,6 +1731,7 @@ export interface FileRouteTypes {
     | '/api/knowledge/search'
     | '/api/mcp/reload'
     | '/api/mcp/servers'
+    | '/api/mcp/wiki'
     | '/api/memory/list'
     | '/api/memory/read'
     | '/api/memory/search'
@@ -1808,6 +1841,7 @@ export interface FileRouteTypes {
     | '/api/hermes-jobs'
     | '/api/hermes-runs'
     | '/api/history'
+    | '/api/mcp-tokens'
     | '/api/memory'
     | '/api/models'
     | '/api/paths'
@@ -1837,6 +1871,7 @@ export interface FileRouteTypes {
     | '/engagements/$customer'
     | '/p/$profile'
     | '/settings/mcp'
+    | '/settings/mcp-tokens'
     | '/settings/providers'
     | '/w/$slug'
     | '/chat/'
@@ -1858,6 +1893,7 @@ export interface FileRouteTypes {
     | '/api/knowledge/search'
     | '/api/mcp/reload'
     | '/api/mcp/servers'
+    | '/api/mcp/wiki'
     | '/api/memory/list'
     | '/api/memory/read'
     | '/api/memory/search'
@@ -1968,6 +2004,7 @@ export interface RootRouteChildren {
   ApiHermesJobsRoute: typeof ApiHermesJobsRouteWithChildren
   ApiHermesRunsRoute: typeof ApiHermesRunsRouteWithChildren
   ApiHistoryRoute: typeof ApiHistoryRoute
+  ApiMcpTokensRoute: typeof ApiMcpTokensRoute
   ApiMemoryRoute: typeof ApiMemoryRouteWithChildren
   ApiModelsRoute: typeof ApiModelsRoute
   ApiPathsRoute: typeof ApiPathsRoute
@@ -2012,6 +2049,7 @@ export interface RootRouteChildren {
   ApiKnowledgeSearchRoute: typeof ApiKnowledgeSearchRoute
   ApiMcpReloadRoute: typeof ApiMcpReloadRoute
   ApiMcpServersRoute: typeof ApiMcpServersRoute
+  ApiMcpWikiRoute: typeof ApiMcpWikiRoute
   ApiMessagingContactsRoute: typeof ApiMessagingContactsRoute
   ApiMessagingInboundRoute: typeof ApiMessagingInboundRoute
   ApiMessagingStreamRoute: typeof ApiMessagingStreamRoute
@@ -2268,6 +2306,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsProvidersRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/settings/mcp-tokens': {
+      id: '/settings/mcp-tokens'
+      path: '/mcp-tokens'
+      fullPath: '/settings/mcp-tokens'
+      preLoaderRoute: typeof SettingsMcpTokensRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/settings/mcp': {
       id: '/settings/mcp'
       path: '/mcp'
@@ -2469,6 +2514,13 @@ declare module '@tanstack/react-router' {
       path: '/api/memory'
       fullPath: '/api/memory'
       preLoaderRoute: typeof ApiMemoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mcp-tokens': {
+      id: '/api/mcp-tokens'
+      path: '/api/mcp-tokens'
+      fullPath: '/api/mcp-tokens'
+      preLoaderRoute: typeof ApiMcpTokensRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/history': {
@@ -2828,6 +2880,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiMemoryListRouteImport
       parentRoute: typeof ApiMemoryRoute
     }
+    '/api/mcp/wiki': {
+      id: '/api/mcp/wiki'
+      path: '/api/mcp/wiki'
+      fullPath: '/api/mcp/wiki'
+      preLoaderRoute: typeof ApiMcpWikiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/mcp/servers': {
       id: '/api/mcp/servers'
       path: '/api/mcp/servers'
@@ -3174,12 +3233,14 @@ const EngagementsRouteWithChildren = EngagementsRoute._addFileChildren(
 
 interface SettingsRouteChildren {
   SettingsMcpRoute: typeof SettingsMcpRoute
+  SettingsMcpTokensRoute: typeof SettingsMcpTokensRoute
   SettingsProvidersRoute: typeof SettingsProvidersRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsMcpRoute: SettingsMcpRoute,
+  SettingsMcpTokensRoute: SettingsMcpTokensRoute,
   SettingsProvidersRoute: SettingsProvidersRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }
@@ -3445,6 +3506,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiHermesJobsRoute: ApiHermesJobsRouteWithChildren,
   ApiHermesRunsRoute: ApiHermesRunsRouteWithChildren,
   ApiHistoryRoute: ApiHistoryRoute,
+  ApiMcpTokensRoute: ApiMcpTokensRoute,
   ApiMemoryRoute: ApiMemoryRouteWithChildren,
   ApiModelsRoute: ApiModelsRoute,
   ApiPathsRoute: ApiPathsRoute,
@@ -3489,6 +3551,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiKnowledgeSearchRoute: ApiKnowledgeSearchRoute,
   ApiMcpReloadRoute: ApiMcpReloadRoute,
   ApiMcpServersRoute: ApiMcpServersRoute,
+  ApiMcpWikiRoute: ApiMcpWikiRoute,
   ApiMessagingContactsRoute: ApiMessagingContactsRoute,
   ApiMessagingInboundRoute: ApiMessagingInboundRoute,
   ApiMessagingStreamRoute: ApiMessagingStreamRoute,
