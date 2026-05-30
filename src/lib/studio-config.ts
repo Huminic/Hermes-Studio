@@ -98,7 +98,10 @@ const FederationSchema = z
  */
 const LeadNotificationsSchema = z
   .object({
-    adf_email: z.string().email().optional(),
+    adf_email: z
+      .union([z.literal(''), z.string().email()])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
     sender_name: z.string().optional(),
     /** Name of the env var (in the profile .env or central-mcp tokens) that holds the Resend token used to send this profile's ADF emails. Defaults to CENTRAL_MCP_TOKEN. */
     resend_token_var: z.string().optional(),
