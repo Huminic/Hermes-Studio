@@ -1,4 +1,9 @@
-import { Link, createFileRoute, useRouterState } from '@tanstack/react-router'
+import {
+  Link,
+  Outlet,
+  createFileRoute,
+  useRouterState,
+} from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import {
   defaultStudioConfig,
@@ -76,7 +81,10 @@ function StorefrontLandingRoute() {
 
   if (!isLandingPath) {
     // Render the child tab route — sub-routes handle their own auth + UI.
-    return null
+    // TanStack file routing: parent must render <Outlet /> for the
+    // child route's component to mount. Returning `null` here meant the
+    // /p/$profile/$tab page rendered as an empty Suspense slot.
+    return <Outlet />
   }
 
   const accentColor = config.branding.accent_color ?? '#1e40af'
