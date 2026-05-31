@@ -44,13 +44,22 @@ import {
   type IssueTokenInput,
   type McpToken,
 } from './mcp-tokens'
+import {
+  BRAIN_TOOLS,
+  BRAIN_ADMIN_TOOLS,
+  callBrainTool,
+} from './brain-mcp-handlers'
+import { recordAudit } from './metadata-substrate'
 
 const ADMIN_TOOLS = new Set([
   'mcp__create_profile',
   'mcp__issue_token',
   'mcp__revoke_token',
   'mcp__list_tokens',
+  ...BRAIN_ADMIN_TOOLS,
 ])
+
+const BRAIN_TOOL_NAMES = new Set(BRAIN_TOOLS.map((t) => t.name))
 
 function profileDir(profile: string): string {
   return path.join(os.homedir(), '.hermes', 'profiles', profile)
@@ -489,7 +498,7 @@ export async function dispatchWikiMcp(
   const token = authResult.token
   const method = body.method ?? ''
   if (method === 'tools/list') {
-    return ok(id, { tools: WIKI_TOOLS })
+    return ok(id, { tools: [...WIKI_TOOLS, ...BRAIN_TOOLS] })
   }
   if (method !== 'tools/call') {
     return err(id, -32601, `method not found: ${method}`)
@@ -581,6 +590,40 @@ export async function dispatchWikiMcp(
         result = { tokens: listTokens() }
         break
       default:
+        if (BRAIN_TOOL_NAMES.has(toolName)) {
+          const brainRes = callBrainTool(toolName, args, {
+            token_label: token.label,
+            token_allowed_profiles: token.allowed_profiles,
+            token_allowed_tools: token.allowed_tools,
+            token_admin: token.admin,
+          })
+          if (!brainRes.ok) {
+            recordToolCall({
+              token,
+              profile: profileArg,
+              tool: toolName,
+              status: 'error',
+              error: brainRes.error,
+            })
+            // The sixth-invariant audit is already written by dsgGate /
+            // recordChat / recordLookupMiss inside the handlers; mirror
+            // the denial into mcp-audit.log for cross-surface visibility.
+            recordAudit(profileArg, {
+              ts: Date.now(),
+              surface: 'brain',
+              actor: `token:${token.label}`,
+              action: 'tool_call',
+              target_type: toolName,
+              reason: brainRes.error,
+              outcome: 'denied',
+              rule: brainRes.rule ?? null,
+              gate_event_id: brainRes.gate_event_id ?? null,
+            })
+            return err(id, -32004, brainRes.error)
+          }
+          result = brainRes.data
+          break
+        }
         recordToolCall({
           token,
           profile: profileArg,

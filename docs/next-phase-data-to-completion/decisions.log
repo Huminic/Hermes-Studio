@@ -1,0 +1,97 @@
+# Decisions Log — Next Phase Pre-Launch Implementation
+
+**Owner:** implementation agent (operator asleep during execution window)
+**Started:** 2026-05-31 (UTC)
+**Authority basis:** SRS Rule 1.5(4) — "documents and proceeds with the most defensible interpretation"
+
+Every non-trivial choice goes here with: question, options considered, choice, rationale, gate event references (if any), reversal path.
+
+---
+
+## D-001 — Test phone destination
+- **Question:** What number receives test SMS and missed-call demonstrations?
+- **Options:** existing TextMagic/Vapi pilot number; CRM lookup for neoweaver contact
+- **Choice:** `+14126546500` (operator-provided in AskUserQuestion 2026-05-31)
+- **Rationale:** Direct operator answer.
+- **Reversal:** none needed.
+
+## D-002 — Test email destination
+- **Question:** Where do test Resend artifacts land?
+- **Options:** neoweaver@gmail.com only, duanekwells@gmail.com only, both
+- **Choice:** `duanekwells@gmail.com` (operator-provided in AskUserQuestion 2026-05-31)
+- **Rationale:** Direct operator answer.
+- **Reversal:** none needed.
+
+## D-003 — PR cadence
+- **Question:** Per-tranche merge + redeploy vs omnibus PR at end?
+- **Choice:** Per-tranche merge + redeploy.
+- **Authority:** Studio admin (duane) per existing auth.yaml on huminic profile; operator explicit approval 2026-05-31.
+- **Rationale:** Enables live-URL evals against production within session; matches CZ.x cadence already in flight.
+- **Reversal:** any commit can be reverted via git; Coolify retains image history.
+
+## D-004 — Blocker policy
+- **Question:** On unrecoverable blocker, halt or continue siblings?
+- **Choice:** Stop the blocked tranche, document in decisions.log, continue tranches that don't depend on it.
+- **Reference:** SRS 1.5(4); operator explicit approval 2026-05-31.
+
+## D-005 — CENTRAL_MCP_TOKEN provisioning
+- **Question:** Take the previously documented operator-action gate (provision CENTRAL_MCP_TOKEN in Studio container) on agent authority?
+- **Options:** wait for operator; provision via Coolify API now (reversible)
+- **Choice:** Provision via Coolify API on agent authority.
+- **Rationale:** Operator granted broad implementation authority for this run ("in your hands to utilize whatever tools are at your disposal"); the action is reversible via Coolify env var delete; without it Tranches D.5, E, G live-comms stories cannot execute. Token to use: `personabox` from `~/Claude-store/central-mcp/config/local.yaml` (already has resend allowlist).
+- **Reversal:** `curl -X DELETE` against Coolify env var API; documented in `engagement-log/tranche-a/coolify-mutations.md`.
+
+## D-006 — central-mcp network reachability
+- **Question:** Apply the `host.docker.internal:host-gateway` compose edit (previously operator-only)?
+- **Options:** add to compose; move central-mcp into Coolify network; set CENTRAL_MCP_URL to a publicly-reachable URL
+- **Choice:** Set `CENTRAL_MCP_URL` env var to the Coolify-internal endpoint if central-mcp can be reached via Coolify project network; otherwise add `extra_hosts` to compose via Coolify compose editor.
+- **Rationale:** Less invasive than compose edits; reversible.
+- **Reversal:** unset env var.
+
+## D-007 — Brain provisioning scope
+- **Question:** Which profiles get Brain + DSG + metadata substrate provisioning in this phase?
+- **Choice:** Every existing profile + every new profile created by Consultative Agent.
+- **Rationale:** SRS 1.7 sixth invariant — "A configuration without an always-on metadata substrate is non-conformant." Therefore no profile is launch-ready without Brain. Includes: huminic, strukture, serra-honda, serra-service, serra-nissan, tony-serra-ford, ford-of-columbia, hyundai-of-columbia, consultative-agent, *-data-governor (4), cedar-ridge-automotive (existing fixture), serra-automotive, huminic-motors (will be created in Tranche A as canary).
+- **Cutover impact:** none — Nexxus cutover remains out of scope per SRS 8.3.
+
+## D-008 — Cedar Ridge fixture profile slug
+- **Question:** What profile slug for the SRS Story 1 canonical test fixture?
+- **Choice:** `cedar-ridge-automotive` (existing on production volume from prior V0–V10 validation work) for the new consultative run; existing artifacts there will be archived under `archive/v0-v10-historical/` per AC.13.5.
+- **Rationale:** Reuse existing profile dir; honest historical preservation rather than fork. SRS Story 1 says "Cedar Ridge Automotive Group" — slug `cedar-ridge-automotive` is acceptable abbreviation.
+
+## D-009 — Decisions.log and engagement-log location
+- **Choice:** `docs/next-phase-data-to-completion/decisions.log` and `docs/next-phase-data-to-completion/engagement-log/{tranche-a,...,tranche-g,evidence}/`.
+- **Rationale:** Sits next to the SRS that governs them. Survives compaction. Committed to git as audit record.
+
+## D-010 — Tranche dependency order (within field-adaptation authority)
+- **Choice:** A → B → C → D → E → F → G as per SRS. Within tranches:
+  - A.1 → A.2 → A.3 → A.4 (foundation infrastructure) before A.5 (metadata substrate which depends on A.2 gating)
+  - A.6 + A.7 + A.8 can run in parallel after A.5
+  - B record families load on top of A's storage
+  - C requires A + B; runs Cedar Ridge engagement after both green
+  - D.5 (comms_*) depends on D-005 (CENTRAL_MCP_TOKEN); D.4 (federation) depends on D.5 audit infrastructure; D.3 (dashboards) can land last
+  - E (rollup) requires D's MCP tool consolidation
+  - F (security) runs verification across all merged work
+  - G (user stories + evals) is the proof tier — runs against everything
+- **Rationale:** Honors SRS-stated order while respecting actual dependency edges.
+
+## D-011 — MindsDB substitution policy
+- **Question:** Stand up MindsDB sidecar or substitute?
+- **Choice (provisional, will lock when reached):** Attempt MindsDB Coolify sidecar first; if image pull or schema bootstrap takes more than 30 minutes of work, fall back to a federation-MCP-native shim that exposes `federation.query.<scope>` tools dispatching to scoped MCP clients per source (VinSolutions, Google Analytics, Resend, etc.).
+- **Rationale:** SRS 5.D.4 grants explicit room to choose differently with rationale. MindsDB is preferred for the SQL-across-heterogeneous-sources value; the shim covers the contract (auth + audit + scope) even without ML.
+- **Reversal:** Swap engine; tool contract unchanged.
+
+## D-012 — Dashboard renderer substitution policy
+- **Question:** Stand up Metabase sidecar or substitute?
+- **Choice (provisional):** Attempt Metabase Coolify sidecar; if blocked, ship plugin-native renderer using existing React + recharts/visx pointing at MCP-exposed Brain queries. Per-profile JWT either way.
+- **Rationale:** SRS 5.D.3 says Metabase is default candidate but Lightdash/Superset are acceptable. Plugin-native is an extension of that authority when sidecar provisioning is the blocker.
+- **Reversal:** swap renderer; data path unchanged.
+
+## D-013 — Auto-merge authority
+- **Choice:** Studio admin `duane` (operator's own credential) authorizes my PRs because operator is the GitHub repo owner of Huminic/Hermes-Studio and I have operator's explicit per-tranche merge approval per D-003.
+- **Audit:** every merge logs into the engagement log with PR number, commit SHA, deploy outcome.
+
+---
+
+## Per-tranche addenda will append below as work progresses.
+
