@@ -136,6 +136,7 @@ import { Route as ApiCustomerEngagementStateRouteImport } from './routes/api/cus
 import { Route as ApiCustomerChatRouteImport } from './routes/api/customer/chat'
 import { Route as ApiCustomerAgentsRouteImport } from './routes/api/customer/agents'
 import { Route as ApiCrewsCrewIdRouteImport } from './routes/api/crews/$crewId'
+import { Route as ApiBrainUploadsRouteImport } from './routes/api/brain/uploads'
 import { Route as ApiBrainReadinessRouteImport } from './routes/api/brain/readiness'
 import { Route as ApiBrainAssumptionsRouteImport } from './routes/api/brain/assumptions'
 import { Route as ApiArtifactsArtifactIdRouteImport } from './routes/api/artifacts/$artifactId'
@@ -809,6 +810,11 @@ const ApiCrewsCrewIdRoute = ApiCrewsCrewIdRouteImport.update({
   path: '/api/crews/$crewId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiBrainUploadsRoute = ApiBrainUploadsRouteImport.update({
+  id: '/api/brain/uploads',
+  path: '/api/brain/uploads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiBrainReadinessRoute = ApiBrainReadinessRouteImport.update({
   id: '/api/brain/readiness',
   path: '/api/brain/readiness',
@@ -1089,6 +1095,7 @@ export interface FileRoutesByFullPath {
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
   '/api/brain/assumptions': typeof ApiBrainAssumptionsRoute
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
+  '/api/brain/uploads': typeof ApiBrainUploadsRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
@@ -1253,6 +1260,7 @@ export interface FileRoutesByTo {
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
   '/api/brain/assumptions': typeof ApiBrainAssumptionsRoute
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
+  '/api/brain/uploads': typeof ApiBrainUploadsRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
@@ -1419,6 +1427,7 @@ export interface FileRoutesById {
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
   '/api/brain/assumptions': typeof ApiBrainAssumptionsRoute
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
+  '/api/brain/uploads': typeof ApiBrainUploadsRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
@@ -1586,6 +1595,7 @@ export interface FileRouteTypes {
     | '/api/artifacts/$artifactId'
     | '/api/brain/assumptions'
     | '/api/brain/readiness'
+    | '/api/brain/uploads'
     | '/api/crews/$crewId'
     | '/api/customer/agents'
     | '/api/customer/chat'
@@ -1750,6 +1760,7 @@ export interface FileRouteTypes {
     | '/api/artifacts/$artifactId'
     | '/api/brain/assumptions'
     | '/api/brain/readiness'
+    | '/api/brain/uploads'
     | '/api/crews/$crewId'
     | '/api/customer/agents'
     | '/api/customer/chat'
@@ -1915,6 +1926,7 @@ export interface FileRouteTypes {
     | '/api/artifacts/$artifactId'
     | '/api/brain/assumptions'
     | '/api/brain/readiness'
+    | '/api/brain/uploads'
     | '/api/crews/$crewId'
     | '/api/customer/agents'
     | '/api/customer/chat'
@@ -2076,6 +2088,7 @@ export interface RootRouteChildren {
   ApiArtifactsArtifactIdRoute: typeof ApiArtifactsArtifactIdRouteWithChildren
   ApiBrainAssumptionsRoute: typeof ApiBrainAssumptionsRoute
   ApiBrainReadinessRoute: typeof ApiBrainReadinessRoute
+  ApiBrainUploadsRoute: typeof ApiBrainUploadsRoute
   ApiCrewsCrewIdRoute: typeof ApiCrewsCrewIdRouteWithChildren
   ApiCustomerAgentsRoute: typeof ApiCustomerAgentsRoute
   ApiCustomerChatRoute: typeof ApiCustomerChatRoute
@@ -3024,6 +3037,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCrewsCrewIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/brain/uploads': {
+      id: '/api/brain/uploads'
+      path: '/api/brain/uploads'
+      fullPath: '/api/brain/uploads'
+      preLoaderRoute: typeof ApiBrainUploadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/brain/readiness': {
       id: '/api/brain/readiness'
       path: '/api/brain/readiness'
@@ -3602,6 +3622,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiArtifactsArtifactIdRoute: ApiArtifactsArtifactIdRouteWithChildren,
   ApiBrainAssumptionsRoute: ApiBrainAssumptionsRoute,
   ApiBrainReadinessRoute: ApiBrainReadinessRoute,
+  ApiBrainUploadsRoute: ApiBrainUploadsRoute,
   ApiCrewsCrewIdRoute: ApiCrewsCrewIdRouteWithChildren,
   ApiCustomerAgentsRoute: ApiCustomerAgentsRoute,
   ApiCustomerChatRoute: ApiCustomerChatRoute,

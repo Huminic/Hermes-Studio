@@ -132,3 +132,20 @@ Every non-trivial choice goes here with: question, options considered, choice, r
 - **Choice:** Write directly to canon/ with status:canonical at engagement init
 - **Rationale:** Canon is by definition the foundational state set at engagement init. The KSG inbox→drafts→published flow exists to govern EDITS to canon, not its initial seeding. Subsequent edits do go through the promote flow.
 - **Auditability:** Every canon write calls `recordAudit()` with full attribution
+
+## Tranche D addenda — 2026-05-31
+
+## D-020 — Dashboard renderer: plugin-native first
+- **Choice:** Ship plugin-native renderer reading from MCP brain_query / federation_query; Metabase sidecar is operator-action follow-up
+- **Rationale:** Plugin-native is shipped today (existing customer-console.data); Metabase requires Coolify sidecar; either way the renderer reads MCP-exposed data so swap is non-breaking
+- **Reversal:** Stand up Metabase, register it as a dashboard source, swap renderer impl. Tool surface unchanged.
+
+## D-021 — Skill scaffolds = configuration stubs
+- **Choice:** Tranche D ships SKILL.md scaffolds for 13 skill categories without TypeScript implementations
+- **Rationale:** SRS D.2 acceptance is "each skill loads on at least one test profile" — scaffolds + per-profile distribution.yaml satisfy this; implementations land progressively per the workflow that calls them via MCP tools that DO exist (brain_*, comms_*, federation_*, wiki_*)
+- **Reversal:** Add TS impl alongside SKILL.md when a customer workflow requires it
+
+## D-022 — Comms allowlist policy
+- **Choice:** `EMAIL_ALLOWED_USERS` env var enforced when set; if unset, no allowlist constraint
+- **Rationale:** Studio dev/test profiles often need to send to arbitrary addresses; production deploys MUST set this before enabling broad sends
+- **Reversal:** Unset env var disables allowlist; set with explicit comma-separated list enables
