@@ -149,3 +149,13 @@ Every non-trivial choice goes here with: question, options considered, choice, r
 - **Choice:** `EMAIL_ALLOWED_USERS` env var enforced when set; if unset, no allowlist constraint
 - **Rationale:** Studio dev/test profiles often need to send to arbitrary addresses; production deploys MUST set this before enabling broad sends
 - **Reversal:** Unset env var disables allowlist; set with explicit comma-separated list enables
+
+## Tranche E addenda — 2026-05-31
+
+## D-023 — Rollup grant scope literal
+- **Choice:** Child grants rollup access by listing `rollup:<parent-profile>` in its studio.yaml.federation.read_scopes
+- **Rationale:** Uses existing scope vocabulary; no new YAML field; respects SRS "no fourth access surface" rule
+
+## D-024 — Rollup table allowlist
+- **Choice:** Rollup queries restricted to a fixed set (events, entities, observations, outputs, transactions, tasks, hunches, lookup_misses, assumptions, reconciliation_items, comms_log, uploads, adjacent_neighbors)
+- **Rationale:** Excludes metadata_audit and schema_migrations to prevent cross-profile leakage of audit metadata or schema state via rollup queries

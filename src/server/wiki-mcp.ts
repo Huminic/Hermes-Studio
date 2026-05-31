@@ -54,6 +54,7 @@ import {
   FEDERATION_TOOLS,
   callFederationTool,
 } from './federation-mcp-handlers'
+import { ROLLUP_TOOLS, callRollupTool } from './rollup-mcp-handlers'
 import { recordAudit } from './metadata-substrate'
 
 const ADMIN_TOOLS = new Set([
@@ -67,6 +68,7 @@ const ADMIN_TOOLS = new Set([
 const BRAIN_TOOL_NAMES = new Set(BRAIN_TOOLS.map((t) => t.name))
 const COMMS_TOOL_NAMES = new Set(COMMS_TOOLS.map((t) => t.name))
 const FEDERATION_TOOL_NAMES = new Set(FEDERATION_TOOLS.map((t) => t.name))
+const ROLLUP_TOOL_NAMES = new Set(ROLLUP_TOOLS.map((t) => t.name))
 
 function profileDir(profile: string): string {
   return path.join(os.homedir(), '.hermes', 'profiles', profile)
@@ -506,7 +508,13 @@ export async function dispatchWikiMcp(
   const method = body.method ?? ''
   if (method === 'tools/list') {
     return ok(id, {
-      tools: [...WIKI_TOOLS, ...BRAIN_TOOLS, ...COMMS_TOOLS, ...FEDERATION_TOOLS],
+      tools: [
+        ...WIKI_TOOLS,
+        ...BRAIN_TOOLS,
+        ...COMMS_TOOLS,
+        ...FEDERATION_TOOLS,
+        ...ROLLUP_TOOLS,
+      ],
     })
   }
   if (method !== 'tools/call') {
@@ -599,6 +607,36 @@ export async function dispatchWikiMcp(
         result = { tokens: listTokens() }
         break
       default:
+        if (ROLLUP_TOOL_NAMES.has(toolName)) {
+          if (!token.admin && !token.allowed_profiles.includes('*')) {
+            recordToolCall({
+              token,
+              profile: profileArg,
+              tool: toolName,
+              status: 'error',
+              error: 'rollup requires admin or wildcard scope',
+            })
+            return err(id, -32007, 'rollup requires admin or wildcard scope')
+          }
+          const rollupRes = callRollupTool(args, {
+            token_label: token.label,
+            token_allowed_profiles: token.allowed_profiles,
+            token_allowed_tools: token.allowed_tools,
+            token_admin: token.admin,
+          })
+          if (!rollupRes.ok) {
+            recordToolCall({
+              token,
+              profile: profileArg,
+              tool: toolName,
+              status: 'error',
+              error: rollupRes.error,
+            })
+            return err(id, -32008, rollupRes.error)
+          }
+          result = rollupRes.data
+          break
+        }
         if (COMMS_TOOL_NAMES.has(toolName)) {
           const commsRes = await callCommsTool(toolName, args, {
             token_label: token.label,
