@@ -1,0 +1,106 @@
+{
+  "customer": "Cedar Ridge Automotive Group",
+  "profile": "cedar-ridge-automotive",
+  "decision_id": "52af1210-36d2-4ecc-846b-63d6f5dd63c5",
+  "phases": [
+    {
+      "phase": "orient",
+      "ok": true,
+      "outputs_written": [],
+      "brain_records_written": [
+        "events:bca2bad5-e597-4d6e-90c5-78f3ed79eb56"
+      ],
+      "wiki_pages_written": [
+        "knowledge/inbox/orientation-memo.md"
+      ],
+      "assumptions_surfaced": [],
+      "capability_gaps": [],
+      "notes": "orientation memo authored to inbox; brain phase event recorded"
+    },
+    {
+      "phase": "audit",
+      "ok": true,
+      "outputs_written": [],
+      "brain_records_written": [],
+      "wiki_pages_written": [
+        "knowledge/inbox/audit-memo.md"
+      ],
+      "assumptions_surfaced": [
+        "a61500cf-ef14-40f0-b670-6d3f2206464a",
+        "867a68f0-1b3b-478f-84f5-df2f29c0c3ed"
+      ],
+      "capability_gaps": [
+        "events:45570c5e-cae9-4466-b4fe-8c5c9d58652f"
+      ],
+      "notes": "audit memo + lookup misses + capability gap recorded"
+    },
+    {
+      "phase": "design",
+      "ok": true,
+      "outputs_written": [],
+      "brain_records_written": [
+        "adjacent_neighbors:bbecdcec-9d1a-42f7-89ef-744accf563de",
+        "adjacent_neighbors:e72a9b5c-7896-4e00-aaf0-21995dd5e665",
+        "adjacent_neighbors:b978f01a-7165-4543-bd21-5487e9379559",
+        "entities:49f01066-49a6-44cb-abbe-340a0d450b14"
+      ],
+      "wiki_pages_written": [
+        "knowledge/inbox/agentic-design.md"
+      ],
+      "assumptions_surfaced": [],
+      "capability_gaps": [],
+      "notes": "agentic design wiki + adjacent neighbors + organization entity"
+    },
+    {
+      "phase": "author",
+      "ok": true,
+      "outputs_written": [],
+      "brain_records_written": [
+        "observations:15a50007-abd3-41d4-a790-98194aad7d15"
+      ],
+      "wiki_pages_written": [
+        "canon/scope-contract.md",
+        "canon/confidence-schema.md",
+        "canon/human-relay-specification.md",
+        "canon/integration-playbooks.md",
+        "canon/house-canon-reference.md",
+        "canon/metadata-substrate.md",
+        "canon/knowledge-brain-interaction-contract.md"
+      ],
+      "assumptions_surfaced": [],
+      "capability_gaps": [],
+      "notes": "six invariants seeded; K↔B contract seeded; observation recorded"
+    },
+    {
+      "phase": "validate",
+      "ok": true,
+      "outputs_written": [],
+      "brain_records_written": [
+        "hunches:351bd5ee-adb7-46a4-9933-0e14f5e897f4"
+      ],
+      "wiki_pages_written": [
+        "knowledge/inbox/validation-summary.md"
+      ],
+      "assumptions_surfaced": [
+        "ffd6713a-7c3a-466b-8002-240c0e7571f9"
+      ],
+      "capability_gaps": [],
+      "notes": "validation memo + hunch + escalation assumption"
+    },
+    {
+      "phase": "package",
+      "ok": true,
+      "outputs_written": [
+        "/tmp/cedar-engagement-evidence/profiles/cedar-ridge-automotive/prescription-package.json"
+      ],
+      "brain_records_written": [
+        "outputs:c0438a72-51c7-47ad-ab87-607682bd3227"
+      ],
+      "wiki_pages_written": [],
+      "assumptions_surfaced": [],
+      "capability_gaps": [],
+      "notes": "prescription package written to /tmp/cedar-engagement-evidence/profiles/cedar-ridge-automotive/prescription-package.json"
+    }
+  ],
+  "generated_at": "2026-05-31T09:23:21.117Z"
+}

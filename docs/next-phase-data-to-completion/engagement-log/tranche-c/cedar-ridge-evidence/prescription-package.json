@@ -1,0 +1,16 @@
+{
+  "customer": "Cedar Ridge Automotive Group",
+  "profile": "cedar-ridge-automotive",
+  "decision_id": "52af1210-36d2-4ecc-846b-63d6f5dd63c5",
+  "generated_at": "2026-05-31T09:23:21.104Z",
+  "wiki_invariants": [
+    "scope-contract",
+    "confidence-schema",
+    "human-relay-specification",
+    "integration-playbooks",
+    "house-canon-reference",
+    "metadata-substrate"
+  ],
+  "brain_schema_version": 4,
+  "notes": "Prescription package complete; engagement-state.yaml advanced to ready_to_run after operator approves readiness gates."
+}
