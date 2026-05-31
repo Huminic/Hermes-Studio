@@ -220,7 +220,11 @@ function isTextual(mime: string | undefined, bytes: Buffer): boolean {
 }
 
 function sanitizeFilename(name: string): string {
-  return name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 96)
+  // Strip dot-runs first so '../foo' doesn't survive as '..foo'.
+  return name
+    .replace(/\.{2,}/g, '_')
+    .replace(/[^a-zA-Z0-9._-]/g, '_')
+    .slice(0, 96)
 }
 
 export function listUploads(

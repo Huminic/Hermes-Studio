@@ -159,3 +159,14 @@ Every non-trivial choice goes here with: question, options considered, choice, r
 ## D-024 — Rollup table allowlist
 - **Choice:** Rollup queries restricted to a fixed set (events, entities, observations, outputs, transactions, tasks, hunches, lookup_misses, assumptions, reconciliation_items, comms_log, uploads, adjacent_neighbors)
 - **Rationale:** Excludes metadata_audit and schema_migrations to prevent cross-profile leakage of audit metadata or schema state via rollup queries
+
+## Tranche F addenda — 2026-05-31
+
+## D-025 — PII redaction for embeddings is operator-configurable
+- **Choice:** Default local-hash-v1 model never leaves the host (no PII risk); remote models require explicit redactor wiring via `EMBED_PII_REDACTOR` env or `registerModel({ embed })` injection
+- **Rationale:** Local model has zero data egress; remote models are opt-in per profile via existing env-var indirection pattern; redactor implementation is per-customer policy
+- **Reversal:** Set `EMBED_MODEL_PROVIDER=local-hash` to revert
+
+## D-026 — Headed pen-test = documented manual checklist
+- **Choice:** Tranche F.9 headless sweep is automated (13 vectors in pen-test-sweep.test.ts); headed sweep is the manual checklist in tranche-f report (browser console + curl steps)
+- **Rationale:** Headed verifies session-cookie + CORS + deploy URL behavior — Playwright-MCP automation lands separately in Tranche G when the live-URL eval pack runs
