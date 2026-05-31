@@ -115,3 +115,20 @@ Every non-trivial choice goes here with: question, options considered, choice, r
 - **Question:** Sync layer's access posture toward the live messaging-hub DB?
 - **Choice:** Read-only (`{ readonly: true }`)
 - **Rationale:** Prevents accidental mutation of the messaging-hub during projection into Brain record families; the messaging-hub remains the source of truth for its own data
+
+## Tranche C addenda — 2026-05-31
+
+## D-017 — Consultative engine LLM is injectable
+- **Question:** Require real LLM for end-to-end? Block on credentials?
+- **Choice:** Inject `complete()` callable; default to deterministic synthetic
+- **Rationale:** Tests + offline evals are reproducible; production wires Hermes/OpenAI via the same function signature
+- **Reversal:** pass `complete: realCallable` to `runConsultativeEngagement()`
+
+## D-018 — Cedar Ridge fixture profile slug
+- **Choice:** `cedar-ridge-automotive` (matches Tranche A D-008; existing on production volume from V0–V10 historical run)
+
+## D-019 — Six invariants seeded as status:canonical directly into canon/
+- **Question:** Should consultative-engine route invariants through inbox→drafts→published like ordinary edits?
+- **Choice:** Write directly to canon/ with status:canonical at engagement init
+- **Rationale:** Canon is by definition the foundational state set at engagement init. The KSG inbox→drafts→published flow exists to govern EDITS to canon, not its initial seeding. Subsequent edits do go through the promote flow.
+- **Auditability:** Every canon write calls `recordAudit()` with full attribution
