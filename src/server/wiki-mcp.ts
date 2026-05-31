@@ -49,6 +49,11 @@ import {
   BRAIN_ADMIN_TOOLS,
   callBrainTool,
 } from './brain-mcp-handlers'
+import { COMMS_TOOLS, callCommsTool } from './comms-mcp-handlers'
+import {
+  FEDERATION_TOOLS,
+  callFederationTool,
+} from './federation-mcp-handlers'
 import { recordAudit } from './metadata-substrate'
 
 const ADMIN_TOOLS = new Set([
@@ -60,6 +65,8 @@ const ADMIN_TOOLS = new Set([
 ])
 
 const BRAIN_TOOL_NAMES = new Set(BRAIN_TOOLS.map((t) => t.name))
+const COMMS_TOOL_NAMES = new Set(COMMS_TOOLS.map((t) => t.name))
+const FEDERATION_TOOL_NAMES = new Set(FEDERATION_TOOLS.map((t) => t.name))
 
 function profileDir(profile: string): string {
   return path.join(os.homedir(), '.hermes', 'profiles', profile)
@@ -498,7 +505,9 @@ export async function dispatchWikiMcp(
   const token = authResult.token
   const method = body.method ?? ''
   if (method === 'tools/list') {
-    return ok(id, { tools: [...WIKI_TOOLS, ...BRAIN_TOOLS] })
+    return ok(id, {
+      tools: [...WIKI_TOOLS, ...BRAIN_TOOLS, ...COMMS_TOOLS, ...FEDERATION_TOOLS],
+    })
   }
   if (method !== 'tools/call') {
     return err(id, -32601, `method not found: ${method}`)
@@ -590,6 +599,46 @@ export async function dispatchWikiMcp(
         result = { tokens: listTokens() }
         break
       default:
+        if (COMMS_TOOL_NAMES.has(toolName)) {
+          const commsRes = await callCommsTool(toolName, args, {
+            token_label: token.label,
+            token_allowed_profiles: token.allowed_profiles,
+            token_allowed_tools: token.allowed_tools,
+            token_admin: token.admin,
+          })
+          if (!commsRes.ok) {
+            recordToolCall({
+              token,
+              profile: profileArg,
+              tool: toolName,
+              status: 'error',
+              error: commsRes.error,
+            })
+            return err(id, -32005, commsRes.error)
+          }
+          result = commsRes.data
+          break
+        }
+        if (FEDERATION_TOOL_NAMES.has(toolName)) {
+          const fedRes = await callFederationTool(toolName, args, {
+            token_label: token.label,
+            token_allowed_profiles: token.allowed_profiles,
+            token_allowed_tools: token.allowed_tools,
+            token_admin: token.admin,
+          })
+          if (!fedRes.ok) {
+            recordToolCall({
+              token,
+              profile: profileArg,
+              tool: toolName,
+              status: 'error',
+              error: fedRes.error,
+            })
+            return err(id, -32006, fedRes.error)
+          }
+          result = fedRes.data
+          break
+        }
         if (BRAIN_TOOL_NAMES.has(toolName)) {
           const brainRes = callBrainTool(toolName, args, {
             token_label: token.label,
