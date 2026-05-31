@@ -1,0 +1,132 @@
+{
+  "started_at": "2026-05-31T09:51:07.292Z",
+  "test_email": "duanekwells@gmail.com",
+  "test_phone": "+14126546500",
+  "stories": {
+    "story1_new_customer_onboarding": {
+      "ok": true,
+      "decision_id": "2948c2c8-40dc-4766-9c51-e7db99d6eaa7",
+      "wiki_pages": 11,
+      "brain_records": 8,
+      "assumptions": 3,
+      "capability_gaps": 1,
+      "prescription_package": "/tmp/tranche-g-evidence/profiles/cedar-ridge-automotive/engagement-2948c2c8.json"
+    },
+    "story2_federated_answer": {
+      "ok": true,
+      "result": {
+        "scope": "vinsolutions",
+        "engine": "shim",
+        "rows": [
+          {
+            "notice": "MindsDB not configured; federation_query returned a shim response. Set MINDSDB_URL + MINDSDB_TOKEN env vars to enable real dispatch.",
+            "profile": "cedar-ridge-automotive",
+            "scope": "vinsolutions",
+            "query": "SELECT COUNT(*) FROM leads WHERE created_at > :since",
+            "params": {
+              "since": "2026-05-01"
+            },
+            "suggested_action": "Register a real source for scope vinsolutions via mcp-federation skill + studio.yaml.federation.read_scopes."
+          }
+        ],
+        "gate_event_id": "a7103d2a-7e86-440f-be59-0b283a760a9b"
+      }
+    },
+    "story3_missing_input": {
+      "ok": true,
+      "assumption_id": "39db2979-0822-4af7-87f3-32052f7f9e0a",
+      "suggested_knowledge_change_id": "145af455-8129-47d3-8609-bd2b8f65e952"
+    },
+    "story4_wiki_edit_reaches_runtime": {
+      "ok": true,
+      "wiki_create_audit_count": 10
+    },
+    "story5_reconciliation": {
+      "ok": true,
+      "reconciliation_id": "e8c1bdd7-51ca-404a-9156-87727d5a7cbd",
+      "hunch_id": "74ce4942-fc17-4f30-a624-e271108f4a82"
+    },
+    "story6_hermes_self_improvement": {
+      "ok": true,
+      "changes_detected": 1,
+      "hunch_id": "e794cc7d-4ab1-473e-a43a-3f8f6e7d393f"
+    },
+    "story7_rollup": {
+      "ok": true,
+      "children_included": [
+        "cedar-ridge-automotive"
+      ],
+      "children_denied": [],
+      "total": 3
+    },
+    "story9_upload_and_classification": {
+      "ok": true,
+      "classification": "document",
+      "embedded": true,
+      "total_uploads": 1
+    },
+    "story10_drift_observability": {
+      "ok": true,
+      "top_hits": [
+        {
+          "id": "c3739124-7291-4ea0-9aa3-2a9f5be55732",
+          "source": "wiki/canon/scope-contract.md",
+          "similarity": 0.43102184066400717
+        },
+        {
+          "id": "097d072f-3308-499d-85b0-ae12ea041699",
+          "source": "uploads/38e327bf-4daa-416b-8591-6f1ebe448637",
+          "similarity": 0
+        }
+      ]
+    },
+    "story10b_decision_context": {
+      "ok": true,
+      "decision_id": "2948c2c8-40dc-4766-9c51-e7db99d6eaa7",
+      "chat_count": 2,
+      "output_count": 0
+    }
+  },
+  "comms": {
+    "email_test": {
+      "ok": true,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"id\": \"e464899c-8c91-479c-a47c-ce0b7fd4949b\"\n}"
+          }
+        ]
+      },
+      "subject": "Huminic Studio launch eval — Tranche G 2026-05-31T09:51:14.557Z",
+      "sent_at": "2026-05-31T09:51:15.205Z"
+    },
+    "sms_test": {
+      "ok": true,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"account_sid\": \"628bb066-45d5-4000-afb7-e9c029de3e88\",\n  \"api_version\": \"2010-04-01\",\n  \"body\": \"Huminic Studio Tranche G eval — SMS comms pipeline test 2026-05-31T09:51:15. If you got this the SMS pipeline works.\",\n  \"num_segments\": 2,\n  \"num_media\": 0,\n  \"date_created\": \"Sun, 31 May 2026 09:51:15 +0000\",\n  \"date_sent\": null,\n  \"date_updated\": \"Sun, 31 May 2026 09:51:15 +0000\",\n  \"direction\": \"outbound-api\",\n  \"error_code\": \"21601\",\n  \"error_message\": \"From number is not a valid SMS-capable phone number.\",\n  \"from\": \"+18886917953\",\n  \"price\": null,\n  \"price_unit\": \"USD\",\n  \"sid\": \"e5316891-eb46-4f99-b735-361aa8376cc2\",\n  \"status\": \"failed\",\n  \"to\": \"+14126546500\",\n  \"uri\": \"/api/laml/2010-04-01/Accounts/628bb066-45d5-4000-afb7-e9c029de3e88/Messages/e5316891-eb46-4f99-b735-361aa8376cc2\",\n  \"subresource_uris\": {\n    \"media\": \"/api/laml/2010-04-01/Accounts/628bb066-45d5-4000-afb7-e9c029de3e88/Messages/e5316891-eb46-4f99-b735-361aa8376cc2/Media\"\n  },\n  \"messaging_service_sid\": null\n}"
+          }
+        ]
+      },
+      "sent_at": "2026-05-31T09:51:15.695Z"
+    },
+    "voice_test": {
+      "ok": true,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"sid\": \"1b932780-5fc3-4191-acaa-7a639c5d7d20\",\n  \"date_created\": \"Sun, 31 May 2026 09:51:15 +0000\",\n  \"date_updated\": \"Sun, 31 May 2026 09:51:15 +0000\",\n  \"parent_call_sid\": null,\n  \"account_sid\": \"628bb066-45d5-4000-afb7-e9c029de3e88\",\n  \"to\": \"+14126546500\",\n  \"formatted_to\": \"412-654-6500\",\n  \"to_formatted\": \"412-654-6500\",\n  \"from\": \"+18886917953\",\n  \"formatted_from\": \"888-691-7953\",\n  \"from_formatted\": \"888-691-7953\",\n  \"phone_number_sid\": \"604d870c-80d9-485b-ba29-39222eed1b8f\",\n  \"status\": \"queued\",\n  \"start_time\": null,\n  \"end_time\": null,\n  \"duration\": 0,\n  \"price\": null,\n  \"price_unit\": \"USD\",\n  \"direction\": \"outbound-api\",\n  \"answered_by\": null,\n  \"api_version\": \"2010-04-01\",\n  \"forwarded_from\": null,\n  \"caller_name\": null,\n  \"uri\": \"/api/laml/2010-04-01/Accounts/628bb066-45d5-4000-afb7-e9c029de3e88/Calls/1b932780-5fc3-4191-acaa-7a639c5d7d20\",\n  \"subresource_uris\": {\n    \"notifications\": null,\n    \"recordings\": \"/api/laml/2010-04-01/Accounts/628bb066-45d5-4000-afb7-e9c029de3e88/Calls/1b932780-5fc3-4191-acaa-7a639c5d7d20/Recordings\"\n  },\n  \"annotation\": null,\n  \"group_sid\": null,\n  \"audio_in_mos\": null,\n  \"sip_result_code\": null,\n  \"audio_rtt_avg\": null,\n  \"audio_rtt_min\": null,\n  \"audio_rtt_max\": null,\n  \"audio_in_jitter_min\": null,\n  \"audio_in_jitter_max\": null,\n  \"audio_out_jitter_min\": null,\n  \"audio_out_jitter_max\": null,\n  \"audio_out_jitter_avg\": null,\n  \"audio_in_media_packet_count\": null,\n  \"audio_out_packet_count\": null,\n  \"audio_out_media_packet_count\": null,\n  \"audio_out_lost\": null,\n  \"audio_in_mean_interval\": null,\n  \"audio_in_dtmf_packet_count\": null,\n  \"audio_out_dtmf_packet_count\": null,\n  \"audio_in_skip_packet_count\": null,\n  \"audio_in_flush_packet_count\": null,\n  \"audio_in_largest_jb_size\": null\n}"
+          }
+        ]
+      },
+      "sent_at": "2026-05-31T09:51:16.062Z"
+    }
+  },
+  "errors": [],
+  "completed_at": "2026-05-31T09:51:16.177Z",
+  "error_count": 0
+}
