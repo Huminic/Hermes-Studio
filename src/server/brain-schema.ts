@@ -381,6 +381,14 @@ CREATE INDEX IF NOT EXISTS comms_log_ts ON comms_log(ts DESC);
 CREATE INDEX IF NOT EXISTS comms_log_channel ON comms_log(channel, ts DESC);
 `,
   },
+  {
+    version: 4,
+    name: 'tranche_b_adjacent_neighbors_source_refs',
+    sql: `
+-- adjacent_neighbors was created in v2 without source_refs; DSG requires it.
+ALTER TABLE adjacent_neighbors ADD COLUMN source_refs TEXT;
+`,
+  },
 ]
 
 export function migrationChecksum(sql: string): string {

@@ -95,3 +95,23 @@ Every non-trivial choice goes here with: question, options considered, choice, r
 
 ## Per-tranche addenda will append below as work progresses.
 
+
+## Tranche B addenda — 2026-05-31
+
+## D-014 — Migration v4 added (vs modifying v2)
+- **Question:** adjacent_neighbors was missing source_refs column, breaking DSG-required writes
+- **Choice:** Add migration v4 (ALTER TABLE) rather than edit v2 inline
+- **Rationale:** Migrations are immutable once published; editing v2 would cause checksum-drift refusal on any DB that already applied v2 (no production DBs yet today, but future-proof discipline matters)
+
+## D-015 — Default embedding model: local-hash-v1
+- **Question:** Which embedding model ships as default?
+- **Options:** OpenAI text-embedding-3-small (network call per profile); sentence-transformers via Python sidecar; local deterministic hash-based pseudo-embedding
+- **Choice:** local-hash-v1 (384-dim, deterministic, no network)
+- **Rationale:** Zero external dependency for the foundation; SRS B.6 allows model swap with `registerModel()`; production deployments can set `EMBED_MODEL_PROVIDER=openai` per profile via env-var indirection (existing pattern)
+- **Limitation noted:** local-hash is NOT a quality semantic model — adequate for evals + offline retrieval, not for production semantic search at scale
+- **Reversal:** `registerModel('openai', { id, dim, embed })` swaps it in
+
+## D-016 — Brain-sync opens messaging-hub.db read-only
+- **Question:** Sync layer's access posture toward the live messaging-hub DB?
+- **Choice:** Read-only (`{ readonly: true }`)
+- **Rationale:** Prevents accidental mutation of the messaging-hub during projection into Brain record families; the messaging-hub remains the source of truth for its own data
