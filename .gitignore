@@ -143,3 +143,7 @@ workspace-final-markdown-review.md
 
 # Playwright MCP scratch dir
 .playwright-mcp/
+
+# Next Phase memorialization — track these even though they're .log files
+!docs/next-phase-data-to-completion/decisions.log
+!docs/next-phase-data-to-completion/engagement-log/**/*.log

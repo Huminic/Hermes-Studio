@@ -124,6 +124,7 @@ import { Route as ApiMemoryListRouteImport } from './routes/api/memory/list'
 import { Route as ApiMcpWikiRouteImport } from './routes/api/mcp/wiki'
 import { Route as ApiMcpServersRouteImport } from './routes/api/mcp/servers'
 import { Route as ApiMcpReloadRouteImport } from './routes/api/mcp/reload'
+import { Route as ApiMcpProfileRouteImport } from './routes/api/mcp/$profile'
 import { Route as ApiKnowledgeSearchRouteImport } from './routes/api/knowledge/search'
 import { Route as ApiKnowledgeReadRouteImport } from './routes/api/knowledge/read'
 import { Route as ApiKnowledgeListRouteImport } from './routes/api/knowledge/list'
@@ -135,6 +136,8 @@ import { Route as ApiCustomerEngagementStateRouteImport } from './routes/api/cus
 import { Route as ApiCustomerChatRouteImport } from './routes/api/customer/chat'
 import { Route as ApiCustomerAgentsRouteImport } from './routes/api/customer/agents'
 import { Route as ApiCrewsCrewIdRouteImport } from './routes/api/crews/$crewId'
+import { Route as ApiBrainReadinessRouteImport } from './routes/api/brain/readiness'
+import { Route as ApiBrainAssumptionsRouteImport } from './routes/api/brain/assumptions'
 import { Route as ApiArtifactsArtifactIdRouteImport } from './routes/api/artifacts/$artifactId'
 import { Route as ApiAgentsAgentIdRouteImport } from './routes/api/agents/$agentId'
 import { Route as ApiCustomerWidgetsIndexRouteImport } from './routes/api/customer/widgets/index'
@@ -745,6 +748,11 @@ const ApiMcpReloadRoute = ApiMcpReloadRouteImport.update({
   path: '/api/mcp/reload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMcpProfileRoute = ApiMcpProfileRouteImport.update({
+  id: '/api/mcp/$profile',
+  path: '/api/mcp/$profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiKnowledgeSearchRoute = ApiKnowledgeSearchRouteImport.update({
   id: '/api/knowledge/search',
   path: '/api/knowledge/search',
@@ -799,6 +807,16 @@ const ApiCustomerAgentsRoute = ApiCustomerAgentsRouteImport.update({
 const ApiCrewsCrewIdRoute = ApiCrewsCrewIdRouteImport.update({
   id: '/api/crews/$crewId',
   path: '/api/crews/$crewId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBrainReadinessRoute = ApiBrainReadinessRouteImport.update({
+  id: '/api/brain/readiness',
+  path: '/api/brain/readiness',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBrainAssumptionsRoute = ApiBrainAssumptionsRouteImport.update({
+  id: '/api/brain/assumptions',
+  path: '/api/brain/assumptions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiArtifactsArtifactIdRoute = ApiArtifactsArtifactIdRouteImport.update({
@@ -1069,6 +1087,8 @@ export interface FileRoutesByFullPath {
   '/w/': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
+  '/api/brain/assumptions': typeof ApiBrainAssumptionsRoute
+  '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
@@ -1080,6 +1100,7 @@ export interface FileRoutesByFullPath {
   '/api/knowledge/list': typeof ApiKnowledgeListRoute
   '/api/knowledge/read': typeof ApiKnowledgeReadRoute
   '/api/knowledge/search': typeof ApiKnowledgeSearchRoute
+  '/api/mcp/$profile': typeof ApiMcpProfileRoute
   '/api/mcp/reload': typeof ApiMcpReloadRoute
   '/api/mcp/servers': typeof ApiMcpServersRoute
   '/api/mcp/wiki': typeof ApiMcpWikiRoute
@@ -1230,6 +1251,8 @@ export interface FileRoutesByTo {
   '/w': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
+  '/api/brain/assumptions': typeof ApiBrainAssumptionsRoute
+  '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
@@ -1241,6 +1264,7 @@ export interface FileRoutesByTo {
   '/api/knowledge/list': typeof ApiKnowledgeListRoute
   '/api/knowledge/read': typeof ApiKnowledgeReadRoute
   '/api/knowledge/search': typeof ApiKnowledgeSearchRoute
+  '/api/mcp/$profile': typeof ApiMcpProfileRoute
   '/api/mcp/reload': typeof ApiMcpReloadRoute
   '/api/mcp/servers': typeof ApiMcpServersRoute
   '/api/mcp/wiki': typeof ApiMcpWikiRoute
@@ -1393,6 +1417,8 @@ export interface FileRoutesById {
   '/w/': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
+  '/api/brain/assumptions': typeof ApiBrainAssumptionsRoute
+  '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
@@ -1404,6 +1430,7 @@ export interface FileRoutesById {
   '/api/knowledge/list': typeof ApiKnowledgeListRoute
   '/api/knowledge/read': typeof ApiKnowledgeReadRoute
   '/api/knowledge/search': typeof ApiKnowledgeSearchRoute
+  '/api/mcp/$profile': typeof ApiMcpProfileRoute
   '/api/mcp/reload': typeof ApiMcpReloadRoute
   '/api/mcp/servers': typeof ApiMcpServersRoute
   '/api/mcp/wiki': typeof ApiMcpWikiRoute
@@ -1557,6 +1584,8 @@ export interface FileRouteTypes {
     | '/w/'
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
+    | '/api/brain/assumptions'
+    | '/api/brain/readiness'
     | '/api/crews/$crewId'
     | '/api/customer/agents'
     | '/api/customer/chat'
@@ -1568,6 +1597,7 @@ export interface FileRouteTypes {
     | '/api/knowledge/list'
     | '/api/knowledge/read'
     | '/api/knowledge/search'
+    | '/api/mcp/$profile'
     | '/api/mcp/reload'
     | '/api/mcp/servers'
     | '/api/mcp/wiki'
@@ -1718,6 +1748,8 @@ export interface FileRouteTypes {
     | '/w'
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
+    | '/api/brain/assumptions'
+    | '/api/brain/readiness'
     | '/api/crews/$crewId'
     | '/api/customer/agents'
     | '/api/customer/chat'
@@ -1729,6 +1761,7 @@ export interface FileRouteTypes {
     | '/api/knowledge/list'
     | '/api/knowledge/read'
     | '/api/knowledge/search'
+    | '/api/mcp/$profile'
     | '/api/mcp/reload'
     | '/api/mcp/servers'
     | '/api/mcp/wiki'
@@ -1880,6 +1913,8 @@ export interface FileRouteTypes {
     | '/w/'
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
+    | '/api/brain/assumptions'
+    | '/api/brain/readiness'
     | '/api/crews/$crewId'
     | '/api/customer/agents'
     | '/api/customer/chat'
@@ -1891,6 +1926,7 @@ export interface FileRouteTypes {
     | '/api/knowledge/list'
     | '/api/knowledge/read'
     | '/api/knowledge/search'
+    | '/api/mcp/$profile'
     | '/api/mcp/reload'
     | '/api/mcp/servers'
     | '/api/mcp/wiki'
@@ -2038,6 +2074,8 @@ export interface RootRouteChildren {
   WIndexRoute: typeof WIndexRoute
   ApiAgentsAgentIdRoute: typeof ApiAgentsAgentIdRoute
   ApiArtifactsArtifactIdRoute: typeof ApiArtifactsArtifactIdRouteWithChildren
+  ApiBrainAssumptionsRoute: typeof ApiBrainAssumptionsRoute
+  ApiBrainReadinessRoute: typeof ApiBrainReadinessRoute
   ApiCrewsCrewIdRoute: typeof ApiCrewsCrewIdRouteWithChildren
   ApiCustomerAgentsRoute: typeof ApiCustomerAgentsRoute
   ApiCustomerChatRoute: typeof ApiCustomerChatRoute
@@ -2047,6 +2085,7 @@ export interface RootRouteChildren {
   ApiKnowledgeListRoute: typeof ApiKnowledgeListRoute
   ApiKnowledgeReadRoute: typeof ApiKnowledgeReadRoute
   ApiKnowledgeSearchRoute: typeof ApiKnowledgeSearchRoute
+  ApiMcpProfileRoute: typeof ApiMcpProfileRoute
   ApiMcpReloadRoute: typeof ApiMcpReloadRoute
   ApiMcpServersRoute: typeof ApiMcpServersRoute
   ApiMcpWikiRoute: typeof ApiMcpWikiRoute
@@ -2901,6 +2940,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiMcpReloadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/mcp/$profile': {
+      id: '/api/mcp/$profile'
+      path: '/api/mcp/$profile'
+      fullPath: '/api/mcp/$profile'
+      preLoaderRoute: typeof ApiMcpProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/knowledge/search': {
       id: '/api/knowledge/search'
       path: '/api/knowledge/search'
@@ -2976,6 +3022,20 @@ declare module '@tanstack/react-router' {
       path: '/api/crews/$crewId'
       fullPath: '/api/crews/$crewId'
       preLoaderRoute: typeof ApiCrewsCrewIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/brain/readiness': {
+      id: '/api/brain/readiness'
+      path: '/api/brain/readiness'
+      fullPath: '/api/brain/readiness'
+      preLoaderRoute: typeof ApiBrainReadinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/brain/assumptions': {
+      id: '/api/brain/assumptions'
+      path: '/api/brain/assumptions'
+      fullPath: '/api/brain/assumptions'
+      preLoaderRoute: typeof ApiBrainAssumptionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/artifacts/$artifactId': {
@@ -3540,6 +3600,8 @@ const rootRouteChildren: RootRouteChildren = {
   WIndexRoute: WIndexRoute,
   ApiAgentsAgentIdRoute: ApiAgentsAgentIdRoute,
   ApiArtifactsArtifactIdRoute: ApiArtifactsArtifactIdRouteWithChildren,
+  ApiBrainAssumptionsRoute: ApiBrainAssumptionsRoute,
+  ApiBrainReadinessRoute: ApiBrainReadinessRoute,
   ApiCrewsCrewIdRoute: ApiCrewsCrewIdRouteWithChildren,
   ApiCustomerAgentsRoute: ApiCustomerAgentsRoute,
   ApiCustomerChatRoute: ApiCustomerChatRoute,
@@ -3549,6 +3611,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiKnowledgeListRoute: ApiKnowledgeListRoute,
   ApiKnowledgeReadRoute: ApiKnowledgeReadRoute,
   ApiKnowledgeSearchRoute: ApiKnowledgeSearchRoute,
+  ApiMcpProfileRoute: ApiMcpProfileRoute,
   ApiMcpReloadRoute: ApiMcpReloadRoute,
   ApiMcpServersRoute: ApiMcpServersRoute,
   ApiMcpWikiRoute: ApiMcpWikiRoute,
