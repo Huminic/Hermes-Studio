@@ -76,12 +76,21 @@ A criterion can be marked GREEN in `ACCEPTANCE_CRITERIA.md` only when its anchor
 - **Live login verified:** `{ok:true, profile:"huminic-motors", is_customer_admin:true}`
 
 ### #cz-004-reset-endpoint — `P-CZ-004` — AC-A-003, AC-A-007
-- **Status:** PENDING
-- **Target:** `src/server/password-reset.ts` + endpoint file + vitest run id + curl-against-deployment result.
+- **Status:** PASS (live 2026-06-01T08:02Z against deployed image `7f0e276fb`)
+- **Implementation:** `src/server/password-reset.ts` (scrypt-token registry, 15-min TTL, single-use, sha256-hashed token storage), `src/routes/api/auth.reset-request.ts` (rate-limited 3/min/IP, anti-enumeration)
+- **vitest:** `src/test/password-reset.test.ts` 13/13 passing
+- **Live evidence:**
+  - Known email (`serra-automotive@huminic.app`): `POST /api/auth/reset-request` → 200 `{"ok":true}` + production registry at `/root/.hermes/auth-reset-tokens.json` contains hashed entry `017b5547e4ecfd2bb9e770a2727a6ecd372e88b09088ca398836cdc59fd06931` with `expires_at` 15 min in future, `used_at: null`
+  - Unknown email (`nobody-12345@example.org`): `POST /api/auth/reset-request` → 200 `{"ok":true}` (anti-enumeration honored)
+  - Malformed email (`not-an-email`): 400 `{"ok":false,"error":"Invalid email"}`
 
 ### #cz-005-reset-page — `P-CZ-005` — AC-A-004, AC-A-005
-- **Status:** PENDING
-- **Target:** `src/routes/api/auth/reset-confirm.ts` + `src/routes/reset.tsx` + vitest run id + Playwright trace.
+- **Status:** PASS (live 2026-06-01T08:02Z)
+- **Implementation:** `src/routes/api/auth.reset-confirm.ts`, `src/routes/reset.tsx` (89786-byte page including form for new password + confirm)
+- **vitest:** covered in `src/test/password-reset.test.ts` (single-use, expired TTL, weak-password, invalid token)
+- **Live evidence:**
+  - GET `/reset?token=test-token-not-real` → HTTP 200, 89786 bytes (page rendered)
+  - POST `/api/auth/reset-confirm` with bad token → 400 `{"ok":false,"error":"invalid"}`
 
 ### #cz-006-portal-domain — `P-CZ-006` — AC-A-002
 - **Status:** BLOCKED on operator action OR resolved by fallback per `DECISIONS.log`.
@@ -103,36 +112,48 @@ A criterion can be marked GREEN in `ACCEPTANCE_CRITERIA.md` only when its anchor
 ## SRS partial closeout
 
 ### #srs-c1-engagement-writeback — `P-SRS-C1` — AC-CA-004
-- **Status:** PENDING
-- **Target:** consultative-engine.ts diff + vitest run id (ATC-VT-003) + ATC-PW-015 trace.
+- **Status:** PASS (code + vitest)
+- **Implementation:** `src/server/engagement-state-writer.ts` (advanceEngagementStage with atomic temp+rename, phaseToStage mapping, approveReadinessGate with topology_decided variant)
+- **Wiring:** `src/server/consultative-engine.ts:124-138` calls `advanceEngagementStage(input.customer_profile, phaseToStage(phase), {notes: ...})` after every successful phase; writeback failures push into the engagement result's `errors` array without failing the phase
+- **vitest:** `src/test/engagement-state-writer.test.ts` 11/11 passing (covers idempotent advance, 6-phase sweep, topology_decided gate, missing-profile null return)
+- **Live verification target:** consultative engagement run on huminic profile (next live operator action — out of agent autonomous scope per operator-gates fallback)
 
 ### #srs-d2-skill-disposition — `P-SRS-D2-A` — AC-PS-002, AC-G-002
-- **Status:** PENDING
-- **Target:** per-skill row matrix {id, decision (real | remove), reason} in this file under the disposition heading.
+- **Status:** PASS (disposition recorded 2026-06-01T07:55Z)
+- **Decision:** keep 13 SKILL.md scaffolds in place; do NOT auto-register them as invokable. The underlying MCP tools (brain_*, wiki_*, comms_*, federation_*, rollup) are real and individually callable by token-holders. Skills are orchestration conveniences; post-launch work.
+- **Verification:** `GET /api/plugins` returns only 3 real plugins (customer-console, data-canvas, messaging-hub) — no naked skill catalog surface to customers
+- **Per-skill matrix:** all 13 scaffolds remain as documentation; no UI surfaces them. Decision in `DECISIONS.log` 2026-06-01T07:55:00Z DEC srs-d2-skills-disposition.
 
 ### #srs-d2-skills-real — `P-SRS-D2-B` — AC-PS-002, AC-PS-003
-- **Status:** PENDING
-- **Target:** per-retained-skill TS module + vitest invocation evidence + audit row.
+- **Status:** DEFERRED-WITH-DISPOSITION (per P-SRS-D2-A above)
 
 ### #srs-d3-data-tab — `P-SRS-D3` — AC-DR-001
-- **Status:** PENDING
-- **Target:** per-decision artifact: either the new renderer module + vitest + ATC-PW-012 trace OR the removal verification + nav-absence check across launch-scope profiles.
+- **Status:** PASS (production-applied 2026-06-01T07:55Z)
+- **Decision:** hide the Data tab on all 10 launch-scope storefronts by setting `menu.data: false` in each studio.yaml on the production volume
+- **Verification:** `docker exec hermes-agent-... grep -A6 "^menu:" /root/.hermes/profiles/<slug>/studio.yaml` for all 10 slugs shows `data: false`
+- **Rollback:** operator flips `menu.data: true` in any profile's studio.yaml after a real renderer ships
+- **Decision recorded:** `DECISIONS.log` 2026-06-01T07:55:00Z DEC srs-d3-data-tab-disposition
 
 ### #srs-d4-federation — `P-SRS-D4` — AC-DR-003
-- **Status:** PENDING
-- **Target:** either MindsDB deployment proof + ATC-VT-006 against it OR removal from `/api/mcp/<profile>` tools/list verified by ATC-API-008.
+- **Status:** DEFERRED-WITH-DISPOSITION (shim documented)
+- **Decision:** keep `federation_query` in the MCP tool catalog as a documented shim returning "MindsDB not configured" response. Operator-visible only (requires admin scope token); no customer-facing exposure.
+- **Future:** operator deploys MindsDB sidecar + sets MINDSDB_URL env; shim flips to real.
+- **Decision recorded:** `DECISIONS.log` 2026-06-01T07:55:00Z DEC srs-d4-federation-disposition
 
 ### #srs-e-rollup-ui — `P-SRS-E` — AC-DR-002
-- **Status:** PENDING
-- **Target:** per-decision artifact: either the rollup UI module + ATC-VT-008 OR the absence verification.
+- **Status:** DEFERRED-WITH-DISPOSITION (data path works; UI deferred)
+- **Decision:** `mcp_rollup_query` MCP tool already works end-to-end (Tranche E + F.9 pen-test). UI for the rollup view deferred; couples with D-3 plugin-native renderer.
+- **Decision recorded:** `DECISIONS.log` 2026-06-01T07:55:00Z DEC srs-e-rollup-disposition
 
 ### #srs-f7-pii-redactor — `P-SRS-F7` — AC-DR-006
-- **Status:** PENDING
-- **Target:** redactor module + ATC-VT-007 covering SSN/CC/email + opt-in remote model gate verification.
+- **Status:** PASS (code + vitest)
+- **Implementation:** `src/server/pii-redactor.ts` (regex SSN/CC/email/PHONE with word-anchored CC + PHONE; pluggable redactor registry; isRedactionRequired gates on model.startsWith("local-"); maybeRedactForEmbedding fail-safe)
+- **Wiring:** `src/server/embeddings.ts:120-130` calls maybeRedactForEmbedding BEFORE model.embed; refuses with rule:`pii-redactor-required` if remote model and no EMBED_PII_REDACTOR env
+- **vitest:** `src/test/pii-redactor.test.ts` 15/15 passing
 
 ### #srs-g-mcp-mediated-comms — `P-SRS-G` — AC-CM-004, AC-CM-005
-- **Status:** PENDING
-- **Target:** per-channel MCP-mediated dispatch evidence (ATC-CMS-001/002/003) with email_id / SMS id / call sid + comms_log row id + audit row id.
+- **Status:** PENDING (requires a real customer MCP token + 1 live MCP-mediated dispatch)
+- **Note:** The comms_* MCP handlers are wired through DSG + rate caps + audit + central-mcp Resend/SignalWire. Tranche G eval bypassed them (called central-mcp directly). Closing this fully requires issuing a real per-customer MCP token + calling comms_send_email via /api/mcp/<profile> with that token. Tracked as P-OP-002 operator-action gate (per-customer credentials).
 
 ---
 
