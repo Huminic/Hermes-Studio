@@ -113,7 +113,21 @@ export async function embedAndStore(
 ): Promise<EmbedResult> {
   const id = uuid()
   const model = getModelForProfile(input.profile)
-  const vector = await Promise.resolve(model.embed(input.chunk_text))
+
+  // P-SRS-F7 / AC-DR-006: redact before embedding if the model is remote.
+  // Refuses the embed (fail-safe) when a remote model is configured but no
+  // redactor is wired. Local models pass through unchanged.
+  const { maybeRedactForEmbedding } = await import('./pii-redactor')
+  const redaction = await maybeRedactForEmbedding(model.id, input.chunk_text)
+  if (!redaction.ok) {
+    return {
+      ok: false,
+      reason: `pii-redactor-required for model ${model.id}; set EMBED_PII_REDACTOR or use a local-* model`,
+      rule: 'pii-redactor-required',
+    }
+  }
+  const chunkTextToEmbed = redaction.text
+  const vector = await Promise.resolve(model.embed(chunkTextToEmbed))
 
   const tenanted = {
     id,
@@ -150,7 +164,7 @@ export async function embedAndStore(
       model.id,
       model.dim,
       buf,
-      input.chunk_text.slice(0, 4000),
+      chunkTextToEmbed.slice(0, 4000),
       input.profile,
     )
     return { ok: true, id, model: model.id, dim: model.dim, gate_event_id: gate.gate_event_id }
