@@ -323,9 +323,20 @@ Format: each SOUL is one markdown file with frontmatter (id, role, channels, sco
 
 **Templates live in huminic profile, instances are per-dealer copies.** Following the existing pattern from Phase C / Tranche A.
 
+#### Workflow diagrams (per role, per agent)
+
+Each human manual AND each agent SOUL gets a Mermaid diagram at the top showing the workflow shape. Mermaid is markdown-native (renders in GitHub + most viewers, no separate tool). One diagram per manual / SOUL, kept simple — sequence diagram for cross-actor flows, flowchart for single-actor decision trees. The diagram is its own diagnostic: if you can't draw the arrow from step A to step B, the handoff is missing — log it as a GAP row.
+
+Diagram types per surface:
+- **Human manuals** — flowchart (operator clicks → screen renders → action taken → branch on outcome)
+- **Agent SOUL stubs** — sequence diagram (agent reads wiki → calls MCP → writes Brain → DSG audit → escalates or returns)
+- **Cross-actor workflows** (in WORKFLOWS.md) — sequence diagram with all actors as lanes
+
+Diagrams live in the same markdown file as the manual/SOUL — top of the body, before the prose. They are the *table of contents* for the prose that follows.
+
 #### Gap-during-writing protocol
 
-When writing a manual or a SOUL, if you can't complete a sentence because the underlying button/screen/endpoint/wiki page/MCP scope doesn't exist, stop and log a new `GAP-MANUAL-*` or `GAP-SOUL-*` row in the running log below. Then write the next sentence around the gap (e.g. "(see GAP-LOGOUT-001 — currently no logout button; operator clears cookies manually)"). Don't smooth over the gap in prose.
+When writing a manual or a SOUL — prose OR diagram — if you can't complete a sentence or draw an arrow because the underlying button/screen/endpoint/wiki page/MCP scope/handoff doesn't exist, stop and log a new `GAP-MANUAL-*`, `GAP-SOUL-*`, or `GAP-FLOW-*` row in the running log below. Then write the next sentence (or draw the next arrow with a `:::missing` style) around the gap. Don't smooth over.
 
 ### Exit criteria (revised)
 
