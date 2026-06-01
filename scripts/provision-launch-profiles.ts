@@ -96,12 +96,15 @@ const SPECS: Array<ProfileSpec> = [
     password: LAUNCH_PASSWORD,
     is_customer_admin: true,
     description: 'CZ-003 Huminic Motors canary (Elliott→ADF round-trip)',
+    // P-FIX-003: schema-correct studio.yaml. Original draft used `brand:` /
+    // `display_name:` which the StudioConfigSchema rejects, causing the
+    // storefront to fall back to defaults (slug name, no DISABLED tag on
+    // Data). Caught during operator-directed Playwright sweep.
     studio_yaml: [
-      'profile: huminic-motors',
-      'brand:',
-      '  display_name: Huminic Motors',
-      '  accent_color: "#0d9488"',
+      '# Huminic Motors canary profile (CZ-003).',
+      'branding:',
       '  persona_name: Huminic Motors',
+      '  accent_color: "#0d9488"',
       'menu:',
       '  chat: true',
       '  knowledge: true',
@@ -110,11 +113,17 @@ const SPECS: Array<ProfileSpec> = [
       '  comms: true',
       '  campaigns: true',
       'agent_picker:',
+      '  visible_agents: []',
       '  default_agent: elliott',
       'tools_widget:',
+      '  show_embed_snippet: true',
+      '  show_live_demo: true',
       '  consult: false',
       'autonomous_reply_defaults:',
       '  enabled: false',
+      '  business_hours_only: false',
+      '  max_agent_turns: 3',
+      '  channels: []',
       'federation:',
       '  read_scopes: []',
       'lead_notifications:',

@@ -210,6 +210,51 @@ A criterion can be marked GREEN in `ACCEPTANCE_CRITERIA.md` only when its anchor
 
 ---
 
+## Defects caught during operator-directed live Playwright sweep (2026-06-01T08:38-09:02Z)
+
+### #p-fix-001 — HermesOnboarding overlay blocked storefront login
+- **Status:** PASS (fix verified live)
+- **Symptom:** "Welcome to Huminic Studio / Works with any OpenAI-compatible backend / Connect Backend / Skip setup" modal overlayed the Sign In form for any visitor without `hermes-onboarding-complete=true` in localStorage. Includes every first-time customer.
+- **Cause:** `<HermesOnboarding />` mounted in both `src/routes/__root.tsx:299` and `src/components/workspace-shell.tsx:493`. The generic backend-connect flow is wrong for this fused-Hermes deployment.
+- **Fix:** PR commit `302df824a` — removed both mounts and unused imports.
+- **Evidence:**
+  - Before: `docs/launch/evidence/live-before-fix-onboarding-visible.png` (modal blocks login)
+  - After: `docs/launch/evidence/live-after-fix-root.png` (login is the only UI on fresh localStorage)
+- **Why I missed it on first pass:** my prior curl tests against `/api/auth` bypass client-side localStorage overlays. The code-reviewer subagent inspected files but did not load the live page with a fresh browser context. This is a real lesson in why headed sweeps must be done by the implementing agent on the actual live URL.
+
+### #p-fix-002 — /reset page rendered inside Studio admin shell on launch host
+- **Status:** PASS (fix verified live)
+- **Symptom:** Customer clicks the reset email link → lands on `studio.huminic.app/reset?token=...` → sees HERMES OS topbar + Dashboard/Chat/Files/Terminal/Jobs/Crews sidebar + "RESET PASSWORD" buried inside.
+- **Cause:** `__root.tsx` bypass for `/reset` was nested inside the `if (portalHost)` branch. On `studio.huminic.app` (launch host since CZ-006 deferred), the bypass didn't fire.
+- **Fix:** PR commit `6708302f7` — moved `/reset` bypass out of `portalHost` conditional so it applies on all hosts.
+- **Evidence:**
+  - Before: `docs/launch/evidence/live-after-fix-reset-hydrated.png` (reset form inside admin chrome)
+  - After: `docs/launch/evidence/live-after-fix2-reset-standalone.png` + `live-after-fix2-reset-final.png` (clean standalone form)
+
+### #p-fix-003 — huminic-motors studio.yaml used wrong schema keys
+- **Status:** PASS (production volume corrected + script updated)
+- **Symptom:** `/p/huminic-motors` rendered "huminic-motors" (the slug) instead of "Huminic Motors" (the brand display name); Data tile did not show DISABLED tag despite menu.data:false in the YAML.
+- **Cause:** My provisioning script wrote `brand:` + `display_name:` keys; `StudioConfigSchema` requires `branding:` + `persona_name:`. Zod silently rejected the YAML and fell back to defaults (slug for name, all-menu-true).
+- **Fix:** rewrote `/root/.hermes/profiles/huminic-motors/studio.yaml` on the production volume with schema-correct keys + updated `scripts/provision-launch-profiles.ts` so re-runs produce the correct shape.
+- **Evidence:**
+  - Before: `docs/launch/evidence/live-after-fix2-huminic-motors-hydrated.png` (slug shown, Data unmarked)
+  - After: `docs/launch/evidence/live-after-fix3-huminic-motors-branded.png` (brand + DISABLED both correct)
+
+### #p-sur-playwright-sweep — operator-directed live sweep
+- **Status:** PASS (sweep complete; defects caught + fixed live; final state verified)
+- **Surfaces verified post-fixes:**
+  - `/` (unauthenticated, fresh localStorage) → login form only, no overlays
+  - `/` (authenticated as duane) → Studio admin shell, no overlays
+  - `/p/serra-automotive` (anon) → branded landing with Data DISABLED
+  - `/p/serra-automotive/chat` (authed) → red-accent storefront chrome, 6-tab nav, Data icon dimmed
+  - `/p/huminic-motors` (anon, post-fix-003) → branded landing with Data DISABLED
+  - `/reset?token=test-token` (post-fix-002) → standalone reset form, no admin shell
+  - `/engagements` (anon) → auth-redirected to login screen (expected)
+- **Per-storefront audit:** all 10 launch-scope profiles have schema-correct studio.yaml with branding.persona_name + menu.data:false
+- **Console errors observed:** preexisting CSP warnings about Google Fonts + React error #418 (hydration message) — not introduced by closeout; tracked as known minor for post-launch cleanup.
+
+---
+
 ## Final closeout
 
 ### #closeout-review — `P-RPT-003` — AC-FC-005
