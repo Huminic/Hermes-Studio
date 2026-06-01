@@ -268,6 +268,19 @@ function RootRouteSwitch() {
     )
   }
 
+  // /reset is a public standalone page (customer follows a token link from
+  // their reset email). It must render without the Studio admin shell on
+  // BOTH the launch host and the portal host. CZ-005 + caught during
+  // P-SUR-PLAYWRIGHT closeout sweep when /reset rendered inside the admin
+  // chrome on studio.huminic.app.
+  if (pathname.startsWith('/reset')) {
+    return (
+      <div data-storefront="true" className="theme-bg theme-text min-h-dvh">
+        <Outlet />
+      </div>
+    )
+  }
+
   // Portal hostname, bare path → generic Huminic-branded login form.
   // After successful auth, PortalLogin redirects to /p/<profile>/chat.
   if (portalHost) {
@@ -278,8 +291,8 @@ function RootRouteSwitch() {
         </div>
       )
     }
-    // Allow public /reset/* and /api/* pass-throughs on the portal host.
-    if (pathname.startsWith('/reset') || pathname.startsWith('/api/')) {
+    // Allow public /api/* pass-throughs on the portal host.
+    if (pathname.startsWith('/api/')) {
       return (
         <div data-storefront="true" className="theme-bg theme-text min-h-dvh">
           <Outlet />
