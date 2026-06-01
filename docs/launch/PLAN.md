@@ -233,6 +233,36 @@ NOTE: per Section 11 of the closeout prompt, we do NOT execute the business cuto
 
 ---
 
+## Closeout sweep gaps (running log — added 2026-06-01)
+
+Living section. Every gap surfaced during the post-checkpoint live verification + operator Q&A lands here with a stable id, current status, and a one-line description. Items move out of this section once they're fully closed AND verified live. Items that are NOT yet started stay here as backlog.
+
+Two kinds of gaps live here:
+
+- **P-FIX-***: defects discovered during execution that did not exist in the original plan (caught + fixed within the closeout run).
+- **GAP-***: structural/scope gaps the operator surfaced in conversation that were always implied by the spec but never delivered. These need PLAN-level attention; some may move to formal tasks once scoped.
+
+| id | status | one-line | discovered | fix / next step | links |
+|---|---|---|---|---|---|
+| P-FIX-001 | DONE (verified live) | `<HermesOnboarding>` modal overlayed the storefront login on fresh-localStorage visitors. Removed mounts in `__root.tsx` + `workspace-shell.tsx`. | 2026-06-01 operator screenshot | commit `302df824a` | `EVIDENCE_INDEX.md#p-fix-001` |
+| P-FIX-002 | DONE (verified live) | `/reset` rendered inside the Studio admin shell on `studio.huminic.app` because the bypass was nested inside the portal-host conditional. | 2026-06-01 live Playwright sweep | commit `6708302f7` | `EVIDENCE_INDEX.md#p-fix-002` |
+| P-FIX-003 | DONE (verified live) | huminic-motors `studio.yaml` used wrong keys (`brand:`/`display_name:`) → Zod fell back to defaults → slug shown instead of brand + Data tile not marked DISABLED. | 2026-06-01 live Playwright sweep | commit `cfed63238` + script corrected | `EVIDENCE_INDEX.md#p-fix-003` |
+| GAP-PROV-001 | OPEN — scoped but not started | No "Provisioner / Fulfillment" agent exists. Consultative agent writes the prescription; nothing executes it. SRS implies this in the run-time crew but it was never built. Smallest portable fix: SOUL fragment at `huminic/governance/agents/provisioner.md` + wiki playbook at `huminic/knowledge/provisioning/` + new MCP scopes (`profile_write`, `auth_write`, `studio_config_write`). ~half a day. | 2026-06-01 operator Q on prescription fulfillment | option A: hand-built one-time script per customer; option B: build the Provisioner now and dogfood it on next customer | this conversation 2026-06-01 |
+| GAP-SG-001 | OPEN — scoped but not started | 7 customer-shaped profiles missing their named `<slug>-data-governor` sibling (serra-honda, serra-nissan, serra-service, tony-serra-ford, ford-of-columbia, hyundai-of-columbia, huminic-motors). Code-level KSG/DSG enforcement still runs against their writes; the named guardian *identity* is what's missing — no addressable role for reconciliations or operator queries. Existing huminic-data-governor SOUL is the template. ~30 min via a one-shot script, OR first job for the Provisioner agent in GAP-PROV-001. | 2026-06-01 operator Q on per-customer SGs | option A: `scripts/provision-data-governors.ts` now; option B: defer to Provisioner | this conversation 2026-06-01 |
+| GAP-AGENT-WIKI-001 | OPEN — backlog | Studio custom agents (`/agents` form, `.runtime/agent-definitions.json`) have no first-class wiki-binding fields. Today the only "instructions" field is `systemPrompt: string`; pointing an agent at a wiki is a discipline embedded in prompt text, not a schema field. Profile-distributed SOULs DO bind via frontmatter (`scope_contract:`, `workflow:`) — that pattern doesn't exist on Studio custom agents. Path forward: add `scope_contract_path`, `workflow_path`, `kanban_lane` to `AgentDefinition` + surface in `/agents` form + inject file contents into the system prompt at session start. ~1 day. | 2026-06-01 operator Q on manual agent → wiki binding | backlog post-launch unless operator wants it before | this conversation 2026-06-01 |
+| GAP-LOGOUT-001 | OPEN — small but real | No `/api/auth/logout` endpoint exists. Internal `clearSession()` exists in `auth-middleware.ts` but isn't exposed. UI has no logout button. Operator can't sign out without clearing cookies manually. Caught during 2026-06-01 Playwright sweep when I tried to test anonymous-state behavior. | 2026-06-01 live sweep | small: POST `/api/auth/logout` + UI control + invalidate session cookie. ~30 min. | this conversation 2026-06-01 |
+| GAP-CONSOLE-001 | OPEN — non-blocking | Two pre-existing console warnings on every page load: CSP rejects Google Fonts stylesheet (`fonts.googleapis.com` not in `style-src`), and a minified React error #418 (hydration mismatch) on the chat route. Neither blocks functionality; both noise the dev console for customer-admins. | 2026-06-01 Playwright sweep noticed | small: add `https://fonts.googleapis.com` to `style-src` in CSP or self-host the fonts; debug the #418 hydration mismatch separately. ~1 hr. | this conversation 2026-06-01 |
+| GAP-PROBE-SIDE-EFFECT-001 | OPEN — non-blocking, documented | `GET /api/brain/readiness?profile=<slug>` creates the profile's brain dir + brain.db if it doesn't exist. A GET endpoint should not mutate state. Discovered during 2026-06-01 env audit when probing huminic-motors silently provisioned its brain dir. Useful side effect this once; should still be fixed. | 2026-06-01 env audit | small: make the readiness probe read-only; expose provisioning as an explicit POST. ~30 min. | `DECISIONS.log` 2026-06-01T07:40:00Z |
+
+### How this section is maintained
+
+- New gaps surfaced in operator Q&A get a new row with a stable `GAP-*` id. Do not delete rows; status flips from OPEN → DONE (verified live) when truly closed.
+- Each row links to the conversation turn or evidence anchor that surfaced it.
+- A row is only DONE if it has a fix commit + a live-verification screenshot or test artifact in `EVIDENCE_INDEX.md`.
+- DEFERRED-WITH-DISPOSITION is allowed when the operator explicitly accepts the gap as out-of-launch-scope; the row stays here with that label and a one-line reason.
+
+---
+
 ## Operator-action-gated tasks (scheduled with fallback per Section 0.5 step 6)
 
 For each operator-action task, the fallback is: agent surfaces the gate with what is needed, what is blocked, and what is unblocked; agent proceeds on the unblocked siblings. Operator gates do NOT permit a launch claim.
