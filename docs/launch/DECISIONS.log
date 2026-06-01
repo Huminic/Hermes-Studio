@@ -99,3 +99,14 @@ Operator can later deploy MindsDB sidecar + set MINDSDB_URL env to flip the shim
 
 P-SRS-E closeout decision: rollup data path (`mcp_rollup_query`) works end-to-end (verified in Tranche E + F.9 pen-test). The dashboard UI for it is deferred — couples with D-3 plugin-native renderer. No customer-visible artifact; operator queries via MCP token until then.
 
+### 2026-06-01T23:14:44Z ACK phase-8-session-start
+
+Session-start re-acknowledgment per AGENTS.md closeout-mode hook. Post-compact resume of Phase 8 (role × workflow audit per operator /goal). Conditional GO from `LAUNCH_CLOSEOUT_REPORT.md` Section 18 remains RETRACTED. No launch claim until Phase 8 exit criteria green with live evidence.
+
+- `docs/launch/ACCEPTANCE_CRITERIA.md` sha256 = `30d39ddb2aeffd3fb8fc80a5cccb040cf28c60d6f6dd5988c93daed1c29af1dd`
+- `docs/launch/PLAN.md` sha256 = `cbe8e61366e0f1315f86b1371b9b161dad1396dc134c09080989220adabc87f3`
+- HEAD = `34d07f513` (PLAN.md: Phase 8 — add Mermaid workflow diagrams per manual + SOUL)
+- Worktree clean except `.playwright-mcp/` (gitignored)
+
+Next step: read PLAN.md Phase 8 in full, then begin `docs/launch/ROLES.md` (step a of resume protocol).
+
