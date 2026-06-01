@@ -1,0 +1,73 @@
+# DECISIONS.log — Huminic Studio launch closeout
+
+**Format:** append-only. One entry per non-trivial choice, workaround, assumption confirmation, or risk resolution. Timestamps in ISO 8601 UTC.
+
+Entry types:
+- `ACK` — session-start re-acknowledgment of ACCEPTANCE_CRITERIA.md and PLAN.md hashes
+- `DEC` — decision the agent took with rationale
+- `CHANGE` — explicit edit to a governance file (ACCEPTANCE_CRITERIA / PLAN / etc.) explaining the change
+- `WORKAROUND` — temporary adaptation with reason + reversibility
+- `BLOCKER` — discovery that cannot be closed in this run; surfaced with owner + next step
+- `OP-GATE` — operator action awaited; what is blocked; what is unblocked
+
+---
+
+## 2026-06-01
+
+### 2026-06-01T07:30:00Z DEC closeout-checkpoint-initiated
+
+Operator (Duane Wells) issued the final closeout + verification + launch-readiness mandate. Agent entered the Section 0.5 planning-mode checkpoint per the prompt. Six artifacts produced in this turn: `PLAN.md`, `ACCEPTANCE_CRITERIA.md`, `AGENTS.md` (session-start hook), `HUMAN_TESTING_SCRIPT.md`, `AUTONOMOUS_TESTING_PLAN.md`, `CHECKPOINT_PROOF.md`. Stale/competing documents archived to `docs/archive/2026-06-01/`. issues.md absorbed into PLAN.md and archived.
+
+### 2026-06-01T07:30:00Z DEC dealer-universe-resolved
+
+The "5 of 6 missing" ambiguity from prior notes was off by one. The canonical launch-scope dealer slugs are: `serra-honda` (already has tester auth), `serra-nissan`, `serra-service`, `tony-serra-ford`, `ford-of-columbia`, `hyundai-of-columbia`, `serra-automotive`. Six need new auth.yaml in P-CZ-002; the seventh (serra-honda) keeps the legacy `tester` account or gets a refresh during P-CZ-002 at operator discretion. `cedar-ridge-automotive` stays as a fixture per D-019; not part of launch-scope dealer universe. `huminic-motors` (P-CZ-003) is a separate canary, not in the dealer universe. Recorded in `docs/launch/CHECKPOINT_PROOF.md` Section A.
+
+### 2026-06-01T07:30:00Z DEC archive-policy
+
+Archived 8 files to `docs/archive/2026-06-01/` with README.md explaining each move:
+- `docs/next-phase-data-to-completion/PLAN_INTEGRATION.md` (superseded by PLAN.md)
+- `docs/next-phase-data-to-completion/LAUNCH_READINESS_REPORT.md` (premature GO claim)
+- `docs/cedar-ridge-defect-register.md`, `docs/cedar-ridge-readiness-report.md` (V0 era; historical)
+- `docs/customer-cluster-defect-register.md`, `docs/customer-cluster-readiness-report.md` (Phase C; historical)
+- `docs/v0-validation-runbook.md` (V0 era runbook)
+- `issues.md` (absorbed into PLAN.md)
+- `AGENTS.md` (stale `/Users/dw/` paths + epoch.local references; replaced with closeout-focused AGENTS.md at repo root)
+
+### 2026-06-01T07:30:00Z DEC session-start-hook-convention
+
+The repo's AGENTS.md is the session-start convention. ACCEPTANCE_CRITERIA.md re-acknowledgment is enforced by an `ACK` line append to this DECISIONS.log at every session start, including the sha256 of ACCEPTANCE_CRITERIA.md + PLAN.md. If hashes change without a `CHANGE` entry, session is in violation and must halt.
+
+### 2026-06-01T07:30:00Z DEC test-id-taxonomy
+
+Task ids `P-<phase>-<seq>`. Acceptance ids `AC-<class>-<seq>`. Human test ids `HTC-<section>-<seq>`. Autonomous test ids `ATC-<class>-<seq>`. Defect fix ids `P-FIX-<seq>`. Operator-action ids `P-OP-<seq>`. These ids are stable for the entire closeout run.
+
+### 2026-06-01T07:30:00Z DEC operator-gates-fallback-policy
+
+For each P-OP-* (CZ-006 portal domain, CZ-008 Vapi config, OP-001 Nexxus cutover, OP-002 per-customer creds, OP-003 sidecars), agent will (a) surface the gate explicitly in the closeout report, (b) document the fallback chosen (e.g. plugin-native renderer if Metabase deferred; federation_query removed from launch tool surface if MindsDB deferred), (c) ensure the fallback is itself green with evidence, (d) NOT make a launch claim if any launch-visible surface depends on an open operator gate.
+
+### 2026-06-01T07:30:00Z DEC use-of-subagents
+
+Operator's prompt explicitly authorized subagent use. Closeout will use:
+- `code-reviewer` subagent for adversarial verification at end of each P-CZ / P-SRS PR before merge, and for the final closeout review (AC-FC-005).
+- `Explore` subagents for surface sweeps where multiple parallel reads accelerate without polluting main context.
+- `Workflow` tool for fan-out tasks like per-profile readiness probe, per-screen sweep, or per-tenant isolation verification if such parallelism is needed.
+
+### 2026-06-01T07:30:00Z OP-GATE pending-operator-actions
+
+These items wait for the operator. Each has a fallback recorded. None block the checkpoint completion message:
+- CZ-006 — `portal.huminic.app` Coolify domain add. Fallback: launch on `studio.huminic.app/p/<slug>` only; remove any `portal.huminic.app` reference from launch-facing docs. Owner = Duane.
+- CZ-008 — Vapi dashboard config for Elliott's end-of-call webhook. Fallback: launch without Elliott canary; track as post-launch backlog. Owner = Duane.
+- OP-001 — Nexxus DNS cutover. Out of scope for this closeout; remains operator decision.
+- OP-002 — Per-customer real Vapi/TextMagic/VinSolutions credentials. Fallback: huminic + huminic-motors have real creds; other dealers stay test-cred until operator provisions. Owner = Duane.
+- OP-003 — Metabase + MindsDB sidecars. Fallback per P-SRS-D3 (plugin-native renderer) and P-SRS-D4 (federation tool removed from launch surface). Owner = Duane.
+
+---
+
+## Session-start ACK entries (one per session)
+
+Entries appended automatically per the AGENTS.md hook. Format:
+```
+YYYY-MM-DDTHH:MM:SSZ ACK acceptance-criteria sha256=<hex>  plan sha256=<hex>  by <agent-id>
+```
+
+2026-06-01T07:37:18Z ACK acceptance-criteria sha256=30d39ddb2aeffd3fb8fc80a5cccb040cf28c60d6f6dd5988c93daed1c29af1dd  plan sha256=2e11d98ab62b91cadacd69243b2b710bb5d6d4331e972da56031c8cc7b99a3eb  by claude-opus-4-7-closeout-session-01
