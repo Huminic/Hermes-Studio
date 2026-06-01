@@ -6,15 +6,15 @@
 
 **Source.** Every `P-FIX-*` / `GAP-*` row in `PLAN.md` "Closeout sweep gaps" section. Newly added Phase 8 rows (ROLES + WORKFLOWS + manuals + SOULs writing) are folded in.
 
-**Headline counts.**
+**Headline counts** (updated post live-headed-sweep 2026-06-01):
 
 | Bucket | Count |
 |---|---|
-| DONE (verified live) | 3 |
+| DONE (verified live, 3 P-FIX + 3 P-FIX re-verified on live sweep) | 3 |
 | OPEN — HIGH blast radius (operating-layer-completion) | 4 |
-| OPEN — MEDIUM blast radius (customer-impacting quality of life) | 5 |
-| OPEN — LOW blast radius (post-launch cleanup) | 10 |
-| TOTAL OPEN | 19 |
+| OPEN — MEDIUM blast radius (customer-impacting quality of life) | 6 (+1 from sweep: GAP-AUTH-HYDRATION-SPLASH-001) |
+| OPEN — LOW blast radius (post-launch cleanup) | 12 (+2 from sweep: GAP-CSP-META-001, GAP-API-CONNECTION-STATUS-500) |
+| TOTAL OPEN | 22 |
 
 ---
 
@@ -54,6 +54,7 @@ Customer-impacting in the daily workflow but each has a documented launch-time w
 | GAP-FLOW-concurrent-edit-001 | CONFIRMED silent-overwrite. `src/server/ksg-gate.ts` has no concurrent-edit detection; last save wins silently. | `customer-admin-guide.md` Section 4: single-writer convention per page; git history recovery if loss suspected. | ETag-style optimistic concurrency on `POST /api/customer/wiki/save`. ~2 hr. | agent (post-launch) |
 | GAP-MANUAL-promote-001 | No operator-side Promote button in `/files`. Customer-side endpoint exists. | `studio-admin-guide.md` Section 5: 3 workarounds (customer-storefront path / direct API curl / git-mv break-glass). | Add Promote button to file editor for `inbox/` and `drafts/` paths. ~2 hr UI work. | agent (post-launch) |
 | GAP-FLOW-operator-promote-approval-001 | Customer-admin promote writes directly to `published/` without operator-in-the-loop approval. Operator decision needed on whether to require approval. | Today: customer-admin owns their published wiki. Operator audits via `/audit`. | Operator decision: if approval required → queued-approval flow. If not → document explicitly in customer-admin-guide.md. | operator decision |
+| GAP-AUTH-HYDRATION-SPLASH-001 | Transient "h Huminic Studio" splash overlays the login form on auth-gated admin routes (`/engagements`, likely others) during ~3s hydration. | Resolves within 3s; user can still type into the form behind it. | Defer splash render until after auth-check OR render as backdrop not overlay. ~1 hr. | agent (post-launch) |
 
 ---
 
@@ -74,6 +75,8 @@ Quality-of-life improvements + schema bumps + non-blocking surface issues + drif
 | GAP-ENG-STATE-PERF-001 | `engagement-state.yaml` schema has no `performance_review` stage. | Couples with GAP-PERF-CONSULTATIVE-001. Schema additive ~2 hr. |
 | GAP-ENG-STATE-ABANDON-001 | `engagement-state.yaml` schema has no terminal `abandoned` stage. | `consulting-human-operator-guide.md` Section 8 workaround: freeze + annotate. Schema additive ~1 hr. |
 | GAP-CONSULTATIVE-DRIFT-001 | SOUL ↔ `consultative-engine.ts` drift unverified. | Documented drift-check protocol in `consulting-human-operator-guide.md` Section 5. Run during a regular consultative engagement; file `DEC` entry on findings. |
+| GAP-CSP-META-001 | CSP `frame-ancestors` directive ignored (delivered via `<meta>` not HTTP header). | Move to HTTP header in server-entry.js. ~30 min. Pair with GAP-CONSOLE-001 CSP fix. |
+| GAP-API-CONNECTION-STATUS-500 | `/api/connection-status` returns 500 to unauthenticated callers (should be 401). | Route handler fix; not user-blocking. ~30 min. |
 
 ---
 
