@@ -279,18 +279,68 @@ The gaps in the running log are not random defects. They share a category: the s
 - **No** new agent definitions beyond what the gap pass forces.
 - **No** new infrastructure. Cron / webhook / Redis decision deferred to whenever the integrity scanner actually gets built.
 
-### Exit criteria
+### Augmentation 2026-06-01: manuals as the diagnostic
+
+Per operator: writing the end-to-end user manual for each role IS the audit, not a deliverable on top of the audit. A workflow can say "operator approves a readiness gate" in one sentence and look green; the manual has to say *where the button lives, what the screen says, what happens after click* — and writing it surfaces the gap when there's no button. Same for agent SOUL wiki entries: drafting the SOUL forces naming the wiki pages it reads, the MCP scopes it needs, the consumers of its outputs — any missing piece is a gap surfaced mid-sentence.
+
+**WORKFLOWS.md becomes the table of contents.** The body lives in the manuals and SOUL stubs below. Gap pass happens during the writing.
+
+#### Human manuals (5)
+
+| Path | Audience |
+|---|---|
+| `docs/launch/manuals/studio-admin-guide.md` | Huminic Studio operator (the system admin running everything). All `is_admin: true` paths: profiles, agents, MCP tokens, audit, engagements, promote-from-drafts, readiness gates. |
+| `docs/launch/manuals/consulting-human-operator-guide.md` | Huminic sales professional using the consultative agent. Six-phase engagement walk, prescription read, handoff to Provisioner, resolving surfaced assumptions, editing pages the agent authored. |
+| `docs/launch/manuals/customer-admin-guide.md` | Dealer's staff logging into their own storefront at `/p/<slug>/*`. Wiki editing under KSG, Comms send, audit trail read, password reset, customer-admin invite. |
+| `docs/launch/manuals/nexxus-migration-customer-guide.md` | Existing Nexxus dealer transitioning to Huminic — what's different, where their old data is (or isn't), how to do the things they used to do, cutover from their side. (**Operator assumption: this is the dealer-side migration guide, not the end-consumer/car-shopper. Flag at writing time if interpretation is wrong.**) |
+| `docs/launch/manuals/huminic-rollup-operator-guide.md` | Huminic-the-company operator reading aggregated data across child profiles. Authorizing rollup scope; reading rollup; auditing rollup reads. (Couples with SRS-E. Smaller manual.) |
+
+#### Agent SOUL wiki entries (~17 identities)
+
+Format: each SOUL is one markdown file with frontmatter (id, role, channels, scope_contract, workflow, kanban_lane, enabled) + a body describing what the agent does and what wiki pages it reads at runtime. Lives under `huminic/governance/agents/` for huminic-owned agents (Provisioner) and `<dealer>/governance/agents/` for per-dealer agents.
+
+| Agent | Lives at | Notes |
+|---|---|---|
+| Provisioner | `huminic/governance/agents/provisioner.md` | GAP-PROV-001. Writes the SOUL stub here; building the agent itself is post-launch. |
+| Knowledge Semantic Guardian | `<slug>-data-governor/SOUL.md` (unified KSG+DSG) | 4 exist (huminic, strukture, serra-automotive, cedar-ridge-automotive); 7 missing per GAP-SG-001 — write SOULs as part of this pass. |
+| Data Semantic Guardian | Same as above | Same. |
+| Consultative agent | `consultative-agent/SOUL.md` | Already exists. Verify drift between SOUL + actual `consultative-engine.ts` behavior; flag any divergence as a gap. |
+| Elliott (per dealer) | `<dealer>/governance/agents/elliott.md` | Exists for huminic-motors (CZ-003). Template for other dealers when they go live. |
+| Caroline (SMS responder, per dealer) | `<dealer>/governance/agents/caroline.md` | Template. |
+| Lead follow-up agent (per dealer) | `<dealer>/governance/agents/lead-follow-up.md` | Template. |
+| Lead response agent (per dealer) | `<dealer>/governance/agents/lead-response.md` | Template. |
+| Service agent (per dealer) | `<dealer>/governance/agents/service.md` | Template. |
+| CRM data guru (per dealer) | `<dealer>/governance/agents/crm-data-guru.md` | Template. |
+| Sales coach (per dealer) | `<dealer>/governance/agents/sales-coach.md` | Template. |
+| Communication writer (per dealer) | `<dealer>/governance/agents/communication-writer.md` | Template. |
+| Photo studio (per dealer) | `<dealer>/governance/agents/photo-studio.md` | Template. |
+| Video producer (per dealer) | `<dealer>/governance/agents/video-producer.md` | Template. |
+| Copywriter (per dealer) | `<dealer>/governance/agents/copywriter.md` | Template. |
+| Market intel (per dealer) | `<dealer>/governance/agents/market-intel.md` | Template. |
+| Creative director (per dealer) | `<dealer>/governance/agents/creative-director.md` | Template. |
+
+**Disabled by default.** Every per-dealer agent SOUL ships with `enabled: false` per the existing cutover-ritual convention. Operator flips `enabled: true` when they're actually ready to dispatch the agent.
+
+**Templates live in huminic profile, instances are per-dealer copies.** Following the existing pattern from Phase C / Tranche A.
+
+#### Gap-during-writing protocol
+
+When writing a manual or a SOUL, if you can't complete a sentence because the underlying button/screen/endpoint/wiki page/MCP scope doesn't exist, stop and log a new `GAP-MANUAL-*` or `GAP-SOUL-*` row in the running log below. Then write the next sentence around the gap (e.g. "(see GAP-LOGOUT-001 — currently no logout button; operator clears cookies manually)"). Don't smooth over the gap in prose.
+
+### Exit criteria (revised)
 
 Phase 8 is complete only when ALL of:
 
 - `docs/launch/ROLES.md` committed with ≥12 actor paragraphs
-- `docs/launch/WORKFLOWS.md` committed with ≥3 workflows per actor in the catalog
-- Every workflow has its "what has to be true" answer recorded (green or → new GAP-* row)
-- Regenerated Playwright suite committed and passing headed + headless
+- `docs/launch/WORKFLOWS.md` committed (table of contents pointing into the manuals)
+- All 5 human manuals committed under `docs/launch/manuals/`
+- All ~17 agent SOUL stubs committed under the appropriate profile `governance/agents/` directories (including the 7 missing `<slug>-data-governor` SOULs, closing GAP-SG-001 at the wiki-entry level)
+- Every gap surfaced during manual/SOUL writing logged as a new GAP-* row in the running log
+- Regenerated Playwright suite committed and passing headed + headless, designed against manual workflows (not pages)
 - Triage view assembled from the running log
-- Every fix that closes a workflow gap has a live-verification screenshot or test artifact in `EVIDENCE_INDEX.md`
+- Every fix that closes a manual-surfaced gap has a live-verification screenshot or test artifact in `EVIDENCE_INDEX.md`
 
-Only then can a fresh launch recommendation be drafted. The next recommendation may be GO, GO-WITH-CONDITIONS, or NO-GO; this phase determines which.
+Only then can a fresh launch recommendation be drafted. Manuals + SOUL stubs ARE the eval surface; if I can't write a step, the eval would have failed too.
 
 ### /goal (operator-issued 2026-06-01, post-compact execution)
 
