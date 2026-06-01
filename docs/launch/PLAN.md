@@ -233,6 +233,73 @@ NOTE: per Section 11 of the closeout prompt, we do NOT execute the business cuto
 
 ---
 
+## Phase 8 — Role × workflow audit + regenerated eval suite (added 2026-06-01 after operator diagnosis)
+
+**Status:** ACTIVE. Supersedes the launch readiness claim in `LAUNCH_CLOSEOUT_REPORT.md` Section 18 (GO WITH CONDITIONS).
+
+### Retraction
+
+The conditional GO from `LAUNCH_CLOSEOUT_REPORT.md` is **retracted**. The prior Playwright sweep tested pages, routes, and single-actor surfaces. It did NOT test cross-actor, cross-handoff, cross-time work-completion surfaces. Operator surfaced multiple customer-blocking gaps in conversation within ten minutes of compact, confirming the prior eval covered the wrong class of behavior. "Ready" does not mean anything until both classes pass.
+
+### Diagnosis (operator-stated, agent-acknowledged)
+
+The gaps in the running log are not random defects. They share a category: the system was specified to operate, and the **operating layer that connects features into work that gets done across actors and across time was never fully built**. Code does the moment-to-moment thing (gate this write, render this page, run this prompt); the connective tissue between moments — workflows, handoffs, recovery paths, integrity over time — is missing in pieces. User stories surface this category of gap because they describe work-completion, not button-existence.
+
+### Approach (minimum set; no new audit framework, no Devil's Advocate teammate yet)
+
+1. **Role catalog** at `docs/launch/ROLES.md` — 12–15 actors, one paragraph each: identity, ownership, reads, writes, handoffs, escalation paths. Inputs: existing governor SOULs, `HUMAN_TESTING_SCRIPT.md`, this PLAN, the SRS.
+2. **Workflow catalog** at `docs/launch/WORKFLOWS.md` — 3–5 workflows per actor, one sentence each, concrete, covering every user surface the operator enumerated (see Actor inventory below). No prose padding.
+3. **Gap pass.** For every workflow, one question: *what has to be true for this to work end-to-end in the running system today?* If nothing is missing → mark green. If the answer involves manual steps no actor owns, missing endpoints, missing bindings, missing handoffs, missing recovery paths, or missing agents → log as a new `GAP-*` row in the running log below.
+4. **Regenerate the Playwright eval suite against workflow surfaces (not pages).** Headed + headless. Real transactions across Vapi / TextMagic / Tavus / Studio-mediated MCP comms path / federation scopes / ADF webhook round-trip / password reset canary / Provisioner end-to-end / KSG integrity scan / DSG reconciliation path.
+5. **Run + fix + re-run until green.** Both headed and headless. Real artifacts, not mocks.
+6. **Aggregate every gap in the running log into a single triage view** before any further launch claim.
+
+### Actor inventory (operator-listed; ~14 actors covering the operating layer)
+
+1. Operator
+2. Consulting human operator
+3. Customer-admin (per profile)
+4. Consultative agent
+5. Performance engagement consultative agent (specialization)
+6. Provisioner (GAP-PROV-001 — not yet built)
+7. Knowledge Semantic Guardian (per profile; named SG agents in `<slug>-data-governor` — GAP-SG-001 for 7 missing)
+8. Data Semantic Guardian (per profile; same)
+9. Runtime agents (per customer / per channel — Elliott, Caroline, etc.)
+10. Comms (the email / SMS / voice / video pipeline)
+11. Federation (cross-source query layer)
+12. Rollup (Huminic-the-company aggregation case)
+13. Cross-actor interactions (concurrent edits, handoffs)
+14. Failure & recovery (the negative-space surfaces)
+
+### What is explicitly NOT in this phase
+
+- **No** Devil's Advocate teammate built yet. Post-launch role.
+- **No** 7-item failure-mode checklist or formal audit playbook authored yet. Catalog + workflows + one gap-pass question is sufficient.
+- **No** scheduled integrity scanner cron. Post-launch.
+- **No** new agent definitions beyond what the gap pass forces.
+- **No** new infrastructure. Cron / webhook / Redis decision deferred to whenever the integrity scanner actually gets built.
+
+### Exit criteria
+
+Phase 8 is complete only when ALL of:
+
+- `docs/launch/ROLES.md` committed with ≥12 actor paragraphs
+- `docs/launch/WORKFLOWS.md` committed with ≥3 workflows per actor in the catalog
+- Every workflow has its "what has to be true" answer recorded (green or → new GAP-* row)
+- Regenerated Playwright suite committed and passing headed + headless
+- Triage view assembled from the running log
+- Every fix that closes a workflow gap has a live-verification screenshot or test artifact in `EVIDENCE_INDEX.md`
+
+Only then can a fresh launch recommendation be drafted. The next recommendation may be GO, GO-WITH-CONDITIONS, or NO-GO; this phase determines which.
+
+### /goal (operator-issued 2026-06-01, post-compact execution)
+
+```
+Before any further launch claim, complete the role catalog at docs/launch/ROLES.md (twelve to fifteen actors, one paragraph each covering identity, ownership, reads, writes, handoffs, and escalation paths) using existing governor SOULs and HUMAN_TESTING_SCRIPT as inputs; complete the workflow catalog at docs/launch/WORKFLOWS.md with three to five end-to-end workflows per actor (one sentence each, concrete, covering every user surface listed above including operator, consulting human operator, customer-admin, consultative agent, performance engagement consultative agent, Provisioner, KSG, DSG, runtime agents per customer, comms, federation, rollup, cross-actor interactions, and failure/recovery paths); for every workflow answer the question "what has to be true for this to work end to end in the running system today" and log every gap as a new GAP- row in the running log in docs/launch/PLAN.md; recognize explicitly that the prior Playwright eval pass tested pages, routes, and single-actor surfaces but did not test the cross-actor, cross-handoff, cross-time work-completion surfaces the new catalogs cover, so a new eval suite must be designed against the workflow surfaces rather than against pages; regenerate the Playwright eval suite against the workflow surfaces, headed and headless, with real transactions across Vapi, TextMagic, Tavus where in scope, the Studio-mediated MCP comms path, federation scopes, the ADF webhook round-trip, the password reset canary, the Provisioner end-to-end, the KSG integrity scan, and the DSG reconciliation path; run the new eval suite; fix every failure; re-run until green; aggregate every gap in the running log into a single triage view; do not return with a launch claim until the role catalog, workflow catalog, gap pass, regenerated eval suite, and full green re-run are all complete with evidence references in EVIDENCE_INDEX.md; the Devil's Advocate teammate, the integrity scanner cron, and the formal audit framework remain post-launch work and are not built in this pass.
+```
+
+---
+
 ## Closeout sweep gaps (running log — added 2026-06-01)
 
 Living section. Every gap surfaced during the post-checkpoint live verification + operator Q&A lands here with a stable id, current status, and a one-line description. Items move out of this section once they're fully closed AND verified live. Items that are NOT yet started stay here as backlog.
