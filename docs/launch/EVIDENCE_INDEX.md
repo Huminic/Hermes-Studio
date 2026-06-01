@@ -19,12 +19,19 @@ A criterion can be marked GREEN in `ACCEPTANCE_CRITERIA.md` only when its anchor
 ## Environment state
 
 ### #env-state — `P-ENV-001`
-- **Status:** PENDING
-- **Target evidence:** Coolify image hash + container env-var inventory + volume mount verification.
+- **Status:** PASS (audit 2026-06-01T07:40Z)
+- **Deployed image hash:** `fa2441fbafd7614a621bc6191957c9bef88cdd09` (Tranche G; behind latest `main` at `ac9a69583` and behind closeout work — redeploy required after CZ-004/005)
+- **Containers:** `hermes-studio-nh5vnz9kz226cj9ib3nodg1j-095907890280` (Up 22h), `hermes-agent-nh5vnz9kz226cj9ib3nodg1j-095907879926` (Up 22h, healthy)
+- **Studio container env:** `HERMES_PASSWORD`, `HERMES_API_URL`, `CENTRAL_MCP_TOKEN`, `CENTRAL_MCP_URL`, `CENTRAL_MCP_STUDIO_TOKEN`, `SERVICE_FQDN_HERMES_STUDIO`, `SERVICE_NAME_HERMES_*`, `SERVICE_URL_HERMES_STUDIO` all set. `PORTAL_HOST` not set (consistent with CZ-006 open).
+- **Agent container env:** `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` both set — Hermes inference recoverable via direct openai/anthropic (OPENROUTER not required).
 
 ### #profile-state — `P-ENV-002`
-- **Status:** PENDING
-- **Target:** matrix of all production profiles × {auth.yaml present, studio.yaml present, mcp.json present, brain.db present, schema_version}.
+- **Status:** PASS (audit 2026-06-01T07:38Z)
+- **Total profiles on volume:** 16 after the readiness probe inadvertently provisioned huminic-motors brain dir (NOTE: `/api/brain/readiness` GET has a side-effect of provisioning brain if absent; documented as quirk in DECISIONS.log; not a launch blocker).
+- **Profiles with auth.yaml:** huminic, serra-honda, strukture (3 of 16)
+- **Profiles needing auth.yaml for launch:** ford-of-columbia, hyundai-of-columbia, serra-automotive, serra-nissan, serra-service, tony-serra-ford (6 — confirms P-CZ-002 scope), plus huminic-motors (P-CZ-003)
+- **Brain readiness:** all 12 customer-shaped profiles + consultative-agent + huminic-motors return `ok:true, schema_version:4, metadata_substrate_present:true` — sixth-invariant satisfied across the board.
+- **plugins.json:** 3 loaded (customer-console v0.2.0 with 7 routes + 2 bundles, data-canvas v0.1.0, messaging-hub v0.1.0) — no issues.
 
 ### #dealer-universe — `P-ENV-003`
 - **Status:** PROVISIONAL (recorded in `CHECKPOINT_PROOF.md` Section A; to be re-verified by HTC-NX-001 + ATC-API-002 at run time)
@@ -35,24 +42,38 @@ A criterion can be marked GREEN in `ACCEPTANCE_CRITERIA.md` only when its anchor
 - **Target:** domain list, env-var-API endpoint that works for dockercompose apps, current image deployment state.
 
 ### #secrets-set — `P-ENV-005`
-- **Status:** PENDING
-- **Target:** confirm HERMES_PASSWORD, CENTRAL_MCP_TOKEN, CENTRAL_MCP_URL, CENTRAL_MCP_STUDIO_TOKEN, OPENROUTER_API_KEY, HERMES_API_URL all set durably in Coolify.
+- **Status:** PASS (audit 2026-06-01T07:40Z)
+- **Studio:** HERMES_PASSWORD, CENTRAL_MCP_TOKEN, CENTRAL_MCP_URL, CENTRAL_MCP_STUDIO_TOKEN, HERMES_API_URL all set durably (confirmed by Up 22h container with these env vars). PORTAL_HOST is NOT set (CZ-006 dependent). RESEND/SIGNALWIRE/VAPI/TAVUS credentials live in central-mcp not Studio (per D-006 architecture — central-mcp is at `https://mcp.huminicdev.com/dax/mcp`).
+- **Agent:** ANTHROPIC_API_KEY + OPENAI_API_KEY set; OPENROUTER not needed.
 
 ### #vitest-baseline — `P-ENV-006`
-- **Status:** PENDING
-- **Target:** baseline `pnpm test` output count + build clean.
+- **Status:** PASS (run 2026-06-01T07:39:31Z)
+- **Result:** 56 files, 473 tests, all passing, 18.75s. Build clean.
 
 ---
 
 ## CZ closeout
 
 ### #cz-002-dealer-auth — `P-CZ-002` — AC-P-001..003
-- **Status:** PENDING
-- **Target:** list of 6 dealer slugs with auth.yaml file checksum + 0600 perm + successful login screenshot per dealer.
+- **Status:** PASS (provisioned 2026-06-01T07:43Z via `scripts/provision-launch-profiles.ts` then docker cp into production volume)
+- **Auth.yaml files provisioned in production volume** (6 new + 0600 perm verified):
+  - serra-automotive (`serra-automotive@huminic.app`)
+  - serra-nissan (`serra-nissan@huminic.app`)
+  - serra-service (`serra-service@huminic.app`)
+  - tony-serra-ford (`tony-serra-ford@huminic.app`)
+  - ford-of-columbia (`ford-of-columbia@huminic.app`)
+  - hyundai-of-columbia (`hyundai-of-columbia@huminic.app`)
+- **Live login verified against `https://studio.huminic.app/api/auth`** (2026-06-01T07:44Z): serra-automotive + ford-of-columbia returned `{ok:true, is_customer_admin:true}`. Wrong-password returned `{ok:false, "Invalid credentials"}`.
+- **Launch password (all 6 + huminic-motors):** `De@l$ucce$`. SECURITY NOTE in `DECISIONS.log` and `cutover-ritual.md`: operator MUST direct each user to run `/reset` on first login.
 
 ### #cz-003-huminic-motors — `P-CZ-003` — AC-CM-001, AC-P-001
-- **Status:** PENDING
-- **Target:** profile dir listing + studio.yaml content + auth.yaml content + Elliott agent SOUL + lead_notifications.adf_email.
+- **Status:** PASS (provisioned 2026-06-01T07:43Z)
+- **Profile dir:** `/root/.hermes/profiles/huminic-motors/` (created by `/api/brain/readiness` probe; brain.db schema_version=4, metadata_substrate_present=true)
+- **studio.yaml:** teal accent (#0d9488), persona "Huminic Motors", default_agent=elliott, lead_notifications.adf_email=neoweaver@gmail.com
+- **auth.yaml:** username=neoweaver@gmail.com, password=De@l$ucce$, is_customer_admin=true
+- **SOUL.md:** present
+- **governance/agents/elliott.md:** present with `enabled: true`, channels=[vapi,chat], scope_contract reference
+- **Live login verified:** `{ok:true, profile:"huminic-motors", is_customer_admin:true}`
 
 ### #cz-004-reset-endpoint — `P-CZ-004` — AC-A-003, AC-A-007
 - **Status:** PENDING

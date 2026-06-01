@@ -15,6 +15,7 @@ import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as SkillsRouteImport } from './routes/skills'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SessionHistoryRouteImport } from './routes/session-history'
+import { Route as ResetRouteImport } from './routes/reset'
 import { Route as ProfilesRouteImport } from './routes/profiles'
 import { Route as PatternsRouteImport } from './routes/patterns'
 import { Route as OperationsRouteImport } from './routes/operations'
@@ -139,6 +140,8 @@ import { Route as ApiCrewsCrewIdRouteImport } from './routes/api/crews/$crewId'
 import { Route as ApiBrainUploadsRouteImport } from './routes/api/brain/uploads'
 import { Route as ApiBrainReadinessRouteImport } from './routes/api/brain/readiness'
 import { Route as ApiBrainAssumptionsRouteImport } from './routes/api/brain/assumptions'
+import { Route as ApiAuthResetRequestRouteImport } from './routes/api/auth.reset-request'
+import { Route as ApiAuthResetConfirmRouteImport } from './routes/api/auth.reset-confirm'
 import { Route as ApiArtifactsArtifactIdRouteImport } from './routes/api/artifacts/$artifactId'
 import { Route as ApiAgentsAgentIdRouteImport } from './routes/api/agents/$agentId'
 import { Route as ApiCustomerWidgetsIndexRouteImport } from './routes/api/customer/widgets/index'
@@ -202,6 +205,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const SessionHistoryRoute = SessionHistoryRouteImport.update({
   id: '/session-history',
   path: '/session-history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetRoute = ResetRouteImport.update({
+  id: '/reset',
+  path: '/reset',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfilesRoute = ProfilesRouteImport.update({
@@ -825,6 +833,16 @@ const ApiBrainAssumptionsRoute = ApiBrainAssumptionsRouteImport.update({
   path: '/api/brain/assumptions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthResetRequestRoute = ApiAuthResetRequestRouteImport.update({
+  id: '/reset-request',
+  path: '/reset-request',
+  getParentRoute: () => ApiAuthRoute,
+} as any)
+const ApiAuthResetConfirmRoute = ApiAuthResetConfirmRouteImport.update({
+  id: '/reset-confirm',
+  path: '/reset-confirm',
+  getParentRoute: () => ApiAuthRoute,
+} as any)
 const ApiArtifactsArtifactIdRoute = ApiArtifactsArtifactIdRouteImport.update({
   id: '/api/artifacts/$artifactId',
   path: '/api/artifacts/$artifactId',
@@ -1032,13 +1050,14 @@ export interface FileRoutesByFullPath {
   '/operations': typeof OperationsRoute
   '/patterns': typeof PatternsRoute
   '/profiles': typeof ProfilesRoute
+  '/reset': typeof ResetRoute
   '/session-history': typeof SessionHistoryRoute
   '/settings': typeof SettingsRouteWithChildren
   '/skills': typeof SkillsRoute
   '/tasks': typeof TasksRoute
   '/terminal': typeof TerminalRoute
   '/widgets': typeof WidgetsRoute
-  '/api/auth': typeof ApiAuthRoute
+  '/api/auth': typeof ApiAuthRouteWithChildren
   '/api/auth-check': typeof ApiAuthCheckRoute
   '/api/auth-session': typeof ApiAuthSessionRoute
   '/api/chat-events': typeof ApiChatEventsRoute
@@ -1093,6 +1112,8 @@ export interface FileRoutesByFullPath {
   '/w/': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
+  '/api/auth/reset-confirm': typeof ApiAuthResetConfirmRoute
+  '/api/auth/reset-request': typeof ApiAuthResetRequestRoute
   '/api/brain/assumptions': typeof ApiBrainAssumptionsRoute
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/brain/uploads': typeof ApiBrainUploadsRoute
@@ -1198,12 +1219,13 @@ export interface FileRoutesByTo {
   '/operations': typeof OperationsRoute
   '/patterns': typeof PatternsRoute
   '/profiles': typeof ProfilesRoute
+  '/reset': typeof ResetRoute
   '/session-history': typeof SessionHistoryRoute
   '/skills': typeof SkillsRoute
   '/tasks': typeof TasksRoute
   '/terminal': typeof TerminalRoute
   '/widgets': typeof WidgetsRoute
-  '/api/auth': typeof ApiAuthRoute
+  '/api/auth': typeof ApiAuthRouteWithChildren
   '/api/auth-check': typeof ApiAuthCheckRoute
   '/api/auth-session': typeof ApiAuthSessionRoute
   '/api/chat-events': typeof ApiChatEventsRoute
@@ -1258,6 +1280,8 @@ export interface FileRoutesByTo {
   '/w': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
+  '/api/auth/reset-confirm': typeof ApiAuthResetConfirmRoute
+  '/api/auth/reset-request': typeof ApiAuthResetRequestRoute
   '/api/brain/assumptions': typeof ApiBrainAssumptionsRoute
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/brain/uploads': typeof ApiBrainUploadsRoute
@@ -1364,13 +1388,14 @@ export interface FileRoutesById {
   '/operations': typeof OperationsRoute
   '/patterns': typeof PatternsRoute
   '/profiles': typeof ProfilesRoute
+  '/reset': typeof ResetRoute
   '/session-history': typeof SessionHistoryRoute
   '/settings': typeof SettingsRouteWithChildren
   '/skills': typeof SkillsRoute
   '/tasks': typeof TasksRoute
   '/terminal': typeof TerminalRoute
   '/widgets': typeof WidgetsRoute
-  '/api/auth': typeof ApiAuthRoute
+  '/api/auth': typeof ApiAuthRouteWithChildren
   '/api/auth-check': typeof ApiAuthCheckRoute
   '/api/auth-session': typeof ApiAuthSessionRoute
   '/api/chat-events': typeof ApiChatEventsRoute
@@ -1425,6 +1450,8 @@ export interface FileRoutesById {
   '/w/': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
+  '/api/auth/reset-confirm': typeof ApiAuthResetConfirmRoute
+  '/api/auth/reset-request': typeof ApiAuthResetRequestRoute
   '/api/brain/assumptions': typeof ApiBrainAssumptionsRoute
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/brain/uploads': typeof ApiBrainUploadsRoute
@@ -1532,6 +1559,7 @@ export interface FileRouteTypes {
     | '/operations'
     | '/patterns'
     | '/profiles'
+    | '/reset'
     | '/session-history'
     | '/settings'
     | '/skills'
@@ -1593,6 +1621,8 @@ export interface FileRouteTypes {
     | '/w/'
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
+    | '/api/auth/reset-confirm'
+    | '/api/auth/reset-request'
     | '/api/brain/assumptions'
     | '/api/brain/readiness'
     | '/api/brain/uploads'
@@ -1698,6 +1728,7 @@ export interface FileRouteTypes {
     | '/operations'
     | '/patterns'
     | '/profiles'
+    | '/reset'
     | '/session-history'
     | '/skills'
     | '/tasks'
@@ -1758,6 +1789,8 @@ export interface FileRouteTypes {
     | '/w'
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
+    | '/api/auth/reset-confirm'
+    | '/api/auth/reset-request'
     | '/api/brain/assumptions'
     | '/api/brain/readiness'
     | '/api/brain/uploads'
@@ -1863,6 +1896,7 @@ export interface FileRouteTypes {
     | '/operations'
     | '/patterns'
     | '/profiles'
+    | '/reset'
     | '/session-history'
     | '/settings'
     | '/skills'
@@ -1924,6 +1958,8 @@ export interface FileRouteTypes {
     | '/w/'
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
+    | '/api/auth/reset-confirm'
+    | '/api/auth/reset-request'
     | '/api/brain/assumptions'
     | '/api/brain/readiness'
     | '/api/brain/uploads'
@@ -2030,13 +2066,14 @@ export interface RootRouteChildren {
   OperationsRoute: typeof OperationsRoute
   PatternsRoute: typeof PatternsRoute
   ProfilesRoute: typeof ProfilesRoute
+  ResetRoute: typeof ResetRoute
   SessionHistoryRoute: typeof SessionHistoryRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   SkillsRoute: typeof SkillsRoute
   TasksRoute: typeof TasksRoute
   TerminalRoute: typeof TerminalRoute
   WidgetsRoute: typeof WidgetsRoute
-  ApiAuthRoute: typeof ApiAuthRoute
+  ApiAuthRoute: typeof ApiAuthRouteWithChildren
   ApiAuthCheckRoute: typeof ApiAuthCheckRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiChatEventsRoute: typeof ApiChatEventsRoute
@@ -2188,6 +2225,13 @@ declare module '@tanstack/react-router' {
       path: '/session-history'
       fullPath: '/session-history'
       preLoaderRoute: typeof SessionHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset': {
+      id: '/reset'
+      path: '/reset'
+      fullPath: '/reset'
+      preLoaderRoute: typeof ResetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profiles': {
@@ -3058,6 +3102,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBrainAssumptionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/reset-request': {
+      id: '/api/auth/reset-request'
+      path: '/reset-request'
+      fullPath: '/api/auth/reset-request'
+      preLoaderRoute: typeof ApiAuthResetRequestRouteImport
+      parentRoute: typeof ApiAuthRoute
+    }
+    '/api/auth/reset-confirm': {
+      id: '/api/auth/reset-confirm'
+      path: '/reset-confirm'
+      fullPath: '/api/auth/reset-confirm'
+      preLoaderRoute: typeof ApiAuthResetConfirmRouteImport
+      parentRoute: typeof ApiAuthRoute
+    }
     '/api/artifacts/$artifactId': {
       id: '/api/artifacts/$artifactId'
       path: '/api/artifacts/$artifactId'
@@ -3329,6 +3387,19 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
   SettingsRouteChildren,
 )
 
+interface ApiAuthRouteChildren {
+  ApiAuthResetConfirmRoute: typeof ApiAuthResetConfirmRoute
+  ApiAuthResetRequestRoute: typeof ApiAuthResetRequestRoute
+}
+
+const ApiAuthRouteChildren: ApiAuthRouteChildren = {
+  ApiAuthResetConfirmRoute: ApiAuthResetConfirmRoute,
+  ApiAuthResetRequestRoute: ApiAuthResetRequestRoute,
+}
+
+const ApiAuthRouteWithChildren =
+  ApiAuthRoute._addFileChildren(ApiAuthRouteChildren)
+
 interface ApiEventsRouteChildren {
   ApiEventsReplayRoute: typeof ApiEventsReplayRoute
 }
@@ -3564,13 +3635,14 @@ const rootRouteChildren: RootRouteChildren = {
   OperationsRoute: OperationsRoute,
   PatternsRoute: PatternsRoute,
   ProfilesRoute: ProfilesRoute,
+  ResetRoute: ResetRoute,
   SessionHistoryRoute: SessionHistoryRoute,
   SettingsRoute: SettingsRouteWithChildren,
   SkillsRoute: SkillsRoute,
   TasksRoute: TasksRoute,
   TerminalRoute: TerminalRoute,
   WidgetsRoute: WidgetsRoute,
-  ApiAuthRoute: ApiAuthRoute,
+  ApiAuthRoute: ApiAuthRouteWithChildren,
   ApiAuthCheckRoute: ApiAuthCheckRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiChatEventsRoute: ApiChatEventsRoute,

@@ -71,3 +71,31 @@ YYYY-MM-DDTHH:MM:SSZ ACK acceptance-criteria sha256=<hex>  plan sha256=<hex>  by
 ```
 
 2026-06-01T07:37:18Z ACK acceptance-criteria sha256=30d39ddb2aeffd3fb8fc80a5cccb040cf28c60d6f6dd5988c93daed1c29af1dd  plan sha256=2e11d98ab62b91cadacd69243b2b710bb5d6d4331e972da56031c8cc7b99a3eb  by claude-opus-4-7-closeout-session-01
+
+### 2026-06-01T07:40:00Z DEC readiness-probe-side-effect-noted
+
+`GET /api/brain/readiness?profile=<slug>` provisions the brain dir + brain.db if absent. Discovered when probing for huminic-motors (which did not exist as a profile dir) — the probe returned ok:true and created `/root/.hermes/profiles/huminic-motors/brain/`. This is a Tranche A pattern (`provisionBrainForProfile` called from the readiness handler) but a GET endpoint should not have a side-effect. Not a launch blocker — useful in this case for CZ-003. Logged for post-launch cleanup.
+
+
+### 2026-06-01T07:55:00Z DEC srs-d3-data-tab-disposition
+
+P-SRS-D3 closeout decision: hide the Data tab from all customer storefronts at launch. Set `menu.data: false` in 9 launch-scope studio.yaml files via docker exec sed in the production volume. The current Data renderer is a stub; rather than ship a half-built UI, we remove the surface. The brain.db data + `mcp_rollup_query` MCP tool remain available for operator queries.
+
+Rollback: operator flips `menu.data: true` in any profile's studio.yaml after the real renderer ships.
+
+### 2026-06-01T07:55:00Z DEC srs-d2-skills-disposition
+
+P-SRS-D2 closeout decision: keep the 13 SKILL.md scaffolds in place but do NOT surface them as enabled skills anywhere customer-visible. The MCP tools they would orchestrate (brain_*, wiki_*, comms_*, federation_*, rollup) are themselves real and individually invokable by token-holders. Skills are an orchestration convenience, not a primary feature. Post-launch: implement per-skill TS modules as workflows require them.
+
+No code change needed today — the scaffolds are not currently auto-registered as invokable in `/skills`. Verified by /api/plugins which shows only the 3 plugins (customer-console, data-canvas, messaging-hub) and no naked skill catalog.
+
+### 2026-06-01T07:55:00Z DEC srs-d4-federation-disposition
+
+P-SRS-D4 closeout decision: keep `federation_query` in the MCP tool catalog as a documented shim. The tool returns a structured "MindsDB not configured" response when called without the sidecar deployed. This is operator-visible only (requires admin scope MCP token); no customer surface exposes it. Documented as operator-action gate OP-003.
+
+Operator can later deploy MindsDB sidecar + set MINDSDB_URL env to flip the shim to real.
+
+### 2026-06-01T07:55:00Z DEC srs-e-rollup-disposition
+
+P-SRS-E closeout decision: rollup data path (`mcp_rollup_query`) works end-to-end (verified in Tranche E + F.9 pen-test). The dashboard UI for it is deferred — couples with D-3 plugin-native renderer. No customer-visible artifact; operator queries via MCP token until then.
+

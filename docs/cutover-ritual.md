@@ -1,7 +1,71 @@
 # Nexxus → Huminic Studio Hard Cutover — Operator Ritual
 
-**Status:** Pre-cutover. Phase C + CY work merged through main as of 2026-05-30.
+**Status:** Pre-cutover. Phase C + CY work merged through main as of 2026-05-30. **Closeout addendum 2026-06-01** below covers the portal flow + password reset + Huminic Motors canary.
 **Owner:** Duane Wells. Coding agent prepared the system; the operator owns every irreversible action below.
+
+---
+
+## Closeout addendum — 2026-06-01
+
+### Canonical launch-scope storefront universe
+
+10 storefronts can be logged into via `https://studio.huminic.app/p/<slug>`:
+
+| Slug | Login | Provisioning |
+|---|---|---|
+| huminic | `duane / HuminicValidation2026!` | existing |
+| strukture | `kim / StruktureLogin2026!` | existing |
+| serra-honda | `tester / SerraHondaTest2026!` | existing |
+| serra-automotive | `serra-automotive@huminic.app / De@l$ucce$` | CZ-002, 2026-06-01 |
+| serra-nissan | `serra-nissan@huminic.app / De@l$ucce$` | CZ-002, 2026-06-01 |
+| serra-service | `serra-service@huminic.app / De@l$ucce$` | CZ-002, 2026-06-01 |
+| tony-serra-ford | `tony-serra-ford@huminic.app / De@l$ucce$` | CZ-002, 2026-06-01 |
+| ford-of-columbia | `ford-of-columbia@huminic.app / De@l$ucce$` | CZ-002, 2026-06-01 |
+| hyundai-of-columbia | `hyundai-of-columbia@huminic.app / De@l$ucce$` | CZ-002, 2026-06-01 |
+| huminic-motors | `neoweaver@gmail.com / De@l$ucce$` | CZ-003, 2026-06-01 — Elliott canary |
+
+**MANDATORY first-login action:** direct each new user to click "Forgot password?" on the storefront login (or visit `/reset?token=...` from the reset email) to pick their own password. The shared `De@l$ucce$` is a provisioning seed, NOT a long-term credential.
+
+### Password reset flow (CZ-004 + CZ-005)
+
+Live at `studio.huminic.app` after the closeout-checkpoint redeploy. Operator can verify with:
+
+```bash
+# Issue a reset for a known user. Returns 200 regardless (anti-enumeration);
+# email is only dispatched if the username is known.
+curl -X POST https://studio.huminic.app/api/auth/reset-request \
+  -H "Content-Type: application/json" \
+  -d '{"email":"serra-honda@huminic.app"}'
+# Returns: {"ok":true}
+```
+
+The Resend email contains a `https://studio.huminic.app/reset?token=<hex>` link. User clicks, picks a new password (>=8 chars, confirm field must match), and is redirected to their storefront login.
+
+Token TTL is 15 minutes, single-use. Re-requesting invalidates any prior live token for the same username.
+
+### Huminic Motors canary (CZ-003) + Elliott to ADF round-trip (CZ-008)
+
+`huminic-motors` profile is the canary test store. Its `studio.yaml` sets `lead_notifications.adf_email: neoweaver@gmail.com`. Elliott is enabled (`governance/agents/elliott.md`), all 8 other agents disabled.
+
+**Operator-action gate:** in the Vapi dashboard, configure Elliott's end-of-call webhook to:
+
+```
+https://studio.huminic.app/api/webhooks/vapi/huminic-motors
+```
+
+Then `scripts/elliott-test-huminic.ts` (already in the repo) can trigger a round-trip simulation. Real round-trip = dial Elliott on the assigned phone, speak a lead-shaped transcript, end the call, watch for the ADF email at neoweaver@gmail.com.
+
+### portal.huminic.app domain (CZ-006)
+
+**Status: launch-deferred.** Operator decision. The Coolify app domain list contains only `studio.huminic.app` today; `portal.huminic.app` is NOT routable. Launch on `studio.huminic.app/p/<slug>` URLs only. Add `portal.huminic.app` post-launch via the Coolify API + Cloudflare DNS verify + `PORTAL_HOST` env var.
+
+### What CZ closeout did NOT touch
+
+- Nexxus DNS / Caddy cutover (OP-001): still operator-only, scheduled per Section 9 of this ritual document below.
+- Per-customer real Vapi / TextMagic / VinSolutions credentials (OP-002): operator provisions in central-mcp + flips `enabled: true` on the relevant agent SOULs.
+- Metabase / MindsDB sidecars (OP-003): Data tab + federation_query hidden from customer storefront launch surface per the closeout disposition; sidecars deployed post-launch unlock them.
+
+---
 
 ---
 

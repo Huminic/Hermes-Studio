@@ -39,6 +39,10 @@ import { recordAudit } from './metadata-substrate'
 import { evaluateWikiSave } from './ksg-gate'
 import { provisionBrainForProfile } from './brain-readiness'
 import { seedInteractionContract } from './reconciliation'
+import {
+  advanceEngagementStage,
+  phaseToStage,
+} from './engagement-state-writer'
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -117,6 +121,19 @@ export async function runConsultativeEngagement(
     try {
       const res = await runPhase(phase, input, decisionId)
       phases.push(res)
+      // P-SRS-C1 / AC-CA-004: persist engagement stage on every successful
+      // phase transition. No-op if no engagement-state.yaml exists.
+      try {
+        advanceEngagementStage(input.customer_profile, phaseToStage(phase), {
+          notes: `consultative-engine: ${phase} complete (decision_id=${decisionId})`,
+        })
+      } catch (writeErr) {
+        // Don't fail the phase on a writeback error; record into errors so
+        // it surfaces in the engagement result.
+        errors.push(
+          `engagement-state-writeback after ${phase}: ${(writeErr as Error).message}`,
+        )
+      }
     } catch (err) {
       errors.push(`${phase}: ${(err as Error).message}`)
       phases.push({
