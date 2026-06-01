@@ -17,7 +17,6 @@ import { Toaster } from '@/components/ui/toast'
 import { OnboardingTour } from '@/components/onboarding/onboarding-tour'
 import { KeyboardShortcutsModal } from '@/components/keyboard-shortcuts-modal'
 import { initializeSettingsAppearance } from '@/hooks/use-settings'
-import { HermesOnboarding } from '@/components/onboarding/hermes-onboarding'
 import { PortalLogin } from '@/components/portal-login'
 import { isPortalHost } from '@/lib/portal-host'
 
@@ -296,7 +295,6 @@ function RootRouteSwitch() {
 
   return (
     <>
-      <HermesOnboarding />
       <GlobalShortcutListener />
       <TerminalShortcutListener />
       <MobilePromptTrigger />
