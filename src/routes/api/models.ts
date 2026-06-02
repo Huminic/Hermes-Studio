@@ -8,6 +8,7 @@ import {
   ensureGatewayProbed,
   getGatewayCapabilities,
 } from '../../server/hermes-api'
+import { BEARER_TOKEN } from '../../server/gateway-capabilities'
 
 const HERMES_API_URL = process.env.HERMES_API_URL || 'http://127.0.0.1:8642'
 
@@ -110,7 +111,12 @@ function normalizeHermesModel(entry: unknown): ModelEntry | null {
 }
 
 async function fetchHermesModels(): Promise<Array<ModelEntry>> {
-  const response = await fetch(`${HERMES_API_URL}/v1/models`)
+  // The gateway's built-in API server gates /v1/models behind its bearer
+  // (API_SERVER_KEY); without it this 401s and the route returns 503
+  // (GAP-LIVE-002).
+  const response = await fetch(`${HERMES_API_URL}/v1/models`, {
+    headers: BEARER_TOKEN ? { Authorization: `Bearer ${BEARER_TOKEN}` } : {},
+  })
   if (!response.ok)
     throw new Error(`Hermes models request failed (${response.status})`)
   const payload = asRecord(await response.json())
