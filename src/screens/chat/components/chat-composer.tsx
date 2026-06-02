@@ -118,8 +118,6 @@ type ModelSwitchNotice = {
   retryProvider?: string
 }
 
-const HERMES_API_URL = process.env.HERMES_API_URL || 'http://127.0.0.1:8642'
-
 function readModelText(value: unknown): string {
   return typeof value === 'string' ? value.trim() : ''
 }
@@ -238,10 +236,15 @@ async function fetchModels(): Promise<{
       }
     }
   } catch {
-    // Fall back to /v1/models
+    // Fall back to the Studio's own server-side models route (below).
   }
 
-  const response = await fetch(`${HERMES_API_URL}/v1/models`)
+  // Fall back to the Studio server route — same-origin + authenticated +
+  // gateway-bearer-aware. The old fallback fetched the gateway directly at
+  // ${HERMES_API_URL}/v1/models which, client-side, resolves to the unreachable
+  // http://127.0.0.1:8642 and only ever produced a CORS "loopback denied"
+  // console error (GAP-CONSOLE-003).
+  const response = await fetch('/api/models')
   if (!response.ok) {
     throw new Error(`Hermes models request failed (${response.status})`)
   }

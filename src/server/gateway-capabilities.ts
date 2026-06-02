@@ -76,8 +76,12 @@ let probePromise: Promise<GatewayCapabilities> | null = null
 let lastProbeAt = 0
 let lastLoggedSummary = ''
 
-/** Optional bearer token for authenticated endpoints. */
-export const BEARER_TOKEN = process.env.HERMES_API_TOKEN || ''
+/**
+ * Optional bearer token for authenticated endpoints. Falls back to API_SERVER_KEY so the
+ * Studio authenticates to a Hermes gateway whose built-in API server uses that key
+ * (GAP-LIVE-002). HERMES_API_TOKEN still takes precedence when explicitly set.
+ */
+export const BEARER_TOKEN = process.env.HERMES_API_TOKEN || process.env.API_SERVER_KEY || ''
 
 function authHeaders(): Record<string, string> {
   return BEARER_TOKEN ? { Authorization: `Bearer ${BEARER_TOKEN}` } : {}

@@ -32,6 +32,17 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/server-entry.js ./
+# Operator CLI scripts (create-user, provision-launch-profiles, ...). This is
+# the Dockerfile docker-compose actually builds hermes-studio from, so the
+# GAP-VER-007 COPY lines must live HERE, not only in the unused root Dockerfile.
+# Without this the documented `docker exec <studio> npx tsx scripts/<file>.ts`
+# workarounds fail because /app/scripts/ does not exist in the runtime image.
+# `src/` is required too: several scripts import from `../src/...` (e.g.
+# create-user.ts -> ../src/server/password-hash), which tsx compiles on the fly.
+# `tsconfig.json` lets tsx resolve `@/` path aliases. (GAP-VER-007-B)
+COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/tsconfig.json ./
 
 # Hermes profile data + .env live on the shared hermes-state volume
 # mounted at /root/.hermes by docker-compose. Keep the runtime user as

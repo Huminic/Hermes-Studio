@@ -1,9 +1,17 @@
-model: default
+model:
+  default: gpt-4.1
+  provider: custom
+  base_url: https://api.openai.com/v1
+  api_mode: chat_completions
 reasoning: medium
 temperature: 0.2
 platforms:
   email:
     skip_attachments: false
 notes:
-  - This is a scaffold config to be adapted locally.
-  - Keep important agent behavior grounded in wiki pages and templates.
+- This is a scaffold config to be adapted locally.
+- Keep important agent behavior grounded in wiki pages and templates.
+providers:
+  custom:
+    request_timeout_seconds: 600
+    stale_timeout_seconds: 900
