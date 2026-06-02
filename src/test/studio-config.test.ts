@@ -1,5 +1,61 @@
 import { describe, it, expect } from 'vitest'
-import { parseStudioConfig, defaultStudioConfig } from '@/lib/studio-config'
+import {
+  parseStudioConfig,
+  defaultStudioConfig,
+  credentialModeFor,
+} from '@/lib/studio-config'
+
+describe('credentialModeFor (shared/own channel credential selection)', () => {
+  it('defaults every channel to shared when no config given', () => {
+    const cfg = defaultStudioConfig('huminic')
+    for (const ch of ['sms', 'vapi', 'tavus', 'email'] as const) {
+      expect(credentialModeFor(cfg, ch)).toBe('shared')
+    }
+  })
+
+  it('honors an explicit per-channel own override', () => {
+    const r = parseStudioConfig(`
+branding:
+  persona_name: Test
+channel_credentials:
+  default: shared
+  vapi: own
+`)
+    expect(r.ok).toBe(true)
+    if (r.ok) {
+      expect(credentialModeFor(r.config, 'vapi')).toBe('own')
+      expect(credentialModeFor(r.config, 'sms')).toBe('shared') // falls to default
+      expect(credentialModeFor(r.config, 'tavus')).toBe('shared')
+    }
+  })
+
+  it('honors a profile-wide default of own', () => {
+    const r = parseStudioConfig(`
+branding:
+  persona_name: Test
+channel_credentials:
+  default: own
+  sms: shared
+`)
+    expect(r.ok).toBe(true)
+    if (r.ok) {
+      expect(credentialModeFor(r.config, 'sms')).toBe('shared') // explicit wins
+      expect(credentialModeFor(r.config, 'vapi')).toBe('own') // default
+      expect(credentialModeFor(r.config, 'tavus')).toBe('own')
+      expect(credentialModeFor(r.config, 'email')).toBe('own')
+    }
+  })
+
+  it('rejects an invalid credential mode', () => {
+    const r = parseStudioConfig(`
+branding:
+  persona_name: Test
+channel_credentials:
+  sms: borrowed
+`)
+    expect(r.ok).toBe(false)
+  })
+})
 
 describe('parseStudioConfig', () => {
   it('parses minimum valid config', () => {

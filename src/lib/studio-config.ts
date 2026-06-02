@@ -91,6 +91,27 @@ const FederationSchema = z
   .default({ read_scopes: [] })
 
 /**
+ * Operator-side per-profile channel-credential selection. Each outbound channel
+ * (SMS/TextMagic, Vapi voice, Tavus video, email) can use the SHARED ("united")
+ * credentials brokered by central-mcp, or the profile's OWN credentials in its
+ * .env. Default is `shared` for every channel — the launch posture is one united
+ * credential set, with per-profile opt-out to own creds. This block lives in
+ * studio.yaml, which is operator-controlled (customer-admins cannot edit it).
+ */
+const CredentialModeSchema = z.enum(['shared', 'own'])
+const ChannelCredentialsSchema = z
+  .object({
+    /** Fallback mode for any channel not set explicitly. */
+    default: CredentialModeSchema.optional().default('shared'),
+    sms: CredentialModeSchema.optional(),
+    vapi: CredentialModeSchema.optional(),
+    tavus: CredentialModeSchema.optional(),
+    email: CredentialModeSchema.optional(),
+  })
+  .optional()
+  .default({ default: 'shared' })
+
+/**
  * Lead notification destination per profile. When an inbound channel
  * adapter creates a "lead" thread (Vapi end-of-call summary, ADF email,
  * form submission), the messaging hub emits an ADF XML email to this
@@ -118,9 +139,26 @@ export const StudioConfigSchema = z.object({
   autonomous_reply_defaults: AutonomousReplyDefaultsSchema,
   federation: FederationSchema,
   lead_notifications: LeadNotificationsSchema,
+  channel_credentials: ChannelCredentialsSchema,
 })
 
 export type StudioConfig = z.infer<typeof StudioConfigSchema>
+export type CredentialMode = z.infer<typeof CredentialModeSchema>
+
+/** Channels that resolve credentials via the shared/own selector. */
+export type CredentialedChannel = 'sms' | 'vapi' | 'tavus' | 'email'
+
+/**
+ * Resolve the credential mode for a channel: explicit per-channel setting, else
+ * the profile's `default`, else `shared`. Never throws.
+ */
+export function credentialModeFor(
+  config: StudioConfig,
+  channel: CredentialedChannel,
+): CredentialMode {
+  const cc = config.channel_credentials
+  return cc?.[channel] ?? cc?.default ?? 'shared'
+}
 
 export type ParseResult =
   | { ok: true; config: StudioConfig }
@@ -172,5 +210,6 @@ export function defaultStudioConfig(profile: string): StudioConfig {
     },
     federation: { read_scopes: [] },
     lead_notifications: {},
+    channel_credentials: { default: 'shared' },
   }
 }
