@@ -2,7 +2,7 @@
 
 **Audience.** A dealer principal, GM, or designated staff member with `is_customer_admin: true` on your dealership's profile. You log in at `https://studio.huminic.app/p/<your-slug>/` — not at the bare Studio URL.
 
-**What you can do.** Hold conversations with your dealership's AI agents (Chat tab), edit your wiki within governed bounds (Knowledge tab), manage your widget embeds (Tools tab), reply to inbound customer messages across SMS/email/voice/video (Comms tab), schedule service campaigns (Campaigns tab). The Data tab is disabled at launch — your data is being indexed, but the customer-facing dashboards are not yet built.
+**What you can do.** Hold conversations with your dealership's AI agents (Chat tab), edit your wiki within governed bounds (Knowledge tab), manage your widget embeds (Tools tab), reply to inbound customer messages across SMS/email/voice/video (Comms tab), schedule service campaigns (Campaigns tab). The Data tab is dimmed at launch via your `studio.yaml` `menu.data` flag (huminic ships it `false`) — your data is being indexed, but the customer-facing dashboards are not yet built.
 
 **What you can't do.** Touch other dealers' data. Edit your canonical knowledge directly (canon updates go through your account manager). Send outbound to recipients outside your allowlist. Approve your own readiness gates on engagements.
 
@@ -18,7 +18,7 @@ flowchart TD
     H --> T[Tools: widget embed + edit]:::ok
     H --> CO[Comms: inbox SMS/email/voice/video]:::partial
     H --> CP[Campaigns: schedule Service sends]:::partial
-    H --> D[Data: DISABLED at launch]:::gap
+    H --> D[Data: dimmed via studio.yaml menu.data flag]:::gap
 
     K -->|Save draft| KSG[KSG gate]:::ok
     KSG -->|Approved| KD[draft saved]:::ok
@@ -30,6 +30,9 @@ flowchart TD
 
     L -.->|Sign out| LO[Clear browser cookies]:::gap
     LO -.->|GAP-LOGOUT-001| Gap2[No logout button]:::gap
+
+    L -.->|Reset password| RR[POST /api/auth/reset-request directly, or use the portal-host login]:::partial
+    RR -.->|Forgot-password link is on the portal host, not the storefront login| RN[No Forgot-password link on the /p/your-slug/ form]:::gap
 
     classDef ok fill:#d4edda,stroke:#28a745,color:#000
     classDef partial fill:#fff3cd,stroke:#ffc107,color:#000
@@ -45,7 +48,7 @@ flowchart TD
 **First-time credential.** Your account manager will send you a temporary password — typically the launch convention is `De@l$ucce$`. You'll be asked to set a new password on first login via the reset flow.
 
 **Reset your password.**
-1. POST to `/api/auth/reset-request` with `{"email": "<your-username>"}`. The simplest way: click "Forgot password?" on the login form (which makes the same request). You always get a 200 response — this is anti-enumeration, not a bug.
+1. POST to `/api/auth/reset-request` with `{"email": "<your-username>"}`. Note: the `/p/<your-slug>/` storefront login form does **not** have a "Forgot password?" link — that link only exists on the portal-host login (the generic Huminic sign-in at the bare portal domain). From the storefront, either POST `/api/auth/reset-request` directly or use the portal-host login's "Forgot password?" button (it makes the same request). You always get a 200 response — this is anti-enumeration, not a bug.
 2. Check your email for a single-use reset link. Token is valid 15 minutes.
 3. Click the link, land on `/reset?token=<x>`, enter new password + confirm.
 4. Sign in at `/p/<your-slug>/` with the new password.
@@ -63,11 +66,11 @@ After login, the storefront shell renders a top nav with up to 6 tabs. Which tab
 - **Chat** — visible
 - **Knowledge** — visible
 - **Tools** — visible (including the Widget sub-page)
-- **Data** — **disabled at launch** per SRS-D3 (data tile is dimmed; the brain.db data is being collected but the dashboard renderer is post-launch)
+- **Data** — **dimmed via your `studio.yaml` `menu.data` flag** (not hardcoded-disabled in code; the menu flag defaults to `true`, and huminic ships `menu.data: false` at launch per SRS-D3). The brain.db data is being collected but the dashboard renderer is post-launch.
 - **Comms** — visible
 - **Campaigns** — visible (Service sub-page only per operator decision 2026-05-29)
 
-The Data tab dim state is intentional. Your account manager flips it on when your data dashboard is ready.
+The Data tab dim state is driven by your `studio.yaml` `menu.data` flag, not a code-level disable. Your account manager flips `menu.data: true` when your data dashboard is ready.
 
 ---
 
@@ -110,7 +113,7 @@ The Data tab dim state is intentional. Your account manager flips it on when you
 
 **What happens on Save.**
 - KSG runs synchronous pre-checks: protected-tree denial, canonical-frozen denial (you can't overwrite a file with `status: canonical` frontmatter), missing-frontmatter denial (`type`, `status`, `title` are required).
-- On success: file saved. A `metadata_audit` row written to your Brain for traceability.
+- On success: file saved. (Post-launch gap: the customer wiki Save path does **not** yet write a `metadata_audit` row to your Brain — there is no per-save audit trail today.)
 - On failure: editor shows a red verdict bar — *"protected-tree: governance/ is read-only on the customer-admin path. Edit via the operator console."* Fix the path or content and retry.
 
 **Promoting a draft to published.**
@@ -139,13 +142,13 @@ The Data tab dim state is intentional. Your account manager flips it on when you
 
 **Public widget URL.** Each widget has a public URL: `https://studio.huminic.app/w/<widget-slug>`. Test it in an incognito window — should render without authentication.
 
-**Channel modes.** Each widget has a `mode` in its frontmatter: `chat`, `voice`, `video`, `form`. Chat mode works for all dealers at launch. Voice (Vapi), video (Tavus), and form modes require per-dealer adapter credentials (`OP-002`); status shows `unconfigured` on the widget row until your account manager provisions credentials.
+**Channel modes.** Each widget has a `mode` in its frontmatter: `chat`, `voice`, `video`, `form`. Chat mode works for all dealers at launch. Voice (Vapi), video (Tavus), and form modes require per-dealer adapter credentials (`OP-002`). The widget-row `status` itself is only `ready` / `missing-file` / `misconfigured` — it does not carry an `unconfigured` value; the `unconfigured` status surfaces at outbound-dispatch time on the adapter (see §7) when credentials are not provisioned.
 
 ---
 
 ## 6. Data tab
 
-**Disabled at launch.** The tile is dimmed and clicking does nothing. Your data IS being indexed in your Brain (per-profile sqlite at `<your-slug>/brain/brain.db`); the dashboard renderer is post-launch.
+**Dimmed at launch.** The tile is dimmed and clicking does nothing whenever your `studio.yaml` sets `menu.data: false` (the flag defaults to `true` in code; huminic ships it `false` at launch). Your data IS being indexed in your Brain (per-profile sqlite at `<your-slug>/brain/brain.db`); the dashboard renderer is post-launch.
 
 **Workaround at launch.** If you need a one-off data lookup, ask your account manager — they can query via `mcp_rollup_query` or the brain MCP tool on your behalf.
 
@@ -215,7 +218,7 @@ Tokens are valid 15 minutes. Request a new one — POST `/api/auth/reset-request
 
 ### Concurrent-edit silent overwrite suspected
 
-You saved a draft + later it looks like your changes are missing. Check git history via your account manager — every save is committed to the profile's git repo. Recover the lost content if needed; talk to account manager about coordination.
+You saved a draft + later it looks like your changes are missing. Note: the customer wiki Save path writes the file directly to disk — it does **not** auto-commit each save to the profile's git repo, so there is no per-save git history to recover an overwritten version from today (post-launch gap, tracked alongside `GAP-FLOW-concurrent-edit-001`). Avoid the overwrite in the first place by following the one-writer-at-a-time convention (§4); if a conflict already happened, talk to your account manager about coordination and any out-of-band backups.
 
 ### Storefront not rendering correctly (brand wrong, tiles wrong)
 

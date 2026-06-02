@@ -66,11 +66,11 @@ The agent runs the method against the prospect; you act as the human relay betwe
 
 ### Phase 1: Orient
 
-**Agent does.** Builds an industry brief + strawman solution shape from public Hermes context + Huminic canon. Surfaces 3–8 initial assumptions as `engagement-state.yaml.deployment_notes[]` with `status: open`.
+**Agent does.** Builds an industry brief + strawman solution shape from public Hermes context + Huminic canon. Surfaces 3–8 initial assumptions as `engagement-state.yaml.deployment_notes[]` (each note carries `area`, `status: unknown|partial|confirmed`, `impact_if_missing`, `surfaced_at`, `resolved_at`).
 
 **You do.**
 - Read the strawman as soon as it's complete. If the industry framing is wrong (e.g., agent assumed dealership when the customer is dealer-group), inform the agent inline — it'll re-run.
-- Resolve any initial assumptions you can answer immediately (e.g., "customer's primary CRM is VinSolutions"). Append to `engagement-state.yaml.deployment_notes[<id>].resolution`. The agent reads these on next dispatch.
+- Resolve any initial assumptions you can answer immediately (e.g., "customer's primary CRM is VinSolutions"). When a note is resolved, set its `status` to `confirmed` (or `partial`) and stamp `resolved_at`. Note: deployment_notes have no `resolution` text field — record the resolving decision as an `open_decisions[<id>].resolution` entry, which the agent reads on next dispatch.
 
 **Stage flip.** `draft` → `gathering_data`.
 
@@ -94,7 +94,7 @@ The agent runs the method against the prospect; you act as the human relay betwe
 
 If a decision is yours-to-make + you don't know yet → say so explicitly. The agent will park the decision + advance partially.
 
-**Stage flip.** `solution_discovery` → `creation`. Readiness gate `topology_decided` proposed for operator approval. **Note:** Gate is `topology_decided` (past tense). The notes field on this gate is `null` per zod schema — do not try to attach a note.
+**Stage flip.** `solution_discovery` → `creation`. Readiness gate `topology_decided` set to `pending` for operator approval. **Note:** Gate is `topology_decided` (past tense). The topology gate omits the `notes` field per zod schema (it carries a `decision` field instead: `we-host | hybrid | external-consumes-projections`) — do not try to attach a note.
 
 ### Phase 4: Author
 
@@ -110,7 +110,7 @@ Each artifact has required frontmatter (per Artifact_B spec) + an "Impact of Mis
 
 **You do.** Spot-check the drafts in `/files`. Focus on the agentic-design doc — is the agent list right for this customer's actual channel mix? Are the SOUL fragments referencing the right channel personas? If something's wrong, tell the agent + it re-authors.
 
-**Stage flip.** `creation` → `submission`. Readiness gate `prescription_approved` proposed for operator approval.
+**Stage flip.** `creation` → `submission`. Readiness gate `ready_to_blueprint` set to `pending` for operator approval.
 
 ### Phase 5: Validate
 
@@ -122,11 +122,11 @@ Each artifact has required frontmatter (per Artifact_B spec) + an "Impact of Mis
 
 ### Phase 6: Package
 
-**Agent does.** Bundles the six artifacts + manifest with readiness gates + deployment notes + adjacent_data_neighbors. Sets all 5 readiness gates to `proposed`.
+**Agent does.** Bundles the six artifacts + manifest with readiness gates + deployment notes + adjacent_data_neighbors. Sets all 5 readiness gates to `pending`.
 
 **You do.** Hand the operator the manifest. They approve gates 1–5 per `studio-admin-guide.md` Section 11.
 
-**Stage flip.** `feedback` → `ready_to_run`. Gates: `prescription_approved`, `topology_decided`, `data_storage_approved`, `mcp_access_approved`, `provisioning_ready` all need to flip `approved: true` before handoff to provisioning.
+**Stage flip.** `feedback` → `ready_to_run`. Gates: `ready_to_blueprint`, `topology_decided`, `ready_to_instantiate_runtime`, `ready_to_publish_mcp_projections`, `ready_to_hand_off_externally` all need to flip `status: approved` before handoff to provisioning.
 
 ---
 
@@ -175,10 +175,10 @@ You should:
 
 ## 7. Handing off to provisioning
 
-When all 5 readiness gates are `approved: true`:
+When all 5 readiness gates are `status: approved`:
 
 1. **Notify the operator.** They run the provisioning script per `studio-admin-guide.md` Section 10.
-2. **Stand by during provisioning.** Provisioning may surface unmet preconditions (e.g., customer hasn't returned VinSolutions credentials). Each unmet precondition becomes a deployment_note open entry — operator returns it to you to resolve with the customer.
+2. **Stand by during provisioning.** Provisioning may surface unmet preconditions (e.g., customer hasn't returned VinSolutions credentials). Each unmet precondition becomes a deployment_note with `status: unknown` (or `partial`) and `resolved_at: null` — operator returns it to you to resolve with the customer.
 3. **Verify customer-admin can log in.** Once provisioning is complete, open `/p/<slug>/` in a fresh-localStorage incognito window. Verify the brand renders + login form accepts the provisioned customer-admin credential. If anything is wrong → file a P-FIX with the operator before customer-admin sees it.
 
 > **Gap.** `GAP-PROV-001` — there's no Provisioner agent to dispatch directly. Provisioning is the operator's script-run. The handoff is verbal/chat between you + operator.
@@ -191,7 +191,7 @@ When all 5 readiness gates are `approved: true`:
 
 The customer goes dark, evidence doesn't come back, or you can't get a decision out of them.
 
-**Action.** Park the engagement. Annotate `engagement-state.yaml.deployment_notes[]` with a new open entry: `"Engagement paused YYYY-MM-DD — awaiting <evidence|decision> from customer"`. Don't advance the stage. Don't approve gates. When the customer comes back, resume from where you left off — the agent reads engagement-state.yaml fresh on each dispatch.
+**Action.** Park the engagement. Record the pause as an `engagement-state.yaml.open_decisions[]` entry (which carries a free-text `resolution` field): `"Engagement paused YYYY-MM-DD — awaiting <evidence|decision> from customer"`. (deployment_notes have no free-text field for this; their `status` enum is `unknown|partial|confirmed`.) Don't advance the stage. Don't approve gates. When the customer comes back, resume from where you left off — the agent reads engagement-state.yaml fresh on each dispatch.
 
 > **Gap.** `GAP-ENG-STATE-ABANDON-001` — no terminal `abandoned` stage. If you decide an engagement is dead, leave it frozen + annotate as above. Don't fake an approval.
 
@@ -205,13 +205,13 @@ The agent proposes voice-first launch + customer told you SMS-first.
 
 Customer asks for a capability that the prescription doesn't include (e.g., a custom dashboard the consultative process doesn't build).
 
-**Action.** Flag the request to the operator. They decide: accept as scope expansion (extend prescription) OR defer to post-launch (record as `engagement-state.yaml.deployment_notes` with `status: deferred`). Document the decision in `DECISIONS.log`.
+**Action.** Flag the request to the operator. They decide: accept as scope expansion (extend prescription) OR defer to post-launch (record as an `engagement-state.yaml.open_decisions[]` entry whose `resolution` notes the deferral). Document the decision in `DECISIONS.log`.
 
 ### Gate approval blocked because operator unavailable
 
 Gates require operator approval. If the operator is unavailable + engagement is time-sensitive: do not self-approve gates. The Environmental Core Values rule #5 (no self-approval) applies even under deadline pressure.
 
-**Action.** Park the engagement at the current stage + flag the operator-needed approval in `engagement-state.yaml.deployment_notes`. The customer-facing communication is: "Approval pending; we'll resume on operator availability."
+**Action.** Park the engagement at the current stage + flag the operator-needed approval in an `engagement-state.yaml.open_decisions[]` entry (use its `resolution` field for the free-text note). The customer-facing communication is: "Approval pending; we'll resume on operator availability."
 
 ---
 

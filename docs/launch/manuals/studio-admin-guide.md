@@ -43,7 +43,7 @@ flowchart TD
 
 **Surface.** `https://studio.huminic.app/`
 
-**Click path.** Land on `/` → if not authenticated, the login form renders inline. Enter username + password → POST `/api/auth` → response carries `{authenticated, profile, username, is_admin, is_customer_admin}` → redirect to `/` (or to `/p/<slug>` if the credential is customer-admin only).
+**Click path.** Land on `/` → if not authenticated, the login form renders inline. Enter username + password → POST `/api/auth` → response carries `{ok, profile, username, is_admin, is_customer_admin}` → redirect to `/` (or to `/p/<slug>` if the credential is customer-admin only).
 
 **Launch credentials.** Studio admin: `duane / HuminicValidation2026!` on the `huminic` profile.
 
@@ -105,14 +105,14 @@ flowchart TD
 
 **Edit a page.** Click a markdown file → editor opens → edit body + frontmatter → "Save". KSG runs against the proposed write (protected-tree, canonical-frozen, missing-frontmatter rules). On block: KSG verdict text displayed inline; the write is rejected.
 
-**Promote a draft.** **No operator-side Promote button in `/files` today.** The promote flow exists as an API: `POST /api/customer/wiki/promote` with `{profile, from_path, to_path}`. The customer-storefront Knowledge tab consumes this; the operator-side `/files` screen does not expose a button.
+**Promote a draft.** **No operator-side Promote button in `/files` today.** The promote flow exists as an API: `POST /api/customer/wiki/promote` with `{profile, path}` (the destination bucket is computed server-side by the KSG promote rule). The customer-storefront Knowledge tab consumes this; the operator-side `/files` screen does not expose a button.
 
 > **Gap.** `GAP-MANUAL-promote-001` — operator-side promote button absent in Files screen. Launch-time procedure: operator uses one of three workarounds.
 
 **Launch-time promote workarounds.**
 
 1. **Customer-storefront path** (preferred). The operator can log in as `duane` on `/p/<slug>` (where huminic credentials carry both `is_admin: true` + `is_customer_admin: true`) and use the storefront Knowledge tab's Promote button, which already calls `/api/customer/wiki/promote`.
-2. **Direct API call** via terminal: `curl -X POST https://studio.huminic.app/api/customer/wiki/promote -H "Cookie: hermes_session=<token>" -H "Content-Type: application/json" -d '{"profile":"<slug>","from_path":"knowledge/drafts/<page>.md","to_path":"knowledge/published/<page>.md"}'`.
+2. **Direct API call** via terminal: `curl -X POST https://studio.huminic.app/api/customer/wiki/promote -H "Cookie: hermes_session=<token>" -H "Content-Type: application/json" -d '{"profile":"<slug>","path":"knowledge/drafts/<page>.md"}'`.
 3. **Direct git-mv on production volume**: `docker exec hermes-studio-... sh -c 'cd /root/.hermes/profiles/<slug> && git mv knowledge/drafts/<page>.md knowledge/published/<page>.md && git commit -m "promote <page>"'`. **This bypasses KSG.** Only use for break-glass. (The `hermes-studio-...` container mounts the `~/.hermes` volume at `/root/.hermes`; find its exact name with `docker ps | grep hermes-studio`.)
 
 Post-launch fix: add a "Promote" affordance in the file editor for files under `knowledge/inbox/` or `knowledge/drafts/`. The endpoint already exists; this is a small UI change.
@@ -139,7 +139,7 @@ Post-launch fix: add a "Promote" affordance in the file editor for files under `
 
 **Provision a new token.** Click "New token" → form with name + scope set (per `central-mcp` allowlist semantics — see `docs/system-services-resend.md`). On submit: token returned ONCE in the response, not persisted in plaintext. Operator copies the token into the consuming profile's `.env` (Coolify env vars or per-profile `.env` on the volume).
 
-**Rotate a token.** Click an existing token row → "Rotate". Old token marked revoked, new token shown once. Operator must update consuming profile's `.env` and redeploy that profile's container.
+**Rotate a token.** There is no atomic "rotate" operation today. Rotation is two steps against `/api/mcp-tokens`: issue a new token (POST — new token shown once) and revoke the old one (DELETE `?label=...`). Operator must update consuming profile's `.env` and redeploy that profile's container.
 
 **Verification after rotation.** `/audit` should show `MCP_AUTH_OK` for the new token + `MCP_AUTH_REVOKED` for the old.
 
@@ -159,7 +159,7 @@ Post-launch fix: add a "Promote" affordance in the file editor for files under `
 
 ## 9. Audit / observability
 
-**Surface.** `/audit` + `/observability` + `/logs`
+**Surface.** `/audit` + `/logs`
 
 **What audit shows.** Append-only audit log. Filters: profile, agent, tool, success/failure, time range. Each row: timestamp, profile, actor (agent or user), action verb, target (e.g., MCP tool + args), outcome, latency, optional verdict text.
 
@@ -194,9 +194,9 @@ Post-launch fix: add a "Promote" affordance in the file editor for files under `
 
 **When.** A consultative engagement reaches a phase boundary; the consultative agent proposes a gate approval; operator must approve before the engagement advances.
 
-**The 5 gates.** Per `engagement-state.yaml` schema: `prescription_approved`, `topology_decided`, `data_storage_approved`, `mcp_access_approved`, `provisioning_ready`. (Schema is `topology_decided`, past tense — not `topology_decision`. The Phase 0 closeout vitest at `src/test/engagement-state-writer.test.ts` enforces this.)
+**The 5 gates.** Per `engagement-state.yaml` schema: `ready_to_blueprint`, `ready_to_instantiate_runtime`, `ready_to_publish_mcp_projections`, `ready_to_hand_off_externally`, `topology_decided`. (Schema is `topology_decided`, past tense — not `topology_decision`. The Phase 0 closeout vitest at `src/test/engagement-state-writer.test.ts` enforces this.)
 
-**Click path.** `/engagements/<customer>` → scroll to readiness gates panel → click the gate's status badge (currently `pending`) → "Approve" → form: approver name + optional notes (note: `topology_decided` gate omits notes per schema) → submit → writes back to `engagement-state.yaml.readiness_gates[<gate_id>] = {approved: true, approver_name, approver_role, approved_at, notes}`.
+**Click path.** `/engagements/<customer>` → scroll to readiness gates panel → click the gate's status badge (currently `pending`) → "Approve" → form: approver name + optional notes (note: `topology_decided` gate omits notes per schema) → submit → writes back to `engagement-state.yaml.readiness_gates[<gate_id>] = {status: 'approved', approved_by, approved_at, notes}` (the `topology_decided` gate carries `decision` instead of `notes`).
 
 **Verification.** Refresh `/engagements/<customer>` → gate badge flips green → audit row appears.
 

@@ -12,13 +12,13 @@
 
 ```mermaid
 flowchart TD
-    P[Parent profile: huminic]:::ok --> A[Authorize child scope]:::ok
-    A --> G[Grant rollup:huminic to token holder]:::ok
+    P[Parent profile: huminic]:::ok --> A[Child declares rollup:huminic in its studio.yaml]:::ok
+    A --> G[Caller holds admin/wildcard MCP token]:::ok
     G --> Q[mcp_rollup_query MCP call]:::ok
-    Q --> R{Token has rollup:huminic scope?}:::ok
-    R -->|Yes| AGG[Aggregate child Brain + canon]:::ok
-    R -->|No| D[Deny: verdict + missing scope name]:::ok
-    AGG --> AUD[Audit row recorded]:::ok
+    Q --> R{Token admin/wildcard AND child granted rollup:huminic?}:::ok
+    R -->|Yes| AGG[Aggregate child Brain]:::ok
+    R -->|No| D[Deny: reason + rule cross-profile-write-denied]:::ok
+    AGG --> AUD[metadata_audit row recorded]:::ok
     AGG --> O[Operator reads results]:::ok
 
     O -.->|Dashboard UI?| DASH[Deferred per SRS-E]:::gap
@@ -43,7 +43,7 @@ The distinction matters:
 
 | Relationship | Mechanism | Auth model |
 |---|---|---|
-| Parent reads from its declared child | `mcp_rollup_query` with `rollup:<parent>` scope | Pre-authorized by parent–child declaration |
+| Parent reads from its declared child | `mcp_rollup_query` | Two-part: child declares `rollup:<parent>` in its `studio.yaml.federation.read_scopes` AND caller holds an admin/wildcard MCP token (or a token whose `allowed_profiles` lists the child) |
 | Independent peer reads from another peer | `federated_search` with target's `federation.read_scopes` | Per-target explicit scope grant naming the caller |
 | Operator reads anything | Admin scope MCP token | Operator-level authorization (top of stack) |
 
@@ -51,36 +51,41 @@ The distinction matters:
 
 ## 2. Authorizing rollup scope
 
-**Today's procedure.** The `rollup:<parent>` scope is granted at the MCP token registry level. The token holder (a human operator or a script with the right MCP token) can call `mcp_rollup_query` only if their token carries `rollup:huminic` in its scope set.
+**Today's procedure.** Authorization is **two-part** — note that `rollup:huminic` is a **child-side `studio.yaml` scope, NOT an MCP-token scope**:
+
+1. **Child grants the parent (child `studio.yaml`).** The child profile must declare `rollup:<parent>` in its `studio.yaml.federation.read_scopes`. Without this grant in the child's own config, the parent's rollup against that child is denied — even with an admin token. For the launch canary: `huminic-motors/studio.yaml` must list `rollup:huminic` under `federation.read_scopes`.
+2. **Caller holds the right MCP token.** `mcp_rollup_query` is admin-scoped: the calling token must be **admin/wildcard (`*`)** OR carry the child in its `allowed_profiles` set. The token does **not** carry a `rollup:huminic` scope — that string lives only in the child's `studio.yaml`.
 
 **Click path** (operator-side, via Studio admin):
 
-1. `/mcp-tokens` (admin-only).
-2. Create or edit a token → in the scope set, add `rollup:huminic`.
-3. Save → the token can now call `mcp_rollup_query` with parent identifier `huminic`.
+1. Edit the child profile's `studio.yaml` → under `federation.read_scopes`, add `rollup:huminic`.
+2. `/mcp-tokens` (admin-only) → ensure the calling token is admin/wildcard (or has the child in `allowed_profiles`).
+3. The token can now call `mcp_rollup_query` with `parent_profile: huminic` and the granted children in `child_profiles`.
 
-> **Note.** The full granular scope model (e.g., `rollup:huminic:brain-only`, `rollup:huminic:no-pii`) is post-launch. At launch, `rollup:huminic` grants read of every child profile's Brain + published canon.
+> **Note.** The full granular scope model (e.g., `rollup:huminic:brain-only`, `rollup:huminic:no-pii`) is post-launch. At launch, the child's `rollup:huminic` grant exposes its Brain tables (from the rollup allow-list) to the parent.
 
 ---
 
 ## 3. Executing a rollup query
 
-**Tool.** `mcp_rollup_query` — invoked via any MCP client that holds the right scope. The Studio admin chat UI is one entry point; direct API call is another.
+**Tool.** `mcp_rollup_query` — invoked via any MCP client whose token meets the auth bar in Section 2. The Studio admin chat UI is one entry point; direct API call is another.
+
+**Arguments are structured** (not a free-text query). The tool takes `parent_profile`, `child_profiles[]`, `table`, and optional `where`, `aggregate` (`count | sum | avg | list`), `column`, and `limit`. `table` must be one of the rollup allow-list (13 Brain tables): `events`, `entities`, `observations`, `outputs`, `transactions`, `tasks`, `hunches`, `lookup_misses`, `assumptions`, `reconciliation_items`, `comms_log`, `uploads`, `adjacent_neighbors`.
 
 **Invocation pattern** (Studio admin chat, profile = huminic, agent with admin MCP token):
 
 ```
-User: Run mcp_rollup_query against parent=huminic with query "count messages per child per day for last 7 days, group by channel and domain"
+User: Run mcp_rollup_query with parent_profile=huminic, child_profiles=[huminic-motors],
+      table=comms_log, aggregate=count
 
-Agent: <calls mcp_rollup_query with parent=huminic, query=...>
+Agent: <calls mcp_rollup_query with the structured args above>
 Result:
-  huminic-motors:
-    2026-05-26: {sms: 14, voice: 7, chat: 23}
-    2026-05-27: {sms: 18, voice: 9, chat: 31}
-    ...
+  children_included: [huminic-motors]
+  rows: [{ profile: huminic-motors, value: 142 }]
+  total: 142
 ```
 
-The tool aggregates across each child profile's `messaging-hub.db` + `brain/brain.db` per the query scope. The exact query DSL is documented in the federation-MCP design doc + `mcp_rollup_query` MCP tool description (accessible via the Studio MCP catalog at `/mcp-tokens`).
+The tool aggregates across each child profile's Brain (`brain/brain.db`) per the requested `table` — including `comms_log` for messaging counts. It does not read `messaging-hub.db` directly. The argument schema is documented in the `mcp_rollup_query` MCP tool description, retrievable via `tools/list` on the central-mcp endpoint.
 
 **Direct API form.** Useful for scripted reports:
 
@@ -88,24 +93,24 @@ The tool aggregates across each child profile's `messaging-hub.db` + `brain/brai
 curl -X POST https://mcp.huminicdev.com/dax/mcp \
   -H "Authorization: Bearer $ROLLUP_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"method": "tools/call", "params": {"name": "mcp_rollup_query", "arguments": {"parent": "huminic", "query": "..."}}}'
+  -d '{"method": "tools/call", "params": {"name": "mcp_rollup_query", "arguments": {"parent_profile": "huminic", "child_profiles": ["huminic-motors"], "table": "comms_log", "aggregate": "count"}}}'
 ```
 
 ---
 
 ## 4. Audit + denial behavior
 
-**Every rollup query writes an audit row.** Filter `/audit` by `action_type = ROLLUP_QUERY` to see all rollup reads — caller, parent, query summary, row count, latency.
+**Every rollup query writes an audit row.** The row lands in the **parent profile's `metadata_audit`** table (not the central `/audit` event-store view) with `target_type: 'rollup_query'`, the parent actor, the `target_id` (the queried table), and the set of children included/denied. Inspect it via the parent profile's metadata-audit surface.
 
-**Denied queries.** If the calling token doesn't carry `rollup:<parent>` scope, the call fails with a verdict naming the missing scope:
+**Denied queries.** If a child hasn't declared `rollup:<parent>` in its `studio.yaml.federation.read_scopes` (or the token lacks scope for the requested children), the call fails with a structured verdict:
 
 ```
-{"ok": false, "error": "rollup scope required", "missing_scope": "rollup:huminic"}
+{"ok": false, "reason": "child huminic-motors's studio.yaml.federation.read_scopes does not include rollup:huminic", "rule": "cross-profile-write-denied", "gate_event_id": "..."}
 ```
 
-This matches the cross-tenant denial behavior validated in Tranche F.9 pen-tests (13/13 vectors blocked).
+(Token-level denials use the same `rule` with `reason: "token lacks scope for children: ..."`.) This matches the cross-tenant denial behavior validated in Tranche F.9 pen-tests (13/13 vectors blocked).
 
-**Operator action on denial.** If the denial is unexpected (you thought your token had the scope), check `/mcp-tokens` → your token's scope set → add `rollup:<parent>` if missing → re-issue if rotated.
+**Operator action on denial.** If the denial is unexpected: check the child's `studio.yaml.federation.read_scopes` for the `rollup:<parent>` grant, and check `/mcp-tokens` to confirm the calling token is admin/wildcard (or lists the child in `allowed_profiles`).
 
 ---
 
@@ -123,7 +128,7 @@ What you cannot do at launch:
 What you CAN do at launch:
 - Execute rollup queries via MCP tool call in any Studio admin chat session.
 - Execute rollup queries via direct API curl.
-- Read audit log of all rollup queries via `/audit`.
+- Read the audit trail of all rollup queries in the parent profile's `metadata_audit` (rows with `target_type: 'rollup_query'`).
 
 ### Granular sub-scopes
 
@@ -147,7 +152,7 @@ Most likely the query is too broad (e.g., "all messages, all time, all channels"
 
 Token compromise possibility.
 
-**Action.** Rotate the rollup-scoped MCP token immediately (`/mcp-tokens` → token row → "Rotate"). Old token is revoked; new one issued. Re-issue to legitimate consumers. Investigate the unrecognized caller via `/audit` source IP + timestamps.
+**Action.** Rotate the offending MCP token immediately (`/mcp-tokens` → token row → "Rotate"). Old token is revoked; new one issued. Re-issue to legitimate consumers. Investigate the unrecognized caller via the parent profile's `metadata_audit` rollup rows (actor + timestamps).
 
 ### Child profile schema_version mismatch
 
@@ -167,7 +172,7 @@ You see rollup results aggregating a profile that isn't actually a child of humi
 
 - Workflow ids covered: `WF-RLP-001`, `WF-RLP-002`, `WF-RLP-003`, plus rollup-related rows from `WF-OP-005` (token rotation).
 - Companion: `studio-admin-guide.md` Section 7 (MCP tokens) + Section 9 (audit).
-- MCP tool reference: `mcp_rollup_query` — listed in `/api/mcp-catalog` (admin-only) or queryable via `tools/list` on the central-mcp endpoint.
+- MCP tool reference: `mcp_rollup_query` — queryable via `tools/list` on the central-mcp endpoint.
 - Federation companion (different mechanism): `docs/federation-mcp-design.md`.
 
 ---
