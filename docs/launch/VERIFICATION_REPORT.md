@@ -530,3 +530,47 @@ None. All 82 procedures were walked or evaluated. The 22 BLOCKED procedures are 
 - Playwright MCP session lived through ~20 page navigations; trace files at `.playwright-mcp/`.
 
 ## End of report
+
+---
+
+# BLOCKER FIX PASS — 2026-06-02
+
+Branch: `feature/phase-8-blocker-fixes` (cut from `feature/phase-8-closeout`).
+One commit per fix; each independently `git revert`-able. Full suite after every
+fix: **vitest 530 pass** (512 baseline + 18 new), **Playwright workflows 16 pass
+/ 49 fixme / 0 fail**. No `origin/main` push, no Coolify redeploy, no credential
+activation.
+
+**Critical framing — why "FIXED" but production still shows the gap.** Production
+runs a *built dist image* (`hermes-studio-...-085548456876`) built before this
+work. The fixes are source changes on the branch; **production will not reflect
+any of them until the operator rebuilds + redeploys the studio image** (operator-
+only per DECISIONS.log `DEC phase-8-branch-not-main`). So each fix is verified
+FIXED on the branch (tests + a live headed pass against a locally-run build), and
+its production procedure is **PENDING-COOLIFY-REDEPLOY**.
+
+| Gap | Outcome | Commit | Verified | Production procedure |
+|---|---|---|---|---|
+| GAP-VER-005 (engagement detail won't render) | **FIXED** | `7909e4a79` | render test + live headed: clicking the huminic card loads `/engagements/huminic` with full detail | PROC-012 PENDING-COOLIFY-REDEPLOY |
+| GAP-VER-003 (reset rate-limit not firing) | **FIXED** | `223b14a7c` | root-caused live via tcpdump (Caddy XFF = `IP:port`, rotating port); 10 unit tests; rebuilt build returns 200/200/200/429/429 on rotating-port XFF | PROC-005 / PROC-104 PENDING-COOLIFY-REDEPLOY |
+| GAP-VER-004 (/agents only 8 built-ins) | **FIXED** | `baf89473d` | 5 unit tests; live "8 built-in · 2 profile · 0 custom" with profile SOULs rendered read-only | PROC-011 PENDING-COOLIFY-REDEPLOY |
+| GAP-VER-002 (direct nav shows login) | **FIXED** | `936615dcf` | live: direct nav to `/engagements`, `/profiles`, `/mcp-tokens`, `/plugins` render the workspace; **P-FIX-001 (PROC-120) + P-FIX-002 (PROC-006) re-verified** | PROC-010 / PROC-130 PENDING-COOLIFY-REDEPLOY |
+| GAP-VER-007 (scripts/ not in image) | **FIXED** | `3e577897a` | docker build; image has `/app/scripts` + `/app/src`; `npx tsx scripts/create-user.ts` runs in-image; manuals corrected (`npx tsx`, `hermes-studio-` container) | PROC-020 / PROC-022 / PROC-103 PENDING-COOLIFY-REDEPLOY |
+| GAP-VER-001 (no /plugins, /mcp-tokens UI) | **FIXED** | `78babf2c7` | live: both routes render (read-only views), sidebar carries both links, registry table shows a seeded token | PROC-001 / PROC-013 PENDING-COOLIFY-REDEPLOY |
+| GAP-SG-001 (7 governor SOULs not on volume) | **PENDING-OPERATOR-CONFIRMATION** | `ebf6b8b11` | `scripts/deploy-phase8-souls.sh` committed; dry-run validated; **NOT run** (mutates production) | operator runs `--apply` |
+| Manuals → wiki ("kool-aid") | **PENDING-OPERATOR-CONFIRMATION** | `3adbf4a48` | `scripts/port-manuals-to-wiki.sh` committed; dry-run validated; **NOT run** (mutates production) | operator runs `--apply` |
+
+Per-blocker root cause, fix, and live evidence: `docs/launch/evidence/blocker-fixes/<gap>/`.
+
+**New blockers discovered this pass:** none. The diagnosis of GAP-VER-003 and
+GAP-VER-007 went deeper than the verifier could (the rate-limit logic was always
+correct — the proxy fed it an `IP:port` key; and `scripts/` alone was a false fix
+because the scripts import `../src`), but both are closed.
+
+**Operator next steps to make these live:** (1) rebuild + redeploy the studio
+image from this branch via Coolify; (2) re-run the verifier against
+`feature/phase-8-blocker-fixes` (its own session/state) to confirm PASS on the
+PENDING-COOLIFY-REDEPLOY procedures; (3) decide on `--apply` for
+deploy-phase8-souls.sh + port-manuals-to-wiki.sh; (4) the LOW-bucket items
+(GAP-CONSOLE-001 / GAP-CSP-META-001 / GAP-API-CONNECTION-STATUS-500) remain open
+(see PLAN.md) — not launch-blocking.

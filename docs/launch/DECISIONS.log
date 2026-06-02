@@ -147,3 +147,36 @@ Verifier dispatch rules captured in `docs/launch/PROCEDURAL_TEST_SCRIPT.md` prea
 
 The prior agent posts the verifier's raw `VERIFICATION_REPORT.md` back to the operator UNEDITED. No summary. No pre-triage. Operator reviews raw findings and decides what blocks launch.
 
+
+### 2026-06-02T03:48:12Z DEC phase-8-blocker-fixes
+
+Overnight blocker-fix pass on branch `feature/phase-8-blocker-fixes` (cut from
+`feature/phase-8-closeout`). Per `docs/launch/BLOCKER_FIX_BRIEF.md`. One commit
+per fix, each independently `git revert`-able. No origin/main push, no Coolify
+redeploy, no credential activation, no production-volume mutation.
+
+Fix commits (GAP-id -> sha):
+- GAP-VER-005  -> 7909e4a79  (engagement detail route: removed swallowing parent, /w/-style index)
+- GAP-VER-003  -> 223b14a7c  (rate-limit key: strip proxy IP:port; root-caused live via tcpdump)
+- GAP-VER-004  -> baf89473d  (/agents: enumerate profile SOULs, source-tagged read-only)
+- GAP-VER-002  -> 936615dcf  (direct-nav auth: resolve auth in a useEffect, not bypassed by the guard)
+- GAP-VER-007  -> 3e577897a  (Dockerfile: ship scripts/ + src/; manuals npx tsx + hermes-studio container)
+- GAP-VER-001  -> 78babf2c7  (/plugins + /mcp-tokens read-only screens + sidebar)
+Plus setup: f57f2f40d (brief + verifier report onto branch).
+
+Committed but NOT run (mutate production state — PENDING-OPERATOR-CONFIRMATION):
+- ebf6b8b11  scripts/deploy-phase8-souls.sh  (GAP-SG-001: 7 governor SOULs -> volume)
+- 3adbf4a48  scripts/port-manuals-to-wiki.sh (manuals -> each profile wiki)
+
+Verification: vitest 530 pass, Playwright workflows 16 pass / 49 fixme / 0 fail
+after every fix. Each UI/route/auth fix additionally verified by a live headed
+pass against a locally-run build (production runs an older dist image, so live
+production verification is PENDING-COOLIFY-REDEPLOY). Per-gap root cause + fix +
+evidence under docs/launch/evidence/blocker-fixes/<gap>/.
+
+Rationale: production-safe (no irreversible action; branch isolates work from
+the Coolify auto-deploy trigger), per-fix revertibility, honest production status
+(every code fix is PENDING-COOLIFY-REDEPLOY; nothing is claimed live that isn't).
+The agent did NOT push origin/main, did NOT redeploy, did NOT run the two
+production-mutating scripts, did NOT re-dispatch the verifier (operator's
+billing + integrity boundary).
