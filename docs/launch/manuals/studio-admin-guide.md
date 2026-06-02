@@ -113,7 +113,7 @@ flowchart TD
 
 1. **Customer-storefront path** (preferred). The operator can log in as `duane` on `/p/<slug>` (where huminic credentials carry both `is_admin: true` + `is_customer_admin: true`) and use the storefront Knowledge tab's Promote button, which already calls `/api/customer/wiki/promote`.
 2. **Direct API call** via terminal: `curl -X POST https://studio.huminic.app/api/customer/wiki/promote -H "Cookie: hermes_session=<token>" -H "Content-Type: application/json" -d '{"profile":"<slug>","from_path":"knowledge/drafts/<page>.md","to_path":"knowledge/published/<page>.md"}'`.
-3. **Direct git-mv on production volume**: `docker exec hermes-agent-... sh -c 'cd /root/.hermes/profiles/<slug> && git mv knowledge/drafts/<page>.md knowledge/published/<page>.md && git commit -m "promote <page>"'`. **This bypasses KSG.** Only use for break-glass.
+3. **Direct git-mv on production volume**: `docker exec hermes-studio-... sh -c 'cd /root/.hermes/profiles/<slug> && git mv knowledge/drafts/<page>.md knowledge/published/<page>.md && git commit -m "promote <page>"'`. **This bypasses KSG.** Only use for break-glass. (The `hermes-studio-...` container mounts the `~/.hermes` volume at `/root/.hermes`; find its exact name with `docker ps | grep hermes-studio`.)
 
 Post-launch fix: add a "Promote" affordance in the file editor for files under `knowledge/inbox/` or `knowledge/drafts/`. The endpoint already exists; this is a small UI change.
 
@@ -175,10 +175,10 @@ Post-launch fix: add a "Promote" affordance in the file editor for files under `
 
 **Today's procedure** (Provisioner agent not built — `GAP-PROV-001`):
 
-1. **Decide the slug.** Lowercase, hyphens only, matches DNS-safe pattern. Verify the slug doesn't exist: `docker exec hermes-agent-... ls /root/.hermes/profiles/ | grep <slug>`. Should return nothing.
-2. **Run the provisioning script** with all 7 slugs at once OR a single slug at a time. Reference: `scripts/provision-launch-profiles.ts`. Single-slug invocation pattern:
+1. **Decide the slug.** Lowercase, hyphens only, matches DNS-safe pattern. Verify the slug doesn't exist: `docker exec hermes-studio-... ls /root/.hermes/profiles/ | grep <slug>`. Should return nothing.
+2. **Run the provisioning script** with all 7 slugs at once OR a single slug at a time. Reference: `scripts/provision-launch-profiles.ts`. The scripts ship inside the **studio** image at `/app/scripts` (GAP-VER-007 — requires a Coolify redeploy of the image built from the Dockerfile that copies `scripts/`). Run with `npx tsx` (the runtime image has `npx`+`tsx` in `node_modules`; it intentionally has no global `pnpm`). Single-slug invocation pattern:
    ```bash
-   pnpm tsx scripts/provision-launch-profiles.ts --slug=<slug> --brand="<Brand Name>" --accent="#hexcolor" --customer-admin-username=<email> --customer-admin-password=<initial-password>
+   docker exec -it hermes-studio-... npx tsx scripts/provision-launch-profiles.ts --slug=<slug> --brand="<Brand Name>" --accent="#hexcolor" --customer-admin-username=<email> --customer-admin-password=<initial-password>
    ```
    This: creates `~/.hermes/profiles/<slug>/`, applies scaffold (distribution.yaml, SOUL.md, config.yaml, mcp.json, .env.example, skills/, cron/), writes `studio.yaml` with branding + 6-tab menu, writes `auth.yaml` with the customer-admin credential.
 3. **Verify schema.** Crucial — P-FIX-003 caught a silent Zod fallback. After provisioning, check that `studio.yaml` uses `branding.persona_name` and NOT `brand.display_name`. Read the file: it should match the canonical huminic studio.yaml shape.
@@ -212,9 +212,9 @@ See Section 5 (Files screen). Launch-time procedure: customer-storefront path OR
 
 ## 13. Rotating credentials + MCP tokens
 
-**Customer-admin password rotation.** Run `scripts/create-user.ts` in the production agent container:
+**Customer-admin password rotation.** Run `scripts/create-user.ts` in the production **studio** container (the studio image ships `/app/scripts` after the GAP-VER-007 redeploy; it has `npx`+`tsx` but no global `pnpm`):
 ```bash
-docker exec -it hermes-agent-... pnpm tsx scripts/create-user.ts --profile <slug> --username <email> --customer-admin
+docker exec -it hermes-studio-... npx tsx scripts/create-user.ts --profile <slug> --username <email> --customer-admin
 ```
 Prompts for new password (hidden input + confirm). Overwrites `~/.hermes/profiles/<slug>/auth.yaml`. Customer-admin's prior sessions are NOT invalidated by this rewrite — the in-memory session token registry would need a force-revoke. **GAP-FLOW-session-revoke-on-rotate-001** flagged: confirm whether password rotation also revokes existing sessions.
 

@@ -359,8 +359,8 @@ Steps (UI path — EXPECTED TO FAIL):
 3. Result: no such button exists. Document.
 
 Steps (CLI workaround — EXPECTED to PASS):
-1. `docker exec -it hermes-agent-nh5vnz9kz226cj9ib3nodg1j-... pnpm tsx scripts/provision-launch-profiles.ts --slug verifier-test-dealer --brand "Verifier Test Dealer" --accent "#888888" --customer-admin-username verifier@example.com --customer-admin-password TestProvision2026!`
-2. Verify directory: `docker exec hermes-agent-... ls /root/.hermes/profiles/verifier-test-dealer/`.
+1. `docker exec -it hermes-studio-nh5vnz9kz226cj9ib3nodg1j-... npx tsx scripts/provision-launch-profiles.ts --slug verifier-test-dealer --brand "Verifier Test Dealer" --accent "#888888" --customer-admin-username verifier@example.com --customer-admin-password TestProvision2026!` — the scripts live in the **studio** container at `/app/scripts` (GAP-VER-007: requires the Coolify redeploy of the scripts-bearing image) and run with `npx tsx` (no global `pnpm` in the runtime image).
+2. Verify directory: `docker exec hermes-studio-... ls /root/.hermes/profiles/verifier-test-dealer/`.
 3. Read `studio.yaml`: must use `branding.persona_name: "Verifier Test Dealer"` (NOT `brand.display_name`). Schema-fallback check.
 4. Read `auth.yaml`: must have `username: verifier@example.com`, `password_hash: <scrypt>`, `is_customer_admin: true`.
 
@@ -408,7 +408,7 @@ Steps:
 1. Log in as customer-admin.
 2. Look for an "Invite" or "Add staff" button in the storefront UI.
 3. Result: no such button exists.
-4. Workaround: operator runs `docker exec -it hermes-agent-... pnpm tsx scripts/create-user.ts --profile <slug> --username <email> --customer-admin`.
+4. Workaround: operator runs `docker exec -it hermes-studio-... npx tsx scripts/create-user.ts --profile <slug> --username <email> --customer-admin` (studio container; `/app/scripts` ships after the GAP-VER-007 redeploy; `npx tsx`, no global `pnpm`).
 
 Expected outcome:
 - No invite UI in the customer-admin's storefront.
