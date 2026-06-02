@@ -412,6 +412,9 @@ Two kinds of gaps live here:
 
 > **Blocker-fix pass status (2026-06-02):** see the `BLOCKER FIX PASS — 2026-06-02` section in `VERIFICATION_REPORT.md` for the full per-blocker table. All six GAP-VER code blockers are FIXED on `feature/phase-8-blocker-fixes` and PENDING-COOLIFY-REDEPLOY (production runs the pre-fix image). GAP-SG-001 + manuals→wiki are committed scripts, PENDING-OPERATOR-CONFIRMATION. LOW-bucket (GAP-CONSOLE-001 / GAP-CSP-META-001 / GAP-API-CONNECTION-STATUS-500 / GAP-VER-006 / GAP-VER-008) remain open, non-blocking.
 
+| GAP-PROVISION-SLUG-001 | FIXED — PENDING-COOLIFY-REDEPLOY | `scripts/provision-launch-profiles.ts` ignored `--slug`/`--brand`/credentials and always re-provisioned the hardcoded 7 launch profiles, so the manual's documented "onboard a NEW customer" command silently failed. Added a single-customer mode (`--slug` → provision exactly that one with a schema-correct studio.yaml). Found via end-to-end onboarding test. | 2026-06-02 onboarding e2e | commit `f65544878`; verified live (/p/onboard-demo renders brand; provisioned customer-admin authenticates) | `docs/launch/evidence/blocker-fixes/onboard-e2e/` |
+| GAP-LOGIN-UI-001 | FIXED — PENDING-COOLIFY-REDEPLOY | Admin login was washed out (theme-mapped `text-primary-900`/`bg-accent-500` invert to light in the dark theme) + the boot splash and the "Set up mobile access" prompt + the MobileSetupModal + the OnboardingTour overlaid/washed the login. Operator-reported. Fixed: explicit high-contrast login, splash dismissed on login mount, mobile-prompt + onboarding-tour auth-gated, modal restyled dark. | 2026-06-02 operator report + skeptical UI audit | commits `1832e2056`, `13a3a1f44`; verified live | `docs/launch/evidence/blocker-fixes/login-ui/`, `.../ui-audit/` |
+
 ### How this section is maintained
 
 - New gaps surfaced in operator Q&A get a new row with a stable `GAP-*` id. Do not delete rows; status flips from OPEN → DONE (verified live) when truly closed.

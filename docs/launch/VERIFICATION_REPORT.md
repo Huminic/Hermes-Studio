@@ -567,6 +567,38 @@ GAP-VER-007 went deeper than the verifier could (the rate-limit logic was always
 correct — the proxy fed it an `IP:port` key; and `scripts/` alone was a false fix
 because the scripts import `../src`), but both are closed.
 
+## Follow-up pass — 2026-06-02 (operator UI report + end-to-end onboarding)
+
+After the operator reported the login looked washed-out / had an overlay, and
+asked to verify things work end-to-end:
+
+- **Login UI (GAP-LOGIN-UI-001) — FIXED + verified live.** The admin login used
+  theme-mapped colors that invert to light in the dark theme (light text on a
+  white card) + the boot splash, the "Set up mobile access" prompt, the
+  MobileSetupModal, and the OnboardingTour all overlaid/washed the login. Fixed
+  all five (explicit high-contrast login; splash dismissed on login mount;
+  mobile-prompt + onboarding-tour gated on auth; modal restyled dark). A
+  skeptical independent UI audit found the modal + tour the first pass missed —
+  fixed too. Commits `1832e2056`, `13a3a1f44`. Customer login (portal-login) +
+  /reset were already correctly dark-styled — confirmed.
+- **GAP-VER-002 re-verified in PASSWORD mode** (the real scenario, not just
+  no-auth): logged in, then full-page direct nav to /engagements, /agents,
+  /plugins, /profiles → workspace renders, no login. GAP-VER-004 + 001 also
+  re-confirmed in password mode.
+- **End-to-end onboarding — verified, and a NEW gap found + fixed.**
+  - Create agent: POST /api/agents → custom agent persisted + shown ("1 custom").
+  - Storefront: /p/huminic/knowledge renders the customer shell + KSG wiki editor.
+  - **GAP-PROVISION-SLUG-001 (FIXED):** the documented `provision-launch-profiles.ts
+    --slug <new>` command ignored its args and re-provisioned the 7 launch
+    profiles — so onboarding a NEW customer per the manual silently failed.
+    Added a single-customer mode. Verified live: provisioned `onboard-demo`,
+    /p/onboard-demo renders its brand, and the provisioned customer-admin
+    authenticates (wrong password → 401). Commit `f65544878`.
+
+All follow-up fixes are also PENDING-COOLIFY-REDEPLOY (source-only until the
+operator redeploys). Honest residual: agent CHAT producing a real AI reply needs
+provider credentials (OP-002/003/004) — not verifiable locally, not a code gap.
+
 **Operator next steps to make these live:** (1) rebuild + redeploy the studio
 image from this branch via Coolify; (2) re-run the verifier against
 `feature/phase-8-blocker-fixes` (its own session/state) to confirm PASS on the
