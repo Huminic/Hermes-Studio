@@ -17,9 +17,11 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SessionHistoryRouteImport } from './routes/session-history'
 import { Route as ResetRouteImport } from './routes/reset'
 import { Route as ProfilesRouteImport } from './routes/profiles'
+import { Route as PluginsRouteImport } from './routes/plugins'
 import { Route as PatternsRouteImport } from './routes/patterns'
 import { Route as OperationsRouteImport } from './routes/operations'
 import { Route as MemoryRouteImport } from './routes/memory'
+import { Route as McpTokensRouteImport } from './routes/mcp-tokens'
 import { Route as LogsRouteImport } from './routes/logs'
 import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as HelpRouteImport } from './routes/help'
@@ -217,6 +219,11 @@ const ProfilesRoute = ProfilesRouteImport.update({
   path: '/profiles',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PluginsRoute = PluginsRouteImport.update({
+  id: '/plugins',
+  path: '/plugins',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatternsRoute = PatternsRouteImport.update({
   id: '/patterns',
   path: '/patterns',
@@ -230,6 +237,11 @@ const OperationsRoute = OperationsRouteImport.update({
 const MemoryRoute = MemoryRouteImport.update({
   id: '/memory',
   path: '/memory',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpTokensRoute = McpTokensRouteImport.update({
+  id: '/mcp-tokens',
+  path: '/mcp-tokens',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LogsRoute = LogsRouteImport.update({
@@ -1045,9 +1057,11 @@ export interface FileRoutesByFullPath {
   '/help': typeof HelpRoute
   '/jobs': typeof JobsRoute
   '/logs': typeof LogsRoute
+  '/mcp-tokens': typeof McpTokensRoute
   '/memory': typeof MemoryRoute
   '/operations': typeof OperationsRoute
   '/patterns': typeof PatternsRoute
+  '/plugins': typeof PluginsRoute
   '/profiles': typeof ProfilesRoute
   '/reset': typeof ResetRoute
   '/session-history': typeof SessionHistoryRoute
@@ -1214,9 +1228,11 @@ export interface FileRoutesByTo {
   '/help': typeof HelpRoute
   '/jobs': typeof JobsRoute
   '/logs': typeof LogsRoute
+  '/mcp-tokens': typeof McpTokensRoute
   '/memory': typeof MemoryRoute
   '/operations': typeof OperationsRoute
   '/patterns': typeof PatternsRoute
+  '/plugins': typeof PluginsRoute
   '/profiles': typeof ProfilesRoute
   '/reset': typeof ResetRoute
   '/session-history': typeof SessionHistoryRoute
@@ -1383,9 +1399,11 @@ export interface FileRoutesById {
   '/help': typeof HelpRoute
   '/jobs': typeof JobsRoute
   '/logs': typeof LogsRoute
+  '/mcp-tokens': typeof McpTokensRoute
   '/memory': typeof MemoryRoute
   '/operations': typeof OperationsRoute
   '/patterns': typeof PatternsRoute
+  '/plugins': typeof PluginsRoute
   '/profiles': typeof ProfilesRoute
   '/reset': typeof ResetRoute
   '/session-history': typeof SessionHistoryRoute
@@ -1554,9 +1572,11 @@ export interface FileRouteTypes {
     | '/help'
     | '/jobs'
     | '/logs'
+    | '/mcp-tokens'
     | '/memory'
     | '/operations'
     | '/patterns'
+    | '/plugins'
     | '/profiles'
     | '/reset'
     | '/session-history'
@@ -1723,9 +1743,11 @@ export interface FileRouteTypes {
     | '/help'
     | '/jobs'
     | '/logs'
+    | '/mcp-tokens'
     | '/memory'
     | '/operations'
     | '/patterns'
+    | '/plugins'
     | '/profiles'
     | '/reset'
     | '/session-history'
@@ -1891,9 +1913,11 @@ export interface FileRouteTypes {
     | '/help'
     | '/jobs'
     | '/logs'
+    | '/mcp-tokens'
     | '/memory'
     | '/operations'
     | '/patterns'
+    | '/plugins'
     | '/profiles'
     | '/reset'
     | '/session-history'
@@ -2061,9 +2085,11 @@ export interface RootRouteChildren {
   HelpRoute: typeof HelpRoute
   JobsRoute: typeof JobsRoute
   LogsRoute: typeof LogsRoute
+  McpTokensRoute: typeof McpTokensRoute
   MemoryRoute: typeof MemoryRoute
   OperationsRoute: typeof OperationsRoute
   PatternsRoute: typeof PatternsRoute
+  PluginsRoute: typeof PluginsRoute
   ProfilesRoute: typeof ProfilesRoute
   ResetRoute: typeof ResetRoute
   SessionHistoryRoute: typeof SessionHistoryRoute
@@ -2242,6 +2268,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfilesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/plugins': {
+      id: '/plugins'
+      path: '/plugins'
+      fullPath: '/plugins'
+      preLoaderRoute: typeof PluginsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patterns': {
       id: '/patterns'
       path: '/patterns'
@@ -2261,6 +2294,13 @@ declare module '@tanstack/react-router' {
       path: '/memory'
       fullPath: '/memory'
       preLoaderRoute: typeof MemoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp-tokens': {
+      id: '/mcp-tokens'
+      path: '/mcp-tokens'
+      fullPath: '/mcp-tokens'
+      preLoaderRoute: typeof McpTokensRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/logs': {
@@ -3619,9 +3659,11 @@ const rootRouteChildren: RootRouteChildren = {
   HelpRoute: HelpRoute,
   JobsRoute: JobsRoute,
   LogsRoute: LogsRoute,
+  McpTokensRoute: McpTokensRoute,
   MemoryRoute: MemoryRoute,
   OperationsRoute: OperationsRoute,
   PatternsRoute: PatternsRoute,
+  PluginsRoute: PluginsRoute,
   ProfilesRoute: ProfilesRoute,
   ResetRoute: ResetRoute,
   SessionHistoryRoute: SessionHistoryRoute,

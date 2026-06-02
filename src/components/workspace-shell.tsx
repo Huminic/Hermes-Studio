@@ -74,6 +74,8 @@ const PROTECTED_PATH_PREFIXES = [
   '/operations',
   '/conductor',
   '/audit',
+  '/plugins',
+  '/mcp-tokens',
   '/analytics',
   '/session-history',
   '/logs',
@@ -198,6 +200,8 @@ export function WorkspaceShell() {
     if (pathname.startsWith('/session-history')) return 'Session History'
     if (pathname.startsWith('/audit')) return 'Audit Trail'
     if (pathname.startsWith('/engagements')) return 'Engagements'
+    if (pathname.startsWith('/plugins')) return 'Plugins'
+    if (pathname.startsWith('/mcp-tokens')) return 'MCP Tokens'
     if (pathname.startsWith('/logs')) return 'Logs'
     if (pathname.startsWith('/profiles')) return 'Profiles'
     if (pathname.startsWith('/settings')) return 'Settings'
