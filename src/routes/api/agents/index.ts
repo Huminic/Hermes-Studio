@@ -9,6 +9,7 @@ import { requireJsonContentType } from '../../../server/rate-limit'
 import {
   listAgents,
   createAgent,
+  getProfileSoulAgents,
 } from '../../../server/agent-definitions-store'
 
 const VALID_COLORS = [
@@ -37,7 +38,16 @@ export const Route = createFileRoute('/api/agents/')({
         if (!isAuthenticated(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
-        return json({ ok: true, agents: listAgents() })
+        // Built-ins + custom + profile-distributed SOULs (GAP-VER-004).
+        // getProfileSoulAgents touches the filesystem; never let a read error
+        // take down the whole library.
+        let profileSouls: ReturnType<typeof getProfileSoulAgents> = []
+        try {
+          profileSouls = getProfileSoulAgents()
+        } catch {
+          profileSouls = []
+        }
+        return json({ ok: true, agents: [...listAgents(), ...profileSouls] })
       },
 
       POST: async ({ request }) => {

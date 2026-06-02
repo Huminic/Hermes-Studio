@@ -59,10 +59,10 @@ function AgentCard({
             <span className="font-semibold text-sm text-[var(--theme-text)] truncate">
               {agent.name}
             </span>
-            {agent.isBuiltIn && (
+            {agentSource(agent) !== 'custom' && (
               <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium bg-[var(--theme-bg)] text-[var(--theme-muted)] border border-[var(--theme-border)]">
                 <HugeiconsIcon icon={LockIcon} size={9} />
-                built-in
+                {agentSource(agent) === 'profile' ? 'profile' : 'built-in'}
               </span>
             )}
           </div>
@@ -138,7 +138,14 @@ function AgentCard({
 
 // ─── Main screen ──────────────────────────────────────────────────────────────
 
-type Filter = 'all' | 'builtin' | 'custom'
+type Filter = 'all' | 'builtin' | 'profile' | 'custom'
+
+/** Effective source for an agent (back-compat: infer from isBuiltIn). */
+function agentSource(a: AgentDefinition): 'builtin' | 'profile' | 'custom' {
+  if (a.source === 'builtin' || a.source === 'profile' || a.source === 'custom')
+    return a.source
+  return a.isBuiltIn ? 'builtin' : 'custom'
+}
 
 export function AgentLibraryScreen() {
   const queryClient = useQueryClient()
@@ -217,8 +224,7 @@ export function AgentLibraryScreen() {
 
   // Filter + search
   const displayed = agents.filter((a) => {
-    if (filter === 'builtin' && !a.isBuiltIn) return false
-    if (filter === 'custom' && a.isBuiltIn) return false
+    if (filter !== 'all' && agentSource(a) !== filter) return false
     if (search) {
       const q = search.toLowerCase()
       return (
@@ -230,8 +236,9 @@ export function AgentLibraryScreen() {
     return true
   })
 
-  const builtInCount = agents.filter((a) => a.isBuiltIn).length
-  const customCount = agents.filter((a) => !a.isBuiltIn).length
+  const builtInCount = agents.filter((a) => agentSource(a) === 'builtin').length
+  const profileCount = agents.filter((a) => agentSource(a) === 'profile').length
+  const customCount = agents.filter((a) => agentSource(a) === 'custom').length
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -241,7 +248,7 @@ export function AgentLibraryScreen() {
           <div>
             <h1 className="text-lg font-semibold text-[var(--theme-text)]">Agent Library</h1>
             <p className="text-xs text-[var(--theme-muted)] mt-0.5">
-              {builtInCount} built-in · {customCount} custom
+              {builtInCount} built-in · {profileCount} profile · {customCount} custom
             </p>
           </div>
           <button
@@ -273,7 +280,7 @@ export function AgentLibraryScreen() {
             />
           </div>
           <div className="flex rounded-lg border border-[var(--theme-border)] bg-[var(--theme-card)] p-0.5 text-xs">
-            {(['all', 'builtin', 'custom'] as const).map((f) => (
+            {(['all', 'builtin', 'profile', 'custom'] as const).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
