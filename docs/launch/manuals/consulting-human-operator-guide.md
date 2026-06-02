@@ -49,8 +49,8 @@ flowchart TD
 **Today's procedure** (`GAP-FLOW-engagement-seed-001` — no Studio "New engagement" button):
 
 1. **Create the prospect profile directory** on the production volume. Two paths:
-   - **Coolify shell**: `docker exec -it hermes-agent-... mkdir -p /root/.hermes/profiles/<slug>/knowledge/inbox /root/.hermes/profiles/<slug>/knowledge/drafts /root/.hermes/profiles/<slug>/governance /root/.hermes/profiles/<slug>/canon`
-   - **OR**: ask the operator to run `scripts/provision-launch-profiles.ts --slug <slug>` with the customer-admin credential left blank for now.
+   - **Coolify shell**: `docker exec -it hermes-studio-... mkdir -p /root/.hermes/profiles/<slug>/knowledge/inbox /root/.hermes/profiles/<slug>/knowledge/drafts /root/.hermes/profiles/<slug>/governance /root/.hermes/profiles/<slug>/canon` (the `hermes-studio-...` container mounts the volume at `/root/.hermes` and ships the scripts; `docker ps | grep hermes-studio` for the exact name)
+   - **OR**: ask the operator to run `docker exec -it hermes-studio-... npx tsx scripts/provision-launch-profiles.ts --slug <slug>` with the customer-admin credential left blank for now.
 2. **Seed engagement-state.yaml at stage `draft`.** Copy the canonical seed from `~/.hermes/profiles/huminic/engagement-state.yaml` as a template. Edit the customer name + initial deployment_notes (operator-supplied notes about the prospect). Write to `<slug>/engagement-state.yaml`.
 3. **Switch active profile in Studio.** `/profiles` → click `consultative-agent` → "Set active".
 4. **Open a new chat session against the consultative agent.** `/chat` (or sidebar "Chat") → New session. The system prompt is the consultative-agent SOUL by default.

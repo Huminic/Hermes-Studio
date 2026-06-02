@@ -697,7 +697,7 @@
 ### HTC-PR-005 — Provisioning via scripts/create-user.ts
 
 - **Objective:** new customer-admin can be provisioned in production.
-- **Steps:** `pnpm tsx scripts/create-user.ts --profile <slug> --username <name> --customer-admin`; verify auth.yaml written 0600; log in.
+- **Steps:** `docker exec -it hermes-studio-... npx tsx scripts/create-user.ts --profile <slug> --username <name> --customer-admin` (studio container; `/app/scripts` ships after the GAP-VER-007 redeploy; `npx tsx`, no global `pnpm`); verify auth.yaml written 0600; log in.
 - **Expected result:** all three.
 - **Pass/fail:**
 - **Notes:**

@@ -248,7 +248,7 @@ export function WorkspaceSkillsScreen() {
           </div>
         </header>
 
-        <div className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden rounded-xl border border-[var(--theme-border)] bg-white shadow-sm lg:grid-cols-2">
+        <div className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden rounded-xl border border-[var(--theme-border)] bg-[var(--theme-card)] shadow-sm lg:grid-cols-2">
           <section className="min-h-0 border-b border-[var(--theme-border)] lg:border-b-0">
             <div className="flex h-full min-h-0 flex-col p-4 sm:p-5">
               <div className="flex flex-col gap-3 border-b border-[var(--theme-border)] pb-4 sm:flex-row sm:items-center sm:justify-between">
@@ -401,7 +401,7 @@ export function WorkspaceSkillsScreen() {
                       {selectedSkill.name}
                     </span>
                   </div>
-                  <div className="rounded-xl border border-[var(--theme-border)] bg-white p-3">
+                  <div className="rounded-xl border border-[var(--theme-border)] bg-[var(--theme-card)] p-3">
                     {skillContentQuery.isPending ? (
                       <div className="space-y-2">
                         {Array.from({ length: 4 }).map((_, index) => (
@@ -418,7 +418,7 @@ export function WorkspaceSkillsScreen() {
                           : 'Failed to load skill content'}
                       </div>
                     ) : (
-                      <div className="max-h-96 overflow-y-auto rounded-lg border border-[var(--theme-border)] bg-white p-4 text-sm text-primary-800 prose prose-sm prose-primary max-w-none">
+                      <div className="max-h-96 overflow-y-auto rounded-lg border border-[var(--theme-border)] bg-[var(--theme-card)] p-4 text-sm text-primary-800 prose prose-sm prose-primary max-w-none">
                         <SkillMarkdown
                           content={
                             skillContentQuery.data?.trim() ||
@@ -469,7 +469,7 @@ export function WorkspaceSkillsScreen() {
                     value={memorySearch}
                     onChange={(event) => setMemorySearch(event.target.value)}
                     placeholder="Search memory..."
-                    className="w-full rounded-xl border border-[var(--theme-border)] bg-white px-10 py-2.5 text-sm text-[var(--theme-text)] outline-none transition-colors placeholder:text-[var(--theme-muted)] focus:border-accent-500/50"
+                    className="w-full rounded-xl border border-[var(--theme-border)] bg-[var(--theme-card)] px-10 py-2.5 text-sm text-[var(--theme-text)] outline-none transition-colors placeholder:text-[var(--theme-muted)] focus:border-accent-500/50"
                   />
                 </div>
 
@@ -485,7 +485,7 @@ export function WorkspaceSkillsScreen() {
                           'rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors',
                           active
                             ? 'border-accent-500/40 bg-accent-500/10 text-accent-400'
-                            : 'border-[var(--theme-border)] bg-white text-[var(--theme-muted)] hover:border-primary-300 hover:text-[var(--theme-text)]',
+                            : 'border-[var(--theme-border)] bg-[var(--theme-card)] text-[var(--theme-muted)] hover:border-primary-300 hover:text-[var(--theme-text)]',
                         )}
                       >
                         {filter}
@@ -603,7 +603,7 @@ function MemorySectionBlock({
                   'flex w-full items-center gap-3 rounded-2xl border px-3 py-3 text-left transition-colors',
                   active
                     ? 'border-accent-500/40 bg-accent-500/5'
-                    : 'border-[var(--theme-border)] bg-white hover:border-primary-300',
+                    : 'border-[var(--theme-border)] bg-[var(--theme-card)] hover:border-primary-300',
                 )}
               >
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-[var(--theme-border)] bg-[var(--theme-bg)] text-[var(--theme-muted)]">

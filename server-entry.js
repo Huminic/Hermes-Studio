@@ -128,10 +128,16 @@ const httpServer = createServer(async (req, res) => {
   try {
     const response = await server.fetch(request)
 
-    res.writeHead(
-      response.status,
-      Object.fromEntries(response.headers.entries()),
-    )
+    // frame-ancestors only takes effect when delivered as an HTTP header — the
+    // <meta> CSP in __root.tsx is ignored for this directive (GAP-CSP-META-001).
+    // Emit it (and X-Frame-Options as a belt-and-suspenders) at the edge.
+    const outHeaders = Object.fromEntries(response.headers.entries())
+    if (!outHeaders['content-security-policy']) {
+      outHeaders['content-security-policy'] = "frame-ancestors 'none'"
+    }
+    outHeaders['x-frame-options'] = 'DENY'
+
+    res.writeHead(response.status, outHeaders)
 
     if (response.body) {
       const reader = response.body.getReader()

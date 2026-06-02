@@ -110,3 +110,73 @@ Session-start re-acknowledgment per AGENTS.md closeout-mode hook. Post-compact r
 
 Next step: read PLAN.md Phase 8 in full, then begin `docs/launch/ROLES.md` (step a of resume protocol).
 
+## 2026-06-02
+
+### 2026-06-02T00:40:43Z DEC phase-8-branch-not-main
+
+Per operator directive 2026-06-02 morning, Phase 8 closeout work is pushed to a new branch `feature/phase-8-closeout` on `origin`, NOT to `origin/main`. Production stays at `origin/main` HEAD = `34d07f513` until the verifier pass closes and operator decides launch posture.
+
+Rationale:
+- **Production-safe verification.** Coolify auto-redeploys on push to origin/main. Pushing 4 Phase 8 commits (`c71efb10a`, `aed28bba3`, `dec7882ae`, `b82d1c169`) to main would have flipped production to the Phase 8 build without operator approval. Branch isolates the work from the deploy trigger.
+- **No irreversible action.** Branch-only push is reversible (delete remote branch). Push-to-main with Coolify auto-deploy is effectively irreversible without a rollback redeploy.
+- **Clean rollback if verification fails.** If the verifier's `VERIFICATION_REPORT.md` finds blocking defects, the operator can simply delete `feature/phase-8-closeout` and re-plan. Production is untouched.
+- **Branch is the artifact the verifier reads from.** Verifier instructions explicitly require reading from `feature/phase-8-closeout` only, not local + not main. The branch is the single source of truth for the verification pass.
+
+Commits on the branch (in order from oldest to newest, all on top of `origin/main` HEAD `34d07f513`):
+1. `c71efb10a` — Phase 8: ROLES.md + WORKFLOWS.md + 10 new GAP rows
+2. `aed28bba3` — Phase 8: 5 human manuals + 21 agent SOUL stubs + 4 new GAP rows
+3. `dec7882ae` — Phase 8: Playwright workflow-surface eval suite + TRIAGE view
+4. `b82d1c169` — Phase 8: live headed sweep + 3 new GAP rows
+5. (this commit) — DECISIONS.log entry memorializing the branch decision
+
+Operator-action gates that remain:
+- Operator review of `VERIFICATION_REPORT.md` (verifier produces; operator reviews raw).
+- Operator decision on the 3 dispositions in `TRIAGE.md`.
+- Operator decision on whether the branch fast-forwards to main for launch (post-verification).
+- Operator authorization for any subsequent Coolify redeploy.
+
+The agent will NOT push to origin/main. The agent will NOT delete the branch. The agent will NOT cut a launch claim until operator authorizes.
+
+### 2026-06-02T00:40:43Z DEC verifier-handoff-rules
+
+Verifier dispatch rules captured in `docs/launch/PROCEDURAL_TEST_SCRIPT.md` preamble + the Agent prompt. Three constraints:
+
+1. Verifier reads from `feature/phase-8-closeout` branch only. Not local. Not main.
+2. Verifier performs every procedure themselves against the live system, with their own Playwright MCP session and their own fresh-state browser. They do not trust prior screenshots, prior REPORT.md entries, or prior commit messages — they re-verify.
+3. Verifier produces `docs/launch/VERIFICATION_REPORT.md` with a row per procedure: PASS / FAIL / BLOCKED / KNOWN-GAP. Any FAIL gets a new `GAP-` row added to `PLAN.md` by the verifier, not by the prior agent. Any disagreement between the verifier's finding and the prior agent's claim gets surfaced explicitly — integrity check.
+
+The prior agent posts the verifier's raw `VERIFICATION_REPORT.md` back to the operator UNEDITED. No summary. No pre-triage. Operator reviews raw findings and decides what blocks launch.
+
+
+### 2026-06-02T03:48:12Z DEC phase-8-blocker-fixes
+
+Overnight blocker-fix pass on branch `feature/phase-8-blocker-fixes` (cut from
+`feature/phase-8-closeout`). Per `docs/launch/BLOCKER_FIX_BRIEF.md`. One commit
+per fix, each independently `git revert`-able. No origin/main push, no Coolify
+redeploy, no credential activation, no production-volume mutation.
+
+Fix commits (GAP-id -> sha):
+- GAP-VER-005  -> 7909e4a79  (engagement detail route: removed swallowing parent, /w/-style index)
+- GAP-VER-003  -> 223b14a7c  (rate-limit key: strip proxy IP:port; root-caused live via tcpdump)
+- GAP-VER-004  -> baf89473d  (/agents: enumerate profile SOULs, source-tagged read-only)
+- GAP-VER-002  -> 936615dcf  (direct-nav auth: resolve auth in a useEffect, not bypassed by the guard)
+- GAP-VER-007  -> 3e577897a  (Dockerfile: ship scripts/ + src/; manuals npx tsx + hermes-studio container)
+- GAP-VER-001  -> 78babf2c7  (/plugins + /mcp-tokens read-only screens + sidebar)
+Plus setup: f57f2f40d (brief + verifier report onto branch).
+
+Committed but NOT run (mutate production state — PENDING-OPERATOR-CONFIRMATION):
+- ebf6b8b11  scripts/deploy-phase8-souls.sh  (GAP-SG-001: 7 governor SOULs -> volume)
+- 3adbf4a48  scripts/port-manuals-to-wiki.sh (manuals -> each profile wiki)
+
+Verification: vitest 530 pass, Playwright workflows 16 pass / 49 fixme / 0 fail
+after every fix. Each UI/route/auth fix additionally verified by a live headed
+pass against a locally-run build (production runs an older dist image, so live
+production verification is PENDING-COOLIFY-REDEPLOY). Per-gap root cause + fix +
+evidence under docs/launch/evidence/blocker-fixes/<gap>/.
+
+Rationale: production-safe (no irreversible action; branch isolates work from
+the Coolify auto-deploy trigger), per-fix revertibility, honest production status
+(every code fix is PENDING-COOLIFY-REDEPLOY; nothing is claimed live that isn't).
+The agent did NOT push origin/main, did NOT redeploy, did NOT run the two
+production-mutating scripts, did NOT re-dispatch the verifier (operator's
+billing + integrity boundary).

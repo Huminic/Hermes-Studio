@@ -292,20 +292,101 @@ async function writeAuthYaml(spec: ProfileSpec, force: boolean, dryRun: boolean)
   }
 }
 
+/** Read `--name=value` or `--name value` from argv. */
+function getArg(name: string): string | undefined {
+  const argv = process.argv
+  const eq = argv.find((a) => a.startsWith(`--${name}=`))
+  if (eq) return eq.slice(name.length + 3)
+  const idx = argv.indexOf(`--${name}`)
+  if (idx !== -1 && argv[idx + 1] && !argv[idx + 1].startsWith('--')) {
+    return argv[idx + 1]
+  }
+  return undefined
+}
+
+/** Schema-correct (P-FIX-003) storefront studio.yaml for an arbitrary customer. */
+function buildStudioYaml(brand: string, accent: string): string {
+  return [
+    `# ${brand} storefront profile (provisioned via --slug).`,
+    'branding:',
+    `  persona_name: ${JSON.stringify(brand)}`,
+    `  accent_color: ${JSON.stringify(accent)}`,
+    'menu:',
+    '  chat: true',
+    '  knowledge: true',
+    '  tools: true',
+    '  data: false',
+    '  comms: true',
+    '  campaigns: true',
+    'agent_picker:',
+    '  visible_agents: []',
+    'tools_widget:',
+    '  show_embed_snippet: true',
+    '  show_live_demo: true',
+    '  consult: false',
+    'autonomous_reply_defaults:',
+    '  enabled: false',
+    '  business_hours_only: false',
+    '  max_agent_turns: 3',
+    '  channels: []',
+    'federation:',
+    '  read_scopes: []',
+    '',
+  ].join('\n')
+}
+
+/**
+ * Build the spec list. Default = the hardcoded 7 launch profiles. If `--slug`
+ * is supplied, provision exactly ONE arbitrary customer from the CLI args —
+ * this is the path the manuals document for onboarding a NEW customer.
+ */
+function resolveSpecs(): Array<ProfileSpec> {
+  const slug = getArg('slug')
+  if (!slug) return SPECS
+
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(slug)) {
+    console.error(`--slug must be DNS-safe (lowercase letters, digits, hyphens): got "${slug}"`)
+    process.exit(2)
+  }
+  const username = getArg('customer-admin-username')
+  const password = getArg('customer-admin-password')
+  if (!username || !password) {
+    console.error(
+      'Single-customer mode (--slug) requires --customer-admin-username and --customer-admin-password',
+    )
+    process.exit(2)
+  }
+  const brand = getArg('brand') ?? slug
+  const accent = getArg('accent') ?? '#0d9488'
+  return [
+    {
+      slug,
+      username,
+      password,
+      is_customer_admin: true,
+      description: brand,
+      studio_yaml: buildStudioYaml(brand, accent),
+      soul_md: `# ${brand}\n\nStorefront profile provisioned via --slug. The\nconsultative agent fills in the agentic design + wiki from here.\n`,
+    },
+  ]
+}
+
 async function main() {
   const dryRun = process.argv.includes('--dry-run')
   const force = process.argv.includes('--force')
+  const specs = resolveSpecs()
 
   console.log(`provision-launch-profiles starting`)
   console.log(`  profilesRoot = ${getProfilesRoot()}`)
   console.log(`  dryRun       = ${dryRun}`)
   console.log(`  force        = ${force}`)
-  console.log(`  specs        = ${SPECS.length}`)
+  console.log(`  mode         = ${getArg('slug') ? 'single-customer (--slug)' : 'launch-batch (7 profiles)'}`)
+  console.log(`  specs        = ${specs.length}`)
   console.log('')
 
   let okCount = 0
   let failedCount = 0
-  for (const spec of SPECS) {
+  for (const spec of specs) {
     try {
       await writeAuthYaml(spec, force, dryRun)
       okCount++

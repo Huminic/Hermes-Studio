@@ -49,8 +49,12 @@ export const Route = createFileRoute('/api/connection-status')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const authResult = isAuthenticated(request)
-        if (authResult !== true) return authResult as unknown as Response
+        // isAuthenticated returns a boolean. The previous code returned that
+        // boolean cast as a Response, so an unauthenticated caller got a 500
+        // ("HTTPError") instead of a 401 (GAP-API-CONNECTION-STATUS-500).
+        if (!isAuthenticated(request)) {
+          return Response.json({ error: 'Unauthorized' }, { status: 401 })
+        }
 
         const caps = await ensureGatewayProbed()
         const activeModel = readActiveModel()

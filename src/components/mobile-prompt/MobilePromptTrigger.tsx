@@ -13,6 +13,22 @@ export function MobilePromptTrigger() {
   const [dontShowAgain, setDontShowAgain] = useState(false)
   const [isDismissedForSession, setIsDismissedForSession] = useState(false)
   const mountTimeRef = useRef<number | null>(null)
+  // Don't pop the "Set up mobile access" prompt over the LOGIN screen — it must
+  // only appear once the operator is authenticated and looking at the workspace.
+  const authedRef = useRef(false)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/auth-session', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((d) => {
+        if (!cancelled) authedRef.current = Boolean(d?.authenticated)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     mountTimeRef.current = Date.now()
@@ -47,7 +63,12 @@ export function MobilePromptTrigger() {
       const isDesktop = window.innerWidth > 768
       const hasBeenOnPageLongEnough = elapsedTime >= 45_000
 
-      if (isDesktop && hasBeenOnPageLongEnough && !isDismissedForSession) {
+      if (
+        isDesktop &&
+        hasBeenOnPageLongEnough &&
+        !isDismissedForSession &&
+        authedRef.current
+      ) {
         setShowPrompt(true)
       }
     }

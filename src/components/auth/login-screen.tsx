@@ -8,6 +8,13 @@ export function LoginScreen() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Dismiss the boot splash overlay the moment the login renders, so it doesn't
+  // linger on top of (and wash out) the login card during hydration
+  // (GAP-AUTH-HYDRATION-SPLASH-001).
+  useEffect(() => {
+    if (typeof window !== 'undefined') window.__dismissSplash?.()
+  }, [])
+
   useEffect(() => {
     let cancelled = false
     fetch('/api/auth-session', { credentials: 'include' })
@@ -56,9 +63,9 @@ export function LoginScreen() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-800 to-slate-950 px-4">
       <div className="w-full max-w-md">
-        <div className="rounded-2xl bg-white px-8 py-10 shadow-xl shadow-primary-900/5 ring-1 ring-primary-900/5">
+        <div className="rounded-2xl bg-white px-8 py-10 shadow-2xl shadow-black/40 ring-1 ring-black/10">
           {/* Logo */}
           <div className="mb-8 flex justify-center">
             <div className="flex items-center gap-2.5">
@@ -68,31 +75,31 @@ export function LoginScreen() {
                 viewBox="0 0 100 100"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="text-accent-500"
+                className="text-blue-600"
               >
                 <path
                   d="M50 10 L90 30 L90 70 L50 90 L10 70 L10 30 Z"
                   fill="currentColor"
-                  opacity="0.15"
+                  opacity="0.18"
                 />
                 <path
                   d="M50 25 L75 38 L75 62 L50 75 L25 62 L25 38 Z"
                   fill="currentColor"
-                  opacity="0.3"
+                  opacity="0.4"
                 />
                 <circle cx="50" cy="50" r="15" fill="currentColor" />
               </svg>
-              <h1 className="text-2xl font-bold tracking-tight text-primary-900">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                 Huminic Studio
               </h1>
             </div>
           </div>
 
           {/* Title */}
-          <h2 className="mb-2 text-center text-lg font-semibold text-primary-900">
+          <h2 className="mb-2 text-center text-lg font-semibold text-slate-900">
             {profileAuthMode === true ? 'Sign in' : 'Enter Password'}
           </h2>
-          <p className="mb-6 text-center text-sm text-primary-600">
+          <p className="mb-6 text-center text-sm text-slate-500">
             {profileAuthMode === true
               ? 'Sign in with your profile credentials'
               : 'This workspace is password-protected'}
@@ -108,7 +115,7 @@ export function LoginScreen() {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Username"
                   autoComplete="username"
-                  className="w-full rounded-lg border border-primary-200 bg-white px-4 py-2.5 text-primary-900 placeholder-primary-400 outline-none transition-all focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
                   disabled={loading}
                   autoFocus
                 />
@@ -121,7 +128,7 @@ export function LoginScreen() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 autoComplete="current-password"
-                className="w-full rounded-lg border border-primary-200 bg-white px-4 py-2.5 text-primary-900 placeholder-primary-400 outline-none transition-all focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
                 disabled={loading}
                 autoFocus={profileAuthMode !== true}
               />
@@ -141,7 +148,7 @@ export function LoginScreen() {
                 (profileAuthMode === true && !username) ||
                 profileAuthMode === null
               }
-              className="w-full rounded-lg bg-accent-500 px-4 py-2.5 font-medium text-white transition-all hover:bg-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-500/50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-lg bg-blue-600 px-4 py-2.5 font-medium text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:opacity-100"
             >
               {loading ? 'Authenticating...' : 'Continue'}
             </button>
@@ -149,13 +156,13 @@ export function LoginScreen() {
         </div>
 
         {/* Footer */}
-        <p className="mt-6 text-center text-xs text-primary-500">
+        <p className="mt-6 text-center text-xs text-slate-400">
           Powered by{' '}
           <a
             href="https://github.com/NousResearch/hermes-agent"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-accent-500 hover:text-accent-600 transition-colors"
+            className="text-blue-300 hover:text-blue-200 transition-colors"
           >
             Huminic
           </a>

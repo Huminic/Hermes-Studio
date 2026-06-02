@@ -6,11 +6,19 @@
  * Follows the same pattern as template-store.ts and crew-store.ts.
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import type { AgentDefinition } from '../types/agent'
 import { AGENT_PERSONAS } from '../lib/agent-personas'
+import { getProfilesRoot } from './profiles-browser'
+import { extractFrontmatter } from '../lib/frontmatter'
 
 const DATA_DIR = join(process.cwd(), '.runtime')
 const AGENTS_FILE = join(DATA_DIR, 'agent-definitions.json')
@@ -40,9 +48,154 @@ export function getBuiltInAgents(): AgentDefinition[] {
     model: null,
     tags: p.specialties.slice(0, 5),
     isBuiltIn: true,
+    source: 'builtin',
     createdAt: 0,
     updatedAt: 0,
   }))
+}
+
+// ─── Profile-distributed SOUL agents (GAP-VER-004) ───────────────────────────
+//
+// The /agents library previously surfaced only built-ins + custom agents, so
+// the profile-distributed SOULs the operator authored were invisible. This
+// reader walks each ~/.hermes/profiles/<profile>/ for:
+//   - SOUL.md                      (the profile's primary agent)
+//   - governance/agents/*.md       (per-profile named agents)
+// SOULs may or may not carry YAML frontmatter (production profile SOUL.md
+// files are often bare markdown), so we degrade gracefully. These entries are
+// read-only in the library (isBuiltIn: true → no edit/delete) and tagged
+// source: 'profile'.
+
+const PROFILE_AGENT_COLORS = [
+  'text-teal-400',
+  'text-violet-400',
+  'text-sky-400',
+  'text-lime-400',
+  'text-rose-400',
+  'text-indigo-400',
+]
+
+function firstHeading(body: string): string | null {
+  for (const line of body.split(/\r?\n/)) {
+    const m = line.match(/^#{1,3}\s+(.+?)\s*$/)
+    if (m) return m[1].trim()
+  }
+  return null
+}
+
+function firstParagraph(body: string): string {
+  const text = body
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith('#'))
+    .join(' ')
+  return text.length > 280 ? `${text.slice(0, 277)}…` : text
+}
+
+function soulToAgent(
+  profile: string,
+  fallbackName: string,
+  content: string,
+  idBase: string,
+  index: number,
+): AgentDefinition {
+  const { frontmatter: fm, body } = extractFrontmatter(content)
+  const str = (v: unknown): string | null =>
+    typeof v === 'string' && v.trim() ? v.trim() : null
+  const name =
+    str(fm?.persona_name) ??
+    str(fm?.name) ??
+    str(fm?.id) ??
+    firstHeading(body) ??
+    fallbackName
+  const role = str(fm?.role)
+  const roleLabel = role
+    ? role.length > 60
+      ? `${role.slice(0, 57)}…`
+      : role
+    : 'Profile SOUL'
+  const tags = [profile]
+  const lane = str(fm?.kanban_lane)
+  if (lane) tags.push(lane)
+  if (fm?.enabled === false) tags.push('disabled')
+  return {
+    id: idBase,
+    name,
+    emoji: '📜',
+    color: PROFILE_AGENT_COLORS[index % PROFILE_AGENT_COLORS.length],
+    roleLabel,
+    systemPrompt: firstParagraph(body),
+    model: null,
+    tags,
+    isBuiltIn: true,
+    source: 'profile',
+    profile,
+    createdAt: 0,
+    updatedAt: 0,
+  }
+}
+
+export function getProfileSoulAgents(): AgentDefinition[] {
+  const root = getProfilesRoot()
+  if (!existsSync(root)) return []
+  const out: AgentDefinition[] = []
+  let i = 0
+  let dirs: string[]
+  try {
+    dirs = readdirSync(root, { withFileTypes: true })
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name)
+      .sort()
+  } catch {
+    return []
+  }
+  for (const profile of dirs) {
+    const profileDir = join(root, profile)
+    const soulPath = join(profileDir, 'SOUL.md')
+    if (existsSync(soulPath)) {
+      try {
+        out.push(
+          soulToAgent(
+            profile,
+            `${profile} SOUL`,
+            readFileSync(soulPath, 'utf8'),
+            `profile-${profile}-soul`,
+            i++,
+          ),
+        )
+      } catch {
+        /* unreadable SOUL — skip */
+      }
+    }
+    const agentsDir = join(profileDir, 'governance', 'agents')
+    if (existsSync(agentsDir)) {
+      let files: string[]
+      try {
+        files = readdirSync(agentsDir)
+          .filter((f) => f.endsWith('.md'))
+          .sort()
+      } catch {
+        files = []
+      }
+      for (const f of files) {
+        const base = f.replace(/\.md$/, '')
+        try {
+          out.push(
+            soulToAgent(
+              profile,
+              base,
+              readFileSync(join(agentsDir, f), 'utf8'),
+              `profile-${profile}-agent-${base}`,
+              i++,
+            ),
+          )
+        } catch {
+          /* unreadable — skip */
+        }
+      }
+    }
+  }
+  return out
 }
 
 // ─── Custom agent store ───────────────────────────────────────────────────────
@@ -107,6 +260,7 @@ export function createAgent(input: {
   const agent: AgentDefinition = {
     id,
     isBuiltIn: false,
+    source: 'custom',
     createdAt: now,
     updatedAt: now,
     ...input,

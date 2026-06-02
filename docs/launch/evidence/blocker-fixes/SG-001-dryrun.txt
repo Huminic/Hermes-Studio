@@ -1,0 +1,35 @@
+deploy-phase8-souls — GAP-SG-001
+  container : hermes-studio-nh5vnz9kz226cj9ib3nodg1j-085548456876
+  source    : /home/ubuntu/Claude-store/huminic-studio/docs/launch/agent-souls/governors
+  mode      : DRY-RUN
+
+[ford-of-columbia-data-governor]
+  -> /root/.hermes/profiles/ford-of-columbia-data-governor/SOUL.md
+  (dry-run) would mkdir -p /root/.hermes/profiles/ford-of-columbia-data-governor, back up any existing SOUL.md, then docker cp
+
+[huminic-motors-data-governor]
+  -> /root/.hermes/profiles/huminic-motors-data-governor/SOUL.md
+  (dry-run) would mkdir -p /root/.hermes/profiles/huminic-motors-data-governor, back up any existing SOUL.md, then docker cp
+
+[hyundai-of-columbia-data-governor]
+  -> /root/.hermes/profiles/hyundai-of-columbia-data-governor/SOUL.md
+  (dry-run) would mkdir -p /root/.hermes/profiles/hyundai-of-columbia-data-governor, back up any existing SOUL.md, then docker cp
+
+[serra-honda-data-governor]
+  -> /root/.hermes/profiles/serra-honda-data-governor/SOUL.md
+  (dry-run) would mkdir -p /root/.hermes/profiles/serra-honda-data-governor, back up any existing SOUL.md, then docker cp
+
+[serra-nissan-data-governor]
+  -> /root/.hermes/profiles/serra-nissan-data-governor/SOUL.md
+  (dry-run) would mkdir -p /root/.hermes/profiles/serra-nissan-data-governor, back up any existing SOUL.md, then docker cp
+
+[serra-service-data-governor]
+  -> /root/.hermes/profiles/serra-service-data-governor/SOUL.md
+  (dry-run) would mkdir -p /root/.hermes/profiles/serra-service-data-governor, back up any existing SOUL.md, then docker cp
+
+[tony-serra-ford-data-governor]
+  -> /root/.hermes/profiles/tony-serra-ford-data-governor/SOUL.md
+  (dry-run) would mkdir -p /root/.hermes/profiles/tony-serra-ford-data-governor, back up any existing SOUL.md, then docker cp
+
+processed 7 governor SOUL(s).
+DRY-RUN only. Re-run with --apply to deploy (requires operator confirmation).

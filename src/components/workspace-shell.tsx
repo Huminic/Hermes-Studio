@@ -17,6 +17,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Suspense, lazy } from 'react'
 import type { SessionMeta } from '@/screens/chat/types'
 import type { AuthStatus } from '@/lib/hermes-auth'
+import { fetchHermesAuthStatus } from '@/lib/hermes-auth'
 import { cn } from '@/lib/utils'
 import { ConnectionStartupScreen } from '@/components/connection-startup-screen'
 import { ChatSidebar } from '@/screens/chat/components/chat-sidebar'
@@ -73,6 +74,8 @@ const PROTECTED_PATH_PREFIXES = [
   '/operations',
   '/conductor',
   '/audit',
+  '/plugins',
+  '/mcp-tokens',
   '/analytics',
   '/session-history',
   '/logs',
@@ -154,6 +157,33 @@ export function WorkspaceShell() {
     setConnectionVerified(true)
   }, [])
 
+  // GAP-VER-002: resolve the auth-session independently of
+  // ConnectionStartupScreen. The protected-path LoginScreen guard further down
+  // returns BEFORE that overlay mounts, so on DIRECT navigation (refresh /
+  // bookmark) to an admin route the overlay never ran, `authStatus` stayed
+  // `null` forever, and the page was stuck on the login form even for an
+  // authenticated session (SPA navigation worked only because the shell had
+  // already mounted on a non-protected route and resolved auth). Hooks run
+  // before the early returns, so this check always runs. It uses the same
+  // `/api/auth-check` call as the startup overlay; on failure it no-ops and the
+  // main render's ConnectionStartupScreen still owns the retry/failure UI.
+  useEffect(() => {
+    if (!isClient) return
+    let cancelled = false
+    void fetchHermesAuthStatus()
+      .then((status) => {
+        if (cancelled) return
+        setAuthStatus((prev) => prev ?? status)
+        setConnectionVerified(true)
+      })
+      .catch(() => {
+        /* leave authStatus null; ConnectionStartupScreen handles retries */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [isClient])
+
   // Derive active session from URL
   const mobilePageTitle = (() => {
     if (pathname.startsWith('/terminal')) return 'Terminal'
@@ -170,6 +200,8 @@ export function WorkspaceShell() {
     if (pathname.startsWith('/session-history')) return 'Session History'
     if (pathname.startsWith('/audit')) return 'Audit Trail'
     if (pathname.startsWith('/engagements')) return 'Engagements'
+    if (pathname.startsWith('/plugins')) return 'Plugins'
+    if (pathname.startsWith('/mcp-tokens')) return 'MCP Tokens'
     if (pathname.startsWith('/logs')) return 'Logs'
     if (pathname.startsWith('/profiles')) return 'Profiles'
     if (pathname.startsWith('/settings')) return 'Settings'

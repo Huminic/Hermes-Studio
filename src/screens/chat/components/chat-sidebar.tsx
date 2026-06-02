@@ -543,6 +543,8 @@ function ChatSidebarComponent({
   const isSessionHistoryActive = pathname === '/session-history'
   const isAuditActive = pathname === '/audit'
   const isLogsActive = pathname === '/logs'
+  const isPluginsActive = pathname === '/plugins'
+  const isMcpTokensActive = pathname === '/mcp-tokens'
   const isHelpActive = pathname === '/help'
   const isDocsActive = pathname === '/docs'
   const mainRoutes = ['/chat', '/new', '/files', '/terminal', '/artifacts', '/widgets']
@@ -859,6 +861,20 @@ function ChatSidebarComponent({
       icon: Clock01Icon,
       label: 'Session History',
       active: isSessionHistoryActive,
+    },
+    {
+      kind: 'link',
+      to: '/plugins',
+      icon: PuzzleIcon,
+      label: 'Plugins',
+      active: isPluginsActive,
+    },
+    {
+      kind: 'link',
+      to: '/mcp-tokens',
+      icon: Settings01Icon,
+      label: 'MCP Tokens',
+      active: isMcpTokensActive,
     },
     {
       kind: 'link',

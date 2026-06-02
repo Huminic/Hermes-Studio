@@ -1,0 +1,277 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e189]:
+    - generic [ref=e190]:
+      - generic [ref=e191]:
+        - generic [ref=e192]: ◈
+        - generic [ref=e193]: HERMES OS
+      - generic [ref=e194]: │
+      - generic [ref=e195]: NO ACTIVE SESSION
+      - generic [ref=e196]: │
+      - generic [ref=e199]: PARTIAL
+    - generic [ref=e200]:
+      - complementary [ref=e202]:
+        - generic [ref=e203]:
+          - link "Huminic Huminic Studio" [ref=e205] [cursor=pointer]:
+            - /url: /chat
+            - generic "Huminic" [ref=e206]: h
+            - generic [ref=e207]: Huminic Studio
+          - button "Close Sidebar" [ref=e208]:
+            - img
+        - button "Search" [ref=e211]:
+          - img
+          - generic [ref=e213]: Search
+        - link "New Session" [ref=e215] [cursor=pointer]:
+          - /url: /chat/new
+          - img
+          - generic [ref=e216]: New Session
+        - generic [ref=e217]:
+          - generic [ref=e218]:
+            - generic [ref=e219]:
+              - link "Main" [ref=e220] [cursor=pointer]:
+                - /url: /chat
+              - button "Collapse Main" [ref=e221]:
+                - img [ref=e222]
+            - generic [ref=e224]:
+              - link "Dashboard" [ref=e226] [cursor=pointer]:
+                - /url: /dashboard
+                - img
+                - generic [ref=e228]: Dashboard
+              - link "Chat" [ref=e230] [cursor=pointer]:
+                - /url: /chat
+                - img
+                - generic [ref=e232]: Chat
+              - link "Files" [ref=e234] [cursor=pointer]:
+                - /url: /files
+                - img
+                - generic [ref=e236]: Files
+              - link "Terminal" [ref=e238] [cursor=pointer]:
+                - /url: /terminal
+                - img
+                - generic [ref=e240]: Terminal
+              - link "Jobs" [ref=e242] [cursor=pointer]:
+                - /url: /jobs
+                - img
+                - generic [ref=e244]: Jobs
+              - link "Crews" [ref=e246] [cursor=pointer]:
+                - /url: /crews
+                - img
+                - generic [ref=e248]: Crews
+              - link "Conductor" [ref=e250] [cursor=pointer]:
+                - /url: /conductor
+                - img
+                - generic [ref=e252]: Conductor
+              - link "Operations" [ref=e254] [cursor=pointer]:
+                - /url: /operations
+                - img
+                - generic [ref=e256]: Operations
+              - link "Tasks" [ref=e258] [cursor=pointer]:
+                - /url: /tasks
+                - img
+                - generic [ref=e260]: Tasks
+              - link "Agents" [ref=e262] [cursor=pointer]:
+                - /url: /agents
+                - img
+                - generic [ref=e264]: Agents
+              - link "Engagements" [ref=e266] [cursor=pointer]:
+                - /url: /engagements
+                - img
+                - generic [ref=e268]: Engagements
+              - link "Artifacts" [ref=e270] [cursor=pointer]:
+                - /url: /artifacts
+                - img
+                - generic [ref=e272]: Artifacts
+              - link "Widget" [ref=e274] [cursor=pointer]:
+                - /url: /widgets
+                - img
+                - generic [ref=e276]: Widget
+              - link "Patterns" [ref=e278] [cursor=pointer]:
+                - /url: /patterns
+                - img
+                - generic [ref=e280]: Patterns
+              - link "Analytics" [ref=e282] [cursor=pointer]:
+                - /url: /analytics
+                - img
+                - generic [ref=e284]: Analytics
+              - link "Session History" [ref=e286] [cursor=pointer]:
+                - /url: /session-history
+                - img
+                - generic [ref=e288]: Session History
+              - link "Audit Trail" [ref=e290] [cursor=pointer]:
+                - /url: /audit
+                - img
+                - generic [ref=e292]: Audit Trail
+              - link "Logs" [ref=e294] [cursor=pointer]:
+                - /url: /logs
+                - img
+                - generic [ref=e296]: Logs
+            - generic [ref=e297]:
+              - link "Knowledge" [ref=e298] [cursor=pointer]:
+                - /url: /memory
+              - button "Collapse Knowledge" [ref=e299]:
+                - img [ref=e300]
+            - generic [ref=e302]:
+              - link "Memory" [ref=e304] [cursor=pointer]:
+                - /url: /memory
+                - img
+                - generic [ref=e306]: Memory
+              - link "Skills" [ref=e308] [cursor=pointer]:
+                - /url: /skills
+                - img
+                - generic [ref=e310]: Skills
+              - link "Profiles" [ref=e312] [cursor=pointer]:
+                - /url: /profiles
+                - img
+                - generic [ref=e314]: Profiles
+            - generic [ref=e315]:
+              - link "Help" [ref=e317] [cursor=pointer]:
+                - /url: /help
+                - img
+                - generic [ref=e319]: Help
+              - link "Documentation" [ref=e321] [cursor=pointer]:
+                - /url: /docs
+                - img
+                - generic [ref=e323]: Documentation
+          - generic [ref=e327]:
+            - button "Sessions" [expanded] [ref=e328]:
+              - generic [ref=e329]: Sessions
+              - img [ref=e331]
+            - generic [ref=e337]: No sessions yet. Start a conversation →
+        - generic [ref=e339]:
+          - button "User" [ref=e340]:
+            - img [ref=e341]
+            - generic [ref=e355]:
+              - generic [ref=e356]: User
+              - 'generic "Backend: Partial · Backend connected. Choose a provider and model to test chat. · No model selected" [ref=e357]'
+          - generic [ref=e359]:
+            - button "Settings" [ref=e360]:
+              - img [ref=e361]
+            - generic "Dark mode" [ref=e364]:
+              - img [ref=e365]
+      - main [ref=e367]:
+        - generic [ref=e460]:
+          - generic [ref=e461]:
+            - link "← All engagements" [ref=e462] [cursor=pointer]:
+              - /url: /engagements
+            - heading "huminic" [level=1] [ref=e463]
+          - generic [ref=e464]:
+            - generic [ref=e465]:
+              - generic [ref=e466]:
+                - heading "Current stage" [level=2] [ref=e467]
+                - generic [ref=e468]: Creation
+              - generic [ref=e469]:
+                - generic "Draft" [ref=e470]
+                - generic "Gathering Data" [ref=e471]
+                - generic "Solution Discovery" [ref=e472]
+                - generic "Creation" [ref=e473]
+                - generic "Submission" [ref=e474]
+                - generic "Feedback" [ref=e475]
+                - generic "Ready To Run" [ref=e476]
+              - generic [ref=e477]:
+                - generic [ref=e478]: Draft
+                - generic [ref=e479]: Gathering Data
+                - generic [ref=e480]: Solution Discovery
+                - generic [ref=e481]: Creation
+                - generic [ref=e482]: Submission
+                - generic [ref=e483]: Feedback
+                - generic [ref=e484]: Ready To Run
+              - generic [ref=e485]: Entered at 2026-06-01T18:00:00Z
+            - generic [ref=e486]:
+              - generic [ref=e487]:
+                - generic [ref=e488]:
+                  - heading "Build-time crew" [level=2] [ref=e489]
+                  - generic [ref=e490]: 1 members
+                - list [ref=e492]:
+                  - listitem [ref=e493]:
+                    - generic [ref=e494]: architect
+                    - generic [ref=e495]: consultative-agent
+              - generic [ref=e496]:
+                - generic [ref=e497]:
+                  - heading "Run-time crew" [level=2] [ref=e498]
+                  - generic [ref=e499]: 3 members
+                - list [ref=e501]:
+                  - listitem [ref=e502]:
+                    - generic [ref=e503]: architect
+                    - generic [ref=e504]: consultative-agent
+                  - listitem [ref=e505]:
+                    - generic [ref=e506]: knowledge-semantic-guardian
+                    - generic [ref=e507]: huminic-data-governor
+                  - listitem [ref=e508]:
+                    - generic [ref=e509]: data-semantic-guardian
+                    - generic [ref=e510]: huminic-data-governor
+            - generic [ref=e511]:
+              - generic [ref=e512]:
+                - heading "Readiness gates" [level=2] [ref=e513]
+                - generic [ref=e514]: 2 approved · 3 pending · 0 rejected
+              - list [ref=e515]:
+                - listitem [ref=e516]:
+                  - generic [ref=e517]:
+                    - generic [ref=e518]: Ready To Blueprint
+                    - generic [ref=e519]: approved
+                  - generic [ref=e520]: Approved by duane at 2026-05-31T09:00:00Z
+                  - generic [ref=e521]: blueprint reviewed
+                - listitem [ref=e522]:
+                  - generic [ref=e523]:
+                    - generic [ref=e524]: Ready To Instantiate Runtime
+                    - generic [ref=e525]: pending
+                - listitem [ref=e526]:
+                  - generic [ref=e527]:
+                    - generic [ref=e528]: Ready To Publish Mcp Projections
+                    - generic [ref=e529]: pending
+                - listitem [ref=e530]:
+                  - generic [ref=e531]:
+                    - generic [ref=e532]: Ready To Hand Off Externally
+                    - generic [ref=e533]: pending
+                - listitem [ref=e534]:
+                  - generic [ref=e535]:
+                    - generic [ref=e536]: Topology Decided
+                    - generic [ref=e537]: approved
+                  - generic [ref=e538]: "Decision: we-host"
+                  - generic [ref=e539]: Approved by duane at 2026-05-31T09:05:00Z
+            - generic [ref=e540]:
+              - generic [ref=e541]:
+                - generic [ref=e542]:
+                  - heading "Deployment notes" [level=2] [ref=e543]
+                  - generic [ref=e544]: 1 total
+                - list [ref=e546]:
+                  - listitem [ref=e547]:
+                    - generic [ref=e548]:
+                      - generic [ref=e549]: VinSolutions API
+                      - generic [ref=e550]: partial
+                    - generic [ref=e551]: Lead routing degraded without CRM credentials.
+                    - generic [ref=e552]: Surfaced at 2026-06-01T18:30:00Z
+              - generic [ref=e553]:
+                - generic [ref=e554]:
+                  - heading "Open decisions" [level=2] [ref=e555]
+                  - generic [ref=e556]: 1 total
+                - list [ref=e558]:
+                  - listitem [ref=e559]:
+                    - generic [ref=e560]: DEC-CRM-CADENCE
+                    - generic [ref=e561]: Choose CRM sync cadence (real-time vs nightly batch).
+                    - generic [ref=e562]: "Blocking: Submission"
+            - generic [ref=e563]:
+              - generic [ref=e564]:
+                - heading "Adjacent data neighbors" [level=2] [ref=e565]
+                - generic [ref=e566]: 1 flagged
+              - list [ref=e568]:
+                - listitem [ref=e569]:
+                  - generic [ref=e570]: service-history
+                  - generic [ref=e571]: crm · high
+            - generic [ref=e572]:
+              - heading "Stage history" [level=2] [ref=e573]
+              - list [ref=e574]:
+                - listitem [ref=e575]:
+                  - generic [ref=e577]: Draft
+                  - generic [ref=e578]: seeded
+                  - generic [ref=e579]: Entered at 2026-05-29T01:49:33Z · exited at 2026-05-30T10:00:00Z
+                - listitem [ref=e580]:
+                  - generic [ref=e582]: Gathering Data
+                  - generic [ref=e583]: audited existing wiki + Nexxus evidence
+                  - generic [ref=e584]: Entered at 2026-05-30T10:00:00Z · exited at 2026-05-31T12:00:00Z
+                - listitem [ref=e585]:
+                  - generic [ref=e587]: Creation
+                  - generic [ref=e588]: authoring prescription artifacts
+                  - generic [ref=e589]: Entered at 2026-06-01T18:00:00Z
+    - button "Open chat" [ref=e458]:
+      - img
+    - button "Collapse navigation sidebar" [ref=e459]
+  - generic [ref=e422]: $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ssssssssssssssssssssssssssssssss
