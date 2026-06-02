@@ -180,3 +180,43 @@ the Coolify auto-deploy trigger), per-fix revertibility, honest production statu
 The agent did NOT push origin/main, did NOT redeploy, did NOT run the two
 production-mutating scripts, did NOT re-dispatch the verifier (operator's
 billing + integrity boundary).
+
+---
+
+## 2026-06-02T19:16:00Z — LAUNCH DEPLOY: merge to main + live cutover
+
+**Decision:** Operator authorized merging the Phase-8 fixes to the main branch and
+redeploying via Coolify, then a second merge for live-deploy fixes found during
+verification.
+
+**Sequence (operator performed every origin/main publish via `!`-prefixed command;
+the agent surfaced the merge-to-main decision and never bypassed the branch-guard hook):**
+1. `feature/phase-8-blocker-fixes` (24 commits) merged --no-ff to main (51980f58c), published by operator, Coolify deployed. App code went live; the gateway-auth and scaffold-model defects surfaced during the live test.
+2. `fix/launch-followups` (6 commits) merged --no-ff to main (a16259761), published by operator, redeployed (container 185417403474).
+
+**Live-deploy defects found + fixed (root-caused, not assumed):**
+- GAP-VER-007-B: the COPY scripts/src/tsconfig lines were in the unused root Dockerfile; compose builds the studio from docker/workspace/Dockerfile. Fixed there; verified /app/scripts + /app/src present in the new image.
+- GAP-LIVE-002: the Studio sent no bearer to the gateway (HERMES_API_TOKEN unset) -> 401 "Invalid API key" -> chat showed Retry. Fixed: fall back to API_SERVER_KEY (openai-compat-api.ts, gateway-capabilities.ts, /api/models). Also repointed the chat model-picker fallback off the browser-unreachable 127.0.0.1:8642 loopback to the same-origin /api/models.
+- GAP-LIVE-001: scaffold profiles used `model: default` / bare model -> gateway routed inference to OpenRouter (no key) -> 401 "Missing Authentication header". Fixed the scaffold templates + repaired every live-volume profile to the OpenAI provider block (scripts/fix-profile-model-provider.py).
+- GAP-CONSOLE-002/003: removed the redundant frame-ancestors meta CSP; authed /api/models.
+
+**Live verification (fresh browser, profile-auth/PASSWORD mode, user duane):** login UI contrast resolved (operator's complaint — dark text, solid blue-600 button, no overlay); admin chat real reply ("Tokyo"); customer storefront chat real reply (openai-direct fallback); KSG save block (422 protected-tree) + allow (200); public widget /w/cedar-ridge-hero unauthenticated 200; all 6 storefront tabs render; /profiles Activate; /engagements + detail; /plugins (3 loaded, 0 issues); /mcp-tokens; /agents (8 built-in + 85 profile SOULs); in-container provisioning (provision-launch-profiles.ts) runs. Console errors dropped 15 -> 4; the remaining 4 are non-blocking (terminal-resize 404, available-models 404 with working /api/models fallback, React #418 cosmetic hydration).
+
+**Operator-mutating ops run (authorized):** deploy-phase8-souls.sh --apply (7 governor SOULs), port-manuals-to-wiki.sh --apply (6 manuals -> 23 profiles). OPENAI_API_KEY + HERMES_PASSWORD were already set in the environment and OpenAI key was live-validated (/models -> 200).
+
+Rationale: every irreversible publish to the main branch was performed by the
+operator; each fix is a separate revertible commit; nothing was claimed live that
+was not verified in a real browser or container.
+
+## 2026-06-02T19:16:00Z — Manuals: corrected + per-persona quick-starts
+
+**Decision:** Per operator request, ensured per-persona quick-start manuals across
+functions and confirmed every instruction works. Three parallel desk-audits found
+load-bearing inaccuracies in all 5 manuals (wrong readiness-gate names, wrong
+promote body, forgot-password on the wrong login, Save claiming a non-existent
+metadata_audit / git-commit, wrong rollup auth model + tool args); all corrected
+and the corrections live-verified where applicable. Added
+huminic-sales-and-prescription-guide.md (salesperson: analyze a prospect; project
+team: create the prescription), grounded in the verified-live consultative chat +
+engagements path. Committed on branch docs/launch-manuals (docs-only, no redeploy)
+and re-ported to all 23 profile wikis.

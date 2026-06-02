@@ -606,3 +606,77 @@ PENDING-COOLIFY-REDEPLOY procedures; (3) decide on `--apply` for
 deploy-phase8-souls.sh + port-manuals-to-wiki.sh; (4) the LOW-bucket items
 (GAP-CONSOLE-001 / GAP-CSP-META-001 / GAP-API-CONNECTION-STATUS-500) remain open
 (see PLAN.md) — not launch-blocking.
+
+---
+
+# LAUNCH DEPLOY PASS — 2026-06-02
+
+The Phase-8 fixes were merged to the main branch (operator-published) and deployed
+live to `studio.huminic.app` via Coolify, then a second batch of fixes found
+during live verification was deployed. The application is launched and the core
+workflows are verified working in a real browser + container.
+
+## Deploys
+
+| # | Source | main commit | Container | Result |
+|---|--------|-------------|-----------|--------|
+| 1 | feature/phase-8-blocker-fixes (24 commits) | 51980f58c | hermes-studio-...-145314479819 | app code live; 2 defects surfaced |
+| 2 | fix/launch-followups (6 commits) | a16259761 | hermes-studio-...-185417403474 | chat + provisioning + console fixes live |
+
+## Defects found live + fixed (each a separate revertible commit)
+
+| Gap | Root cause | Fix | Verified live |
+|-----|-----------|-----|---------------|
+| GAP-VER-007-B | scripts/src COPY was in the unused root Dockerfile; compose builds docker/workspace/Dockerfile | added COPY to the workspace Dockerfile | /app/scripts (6 .ts) + /app/src + tsconfig present; provisioning script runs in-container |
+| GAP-LIVE-002 | Studio sent no gateway bearer (HERMES_API_TOKEN unset) -> 401 | fall back to API_SERVER_KEY (3 sites) | admin chat returns real reply ("Tokyo"); /api/models 200 |
+| GAP-LIVE-001 | scaffold profiles `model: default` -> OpenRouter (no key) -> 401 | OpenAI provider block in scaffold + all live profiles | gateway /v1/chat/completions 200; consultative-agent shows gpt-4.1 |
+| GAP-CONSOLE-002/003 | redundant frame-ancestors meta; client-side 127.0.0.1:8642 model fetch | drop meta directive; same-origin /api/models | console errors 15 -> 4 (rest non-blocking) |
+
+## Live verification matrix (fresh browser, profile-auth, user duane)
+
+| Function | Result |
+|----------|--------|
+| Login UI contrast (operator complaint) | PASS — dark text, solid blue-600 button, no overlay |
+| Admin chat round-trip | PASS — real reply "Tokyo" (consultative-agent / gpt-4.1) |
+| Customer storefront chat | PASS — real reply (openai-direct fallback) |
+| KSG wiki save | PASS — block 422 protected-tree; allow 200 valid draft |
+| Public widget /w/cedar-ridge-hero | PASS — 200 unauthenticated, chat mode |
+| Storefront tabs (Chat/Knowledge/Tools/Data/Comms/Campaigns) | PASS — all render; Data dimmed per studio.yaml |
+| /profiles Activate | PASS — consultative-agent ACTIVE gpt-4.1 ENV |
+| /engagements + /engagements/<customer> | PASS — overview + detail (GAP-VER-005) |
+| /plugins | PASS — 3 plugins loaded, 0 issues |
+| /mcp-tokens | PASS — renders |
+| /agents | PASS — 8 built-in + 85 profile SOULs (GAP-VER-004) |
+| Direct-nav auth gate (GAP-VER-002) | PASS — login gated then loads |
+| Security headers | PASS — CSP frame-ancestors none + X-Frame-Options DENY (HTTP) |
+| In-container provisioning | PASS — provision-launch-profiles.ts runs (no-op, all 7 exist) |
+| Governor SOULs deploy | PASS — 7 deployed (deploy-phase8-souls.sh --apply) |
+| Manuals -> wiki | PASS — 6 manuals ported to 23 profiles |
+
+GAP-VER-003 (rate-limit) is unit-verified (rate-limit.test.ts) and not live-hammered
+to avoid self-lockout.
+
+## Manuals (operator request)
+
+All 5 persona manuals were desk-audited against the live code (3 parallel agents)
+and corrected for load-bearing inaccuracies (gate names, promote body, login/reset
+location, Save audit/commit claims, rollup auth + tool args). A new
+huminic-sales-and-prescription-guide.md adds quick-starts for the Huminic
+salesperson (analyze a prospect) and project team (create the prescription),
+grounded in the verified-live consultative chat + engagements path. Live-verified
+flows from the manuals: login, chat, KSG save block+allow, public widget, all 6
+tabs, Activate, engagements, provisioning. Committed on docs/launch-manuals.
+
+## Non-blocking debt
+
+See docs/launch/issues.md (terminal-resize 404, React #418 cosmetic,
+available-models 404 with working fallback, portable-gateway missing APIs, and the
+documented launch gaps GAP-LOGOUT-001 / concurrent-edit / OP-002 / data-canvas).
+
+## Disposition
+
+GO — launched and verified. Core admin + customer workflows work end-to-end on
+live studio.huminic.app. origin/main carries all fixes (operator-published).
+Channel adapters (SMS/voice/video) and the Data dashboard remain operator-gated on
+credentials/provisioning per the documented gaps; they are not launch-blocking for
+the verified core.
