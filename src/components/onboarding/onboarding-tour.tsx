@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Joyride, { ACTIONS, STATUS } from 'react-joyride'
 import { tourSteps } from './tour-steps'
 import type { CallBackProps, Styles } from 'react-joyride'
@@ -32,9 +32,28 @@ export function OnboardingTour() {
   const resolvedTheme = useResolvedTheme()
   const isDark = resolvedTheme === 'dark'
 
+  // The tour overlays the workspace chrome (sidebar/nav targets). It must NOT
+  // fire over the LOGIN screen — gate on authentication, the same way the
+  // mobile-access prompt is gated, so a previously-configured-but-logged-out
+  // operator doesn't get a Joyride overlay on top of the sign-in form.
+  const authedRef = useRef(false)
+
   // Wait for client-side mount before doing anything — prevents SSR hydration errors
   useEffect(() => {
     setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/auth-session', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((d) => {
+        if (!cancelled) authedRef.current = Boolean(d?.authenticated)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   useEffect(() => {
@@ -49,7 +68,7 @@ export function OnboardingTour() {
       const checkAndStart = () => {
         const hermesConfigured =
           localStorage.getItem(HERMES_SETUP_KEY) === 'true'
-        if (hermesConfigured) {
+        if (hermesConfigured && authedRef.current) {
           setRun(true)
           return true
         }

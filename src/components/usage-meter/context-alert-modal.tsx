@@ -147,7 +147,7 @@ function ContextAlertModalComponent({
             {isDanger && (
               <a
                 href="/new"
-                className="rounded-lg bg-primary-900 px-4 py-2 text-xs font-medium text-white hover:bg-primary-800 transition-colors"
+                className="rounded-lg bg-accent-500 px-4 py-2 text-xs font-medium text-white hover:bg-accent-400 transition-colors"
               >
                 New Chat
               </a>

@@ -442,7 +442,7 @@ export function UsageDetailsModal({
             onClick={() => setActiveTab(tab)}
             className={`rounded-full px-3 py-1 font-medium transition ${
               activeTab === tab
-                ? 'bg-white text-primary-900 shadow-sm'
+                ? 'bg-[var(--theme-card)] text-primary-900 shadow-sm'
                 : 'text-primary-600 hover:text-primary-800'
             }`}
           >
@@ -503,7 +503,7 @@ export function UsageDetailsModal({
                   usage.models.map((model) => (
                     <div
                       key={model.model}
-                      className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-primary-100 bg-white px-3 py-2 text-sm"
+                      className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-primary-100 bg-[var(--theme-card)] px-3 py-2 text-sm"
                     >
                       <div className="font-medium text-primary-800">
                         {formatModelName(model.model)}
@@ -535,7 +535,7 @@ export function UsageDetailsModal({
                   usage.sessions.map((session) => (
                     <div
                       key={session.id}
-                      className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-primary-100 bg-white px-3 py-2 text-sm"
+                      className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-primary-100 bg-[var(--theme-card)] px-3 py-2 text-sm"
                     >
                       <div>
                         <div className="font-medium text-primary-800">
@@ -674,7 +674,7 @@ export function UsageDetailsModal({
                                 onClick={() =>
                                   handleSetDefault(provider.provider)
                                 }
-                                className="rounded-lg border border-primary-200 bg-white px-3 py-1.5 text-xs font-medium text-primary-700 transition hover:bg-primary-50"
+                                className="rounded-lg border border-primary-200 bg-[var(--theme-card)] px-3 py-1.5 text-xs font-medium text-primary-700 transition hover:bg-primary-50"
                               >
                                 Set as Default
                               </button>
