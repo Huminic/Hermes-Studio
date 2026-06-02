@@ -17,6 +17,12 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import type { Thread } from './messaging-hub-store'
+import { readStudioConfig } from './studio-config'
+import {
+  credentialModeFor,
+  type CredentialedChannel,
+  type CredentialMode,
+} from '../lib/studio-config'
 
 type AdapterStatus = 'sent' | 'unconfigured' | 'failed' | 'simulated'
 
@@ -25,6 +31,82 @@ export type AdapterResult = {
   via: string
   external_id?: string | null
   error?: string | null
+}
+
+/**
+ * Resolve the operator-selected credential mode for a channel on a profile.
+ * Default 'shared' (united credentials brokered by central-mcp). Never throws —
+ * a missing/broken studio.yaml falls back to 'shared'.
+ */
+function modeFor(profile: string, channel: CredentialedChannel): CredentialMode {
+  try {
+    return credentialModeFor(readStudioConfig(profile).config, channel)
+  } catch {
+    return 'shared'
+  }
+}
+
+/**
+ * SHARED path: dispatch via central-mcp, which holds the united provider
+ * credentials (same broker the email/Resend path already uses). Mirrors the
+ * SSE-framed JSON-RPC call shape in notifications.ts. Returns 'unconfigured'
+ * when the central-mcp token is absent so the hub still keeps a local record.
+ */
+async function callCentralMcpTool(
+  profile: string,
+  toolName: string,
+  args: Record<string, unknown>,
+): Promise<{ ok: boolean; externalId?: string | null; error?: string; unconfigured?: boolean }> {
+  const env = readEnvFromProfile(profile)
+  const token = env.CENTRAL_MCP_TOKEN ?? process.env.CENTRAL_MCP_TOKEN
+  const central =
+    env.CENTRAL_MCP_URL ?? process.env.CENTRAL_MCP_URL ?? 'http://localhost:4002/mcp'
+  if (!token) return { ok: false, unconfigured: true, error: 'central-mcp token missing' }
+  try {
+    const res = await fetch(central, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'tools/call',
+        params: { name: toolName, arguments: args },
+      }),
+    })
+    const text = await res.text()
+    if (!res.ok) return { ok: false, error: text.slice(0, 200) }
+    const m = text.match(/data: ({[\s\S]*?})\n/)
+    if (m) {
+      const obj = JSON.parse(m[1]) as {
+        error?: unknown
+        result?: { isError?: boolean; content?: Array<{ text?: string }> }
+      }
+      if (obj.error) return { ok: false, error: JSON.stringify(obj.error).slice(0, 200) }
+      if (obj.result?.isError)
+        return { ok: false, error: (obj.result.content?.[0]?.text ?? 'tool error').slice(0, 200) }
+      let externalId: string | null = null
+      const inner = obj.result?.content?.[0]?.text
+      if (inner) {
+        try {
+          const o = JSON.parse(inner) as Record<string, unknown>
+          externalId =
+            (o.id as string) ??
+            (o.conversation_id as string) ??
+            (o.call_id as string) ??
+            null
+        } catch {
+          // non-JSON tool text — still a successful send
+        }
+      }
+      return { ok: true, externalId }
+    }
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : 'network error' }
+  }
 }
 
 function readEnvFromProfile(profile: string): Record<string, string> {
@@ -56,13 +138,24 @@ async function dispatchTextMagic(
   thread: Thread,
   content: string,
 ): Promise<AdapterResult> {
-  const env = readEnvFromProfile(profile)
-  const apiKey = env.TEXTMAGIC_API_KEY ?? process.env.TEXTMAGIC_API_KEY
-  const username = env.TEXTMAGIC_USERNAME ?? process.env.TEXTMAGIC_USERNAME
-  const from = env.TEXTMAGIC_FROM ?? process.env.TEXTMAGIC_FROM
   const to = thread.contact_handle
+  // SHARED (default): united TextMagic creds + sender via central-mcp.
+  if (modeFor(profile, 'sms') === 'shared') {
+    const r = await callCentralMcpTool(profile, 'tm_send_message', {
+      text: content,
+      phones: to,
+    })
+    if (r.unconfigured) return { status: 'unconfigured', via: 'textmagic-shared' }
+    if (!r.ok) return { status: 'failed', via: 'textmagic-shared', error: r.error }
+    return { status: 'sent', via: 'textmagic-shared', external_id: r.externalId ?? null }
+  }
+  // OWN: the profile's own TextMagic creds, direct to the provider.
+  const env = readEnvFromProfile(profile)
+  const apiKey = env.TEXTMAGIC_API_KEY
+  const username = env.TEXTMAGIC_USERNAME
+  const from = env.TEXTMAGIC_FROM
   if (!apiKey || !username || !from) {
-    return { status: 'unconfigured', via: 'textmagic' }
+    return { status: 'unconfigured', via: 'textmagic-own' }
   }
   try {
     const res = await fetch('https://rest.textmagic.com/api/v2/messages', {
@@ -104,10 +197,29 @@ async function dispatchVapi(
   thread: Thread,
   content: string,
 ): Promise<AdapterResult> {
+  // SHARED (default): united Vapi creds via central-mcp vapi_create_call. The
+  // shared assistant (and optional phone number) come from the studio-level env
+  // so every shared-mode profile dials with the same united setup.
+  if (modeFor(profile, 'vapi') === 'shared') {
+    const assistantId = process.env.VAPI_ASSISTANT_ID
+    if (!assistantId) return { status: 'unconfigured', via: 'vapi-shared' }
+    const r = await callCentralMcpTool(profile, 'vapi_create_call', {
+      assistantId,
+      customerNumber: thread.contact_handle,
+      ...(process.env.VAPI_PHONE_NUMBER_ID
+        ? { phoneNumberId: process.env.VAPI_PHONE_NUMBER_ID }
+        : {}),
+      firstMessageOverride: content.slice(0, 400),
+    })
+    if (r.unconfigured) return { status: 'unconfigured', via: 'vapi-shared' }
+    if (!r.ok) return { status: 'failed', via: 'vapi-shared', error: r.error }
+    return { status: 'sent', via: 'vapi-shared', external_id: r.externalId ?? null }
+  }
+  // OWN: the profile's own Vapi key, direct to the provider.
   const env = readEnvFromProfile(profile)
-  const key = env.VAPI_API_KEY ?? process.env.VAPI_API_KEY
+  const key = env.VAPI_API_KEY
   if (!key) {
-    return { status: 'unconfigured', via: 'vapi' }
+    return { status: 'unconfigured', via: 'vapi-own' }
   }
   // Vapi outbound is a dial action; the actual "message" carrier is the
   // assistant's initial_message override. The bridge submits a call
@@ -151,11 +263,26 @@ async function dispatchTavus(
   thread: Thread,
   content: string,
 ): Promise<AdapterResult> {
+  // SHARED (default): united Tavus creds via central-mcp tavus_create_conversation.
+  // The shared persona comes from the studio-level env.
+  if (modeFor(profile, 'tavus') === 'shared') {
+    const personaId = process.env.TAVUS_PERSONA_ID
+    if (!personaId) return { status: 'unconfigured', via: 'tavus-shared' }
+    const r = await callCentralMcpTool(profile, 'tavus_create_conversation', {
+      persona_id: personaId,
+      conversation_name: thread.subject,
+      custom_greeting: content.slice(0, 200),
+    })
+    if (r.unconfigured) return { status: 'unconfigured', via: 'tavus-shared' }
+    if (!r.ok) return { status: 'failed', via: 'tavus-shared', error: r.error }
+    return { status: 'sent', via: 'tavus-shared', external_id: r.externalId ?? null }
+  }
+  // OWN: the profile's own Tavus key + persona, direct to the provider.
   const env = readEnvFromProfile(profile)
-  const key = env.TAVUS_API_KEY ?? process.env.TAVUS_API_KEY
-  const personaId = env.TAVUS_PERSONA_ID ?? process.env.TAVUS_PERSONA_ID
+  const key = env.TAVUS_API_KEY
+  const personaId = env.TAVUS_PERSONA_ID
   if (!key || !personaId) {
-    return { status: 'unconfigured', via: 'tavus' }
+    return { status: 'unconfigured', via: 'tavus-own' }
   }
   // Tavus session-create stub (AC.6.3 builds out fully).
   try {
