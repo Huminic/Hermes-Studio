@@ -24,7 +24,6 @@ import { Route as LogsRouteImport } from './routes/logs'
 import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as FilesRouteImport } from './routes/files'
-import { Route as EngagementsRouteImport } from './routes/engagements'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ConductorRouteImport } from './routes/conductor'
@@ -36,6 +35,7 @@ import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WIndexRouteImport } from './routes/w.index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
+import { Route as EngagementsIndexRouteImport } from './routes/engagements.index'
 import { Route as CrewsIndexRouteImport } from './routes/crews/index'
 import { Route as ChatIndexRouteImport } from './routes/chat/index'
 import { Route as WSlugRouteImport } from './routes/w.$slug'
@@ -252,11 +252,6 @@ const FilesRoute = FilesRouteImport.update({
   path: '/files',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EngagementsRoute = EngagementsRouteImport.update({
-  id: '/engagements',
-  path: '/engagements',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DocsRoute = DocsRouteImport.update({
   id: '/docs',
   path: '/docs',
@@ -312,6 +307,11 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SettingsRoute,
 } as any)
+const EngagementsIndexRoute = EngagementsIndexRouteImport.update({
+  id: '/engagements/',
+  path: '/engagements/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CrewsIndexRoute = CrewsIndexRouteImport.update({
   id: '/crews/',
   path: '/crews/',
@@ -348,9 +348,9 @@ const PProfileRoute = PProfileRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const EngagementsCustomerRoute = EngagementsCustomerRouteImport.update({
-  id: '/$customer',
-  path: '/$customer',
-  getParentRoute: () => EngagementsRoute,
+  id: '/engagements/$customer',
+  path: '/engagements/$customer',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CrewsCrewIdRoute = CrewsCrewIdRouteImport.update({
   id: '/crews/$crewId',
@@ -1041,7 +1041,6 @@ export interface FileRoutesByFullPath {
   '/conductor': typeof ConductorRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
-  '/engagements': typeof EngagementsRouteWithChildren
   '/files': typeof FilesRoute
   '/help': typeof HelpRoute
   '/jobs': typeof JobsRoute
@@ -1108,6 +1107,7 @@ export interface FileRoutesByFullPath {
   '/w/$slug': typeof WSlugRoute
   '/chat/': typeof ChatIndexRoute
   '/crews/': typeof CrewsIndexRoute
+  '/engagements/': typeof EngagementsIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/w/': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
@@ -1210,7 +1210,6 @@ export interface FileRoutesByTo {
   '/conductor': typeof ConductorRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
-  '/engagements': typeof EngagementsRouteWithChildren
   '/files': typeof FilesRoute
   '/help': typeof HelpRoute
   '/jobs': typeof JobsRoute
@@ -1276,6 +1275,7 @@ export interface FileRoutesByTo {
   '/w/$slug': typeof WSlugRoute
   '/chat': typeof ChatIndexRoute
   '/crews': typeof CrewsIndexRoute
+  '/engagements': typeof EngagementsIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/w': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
@@ -1379,7 +1379,6 @@ export interface FileRoutesById {
   '/conductor': typeof ConductorRoute
   '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
-  '/engagements': typeof EngagementsRouteWithChildren
   '/files': typeof FilesRoute
   '/help': typeof HelpRoute
   '/jobs': typeof JobsRoute
@@ -1446,6 +1445,7 @@ export interface FileRoutesById {
   '/w/$slug': typeof WSlugRoute
   '/chat/': typeof ChatIndexRoute
   '/crews/': typeof CrewsIndexRoute
+  '/engagements/': typeof EngagementsIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/w/': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
@@ -1550,7 +1550,6 @@ export interface FileRouteTypes {
     | '/conductor'
     | '/dashboard'
     | '/docs'
-    | '/engagements'
     | '/files'
     | '/help'
     | '/jobs'
@@ -1617,6 +1616,7 @@ export interface FileRouteTypes {
     | '/w/$slug'
     | '/chat/'
     | '/crews/'
+    | '/engagements/'
     | '/settings/'
     | '/w/'
     | '/api/agents/$agentId'
@@ -1719,7 +1719,6 @@ export interface FileRouteTypes {
     | '/conductor'
     | '/dashboard'
     | '/docs'
-    | '/engagements'
     | '/files'
     | '/help'
     | '/jobs'
@@ -1785,6 +1784,7 @@ export interface FileRouteTypes {
     | '/w/$slug'
     | '/chat'
     | '/crews'
+    | '/engagements'
     | '/settings'
     | '/w'
     | '/api/agents/$agentId'
@@ -1887,7 +1887,6 @@ export interface FileRouteTypes {
     | '/conductor'
     | '/dashboard'
     | '/docs'
-    | '/engagements'
     | '/files'
     | '/help'
     | '/jobs'
@@ -1954,6 +1953,7 @@ export interface FileRouteTypes {
     | '/w/$slug'
     | '/chat/'
     | '/crews/'
+    | '/engagements/'
     | '/settings/'
     | '/w/'
     | '/api/agents/$agentId'
@@ -2057,7 +2057,6 @@ export interface RootRouteChildren {
   ConductorRoute: typeof ConductorRoute
   DashboardRoute: typeof DashboardRoute
   DocsRoute: typeof DocsRoute
-  EngagementsRoute: typeof EngagementsRouteWithChildren
   FilesRoute: typeof FilesRoute
   HelpRoute: typeof HelpRoute
   JobsRoute: typeof JobsRoute
@@ -2116,10 +2115,12 @@ export interface RootRouteChildren {
   ChatSessionKeyRoute: typeof ChatSessionKeyRoute
   ConsoleProfileRoute: typeof ConsoleProfileRouteWithChildren
   CrewsCrewIdRoute: typeof CrewsCrewIdRoute
+  EngagementsCustomerRoute: typeof EngagementsCustomerRoute
   PProfileRoute: typeof PProfileRouteWithChildren
   WSlugRoute: typeof WSlugRoute
   ChatIndexRoute: typeof ChatIndexRoute
   CrewsIndexRoute: typeof CrewsIndexRoute
+  EngagementsIndexRoute: typeof EngagementsIndexRoute
   WIndexRoute: typeof WIndexRoute
   ApiAgentsAgentIdRoute: typeof ApiAgentsAgentIdRoute
   ApiArtifactsArtifactIdRoute: typeof ApiArtifactsArtifactIdRouteWithChildren
@@ -2290,13 +2291,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FilesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/engagements': {
-      id: '/engagements'
-      path: '/engagements'
-      fullPath: '/engagements'
-      preLoaderRoute: typeof EngagementsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/docs': {
       id: '/docs'
       path: '/docs'
@@ -2374,6 +2368,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/engagements/': {
+      id: '/engagements/'
+      path: '/engagements'
+      fullPath: '/engagements/'
+      preLoaderRoute: typeof EngagementsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/crews/': {
       id: '/crews/'
       path: '/crews'
@@ -2425,10 +2426,10 @@ declare module '@tanstack/react-router' {
     }
     '/engagements/$customer': {
       id: '/engagements/$customer'
-      path: '/$customer'
+      path: '/engagements/$customer'
       fullPath: '/engagements/$customer'
       preLoaderRoute: typeof EngagementsCustomerRouteImport
-      parentRoute: typeof EngagementsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/crews/$crewId': {
       id: '/crews/$crewId'
@@ -3357,18 +3358,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface EngagementsRouteChildren {
-  EngagementsCustomerRoute: typeof EngagementsCustomerRoute
-}
-
-const EngagementsRouteChildren: EngagementsRouteChildren = {
-  EngagementsCustomerRoute: EngagementsCustomerRoute,
-}
-
-const EngagementsRouteWithChildren = EngagementsRoute._addFileChildren(
-  EngagementsRouteChildren,
-)
-
 interface SettingsRouteChildren {
   SettingsMcpRoute: typeof SettingsMcpRoute
   SettingsMcpTokensRoute: typeof SettingsMcpTokensRoute
@@ -3626,7 +3615,6 @@ const rootRouteChildren: RootRouteChildren = {
   ConductorRoute: ConductorRoute,
   DashboardRoute: DashboardRoute,
   DocsRoute: DocsRoute,
-  EngagementsRoute: EngagementsRouteWithChildren,
   FilesRoute: FilesRoute,
   HelpRoute: HelpRoute,
   JobsRoute: JobsRoute,
@@ -3685,10 +3673,12 @@ const rootRouteChildren: RootRouteChildren = {
   ChatSessionKeyRoute: ChatSessionKeyRoute,
   ConsoleProfileRoute: ConsoleProfileRouteWithChildren,
   CrewsCrewIdRoute: CrewsCrewIdRoute,
+  EngagementsCustomerRoute: EngagementsCustomerRoute,
   PProfileRoute: PProfileRouteWithChildren,
   WSlugRoute: WSlugRoute,
   ChatIndexRoute: ChatIndexRoute,
   CrewsIndexRoute: CrewsIndexRoute,
+  EngagementsIndexRoute: EngagementsIndexRoute,
   WIndexRoute: WIndexRoute,
   ApiAgentsAgentIdRoute: ApiAgentsAgentIdRoute,
   ApiArtifactsArtifactIdRoute: ApiArtifactsArtifactIdRouteWithChildren,
