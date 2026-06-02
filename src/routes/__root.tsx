@@ -25,7 +25,9 @@ const APP_CSP = [
   "base-uri 'self'",
   "object-src 'none'",
   "form-action 'self'",
-  "frame-ancestors 'none'",
+  // frame-ancestors is intentionally NOT here: browsers ignore it when delivered
+  // via <meta> and log a console error. It is enforced via the HTTP response
+  // header in server-entry.js (plus X-Frame-Options: DENY). (GAP-CONSOLE-002)
   "script-src 'self' 'unsafe-inline'",
   // Google Fonts stylesheet is @import-ed in styles.css; allow its host so the
   // stylesheet + font files load instead of being CSP-blocked (GAP-CONSOLE-001).
