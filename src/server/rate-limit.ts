@@ -42,11 +42,49 @@ export function rateLimit(
 }
 
 /**
- * Extract client IP from request for rate limiting key.
+ * Strip a trailing `:port` from a forwarded address token so the rate-limit
+ * key is a stable per-client IP.
+ *
+ * The reverse proxy in front of this app (Caddy) sets `X-Forwarded-For` /
+ * `X-Real-IP` to `{remote}`, which is `IP:port` — and the ephemeral source
+ * port changes on every TCP connection. Without stripping the port, every
+ * request produced a unique key and the per-IP rate limit never accumulated
+ * (GAP-VER-003: reset-request returned 200 for unlimited rapid calls in
+ * production while limiting correctly when hit directly with no proxy header).
+ *
+ * Handles: `IPv4:port`, `[IPv6]:port`, bare `IPv4`, bare `IPv6`, and `[IPv6]`.
+ */
+export function stripPort(addr: string): string {
+  const s = addr.trim()
+  if (!s) return s
+  // Bracketed IPv6, optionally with a port: [::1] or [::1]:443
+  if (s.startsWith('[')) {
+    const end = s.indexOf(']')
+    return end === -1 ? s : s.slice(1, end)
+  }
+  // Exactly one colon => IPv4:port. Bare IPv4 (no colon) and bare IPv6
+  // (many colons, unbracketed) are returned unchanged.
+  const first = s.indexOf(':')
+  if (first !== -1 && first === s.lastIndexOf(':')) {
+    return s.slice(0, first)
+  }
+  return s
+}
+
+/**
+ * Extract a stable client IP from request for the rate limiting key.
+ * Prefers the left-most X-Forwarded-For entry, falls back to X-Real-IP,
+ * then to a constant. Always port-stripped (see {@link stripPort}).
  */
 export function getClientIp(request: Request): string {
   const forwarded = request.headers.get('x-forwarded-for')
-  if (forwarded) return forwarded.split(',')[0].trim()
+  if (forwarded && forwarded.trim()) {
+    return stripPort(forwarded.split(',')[0])
+  }
+  const realIp = request.headers.get('x-real-ip')
+  if (realIp && realIp.trim()) {
+    return stripPort(realIp)
+  }
   return 'local'
 }
 
