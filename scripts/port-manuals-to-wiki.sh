@@ -64,6 +64,14 @@ echo "  mode      : $([ "$APPLY" -eq 1 ] && echo APPLY || echo DRY-RUN)"
 echo
 
 for p in $PROFILES; do
+  # Defensive: profile slugs are DNS-safe; reject anything else so an operator
+  # typo / odd --only value can't inject into the docker exec shell below.
+  case "$p" in
+    *[!a-zA-Z0-9._-]*|'')
+      echo "  SKIP invalid profile name: '$p'" >&2
+      continue
+      ;;
+  esac
   dest="/root/.hermes/profiles/$p/knowledge/operating-manuals"
   echo "[$p] -> $dest"
   if [ "$APPLY" -eq 0 ]; then
