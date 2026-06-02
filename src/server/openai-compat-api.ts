@@ -1,7 +1,13 @@
 import { HERMES_API } from './gateway-capabilities'
 
-/** Optional bearer token for authenticated OpenAI-compatible endpoints (e.g. Codex OAuth). */
-const BEARER_TOKEN = process.env.HERMES_API_TOKEN || ''
+/**
+ * Optional bearer token for authenticated OpenAI-compatible endpoints (e.g. Codex OAuth).
+ * Falls back to API_SERVER_KEY: when the Studio talks to a Hermes gateway running its
+ * built-in API server (API_SERVER_ENABLED=true), that server authenticates requests with
+ * API_SERVER_KEY. Without this fallback the Studio sends no bearer and every gateway call
+ * 401s with "Invalid API key" (GAP-LIVE-002). HERMES_API_TOKEN still wins when set.
+ */
+const BEARER_TOKEN = process.env.HERMES_API_TOKEN || process.env.API_SERVER_KEY || ''
 
 /** Cached first available model from /v1/models — used as fallback when no model is specified. */
 let _cachedDefaultModel: string | null = null
