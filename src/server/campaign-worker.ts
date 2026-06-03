@@ -30,6 +30,7 @@ export type CampaignTickResult = {
   sent: number
   failed: number
   skipped: number
+  simulated?: number
 }
 
 function pickHandle(contact: Contact, channel: string): string | null {
@@ -98,6 +99,7 @@ export async function tickCampaigns(input: {
     let sent = 0
     let failed = 0
     let skipped = 0
+    let simulated = 0
     for (const contact of contacts) {
       if (previousDeliveries.has(contact.id)) {
         skipped++
@@ -143,10 +145,12 @@ export async function tickCampaigns(input: {
           via: adapterResult.via,
         },
       })
-      if (
-        adapterResult.status === 'sent' ||
-        adapterResult.status === 'simulated'
-      ) {
+      if (adapterResult.status === 'simulated') {
+        // Local-only record (e.g. chat) — nothing was actually delivered to a
+        // real recipient, so it must NOT count as a 'sent' delivery (that would
+        // inflate campaign reach). Tracked separately.
+        simulated++
+      } else if (adapterResult.status === 'sent') {
         recordCampaignDelivery({
           profile: input.profile,
           campaign_id: c.id,
@@ -174,6 +178,7 @@ export async function tickCampaigns(input: {
       sent,
       failed,
       skipped,
+      simulated,
     })
   }
   return out

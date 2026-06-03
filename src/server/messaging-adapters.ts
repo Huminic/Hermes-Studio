@@ -339,6 +339,10 @@ async function dispatchEmail(
   const token = env.CENTRAL_MCP_TOKEN ?? process.env.CENTRAL_MCP_TOKEN
   const central = env.CENTRAL_MCP_URL ?? process.env.CENTRAL_MCP_URL ?? 'http://localhost:4002/mcp'
   if (!token) return { status: 'unconfigured', via: 'email-resend' }
+  // central-mcp's resend tool REQUIRES a `from` (its schema reads body.from).
+  // Without it the send is rejected at schema validation. Per-profile override
+  // via RESEND_FROM in the profile .env; default matches Nexxus's sender.
+  const from = env.RESEND_FROM ?? process.env.RESEND_FROM ?? 'notifications@huminic.ai'
   try {
     const res = await fetch(central, {
       method: 'POST',
@@ -353,6 +357,7 @@ async function dispatchEmail(
         params: {
           name: 'resend_send_email',
           arguments: {
+            from,
             to: thread.contact_handle,
             subject: thread.subject,
             html: `<p>${escapeHtml(content)}</p>`,

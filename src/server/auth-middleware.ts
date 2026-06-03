@@ -215,6 +215,22 @@ export function requireLocalOrAuth(request: Request): boolean {
 }
 
 /**
+ * True only when the request carries a Studio-ADMIN session (is_admin).
+ * A customer-admin (storefront) session is NOT admin. When password
+ * protection is disabled (local dev), defers to a local request so the
+ * dev workflow is unaffected. Use this to gate operator-only mutations
+ * (e.g. editing governance/ files an agent reads).
+ */
+export function isAdmin(request: Request): boolean {
+  if (!isPasswordProtectionEnabled()) {
+    return isLocalRequest(request)
+  }
+  const token = getSessionTokenFromCookie(request.headers.get('cookie'))
+  if (!token) return false
+  return getSessionMetadata(token)?.is_admin === true
+}
+
+/**
  * Create a Set-Cookie header for the session token.
  */
 export function createSessionCookie(token: string): string {

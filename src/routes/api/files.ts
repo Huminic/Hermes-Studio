@@ -6,6 +6,7 @@ import { promisify } from 'node:util'
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import {
+  isAdmin,
   isAuthenticated,
   requireLocalOrAuth,
 } from '../../server/auth-middleware'
@@ -332,8 +333,15 @@ export const Route = createFileRoute('/api/files')({
         }
       },
       POST: async ({ request }) => {
-        if (!isAuthenticated(request)) {
-          return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
+        // Mutations here can write ANY file in a profile workspace, including
+        // governance/agents/*.md (the instructions agents read). That is an
+        // operator-only surface — require a Studio ADMIN session, not just any
+        // authenticated (e.g. customer-admin storefront) session.
+        if (!isAdmin(request)) {
+          return json(
+            { ok: false, error: 'Admin session required.' },
+            { status: 403 },
+          )
         }
         const ip = getClientIp(request)
         if (!rateLimit(`files:${ip}`, 30, 60_000)) {
