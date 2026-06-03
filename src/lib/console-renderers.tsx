@@ -23,6 +23,7 @@ import { CustomerKnowledgeRenderer } from '../components/customer-console/knowle
 import { CustomerToolsWidgetRenderer } from '../components/customer-console/tools-widget-renderer'
 import { CustomerCommsRenderer } from '../components/customer-console/comms-renderer'
 import { CustomerCampaignsRenderer } from '../components/customer-console/campaigns-renderer'
+import { CustomerDataRenderer } from '../components/customer-console/data-renderer'
 import { ConsultPanel } from '../components/customer-console/consult-panel'
 
 export type ConsoleRendererProps = {
@@ -133,19 +134,7 @@ function ToolsWidgetRenderer(props: ConsoleRendererProps) {
 }
 
 function DataRenderer(props: ConsoleRendererProps) {
-  const scopes = props.config.federation.read_scopes
-  return (
-    <StubFrame title={`customer-console.data · ${props.profile}`}>
-      <div className="text-xs opacity-70">
-        Phase C.10 — Metabase React SDK dashboards reading from a per-profile
-        analytics.duckdb. Federation MCP (C.9) backs ad-hoc queries.
-      </div>
-      <div className="mt-2 text-xs opacity-60">
-        Federation read scopes:{' '}
-        {scopes.length === 0 ? '(none configured)' : scopes.join(', ')}
-      </div>
-    </StubFrame>
-  )
+  return <CustomerDataRenderer profile={props.profile} config={props.config} />
 }
 
 function CommsRenderer(props: ConsoleRendererProps) {

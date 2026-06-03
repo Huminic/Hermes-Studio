@@ -1129,6 +1129,132 @@ export function listQueuedReplyJobs(profile: string): Array<AgentReplyJob> {
   )
 }
 
+// ─── Report aggregates (P3 native reports) ──────────────────────────────────
+//
+// Read-only rollups over the per-profile store. Mirror the Nexxus Insights
+// model (hardcoded queries over the local store) but against Studio's own
+// messaging-hub.db. Both the SQLite and in-memory paths return identical
+// shapes so portable test builds and production behave the same.
+
+export type MessageStats = {
+  total: number
+  inbound: number
+  outbound: number
+  by_channel: Record<string, { inbound: number; outbound: number }>
+}
+
+export type ThreadStats = {
+  total: number
+  open: number
+  closed: number
+  by_domain: Record<string, number>
+}
+
+export type CampaignStats = {
+  campaigns: number
+  by_status: Record<string, number>
+  deliveries_sent: number
+  deliveries_failed: number
+}
+
+/**
+ * Message volume rollup. `sinceMs` (epoch ms) optionally bounds to a recent
+ * window (created_at >= sinceMs); omit for all-time.
+ */
+export function aggregateMessages(profile: string, sinceMs?: number): MessageStats {
+  const stats: MessageStats = { total: 0, inbound: 0, outbound: 0, by_channel: {} }
+  const tally = (direction: string, channel: string) => {
+    stats.total += 1
+    if (direction === 'inbound') stats.inbound += 1
+    else if (direction === 'outbound') stats.outbound += 1
+    const ch = (stats.by_channel[channel] ??= { inbound: 0, outbound: 0 })
+    if (direction === 'inbound') ch.inbound += 1
+    else if (direction === 'outbound') ch.outbound += 1
+  }
+  const db = getDb(profile)
+  if (db) {
+    const rows = db
+      .prepare(
+        `SELECT direction, channel FROM messages${sinceMs ? ' WHERE created_at >= ?' : ''}`,
+      )
+      .all(...(sinceMs ? [sinceMs] : [])) as Array<{ direction: string; channel: string }>
+    for (const r of rows) tally(r.direction, r.channel)
+    return stats
+  }
+  for (const thread of getStore(profile).threads.values()) {
+    for (const m of thread.messages) {
+      if (sinceMs && m.created_at < sinceMs) continue
+      tally(m.direction, m.channel)
+    }
+  }
+  return stats
+}
+
+/** Thread rollup: total / open / closed and a sales-vs-service domain split. */
+export function aggregateThreads(profile: string): ThreadStats {
+  const stats: ThreadStats = { total: 0, open: 0, closed: 0, by_domain: {} }
+  const tally = (status: string, domain: string) => {
+    stats.total += 1
+    if (status === 'open') stats.open += 1
+    else if (status === 'closed') stats.closed += 1
+    stats.by_domain[domain] = (stats.by_domain[domain] ?? 0) + 1
+  }
+  const db = getDb(profile)
+  if (db) {
+    const rows = db
+      .prepare(`SELECT status, domain FROM threads WHERE profile=?`)
+      .all(profile) as Array<{ status: string; domain: string }>
+    for (const r of rows) tally(r.status, r.domain)
+    return stats
+  }
+  for (const t of getStore(profile).threads.values()) tally(t.status, t.domain)
+  return stats
+}
+
+/** Campaign rollup: campaign counts by status + delivery sent/failed totals. */
+export function aggregateCampaignDeliveries(profile: string): CampaignStats {
+  const stats: CampaignStats = {
+    campaigns: 0,
+    by_status: {},
+    deliveries_sent: 0,
+    deliveries_failed: 0,
+  }
+  const db = getDb(profile)
+  if (db) {
+    const camps = db
+      .prepare(`SELECT status FROM campaigns WHERE profile=?`)
+      .all(profile) as Array<{ status: string }>
+    stats.campaigns = camps.length
+    for (const c of camps)
+      stats.by_status[c.status] = (stats.by_status[c.status] ?? 0) + 1
+    const del = db
+      .prepare(
+        `SELECT cd.status AS status FROM campaign_deliveries cd
+         JOIN campaigns c ON c.id = cd.campaign_id
+         WHERE c.profile=?`,
+      )
+      .all(profile) as Array<{ status: string }>
+    for (const d of del) {
+      if (d.status === 'sent') stats.deliveries_sent += 1
+      else if (d.status === 'failed') stats.deliveries_failed += 1
+    }
+    return stats
+  }
+  const store = getStore(profile)
+  const campaignIds = new Set<string>()
+  for (const c of store.campaigns.values()) {
+    stats.campaigns += 1
+    campaignIds.add(c.id)
+    stats.by_status[c.status] = (stats.by_status[c.status] ?? 0) + 1
+  }
+  for (const d of store.deliveries.values()) {
+    if (!campaignIds.has(d.campaign_id)) continue
+    if (d.status === 'sent') stats.deliveries_sent += 1
+    else if (d.status === 'failed') stats.deliveries_failed += 1
+  }
+  return stats
+}
+
 // ─── Test helpers ───────────────────────────────────────────────────────────
 
 export function _resetForTests(profile?: string): void {

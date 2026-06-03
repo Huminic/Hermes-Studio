@@ -95,14 +95,15 @@ describe('console-renderers registry', () => {
     expect(container.textContent).toContain('No widgets declared')
   })
 
-  it('data renderer surfaces federation read_scopes', () => {
+  it('data renderer mounts the native reports view (fetches /api/customer/reports)', () => {
+    // The real DataRenderer fetches reports on mount; first paint is the
+    // loading state. (Report content is covered by customer-reports.test.ts.)
     const config = defaultStudioConfig('huminic')
-    config.federation.read_scopes = ['serra:knowledge/reports/published/*']
     const Renderer = consoleRenderers['customer-console.data']
     const { container } = render(
       <Renderer profile="huminic" config={config} params={{}} />,
     )
-    expect(container.textContent).toContain('serra:')
+    expect(container.textContent).toContain('Loading reports')
   })
 
   it('comms renderer shows the sales/service segment structure', () => {

@@ -135,6 +135,7 @@ import { Route as ApiKnowledgeGraphRouteImport } from './routes/api/knowledge/gr
 import { Route as ApiHermesProxySplatRouteImport } from './routes/api/hermes-proxy/$'
 import { Route as ApiHermesJobsJobIdRouteImport } from './routes/api/hermes-jobs.$jobId'
 import { Route as ApiEventsReplayRouteImport } from './routes/api/events/replay'
+import { Route as ApiCustomerReportsRouteImport } from './routes/api/customer/reports'
 import { Route as ApiCustomerEngagementStateRouteImport } from './routes/api/customer/engagement-state'
 import { Route as ApiCustomerChatRouteImport } from './routes/api/customer/chat'
 import { Route as ApiCustomerAgentsRouteImport } from './routes/api/customer/agents'
@@ -809,6 +810,11 @@ const ApiEventsReplayRoute = ApiEventsReplayRouteImport.update({
   path: '/replay',
   getParentRoute: () => ApiEventsRoute,
 } as any)
+const ApiCustomerReportsRoute = ApiCustomerReportsRouteImport.update({
+  id: '/api/customer/reports',
+  path: '/api/customer/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCustomerEngagementStateRoute =
   ApiCustomerEngagementStateRouteImport.update({
     id: '/api/customer/engagement-state',
@@ -1135,6 +1141,7 @@ export interface FileRoutesByFullPath {
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
+  '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
   '/api/hermes-proxy/$': typeof ApiHermesProxySplatRoute
@@ -1305,6 +1312,7 @@ export interface FileRoutesByTo {
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
+  '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
   '/api/hermes-proxy/$': typeof ApiHermesProxySplatRoute
@@ -1477,6 +1485,7 @@ export interface FileRoutesById {
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
+  '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
   '/api/hermes-proxy/$': typeof ApiHermesProxySplatRoute
@@ -1650,6 +1659,7 @@ export interface FileRouteTypes {
     | '/api/customer/agents'
     | '/api/customer/chat'
     | '/api/customer/engagement-state'
+    | '/api/customer/reports'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
     | '/api/hermes-proxy/$'
@@ -1820,6 +1830,7 @@ export interface FileRouteTypes {
     | '/api/customer/agents'
     | '/api/customer/chat'
     | '/api/customer/engagement-state'
+    | '/api/customer/reports'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
     | '/api/hermes-proxy/$'
@@ -1991,6 +2002,7 @@ export interface FileRouteTypes {
     | '/api/customer/agents'
     | '/api/customer/chat'
     | '/api/customer/engagement-state'
+    | '/api/customer/reports'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
     | '/api/hermes-proxy/$'
@@ -2157,6 +2169,7 @@ export interface RootRouteChildren {
   ApiCustomerAgentsRoute: typeof ApiCustomerAgentsRoute
   ApiCustomerChatRoute: typeof ApiCustomerChatRoute
   ApiCustomerEngagementStateRoute: typeof ApiCustomerEngagementStateRoute
+  ApiCustomerReportsRoute: typeof ApiCustomerReportsRoute
   ApiHermesProxySplatRoute: typeof ApiHermesProxySplatRoute
   ApiKnowledgeGraphRoute: typeof ApiKnowledgeGraphRoute
   ApiKnowledgeListRoute: typeof ApiKnowledgeListRoute
@@ -3094,6 +3107,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiEventsReplayRouteImport
       parentRoute: typeof ApiEventsRoute
     }
+    '/api/customer/reports': {
+      id: '/api/customer/reports'
+      path: '/api/customer/reports'
+      fullPath: '/api/customer/reports'
+      preLoaderRoute: typeof ApiCustomerReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/customer/engagement-state': {
       id: '/api/customer/engagement-state'
       path: '/api/customer/engagement-state'
@@ -3731,6 +3751,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCustomerAgentsRoute: ApiCustomerAgentsRoute,
   ApiCustomerChatRoute: ApiCustomerChatRoute,
   ApiCustomerEngagementStateRoute: ApiCustomerEngagementStateRoute,
+  ApiCustomerReportsRoute: ApiCustomerReportsRoute,
   ApiHermesProxySplatRoute: ApiHermesProxySplatRoute,
   ApiKnowledgeGraphRoute: ApiKnowledgeGraphRoute,
   ApiKnowledgeListRoute: ApiKnowledgeListRoute,
