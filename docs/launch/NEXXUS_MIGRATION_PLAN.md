@@ -103,3 +103,63 @@ the live Studio state (containers + volume), 2026-06-03.
 - Finish the **Tavus** adapter (P1).
 - Provision **`messaging-hub.db`** on all customer profiles (P1).
 - Ship the **integrity scanner** so governor SOULs are real, not `status: stub` (P2).
+
+---
+
+## F. PROGRESS + RESUME (2026-06-03) — autonomous mode, no stops
+
+**Mode:** full autonomous /goal. Do NOT checkpoint/pause — build → test → commit →
+keep going until the operator can turn the key on `live.huminic.app` and it works.
+Test COPIES of hooks/integrations (non-destructive). Only the flip itself is the
+operator's key-turn. See memory `feedback-nexxus-autonomous-nostop`.
+
+**Branch:** `feat/nexxus-comms-engine` (off main; pushed). NOT merged/deployed — nothing
+is live until merge→deploy. Commits so far:
+- `1045cc95d` migration plan (this doc)
+- `946152fff` **CommGate** — fail-closed outbound: global kill switch + per-profile/
+  per-channel flags + TCPA business hours + blacklist + **live VIN DNC check** + rate
+  limit; fronts dispatchOutbound; returns status:'blocked'. (studio.yaml `comms` block;
+  src/server/comms-gate.ts, comms-blacklist.ts, central-mcp.ts) — 9 tests.
+- `444bc9877` **human-takeover pause** — AI stops when a human claims a thread, re-checked
+  before send (src/server/thread-takeover.ts; wired into maybeAutonomousReply) — 2 tests.
+- `fedc0eb7f` **comms scheduler** — runDueWork(): campaign ticks + >30min escalation across
+  all profiles; scripts/comms-cron.ts (cron runner, in-container) + startCommsScheduler()
+  — 3 tests.
+- Tavus adapter confirmed REAL (both shared+own make the real API call; "stub" was a stale
+  comment). 553 vitest pass, build clean throughout.
+
+**DONE (P1 core):** CommGate ✅, human-takeover ✅, scheduler ✅, Tavus ✅.
+
+**NEXT (resume here, in order):**
+1. **P3 reports (in progress when paused):** replace the `DataRenderer` StubFrame
+   (src/lib/console-renderers.tsx) with a real dashboard. Data sources mapped:
+   - comms volume → messaging-hub `messages` (direction/channel/created_at) — add exported
+     aggregate helpers to messaging-hub-store.ts (getDb is private at line 116).
+   - sales/service split → `threads.domain`; campaign deliveries → `campaign_deliveries`.
+   - lead funnel → **live federated VIN** via callCentralMcpTool('vin_query_leads' /
+     'vin_get_lead_statuses') when the profile has a vin federation scope; else mark
+     unavailable. Build: src/server/customer-reports.ts (buildCustomerReports) +
+     /api/customer/reports.ts (auth-gated) + real DataRenderer + tests. Flip menu.data:true
+     per profile once real.
+2. **P4 federation→VIN live wiring:** finish federation-mcp-handlers.ts so a declared VIN
+   scope actually executes vin_query_leads live (today it validates the scope only).
+3. **P2 agent staging + integrity scanner:** huminic-motors thin (1 SOUL); ship the integrity
+   scanner so `*-data-governor` SOULs flip off `status: stub`. Parent profiles
+   (huminic/serra-automotive/strukture) stay non-dealer (no roster) per operator.
+4. **P1 ops (post-merge):** provision `messaging-hub.db` on the 9 profiles lacking one;
+   wire the comms cron (host crontab or Hermes cron → scripts/comms-cron.ts every min);
+   set OUTBOUND_LIVE_ENABLED + shared VAPI_ASSISTANT_ID/TAVUS_PERSONA_ID for go-live.
+5. **Inbound hooks test (copies):** integration test the inbound webhook → 2-way reply →
+   outbound (mocked providers) round-trip + service flow. No real-recipient sends.
+6. **Merge → deploy → live verify** (operator publishes main pushes; agent triggers Coolify).
+7. **P5 flip PACKAGE (operator turns the key):** Caddy upstream `live.huminic.app` :5001
+   (legacy Nexxus) → Studio 127.0.0.1:8009 + `PORTAL_HOST=live.huminic.app` + per-profile
+   creds, via ~/Claude-store/sysadmin/. Prepare it; the operator flips.
+
+**Locked scope (operator-confirmed):** VIN = live-federated, NO sync; outbound checks hit
+live VIN DB; Brain = Studio-native (meta/uploads/marketing), never VIN. Reports = native
+over live federated VIN + Brain (no Metabase warehouse). Parent profiles non-dealer.
+
+**Other branches awaiting merge (no redeploy needed):** `docs/launch-manuals` (corrected
+manuals + sales/prescription guide + LAUNCH_CAPABILITY_MANIFEST + DECISIONS/issues/
+VERIFICATION). main already has: channel_credentials, GAP-LIVE/VER fixes (deployed).
