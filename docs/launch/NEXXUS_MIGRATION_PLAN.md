@@ -130,7 +130,49 @@ is live until merge→deploy. Commits so far:
 
 **DONE (P1 core):** CommGate ✅, human-takeover ✅, scheduler ✅, Tavus ✅.
 
-**NEXT (resume here, in order):**
+### Progress update 2026-06-03 (autonomous run, post-compaction)
+
+Branch advanced to (latest first): `3c9a059c5` inbound-hooks integration test ·
+`2b4eb04e9` P2 integrity scanner + governor SOULs active · `e5bfcb8fd` P4
+federation→VIN live · `6deaf1e49` P3 native reports. **578 vitest pass, build
+clean.** Now 9 commits ahead of main, pushed-pending.
+
+- **P3 reports ✅** — `customer-reports.ts` (comms/threads/campaigns aggregates +
+  live VIN lead funnel, unavailable-with-reason when no scope/unconfigured/bad
+  shape — no fabricated numbers), `/api/customer/reports` (auth-gated),
+  `CustomerDataRenderer` real, aggregate helpers in messaging-hub-store. 10 tests.
+- **P4 federation→VIN ✅** — `federation_query` routes a VIN scope to central-mcp
+  live (`dispatchVinScope`, picks vin_query_leads / vin_get_lead_statuses) ahead
+  of MindsDB/shim; scope-enforcement unchanged; honest error (not shim) when VIN
+  unconfigured. 4 tests (shim test repointed to non-VIN scope).
+- **P2 integrity scanner ✅** — `scanWikiIntegrity` (broken links / orphans /
+  missing frontmatter) + `integrity-scanner.ts` (severity + best-effort Brain
+  memorialization) + `integrity-cron.ts`. All 7 `*-data-governor` SOULs flipped
+  `status: stub → active`; companion SG playbook shipped. 5 tests. huminic-motors
+  already staged thin on the volume (brain + agent `elliott` + governor profile).
+- **Inbound-hooks integration test ✅** — drives the real `/api/messaging/inbound`
+  route: chat round-trip, CommGate blocks regulated send in-hook, human-takeover
+  pause, ADF lead-email ingestion. Mocked provider + gated outbound, no real
+  recipients. 4 tests.
+- **Operator hand-off docs ✅** — `docs/launch/GO_LIVE_OPS.md` (P1 ops runbook:
+  provision messaging-hub.db via `scripts/provision-messaging-hub.ts`, wire
+  comms+integrity crons, go-live env, volume governor-SOUL flip) +
+  `docs/launch/FLIP_PACKAGE.md` (the operator key-turn: Caddy `live.huminic.app`
+  upstream `:5001`→`:8009` + `PORTAL_HOST`, grounded in the live Caddyfile, with
+  rollback).
+
+**Live facts captured 2026-06-03:** `live.huminic.app` → host Caddy
+(`/etc/caddy/Caddyfile`) → `:5001` legacy Nexxus. Studio at `127.0.0.1:8009`
+(health 200). Only `huminic`+`serra-honda` have messaging-hub.db (9 lack one;
+parents non-dealer so 8 dealers to provision). `OUTBOUND_LIVE_ENABLED` + studio
+`PORTAL_HOST` empty (fail-closed, correct). huminic-motors-data-governor volume
+SOUL still `status: stub` until the scanner code deploys (flip at deploy time).
+
+**REMAINING (operator key-turns):** merge `feat/nexxus-comms-engine` → deploy →
+verify (operator pushes main; agent triggers Coolify) · run GO_LIVE_OPS · execute
+FLIP_PACKAGE. Independent verification of P2/P3/P4 dispatched.
+
+**Original NEXT list (for reference — items 1–3,5 now done):**
 1. **P3 reports (in progress when paused):** replace the `DataRenderer` StubFrame
    (src/lib/console-renderers.tsx) with a real dashboard. Data sources mapped:
    - comms volume → messaging-hub `messages` (direction/channel/created_at) — add exported
