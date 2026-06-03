@@ -212,6 +212,49 @@ federation:
     }
   })
 
+  it('federation_query NEVER persists live VIN rows into the Brain (only a redacted count)', async () => {
+    callCentralMcpTool.mockResolvedValue({
+      ok: true,
+      data: { leads: [{ id: 'VINLEAD-XYZ', status: 'Hot', name: 'Secret Buyer' }] },
+    })
+    const profileRoot = path.join(tmpRoot, '.hermes', 'profiles', 'fixture')
+    fs.writeFileSync(
+      path.join(profileRoot, 'studio.yaml'),
+      `
+branding:
+  persona_name: Fixture
+federation:
+  read_scopes:
+    - vinsolutions
+`,
+      'utf8',
+    )
+    await callFederationTool(
+      'federation_query',
+      { profile: 'fixture', scope: 'vinsolutions', query: 'open leads' },
+      {
+        token_label: 'test',
+        token_allowed_profiles: ['fixture'],
+        token_allowed_tools: ['federation_query'],
+        token_admin: false,
+      },
+    )
+    // Inspect the Brain outputs table directly — no VIN PII may be present.
+    const handle = openBrain('fixture', { profileRoot })
+    try {
+      const rows = handle.all(
+        `SELECT content FROM outputs WHERE output_type='federation_query_result'`,
+      ) as Array<{ content: string }>
+      expect(rows.length).toBeGreaterThan(0)
+      const blob = rows.map((r) => r.content).join('\n')
+      expect(blob).not.toContain('VINLEAD-XYZ')
+      expect(blob).not.toContain('Secret Buyer')
+      expect(blob).toContain('redacted')
+    } finally {
+      handle.close()
+    }
+  })
+
   it('federation_query VIN scope picks vin_get_lead_statuses on a status query', async () => {
     callCentralMcpTool.mockResolvedValue({ ok: true, data: { statuses: ['Hot', 'Cold'] } })
     const profileRoot = path.join(tmpRoot, '.hermes', 'profiles', 'fixture')

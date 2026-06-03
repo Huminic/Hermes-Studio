@@ -153,14 +153,23 @@ export async function callFederationTool(
     outcome: engineResult.ok ? 'ok' : 'error',
     gate_event_id: gateEventId,
   })
-  // Memorialize the answer as an output for later inspection.
+  // Memorialize the answer as an output for later inspection — EXCEPT for VIN,
+  // which is live-federated and must NEVER be persisted in the Brain (locked
+  // scope). For a VIN scope we store only a redacted summary (row count), never
+  // the rows themselves; the live rows still flow back to the caller below.
+  const vinLive = engineResult.engine === 'vin-live' || isVinScope(scope)
   insertOutput({
     profile,
     actor,
     producer_actor: `federation:${engineResult.engine}`,
     output_type: 'federation_query_result',
-    content: JSON.stringify(engineResult.rows).slice(0, 8000),
-    metadata: { scope, query, engine: engineResult.engine, ok: engineResult.ok },
+    content: vinLive
+      ? JSON.stringify({
+          redacted: 'VIN is live-federated and never persisted in the Brain',
+          rows: engineResult.rows.length,
+        })
+      : JSON.stringify(engineResult.rows).slice(0, 8000),
+    metadata: { scope, query, engine: engineResult.engine, ok: engineResult.ok, vin_live: vinLive },
     source_refs: [{ kind: 'external', value: `federation:${scope}` }],
   })
   insertEvent({
