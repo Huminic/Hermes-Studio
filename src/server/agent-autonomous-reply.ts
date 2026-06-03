@@ -38,6 +38,7 @@ import {
 import { publishMessagingEvent } from './messaging-hub-bus'
 import { dispatchOutbound } from './messaging-adapters'
 import { readStudioConfig } from './studio-config'
+import { isHumanAssigned } from './thread-takeover'
 
 export type AutonomousReplyResult =
   | { ok: true; jobId: string; reply: string; via: string }
@@ -155,6 +156,10 @@ export async function maybeAutonomousReply(input: {
   if (!inbound) return []
   if (inbound.direction !== 'inbound') return []
 
+  // Human-takeover pause: the moment a human claims the thread, the AI stops
+  // (Nexxus's assignedTo contract). Re-checked again immediately before send.
+  if (isHumanAssigned(input.profile, input.threadId)) return []
+
   const subs = listSubscriptionsForThread(input.profile, input.threadId)
   if (subs.length === 0) return []
 
@@ -224,6 +229,17 @@ export async function maybeAutonomousReply(input: {
       continue
     }
     const replyText = providerResult.reply
+    // Re-check human takeover immediately before send (race window): a human
+    // may have claimed the thread while the model was generating.
+    if (isHumanAssigned(input.profile, input.threadId)) {
+      updateReplyJob(input.profile, job.id, {
+        status: 'rejected',
+        attempted_at: now,
+        reason: 'human takeover',
+      })
+      results.push({ ok: false, jobId: job.id, reason: 'human takeover' })
+      continue
+    }
     // Dispatch outbound through the channel adapter.
     const adapterResult = await dispatchOutbound({
       profile: input.profile,
