@@ -17,16 +17,36 @@ const thread = {
 
 function withConfig(yamlIshOverride: Partial<StudioConfig['channel_credentials']>): StudioConfig {
   const base = defaultStudioConfig('test')
-  return { ...base, channel_credentials: { default: 'shared', ...yamlIshOverride } }
+  return {
+    ...base,
+    channel_credentials: { default: 'shared', ...yamlIshOverride },
+    comms: {
+      outbound_enabled: true,
+      channels: { sms: true, voice: true, video: true, email: true },
+      business_hours: { tz: 'UTC', start: '00:00', end: '23:59' },
+      vin_check: false,
+      rate_caps: { sms: { per_minute: 1000, per_hour: 1000 } },
+    },
+  }
 }
 
 describe('dispatchOutbound — shared/own credential routing', () => {
   const fetchMock = vi.fn()
   beforeEach(() => {
     mockConfig = defaultStudioConfig('test')
+    // Open the CommGate for routing tests: enable outbound globally + a 24h
+    // window + generous caps so only the credential routing under test decides.
+    mockConfig.comms = {
+      outbound_enabled: true,
+      channels: { sms: true, voice: true, video: true, email: true },
+      business_hours: { tz: 'UTC', start: '00:00', end: '23:59' },
+      vin_check: false,
+      rate_caps: { sms: { per_minute: 1000, per_hour: 1000 } },
+    }
     fetchMock.mockReset()
     vi.stubGlobal('fetch', fetchMock)
     vi.stubEnv('CENTRAL_MCP_TOKEN', 'test-central-token')
+    vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
   })
   afterEach(() => {
     vi.unstubAllGlobals()

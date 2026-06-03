@@ -23,14 +23,17 @@ import {
   type CredentialedChannel,
   type CredentialMode,
 } from '../lib/studio-config'
+import { checkCommGate, type GateChannel } from './comms-gate'
 
-type AdapterStatus = 'sent' | 'unconfigured' | 'failed' | 'simulated'
+type AdapterStatus = 'sent' | 'unconfigured' | 'failed' | 'simulated' | 'blocked'
 
 export type AdapterResult = {
   status: AdapterStatus
   via: string
   external_id?: string | null
   error?: string | null
+  /** When status === 'blocked', the CommGate rule that fired. */
+  gate_rule?: string | null
 }
 
 /**
@@ -398,12 +401,46 @@ function escapeHtml(s: string): string {
     .replace(/'/g, '&#39;')
 }
 
+/** Map a dispatch channel to the CommGate channel (chat is ungated). */
+function gateChannelFor(channel: string): GateChannel | null {
+  switch (channel) {
+    case 'sms':
+    case 'textmagic':
+      return 'sms'
+    case 'voice':
+    case 'phone':
+    case 'vapi':
+      return 'voice'
+    case 'video':
+    case 'tavus':
+      return 'video'
+    case 'email':
+      return 'email'
+    default:
+      return null
+  }
+}
+
 export async function dispatchOutbound(input: {
   profile: string
   channel: string
   thread: Thread
   content: string
+  options?: { bypassBusinessHours?: boolean }
 }): Promise<AdapterResult> {
+  // CommGate runs fail-closed before any real send (chat is a local record).
+  const gateChannel = gateChannelFor(input.channel)
+  if (gateChannel) {
+    const gate = await checkCommGate({
+      profile: input.profile,
+      channel: gateChannel,
+      to: input.thread.contact_handle,
+      options: { bypassBusinessHours: input.options?.bypassBusinessHours },
+    })
+    if (!gate.ok) {
+      return { status: 'blocked', via: `${input.channel}-gate`, error: gate.reason, gate_rule: gate.rule }
+    }
+  }
   switch (input.channel) {
     case 'sms':
     case 'textmagic':

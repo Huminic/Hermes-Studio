@@ -130,6 +130,57 @@ const LeadNotificationsSchema = z
   .optional()
   .default({})
 
+/**
+ * Outbound communications gate (CommGate) — fail-closed safety, mirrors the
+ * Nexxus `checkCommGate` contract. Per-profile + per-channel enable flags, a
+ * TCPA business-hours window, and a flag to check live VinSolutions lead status
+ * before sms/voice. The GLOBAL kill switch is the env var OUTBOUND_LIVE_ENABLED
+ * (not here): nothing sends unless it is exactly "true".
+ */
+const BusinessHoursSchema = z
+  .object({
+    /** IANA tz, e.g. America/New_York. */
+    tz: z.string().optional().default('America/New_York'),
+    /** 24h "HH:MM". */
+    start: z.string().regex(/^\d{2}:\d{2}$/).optional().default('08:00'),
+    end: z.string().regex(/^\d{2}:\d{2}$/).optional().default('21:00'),
+  })
+  .optional()
+  .default({})
+
+const CommsSchema = z
+  .object({
+    /** Master per-profile outbound switch (still gated by OUTBOUND_LIVE_ENABLED env). */
+    outbound_enabled: z.boolean().optional().default(true),
+    /** Per-channel enable flags. */
+    channels: z
+      .object({
+        sms: z.boolean().optional().default(true),
+        voice: z.boolean().optional().default(true),
+        video: z.boolean().optional().default(true),
+        email: z.boolean().optional().default(true),
+      })
+      .optional()
+      .default({}),
+    /** TCPA window applied to sms + voice. */
+    business_hours: BusinessHoursSchema,
+    /** Check live VinSolutions lead status (DNC / opted-out) before sms/voice. */
+    vin_check: z.boolean().optional().default(true),
+    /** Per-channel rate caps (consumed by comms-rate-limiter). */
+    rate_caps: z
+      .record(
+        z.string(),
+        z.object({
+          per_minute: z.number().int().min(0).optional(),
+          per_hour: z.number().int().min(0).optional(),
+        }),
+      )
+      .optional()
+      .default({}),
+  })
+  .optional()
+  .default({})
+
 export const StudioConfigSchema = z.object({
   branding: BrandingSchema,
   menu: MenuSchema,
@@ -140,6 +191,7 @@ export const StudioConfigSchema = z.object({
   federation: FederationSchema,
   lead_notifications: LeadNotificationsSchema,
   channel_credentials: ChannelCredentialsSchema,
+  comms: CommsSchema,
 })
 
 export type StudioConfig = z.infer<typeof StudioConfigSchema>
@@ -211,5 +263,12 @@ export function defaultStudioConfig(profile: string): StudioConfig {
     federation: { read_scopes: [] },
     lead_notifications: {},
     channel_credentials: { default: 'shared' },
+    comms: {
+      outbound_enabled: true,
+      channels: { sms: true, voice: true, video: true, email: true },
+      business_hours: { tz: 'America/New_York', start: '08:00', end: '21:00' },
+      vin_check: true,
+      rate_caps: {},
+    },
   }
 }
