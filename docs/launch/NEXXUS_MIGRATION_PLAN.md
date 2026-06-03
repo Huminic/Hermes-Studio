@@ -168,9 +168,22 @@ parents non-dealer so 8 dealers to provision). `OUTBOUND_LIVE_ENABLED` + studio
 `PORTAL_HOST` empty (fail-closed, correct). huminic-motors-data-governor volume
 SOUL still `status: stub` until the scanner code deploys (flip at deploy time).
 
-**REMAINING (operator key-turns):** merge `feat/nexxus-comms-engine` → deploy →
-verify (operator pushes main; agent triggers Coolify) · run GO_LIVE_OPS · execute
-FLIP_PACKAGE. Independent verification of P2/P3/P4 dispatched.
+**Independent review (general-purpose subagent, 2026-06-03):** ran vitest+build
+(green) and verified 9 checks. Found ONE real locked-scope violation — finding #1:
+`federation_query` persisted live VIN rows into the Brain `outputs` table (P4
+routed VIN through the existing memorialization). **Fixed** in `3e999167f`: VIN
+scopes now memorialize only a redacted `{rows: <count>}` summary, never the rows;
+also closes finding #2 (admin scope-bypass) since VIN PII is never persisted on
+any path. New test asserts no VIN PII in the Brain. Findings #3–#9 all GOOD
+(scope enforcement intact, reports never fabricate, auth gating correct,
+per-profile isolation, scanner real, integration test drives the real route).
+**579 vitest pass** after fix.
+
+**PR:** #47 (`feat/nexxus-comms-engine` → `main`) opened for the operator's merge.
+
+**REMAINING (operator key-turns):** merge PR #47 → Coolify redeploy → verify
+(operator) · run `GO_LIVE_OPS.md` · execute `FLIP_PACKAGE.md`. Agent does NOT push
+main / deploy / flip.
 
 **Original NEXT list (for reference — items 1–3,5 now done):**
 1. **P3 reports (in progress when paused):** replace the `DataRenderer` StubFrame
