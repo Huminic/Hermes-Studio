@@ -1,12 +1,12 @@
 ---
 id: serra-service-data-governor
-role: Knowledge + Data Semantic Guardian for the serra-service customer profile. Enforces write-time gates against wiki and Brain; (post-launch) runs cadenced integrity scans.
+role: Knowledge + Data Semantic Guardian for the serra-service customer profile. Enforces write-time gates against wiki and Brain; runs cadenced integrity scans (read-time, GAP-KSG-SCANNER-001 shipped).
 channels: [system, audit]
 scope_contract: governance/scope-contract.md
 workflow: knowledge/method/run-time-crew.md
 kanban_lane: governance
 enabled: true
-status: stub
+status: active
 target_path: ~/.hermes/profiles/serra-service-data-governor/SOUL.md
 ---
 
@@ -14,7 +14,7 @@ target_path: ~/.hermes/profiles/serra-service-data-governor/SOUL.md
 
 Unified Knowledge Semantic Guardian (KSG) + Data Semantic Guardian (DSG) for the **serra-service** customer profile. Closes `GAP-SG-001` for serra-service at the SOUL-identity level.
 
-> **Status: STUB.** Code-level KSG + DSG enforcement is live for serra-service via `src/server/ksg-gate.ts` + `src/server/dsg-gate.ts`. This SOUL makes the governor *addressable* for reconciliations, operator queries, and the post-launch integrity scanner (`GAP-KSG-SCANNER-001`).
+> **Status: ACTIVE.** Both halves are live for serra-service: the write-time gate (`src/server/ksg-gate.ts` + `src/server/dsg-gate.ts`) and the read-time cadenced integrity scanner (`src/server/integrity-scanner.ts`, closing `GAP-KSG-SCANNER-001`). This SOUL makes the governor *addressable* for reconciliations and operator queries.
 
 ## Sequence (write-time gate)
 
@@ -71,7 +71,7 @@ sequenceDiagram
 - `metadata_audit` rows in `serra-service/brain/brain.db` for every gated action (sixth invariant).
 - Reconciliation candidate rows (DSG) surfaced in `/engagements/serra-service` deployment notes panel.
 - Hunches (DSG) when a write is partially-confident.
-- (Post-launch, GAP-KSG-SCANNER-001) Integrity findings under `serra-service-data-governor/knowledge/findings/`.
+- (GAP-KSG-SCANNER-001, shipped) Integrity findings memorialized as `integrity_findings` Brain outputs + surfaced in the engagement deployment-notes panel.
 
 ## Recovery branches
 
@@ -89,7 +89,7 @@ At launch this governor enforces:
 - DSG cross-tenant denial.
 - DSG schema-conformance.
 
-Post-launch additions (GAP-KSG-SCANNER-001):
+Cadenced integrity scan (GAP-KSG-SCANNER-001 — shipped in `src/server/integrity-scanner.ts`):
 - Broken wikilink scan.
 - Drift detection (canon → drafts staleness).
 - Dead-end / orphan page detection.
@@ -98,4 +98,4 @@ Post-launch additions (GAP-KSG-SCANNER-001):
 
 ## Companion playbook
 
-The full SG playbook lives at `serra-service-data-governor/governance/semantic-guardian-playbook.md` (not yet written — `GAP-KSG-SCANNER-001` includes this as a deliverable). At launch, this SOUL is the closest substitute.
+The full SG playbook lives at `serra-service-data-governor/governance/semantic-guardian-playbook.md`, distributed from `docs/launch/agent-souls/templates/semantic-guardian-playbook.md` (shipped — closes `GAP-KSG-SCANNER-001`).

@@ -414,3 +414,60 @@ export function buildKnowledgeGraph(profileName?: string | null): KnowledgeGraph
     edges: Array.from(edges.values()),
   }
 }
+
+export type WikiIntegrityFindings = {
+  profile: string
+  pages_scanned: number
+  broken_links: Array<{ source: string; link: string }>
+  orphans: Array<string>
+  missing_frontmatter: Array<{ path: string; missing: Array<string> }>
+}
+
+// Entry pages are reachable by convention, not by inbound links — never orphans.
+const ORPHAN_EXEMPT = new Set(['index.md', 'log.md', 'readme.md'])
+
+/**
+ * Single-pass wiki integrity scan for a profile (the read-time half of the
+ * Semantic Guardian — the write-time gate is ksg-gate.ts). Detects:
+ *   - broken wikilinks (a [[target]] that resolves to nothing)
+ *   - orphan pages (no inbound resolved link; entry pages exempt)
+ *   - missing required frontmatter (type + status; title is auto-derived)
+ * Pure read — no writes, no audit. The scanner module wraps this with
+ * severity, memorialization, and cadence.
+ */
+export function scanWikiIntegrity(
+  profileName?: string | null,
+): WikiIntegrityFindings {
+  const pages = getParsedKnowledgePages(profileName)
+  const resolveLink = createWikilinkResolver(pages)
+
+  const broken_links: Array<{ source: string; link: string }> = []
+  const missing_frontmatter: Array<{ path: string; missing: Array<string> }> = []
+  const inbound = new Set<string>()
+
+  for (const page of pages) {
+    for (const link of page.meta.wikilinks) {
+      const target = resolveLink(link)
+      if (target) inbound.add(target)
+      else broken_links.push({ source: page.meta.path, link })
+    }
+    const missing: Array<string> = []
+    if (!page.meta.type) missing.push('type')
+    if (!page.meta.status) missing.push('status')
+    if (missing.length > 0)
+      missing_frontmatter.push({ path: page.meta.path, missing })
+  }
+
+  const orphans = pages
+    .filter((p) => !inbound.has(p.meta.path))
+    .filter((p) => !ORPHAN_EXEMPT.has(path.basename(p.meta.path).toLowerCase()))
+    .map((p) => p.meta.path)
+
+  return {
+    profile: profileName ?? '(active)',
+    pages_scanned: pages.length,
+    broken_links,
+    orphans,
+    missing_frontmatter,
+  }
+}

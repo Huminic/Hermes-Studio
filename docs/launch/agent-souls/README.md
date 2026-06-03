@@ -8,9 +8,15 @@
 - `GAP-PROV-001` — Provisioner agent identity (the *building* of the agent is post-launch; the SOUL stub names the role).
 - `GAP-SG-001` — 7 missing `<slug>-data-governor` SOULs (huminic-motors, serra-honda, serra-nissan, serra-service, tony-serra-ford, ford-of-columbia, hyundai-of-columbia).
 
+**Also closes (Nexxus migration P2):**
+- `GAP-KSG-SCANNER-001` — the read-time integrity-scanner half of the KSG is now
+  shipped (`src/server/integrity-scanner.ts` + `scanWikiIntegrity` in
+  `src/server/knowledge-browser.ts` + `scripts/integrity-cron.ts`). All 7 governor
+  SOULs are flipped from `status: stub` to `status: active`; the companion SG
+  playbook ships at `templates/semantic-guardian-playbook.md`.
+
 **Does NOT close:**
 - Building the Provisioner executor.
-- Wiring the integrity-scanner half of the KSG (`GAP-KSG-SCANNER-001` — still post-launch).
 - Enabling any per-dealer template — every template ships `enabled: false`.
 
 ---
