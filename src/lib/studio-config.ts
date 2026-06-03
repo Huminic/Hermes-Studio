@@ -166,6 +166,14 @@ const CommsSchema = z
     business_hours: BusinessHoursSchema,
     /** Check live VinSolutions lead status (DNC / opted-out) before sms/voice. */
     vin_check: z.boolean().optional().default(true),
+    /**
+     * When vin_check is on but the live VIN lookup ERRORS (outage / VIN not
+     * wired on the broker), should we send anyway? Default false = fail-CLOSED
+     * (block, because we cannot prove the recipient hasn't opted out — TCPA
+     * safe). Set true only when you accept sending without a verifiable DNC
+     * check (the local blacklist still applies regardless).
+     */
+    vin_check_fail_open: z.boolean().optional().default(false),
     /** Per-channel rate caps (consumed by comms-rate-limiter). */
     rate_caps: z
       .record(
@@ -268,6 +276,7 @@ export function defaultStudioConfig(profile: string): StudioConfig {
       channels: { sms: true, voice: true, video: true, email: true },
       business_hours: { tz: 'America/New_York', start: '08:00', end: '21:00' },
       vin_check: true,
+      vin_check_fail_open: false,
       rate_caps: {},
     },
   }

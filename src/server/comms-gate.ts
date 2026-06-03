@@ -120,12 +120,15 @@ export function leadOptedOut(data: unknown): boolean {
   })
 }
 
-async function vinDnc(profile: string, to: string): Promise<boolean> {
-  // Live VIN query; fail-OPEN on lookup error/outage (the other gates still
-  // apply) so a VIN outage doesn't halt all comms — but a clear opt-out blocks.
+async function vinDnc(
+  profile: string,
+  to: string,
+): Promise<{ optedOut: boolean; errored: boolean }> {
+  // Live VIN query. We distinguish a clean answer from a lookup error so the
+  // caller can decide the fail mode (fail-closed by default — see checkCommGate).
   const r = await callCentralMcpTool('vin_query_leads', { phone: to, profile })
-  if (!r.ok) return false
-  return leadOptedOut(r.data)
+  if (!r.ok) return { optedOut: false, errored: true }
+  return { optedOut: leadOptedOut(r.data), errored: false }
 }
 
 export async function checkCommGate(input: CommGateInput): Promise<CommGateResult> {
@@ -172,8 +175,18 @@ export async function checkCommGate(input: CommGateInput): Promise<CommGateResul
 
   // 6. Live VIN lead-status check (sms + voice), when scoped + enabled.
   if (REGULATED.has(input.channel) && comms.vin_check && hasVinScope(config)) {
-    if (await vinDnc(input.profile, input.to)) {
+    const vin = await vinDnc(input.profile, input.to)
+    if (vin.optedOut) {
       return { ok: false, rule: 'vin-dnc', reason: `VinSolutions marks ${input.to} do-not-contact` }
+    }
+    // Lookup errored (VIN outage / not wired). Fail CLOSED by default — we
+    // can't prove the recipient hasn't opted out — unless explicitly allowed.
+    if (vin.errored && comms.vin_check_fail_open !== true) {
+      return {
+        ok: false,
+        rule: 'vin-unavailable',
+        reason: `VinSolutions DNC check unavailable for ${input.to}; blocking (set comms.vin_check_fail_open to send anyway)`,
+      }
     }
   }
 

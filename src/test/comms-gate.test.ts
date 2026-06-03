@@ -100,6 +100,29 @@ describe('checkCommGate — fail-closed layers', () => {
     expect(vinMock).toHaveBeenCalledWith('vin_query_leads', expect.objectContaining({ phone: '+12025550123' }))
   })
 
+  it('fails CLOSED when the VIN lookup errors (default)', async () => {
+    vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
+    vinMock.mockResolvedValue({ ok: false, error: 'vin_query_leads not available' })
+    const r = await checkCommGate({
+      ...base,
+      options: { config: cfg({}, ['vinsolutions:read']), nowMs: HOUR_13_UTC },
+    })
+    expect(r).toMatchObject({ ok: false, rule: 'vin-unavailable' })
+  })
+
+  it('fails OPEN on VIN error only when vin_check_fail_open is set', async () => {
+    vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
+    vinMock.mockResolvedValue({ ok: false, error: 'vin_query_leads not available' })
+    const r = await checkCommGate({
+      ...base,
+      options: {
+        config: cfg({ vin_check_fail_open: true }, ['vinsolutions:read']),
+        nowMs: HOUR_13_UTC,
+      },
+    })
+    expect(r.ok).toBe(true)
+  })
+
   it('does NOT call VIN when the profile has no VIN scope', async () => {
     vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
     const r = await checkCommGate({ ...base, options: { config: cfg(), nowMs: HOUR_13_UTC } })

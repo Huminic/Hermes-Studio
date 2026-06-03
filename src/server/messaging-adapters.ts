@@ -96,6 +96,7 @@ async function callCentralMcpTool(
         try {
           const o = JSON.parse(inner) as Record<string, unknown>
           externalId =
+            (o.sid as string) ??
             (o.id as string) ??
             (o.conversation_id as string) ??
             (o.call_id as string) ??
@@ -136,21 +137,29 @@ function readEnvFromProfile(profile: string): Record<string, string> {
   return env
 }
 
-async function dispatchTextMagic(
+async function dispatchSms(
   profile: string,
   thread: Thread,
   content: string,
 ): Promise<AdapterResult> {
   const to = thread.contact_handle
-  // SHARED (default): united TextMagic creds + sender via central-mcp.
+  // SHARED (default): united SMS via the central-mcp broker. The deployed broker
+  // (mcp.huminicdev.com/dax) exposes SignalWire for SMS — signalwire_send_sms —
+  // NOT tm_send_message. The sender must be an SMS-capable, project-owned number
+  // (SIGNALWIRE_FROM, studio- or profile-level). No hardcoded fallback: an unset
+  // sender reports unconfigured rather than guaranteeing a provider error.
   if (modeFor(profile, 'sms') === 'shared') {
-    const r = await callCentralMcpTool(profile, 'tm_send_message', {
-      text: content,
-      phones: to,
+    const env = readEnvFromProfile(profile)
+    const from = env.SIGNALWIRE_FROM ?? process.env.SIGNALWIRE_FROM
+    if (!from) return { status: 'unconfigured', via: 'sms-signalwire-shared' }
+    const r = await callCentralMcpTool(profile, 'signalwire_send_sms', {
+      from,
+      to,
+      body: content.slice(0, 1600),
     })
-    if (r.unconfigured) return { status: 'unconfigured', via: 'textmagic-shared' }
-    if (!r.ok) return { status: 'failed', via: 'textmagic-shared', error: r.error }
-    return { status: 'sent', via: 'textmagic-shared', external_id: r.externalId ?? null }
+    if (r.unconfigured) return { status: 'unconfigured', via: 'sms-signalwire-shared' }
+    if (!r.ok) return { status: 'failed', via: 'sms-signalwire-shared', error: r.error }
+    return { status: 'sent', via: 'sms-signalwire-shared', external_id: r.externalId ?? null }
   }
   // OWN: the profile's own TextMagic creds, direct to the provider.
   const env = readEnvFromProfile(profile)
@@ -449,7 +458,7 @@ export async function dispatchOutbound(input: {
   switch (input.channel) {
     case 'sms':
     case 'textmagic':
-      return dispatchTextMagic(input.profile, input.thread, input.content)
+      return dispatchSms(input.profile, input.thread, input.content)
     case 'voice':
     case 'phone':
     case 'vapi':
