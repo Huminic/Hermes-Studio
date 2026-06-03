@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -9,6 +9,14 @@ import { callFederationTool } from '@/server/federation-mcp-handlers'
 import { publishBrainEvent } from '@/server/brain-event-bus'
 import { subscribeMessaging } from '@/server/messaging-hub-bus'
 
+// Mock central-mcp so the VIN-live federation path is controllable.
+const callCentralMcpTool = vi.fn()
+vi.mock('@/server/central-mcp', () => ({
+  callCentralMcpTool: (...args: Array<unknown>) => callCentralMcpTool(...args),
+  centralMcpToken: () => undefined,
+  centralMcpUrl: () => 'http://localhost:4002/mcp',
+}))
+
 let tmpRoot: string
 
 beforeEach(() => {
@@ -18,6 +26,10 @@ beforeEach(() => {
   fs.mkdirSync(profileRoot, { recursive: true })
   const handle = openBrain('fixture', { profileRoot })
   handle.close()
+  // Default: VIN unconfigured unless a test overrides.
+  callCentralMcpTool
+    .mockReset()
+    .mockResolvedValue({ ok: false, unconfigured: true, error: 'central-mcp token missing' })
 })
 
 afterEach(() => {
@@ -132,7 +144,41 @@ federation:
     if (!res.ok) expect(res.rule).toBe('unscoped-tool')
   })
 
-  it('federation_query falls back to shim when MindsDB not configured', async () => {
+  it('federation_query falls back to shim for a non-VIN scope when MindsDB not configured', async () => {
+    const profileRoot = path.join(tmpRoot, '.hermes', 'profiles', 'fixture')
+    fs.writeFileSync(
+      path.join(profileRoot, 'studio.yaml'),
+      `
+branding:
+  persona_name: Fixture
+federation:
+  read_scopes:
+    - google_analytics
+`,
+      'utf8',
+    )
+    const res = await callFederationTool(
+      'federation_query',
+      { profile: 'fixture', scope: 'google_analytics', query: 'SELECT 1' },
+      {
+        token_label: 'test',
+        token_allowed_profiles: ['fixture'],
+        token_allowed_tools: ['federation_query'],
+        token_admin: false,
+      },
+    )
+    expect(res.ok).toBe(true)
+    if (res.ok) {
+      expect(res.data.engine).toBe('shim')
+    }
+    expect(callCentralMcpTool).not.toHaveBeenCalled()
+  })
+
+  it('federation_query routes a VIN scope to central-mcp live (vin-live engine)', async () => {
+    callCentralMcpTool.mockResolvedValue({
+      ok: true,
+      data: { leads: [{ id: 1, status: 'Hot' }, { id: 2, status: 'Cold' }] },
+    })
     const profileRoot = path.join(tmpRoot, '.hermes', 'profiles', 'fixture')
     fs.writeFileSync(
       path.join(profileRoot, 'studio.yaml'),
@@ -147,7 +193,7 @@ federation:
     )
     const res = await callFederationTool(
       'federation_query',
-      { profile: 'fixture', scope: 'vinsolutions', query: 'SELECT 1' },
+      { profile: 'fixture', scope: 'vinsolutions', query: 'all open leads' },
       {
         token_label: 'test',
         token_allowed_profiles: ['fixture'],
@@ -155,10 +201,74 @@ federation:
         token_admin: false,
       },
     )
+    expect(callCentralMcpTool).toHaveBeenCalledWith(
+      'vin_query_leads',
+      expect.objectContaining({ profile: 'fixture' }),
+    )
     expect(res.ok).toBe(true)
     if (res.ok) {
-      expect(res.data.engine).toBe('shim')
+      expect(res.data.engine).toBe('vin-live')
+      expect(res.data.rows).toHaveLength(2)
     }
+  })
+
+  it('federation_query VIN scope picks vin_get_lead_statuses on a status query', async () => {
+    callCentralMcpTool.mockResolvedValue({ ok: true, data: { statuses: ['Hot', 'Cold'] } })
+    const profileRoot = path.join(tmpRoot, '.hermes', 'profiles', 'fixture')
+    fs.writeFileSync(
+      path.join(profileRoot, 'studio.yaml'),
+      `
+branding:
+  persona_name: Fixture
+federation:
+  read_scopes:
+    - vin
+`,
+      'utf8',
+    )
+    const res = await callFederationTool(
+      'federation_query',
+      { profile: 'fixture', scope: 'vin', query: 'list lead statuses' },
+      {
+        token_label: 'test',
+        token_allowed_profiles: ['fixture'],
+        token_allowed_tools: ['federation_query'],
+        token_admin: false,
+      },
+    )
+    expect(callCentralMcpTool).toHaveBeenCalledWith(
+      'vin_get_lead_statuses',
+      expect.objectContaining({ profile: 'fixture' }),
+    )
+    expect(res.ok).toBe(true)
+  })
+
+  it('federation_query VIN scope surfaces an error (not a shim) when VIN unconfigured', async () => {
+    // beforeEach default mock returns unconfigured.
+    const profileRoot = path.join(tmpRoot, '.hermes', 'profiles', 'fixture')
+    fs.writeFileSync(
+      path.join(profileRoot, 'studio.yaml'),
+      `
+branding:
+  persona_name: Fixture
+federation:
+  read_scopes:
+    - vinsolutions
+`,
+      'utf8',
+    )
+    const res = await callFederationTool(
+      'federation_query',
+      { profile: 'fixture', scope: 'vinsolutions', query: 'open leads' },
+      {
+        token_label: 'test',
+        token_allowed_profiles: ['fixture'],
+        token_allowed_tools: ['federation_query'],
+        token_admin: false,
+      },
+    )
+    expect(res.ok).toBe(false)
+    if (!res.ok) expect(res.error).toMatch(/not configured/i)
   })
 
   it('publishBrainEvent reaches a messaging-hub subscriber', () => {

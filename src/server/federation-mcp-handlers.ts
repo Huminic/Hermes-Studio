@@ -22,6 +22,7 @@ import { parseStudioConfig, defaultStudioConfig } from '../lib/studio-config'
 import { recordAudit } from './metadata-substrate'
 import { insertEvent, insertOutput } from './brain-record-families'
 import { now, uuid } from './brain-store'
+import { callCentralMcpTool } from './central-mcp'
 
 function resolveStudioConfig(profile: string) {
   const envRoot = process.env.BRAIN_PROFILES_ROOT
@@ -190,12 +191,73 @@ type EngineResult =
   | { ok: true; engine: string; rows: Array<unknown> }
   | { ok: false; engine: string; rows: Array<unknown>; error: string }
 
+/** VIN tools exposed by central-mcp that a federation query can route to. */
+const VIN_TOOLS = new Set(['vin_query_leads', 'vin_get_lead_statuses'])
+
+/** True when this scope targets VinSolutions (its own live source). */
+function isVinScope(scope: string): boolean {
+  return scope.toLowerCase().includes('vin')
+}
+
+/**
+ * Coerce a central-mcp VIN payload into a rows array. VIN's shape isn't ours,
+ * so accept the common shapes (bare array / {leads|data|results|records:[…]}).
+ */
+function vinRows(data: unknown): Array<unknown> {
+  if (Array.isArray(data)) return data
+  if (data && typeof data === 'object') {
+    for (const key of ['leads', 'data', 'results', 'records', 'statuses']) {
+      const v = (data as Record<string, unknown>)[key]
+      if (Array.isArray(v)) return v
+    }
+    return [data] // single object → one row
+  }
+  return data == null ? [] : [data]
+}
+
+/**
+ * Live VinSolutions dispatch (locked architecture: VIN is live-federated, never
+ * synced, on its own source — not routed through MindsDB). Picks the VIN tool
+ * from params.vin_tool, else a keyword in the query, else vin_query_leads.
+ */
+async function dispatchVinScope(
+  profile: string,
+  query: string,
+  params?: Record<string, unknown>,
+): Promise<EngineResult> {
+  const override =
+    typeof params?.vin_tool === 'string' && VIN_TOOLS.has(params.vin_tool)
+      ? (params.vin_tool as string)
+      : null
+  const tool =
+    override ??
+    (/\bstatus(es)?\b/i.test(query) ? 'vin_get_lead_statuses' : 'vin_query_leads')
+  // Forward query params to VIN; always scope by profile (federated, live).
+  const { vin_tool: _omit, ...rest } = params ?? {}
+  const r = await callCentralMcpTool(tool, { profile, ...rest })
+  if (!r.ok) {
+    return {
+      ok: false,
+      engine: 'vin-live',
+      rows: [],
+      error: r.unconfigured
+        ? 'central-mcp / VinSolutions not configured (token missing).'
+        : `VinSolutions ${tool} failed: ${r.error}`,
+    }
+  }
+  return { ok: true, engine: 'vin-live', rows: vinRows(r.data) }
+}
+
 async function dispatchEngine(
   profile: string,
   scope: string,
   query: string,
   params?: Record<string, unknown>,
 ): Promise<EngineResult> {
+  // VIN is its own live source — route to central-mcp ahead of MindsDB/shim.
+  if (isVinScope(scope)) {
+    return dispatchVinScope(profile, query, params)
+  }
   // MindsDB path (preferred when configured).
   if (process.env.MINDSDB_URL) {
     try {
