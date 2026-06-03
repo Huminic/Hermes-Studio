@@ -1,0 +1,150 @@
+/**
+ * Comms scheduler — the background cadence Nexxus runs on cron, ported to the
+ * Studio. One `runDueWork()` pass:
+ *   1. Tick due campaigns for every profile (scheduled outbound sends).
+ *   2. Escalate threads whose last inbound has gone unanswered > 30 min
+ *      (mirrors Nexxus `checkUnansweredEscalations`): mark + emit an event,
+ *      once per thread (no repeats).
+ *
+ * Driven by `scripts/comms-cron.ts` (system/Hermes cron) and/or
+ * `startCommsScheduler()` in a long-running process. Idempotent and never
+ * throws — a bad profile is skipped, not fatal.
+ */
+
+import { listProfiles } from './profiles-browser'
+import { listThreads, getThread } from './messaging-hub-store'
+import { publishMessagingEvent } from './messaging-hub-bus'
+import { tickCampaigns } from './campaign-worker'
+import { openBrain } from './brain-store'
+
+export const ESCALATE_AFTER_MS = 30 * 60_000
+
+export type DueWorkSummary = {
+  profiles: number
+  campaignsTicked: number
+  campaignsSent: number
+  escalated: number
+  errors: Array<{ profile: string; error: string }>
+}
+
+function escalationTable(profile: string, profileRoot?: string) {
+  const h = openBrain(profile, { profileRoot })
+  h.exec(
+    `CREATE TABLE IF NOT EXISTS thread_escalation (thread_id TEXT PRIMARY KEY, ts INTEGER)`,
+  )
+  return h
+}
+
+function alreadyEscalated(profile: string, threadId: string, profileRoot?: string): boolean {
+  try {
+    const h = escalationTable(profile, profileRoot)
+    return !!h.get<{ thread_id: string }>(
+      `SELECT thread_id FROM thread_escalation WHERE thread_id=?`,
+      threadId,
+    )
+  } catch {
+    return false
+  }
+}
+
+function markEscalated(profile: string, threadId: string, nowMs: number, profileRoot?: string) {
+  try {
+    escalationTable(profile, profileRoot).run(
+      `INSERT INTO thread_escalation (thread_id, ts) VALUES (?, ?)
+       ON CONFLICT(thread_id) DO NOTHING`,
+      threadId,
+      nowMs,
+    )
+  } catch {
+    // best effort
+  }
+}
+
+/** Threads whose last inbound is older than the escalation window and unanswered. */
+export function checkEscalations(
+  profile: string,
+  nowMs: number,
+  profileRoot?: string,
+): Array<string> {
+  const escalated: Array<string> = []
+  let threads: Array<{ id: string }> = []
+  try {
+    threads = listThreads({ profile, status: 'open', limit: 500 })
+  } catch {
+    return escalated
+  }
+  for (const t of threads) {
+    if (alreadyEscalated(profile, t.id, profileRoot)) continue
+    const full = getThread(profile, t.id)
+    if (!full || !full.messages.length) continue
+    const last = full.messages[full.messages.length - 1]
+    // Escalate only when the customer's last message sits unanswered.
+    if (last.direction !== 'inbound') continue
+    const age = nowMs - (last.created_at ?? 0)
+    if (age < ESCALATE_AFTER_MS) continue
+    markEscalated(profile, t.id, nowMs, profileRoot)
+    try {
+      publishMessagingEvent(profile, {
+        type: 'thread_escalated',
+        thread_id: t.id,
+        reason: `unanswered ${Math.round(age / 60000)}m`,
+      } as Parameters<typeof publishMessagingEvent>[1])
+    } catch {
+      // event bus best-effort
+    }
+    escalated.push(t.id)
+  }
+  return escalated
+}
+
+export async function runDueWork(
+  opts: { profiles?: Array<string>; now?: number } = {},
+): Promise<DueWorkSummary> {
+  const now = opts.now ?? Date.now()
+  const profiles = opts.profiles ?? listProfiles().map((p) => p.name)
+  const summary: DueWorkSummary = {
+    profiles: 0,
+    campaignsTicked: 0,
+    campaignsSent: 0,
+    escalated: 0,
+    errors: [],
+  }
+  for (const profile of profiles) {
+    summary.profiles++
+    try {
+      const ticks = await tickCampaigns({ profile, now })
+      summary.campaignsTicked += ticks.length
+      for (const t of ticks) {
+        summary.campaignsSent += (t as { sent?: number }).sent ?? 0
+      }
+    } catch (err) {
+      summary.errors.push({ profile, error: `campaigns: ${(err as Error).message}` })
+    }
+    try {
+      summary.escalated += checkEscalations(profile, now).length
+    } catch (err) {
+      summary.errors.push({ profile, error: `escalations: ${(err as Error).message}` })
+    }
+  }
+  return summary
+}
+
+let timer: ReturnType<typeof setInterval> | null = null
+
+/** Start the in-process scheduler (idempotent). intervalMs default 60s. */
+export function startCommsScheduler(intervalMs = 60_000): void {
+  if (timer) return
+  timer = setInterval(() => {
+    void runDueWork().catch(() => {
+      // swallow — next tick retries
+    })
+  }, intervalMs)
+  if (typeof timer.unref === 'function') timer.unref()
+}
+
+export function stopCommsScheduler(): void {
+  if (timer) {
+    clearInterval(timer)
+    timer = null
+  }
+}
