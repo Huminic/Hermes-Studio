@@ -15,6 +15,7 @@ import { listProfiles } from './profiles-browser'
 import { listThreads, getThread } from './messaging-hub-store'
 import { publishMessagingEvent } from './messaging-hub-bus'
 import { tickCampaigns } from './campaign-worker'
+import { tickVinWatcher } from './vin-watcher'
 import { openBrain } from './brain-store'
 
 export const ESCALATE_AFTER_MS = 30 * 60_000
@@ -24,6 +25,10 @@ export type DueWorkSummary = {
   campaignsTicked: number
   campaignsSent: number
   escalated: number
+  /** VIN-watcher new-lead follow-ups dispatched this pass. */
+  watcherSent: number
+  /** VIN-watcher immediate triggers queued for next 07:00 (out-of-hours). */
+  watcherQueued: number
   errors: Array<{ profile: string; error: string }>
 }
 
@@ -107,6 +112,8 @@ export async function runDueWork(
     campaignsTicked: 0,
     campaignsSent: 0,
     escalated: 0,
+    watcherSent: 0,
+    watcherQueued: 0,
     errors: [],
   }
   for (const profile of profiles) {
@@ -124,6 +131,15 @@ export async function runDueWork(
       summary.escalated += checkEscalations(profile, now).length
     } catch (err) {
       summary.errors.push({ profile, error: `escalations: ${(err as Error).message}` })
+    }
+    // VIN-watcher new-lead follow-ups (opt-in per profile; default OFF — an
+    // unconfigured/opted-out profile returns a clean skip, not an error).
+    try {
+      const w = await tickVinWatcher({ profile, now })
+      summary.watcherSent += w.sent
+      summary.watcherQueued += w.queued
+    } catch (err) {
+      summary.errors.push({ profile, error: `vin-watcher: ${(err as Error).message}` })
     }
   }
   return summary

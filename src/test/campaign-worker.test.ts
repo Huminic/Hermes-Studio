@@ -59,6 +59,89 @@ describe('tickCampaigns', () => {
     expect(['sent', 'failed']).toContain(deliveries[0].status)
   })
 
+  it('renders a Service Recall template with vehicle + dealer + name vars populated', async () => {
+    const { upsertContact, createAudience, createCampaign, listThreads, getThread } =
+      await import('@/server/messaging-hub-store')
+    const { tickCampaigns } = await import('@/server/campaign-worker')
+    upsertContact({
+      profile: 'huminic',
+      display_name: 'Dana Reyes',
+      identifiers: { email: 'dana@example.com' },
+    })
+    // Operator-authored campaign-level params ride on the audience query
+    // alongside its filter keys (channel).
+    const audience = createAudience({
+      profile: 'huminic',
+      name: 'recall',
+      query: {
+        channel: 'email',
+        recall_id: '23V-456',
+        vehicle_year: '2021',
+        vehicle_model: 'CR-V',
+      },
+    })
+    const template = [
+      'Hi {{first_name}},',
+      'Your {{vehicle_year}} {{vehicle_model}} is affected by recall {{recall_id}}.',
+      '— {{dealer_name}} service',
+    ].join('\n')
+    createCampaign({
+      profile: 'huminic',
+      audience_id: audience.id,
+      channel: 'email',
+      message_template: template,
+      schedule: Date.now() - 1000,
+    })
+    const results = await tickCampaigns({ profile: 'huminic' })
+    expect(results).toHaveLength(1)
+    // No unresolved vars: every placeholder had a source.
+    expect(results[0].unresolved_vars).toBeUndefined()
+
+    const threads = listThreads({ profile: 'huminic', limit: 10 })
+    expect(threads.length).toBeGreaterThan(0)
+    const thread = getThread('huminic', threads[0].id)
+    const body = (thread?.messages ?? []).map((m) => m.content).join('\n')
+    expect(body).not.toMatch(/\{\{.*?\}\}/) // no leftover placeholders
+    expect(body).toContain('Dana') // first_name
+    expect(body).toContain('2021') // vehicle_year
+    expect(body).toContain('CR-V') // vehicle_model
+    expect(body).toContain('23V-456') // recall_id
+    expect(body).toContain('Huminic') // dealer_name ← branding.persona_name
+  })
+
+  it('renders unresolved template vars empty and reports them', async () => {
+    const { upsertContact, createAudience, createCampaign } = await import(
+      '@/server/messaging-hub-store'
+    )
+    const { tickCampaigns } = await import('@/server/campaign-worker')
+    upsertContact({
+      profile: 'huminic',
+      display_name: 'Sam',
+      identifiers: { sms: '+15555550123' },
+    })
+    const audience = createAudience({
+      profile: 'huminic',
+      name: 'due',
+      query: { channel: 'sms' }, // no service_type / vehicle_model supplied
+    })
+    createCampaign({
+      profile: 'huminic',
+      audience_id: audience.id,
+      channel: 'sms',
+      message_template:
+        'Hi {{first_name}} — your {{vehicle_model}} is due for {{service_type}}.',
+      schedule: Date.now() - 1000,
+    })
+    const results = await tickCampaigns({ profile: 'huminic' })
+    expect(results).toHaveLength(1)
+    expect(results[0].unresolved_vars).toBeDefined()
+    expect(results[0].unresolved_vars).toEqual(
+      expect.arrayContaining(['vehicle_model', 'service_type']),
+    )
+    // first_name still resolved, so it is NOT reported unresolved.
+    expect(results[0].unresolved_vars).not.toContain('first_name')
+  })
+
   it('skips not-yet-due campaigns', async () => {
     const {
       upsertContact,

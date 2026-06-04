@@ -31,7 +31,7 @@ import {
   getOrCreateThread,
   upsertContact,
 } from '../../../server/messaging-hub-store'
-import { emitLeadAdfEmail } from '../../../server/lead-notifications'
+import { notifyDealer } from '../../../server/lead-notifications'
 import type { AdfLead } from '../../../server/adf-xml'
 
 function readSecret(profile: string): string | null {
@@ -183,23 +183,32 @@ export const Route = createFileRoute('/api/webhooks/vapi/$profile')({
         })
 
         const lead = buildLeadFromCall(call, event)
-        const notification = await emitLeadAdfEmail({
+        // WS-4: per-profile dealer notification. Format (adf-xml vs plain
+        // email) and recipient come from the profile's studio.yaml
+        // `notifications` block; the webhook stays format-agnostic.
+        const notification = await notifyDealer({
           profile,
-          lead,
+          event: lead,
           subjectPrefix: 'Vapi lead',
         })
 
-        // Annotate the thread with the notification outcome so the
-        // operator can see in Comms whether the ADF email landed.
+        // Annotate the thread with the notification outcome so the operator
+        // can see (in tooling, not the customer inbox) whether the ADF email
+        // landed. This is a system-role annotation: the Teambox conversation
+        // view never renders system messages, so it stays out of the customer's
+        // view. The human-readable `content` carries only a clean status word —
+        // NEVER the raw diagnostic reason (env-var names, "unconfigured token",
+        // routing strings). Diagnostics live in metadata for operator tooling.
         appendMessage({
           thread_id: thread.id,
           direction: 'outbound',
           role: 'system',
           channel: 'voice',
-          content: `Lead notification: ${notification.ok ? 'sent' : notification.via}${notification.reason ? ` — ${notification.reason}` : ''}`,
+          content: `Lead notification: ${notification.ok ? 'sent' : 'not delivered'}`,
           author: 'system',
           metadata: {
             via: 'lead-notification',
+            delivery: notification.via,
             external_id: notification.external_id ?? null,
             reason: notification.reason ?? null,
           },

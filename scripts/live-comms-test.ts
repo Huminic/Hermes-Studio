@@ -11,12 +11,14 @@
  *  - Goes through dispatchOutbound, so every CommGate layer applies.
  *
  * Usage (inside the studio container, after deploy + creds):
- *   OUTBOUND_LIVE_ENABLED=true SIGNALWIRE_FROM=+1XXXXXXXXXX \
+ *   OUTBOUND_LIVE_ENABLED=true CENTRAL_MCP_TOKEN=<claude_nexxus-2.2> SMS_FROM=+1XXXXXXXXXX \
  *   TEST_PROFILE=serra-honda TEST_PHONE=+14126546500 TEST_EMAIL=you@example.com \
  *   npx tsx scripts/live-comms-test.ts --confirm
+ *   (SMS_FROM is optional — omit to use the broker's default TextMagic sender.)
  *
- * Channels attempted: email (resend), sms (signalwire). Voice/video are left
- * out until the provider decision is made.
+ * Channels attempted: email (resend_send_email), sms (tm_send_message via the
+ * claude_nexxus-2.2 token). Voice (vapi_create_call) / video (tavus) are left
+ * out of this runner; the watcher + adapters exercise them.
  */
 import { dispatchOutbound } from '../src/server/messaging-adapters'
 

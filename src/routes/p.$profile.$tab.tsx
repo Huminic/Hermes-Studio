@@ -2,6 +2,16 @@ import { useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
+  Analytics01Icon,
+  GridIcon,
+  InboxIcon,
+  LibraryIcon,
+  Megaphone01Icon,
+  Robot01Icon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import type { IconSvgElement } from '@hugeicons/react'
+import {
   defaultStudioConfig,
   type StudioConfig,
 } from '@/lib/studio-config'
@@ -99,7 +109,7 @@ function StorefrontTabRoute() {
 
   if (authQuery.isLoading) {
     return (
-      <div className="flex h-dvh items-center justify-center text-sm opacity-60">
+      <div className="flex h-dvh items-center justify-center bg-white text-sm text-slate-500">
         Loading…
       </div>
     )
@@ -112,7 +122,7 @@ function StorefrontTabRoute() {
   const rendererKey = TAB_TO_RENDERER[tab]
   if (!rendererKey) {
     return (
-      <div className="m-6 rounded border border-amber-300/30 bg-amber-400/5 p-4 text-sm">
+      <div className="m-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
         Unknown tab: <code>{tab}</code>. Expected one of:{' '}
         {Object.keys(TAB_TO_RENDERER).join(', ')}.
       </div>
@@ -123,39 +133,37 @@ function StorefrontTabRoute() {
   const AssistantRenderer = getRenderer('customer-console.assistant-pane')
   if (!Renderer) {
     return (
-      <div className="m-6 rounded border border-red-400/40 bg-red-500/10 p-4 text-sm text-red-300">
+      <div className="m-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
         Renderer not found: <code>{rendererKey}</code>
       </div>
     )
   }
 
-  const accent = config.branding.accent_color ?? '#1e40af'
+  // Nexxus brand/active-nav accent (purple-500). Primary blue is #3b82f6.
+  const NAV_ACCENT = '#8b5cf6'
 
-  // Nexxus-style icon sidebar items. Each label sits below its glyph.
-  const tabsList: Array<{ id: string; label: string; glyph: string }> = [
-    { id: 'chat', label: 'Chat', glyph: '💬' },
-    { id: 'knowledge', label: 'Knowledge', glyph: '📚' },
-    { id: 'tools', label: 'Tools', glyph: '🛠️' },
-    { id: 'data', label: 'Data', glyph: '📊' },
-    { id: 'comms', label: 'Comms', glyph: '📥' },
-    { id: 'campaigns', label: 'Campaigns', glyph: '📣' },
+  // Nexxus-style icon sidebar items. Each label sits below its line icon.
+  // `id` is the internal route param (unchanged); `label` is display text.
+  const tabsList: Array<{
+    id: string
+    label: string
+    icon: IconSvgElement
+  }> = [
+    { id: 'chat', label: 'Agents', icon: Robot01Icon },
+    { id: 'knowledge', label: 'Knowledge', icon: LibraryIcon },
+    { id: 'tools', label: 'Widgets', icon: GridIcon },
+    { id: 'data', label: 'Data', icon: Analytics01Icon },
+    { id: 'comms', label: 'Teambox', icon: InboxIcon },
+    { id: 'campaigns', label: 'Campaigns', icon: Megaphone01Icon },
   ]
 
-  const initial = config.branding.persona_name.slice(0, 1).toUpperCase()
+  // Display label for the active section (Nexxus header shows brand once + section).
+  const sectionLabel =
+    tabsList.find((t) => t.id === tab)?.label ?? tab
 
   return (
-    <div className="flex min-h-dvh bg-[#0a0f1c] text-slate-100">
-      <aside className="flex w-[88px] shrink-0 flex-col items-center gap-1 border-r border-white/10 bg-[#080c14] py-3">
-        <Link
-          to="/p/$profile"
-          params={{ profile }}
-          className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg text-sm font-semibold text-white"
-          style={{ background: accent }}
-          title={config.branding.persona_name}
-        >
-          {initial}
-        </Link>
-        <div className="my-2 h-px w-8 bg-white/10" />
+    <div className="flex min-h-dvh bg-white font-sans text-slate-900">
+      <aside className="flex w-[72px] shrink-0 flex-col items-center gap-1 border-r border-slate-200 bg-slate-50 py-3">
         {tabsList.map((item) => {
           const enabled =
             config.menu[item.id as keyof StudioConfig['menu']] ?? true
@@ -167,22 +175,28 @@ function StorefrontTabRoute() {
               params={{ profile, tab: item.id }}
               disabled={!enabled}
               className={
-                'group relative flex w-full flex-col items-center gap-0.5 px-1 py-2 text-[10px] transition-colors ' +
+                'group relative flex w-full flex-col items-center gap-1 px-1 py-2.5 text-[10px] transition-colors ' +
                 (active
-                  ? 'text-white'
-                  : 'text-slate-400 hover:text-slate-100') +
-                (enabled ? '' : ' pointer-events-none opacity-30')
+                  ? 'font-medium text-slate-900'
+                  : 'text-slate-500 hover:text-slate-900') +
+                (enabled ? '' : ' pointer-events-none opacity-40')
               }
               title={item.label}
+              style={active ? { color: NAV_ACCENT } : undefined}
             >
               {active && (
                 <span
                   aria-hidden
-                  className="absolute left-0 top-1 h-10 w-1 rounded-r"
-                  style={{ background: accent }}
+                  className="absolute left-0 top-1.5 h-8 w-0.5 rounded-r-full"
+                  style={{ background: NAV_ACCENT }}
                 />
               )}
-              <span className="text-lg leading-none">{item.glyph}</span>
+              <HugeiconsIcon
+                icon={item.icon}
+                size={22}
+                strokeWidth={1.8}
+                color={active ? NAV_ACCENT : 'currentColor'}
+              />
               <span className="leading-tight">{item.label}</span>
             </Link>
           )
@@ -190,37 +204,13 @@ function StorefrontTabRoute() {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-white/10 bg-[#0d1424] px-4 py-2">
-          <div className="flex items-center gap-3">
-            <div
-              className="flex h-8 w-8 items-center justify-center rounded text-xs font-semibold text-white"
-              style={{ background: accent }}
-            >
-              {initial}
-            </div>
-            <div>
-              <div className="text-sm font-semibold">
-                {config.branding.persona_name}
-              </div>
-              <div className="text-[10px] uppercase tracking-wide text-slate-500">
-                {profile} · {tab}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-slate-400">
-              {session?.username ?? 'guest'}
+        <header className="flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4">
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm font-semibold text-slate-900">
+              {config.branding.persona_name}
             </span>
-            <span
-              className="rounded px-1.5 py-0.5 text-[10px] uppercase"
-              style={{ background: `${accent}33`, color: '#fff' }}
-            >
-              {session?.is_admin
-                ? 'studio admin'
-                : session?.is_customer_admin
-                  ? 'customer admin'
-                  : 'guest'}
-            </span>
+            <span className="text-slate-300">·</span>
+            <span className="text-sm text-slate-500">{sectionLabel}</span>
           </div>
         </header>
 
@@ -229,7 +219,7 @@ function StorefrontTabRoute() {
             <Renderer profile={profile} config={config} params={{ tab }} />
           </main>
           {AssistantRenderer && (
-            <aside className="hidden w-72 shrink-0 border-l border-white/10 bg-[#0d1424] p-3 lg:block">
+            <aside className="hidden w-72 shrink-0 border-l border-slate-200 bg-slate-50 p-3 lg:block">
               <AssistantRenderer
                 profile={profile}
                 config={config}
@@ -239,8 +229,8 @@ function StorefrontTabRoute() {
           )}
         </div>
 
-        <footer className="border-t border-white/10 bg-[#080c14] px-4 py-2 text-[10px] text-slate-500">
-          Powered by Huminic · brand chip {accent}
+        <footer className="border-t border-slate-200 bg-slate-50 px-4 py-2 text-[10px] text-slate-500">
+          Powered by Huminic
         </footer>
       </div>
     </div>
@@ -273,7 +263,7 @@ function CustomerLogin({
         data.is_customer_admin === true && data.profile === profile
       if (!isAdmin && !matchesProfile) {
         setError(
-          `Account is not authorized for ${profile}. Sign in with a customer-admin for this profile.`,
+          "This login isn't authorized for this store. Please use the login for this store.",
         )
         return
       }
@@ -282,72 +272,71 @@ function CustomerLogin({
       // tab content on next render.
       router.invalidate()
     },
-    onError: (err) => {
-      setError((err as Error).message)
+    onError: () => {
+      setError('We couldn’t sign you in just now. Please try again.')
     },
   })
 
-  const accent = config.branding.accent_color ?? '#1e40af'
+  const PRIMARY = '#3b82f6'
 
   return (
-    <div className="flex min-h-dvh items-center justify-center p-4">
+    <div className="flex min-h-dvh items-center justify-center bg-white p-4 font-sans text-slate-900">
       <form
         onSubmit={(e) => {
           e.preventDefault()
           setError(null)
           loginMutation.mutate()
         }}
-        className="flex w-full max-w-sm flex-col gap-3 rounded-lg border border-white/10 bg-white/5 p-6"
-        style={{ borderColor: accent }}
+        className="flex w-full max-w-sm flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 p-6 shadow-sm"
       >
         <div className="flex items-baseline gap-3">
-          <h1 className="text-lg font-semibold">
+          <h1 className="text-lg font-semibold text-slate-900">
             {config.branding.persona_name}
           </h1>
-          <span className="rounded bg-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wide">
+          <span className="rounded bg-slate-200 px-2 py-0.5 text-[10px] uppercase tracking-wide text-slate-600">
             {profile}
           </span>
         </div>
-        <div className="text-xs opacity-60">
+        <div className="text-xs text-slate-500">
           Customer admin sign-in for this storefront.
         </div>
         <label className="flex flex-col gap-1 text-xs">
-          <span className="opacity-60">Username</span>
+          <span className="text-slate-500">Username</span>
           <input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             autoFocus
-            className="rounded border border-white/10 bg-black/20 px-2 py-1.5 text-sm"
+            className="rounded border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             required
           />
         </label>
         <label className="flex flex-col gap-1 text-xs">
-          <span className="opacity-60">Password</span>
+          <span className="text-slate-500">Password</span>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="rounded border border-white/10 bg-black/20 px-2 py-1.5 text-sm"
+            className="rounded border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             required
           />
         </label>
         {error && (
-          <div className="rounded border border-red-400/30 bg-red-500/10 p-2 text-xs text-red-300">
+          <div className="rounded border border-red-200 bg-red-50 p-2 text-xs text-red-600">
             {error}
           </div>
         )}
         <button
           type="submit"
           disabled={loginMutation.isPending}
-          className="mt-1 rounded px-3 py-1.5 text-sm font-medium disabled:opacity-50"
-          style={{ background: accent, color: '#fff' }}
+          className="mt-1 rounded px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
+          style={{ background: PRIMARY }}
         >
           {loginMutation.isPending ? 'Signing in…' : 'Sign in'}
         </button>
         <Link
           to="/p/$profile"
           params={{ profile }}
-          className="text-center text-xs opacity-50 hover:opacity-100"
+          className="text-center text-xs text-slate-400 hover:text-slate-600"
         >
           ← back to landing
         </Link>

@@ -1,14 +1,24 @@
 /**
- * customer-console.knowledge — Phase C.3 (AC.3.1–AC.3.4).
+ * customer-console.knowledge — SERRA-UI-5.
  *
- * Tree on the left, editor on the right. KSG-gated save + promote.
- * Frontmatter panel sits above the textarea so the customer can see
- * what shape the file declares.
+ * A clean, customer-facing company wiki. Tree on the left, page editor on the
+ * right. The tree is served ONLY from the curated `company-wiki/` subtree by
+ * the API (see src/server/customer-wiki.ts), so no backend files or paths can
+ * ever reach this component. As a defence in depth, this renderer additionally
+ * NEVER displays raw filenames or relative paths — it derives a human-readable
+ * page title from the first heading or the filename — and shows plain-language
+ * empty states.
+ *
+ * Light theme to match the storefront: white / slate-50 surfaces, slate-200
+ * borders, slate-900 text, blue (#3b82f6) primary, purple (#8b5cf6) active.
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { extractFrontmatter, readWikiFields } from '../../lib/frontmatter'
 import type { StudioConfig } from '../../lib/studio-config'
+
+const PRIMARY = '#3b82f6'
+const ACTIVE = '#8b5cf6'
 
 type Node = {
   name: string
@@ -32,10 +42,83 @@ type SaveResponse = {
   rule?: string
 }
 
+/**
+ * Translate a save-gate outcome into plain customer copy. The gate's raw
+ * reasons reference internal concepts (protected trees, canonical pages,
+ * frontmatter) that must never surface in the storefront.
+ */
+function friendlySaveError(rule?: string): string {
+  switch (rule) {
+    case 'protected-tree':
+      return 'This page is read-only and can’t be edited here.'
+    case 'canonical-frozen':
+      return 'This page is locked and can’t be changed directly. Please reach out to have it updated.'
+    case 'missing-frontmatter':
+      return 'This page is missing some required details and can’t be saved.'
+    default:
+      return 'This change could not be saved. Please try again.'
+  }
+}
+
 type ReadResponse = {
   ok: boolean
   content?: string
   error?: string
+}
+
+/**
+ * Turn a wiki filename or directory name into a readable title.
+ *   "how-to-edit-this-wiki.md" -> "How to edit this wiki"
+ *   "00-start-here"            -> "Start here"
+ *   "README.md"                -> "Overview"
+ * Numeric ordering prefixes (e.g. "01-") are stripped from the label.
+ */
+function humanizeName(name: string): string {
+  let base = name.replace(/\.md$/i, '')
+  if (/^readme$/i.test(base)) return 'Overview'
+  // Strip a leading numeric ordering prefix like "00-" or "1-".
+  base = base.replace(/^\d+[-_]/, '')
+  base = base.replace(/[-_]+/g, ' ').trim()
+  if (!base) return name
+  // Capitalise the first letter only — keep the rest as authored so acronyms
+  // and proper nouns aren't mangled.
+  return base.charAt(0).toUpperCase() + base.slice(1)
+}
+
+/**
+ * Split a markdown document into its raw frontmatter prefix (the `---` block,
+ * including delimiters and the trailing newline) and the body. The prefix is
+ * preserved verbatim so saving never reformats or loses the original YAML.
+ *   - If no frontmatter block is present, `prefix` is '' and `body` is content.
+ */
+function splitFrontmatterPrefix(content: string): {
+  prefix: string
+  body: string
+} {
+  const fm = extractFrontmatter(content)
+  if (!fm.hasFrontmatter || fm.frontmatter === null) {
+    return { prefix: '', body: content }
+  }
+  // The body returned by extractFrontmatter is everything after the closing
+  // delimiter line. Recover the exact prefix by removing that body from the end.
+  if (fm.body && content.endsWith(fm.body)) {
+    return { prefix: content.slice(0, content.length - fm.body.length), body: fm.body }
+  }
+  return { prefix: '', body: content }
+}
+
+/**
+ * Prefer the page's own first H1 heading as its title; fall back to the
+ * humanised filename. Frontmatter `title:` is honoured first when present.
+ */
+function derivePageTitle(name: string, content: string): string {
+  const fm = extractFrontmatter(content)
+  const fields = readWikiFields(fm.frontmatter ?? {})
+  if (fields.title) return String(fields.title)
+  const body = fm.body ?? content
+  const h1 = body.match(/^\s*#\s+(.+?)\s*$/m)
+  if (h1?.[1]) return h1[1].trim()
+  return humanizeName(name)
 }
 
 export function CustomerKnowledgeRenderer(props: {
@@ -45,15 +128,17 @@ export function CustomerKnowledgeRenderer(props: {
   const [tree, setTree] = useState<Array<Node>>([])
   const [rootExists, setRootExists] = useState(true)
   const [treeError, setTreeError] = useState<string | null>(null)
-  const [selected, setSelected] = useState<string | null>(null)
+  const [selected, setSelected] = useState<Node | null>(null)
   const [content, setContent] = useState('')
-  const [draft, setDraft] = useState('')
+  // The textarea edits the markdown BODY only; the frontmatter block is held
+  // verbatim in `prefix` and re-attached on save so nothing is ever lost.
+  const [prefix, setPrefix] = useState('')
+  const [bodyDraft, setBodyDraft] = useState('')
   const [saveBusy, setSaveBusy] = useState(false)
   const [feedback, setFeedback] = useState<{
     kind: 'ok' | 'err' | 'warn'
     message: string
   } | null>(null)
-  const accent = props.config.branding.accent_color ?? '#1e40af'
 
   const loadTree = useCallback(async () => {
     setTreeError(null)
@@ -64,13 +149,13 @@ export function CustomerKnowledgeRenderer(props: {
       )
       const j = (await res.json().catch(() => ({}))) as TreeResponse
       if (!res.ok || !j.ok) {
-        setTreeError(`HTTP ${res.status}`)
+        setTreeError('Could not load the wiki right now.')
         return
       }
       setTree(j.tree)
       setRootExists(j.root_exists)
-    } catch (err) {
-      setTreeError(err instanceof Error ? err.message : 'fetch failed')
+    } catch {
+      setTreeError('Could not load the wiki right now.')
     }
   }, [props.profile])
 
@@ -79,28 +164,31 @@ export function CustomerKnowledgeRenderer(props: {
   }, [loadTree])
 
   const openFile = useCallback(
-    async (path: string) => {
-      setSelected(path)
+    async (node: Node) => {
+      setSelected(node)
       setFeedback(null)
       try {
         const res = await fetch(
-          `/api/customer/wiki/read?profile=${encodeURIComponent(props.profile)}&path=${encodeURIComponent(path)}`,
+          `/api/customer/wiki/read?profile=${encodeURIComponent(props.profile)}&path=${encodeURIComponent(node.path)}`,
           { credentials: 'include' },
         )
         const j = (await res.json().catch(() => ({}))) as ReadResponse
         if (!res.ok || !j.ok || j.content === undefined) {
           setContent('')
-          setDraft('')
-          setFeedback({ kind: 'err', message: j.error ?? `HTTP ${res.status}` })
+          setPrefix('')
+          setBodyDraft('')
+          setFeedback({
+            kind: 'err',
+            message: 'This page could not be opened.',
+          })
           return
         }
+        const split = splitFrontmatterPrefix(j.content)
         setContent(j.content)
-        setDraft(j.content)
-      } catch (err) {
-        setFeedback({
-          kind: 'err',
-          message: err instanceof Error ? err.message : 'load failed',
-        })
+        setPrefix(split.prefix)
+        setBodyDraft(split.body)
+      } catch {
+        setFeedback({ kind: 'err', message: 'This page could not be opened.' })
       }
     },
     [props.profile],
@@ -117,159 +205,114 @@ export function CustomerKnowledgeRenderer(props: {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           profile: props.profile,
-          path: selected,
-          content: draft,
+          path: selected.path,
+          content: prefix + bodyDraft,
         }),
       })
       const j = (await res.json().catch(() => ({}))) as SaveResponse
       if (!res.ok || !j.ok) {
         setFeedback({
           kind: 'err',
-          message: `KSG blocked save: ${j.error ?? `HTTP ${res.status}`}${j.rule ? ` (${j.rule})` : ''}`,
+          message: friendlySaveError(j.rule),
         })
         return
       }
-      setContent(draft)
+      setContent(prefix + bodyDraft)
       const warnings = j.warnings ?? []
       if (warnings.length) {
         setFeedback({
           kind: 'warn',
-          message: `Saved with warnings: ${warnings.join('; ')}`,
+          message: 'Saved. Some page details are missing — add a title, type, and status to help others find this page.',
         })
       } else {
         setFeedback({ kind: 'ok', message: 'Saved.' })
       }
-    } catch (err) {
+    } catch {
       setFeedback({
         kind: 'err',
-        message: err instanceof Error ? err.message : 'save failed',
+        message: 'This change could not be saved. Please try again.',
       })
     } finally {
       setSaveBusy(false)
     }
-  }, [draft, props.profile, selected])
+  }, [prefix, bodyDraft, props.profile, selected])
 
-  const promote = useCallback(async () => {
-    if (!selected) return
-    setSaveBusy(true)
-    setFeedback(null)
-    try {
-      const res = await fetch('/api/customer/wiki/promote', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          profile: props.profile,
-          path: selected,
-        }),
-      })
-      const j = (await res.json().catch(() => ({}))) as {
-        ok: boolean
-        to?: string
-        error?: string
-        rule?: string
-      }
-      if (!res.ok || !j.ok) {
-        setFeedback({
-          kind: 'err',
-          message: `Promote blocked: ${j.error ?? `HTTP ${res.status}`}${j.rule ? ` (${j.rule})` : ''}`,
-        })
-        return
-      }
-      setFeedback({ kind: 'ok', message: `Promoted → ${j.to}` })
-      await loadTree()
-      if (j.to) await openFile(j.to)
-    } catch (err) {
-      setFeedback({
-        kind: 'err',
-        message: err instanceof Error ? err.message : 'promote failed',
-      })
-    } finally {
-      setSaveBusy(false)
-    }
-  }, [loadTree, openFile, props.profile, selected])
+  const pageTitle = useMemo(
+    () => (selected ? derivePageTitle(selected.name, content) : ''),
+    [selected, content],
+  )
 
-  const fm = useMemo(() => {
-    if (!draft) return { frontmatter: null, body: '' }
-    return extractFrontmatter(draft)
-  }, [draft])
+  // The "Page details" panel reads the preserved frontmatter block; the body
+  // textarea never shows the raw `--- ... ---` delimiters.
+  const fm = useMemo(() => extractFrontmatter(content), [content])
   const wikiFields = useMemo(() => readWikiFields(fm.frontmatter), [fm])
 
-  const dirty = draft !== content
+  const dirty = prefix + bodyDraft !== content
 
   return (
-    <div className="grid h-full max-h-[calc(100dvh-220px)] gap-3 lg:grid-cols-[280px_1fr]">
-      <aside className="overflow-y-auto rounded border border-white/10 bg-black/10 p-3">
-        <div className="mb-2 flex items-center justify-between">
-          <h3 className="text-xs font-medium uppercase tracking-wide opacity-60">
-            {props.profile} wiki
+    <div className="grid h-full max-h-[calc(100dvh-220px)] gap-4 text-slate-900 lg:grid-cols-[300px_1fr]">
+      <aside className="overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-3">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Company Wiki
           </h3>
           <button
             type="button"
             onClick={() => void loadTree()}
-            className="text-[10px] opacity-50 hover:opacity-100"
+            aria-label="Refresh"
+            className="rounded p-1 text-slate-400 hover:bg-white hover:text-slate-700"
           >
             ↻
           </button>
         </div>
         {treeError ? (
-          <div className="text-xs text-red-300">{treeError}</div>
+          <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
+            {treeError}
+          </div>
         ) : !rootExists ? (
-          <div className="text-xs opacity-60">Profile not found.</div>
+          <div className="text-xs leading-relaxed text-slate-500">
+            Your company wiki hasn’t been set up yet. Once it’s ready, your
+            pages will appear here.
+          </div>
         ) : tree.length === 0 ? (
-          <div className="text-xs opacity-60">Empty wiki.</div>
+          <div className="text-xs leading-relaxed text-slate-500">
+            This wiki is empty for now.
+          </div>
         ) : (
-          <TreeView
-            nodes={tree}
-            selected={selected}
-            onSelect={openFile}
-            accent={accent}
-          />
+          <TreeView nodes={tree} selected={selected} onSelect={openFile} />
         )}
       </aside>
 
-      <section className="flex flex-col gap-2 rounded border border-white/10 bg-black/10 p-3">
+      <section className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4">
         {selected ? (
           <>
-            <header className="flex flex-wrap items-baseline justify-between gap-2">
-              <div className="text-xs opacity-70">{selected}</div>
-              <div className="flex gap-2">
-                {selected.startsWith('knowledge/inbox/') ||
-                selected.startsWith('knowledge/drafts/') ? (
-                  <button
-                    type="button"
-                    onClick={() => void promote()}
-                    disabled={saveBusy}
-                    className="rounded border border-white/10 px-2 py-1 text-xs opacity-80 hover:opacity-100 disabled:opacity-40"
-                  >
-                    Promote →{' '}
-                    {selected.startsWith('knowledge/inbox/')
-                      ? 'drafts'
-                      : 'published'}
-                  </button>
-                ) : null}
-                <button
-                  type="button"
-                  onClick={() => void save()}
-                  disabled={!dirty || saveBusy}
-                  className="rounded px-3 py-1 text-xs font-medium disabled:opacity-40"
-                  style={{ background: accent, color: '#fff' }}
-                >
-                  {saveBusy ? '…' : dirty ? 'Save' : 'Saved'}
-                </button>
-              </div>
+            <header className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-base font-semibold text-slate-900">
+                {pageTitle}
+              </h2>
+              <button
+                type="button"
+                onClick={() => void save()}
+                disabled={!dirty || saveBusy}
+                className="rounded-md px-3 py-1.5 text-xs font-semibold text-white transition disabled:opacity-40"
+                style={{ background: PRIMARY }}
+              >
+                {saveBusy ? 'Saving…' : dirty ? 'Save' : 'Saved'}
+              </button>
             </header>
 
             {fm.frontmatter ? (
-              <div className="rounded border border-white/10 bg-white/5 p-2 text-xs">
-                <div className="mb-1 font-medium opacity-60">Frontmatter</div>
+              <div className="rounded-md border border-slate-200 bg-slate-50 p-2 text-xs">
+                <div className="mb-1 font-medium text-slate-500">
+                  Page details
+                </div>
                 <ul className="grid gap-x-4 gap-y-0.5 sm:grid-cols-2">
                   {Object.entries(wikiFields)
                     .filter(([, v]) => v !== undefined && v !== '')
                     .map(([k, v]) => (
                       <li key={k} className="flex gap-2">
-                        <span className="opacity-60">{k}:</span>
-                        <span className="font-medium">
+                        <span className="text-slate-500">{k}:</span>
+                        <span className="font-medium text-slate-800">
                           {Array.isArray(v) ? v.join(', ') : String(v)}
                         </span>
                       </li>
@@ -277,27 +320,28 @@ export function CustomerKnowledgeRenderer(props: {
                 </ul>
               </div>
             ) : (
-              <div className="rounded border border-amber-400/30 bg-amber-400/10 p-2 text-xs">
-                No frontmatter detected. KSG requires `title`, `type`, `status`.
+              <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
+                This page has no details block yet. Add a title, type, and
+                status at the top to help others find it.
               </div>
             )}
 
             <textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              className="flex-1 resize-none rounded border border-white/10 bg-black/30 px-2 py-2 text-xs font-mono"
+              value={bodyDraft}
+              onChange={(e) => setBodyDraft(e.target.value)}
+              className="flex-1 resize-none rounded-md border border-slate-200 bg-white px-3 py-2 font-mono text-xs text-slate-900 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-300"
               spellCheck={false}
             />
 
             {feedback && (
               <div
                 className={
-                  'rounded border p-2 text-xs ' +
+                  'rounded-md border p-2 text-xs ' +
                   (feedback.kind === 'ok'
-                    ? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
+                    ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
                     : feedback.kind === 'warn'
-                      ? 'border-amber-400/30 bg-amber-400/10 text-amber-200'
-                      : 'border-red-400/30 bg-red-500/10 text-red-200')
+                      ? 'border-amber-200 bg-amber-50 text-amber-800'
+                      : 'border-red-200 bg-red-50 text-red-700')
                 }
               >
                 {feedback.message}
@@ -305,9 +349,9 @@ export function CustomerKnowledgeRenderer(props: {
             )}
           </>
         ) : (
-          <div className="m-auto text-xs opacity-60">
-            Pick a file from the tree to edit. Canon/governance pages are
-            read-only here.
+          <div className="m-auto max-w-sm text-center text-sm leading-relaxed text-slate-500">
+            Select a page from the wiki to read or edit it. Your changes are
+            saved straight to your company wiki.
           </div>
         )}
       </section>
@@ -319,33 +363,34 @@ function TreeView({
   nodes,
   selected,
   onSelect,
-  accent,
   depth = 0,
 }: {
   nodes: Array<Node>
-  selected: string | null
-  onSelect: (path: string) => void
-  accent: string
+  selected: Node | null
+  onSelect: (node: Node) => void
   depth?: number
 }) {
   return (
-    <ul className="text-xs">
+    <ul className="text-sm">
       {nodes.map((node) =>
         node.type === 'dir' ? (
           <li key={node.path} className="my-0.5">
             <details open={depth < 1}>
-              <summary className="cursor-pointer truncate opacity-80 hover:opacity-100">
-                {node.name}/
+              <summary className="cursor-pointer truncate font-medium text-slate-700 hover:text-slate-900">
+                {humanizeName(node.name)}
               </summary>
-              <div className="ml-3 border-l border-white/10 pl-2">
-                {node.children && node.children.length > 0 && (
+              <div className="ml-2 border-l border-slate-200 pl-2">
+                {node.children && node.children.length > 0 ? (
                   <TreeView
                     nodes={node.children}
                     selected={selected}
                     onSelect={onSelect}
-                    accent={accent}
                     depth={depth + 1}
                   />
+                ) : (
+                  <div className="py-0.5 text-xs italic text-slate-400">
+                    Nothing here yet.
+                  </div>
                 )}
               </div>
             </details>
@@ -354,20 +399,20 @@ function TreeView({
           <li key={node.path}>
             <button
               type="button"
-              onClick={() => onSelect(node.path)}
+              onClick={() => onSelect(node)}
               className={
-                'block w-full truncate rounded px-1 py-0.5 text-left ' +
-                (selected === node.path
-                  ? 'font-semibold'
-                  : 'opacity-70 hover:opacity-100')
+                'block w-full truncate rounded px-2 py-1 text-left transition ' +
+                (selected?.path === node.path
+                  ? 'font-semibold text-white'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900')
               }
               style={
-                selected === node.path
-                  ? { background: `${accent}33`, color: '#fff' }
+                selected?.path === node.path
+                  ? { background: ACTIVE }
                   : undefined
               }
             >
-              {node.name}
+              {humanizeName(node.name)}
             </button>
           </li>
         ),

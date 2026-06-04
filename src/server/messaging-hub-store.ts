@@ -1255,6 +1255,65 @@ export function aggregateCampaignDeliveries(profile: string): CampaignStats {
   return stats
 }
 
+/** Watcher follow-up message rollup (hub side of follow-up performance). */
+export type AuthoredMessageStats = {
+  /** Messages whose `author` matches, by direction. */
+  total: number
+  inbound: number
+  outbound: number
+  /** Outbound messages split by channel (watcher sends SMS). */
+  by_channel: Record<string, number>
+}
+
+/**
+ * Count hub messages authored by a specific author (e.g. the `vin-watcher`
+ * agent), optionally bounded to a recent window. Read-only; used by the Data
+ * page to surface immediate/24h follow-up *sends* that landed in the hub.
+ */
+export function aggregateMessagesByAuthor(
+  profile: string,
+  author: string,
+  sinceMs?: number,
+): AuthoredMessageStats {
+  const stats: AuthoredMessageStats = {
+    total: 0,
+    inbound: 0,
+    outbound: 0,
+    by_channel: {},
+  }
+  const tally = (direction: string, channel: string) => {
+    stats.total += 1
+    if (direction === 'inbound') stats.inbound += 1
+    else if (direction === 'outbound') {
+      stats.outbound += 1
+      stats.by_channel[channel] = (stats.by_channel[channel] ?? 0) + 1
+    }
+  }
+  const db = getDb(profile)
+  if (db) {
+    const rows = db
+      .prepare(
+        `SELECT direction, channel FROM messages WHERE author=?${
+          sinceMs ? ' AND created_at >= ?' : ''
+        }`,
+      )
+      .all(...(sinceMs ? [author, sinceMs] : [author])) as Array<{
+      direction: string
+      channel: string
+    }>
+    for (const r of rows) tally(r.direction, r.channel)
+    return stats
+  }
+  for (const thread of getStore(profile).threads.values()) {
+    for (const m of thread.messages) {
+      if (m.author !== author) continue
+      if (sinceMs && m.created_at < sinceMs) continue
+      tally(m.direction, m.channel)
+    }
+  }
+  return stats
+}
+
 // ─── Test helpers ───────────────────────────────────────────────────────────
 
 export function _resetForTests(profile?: string): void {

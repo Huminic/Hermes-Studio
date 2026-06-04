@@ -43,17 +43,72 @@ function widgetFilePath(profile: string, slug: string): string {
   )
 }
 
+/**
+ * Reject slugs that could traverse out of the widgets directory. Widget slugs
+ * are simple identifiers (letters, digits, dashes, underscores).
+ */
+function isSafeSlug(slug: string): boolean {
+  return /^[a-zA-Z0-9_-]+$/.test(slug)
+}
+
+/**
+ * Read a widget's stored markdown file (frontmatter + body). Widgets live under
+ * `knowledge/widgets/`, which is intentionally OUTSIDE the customer wiki root,
+ * so widget I/O has its own guarded helpers rather than reusing the wiki ones.
+ */
+export function readCustomerWidgetFile(
+  profile: string,
+  slug: string,
+): { ok: boolean; content?: string; error?: string } {
+  if (!isSafeSlug(slug)) {
+    return { ok: false, error: 'Invalid widget id.' }
+  }
+  const file = widgetFilePath(profile, slug)
+  if (!fs.existsSync(file)) {
+    return { ok: false, error: 'Not found' }
+  }
+  return { ok: true, content: fs.readFileSync(file, 'utf8') }
+}
+
+/**
+ * Write a widget's markdown file, creating the `knowledge/widgets/` directory
+ * if needed. Returns the previous content (for audit/gating) when present.
+ */
+export function writeCustomerWidgetFile(
+  profile: string,
+  slug: string,
+  content: string,
+): { ok: boolean; error?: string; previous?: string | null } {
+  if (!isSafeSlug(slug)) {
+    return { ok: false, error: 'Invalid widget id.' }
+  }
+  const file = widgetFilePath(profile, slug)
+  let previous: string | null = null
+  if (fs.existsSync(file)) {
+    previous = fs.readFileSync(file, 'utf8')
+  }
+  fs.mkdirSync(path.dirname(file), { recursive: true })
+  fs.writeFileSync(file, content, 'utf8')
+  return { ok: true, previous }
+}
+
 function originHint(): string {
   return process.env.STUDIO_PUBLIC_ORIGIN ?? 'https://studio.huminic.app'
 }
 
 function buildEmbedSnippet(slug: string): string {
   const origin = originHint()
-  return `<script async src="${origin}/customer-console/embed.js" data-widget-slug="${slug}"></script>`
+  // Single-ID embed (WS-7): one snippet, one id. The id IS the slug. The
+  // minified bundle reads ?id=<slug> and resolves all config from
+  // /api/public/widget-config/<slug>. No domain key, no per-dealer script.
+  return `<script async src="${origin}/nexxus-widget.min.js?id=${encodeURIComponent(slug)}"></script>`
 }
 
 function buildPreviewUrl(slug: string): string {
-  return `${originHint()}/w/${encodeURIComponent(slug)}`
+  // Same-origin (relative) so the in-app preview loads from wherever Studio is
+  // served (localhost in dev, the live host in prod) and frames same-origin.
+  // The EMBED snippet stays absolute — dealers paste it on their own site.
+  return `/w/${encodeURIComponent(slug)}`
 }
 
 export function listCustomerWidgets(profile: string): {

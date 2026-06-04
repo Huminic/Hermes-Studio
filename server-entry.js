@@ -132,10 +132,24 @@ const httpServer = createServer(async (req, res) => {
     // <meta> CSP in __root.tsx is ignored for this directive (GAP-CSP-META-001).
     // Emit it (and X-Frame-Options as a belt-and-suspenders) at the edge.
     const outHeaders = Object.fromEntries(response.headers.entries())
-    if (!outHeaders['content-security-policy']) {
-      outHeaders['content-security-policy'] = "frame-ancestors 'none'"
+    // Public widget surfaces are MEANT to be embedded (iframed) on customer
+    // websites and previewed in-app, so they must be frameable. Everything else
+    // stays frame-locked (clickjacking protection).
+    const embeddable =
+      url.pathname.startsWith('/w/') ||
+      url.pathname === '/nexxus-widget.js' ||
+      url.pathname === '/nexxus-widget.min.js'
+    if (embeddable) {
+      delete outHeaders['x-frame-options']
+      if (!outHeaders['content-security-policy']) {
+        outHeaders['content-security-policy'] = 'frame-ancestors *'
+      }
+    } else {
+      if (!outHeaders['content-security-policy']) {
+        outHeaders['content-security-policy'] = "frame-ancestors 'none'"
+      }
+      outHeaders['x-frame-options'] = 'DENY'
     }
-    outHeaders['x-frame-options'] = 'DENY'
 
     res.writeHead(response.status, outHeaders)
 

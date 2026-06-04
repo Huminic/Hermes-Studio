@@ -158,6 +158,7 @@ import { Route as ApiSessionsSessionKeyStatusRouteImport } from './routes/api/se
 import { Route as ApiSessionsSessionKeyActiveRunRouteImport } from './routes/api/sessions/$sessionKey.active-run'
 import { Route as ApiPublicWidgetsWidgetKeyRouteImport } from './routes/api/public/widgets/$widgetKey'
 import { Route as ApiPublicWidgetJsRouteImport } from './routes/api/public/widget.js'
+import { Route as ApiPublicWidgetConfigIdRouteImport } from './routes/api/public/widget-config/$id'
 import { Route as ApiPublicArtifactsPublicIdRouteImport } from './routes/api/public/artifacts/$publicId'
 import { Route as ApiMessagingThreadsThreadIdRouteImport } from './routes/api/messaging/threads.$threadId'
 import { Route as ApiHermesRunsRunIdEventsRouteImport } from './routes/api/hermes-runs.$runId.events'
@@ -167,6 +168,8 @@ import { Route as ApiCustomerWikiReadRouteImport } from './routes/api/customer/w
 import { Route as ApiCustomerWikiPromoteRouteImport } from './routes/api/customer/wiki/promote'
 import { Route as ApiCustomerWidgetsSaveRouteImport } from './routes/api/customer/widgets/save'
 import { Route as ApiCustomerCampaignsTickRouteImport } from './routes/api/customer/campaigns/tick'
+import { Route as ApiCustomerCampaignsResultsRouteImport } from './routes/api/customer/campaigns/results'
+import { Route as ApiCustomerAudiencesUploadRouteImport } from './routes/api/customer/audiences/upload'
 import { Route as ApiCrewsTemplatesIdRouteImport } from './routes/api/crews/templates/$id'
 import { Route as ApiCrewsCrewIdWorkflowRouteImport } from './routes/api/crews/$crewId.workflow'
 import { Route as ApiCrewsCrewIdUsageRouteImport } from './routes/api/crews/$crewId.usage'
@@ -178,6 +181,7 @@ import { Route as ApiApprovalsApprovalIdApproveRouteImport } from './routes/api/
 import { Route as ApiPublicWidgetsWidgetKeySessionsRouteImport } from './routes/api/public/widgets/$widgetKey/sessions'
 import { Route as ApiMessagingThreadsThreadIdSubscriptionsRouteImport } from './routes/api/messaging/threads.$threadId.subscriptions'
 import { Route as ApiMessagingThreadsThreadIdReplyRouteImport } from './routes/api/messaging/threads.$threadId.reply'
+import { Route as ApiMessagingThreadsThreadIdAssignRouteImport } from './routes/api/messaging/threads.$threadId.assign'
 import { Route as ApiPublicArtifactsPublicIdDownloadFilenameRouteImport } from './routes/api/public/artifacts/$publicId/download/$filename'
 
 const WidgetsRoute = WidgetsRouteImport.update({
@@ -932,6 +936,11 @@ const ApiPublicWidgetJsRoute = ApiPublicWidgetJsRouteImport.update({
   path: '/api/public/widget/js',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWidgetConfigIdRoute = ApiPublicWidgetConfigIdRouteImport.update({
+  id: '/api/public/widget-config/$id',
+  path: '/api/public/widget-config/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicArtifactsPublicIdRoute =
   ApiPublicArtifactsPublicIdRouteImport.update({
     id: '/api/public/artifacts/$publicId',
@@ -979,6 +988,18 @@ const ApiCustomerCampaignsTickRoute =
   ApiCustomerCampaignsTickRouteImport.update({
     id: '/api/customer/campaigns/tick',
     path: '/api/customer/campaigns/tick',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiCustomerCampaignsResultsRoute =
+  ApiCustomerCampaignsResultsRouteImport.update({
+    id: '/api/customer/campaigns/results',
+    path: '/api/customer/campaigns/results',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiCustomerAudiencesUploadRoute =
+  ApiCustomerAudiencesUploadRouteImport.update({
+    id: '/api/customer/audiences/upload',
+    path: '/api/customer/audiences/upload',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiCrewsTemplatesIdRoute = ApiCrewsTemplatesIdRouteImport.update({
@@ -1040,6 +1061,12 @@ const ApiMessagingThreadsThreadIdReplyRoute =
   ApiMessagingThreadsThreadIdReplyRouteImport.update({
     id: '/reply',
     path: '/reply',
+    getParentRoute: () => ApiMessagingThreadsThreadIdRoute,
+  } as any)
+const ApiMessagingThreadsThreadIdAssignRoute =
+  ApiMessagingThreadsThreadIdAssignRouteImport.update({
+    id: '/assign',
+    path: '/assign',
     getParentRoute: () => ApiMessagingThreadsThreadIdRoute,
   } as any)
 const ApiPublicArtifactsPublicIdDownloadFilenameRoute =
@@ -1196,6 +1223,8 @@ export interface FileRoutesByFullPath {
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
+  '/api/customer/audiences/upload': typeof ApiCustomerAudiencesUploadRoute
+  '/api/customer/campaigns/results': typeof ApiCustomerCampaignsResultsRoute
   '/api/customer/campaigns/tick': typeof ApiCustomerCampaignsTickRoute
   '/api/customer/widgets/save': typeof ApiCustomerWidgetsSaveRoute
   '/api/customer/wiki/promote': typeof ApiCustomerWikiPromoteRoute
@@ -1205,6 +1234,7 @@ export interface FileRoutesByFullPath {
   '/api/hermes-runs/$runId/events': typeof ApiHermesRunsRunIdEventsRoute
   '/api/messaging/threads/$threadId': typeof ApiMessagingThreadsThreadIdRouteWithChildren
   '/api/public/artifacts/$publicId': typeof ApiPublicArtifactsPublicIdRouteWithChildren
+  '/api/public/widget-config/$id': typeof ApiPublicWidgetConfigIdRoute
   '/api/public/widget/js': typeof ApiPublicWidgetJsRoute
   '/api/public/widgets/$widgetKey': typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
@@ -1216,6 +1246,7 @@ export interface FileRoutesByFullPath {
   '/api/customer/audiences/': typeof ApiCustomerAudiencesIndexRoute
   '/api/customer/campaigns/': typeof ApiCustomerCampaignsIndexRoute
   '/api/customer/widgets/': typeof ApiCustomerWidgetsIndexRoute
+  '/api/messaging/threads/$threadId/assign': typeof ApiMessagingThreadsThreadIdAssignRoute
   '/api/messaging/threads/$threadId/reply': typeof ApiMessagingThreadsThreadIdReplyRoute
   '/api/messaging/threads/$threadId/subscriptions': typeof ApiMessagingThreadsThreadIdSubscriptionsRoute
   '/api/public/widgets/$widgetKey/sessions': typeof ApiPublicWidgetsWidgetKeySessionsRoute
@@ -1367,6 +1398,8 @@ export interface FileRoutesByTo {
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
+  '/api/customer/audiences/upload': typeof ApiCustomerAudiencesUploadRoute
+  '/api/customer/campaigns/results': typeof ApiCustomerCampaignsResultsRoute
   '/api/customer/campaigns/tick': typeof ApiCustomerCampaignsTickRoute
   '/api/customer/widgets/save': typeof ApiCustomerWidgetsSaveRoute
   '/api/customer/wiki/promote': typeof ApiCustomerWikiPromoteRoute
@@ -1376,6 +1409,7 @@ export interface FileRoutesByTo {
   '/api/hermes-runs/$runId/events': typeof ApiHermesRunsRunIdEventsRoute
   '/api/messaging/threads/$threadId': typeof ApiMessagingThreadsThreadIdRouteWithChildren
   '/api/public/artifacts/$publicId': typeof ApiPublicArtifactsPublicIdRouteWithChildren
+  '/api/public/widget-config/$id': typeof ApiPublicWidgetConfigIdRoute
   '/api/public/widget/js': typeof ApiPublicWidgetJsRoute
   '/api/public/widgets/$widgetKey': typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
@@ -1387,6 +1421,7 @@ export interface FileRoutesByTo {
   '/api/customer/audiences': typeof ApiCustomerAudiencesIndexRoute
   '/api/customer/campaigns': typeof ApiCustomerCampaignsIndexRoute
   '/api/customer/widgets': typeof ApiCustomerWidgetsIndexRoute
+  '/api/messaging/threads/$threadId/assign': typeof ApiMessagingThreadsThreadIdAssignRoute
   '/api/messaging/threads/$threadId/reply': typeof ApiMessagingThreadsThreadIdReplyRoute
   '/api/messaging/threads/$threadId/subscriptions': typeof ApiMessagingThreadsThreadIdSubscriptionsRoute
   '/api/public/widgets/$widgetKey/sessions': typeof ApiPublicWidgetsWidgetKeySessionsRoute
@@ -1540,6 +1575,8 @@ export interface FileRoutesById {
   '/api/crews/$crewId/usage': typeof ApiCrewsCrewIdUsageRoute
   '/api/crews/$crewId/workflow': typeof ApiCrewsCrewIdWorkflowRoute
   '/api/crews/templates/$id': typeof ApiCrewsTemplatesIdRoute
+  '/api/customer/audiences/upload': typeof ApiCustomerAudiencesUploadRoute
+  '/api/customer/campaigns/results': typeof ApiCustomerCampaignsResultsRoute
   '/api/customer/campaigns/tick': typeof ApiCustomerCampaignsTickRoute
   '/api/customer/widgets/save': typeof ApiCustomerWidgetsSaveRoute
   '/api/customer/wiki/promote': typeof ApiCustomerWikiPromoteRoute
@@ -1549,6 +1586,7 @@ export interface FileRoutesById {
   '/api/hermes-runs/$runId/events': typeof ApiHermesRunsRunIdEventsRoute
   '/api/messaging/threads/$threadId': typeof ApiMessagingThreadsThreadIdRouteWithChildren
   '/api/public/artifacts/$publicId': typeof ApiPublicArtifactsPublicIdRouteWithChildren
+  '/api/public/widget-config/$id': typeof ApiPublicWidgetConfigIdRoute
   '/api/public/widget/js': typeof ApiPublicWidgetJsRoute
   '/api/public/widgets/$widgetKey': typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
@@ -1560,6 +1598,7 @@ export interface FileRoutesById {
   '/api/customer/audiences/': typeof ApiCustomerAudiencesIndexRoute
   '/api/customer/campaigns/': typeof ApiCustomerCampaignsIndexRoute
   '/api/customer/widgets/': typeof ApiCustomerWidgetsIndexRoute
+  '/api/messaging/threads/$threadId/assign': typeof ApiMessagingThreadsThreadIdAssignRoute
   '/api/messaging/threads/$threadId/reply': typeof ApiMessagingThreadsThreadIdReplyRoute
   '/api/messaging/threads/$threadId/subscriptions': typeof ApiMessagingThreadsThreadIdSubscriptionsRoute
   '/api/public/widgets/$widgetKey/sessions': typeof ApiPublicWidgetsWidgetKeySessionsRoute
@@ -1714,6 +1753,8 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
+    | '/api/customer/audiences/upload'
+    | '/api/customer/campaigns/results'
     | '/api/customer/campaigns/tick'
     | '/api/customer/widgets/save'
     | '/api/customer/wiki/promote'
@@ -1723,6 +1764,7 @@ export interface FileRouteTypes {
     | '/api/hermes-runs/$runId/events'
     | '/api/messaging/threads/$threadId'
     | '/api/public/artifacts/$publicId'
+    | '/api/public/widget-config/$id'
     | '/api/public/widget/js'
     | '/api/public/widgets/$widgetKey'
     | '/api/sessions/$sessionKey/active-run'
@@ -1734,6 +1776,7 @@ export interface FileRouteTypes {
     | '/api/customer/audiences/'
     | '/api/customer/campaigns/'
     | '/api/customer/widgets/'
+    | '/api/messaging/threads/$threadId/assign'
     | '/api/messaging/threads/$threadId/reply'
     | '/api/messaging/threads/$threadId/subscriptions'
     | '/api/public/widgets/$widgetKey/sessions'
@@ -1885,6 +1928,8 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
+    | '/api/customer/audiences/upload'
+    | '/api/customer/campaigns/results'
     | '/api/customer/campaigns/tick'
     | '/api/customer/widgets/save'
     | '/api/customer/wiki/promote'
@@ -1894,6 +1939,7 @@ export interface FileRouteTypes {
     | '/api/hermes-runs/$runId/events'
     | '/api/messaging/threads/$threadId'
     | '/api/public/artifacts/$publicId'
+    | '/api/public/widget-config/$id'
     | '/api/public/widget/js'
     | '/api/public/widgets/$widgetKey'
     | '/api/sessions/$sessionKey/active-run'
@@ -1905,6 +1951,7 @@ export interface FileRouteTypes {
     | '/api/customer/audiences'
     | '/api/customer/campaigns'
     | '/api/customer/widgets'
+    | '/api/messaging/threads/$threadId/assign'
     | '/api/messaging/threads/$threadId/reply'
     | '/api/messaging/threads/$threadId/subscriptions'
     | '/api/public/widgets/$widgetKey/sessions'
@@ -2057,6 +2104,8 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId/usage'
     | '/api/crews/$crewId/workflow'
     | '/api/crews/templates/$id'
+    | '/api/customer/audiences/upload'
+    | '/api/customer/campaigns/results'
     | '/api/customer/campaigns/tick'
     | '/api/customer/widgets/save'
     | '/api/customer/wiki/promote'
@@ -2066,6 +2115,7 @@ export interface FileRouteTypes {
     | '/api/hermes-runs/$runId/events'
     | '/api/messaging/threads/$threadId'
     | '/api/public/artifacts/$publicId'
+    | '/api/public/widget-config/$id'
     | '/api/public/widget/js'
     | '/api/public/widgets/$widgetKey'
     | '/api/sessions/$sessionKey/active-run'
@@ -2077,6 +2127,7 @@ export interface FileRouteTypes {
     | '/api/customer/audiences/'
     | '/api/customer/campaigns/'
     | '/api/customer/widgets/'
+    | '/api/messaging/threads/$threadId/assign'
     | '/api/messaging/threads/$threadId/reply'
     | '/api/messaging/threads/$threadId/subscriptions'
     | '/api/public/widgets/$widgetKey/sessions'
@@ -2206,6 +2257,8 @@ export interface RootRouteChildren {
   ApiApprovalsApprovalIdApproveRoute: typeof ApiApprovalsApprovalIdApproveRoute
   ApiApprovalsApprovalIdDenyRoute: typeof ApiApprovalsApprovalIdDenyRoute
   ApiCrewsTemplatesIdRoute: typeof ApiCrewsTemplatesIdRoute
+  ApiCustomerAudiencesUploadRoute: typeof ApiCustomerAudiencesUploadRoute
+  ApiCustomerCampaignsResultsRoute: typeof ApiCustomerCampaignsResultsRoute
   ApiCustomerCampaignsTickRoute: typeof ApiCustomerCampaignsTickRoute
   ApiCustomerWidgetsSaveRoute: typeof ApiCustomerWidgetsSaveRoute
   ApiCustomerWikiPromoteRoute: typeof ApiCustomerWikiPromoteRoute
@@ -2213,6 +2266,7 @@ export interface RootRouteChildren {
   ApiCustomerWikiSaveRoute: typeof ApiCustomerWikiSaveRoute
   ApiCustomerWikiTreeRoute: typeof ApiCustomerWikiTreeRoute
   ApiPublicArtifactsPublicIdRoute: typeof ApiPublicArtifactsPublicIdRouteWithChildren
+  ApiPublicWidgetConfigIdRoute: typeof ApiPublicWidgetConfigIdRoute
   ApiPublicWidgetJsRoute: typeof ApiPublicWidgetJsRoute
   ApiPublicWidgetsWidgetKeyRoute: typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
   ApiWebhooksTextmagicProfileRoute: typeof ApiWebhooksTextmagicProfileRoute
@@ -3268,6 +3322,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWidgetJsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/widget-config/$id': {
+      id: '/api/public/widget-config/$id'
+      path: '/api/public/widget-config/$id'
+      fullPath: '/api/public/widget-config/$id'
+      preLoaderRoute: typeof ApiPublicWidgetConfigIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/artifacts/$publicId': {
       id: '/api/public/artifacts/$publicId'
       path: '/api/public/artifacts/$publicId'
@@ -3329,6 +3390,20 @@ declare module '@tanstack/react-router' {
       path: '/api/customer/campaigns/tick'
       fullPath: '/api/customer/campaigns/tick'
       preLoaderRoute: typeof ApiCustomerCampaignsTickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/customer/campaigns/results': {
+      id: '/api/customer/campaigns/results'
+      path: '/api/customer/campaigns/results'
+      fullPath: '/api/customer/campaigns/results'
+      preLoaderRoute: typeof ApiCustomerCampaignsResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/customer/audiences/upload': {
+      id: '/api/customer/audiences/upload'
+      path: '/api/customer/audiences/upload'
+      fullPath: '/api/customer/audiences/upload'
+      preLoaderRoute: typeof ApiCustomerAudiencesUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/crews/templates/$id': {
@@ -3406,6 +3481,13 @@ declare module '@tanstack/react-router' {
       path: '/reply'
       fullPath: '/api/messaging/threads/$threadId/reply'
       preLoaderRoute: typeof ApiMessagingThreadsThreadIdReplyRouteImport
+      parentRoute: typeof ApiMessagingThreadsThreadIdRoute
+    }
+    '/api/messaging/threads/$threadId/assign': {
+      id: '/api/messaging/threads/$threadId/assign'
+      path: '/assign'
+      fullPath: '/api/messaging/threads/$threadId/assign'
+      preLoaderRoute: typeof ApiMessagingThreadsThreadIdAssignRouteImport
       parentRoute: typeof ApiMessagingThreadsThreadIdRoute
     }
     '/api/public/artifacts/$publicId/download/$filename': {
@@ -3594,12 +3676,15 @@ const ApiCrewsCrewIdRouteWithChildren = ApiCrewsCrewIdRoute._addFileChildren(
 )
 
 interface ApiMessagingThreadsThreadIdRouteChildren {
+  ApiMessagingThreadsThreadIdAssignRoute: typeof ApiMessagingThreadsThreadIdAssignRoute
   ApiMessagingThreadsThreadIdReplyRoute: typeof ApiMessagingThreadsThreadIdReplyRoute
   ApiMessagingThreadsThreadIdSubscriptionsRoute: typeof ApiMessagingThreadsThreadIdSubscriptionsRoute
 }
 
 const ApiMessagingThreadsThreadIdRouteChildren: ApiMessagingThreadsThreadIdRouteChildren =
   {
+    ApiMessagingThreadsThreadIdAssignRoute:
+      ApiMessagingThreadsThreadIdAssignRoute,
     ApiMessagingThreadsThreadIdReplyRoute:
       ApiMessagingThreadsThreadIdReplyRoute,
     ApiMessagingThreadsThreadIdSubscriptionsRoute:
@@ -3788,6 +3873,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiApprovalsApprovalIdApproveRoute: ApiApprovalsApprovalIdApproveRoute,
   ApiApprovalsApprovalIdDenyRoute: ApiApprovalsApprovalIdDenyRoute,
   ApiCrewsTemplatesIdRoute: ApiCrewsTemplatesIdRoute,
+  ApiCustomerAudiencesUploadRoute: ApiCustomerAudiencesUploadRoute,
+  ApiCustomerCampaignsResultsRoute: ApiCustomerCampaignsResultsRoute,
   ApiCustomerCampaignsTickRoute: ApiCustomerCampaignsTickRoute,
   ApiCustomerWidgetsSaveRoute: ApiCustomerWidgetsSaveRoute,
   ApiCustomerWikiPromoteRoute: ApiCustomerWikiPromoteRoute,
@@ -3795,6 +3882,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCustomerWikiSaveRoute: ApiCustomerWikiSaveRoute,
   ApiCustomerWikiTreeRoute: ApiCustomerWikiTreeRoute,
   ApiPublicArtifactsPublicIdRoute: ApiPublicArtifactsPublicIdRouteWithChildren,
+  ApiPublicWidgetConfigIdRoute: ApiPublicWidgetConfigIdRoute,
   ApiPublicWidgetJsRoute: ApiPublicWidgetJsRoute,
   ApiPublicWidgetsWidgetKeyRoute: ApiPublicWidgetsWidgetKeyRouteWithChildren,
   ApiWebhooksTextmagicProfileRoute: ApiWebhooksTextmagicProfileRoute,

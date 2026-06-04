@@ -46,11 +46,11 @@ async function fetchAuthSession(): Promise<AuthSession> {
 }
 
 const TABS: Array<{ id: string; label: string; menuKey: keyof StudioConfig['menu'] }> = [
-  { id: 'chat', label: 'Chat', menuKey: 'chat' },
+  { id: 'chat', label: 'Agents', menuKey: 'chat' },
   { id: 'knowledge', label: 'Knowledge', menuKey: 'knowledge' },
-  { id: 'tools', label: 'Tools', menuKey: 'tools' },
+  { id: 'tools', label: 'Widgets', menuKey: 'tools' },
   { id: 'data', label: 'Data', menuKey: 'data' },
-  { id: 'comms', label: 'Comms', menuKey: 'comms' },
+  { id: 'comms', label: 'Teambox', menuKey: 'comms' },
   { id: 'campaigns', label: 'Campaigns', menuKey: 'campaigns' },
 ]
 
@@ -87,52 +87,36 @@ function StorefrontLandingRoute() {
     return <Outlet />
   }
 
-  const accentColor = config.branding.accent_color ?? '#1e40af'
+  const PRIMARY = '#3b82f6'
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <header
-        className="flex items-center justify-between border-b border-white/10 p-6"
-        style={{ borderColor: accentColor }}
-      >
+    <div className="flex min-h-dvh flex-col bg-white font-sans text-slate-900">
+      <header className="flex items-center justify-between border-b border-slate-200 p-6">
         <div className="flex items-baseline gap-3">
-          <h1 className="text-2xl font-semibold">
+          <h1 className="text-2xl font-semibold text-slate-900">
             {config.branding.persona_name}
           </h1>
-          <span className="rounded bg-white/10 px-2 py-0.5 text-xs uppercase tracking-wide">
+          <span className="rounded bg-slate-100 px-2 py-0.5 text-xs uppercase tracking-wide text-slate-500">
             {profile}
           </span>
         </div>
-        {matchesProfile ? (
-          <Link
-            to="/p/$profile/$tab"
-            params={{ profile, tab: 'chat' }}
-            className="rounded px-3 py-1.5 text-sm font-medium"
-            style={{ background: accentColor, color: '#fff' }}
-          >
-            Enter →
-          </Link>
-        ) : (
-          <Link
-            to="/p/$profile/$tab"
-            params={{ profile, tab: 'chat' }}
-            className="rounded px-3 py-1.5 text-sm font-medium"
-            style={{ background: accentColor, color: '#fff' }}
-          >
-            Log in
-          </Link>
-        )}
+        <Link
+          to="/p/$profile/$tab"
+          params={{ profile, tab: 'chat' }}
+          className="rounded-lg px-3 py-1.5 text-sm font-medium text-white"
+          style={{ background: PRIMARY }}
+        >
+          {matchesProfile ? 'Enter →' : 'Log in'}
+        </Link>
       </header>
 
       <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 p-6">
         <section className="flex flex-col gap-3">
-          <h2 className="text-3xl font-semibold tracking-tight">
+          <h2 className="text-3xl font-semibold tracking-tight text-slate-900">
             Welcome to {config.branding.persona_name}
           </h2>
-          <p className="text-sm opacity-70">
-            This is the customer storefront for the{' '}
-            <span className="font-medium">{profile}</span> profile, powered by
-            Huminic Studio. Six pages live behind sign-in:
+          <p className="text-sm text-slate-500">
+            This is your customer storefront. Six pages live behind sign-in:
           </p>
         </section>
 
@@ -143,21 +127,23 @@ function StorefrontLandingRoute() {
               <li
                 key={tab.id}
                 className={
-                  'rounded-lg border p-4 ' +
+                  'rounded-lg border p-4 transition-colors ' +
                   (enabled
-                    ? 'border-white/20 hover:border-white/40'
-                    : 'border-white/5 opacity-40')
+                    ? 'border-slate-200 bg-slate-50 hover:border-slate-300'
+                    : 'border-slate-100 bg-slate-50 opacity-50')
                 }
               >
                 <div className="flex items-center justify-between">
-                  <div className="text-sm font-semibold">{tab.label}</div>
+                  <div className="text-sm font-semibold text-slate-900">
+                    {tab.label}
+                  </div>
                   {!enabled && (
-                    <div className="text-[10px] uppercase opacity-50">
+                    <div className="text-[10px] uppercase text-slate-400">
                       disabled
                     </div>
                   )}
                 </div>
-                <div className="mt-1 text-xs opacity-60">
+                <div className="mt-1 text-xs text-slate-500">
                   {tabBlurb(tab.id)}
                 </div>
               </li>
@@ -166,14 +152,13 @@ function StorefrontLandingRoute() {
         </ul>
 
         {configQuery.data?.source === 'default' && (
-          <div className="text-[10px] opacity-50">
-            No studio.yaml for this profile — rendering with defaults. Operator
-            seeds branding + menu visibility per-profile.
+          <div className="text-[10px] text-slate-400">
+            Showing default branding for this store.
           </div>
         )}
       </main>
 
-      <footer className="border-t border-white/10 p-4 text-[10px] opacity-50">
+      <footer className="border-t border-slate-200 p-4 text-[10px] text-slate-400">
         Powered by Huminic
       </footer>
     </div>
@@ -185,7 +170,7 @@ function tabBlurb(id: string): string {
     case 'chat':
       return 'Talk to your agents'
     case 'knowledge':
-      return 'Edit your wiki, gated by the Semantic Guardian'
+      return 'Edit your knowledge base, with safe-edit checks'
     case 'tools':
       return 'Widget embed code, live demo, and tool config'
     case 'data':

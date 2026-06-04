@@ -12,9 +12,9 @@ import {
   resolveSession,
 } from '../../../../server/customer-auth'
 import {
-  readCustomerWikiFile,
-  writeCustomerWikiFile,
-} from '../../../../server/customer-wiki'
+  readCustomerWidgetFile,
+  writeCustomerWidgetFile,
+} from '../../../../server/customer-widgets'
 import { evaluateWikiSave } from '../../../../server/ksg-gate'
 
 export const Route = createFileRoute('/api/customer/widgets/save')({
@@ -41,7 +41,7 @@ export const Route = createFileRoute('/api/customer/widgets/save')({
           return json({ ok: false, error: 'Forbidden' }, { status: 403 })
         }
         const relPath = `knowledge/widgets/${slug}.md`
-        const prev = readCustomerWikiFile(profile, relPath)
+        const prev = readCustomerWidgetFile(profile, slug)
         const previousContent = prev.ok ? prev.content ?? null : null
         const verdict = evaluateWikiSave({
           relativePath: relPath,
@@ -54,7 +54,7 @@ export const Route = createFileRoute('/api/customer/widgets/save')({
             { status: 422 },
           )
         }
-        const result = writeCustomerWikiFile(profile, relPath, content)
+        const result = writeCustomerWidgetFile(profile, slug, content)
         if (!result.ok) return json(result, { status: 400 })
         return json({
           ok: true,

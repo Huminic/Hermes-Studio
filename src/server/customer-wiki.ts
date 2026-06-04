@@ -1,9 +1,16 @@
 /**
- * Customer-wiki server helpers — AC.3.1+.
+ * Customer-wiki server helpers — SERRA-UI-5.
  *
- * Exposes only the customer-editable portion of the profile wiki to the
- * /api/customer/wiki/* endpoints. Excludes the protected trees
- * (canon/, governance/) that are operator-only.
+ * The customer-facing Knowledge panel is a CLEAN, customer-facing wiki. It
+ * exposes ONLY a single curated subtree — `company-wiki/` at the profile
+ * root — and nothing else. Everything else in the profile (brain/, vectors/,
+ * backups/, uploads/, data/, campaigns/, widgets/, knowledge/, canon/,
+ * governance/, sessions/, SOUL.md, studio.yaml, config.yaml, auth.yaml,
+ * persona.md, *.db, ...) is BACKEND PLUMBING and is invisible to the customer.
+ *
+ * Model: serve ONLY the `company-wiki/` root, NOT "profile-root-minus-excludes".
+ * The API lists / reads / writes / moves strictly within that subtree, with
+ * path-traversal guards retained.
  */
 
 import fs from 'node:fs'
@@ -12,6 +19,7 @@ import path from 'node:path'
 
 export type CustomerWikiNode = {
   name: string
+  /** Path relative to the profile root, always under `company-wiki/`. */
   path: string
   type: 'dir' | 'file'
   size?: number
@@ -19,22 +27,20 @@ export type CustomerWikiNode = {
   children?: Array<CustomerWikiNode>
 }
 
-const EXCLUDED_TOP_LEVEL = new Set([
-  'canon',
-  'governance',
-  'sessions',
-  'state.db',
-  'state.db-shm',
-  'state.db-wal',
-  'messaging-hub.db',
-  'messaging-hub.db-shm',
-  'messaging-hub.db-wal',
-  '.git',
-  'archive',
-])
+/**
+ * The single curated subtree the customer wiki is allowed to see. This is the
+ * inversion of the old "profile-root-minus-excludes" model: instead of
+ * blacklisting backend folders, we whitelist exactly one wiki root and treat
+ * everything else as invisible.
+ */
+export const WIKI_ROOT = 'company-wiki'
 
 function profileRoot(profile: string): string {
   return path.join(os.homedir(), '.hermes', 'profiles', profile)
+}
+
+function wikiRoot(profile: string): string {
+  return path.join(profileRoot(profile), WIKI_ROOT)
 }
 
 function safeReadDir(dir: string): Array<fs.Dirent> {
@@ -45,16 +51,17 @@ function safeReadDir(dir: string): Array<fs.Dirent> {
   }
 }
 
-function walk(
-  base: string,
-  rel: string,
-  depth = 0,
-): Array<CustomerWikiNode> {
+/**
+ * Walk a directory under the wiki root. `base` is the profile root; `rel` is
+ * the path relative to the profile root (so it always begins with
+ * `company-wiki/...`). Only directories and Markdown files are surfaced;
+ * dotfiles (incl. .gitkeep) are hidden.
+ */
+function walk(base: string, rel: string, depth = 0): Array<CustomerWikiNode> {
   const here = path.join(base, rel)
   const entries = safeReadDir(here)
   const out: Array<CustomerWikiNode> = []
   for (const entry of entries) {
-    if (rel === '' && EXCLUDED_TOP_LEVEL.has(entry.name)) continue
     if (entry.name.startsWith('.')) continue
     const relChild = path.posix.join(rel, entry.name)
     const fullChild = path.join(base, relChild)
@@ -63,7 +70,7 @@ function walk(
         name: entry.name,
         path: relChild,
         type: 'dir',
-        children: depth < 4 ? walk(base, relChild, depth + 1) : [],
+        children: depth < 6 ? walk(base, relChild, depth + 1) : [],
       })
     } else if (entry.isFile() && entry.name.endsWith('.md')) {
       let stat: fs.Stats | null = null
@@ -92,13 +99,29 @@ export function listCustomerWikiTree(profile: string): {
   tree: Array<CustomerWikiNode>
   root_exists: boolean
 } {
-  const base = profileRoot(profile)
-  if (!fs.existsSync(base)) {
+  const root = wikiRoot(profile)
+  if (!fs.existsSync(root)) {
+    // The profile may exist but have no company wiki yet. Report no root so
+    // the UI shows a plain-language empty state — never the profile root.
     return { ok: true, tree: [], root_exists: false }
   }
-  return { ok: true, tree: walk(base, ''), root_exists: true }
+  // Walk from the profile root but starting at `company-wiki/`, so every
+  // returned path is anchored under the wiki root and nothing above it can
+  // ever be enumerated.
+  return {
+    ok: true,
+    tree: walk(profileRoot(profile), WIKI_ROOT),
+    root_exists: true,
+  }
 }
 
+/**
+ * Resolve a customer-supplied path to an absolute file path, enforcing that:
+ *  - it is a Markdown file,
+ *  - it does not traverse (`..`),
+ *  - it resolves strictly inside `company-wiki/` (never the profile root or
+ *    any sibling backend folder).
+ */
 function ensureSafePath(profile: string, relPath: string): string {
   const norm = relPath.replace(/\\/g, '/').replace(/^\/+/, '')
   if (norm.includes('..')) {
@@ -107,15 +130,19 @@ function ensureSafePath(profile: string, relPath: string): string {
   if (!norm.endsWith('.md')) {
     throw new Error('Only Markdown files are allowed.')
   }
-  const top = norm.split('/')[0] ?? ''
-  if (EXCLUDED_TOP_LEVEL.has(top)) {
-    throw new Error(`Path '${top}/' is read-only for customer-admin.`)
+  const top = norm.split('/').filter(Boolean)[0] ?? ''
+  if (top !== WIKI_ROOT) {
+    // Anything not anchored at the wiki root is backend plumbing.
+    throw new Error('Path is outside the company wiki.')
   }
-  const base = path.resolve(profileRoot(profile))
-  const full = path.resolve(base, norm)
-  const rel = path.relative(base, full)
+  const root = path.resolve(wikiRoot(profile))
+  // Resolve relative to the PROFILE root because `norm` includes the
+  // `company-wiki/` segment, then confirm the result stays inside the wiki
+  // root specifically.
+  const full = path.resolve(profileRoot(profile), norm)
+  const rel = path.relative(root, full)
   if (rel.startsWith('..') || path.isAbsolute(rel)) {
-    throw new Error('Resolved path escapes the profile root.')
+    throw new Error('Resolved path escapes the company wiki.')
   }
   return full
 }
@@ -166,6 +193,57 @@ export function moveCustomerWikiFile(
   try {
     from = ensureSafePath(profile, fromRel)
     to = ensureSafePath(profile, toRel)
+  } catch (err) {
+    return { ok: false, error: (err as Error).message }
+  }
+  if (!fs.existsSync(from)) {
+    return { ok: false, error: 'Source not found.' }
+  }
+  fs.mkdirSync(path.dirname(to), { recursive: true })
+  fs.renameSync(from, to)
+  return { ok: true }
+}
+
+/**
+ * The knowledge-authoring tree (`knowledge/inbox|drafts|published`) is a
+ * SEPARATE concern from the customer-facing `company-wiki/` view. It is never
+ * enumerated in the customer wiki tree, but the promote API still moves files
+ * through it (inbox → drafts → published). This guarded helper resolves paths
+ * strictly inside `knowledge/`, with the same traversal protections.
+ */
+const KNOWLEDGE_ROOT = 'knowledge'
+
+function ensureSafeKnowledgePath(profile: string, relPath: string): string {
+  const norm = relPath.replace(/\\/g, '/').replace(/^\/+/, '')
+  if (norm.includes('..')) {
+    throw new Error('Path traversal is not allowed.')
+  }
+  if (!norm.endsWith('.md')) {
+    throw new Error('Only Markdown files are allowed.')
+  }
+  const top = norm.split('/').filter(Boolean)[0] ?? ''
+  if (top !== KNOWLEDGE_ROOT) {
+    throw new Error('Path is outside the knowledge tree.')
+  }
+  const root = path.resolve(profileRoot(profile), KNOWLEDGE_ROOT)
+  const full = path.resolve(profileRoot(profile), norm)
+  const rel = path.relative(root, full)
+  if (rel.startsWith('..') || path.isAbsolute(rel)) {
+    throw new Error('Resolved path escapes the knowledge tree.')
+  }
+  return full
+}
+
+export function moveKnowledgeFile(
+  profile: string,
+  fromRel: string,
+  toRel: string,
+): { ok: boolean; error?: string } {
+  let from: string
+  let to: string
+  try {
+    from = ensureSafeKnowledgePath(profile, fromRel)
+    to = ensureSafeKnowledgePath(profile, toRel)
   } catch (err) {
     return { ok: false, error: (err as Error).message }
   }

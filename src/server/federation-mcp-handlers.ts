@@ -17,12 +17,14 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import os from 'node:os'
+import { defaultStudioConfig, parseStudioConfig } from '../lib/studio-config'
 import { readStudioConfig } from './studio-config'
-import { parseStudioConfig, defaultStudioConfig } from '../lib/studio-config'
 import { recordAudit } from './metadata-substrate'
 import { insertEvent, insertOutput } from './brain-record-families'
 import { now, uuid } from './brain-store'
 import { callCentralMcpTool } from './central-mcp'
+import { resolveLeadNames, resolveVinOrgId } from './vin-client'
+import type { StudioConfig } from '../lib/studio-config'
 
 function resolveStudioConfig(profile: string) {
   const envRoot = process.env.BRAIN_PROFILES_ROOT
@@ -140,7 +142,7 @@ export async function callFederationTool(
     }
   }
 
-  const engineResult = await dispatchEngine(profile, scope, query, args.params as Record<string, unknown> | undefined)
+  const engineResult = await dispatchEngine(profile, cfg.config, scope, query, args.params as Record<string, unknown> | undefined)
   const gateEventId = uuid()
   recordAudit(profile, {
     ts: now(),
@@ -231,19 +233,28 @@ function vinRows(data: unknown): Array<unknown> {
  */
 async function dispatchVinScope(
   profile: string,
+  config: StudioConfig,
   query: string,
   params?: Record<string, unknown>,
 ): Promise<EngineResult> {
   const override =
     typeof params?.vin_tool === 'string' && VIN_TOOLS.has(params.vin_tool)
-      ? (params.vin_tool as string)
+      ? (params.vin_tool)
       : null
   const tool =
     override ??
     (/\bstatus(es)?\b/i.test(query) ? 'vin_get_lead_statuses' : 'vin_query_leads')
-  // Forward query params to VIN; always scope by profile (federated, live).
+  // VIN is keyed by the Nexxus org UUID (broker maps UUID→dealerId). Resolve it
+  // per profile; passing the profile slug silently fails, so an absent UUID is
+  // surfaced as an error rather than guessed. Uses the config already resolved
+  // by the handler (honors BRAIN_PROFILES_ROOT).
+  const org = resolveVinOrgId(profile, config)
+  if (!org.ok) {
+    return { ok: false, engine: 'vin-live', rows: [], error: org.reason }
+  }
+  // Forward query params to VIN; key by the org UUID (federated, live).
   const { vin_tool: _omit, ...rest } = params ?? {}
-  const r = await callCentralMcpTool(tool, { profile, ...rest })
+  const r = await callCentralMcpTool(tool, { orgId: org.orgId, ...rest })
   if (!r.ok) {
     return {
       ok: false,
@@ -254,18 +265,32 @@ async function dispatchVinScope(
         : `VinSolutions ${tool} failed: ${r.error}`,
     }
   }
-  return { ok: true, engine: 'vin-live', rows: vinRows(r.data) }
+  const rows = vinRows(r.data)
+  // Two-step name resolution for the leads tool: the lead `contact` is an href
+  // with no name, so enrich rows with real names via vin_get_contact (≤ cap).
+  // These resolved rows flow back to the caller but are STILL redacted in the
+  // Brain (the handler persists only {redacted, rows: count}).
+  if (tool === 'vin_query_leads') {
+    const cap = config.vin.name_resolve_cap
+    const resolved = await resolveLeadNames(rows as Array<Record<string, unknown>>, {
+      orgId: org.orgId,
+      cap,
+    })
+    return { ok: true, engine: 'vin-live', rows: resolved }
+  }
+  return { ok: true, engine: 'vin-live', rows }
 }
 
 async function dispatchEngine(
   profile: string,
+  config: StudioConfig,
   scope: string,
   query: string,
   params?: Record<string, unknown>,
 ): Promise<EngineResult> {
   // VIN is its own live source — route to central-mcp ahead of MindsDB/shim.
   if (isVinScope(scope)) {
-    return dispatchVinScope(profile, query, params)
+    return dispatchVinScope(profile, config, query, params)
   }
   // MindsDB path (preferred when configured).
   if (process.env.MINDSDB_URL) {

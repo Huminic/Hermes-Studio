@@ -55,9 +55,14 @@ export const Route = createFileRoute('/api/messaging/threads')({
             created_at: t.created_at,
             updated_at: t.updated_at,
             message_count: t.messages.length,
-            last_message_preview: t.messages.length
-              ? t.messages[t.messages.length - 1].content.slice(0, 160)
-              : '',
+            // Preview from the last CUSTOMER-VISIBLE message — never a
+            // system/notification annotation (which can carry internal text).
+            last_message_preview: (() => {
+              const visible = t.messages.filter((m) => m.role !== 'system')
+              return visible.length
+                ? visible[visible.length - 1].content.slice(0, 160)
+                : ''
+            })(),
           })),
         })
       },

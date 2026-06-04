@@ -58,7 +58,8 @@ describe('/api/customer/widgets', () => {
     const form = body.widgets.find((w) => w.slug === 'lead-form')
     expect(hero?.status).toBe('ready')
     expect(form?.status).toBe('missing-file')
-    expect(hero?.embed_snippet).toContain('data-widget-slug="hero-chat"')
+    // Single-ID embed (WS-7): one snippet carrying ?id=<slug>.
+    expect(hero?.embed_snippet).toContain('nexxus-widget.min.js?id=hero-chat')
   })
 })
 

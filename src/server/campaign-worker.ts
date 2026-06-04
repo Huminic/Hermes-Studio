@@ -23,6 +23,7 @@ import {
 } from './messaging-hub-store'
 import { dispatchOutbound } from './messaging-adapters'
 import { resolveAudience } from './audience-resolver'
+import { readStudioConfig } from './studio-config'
 
 export type CampaignTickResult = {
   campaign_id: string
@@ -31,6 +32,8 @@ export type CampaignTickResult = {
   failed: number
   skipped: number
   simulated?: number
+  /** Template vars that had no data source for this campaign (deduped). */
+  unresolved_vars?: Array<string>
 }
 
 function pickHandle(contact: Contact, channel: string): string | null {
@@ -49,18 +52,90 @@ function pickHandle(contact: Contact, channel: string): string | null {
   return first ?? null
 }
 
-function renderTemplate(template: string, contact: Contact): string {
-  return template.replace(/\{\{(\w+)\}\}/g, (_m, key: string) => {
-    if (key === 'first_name') {
-      const name = contact.display_name ?? ''
-      return name.split(' ')[0] ?? ''
+/**
+ * Audience-query keys that are FILTER directives, not template variables.
+ * Everything else on an audience query is treated as an operator-authored
+ * campaign-level parameter (e.g. recall_id, vehicle_year) usable in templates.
+ */
+const RESERVED_AUDIENCE_KEYS = new Set([
+  'channel',
+  'tags',
+  'last_contacted_before',
+  'last_contacted_after',
+])
+
+/** Render context resolved per delivery: contact + campaign + profile vars. */
+export type RenderContext = Record<string, string>
+
+/**
+ * Resolve the `dealer_name` a campaign speaks as, from the profile's
+ * studio.yaml: `vin.watcher.dealer_name` if present, else
+ * `branding.persona_name`. Mirrors the documented fallback in studio-config.
+ */
+function resolveDealerName(profile: string): string {
+  const { config } = readStudioConfig(profile)
+  return (
+    config.vin?.watcher?.dealer_name ?? config.branding?.persona_name ?? ''
+  )
+}
+
+/**
+ * Build the per-delivery render context by merging (lowest→highest priority):
+ *   1. profile-derived vars (dealer_name)
+ *   2. campaign-level params (operator-authored, non-filter audience-query keys)
+ *   3. contact-derived vars (first_name, last_name from display_name)
+ *
+ * Campaign params come from the audience query because that's the only
+ * operator-authored free-form carrier that reaches the worker — Campaign and
+ * Contact rows carry no vehicle/recall/service fields (see WS-5 report).
+ */
+function buildRenderContext(input: {
+  contact: Contact
+  profile: string
+  campaignParams: Record<string, unknown>
+}): RenderContext {
+  const ctx: RenderContext = {}
+
+  // 1. profile-derived
+  const dealer = resolveDealerName(input.profile)
+  if (dealer) ctx.dealer_name = dealer
+
+  // 2. campaign-level params (skip reserved filter keys + nullish values)
+  for (const [k, v] of Object.entries(input.campaignParams)) {
+    if (RESERVED_AUDIENCE_KEYS.has(k)) continue
+    if (v === null || v === undefined) continue
+    ctx[k] = String(v).trim()
+  }
+
+  // 3. contact-derived (authoritative for first/last name)
+  const name = (input.contact.display_name ?? '').trim()
+  ctx.first_name = name.split(/\s+/)[0] ?? ''
+  ctx.last_name = name.includes(' ')
+    ? name.split(/\s+/).slice(1).join(' ')
+    : ''
+
+  return ctx
+}
+
+/**
+ * Substitute every `{{var}}` placeholder from `context`. Unknown variables
+ * render to an empty string but are collected in `unresolved` so the absence
+ * is visible (counted/logged), never silent.
+ */
+function renderTemplate(
+  template: string,
+  context: RenderContext,
+): { text: string; unresolved: Array<string> } {
+  const unresolved: Array<string> = []
+  const text = template.replace(/\{\{(\w+)\}\}/g, (_m, key: string) => {
+    const value = context[key]
+    if (value === undefined || value === '') {
+      if (!unresolved.includes(key)) unresolved.push(key)
+      return ''
     }
-    if (key === 'last_name') {
-      const parts = (contact.display_name ?? '').split(' ')
-      return parts.slice(1).join(' ')
-    }
-    return ''
+    return value
   })
+  return { text, unresolved }
 }
 
 export async function tickCampaigns(input: {
@@ -100,6 +175,10 @@ export async function tickCampaigns(input: {
     let failed = 0
     let skipped = 0
     let simulated = 0
+    const unresolvedVars = new Set<string>()
+    // Operator-authored campaign-level params (recall_id, vehicle_year, …) ride
+    // on the audience query alongside its filter keys.
+    const campaignParams = (audience.query ?? {}) as Record<string, unknown>
     for (const contact of contacts) {
       if (previousDeliveries.has(contact.id)) {
         skipped++
@@ -118,7 +197,14 @@ export async function tickCampaigns(input: {
         failed++
         continue
       }
-      const message = renderTemplate(c.message_template, contact)
+      const renderContext = buildRenderContext({
+        contact,
+        profile: input.profile,
+        campaignParams,
+      })
+      const rendered = renderTemplate(c.message_template, renderContext)
+      const message = rendered.text
+      for (const v of rendered.unresolved) unresolvedVars.add(v)
       const thread = getOrCreateThread({
         profile: input.profile,
         domain: 'service',
@@ -172,6 +258,15 @@ export async function tickCampaigns(input: {
       }
     }
     updateCampaignStatus(input.profile, c.id, 'complete')
+    const unresolved = [...unresolvedVars]
+    if (unresolved.length > 0) {
+      // Visible, not silent: these placeholders had no data source for this
+      // campaign and rendered empty. Operator must supply them (on the
+      // audience query) or edit the template.
+      console.warn(
+        `[campaign-worker] campaign ${c.id} (${input.profile}) had unresolved template vars: ${unresolved.join(', ')}`,
+      )
+    }
     out.push({
       campaign_id: c.id,
       status: 'complete',
@@ -179,6 +274,7 @@ export async function tickCampaigns(input: {
       failed,
       skipped,
       simulated,
+      ...(unresolved.length > 0 ? { unresolved_vars: unresolved } : {}),
     })
   }
   return out

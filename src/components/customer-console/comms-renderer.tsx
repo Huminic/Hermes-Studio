@@ -1,8 +1,20 @@
 /**
- * customer-console.comms — Phase C.7 (AC.7.1–AC.7.7).
+ * customer-console.comms — the customer "Teambox" unified inbox (SERRA-UI-8).
  *
- * Three-column inbox: segment switcher (Sales | Service) → thread list →
- * thread detail with composer. SSE subscribed for live updates.
+ * Four-column layout: segment switcher (Sales | Service) → filtered thread list
+ * (by channel + by agent) → thread detail with inbound/outbound direction and a
+ * composer → customer-info + take-over (human handoff) panel. SSE subscribed for
+ * live updates.
+ *
+ * Hard rules enforced here:
+ *  - Sales and Service are isolated: switching the segment clears the open thread
+ *    and re-selects within the new segment so a Sales conversation can never bleed
+ *    into the Service view.
+ *  - The customer never sees backend internals: system/notification annotations
+ *    (env-var names, "unconfigured token", routing strings) are not rendered in
+ *    the conversation. Only real customer + agent/rep messages appear.
+ *  - Channels and handlers are shown with plain-language labels (Text, Email,
+ *    Call, Video — never "vapi"/"tavus"/"domain:").
  */
 
 import {
@@ -29,72 +41,167 @@ type ThreadSummary = {
   last_message_preview: string
 }
 
+type ThreadMessage = {
+  id: string
+  direction: 'inbound' | 'outbound'
+  role: 'user' | 'assistant' | 'system'
+  channel: string
+  content: string
+  author: string
+  created_at: number
+  metadata: Record<string, unknown>
+}
+
 type ThreadDetail = ThreadSummary & {
-  messages: Array<{
-    id: string
-    direction: 'inbound' | 'outbound'
-    role: 'user' | 'assistant' | 'system'
-    channel: string
-    content: string
-    author: string
-    created_at: number
-    metadata: Record<string, unknown>
-  }>
+  human_assigned?: boolean
+  messages: Array<ThreadMessage>
+}
+
+type ContactSummary = {
+  id: string
+  display_name: string | null
+  identifiers: Record<string, string>
+  channels: Array<string>
 }
 
 type ListResponse = { ok: boolean; threads: Array<ThreadSummary> }
 type DetailResponse = { ok: boolean; thread: ThreadDetail }
-
-const CHANNEL_GLYPH: Record<string, string> = {
-  chat: '💬',
-  sms: '📱',
-  email: '✉️',
-  'email-adf': '📨',
-  voice: '☎️',
-  phone: '☎️',
-  video: '🎥',
-  form: '📝',
-  textmagic: '📱',
-  vapi: '☎️',
-  tavus: '🎥',
+type ContactsResponse = { ok: boolean; contacts: Array<ContactSummary> }
+type AssignResponse = {
+  ok: boolean
+  human_assigned?: boolean
+  assigned_to?: string | null
 }
+
+// ── Plain-language channel model ────────────────────────────────────────────
+// One canonical "kind" per raw backend channel string. The customer only ever
+// sees the friendly label; raw values (sms/vapi/tavus/email-adf) never render.
+type ChannelKind = 'text' | 'email' | 'call' | 'video' | 'chat' | 'other'
+
+function channelKind(channel: string): ChannelKind {
+  switch (channel) {
+    case 'sms':
+    case 'textmagic':
+    case 'text':
+      return 'text'
+    case 'email':
+    case 'email-adf':
+      return 'email'
+    case 'voice':
+    case 'phone':
+    case 'vapi':
+    case 'call':
+      return 'call'
+    case 'video':
+    case 'tavus':
+      return 'video'
+    case 'chat':
+      return 'chat'
+    default:
+      return 'other'
+  }
+}
+
+const CHANNEL_LABEL: Record<ChannelKind, string> = {
+  text: 'Text',
+  email: 'Email',
+  call: 'Call',
+  video: 'Video',
+  chat: 'Chat',
+  other: 'Message',
+}
+
+function channelLabel(channel: string): string {
+  return CHANNEL_LABEL[channelKind(channel)]
+}
+
+const CHANNEL_GLYPH: Record<ChannelKind, string> = {
+  text: '💬',
+  email: '✉️',
+  call: '☎️',
+  video: '🎥',
+  chat: '💬',
+  other: '·',
+}
+
+// Channel filter chips (req #3). "All" plus one chip per friendly kind.
+const CHANNEL_FILTERS: Array<{ key: 'all' | ChannelKind; label: string }> = [
+  { key: 'all', label: 'All' },
+  { key: 'text', label: 'Text' },
+  { key: 'email', label: 'Email' },
+  { key: 'call', label: 'Call' },
+  { key: 'video', label: 'Video' },
+  { key: 'chat', label: 'Chat' },
+]
+
+// Display name for an agent id (req #3). Keeps it human; falls back to a
+// title-cased id when we have no nicer label.
+function agentLabel(agentId: string): string {
+  const known: Record<string, string> = {
+    caroline: 'Caroline',
+    nancy: 'Nancy Gaston',
+    'nancy-gaston': 'Nancy Gaston',
+  }
+  if (known[agentId]) return known[agentId]
+  return agentId
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(' ')
+}
+
+// Light-theme palette (storefront): white / slate. Blue primary, purple active.
+const PRIMARY = '#3b82f6'
+const ACTIVE = '#8b5cf6'
 
 export function CustomerCommsRenderer(props: {
   profile: string
   config: StudioConfig
 }) {
   const [segment, setSegment] = useState<'sales' | 'service'>('sales')
+  const [channelFilter, setChannelFilter] = useState<'all' | ChannelKind>('all')
+  const [agentFilter, setAgentFilter] = useState<string>('all')
   const [threads, setThreads] = useState<Array<ThreadSummary>>([])
+  const [contacts, setContacts] = useState<Array<ContactSummary>>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [detail, setDetail] = useState<ThreadDetail | null>(null)
   const [draft, setDraft] = useState('')
   const [busy, setBusy] = useState(false)
+  const [assignBusy, setAssignBusy] = useState(false)
   const [composerChannel, setComposerChannel] = useState<string>('chat')
   const [agentTyping, setAgentTyping] = useState<{
     threadId: string
     agentId: string
   } | null>(null)
-  const accent = props.config.branding.accent_color ?? '#1e40af'
   const listRef = useRef<HTMLDivElement | null>(null)
 
-  const loadThreads = useCallback(async () => {
-    try {
-      const res = await fetch(
-        `/api/messaging/threads?profile=${encodeURIComponent(
-          props.profile,
-        )}&domain=${segment}&limit=100`,
-        { credentials: 'include' },
-      )
-      const j = (await res.json().catch(() => ({}))) as ListResponse
-      if (!res.ok || !j.ok) return
-      setThreads(j.threads)
-      if (j.threads.length > 0 && !selectedId) {
-        setSelectedId(j.threads[0].id)
+  // Tracks which segment the loaded threads belong to, so a stale Sales response
+  // can never paint into the Service list (race guard for segment isolation).
+  const segmentRef = useRef(segment)
+  useEffect(() => {
+    segmentRef.current = segment
+  }, [segment])
+
+  const loadThreads = useCallback(
+    async (forSegment: 'sales' | 'service') => {
+      try {
+        const res = await fetch(
+          `/api/messaging/threads?profile=${encodeURIComponent(
+            props.profile,
+          )}&domain=${forSegment}&limit=100`,
+          { credentials: 'include' },
+        )
+        const j = (await res.json().catch(() => ({}))) as ListResponse
+        if (!res.ok || !j.ok) return
+        // Drop the response if the user has since switched segments.
+        if (segmentRef.current !== forSegment) return
+        setThreads(j.threads)
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
-    }
-  }, [props.profile, segment, selectedId])
+    },
+    [props.profile],
+  )
 
   const loadDetail = useCallback(
     async (id: string) => {
@@ -116,12 +223,75 @@ export function CustomerCommsRenderer(props: {
     [props.profile],
   )
 
+  const loadContacts = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `/api/messaging/contacts?profile=${encodeURIComponent(props.profile)}`,
+        { credentials: 'include' },
+      )
+      const j = (await res.json().catch(() => ({}))) as ContactsResponse
+      if (!res.ok || !j.ok) return
+      setContacts(j.contacts)
+    } catch {
+      // ignore
+    }
+  }, [props.profile])
+
+  // Take-over / hand-back (req #6). Assigning the thread to the rep pauses the
+  // autonomous agent: the reply pipeline checks isHumanAssigned(profile,thread)
+  // both before generating AND before sending, and the assign endpoint sets that
+  // exact thread_takeover row. Handing back clears it and resumes the agent.
+  const setTakeOver = useCallback(
+    async (action: 'take_over' | 'hand_back') => {
+      if (!detail) return
+      setAssignBusy(true)
+      try {
+        const res = await fetch(
+          `/api/messaging/threads/${encodeURIComponent(detail.id)}/assign`,
+          {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ profile: props.profile, action }),
+          },
+        )
+        const j = (await res.json().catch(() => ({}))) as AssignResponse
+        if (res.ok && j.ok) {
+          setDetail((d) =>
+            d && d.id === detail.id
+              ? { ...d, human_assigned: !!j.human_assigned }
+              : d,
+          )
+        }
+      } finally {
+        setAssignBusy(false)
+      }
+    },
+    [detail, props.profile],
+  )
+
+  // Segment switch: hard-reset the open conversation so a thread from the other
+  // segment can never stay on screen (the core Sales↔Service isolation fix).
+  const switchSegment = useCallback(
+    (s: 'sales' | 'service') => {
+      if (s === segment) return
+      setSegment(s)
+      setSelectedId(null)
+      setDetail(null)
+      setThreads([])
+      setAgentFilter('all')
+    },
+    [segment],
+  )
+
   useEffect(() => {
-    void loadThreads()
-  }, [loadThreads, segment])
+    void loadThreads(segment)
+    void loadContacts()
+  }, [loadThreads, loadContacts, segment])
 
   useEffect(() => {
     if (selectedId) void loadDetail(selectedId)
+    else setDetail(null)
   }, [loadDetail, selectedId])
 
   // SSE subscription
@@ -140,7 +310,7 @@ export function CustomerCommsRenderer(props: {
           t === 'thread_status_changed' ||
           t === 'message_appended'
         ) {
-          void loadThreads()
+          void loadThreads(segmentRef.current)
           if (
             t === 'message_appended' &&
             typeof data.thread_id === 'string' &&
@@ -201,27 +371,79 @@ export function CustomerCommsRenderer(props: {
     }
   }, [composerChannel, detail, draft, loadDetail, props.profile])
 
+  // Agent options for the by-agent filter (req #3): derived from the assigned
+  // agents present on this segment's threads.
+  const agentOptions = useMemo(() => {
+    const ids = new Set<string>()
+    for (const t of threads) {
+      if (t.assigned_agent_id) ids.add(t.assigned_agent_id)
+    }
+    return Array.from(ids).sort()
+  }, [threads])
+
+  // Apply channel + agent filters on top of the segment-scoped thread list.
+  const visibleThreads = useMemo(() => {
+    return threads.filter((t) => {
+      if (channelFilter !== 'all' && channelKind(t.channel) !== channelFilter) {
+        return false
+      }
+      if (agentFilter !== 'all') {
+        if (agentFilter === '__unassigned') {
+          if (t.assigned_agent_id) return false
+        } else if (t.assigned_agent_id !== agentFilter) {
+          return false
+        }
+      }
+      return true
+    })
+  }, [threads, channelFilter, agentFilter])
+
+  // Keep selection valid as filters/segment change: select the first visible
+  // thread; clear when none match.
+  useEffect(() => {
+    if (visibleThreads.length === 0) {
+      if (selectedId !== null) setSelectedId(null)
+      return
+    }
+    if (!visibleThreads.some((t) => t.id === selectedId)) {
+      setSelectedId(visibleThreads[0].id)
+    }
+  }, [visibleThreads, selectedId])
+
   const idxOfSelected = useMemo(
-    () => threads.findIndex((t) => t.id === selectedId),
-    [selectedId, threads],
+    () => visibleThreads.findIndex((t) => t.id === selectedId),
+    [selectedId, visibleThreads],
   )
+
+  // Customer-info panel source: the contact behind the selected thread.
+  const activeContact = useMemo(() => {
+    if (!detail) return null
+    return (
+      contacts.find((c) =>
+        Object.values(c.identifiers).includes(detail.contact_handle),
+      ) ?? null
+    )
+  }, [contacts, detail])
+
+  // Conversation messages: ONLY real customer + agent/rep messages. System /
+  // notification annotations (lead-notification outcomes, routing diagnostics,
+  // env-var/"unconfigured" strings) are internal and never shown to the customer.
+  const visibleMessages = useMemo(() => {
+    if (!detail) return []
+    return detail.messages.filter((m) => m.role !== 'system')
+  }, [detail])
 
   // Keyboard nav: j/k move down/up, r focuses composer.
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      // Only when not typing in an input
       const target = e.target as HTMLElement | null
-      if (
-        target &&
-        ['INPUT', 'TEXTAREA'].includes(target.tagName) &&
-        target.tagName !== ''
-      ) {
+      if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
         return
       }
-      if (e.key === 'j' && idxOfSelected < threads.length - 1) {
-        setSelectedId(threads[idxOfSelected + 1].id)
+      if (e.key === 'j' && idxOfSelected < visibleThreads.length - 1) {
+        setSelectedId(visibleThreads[idxOfSelected + 1].id)
       } else if (e.key === 'k' && idxOfSelected > 0) {
-        setSelectedId(threads[idxOfSelected - 1].id)
+        setSelectedId(visibleThreads[idxOfSelected - 1].id)
       } else if (e.key === 'r') {
         const ta = document.querySelector<HTMLTextAreaElement>(
           'textarea[data-role="comms-composer"]',
@@ -232,144 +454,266 @@ export function CustomerCommsRenderer(props: {
     }
     document.addEventListener('keydown', handler)
     return () => document.removeEventListener('keydown', handler)
-  }, [idxOfSelected, threads])
+  }, [idxOfSelected, visibleThreads])
+
+  const segmentTitle = segment === 'sales' ? 'Sales' : 'Service'
 
   return (
-    <div className="grid h-full max-h-[calc(100dvh-220px)] grid-cols-1 gap-3 lg:grid-cols-[120px_320px_1fr]">
-      <aside className="flex flex-col gap-1 rounded border border-white/10 bg-black/10 p-2">
-        {(['sales', 'service'] as const).map((s) => (
-          <button
-            key={s}
-            type="button"
-            onClick={() => setSegment(s)}
-            className={
-              'rounded px-2 py-1.5 text-left text-sm capitalize ' +
-              (segment === s
-                ? 'font-semibold'
-                : 'opacity-70 hover:opacity-100')
-            }
-            style={
-              segment === s
-                ? { background: `${accent}33`, color: '#fff' }
-                : undefined
-            }
-          >
-            {s}
-          </button>
-        ))}
-        <div className="mt-2 text-[10px] opacity-50">
-          j/k move · r reply
+    <div className="grid h-full max-h-[calc(100dvh-220px)] grid-cols-1 gap-3 text-slate-900 lg:grid-cols-[120px_320px_1fr_280px]">
+      {/* SEGMENT SWITCHER (Sales | Service) — req #1 isolation entry point */}
+      <aside className="flex flex-col gap-1 rounded-lg border border-slate-200 bg-slate-50 p-2">
+        {(['sales', 'service'] as const).map((s) => {
+          const on = segment === s
+          return (
+            <button
+              key={s}
+              type="button"
+              onClick={() => switchSegment(s)}
+              data-role="segment"
+              data-segment={s}
+              aria-pressed={on}
+              className={
+                'rounded-md px-2 py-1.5 text-left text-sm font-medium capitalize transition-colors ' +
+                (on
+                  ? 'text-white'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900')
+              }
+              style={on ? { background: ACTIVE } : undefined}
+            >
+              {s}
+            </button>
+          )
+        })}
+        <div className="mt-2 text-[10px] leading-snug text-slate-400">
+          j / k to move · r to reply
         </div>
       </aside>
 
+      {/* THREAD LIST + filters (channel + agent) */}
       <section
         ref={listRef}
-        className="overflow-y-auto rounded border border-white/10 bg-black/10"
+        className="flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white"
       >
-        {threads.length === 0 ? (
-          <div className="p-4 text-xs opacity-60">
-            No {segment} threads yet.
-          </div>
-        ) : (
-          <ul>
-            {threads.map((t) => {
-              const active = t.id === selectedId
-              return (
-                <li key={t.id}>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedId(t.id)}
-                    className={
-                      'w-full border-b border-white/5 p-3 text-left text-xs ' +
-                      (active ? 'bg-white/10 font-semibold' : 'hover:bg-white/5')
-                    }
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span>
-                        {CHANNEL_GLYPH[t.channel] ?? '·'} {t.contact_handle}
-                      </span>
-                      <span className="text-[10px] opacity-50">
-                        {timeShort(t.updated_at)}
-                      </span>
-                    </div>
-                    <div className="mt-1 truncate text-[11px] opacity-70">
-                      {t.last_message_preview}
-                    </div>
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-        )}
+        {/* Channel filter chips (req #3) */}
+        <div
+          className="flex shrink-0 flex-wrap gap-1 border-b border-slate-200 p-1.5"
+          data-role="comms-channel-filter"
+        >
+          {CHANNEL_FILTERS.map((f) => {
+            const on = channelFilter === f.key
+            return (
+              <button
+                key={f.key}
+                type="button"
+                onClick={() => setChannelFilter(f.key)}
+                className={
+                  'rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ' +
+                  (on
+                    ? 'text-white'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200')
+                }
+                style={on ? { background: PRIMARY } : undefined}
+              >
+                {f.label}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Agent filter (req #3) — derived from this segment's assigned agents */}
+        <div
+          className="flex shrink-0 items-center gap-2 border-b border-slate-200 px-2 py-1.5"
+          data-role="comms-agent-filter"
+        >
+          <span className="text-[11px] text-slate-500">Agent</span>
+          <select
+            value={agentFilter}
+            onChange={(e) => setAgentFilter(e.target.value)}
+            className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-[12px] text-slate-700"
+          >
+            <option value="all">All agents</option>
+            {agentOptions.map((a) => (
+              <option key={a} value={a}>
+                {agentLabel(a)}
+              </option>
+            ))}
+            <option value="__unassigned">Unassigned</option>
+          </select>
+        </div>
+
+        <div className="flex-1 overflow-y-auto">
+          {visibleThreads.length === 0 ? (
+            <div className="p-4 text-xs text-slate-500">
+              No conversations in {segmentTitle} yet.
+            </div>
+          ) : (
+            <ul>
+              {visibleThreads.map((t) => {
+                const active = t.id === selectedId
+                const kind = channelKind(t.channel)
+                return (
+                  <li key={t.id}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedId(t.id)}
+                      className={
+                        'w-full border-b border-slate-100 p-3 text-left text-xs transition-colors ' +
+                        (active
+                          ? 'bg-blue-50'
+                          : 'hover:bg-slate-50')
+                      }
+                      style={
+                        active
+                          ? { boxShadow: `inset 3px 0 0 ${ACTIVE}` }
+                          : undefined
+                      }
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-medium text-slate-800">
+                          {CHANNEL_GLYPH[kind]} {t.contact_handle}
+                        </span>
+                        <span className="text-[10px] text-slate-400">
+                          {timeShort(t.updated_at)}
+                        </span>
+                      </div>
+                      <div className="mt-1 flex items-center gap-1.5">
+                        <span
+                          data-role="channel-chip"
+                          data-channel-kind={kind}
+                          className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-slate-500"
+                        >
+                          {CHANNEL_LABEL[kind]}
+                        </span>
+                        {t.assigned_agent_id && (
+                          <span className="rounded-full bg-violet-50 px-1.5 py-0.5 text-[9px] font-medium text-violet-700">
+                            {agentLabel(t.assigned_agent_id)}
+                          </span>
+                        )}
+                      </div>
+                      <div className="mt-1 truncate text-[11px] text-slate-500">
+                        {t.last_message_preview}
+                      </div>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
       </section>
 
-      <section className="flex flex-col gap-2 rounded border border-white/10 bg-black/10 p-3">
+      {/* CONVERSATION */}
+      <section className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white p-3">
         {detail ? (
           <>
-            <header className="flex flex-wrap items-baseline justify-between gap-2 border-b border-white/10 pb-2">
+            <header className="flex flex-wrap items-baseline justify-between gap-2 border-b border-slate-200 pb-2">
               <div>
-                <div className="text-sm font-semibold">
-                  {detail.contact_handle}
+                <div className="text-sm font-semibold text-slate-900">
+                  {activeContact?.display_name ?? detail.contact_handle}
                 </div>
-                <div className="text-xs opacity-60">
-                  {CHANNEL_GLYPH[detail.channel] ?? '·'} {detail.channel} ·{' '}
-                  {detail.domain}
-                  {detail.assigned_agent_id && (
-                    <>
-                      {' '}
-                      · agent:{' '}
-                      <span className="font-medium">
-                        {detail.assigned_agent_id}
-                      </span>
-                    </>
-                  )}
+                <div className="text-xs text-slate-500">
+                  {CHANNEL_GLYPH[channelKind(detail.channel)]}{' '}
+                  {channelLabel(detail.channel)} · {segmentTitle}
                 </div>
               </div>
-              <span
-                className={
-                  'rounded px-2 py-0.5 text-[10px] uppercase ' +
-                  (detail.status === 'open'
-                    ? 'bg-emerald-500/20'
-                    : 'bg-white/10')
-                }
-              >
-                {detail.status}
-              </span>
+              <div className="flex items-center gap-2">
+                {/* Who-is-handling badge (req #6): rep vs AI agent */}
+                <span
+                  data-role="handling-badge"
+                  data-handler={detail.human_assigned ? 'human' : 'agent'}
+                  className={
+                    'rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ' +
+                    (detail.human_assigned
+                      ? 'bg-amber-100 text-amber-800'
+                      : 'bg-blue-100 text-blue-700')
+                  }
+                >
+                  {detail.human_assigned
+                    ? 'You are handling'
+                    : detail.assigned_agent_id
+                      ? agentLabel(detail.assigned_agent_id)
+                      : 'AI agent'}
+                </span>
+                <span
+                  className={
+                    'rounded-full px-2 py-0.5 text-[10px] font-medium uppercase ' +
+                    (detail.status === 'open'
+                      ? 'bg-emerald-100 text-emerald-700'
+                      : 'bg-slate-100 text-slate-500')
+                  }
+                >
+                  {detail.status === 'open'
+                    ? 'Open'
+                    : detail.status === 'snoozed'
+                      ? 'Snoozed'
+                      : 'Closed'}
+                </span>
+              </div>
             </header>
 
             <div className="flex-1 overflow-y-auto">
-              <ul className="flex flex-col gap-2">
-                {detail.messages.map((m) => (
-                  <li
-                    key={m.id}
-                    className={
-                      'max-w-[80%] rounded-lg px-3 py-2 text-sm ' +
-                      (m.direction === 'inbound'
-                        ? 'mr-auto bg-white/10'
-                        : 'ml-auto bg-emerald-500/10')
-                    }
-                  >
-                    <div className="text-[10px] opacity-60">
-                      {m.author} · {CHANNEL_GLYPH[m.channel] ?? ''}{' '}
-                      {m.channel} · {timeShort(m.created_at)}
-                    </div>
-                    <div className="mt-1 whitespace-pre-wrap">{m.content}</div>
-                    {m.metadata?.lead_meta != null && (
-                      <details className="mt-1 text-[10px] opacity-70">
-                        <summary>lead_meta</summary>
-                        <pre className="overflow-x-auto whitespace-pre-wrap">
-                          {JSON.stringify(m.metadata.lead_meta, null, 2)}
-                        </pre>
-                      </details>
-                    )}
-                  </li>
-                ))}
-                {agentTyping?.threadId === detail.id && (
-                  <li className="mr-auto rounded-lg bg-emerald-500/10 px-3 py-2 text-xs opacity-70">
-                    {agentTyping.agentId} is typing…
-                  </li>
-                )}
-              </ul>
+              {visibleMessages.length === 0 ? (
+                <div className="m-auto p-6 text-center text-xs text-slate-400">
+                  No messages in this conversation yet.
+                </div>
+              ) : (
+                <ul className="flex flex-col gap-3 py-1">
+                  {visibleMessages.map((m) => {
+                    const inbound = m.direction === 'inbound'
+                    return (
+                      <li
+                        key={m.id}
+                        data-role="message"
+                        data-direction={m.direction}
+                        className={
+                          'flex flex-col ' +
+                          (inbound ? 'items-start' : 'items-end')
+                        }
+                      >
+                        {/* Direction label (req #5) */}
+                        <span
+                          className={
+                            'mb-0.5 text-[9px] font-semibold uppercase tracking-wide ' +
+                            (inbound ? 'text-slate-400' : 'text-blue-500')
+                          }
+                        >
+                          {inbound ? '↙ Received' : 'Sent ↗'}
+                        </span>
+                        <div
+                          className={
+                            'max-w-[80%] rounded-2xl px-3 py-2 text-sm ' +
+                            (inbound
+                              ? 'rounded-tl-sm bg-slate-100 text-slate-800'
+                              : 'rounded-tr-sm bg-blue-500 text-white')
+                          }
+                        >
+                          <div className="whitespace-pre-wrap">{m.content}</div>
+                        </div>
+                        <div
+                          className={
+                            'mt-0.5 text-[10px] text-slate-400 ' +
+                            (inbound ? 'text-left' : 'text-right')
+                          }
+                        >
+                          {inbound
+                            ? activeContact?.display_name ?? detail.contact_handle
+                            : m.role === 'assistant'
+                              ? detail.assigned_agent_id
+                                ? agentLabel(detail.assigned_agent_id)
+                                : 'AI agent'
+                              : 'You'}{' '}
+                          · {channelLabel(m.channel)} · {timeShort(m.created_at)}
+                        </div>
+                      </li>
+                    )
+                  })}
+                  {agentTyping?.threadId === detail.id && (
+                    <li className="self-start rounded-2xl rounded-tl-sm bg-slate-100 px-3 py-2 text-xs text-slate-500">
+                      {agentLabel(agentTyping.agentId)} is typing…
+                    </li>
+                  )}
+                </ul>
+              )}
             </div>
 
             <form
@@ -377,20 +721,20 @@ export function CustomerCommsRenderer(props: {
                 e.preventDefault()
                 void send()
               }}
-              className="flex flex-col gap-2 border-t border-white/10 pt-2"
+              className="flex flex-col gap-2 border-t border-slate-200 pt-2"
             >
               <div className="flex items-center gap-2 text-xs">
-                <span className="opacity-60">via</span>
+                <span className="text-slate-500">Reply via</span>
                 <select
                   value={composerChannel}
                   onChange={(e) => setComposerChannel(e.target.value)}
-                  className="rounded border border-white/10 bg-black/30 px-2 py-1 text-xs"
+                  className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700"
                 >
                   {Array.from(
                     new Set([detail.channel, 'chat', 'email', 'sms']),
                   ).map((c) => (
                     <option key={c} value={c}>
-                      {c}
+                      {channelLabel(c)}
                     </option>
                   ))}
                 </select>
@@ -400,30 +744,134 @@ export function CustomerCommsRenderer(props: {
                 data-role="comms-composer"
                 onChange={(e) => setDraft(e.target.value)}
                 rows={3}
-                placeholder="Reply…"
+                placeholder="Type your reply…"
                 disabled={busy}
-                className="resize-none rounded border border-white/10 bg-black/30 px-2 py-1.5 text-sm"
+                className="resize-none rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none"
               />
               <div className="flex justify-end">
                 <button
                   type="submit"
                   disabled={busy || !draft.trim()}
-                  className="rounded px-3 py-1.5 text-sm font-medium disabled:opacity-50"
-                  style={{ background: accent, color: '#fff' }}
+                  className="rounded-md px-4 py-1.5 text-sm font-medium text-white disabled:opacity-50"
+                  style={{ background: PRIMARY }}
                 >
-                  {busy ? '…' : 'Send'}
+                  {busy ? 'Sending…' : 'Send'}
                 </button>
               </div>
             </form>
           </>
         ) : (
-          <div className="m-auto text-xs opacity-60">
-            {threads.length === 0
-              ? 'No threads in this segment yet.'
-              : 'Pick a thread.'}
+          <div className="m-auto text-center text-xs text-slate-400">
+            {visibleThreads.length === 0
+              ? `No conversations in ${segmentTitle} yet.`
+              : 'Select a conversation to view it.'}
           </div>
         )}
       </section>
+
+      {/* CUSTOMER INFO + HANDOFF (take-over) */}
+      <aside
+        data-role="customer-info-panel"
+        className="flex flex-col gap-3 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-3"
+      >
+        {detail ? (
+          <>
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+              Customer
+            </div>
+            <div className="text-sm font-semibold text-slate-900">
+              {activeContact?.display_name ?? detail.contact_handle}
+            </div>
+            <dl className="flex flex-col gap-1 text-xs">
+              {activeContact?.identifiers.email && (
+                <div className="flex justify-between gap-2">
+                  <dt className="text-slate-400">Email</dt>
+                  <dd className="truncate text-right text-slate-700">
+                    {activeContact.identifiers.email}
+                  </dd>
+                </div>
+              )}
+              {(activeContact?.identifiers.sms ||
+                activeContact?.identifiers.textmagic) && (
+                <div className="flex justify-between gap-2">
+                  <dt className="text-slate-400">Phone</dt>
+                  <dd className="truncate text-right text-slate-700">
+                    {activeContact.identifiers.sms ??
+                      activeContact.identifiers.textmagic}
+                  </dd>
+                </div>
+              )}
+              <div className="flex justify-between gap-2">
+                <dt className="text-slate-400">Contact</dt>
+                <dd className="truncate text-right text-slate-700">
+                  {detail.contact_handle}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt className="text-slate-400">Type</dt>
+                <dd className="text-right text-slate-700">{segmentTitle}</dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt className="text-slate-400">Channel</dt>
+                <dd className="text-right text-slate-700">
+                  {channelLabel(detail.channel)}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt className="text-slate-400">Status</dt>
+                <dd className="text-right capitalize text-slate-700">
+                  {detail.status}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt className="text-slate-400">Handled by</dt>
+                <dd className="text-right font-medium text-slate-800">
+                  {detail.human_assigned
+                    ? 'You'
+                    : detail.assigned_agent_id
+                      ? agentLabel(detail.assigned_agent_id)
+                      : 'AI agent'}
+                </dd>
+              </div>
+            </dl>
+
+            {/* HANDOFF control (req #6) */}
+            <div className="mt-auto flex flex-col gap-2 border-t border-slate-200 pt-3">
+              {detail.human_assigned ? (
+                <button
+                  type="button"
+                  data-role="hand-back"
+                  disabled={assignBusy}
+                  onClick={() => void setTakeOver('hand_back')}
+                  className="rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50"
+                >
+                  {assignBusy ? 'Working…' : 'Hand back to AI agent'}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  data-role="take-over"
+                  disabled={assignBusy}
+                  onClick={() => void setTakeOver('take_over')}
+                  className="rounded-md px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90 disabled:opacity-50"
+                  style={{ background: ACTIVE }}
+                >
+                  {assignBusy ? 'Working…' : 'Take over'}
+                </button>
+              )}
+              <p className="text-[10px] leading-snug text-slate-400">
+                {detail.human_assigned
+                  ? 'You are handling this conversation. The AI agent is paused until you hand it back.'
+                  : 'The AI agent may auto-reply. Take over to pause it and reply yourself.'}
+              </p>
+            </div>
+          </>
+        ) : (
+          <div className="m-auto text-center text-xs text-slate-400">
+            Select a conversation to see customer details.
+          </div>
+        )}
+      </aside>
     </div>
   )
 }

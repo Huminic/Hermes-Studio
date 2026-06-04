@@ -17,9 +17,16 @@ import { checkAndRecord } from '@/server/comms-rate-limiter'
 const HOUR_13_UTC = Date.UTC(2026, 5, 3, 13, 0, 0) // within 08:00–21:00
 const HOUR_02_UTC = Date.UTC(2026, 5, 3, 2, 0, 0) // outside
 
-function cfg(overrides: Partial<StudioConfig['comms']> = {}, scopes: Array<string> = []): StudioConfig {
+function cfg(
+  overrides: Partial<StudioConfig['comms']> = {},
+  scopes: Array<string> = [],
+  vinOverrides: Partial<StudioConfig['vin']> = {},
+): StudioConfig {
   const c = defaultStudioConfig('t')
   c.federation = { read_scopes: scopes }
+  // A VIN-scoped profile carries its Nexxus org UUID; the live DNC check is
+  // keyed by it. Tests can omit it via vinOverrides to exercise the gap path.
+  c.vin = { org_id: 'org-uuid-test', name_resolve_cap: 10, ...vinOverrides }
   c.comms = {
     outbound_enabled: true,
     channels: { sms: true, voice: true, video: true, email: true },
@@ -98,6 +105,30 @@ describe('checkCommGate — fail-closed layers', () => {
     })
     expect(r).toMatchObject({ ok: false, rule: 'vin-dnc' })
     expect(vinMock).toHaveBeenCalledWith('vin_query_leads', expect.objectContaining({ phone: '+12025550123' }))
+  })
+
+  it('passes the Nexxus org UUID (not the profile slug) to the VIN query', async () => {
+    vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
+    vinMock.mockResolvedValue({ ok: true, data: [] })
+    await checkCommGate({
+      ...base,
+      options: { config: cfg({}, ['vinsolutions:read']), nowMs: HOUR_13_UTC },
+    })
+    expect(vinMock).toHaveBeenCalledWith(
+      'vin_query_leads',
+      expect.objectContaining({ orgId: 'org-uuid-test' }),
+    )
+  })
+
+  it('fails CLOSED (and skips the VIN call) when the org UUID is unconfigured', async () => {
+    vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
+    vi.stubEnv('VIN_ORG_ID', '')
+    const r = await checkCommGate({
+      ...base,
+      options: { config: cfg({}, ['vinsolutions:read'], { org_id: undefined }), nowMs: HOUR_13_UTC },
+    })
+    expect(r).toMatchObject({ ok: false, rule: 'vin-unavailable' })
+    expect(vinMock).not.toHaveBeenCalled()
   })
 
   it('fails CLOSED when the VIN lookup errors (default)', async () => {

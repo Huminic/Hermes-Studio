@@ -188,6 +188,8 @@ branding:
 federation:
   read_scopes:
     - vinsolutions
+vin:
+  org_id: org-uuid-fixture
 `,
       'utf8',
     )
@@ -203,7 +205,7 @@ federation:
     )
     expect(callCentralMcpTool).toHaveBeenCalledWith(
       'vin_query_leads',
-      expect.objectContaining({ profile: 'fixture' }),
+      expect.objectContaining({ orgId: 'org-uuid-fixture' }),
     )
     expect(res.ok).toBe(true)
     if (res.ok) {
@@ -226,6 +228,8 @@ branding:
 federation:
   read_scopes:
     - vinsolutions
+vin:
+  org_id: org-uuid-fixture
 `,
       'utf8',
     )
@@ -255,6 +259,81 @@ federation:
     }
   })
 
+  it('federation_query VIN leads are name-resolved via the two-step (href → vin_get_contact)', async () => {
+    callCentralMcpTool.mockImplementation(async (tool: string, args: Record<string, unknown>) => {
+      if (tool === 'vin_query_leads') {
+        return {
+          ok: true,
+          data: {
+            leads: [
+              { leadId: 'L1', contact: 'https://vin/contacts/id/55', status: 'Hot' },
+              { leadId: 'L2', contact: 'https://vin/contacts/id/66', status: 'Cold' },
+            ],
+          },
+        }
+      }
+      // vin_get_contact
+      const id = String(args.contactId)
+      return {
+        ok: true,
+        data: {
+          firstName: id === '55' ? 'Ada' : 'Bo',
+          lastName: 'Lovelace',
+          id,
+          ContactInformation: { Emails: [], Phones: [] },
+        },
+      }
+    })
+    const profileRoot = path.join(tmpRoot, '.hermes', 'profiles', 'fixture')
+    fs.writeFileSync(
+      path.join(profileRoot, 'studio.yaml'),
+      `
+branding:
+  persona_name: Fixture
+federation:
+  read_scopes:
+    - vinsolutions
+vin:
+  org_id: org-uuid-fixture
+`,
+      'utf8',
+    )
+    const res = await callFederationTool(
+      'federation_query',
+      { profile: 'fixture', scope: 'vinsolutions', query: 'all open leads' },
+      {
+        token_label: 'test',
+        token_allowed_profiles: ['fixture'],
+        token_allowed_tools: ['federation_query'],
+        token_admin: false,
+      },
+    )
+    // Query, then one vin_get_contact per lead, all carrying the org UUID.
+    expect(callCentralMcpTool).toHaveBeenCalledWith(
+      'vin_get_contact',
+      expect.objectContaining({ orgId: 'org-uuid-fixture', contactId: '55' }),
+      expect.anything(),
+    )
+    expect(res.ok).toBe(true)
+    if (res.ok) {
+      const rows = res.data.rows as Array<Record<string, unknown>>
+      expect(rows[0].resolved_name).toBe('Ada Lovelace')
+      expect(rows[1].resolved_name).toBe('Bo Lovelace')
+    }
+    // Brain still holds only the redacted count, never the resolved names.
+    const handle = openBrain('fixture', { profileRoot })
+    try {
+      const brainRows = handle.all(
+        `SELECT content FROM outputs WHERE output_type='federation_query_result'`,
+      ) as Array<{ content: string }>
+      const blob = brainRows.map((r) => r.content).join('\n')
+      expect(blob).not.toContain('Lovelace')
+      expect(blob).toContain('redacted')
+    } finally {
+      handle.close()
+    }
+  })
+
   it('federation_query VIN scope picks vin_get_lead_statuses on a status query', async () => {
     callCentralMcpTool.mockResolvedValue({ ok: true, data: { statuses: ['Hot', 'Cold'] } })
     const profileRoot = path.join(tmpRoot, '.hermes', 'profiles', 'fixture')
@@ -266,6 +345,8 @@ branding:
 federation:
   read_scopes:
     - vin
+vin:
+  org_id: org-uuid-fixture
 `,
       'utf8',
     )
@@ -281,13 +362,16 @@ federation:
     )
     expect(callCentralMcpTool).toHaveBeenCalledWith(
       'vin_get_lead_statuses',
-      expect.objectContaining({ profile: 'fixture' }),
+      expect.objectContaining({ orgId: 'org-uuid-fixture' }),
     )
     expect(res.ok).toBe(true)
   })
 
-  it('federation_query VIN scope surfaces an error (not a shim) when VIN unconfigured', async () => {
-    // beforeEach default mock returns unconfigured.
+  it('federation_query VIN scope surfaces an error (not a shim) when the org UUID is unconfigured', async () => {
+    // VIN-scoped but NO vin.org_id → must error (the Nexxus org UUID is the
+    // broker key; we never fall back to the profile slug).
+    const prevEnvOrg = process.env.VIN_ORG_ID
+    delete process.env.VIN_ORG_ID
     const profileRoot = path.join(tmpRoot, '.hermes', 'profiles', 'fixture')
     fs.writeFileSync(
       path.join(profileRoot, 'studio.yaml'),
@@ -297,6 +381,44 @@ branding:
 federation:
   read_scopes:
     - vinsolutions
+`,
+      'utf8',
+    )
+    const res = await callFederationTool(
+      'federation_query',
+      { profile: 'fixture', scope: 'vinsolutions', query: 'open leads' },
+      {
+        token_label: 'test',
+        token_allowed_profiles: ['fixture'],
+        token_allowed_tools: ['federation_query'],
+        token_admin: false,
+      },
+    )
+    if (prevEnvOrg !== undefined) process.env.VIN_ORG_ID = prevEnvOrg
+    expect(res.ok).toBe(false)
+    if (!res.ok) expect(res.error).toMatch(/unconfigured/i)
+    // It must NOT have reached the broker with a bad/absent orgId.
+    expect(callCentralMcpTool).not.toHaveBeenCalled()
+  })
+
+  it('federation_query VIN scope surfaces a broker error when central-mcp is unconfigured', async () => {
+    // org UUID present, but the broker/token is unconfigured.
+    callCentralMcpTool.mockResolvedValue({
+      ok: false,
+      unconfigured: true,
+      error: 'central-mcp token missing',
+    })
+    const profileRoot = path.join(tmpRoot, '.hermes', 'profiles', 'fixture')
+    fs.writeFileSync(
+      path.join(profileRoot, 'studio.yaml'),
+      `
+branding:
+  persona_name: Fixture
+federation:
+  read_scopes:
+    - vinsolutions
+vin:
+  org_id: org-uuid-fixture
 `,
       'utf8',
     )

@@ -16,11 +16,12 @@
  * outbound (local record) instead of sending. Never throws.
  */
 
-import type { StudioConfig } from '../lib/studio-config'
 import { readStudioConfig } from './studio-config'
 import { checkAndRecord } from './comms-rate-limiter'
 import { isBlacklisted } from './comms-blacklist'
 import { callCentralMcpTool } from './central-mcp'
+import { resolveVinOrgId } from './vin-client'
+import type { StudioConfig } from '../lib/studio-config'
 
 export type GateChannel = 'sms' | 'voice' | 'video' | 'email'
 
@@ -123,10 +124,16 @@ export function leadOptedOut(data: unknown): boolean {
 async function vinDnc(
   profile: string,
   to: string,
+  config: StudioConfig,
 ): Promise<{ optedOut: boolean; errored: boolean }> {
   // Live VIN query. We distinguish a clean answer from a lookup error so the
   // caller can decide the fail mode (fail-closed by default — see checkCommGate).
-  const r = await callCentralMcpTool('vin_query_leads', { phone: to, profile })
+  // The broker keys VIN by the Nexxus org UUID, not the profile slug; an
+  // unconfigured orgId is treated as an error so we fail CLOSED (we cannot prove
+  // the recipient hasn't opted out).
+  const org = resolveVinOrgId(profile, config)
+  if (!org.ok) return { optedOut: false, errored: true }
+  const r = await callCentralMcpTool('vin_query_leads', { orgId: org.orgId, phone: to })
   if (!r.ok) return { optedOut: false, errored: true }
   return { optedOut: leadOptedOut(r.data), errored: false }
 }
@@ -175,7 +182,7 @@ export async function checkCommGate(input: CommGateInput): Promise<CommGateResul
 
   // 6. Live VIN lead-status check (sms + voice), when scoped + enabled.
   if (REGULATED.has(input.channel) && comms.vin_check && hasVinScope(config)) {
-    const vin = await vinDnc(input.profile, input.to)
+    const vin = await vinDnc(input.profile, input.to, config)
     if (vin.optedOut) {
       return { ok: false, rule: 'vin-dnc', reason: `VinSolutions marks ${input.to} do-not-contact` }
     }
@@ -197,7 +204,7 @@ export async function checkCommGate(input: CommGateInput): Promise<CommGateResul
   const rc = checkAndRecord(
     {
       profile: input.profile,
-      channel: rateChannel as 'sms' | 'voice' | 'video' | 'email',
+      channel: rateChannel,
       cap_per_minute: caps?.per_minute,
       cap_per_hour: caps?.per_hour,
     },

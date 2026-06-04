@@ -19,9 +19,16 @@ import {
 
 export type AudienceQuery = {
   channel?: string
-  // Tag filter is provisional — contacts don't carry tags yet, so this
-  // filter is a no-op until a tagging table lands. Kept in the DSL so
-  // audience definitions are forwards-compatible.
+  // Explicit contact-id list, set when an audience is built from an uploaded
+  // CSV. When present it takes precedence over the channel/filter keys and the
+  // audience resolves to exactly those contacts (still validated against the
+  // hub so a deleted contact drops out honestly).
+  contact_ids?: Array<string>
+  // Tag filter is provisional — the Contact row carries no `tags`/`metadata`
+  // column (only id/profile/display_name/identifiers/channels/timestamps), so
+  // there is no honest source to match against. Confirmed no-op as of WS-5;
+  // kept in the DSL so audience definitions stay forwards-compatible and so a
+  // future tagging table can light it up without a query migration.
   tags?: Array<string>
   last_contacted_before?: number
   last_contacted_after?: number
@@ -33,6 +40,14 @@ export function resolveAudience(input: {
 }): Array<Contact> {
   const q = input.query as AudienceQuery
   const contacts = listContacts(input.profile)
+
+  // Explicit contact-id audience (CSV upload): resolve to exactly the listed
+  // contacts that still exist for this profile.
+  if (Array.isArray(q.contact_ids) && q.contact_ids.length > 0) {
+    const wanted = new Set(q.contact_ids)
+    return contacts.filter((c) => wanted.has(c.id))
+  }
+
   const lastContactedByContact = new Map<string, number>()
   if (q.last_contacted_before || q.last_contacted_after) {
     const threads = listThreads({ profile: input.profile, limit: 500 })

@@ -143,23 +143,23 @@ async function dispatchSms(
   content: string,
 ): Promise<AdapterResult> {
   const to = thread.contact_handle
-  // SHARED (default): united SMS via the central-mcp broker. The deployed broker
-  // (mcp.huminicdev.com/dax) exposes SignalWire for SMS — signalwire_send_sms —
-  // NOT tm_send_message. The sender must be an SMS-capable, project-owned number
-  // (SIGNALWIRE_FROM, studio- or profile-level). No hardcoded fallback: an unset
-  // sender reports unconfigured rather than guaranteeing a provider error.
+  // SHARED (default): united SMS via the central-mcp broker using tm_send_message
+  // (TextMagic) — the same tool the live Nexxus platform uses. The claude_nexxus-2.2
+  // broker token (operator decision D1, see docs/launch/NEXXUS_FIT_SPEC.md) exposes
+  // tm_send_message alongside vin_/vapi_/tavus_/resend_. No token combines SignalWire
+  // with vin/vapi/tavus, so SignalWire is not used. The sender (`from`) is OPTIONAL:
+  // when SMS_FROM is configured it is passed through (matching Nexxus campaign sends
+  // which use the org's smsCampaignNumber); when absent it is omitted so the broker's
+  // default TextMagic sender is used (matching Nexxus trigger/greeting sends).
   if (modeFor(profile, 'sms') === 'shared') {
     const env = readEnvFromProfile(profile)
-    const from = env.SIGNALWIRE_FROM ?? process.env.SIGNALWIRE_FROM
-    if (!from) return { status: 'unconfigured', via: 'sms-signalwire-shared' }
-    const r = await callCentralMcpTool(profile, 'signalwire_send_sms', {
-      from,
-      to,
-      body: content.slice(0, 1600),
-    })
-    if (r.unconfigured) return { status: 'unconfigured', via: 'sms-signalwire-shared' }
-    if (!r.ok) return { status: 'failed', via: 'sms-signalwire-shared', error: r.error }
-    return { status: 'sent', via: 'sms-signalwire-shared', external_id: r.externalId ?? null }
+    const from = env.SMS_FROM ?? process.env.SMS_FROM
+    const args: Record<string, unknown> = { text: content, phones: to }
+    if (from) args.from = from
+    const r = await callCentralMcpTool(profile, 'tm_send_message', args)
+    if (r.unconfigured) return { status: 'unconfigured', via: 'sms-textmagic-shared' }
+    if (!r.ok) return { status: 'failed', via: 'sms-textmagic-shared', error: r.error }
+    return { status: 'sent', via: 'sms-textmagic-shared', external_id: r.externalId ?? null }
   }
   // OWN: the profile's own TextMagic creds, direct to the provider.
   const env = readEnvFromProfile(profile)

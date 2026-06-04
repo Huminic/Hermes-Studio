@@ -138,14 +138,9 @@ export function ConsultPanel(props: {
   if (error) {
     return (
       <div className="rounded border border-amber-400/30 bg-amber-400/10 p-3 text-xs">
-        <div className="font-medium">No engagement state for {props.profile}</div>
-        <div className="opacity-70">{error}</div>
+        <div className="font-medium">Your consultation hasn't started yet</div>
         <div className="mt-2 opacity-70">
-          Operator: seed{' '}
-          <code>
-            ~/.hermes/profiles/{props.profile}/engagement-state.yaml
-          </code>{' '}
-          with the consultative agent's draft template.
+          Once your onboarding is set up, your progress will appear here.
         </div>
       </div>
     )
@@ -256,10 +251,9 @@ export function ConsultPanel(props: {
       </div>
 
       <div className="rounded border border-white/10 bg-black/20 p-3 text-xs">
-        To chat with the consultative agent about this engagement, switch to
-        the <span className="font-medium">Chat</span> tab and pick the
-        consultative-agent SOUL (visible when this profile's
-        consultative-agent fragment is exposed in studio.yaml.agent_picker).
+        To talk through your engagement, switch to the{' '}
+        <span className="font-medium">Chat</span> tab and choose your
+        consultant.
       </div>
     </div>
   )

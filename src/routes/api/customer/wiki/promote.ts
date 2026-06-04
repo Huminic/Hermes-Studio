@@ -10,7 +10,7 @@ import {
   isAuthorizedForProfile,
   resolveSession,
 } from '../../../../server/customer-auth'
-import { moveCustomerWikiFile } from '../../../../server/customer-wiki'
+import { moveKnowledgeFile } from '../../../../server/customer-wiki'
 import { evaluatePromote } from '../../../../server/ksg-gate'
 
 export const Route = createFileRoute('/api/customer/wiki/promote')({
@@ -54,7 +54,7 @@ export const Route = createFileRoute('/api/customer/wiki/promote')({
           )
         }
         const toRel = (underKnowledge ? KNOWLEDGE_PREFIX : '') + verdict.to
-        const move = moveCustomerWikiFile(profile, p, toRel)
+        const move = moveKnowledgeFile(profile, p, toRel)
         if (!move.ok) {
           return json(move, { status: 400 })
         }

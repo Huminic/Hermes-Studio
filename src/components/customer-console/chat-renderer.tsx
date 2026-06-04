@@ -1,14 +1,18 @@
 /**
- * customer-console.chat real renderer — Phase C.2 (AC.2.2, AC.2.3, AC.2.4).
+ * customer-console.chat real renderer — the customer-facing "Agents" area.
  *
  * Reads /api/customer/agents?profile=X to populate an agent picker. Chat
- * round-trips POST to /api/customer/chat with the picked agent id. The
- * server persists turns into the messaging-hub store keyed channel: chat,
- * domain: chat so the conversation also appears in Comms (C.7).
+ * round-trips POST to /api/customer/chat with the picked agent id. Turns are
+ * persisted so the conversation also appears in Teambox.
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { StudioConfig } from '../../lib/studio-config'
+
+// Platform accents (Nexxus look). Functional UI is blue; active selection is
+// purple. We intentionally do NOT use the per-store brand color for buttons.
+const PRIMARY = '#3b82f6'
+const ACTIVE = '#8b5cf6'
 
 type CustomerAgent = {
   id: string
@@ -40,6 +44,13 @@ type ChatResponse = {
   session_id?: string
   via?: 'hermes' | 'openai-direct'
   error?: string
+}
+
+/** A short, customer-safe role label (never "fragment"/"SOUL"/file terms). */
+function roleLabel(a: CustomerAgent): string | null {
+  const s = (a.scope ?? '').trim()
+  if (!s || s.length > 24 || s.includes('/') || s.includes('.md')) return null
+  return s
 }
 
 export function CustomerChatRenderer(props: {
@@ -95,8 +106,6 @@ export function CustomerChatRenderer(props: {
     }
   }, [turns])
 
-  const accent = props.config.branding.accent_color ?? '#1e40af'
-
   const activeAgent = useMemo(
     () => roster?.agents.find((a) => a.id === agentId) ?? null,
     [roster, agentId],
@@ -107,11 +116,7 @@ export function CustomerChatRenderer(props: {
     if (!message || !agentId || busy) return
     setBusy(true)
     setError(null)
-    const userTurn: ChatTurn = {
-      role: 'user',
-      content: message,
-      ts: Date.now(),
-    }
+    const userTurn: ChatTurn = { role: 'user', content: message, ts: Date.now() }
     setTurns((prev) => [...prev, userTurn])
     setDraft('')
     try {
@@ -128,19 +133,20 @@ export function CustomerChatRenderer(props: {
       })
       const j = (await res.json().catch(() => ({}))) as ChatResponse
       if (!res.ok || !j.ok || !j.reply) {
-        setError(j.error ?? `HTTP ${res.status}`)
+        setError(
+          'Sorry — the assistant is unavailable right now. Please try again.',
+        )
         return
       }
       if (j.session_id) setSessionId(j.session_id)
-      const reply: ChatTurn = {
-        role: 'assistant',
-        content: j.reply,
-        via: j.via,
-        ts: Date.now(),
-      }
-      setTurns((prev) => [...prev, reply])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'network error')
+      setTurns((prev) => [
+        ...prev,
+        { role: 'assistant', content: j.reply!, via: j.via, ts: Date.now() },
+      ])
+    } catch {
+      setError(
+        'Sorry — the assistant is unavailable right now. Please try again.',
+      )
     } finally {
       setBusy(false)
     }
@@ -148,83 +154,81 @@ export function CustomerChatRenderer(props: {
 
   if (rosterError) {
     return (
-      <div className="rounded border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-300">
-        Failed to load agent roster: {rosterError}
+      <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+        Your agents aren’t available right now. Please refresh, or contact your
+        Huminic administrator if this continues.
       </div>
     )
   }
 
   if (!roster) {
     return (
-      <div className="rounded border border-white/10 p-4 text-xs opacity-60">
-        Loading agents for {props.profile}…
+      <div className="rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-500">
+        Loading your agents…
       </div>
     )
   }
 
   if (roster.agents.length === 0) {
     return (
-      <div className="rounded border border-amber-400/30 bg-amber-400/10 p-4 text-sm">
-        No agents defined for{' '}
-        <span className="font-medium">{props.profile}</span>.
-        <div className="mt-1 text-xs opacity-70">
-          Operator: drop SOUL fragments under{' '}
-          <code>governance/agents/&lt;id&gt;.md</code> or seed a profile
-          SOUL.md.
-        </div>
+      <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+        No agents are set up for this storefront yet. Your Huminic team will add
+        them shortly.
       </div>
     )
   }
 
   return (
     <div className="flex h-full max-h-[calc(100dvh-220px)] flex-col gap-3">
-      <header className="flex flex-col gap-2 rounded border border-white/10 bg-white/5 p-3">
-        <div className="text-xs font-medium uppercase tracking-wide opacity-60">
+      <header className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white p-3">
+        <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
           Pick an agent
         </div>
         <div className="flex flex-wrap gap-2">
           {roster.agents.map((a) => {
             const active = a.id === agentId
+            const role = roleLabel(a)
             return (
               <button
                 key={a.id}
                 type="button"
                 onClick={() => setAgentId(a.id)}
                 className={
-                  'rounded border px-3 py-1.5 text-xs ' +
+                  'rounded-lg border px-3 py-1.5 text-left transition-colors ' +
                   (active
                     ? 'font-semibold'
-                    : 'border-white/10 opacity-70 hover:opacity-100')
+                    : 'border-slate-200 text-slate-600 hover:bg-slate-50')
                 }
                 style={
                   active
-                    ? { borderColor: accent, background: `${accent}33` }
+                    ? { borderColor: ACTIVE, background: `${ACTIVE}14` }
                     : undefined
                 }
                 title={a.summary}
               >
-                <div className="text-sm">{a.name}</div>
-                <div className="text-[10px] opacity-70">
-                  {a.source === 'governance/agents' ? 'fragment' : 'profile SOUL'}
-                  {a.has_chat_persona && ' · chat persona'}
-                </div>
+                <div className="text-sm text-slate-900">{a.name}</div>
+                {role && (
+                  <div className="text-[10px] capitalize text-slate-500">
+                    {role}
+                  </div>
+                )}
               </button>
             )
           })}
         </div>
         {activeAgent && (
-          <div className="text-xs opacity-70">{activeAgent.summary}</div>
+          <div className="text-xs text-slate-600">{activeAgent.summary}</div>
         )}
       </header>
 
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto rounded border border-white/10 bg-black/10 p-3"
+        className="flex-1 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-3"
       >
         {turns.length === 0 ? (
-          <div className="text-xs opacity-50">
-            Say hi to start the conversation. Messages here persist into Comms
-            under channel: chat.
+          <div className="text-xs text-slate-400">
+            Say hi to {activeAgent?.name ?? 'your agent'} to start the
+            conversation.
           </div>
         ) : (
           <ul className="flex flex-col gap-3">
@@ -234,18 +238,15 @@ export function CustomerChatRenderer(props: {
                 className={
                   'max-w-[80%] rounded-lg px-3 py-2 text-sm ' +
                   (t.role === 'user'
-                    ? 'ml-auto bg-white/10'
-                    : 'mr-auto bg-emerald-500/10')
+                    ? 'ml-auto bg-blue-500 text-white'
+                    : 'mr-auto border border-slate-200 bg-white text-slate-900')
                 }
               >
                 <div className="whitespace-pre-wrap">{t.content}</div>
-                {t.via && (
-                  <div className="mt-1 text-[10px] opacity-50">via {t.via}</div>
-                )}
               </li>
             ))}
             {busy && (
-              <li className="mr-auto max-w-[80%] rounded-lg bg-emerald-500/10 px-3 py-2 text-xs opacity-70">
+              <li className="mr-auto max-w-[80%] rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500">
                 {activeAgent?.name ?? 'Agent'} is typing…
               </li>
             )}
@@ -254,7 +255,7 @@ export function CustomerChatRenderer(props: {
       </div>
 
       {error && (
-        <div className="rounded border border-red-400/30 bg-red-500/10 p-2 text-xs text-red-300">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-2 text-xs text-red-600">
           {error}
         </div>
       )}
@@ -275,16 +276,16 @@ export function CustomerChatRenderer(props: {
               void send()
             }
           }}
-          placeholder={`Message ${activeAgent?.name ?? 'agent'}…`}
+          placeholder={`Message ${activeAgent?.name ?? 'your agent'}…`}
           rows={2}
           disabled={busy || !agentId}
-          className="flex-1 resize-none rounded border border-white/10 bg-black/20 px-2 py-1.5 text-sm"
+          className="flex-1 resize-none rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
         />
         <button
           type="submit"
           disabled={busy || !agentId || !draft.trim()}
-          className="rounded px-3 py-2 text-sm font-medium disabled:opacity-50"
-          style={{ background: accent, color: '#fff' }}
+          className="rounded-lg px-4 py-2 text-sm font-medium text-white transition-opacity disabled:opacity-50"
+          style={{ background: PRIMARY }}
         >
           {busy ? '…' : 'Send'}
         </button>

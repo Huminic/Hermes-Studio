@@ -64,6 +64,53 @@ export function listPublicWidgets(): Array<PublicWidget> {
 }
 
 /**
+ * Public, unauthed config for a widget resolved by its single ID (the slug).
+ *
+ * This is the resolution target for the single-ID embed (WS-7): the customer
+ * pastes ONE snippet carrying ONE id; the widget script fetches this config
+ * and renders accordingly. Everything the embed needs (mode, agent, branding,
+ * greeting, title, the live widget URL) is derived from the widget frontmatter
+ * — the same source the public /w/<slug> route renders from. No domain keying,
+ * no per-dealer baked-in script.
+ *
+ * Returns null when no widget matches the id, so the caller can 404.
+ */
+export type PublicWidgetById = {
+  id: string
+  profile: string
+  mode: string
+  agent: string
+  title: string
+  greeting: string
+  launcherLabel: string
+  accent: string
+  primary: string
+  /** Live, fully-functional widget URL (the /w/<id> route). */
+  url: string
+}
+
+export function publicWidgetConfigById(id: string): PublicWidgetById | null {
+  if (!id) return null
+  const widget = findPublicWidget(id)
+  if (!widget) return null
+  const fm = widget.frontmatter
+  const brand = (fm.brand as Record<string, unknown> | undefined) ?? {}
+  const title = String(fm.title ?? widget.slug)
+  return {
+    id: widget.slug,
+    profile: widget.profile,
+    mode: String(fm.mode ?? 'chat'),
+    agent: String(fm.agent ?? ''),
+    title,
+    greeting: String(fm.greeting ?? ''),
+    launcherLabel: String(fm.launcher_label ?? fm.launcherLabel ?? `Chat with ${title}`),
+    accent: String(brand.accent_color ?? '#0a7dff'),
+    primary: String(brand.primary_color ?? '#222222'),
+    url: `/w/${encodeURIComponent(widget.slug)}`,
+  }
+}
+
+/**
  * Resolve the agent's SOUL fragment for a widget. Looks under the widget's
  * profile at governance/agents/<agentId>.md. Returns the file content or
  * null if no matching SOUL exists (then the caller falls back to the

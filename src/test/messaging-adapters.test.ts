@@ -47,45 +47,52 @@ describe('dispatchOutbound — shared/own credential routing', () => {
     vi.stubGlobal('fetch', fetchMock)
     vi.stubEnv('CENTRAL_MCP_TOKEN', 'test-central-token')
     vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
-    vi.stubEnv('SIGNALWIRE_FROM', '+18886917953')
+    vi.stubEnv('SMS_FROM', '+18886917953')
   })
   afterEach(() => {
     vi.unstubAllGlobals()
     vi.unstubAllEnvs()
   })
 
-  it('SHARED sms (default) routes via central-mcp signalwire_send_sms', async () => {
+  it('SHARED sms (default) routes via central-mcp tm_send_message', async () => {
     fetchMock.mockResolvedValue({
       ok: true,
       text: async () =>
-        'data: {"result":{"content":[{"text":"{\\"sid\\":\\"sms_sid_99\\"}"}]}}\n',
+        'data: {"result":{"content":[{"text":"{\\"id\\":\\"tm_msg_99\\"}"}]}}\n',
     })
     const r = await dispatchOutbound({ profile: 'test', channel: 'sms', thread, content: 'hi' })
     expect(r.status).toBe('sent')
-    expect(r.via).toBe('sms-signalwire-shared')
-    expect(r.external_id).toBe('sms_sid_99')
+    expect(r.via).toBe('sms-textmagic-shared')
+    expect(r.external_id).toBe('tm_msg_99')
     const [url, opts] = fetchMock.mock.calls[0]
     expect(String(url)).toContain('/mcp')
     const body = JSON.parse((opts as { body: string }).body)
-    expect(body.params.name).toBe('signalwire_send_sms')
-    expect(body.params.arguments.to).toBe('+12025550123')
+    expect(body.params.name).toBe('tm_send_message')
+    expect(body.params.arguments.phones).toBe('+12025550123')
+    expect(body.params.arguments.text).toBe('hi')
     expect(body.params.arguments.from).toBe('+18886917953')
-    expect(body.params.arguments.body).toBe('hi')
   })
 
-  it('SHARED sms with no SIGNALWIRE_FROM reports unconfigured (no guaranteed-fail send)', async () => {
-    vi.stubEnv('SIGNALWIRE_FROM', '')
+  it('SHARED sms with no SMS_FROM still sends (broker default sender, no `from` arg)', async () => {
+    vi.stubEnv('SMS_FROM', '')
+    fetchMock.mockResolvedValue({
+      ok: true,
+      text: async () =>
+        'data: {"result":{"content":[{"text":"{\\"id\\":\\"tm_msg_nofrom\\"}"}]}}\n',
+    })
     const r = await dispatchOutbound({ profile: 'test', channel: 'sms', thread, content: 'hi' })
-    expect(r.status).toBe('unconfigured')
-    expect(r.via).toBe('sms-signalwire-shared')
-    expect(fetchMock).not.toHaveBeenCalled()
+    expect(r.status).toBe('sent')
+    expect(r.via).toBe('sms-textmagic-shared')
+    const body = JSON.parse((fetchMock.mock.calls[0][1] as { body: string }).body)
+    expect(body.params.name).toBe('tm_send_message')
+    expect(body.params.arguments).not.toHaveProperty('from')
   })
 
   it('SHARED sms with no central token reports unconfigured (keeps local record)', async () => {
     vi.stubEnv('CENTRAL_MCP_TOKEN', '')
     const r = await dispatchOutbound({ profile: 'test', channel: 'sms', thread, content: 'hi' })
     expect(r.status).toBe('unconfigured')
-    expect(r.via).toBe('sms-signalwire-shared')
+    expect(r.via).toBe('sms-textmagic-shared')
     expect(fetchMock).not.toHaveBeenCalled()
   })
 

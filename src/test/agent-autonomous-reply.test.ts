@@ -216,6 +216,176 @@ describe('agent-autonomous-reply', () => {
     }
   })
 
+  it('default provider: Hermes-first produces a sent reply', async () => {
+    const {
+      getOrCreateThread,
+      appendMessage,
+      subscribeAgentToThread,
+      getThread,
+    } = await import('@/server/messaging-hub-store')
+    const ar = await import('@/server/agent-autonomous-reply')
+
+    // Provide a channel persona fragment so we can assert it lands in the
+    // system prompt the provider receives.
+    const agentDir = path.join(
+      tmpHome,
+      '.hermes',
+      'profiles',
+      'huminic',
+      'governance',
+      'agents',
+      'caroline',
+      'personas',
+    )
+    fs.mkdirSync(agentDir, { recursive: true })
+    fs.writeFileSync(
+      path.join(agentDir, 'sms.md'),
+      'SMS PERSONA: be brief and friendly.\n',
+    )
+
+    let capturedUrl = ''
+    let capturedSystem = ''
+    const fakeFetch = (async (url: string, init?: RequestInit) => {
+      capturedUrl = String(url)
+      const sent = JSON.parse(String(init?.body ?? '{}'))
+      capturedSystem = sent.messages?.[0]?.content ?? ''
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          choices: [{ message: { content: 'Hi! Happy to help.' } }],
+        }),
+      } as unknown as Response
+    }) as unknown as typeof fetch
+
+    ar.setAutonomousReplyProvider(
+      ar.makeDefaultAutonomousReplyProvider(fakeFetch),
+    )
+    process.env.API_SERVER_KEY = 'test-hermes-key'
+
+    const thread = getOrCreateThread({
+      profile: 'huminic',
+      domain: 'service',
+      channel: 'sms',
+      contact_handle: '+15555550100',
+    })
+    const inbound = appendMessage({
+      thread_id: thread.id,
+      direction: 'inbound',
+      role: 'user',
+      channel: 'sms',
+      content: 'do you have a Civic?',
+      author: 'lead',
+    })
+    subscribeAgentToThread({
+      thread_id: thread.id,
+      agent_id: 'caroline',
+      profile: 'huminic',
+      channel: 'sms',
+      mode: 'reply',
+      rules: {},
+      created_at: Date.now(),
+    })
+    const results = await ar.maybeAutonomousReply({
+      profile: 'huminic',
+      threadId: thread.id,
+      inboundMessageId: inbound.id,
+      now: Date.UTC(2026, 4, 29, 16, 0, 0),
+    })
+    delete process.env.API_SERVER_KEY
+
+    expect(results).toHaveLength(1)
+    expect(results[0].ok).toBe(true)
+    if (results[0].ok) {
+      expect(results[0].via).toBe('hermes')
+      expect(results[0].reply).toBe('Hi! Happy to help.')
+    }
+    // Hermes endpoint was hit, persona made it into the system prompt.
+    expect(capturedUrl).toMatch(/\/v1\/chat\/completions$/)
+    expect(capturedSystem).toContain('SMS PERSONA')
+    const updated = getThread('huminic', thread.id)
+    expect(updated?.messages).toHaveLength(2)
+    expect(updated?.messages[1].content).toBe('Hi! Happy to help.')
+  })
+
+  it('default provider: falls back to claude-sonnet-4-6 when Hermes fails', async () => {
+    const {
+      getOrCreateThread,
+      appendMessage,
+      subscribeAgentToThread,
+    } = await import('@/server/messaging-hub-store')
+    const ar = await import('@/server/agent-autonomous-reply')
+
+    const calls: Array<string> = []
+    const fakeFetch = (async (url: string) => {
+      calls.push(String(url))
+      if (String(url).includes('/v1/chat/completions')) {
+        // Hermes reports inference-not-configured.
+        return {
+          ok: false,
+          status: 503,
+          json: async () => ({ error: { message: 'inference not configured' } }),
+        } as unknown as Response
+      }
+      // Anthropic Messages API success.
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          content: [{ type: 'text', text: 'Sure — when can you stop by?' }],
+        }),
+      } as unknown as Response
+    }) as unknown as typeof fetch
+
+    ar.setAutonomousReplyProvider(
+      ar.makeDefaultAutonomousReplyProvider(fakeFetch),
+    )
+    process.env.API_SERVER_KEY = 'test-hermes-key'
+    process.env.ANTHROPIC_API_KEY = 'test-anthropic-key'
+
+    const thread = getOrCreateThread({
+      profile: 'huminic',
+      domain: 'service',
+      channel: 'sms',
+      contact_handle: '+15555550100',
+    })
+    const inbound = appendMessage({
+      thread_id: thread.id,
+      direction: 'inbound',
+      role: 'user',
+      channel: 'sms',
+      content: 'still interested',
+      author: 'lead',
+    })
+    subscribeAgentToThread({
+      thread_id: thread.id,
+      agent_id: 'caroline',
+      profile: 'huminic',
+      channel: 'sms',
+      mode: 'reply',
+      rules: {},
+      created_at: Date.now(),
+    })
+    const results = await ar.maybeAutonomousReply({
+      profile: 'huminic',
+      threadId: thread.id,
+      inboundMessageId: inbound.id,
+      now: Date.UTC(2026, 4, 29, 16, 0, 0),
+    })
+    delete process.env.API_SERVER_KEY
+    delete process.env.ANTHROPIC_API_KEY
+
+    expect(results).toHaveLength(1)
+    expect(results[0].ok).toBe(true)
+    if (results[0].ok) {
+      expect(results[0].via).toBe('openai-direct')
+      expect(results[0].reply).toBe('Sure — when can you stop by?')
+    }
+    // Both endpoints were tried, in order.
+    expect(calls.some((u) => u.includes('/v1/chat/completions'))).toBe(true)
+    expect(calls.some((u) => u.includes('api.anthropic.com'))).toBe(true)
+  })
+
   it('returns empty when no subscriptions exist', async () => {
     const {
       getOrCreateThread,

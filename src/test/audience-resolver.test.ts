@@ -61,4 +61,29 @@ describe('resolveAudience', () => {
     const all = resolveAudience({ profile: 'huminic', query: {} })
     expect(all).toHaveLength(2)
   })
+
+  it('resolves an explicit contact_ids audience (CSV upload path)', async () => {
+    const { upsertContact } = await import('@/server/messaging-hub-store')
+    const { resolveAudience } = await import('@/server/audience-resolver')
+    const a = upsertContact({
+      profile: 'huminic',
+      display_name: 'A',
+      identifiers: { email: 'a@example.com' },
+    })
+    upsertContact({
+      profile: 'huminic',
+      display_name: 'B',
+      identifiers: { sms: '+15555550100' },
+    })
+    const c = upsertContact({
+      profile: 'huminic',
+      display_name: 'C',
+      identifiers: { email: 'c@example.com' },
+    })
+    const picked = resolveAudience({
+      profile: 'huminic',
+      query: { contact_ids: [a.id, c.id, 'missing-id'] },
+    })
+    expect(picked.map((x) => x.display_name).sort()).toEqual(['A', 'C'])
+  })
 })

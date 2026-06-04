@@ -17,9 +17,13 @@ vi.mock('@/server/studio-config', () => ({
 
 let tmpHome: string
 
-function configWithScopes(scopes: Array<string>) {
+function configWithScopes(scopes: Array<string>, vin?: Record<string, unknown>) {
   return {
-    config: { federation: { read_scopes: scopes } },
+    config: {
+      federation: { read_scopes: scopes },
+      // A VIN scope implies the profile's Nexxus org UUID is configured.
+      vin: vin ?? (scopes.some((s) => s.includes('vin')) ? { org_id: 'org-uuid-test' } : {}),
+    },
     source: 'file' as const,
   }
 }
@@ -66,6 +70,108 @@ describe('buildCustomerReports', () => {
     expect(reports.campaigns.campaigns).toBe(0)
   })
 
+  it('surfaces calls-in (inbound voice) and texts-out (outbound sms)', async () => {
+    const { getOrCreateThread, appendMessage } = await import(
+      '@/server/messaging-hub-store'
+    )
+    const voice = getOrCreateThread({
+      profile: 'serra-honda',
+      domain: 'sales',
+      channel: 'voice',
+      contact_handle: '+15555550111',
+    })
+    appendMessage({
+      thread_id: voice.id,
+      direction: 'inbound',
+      role: 'user',
+      channel: 'voice',
+      content: 'inbound call',
+      author: '+15555550111',
+    })
+    const sms = getOrCreateThread({
+      profile: 'serra-honda',
+      domain: 'sales',
+      channel: 'sms',
+      contact_handle: '+15555550122',
+    })
+    appendMessage({
+      thread_id: sms.id,
+      direction: 'outbound',
+      role: 'assistant',
+      channel: 'sms',
+      content: 'follow up',
+      author: 'caroline',
+    })
+    const { buildCustomerReports } = await import('@/server/customer-reports')
+    const reports = await buildCustomerReports('serra-honda')
+    expect(reports.comms.calls_in).toBe(1)
+    expect(reports.comms.texts_out).toBe(1)
+  })
+
+  it('reports vin-watcher follow-up performance (ledger + authored sends)', async () => {
+    const { getOrCreateThread, appendMessage } = await import(
+      '@/server/messaging-hub-store'
+    )
+    const { openBrain } = await import('@/server/brain-store')
+    const { WATCHER_AUTHOR } = await import('@/server/vin-watcher')
+    // Seed the per-profile Brain trigger ledger (immediate + checkin).
+    const h = openBrain('serra-honda')
+    h.exec(
+      `CREATE TABLE IF NOT EXISTS vin_watcher_trigger (
+         phone TEXT, kind TEXT, ts INTEGER, PRIMARY KEY (phone, kind)
+       )`,
+    )
+    h.run(
+      `INSERT INTO vin_watcher_trigger (phone, kind, ts) VALUES (?,?,?)`,
+      '+15555550100',
+      'immediate',
+      1_000,
+    )
+    h.run(
+      `INSERT INTO vin_watcher_trigger (phone, kind, ts) VALUES (?,?,?)`,
+      '+15555550101',
+      'immediate',
+      2_000,
+    )
+    h.run(
+      `INSERT INTO vin_watcher_trigger (phone, kind, ts) VALUES (?,?,?)`,
+      '+15555550100',
+      'checkin',
+      3_000,
+    )
+    // Seed a watcher-authored outbound hub message.
+    const t = getOrCreateThread({
+      profile: 'serra-honda',
+      domain: 'sales',
+      channel: 'sms',
+      contact_handle: '+15555550100',
+    })
+    appendMessage({
+      thread_id: t.id,
+      direction: 'outbound',
+      role: 'assistant',
+      channel: 'sms',
+      content: 'Hi Pat, this is Caroline…',
+      author: WATCHER_AUTHOR,
+    })
+    const { buildCustomerReports } = await import('@/server/customer-reports')
+    const reports = await buildCustomerReports('serra-honda')
+    expect(reports.followups.immediate_triggers).toBe(2)
+    expect(reports.followups.checkin_triggers).toBe(1)
+    expect(reports.followups.last_fire).toBe(3_000)
+    expect(reports.followups.sends.outbound).toBe(1)
+    expect(reports.followups.sends.by_channel.sms).toBe(1)
+  })
+
+  it('reports zero follow-ups when the watcher never ran', async () => {
+    const { buildCustomerReports } = await import('@/server/customer-reports')
+    const reports = await buildCustomerReports('serra-honda')
+    expect(reports.followups.immediate_triggers).toBe(0)
+    expect(reports.followups.checkin_triggers).toBe(0)
+    expect(reports.followups.last_fire).toBeNull()
+    expect(reports.followups.sends.total).toBe(0)
+  })
+
   it('marks the lead funnel unavailable (source none) without a VIN scope', async () => {
     readStudioConfig.mockReturnValue(configWithScopes([]))
     const { buildCustomerReports } = await import('@/server/customer-reports')
@@ -94,7 +200,7 @@ describe('buildCustomerReports', () => {
     const reports = await buildCustomerReports('serra-honda')
     expect(callCentralMcpTool).toHaveBeenCalledWith(
       'vin_query_leads',
-      { profile: 'serra-honda' },
+      { orgId: 'org-uuid-test' },
       expect.any(Object),
     )
     expect(reports.lead_funnel.available).toBe(true)

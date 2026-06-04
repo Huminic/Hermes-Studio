@@ -1,23 +1,26 @@
 /**
  * customer-console.tools-widget — Phase C.4.
  *
- * For each widget declared in studio.yaml:
- *  - shows status (ready / missing-file / misconfigured)
- *  - embed snippet (copy-to-clipboard)
- *  - live preview iframe (the /w/<slug> public route)
- *  - editor for the widget's wiki frontmatter + body, KSG-gated save
+ * Customer-facing Widgets panel. For each widget declared for the profile it
+ * shows a friendly title, a plain-language description of what it does, the
+ * single-ID embed snippet (copy button), and a live demo (link + preview
+ * iframe of the public /w/<slug> page). A content editor (frontmatter + body,
+ * KSG-gated save) is available below.
  *
- * Voice/video/form modes are surfaced with their current adapter status
- * (real provider when env credentials are present, "unconfigured" with
- * a clear operator-action note otherwise — AC.4.4).
+ * Customer-safe by contract: this view never surfaces studio.yaml paths,
+ * "Operator:" notes, env-var names, or backend status strings. Modes that are
+ * not yet fully wired (voice/video/form) are shown honestly as "coming soon"
+ * rather than a broken demo.
  */
 
 import { useCallback, useEffect, useState } from 'react'
 import type { StudioConfig } from '../../lib/studio-config'
 
+type WidgetMode = 'chat' | 'voice' | 'video' | 'form'
+
 type WidgetRow = {
   slug: string
-  mode: 'chat' | 'voice' | 'video' | 'form'
+  mode: WidgetMode
   agent: string
   status: 'ready' | 'missing-file' | 'misconfigured'
   filePath: string | null
@@ -34,12 +37,42 @@ type ListResponse = {
   source: 'file' | 'default'
 }
 
+// Chat is production-ready; the other modes render an honest "coming soon"
+// preview until their adapters ship. This drives both the live-demo gating and
+// the per-widget status pill so the customer is never shown a broken demo.
+const LIVE_MODES: ReadonlySet<WidgetMode> = new Set<WidgetMode>(['chat'])
+
+const MODE_LABEL: Record<WidgetMode, string> = {
+  chat: 'Live chat',
+  voice: 'Voice call',
+  video: 'Video assistant',
+  form: 'Contact form',
+}
+
+const MODE_BLURB: Record<WidgetMode, string> = {
+  chat: 'A chat bubble your visitors can open to talk with your AI assistant in real time.',
+  voice: 'A click-to-call voice assistant your visitors can speak with from their browser.',
+  video: 'A live AI video assistant that greets and helps visitors face-to-face.',
+  form: 'A lead-capture form that drops new contacts straight into your inbox.',
+}
+
+function widgetTitle(w: WidgetRow): string {
+  return w.title?.trim() || prettifySlug(w.slug)
+}
+
+function prettifySlug(slug: string): string {
+  return slug
+    .split('-')
+    .map((part) => (part ? part[0].toUpperCase() + part.slice(1) : part))
+    .join(' ')
+}
+
 export function CustomerToolsWidgetRenderer(props: {
   profile: string
   config: StudioConfig
 }) {
   const [widgets, setWidgets] = useState<Array<WidgetRow>>([])
-  const [error, setError] = useState<string | null>(null)
+  const [loadFailed, setLoadFailed] = useState(false)
   const [activeSlug, setActiveSlug] = useState<string | null>(null)
   const [draft, setDraft] = useState<string>('')
   const [feedback, setFeedback] = useState<{
@@ -47,7 +80,7 @@ export function CustomerToolsWidgetRenderer(props: {
     message: string
   } | null>(null)
   const [busy, setBusy] = useState(false)
-  const accent = props.config.branding.accent_color ?? '#1e40af'
+  const [copied, setCopied] = useState(false)
   const settings = props.config.tools_widget
 
   const load = useCallback(async () => {
@@ -58,16 +91,17 @@ export function CustomerToolsWidgetRenderer(props: {
       )
       const j = (await res.json().catch(() => ({}))) as ListResponse
       if (!res.ok || !j.ok) {
-        setError(`HTTP ${res.status}`)
+        setLoadFailed(true)
         return
       }
+      setLoadFailed(false)
       setWidgets(j.widgets)
       if (j.widgets.length > 0 && !activeSlug) {
         setActiveSlug(j.widgets[0].slug)
         setDraft(buildFromRow(j.widgets[0]))
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'fetch failed')
+    } catch {
+      setLoadFailed(true)
     }
   }, [activeSlug, props.profile])
 
@@ -101,7 +135,9 @@ export function CustomerToolsWidgetRenderer(props: {
       if (!res.ok || !j.ok) {
         setFeedback({
           kind: 'err',
-          message: `KSG blocked: ${j.error ?? `HTTP ${res.status}`}${j.rule ? ` (${j.rule})` : ''}`,
+          message: j.error
+            ? `Could not save: ${j.error}`
+            : 'Could not save those changes. Please review and try again.',
         })
         return
       }
@@ -109,165 +145,244 @@ export function CustomerToolsWidgetRenderer(props: {
         kind: j.warnings && j.warnings.length ? 'warn' : 'ok',
         message:
           j.warnings && j.warnings.length
-            ? `Saved with warnings: ${j.warnings.join('; ')}`
+            ? `Saved with notes: ${j.warnings.join('; ')}`
             : 'Saved.',
       })
       await load()
-    } catch (err) {
+    } catch {
       setFeedback({
         kind: 'err',
-        message: err instanceof Error ? err.message : 'save failed',
+        message: 'Could not save right now. Please try again in a moment.',
       })
     } finally {
       setBusy(false)
     }
   }, [active, draft, load, props.profile])
 
-  if (error) {
+  if (loadFailed) {
     return (
-      <div className="rounded border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-300">
-        {error}
+      <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+        We couldn&apos;t load your widgets right now. Please refresh the page, or
+        contact your Huminic team if this keeps happening.
       </div>
     )
   }
 
   if (widgets.length === 0) {
     return (
-      <div className="rounded border border-amber-400/30 bg-amber-400/10 p-4 text-sm">
-        No widgets declared in this profile's studio.yaml.
-        <div className="mt-2 text-xs opacity-70">
-          Operator: edit{' '}
-          <code>~/.hermes/profiles/{props.profile}/studio.yaml</code> to add a
-          widget under the <code>widgets:</code> key.
+      <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center">
+        <div className="text-sm font-medium text-slate-900">
+          No widgets are set up yet.
+        </div>
+        <div className="mt-1 text-sm text-slate-600">
+          Your Huminic team can add chat, voice, video, and contact-form widgets
+          for your website.
         </div>
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       <div className="flex flex-wrap gap-2">
-        {widgets.map((w) => (
-          <button
-            key={w.slug}
-            type="button"
-            onClick={() => {
-              setActiveSlug(w.slug)
-              setDraft(buildFromRow(w))
-              setFeedback(null)
-            }}
-            className={
-              'rounded border px-3 py-1.5 text-xs ' +
-              (w.slug === activeSlug
-                ? 'font-semibold'
-                : 'border-white/10 opacity-70 hover:opacity-100')
-            }
-            style={
-              w.slug === activeSlug
-                ? { borderColor: accent, background: `${accent}33` }
-                : undefined
-            }
-          >
-            <div className="text-sm">{w.slug}</div>
-            <div className="text-[10px] opacity-70">
-              {w.mode} · {w.agent}
-              {w.status !== 'ready' && (
-                <span className="ml-1 text-amber-300">· {w.status}</span>
-              )}
-            </div>
-          </button>
-        ))}
+        {widgets.map((w) => {
+          const isActive = w.slug === activeSlug
+          return (
+            <button
+              key={w.slug}
+              type="button"
+              onClick={() => {
+                setActiveSlug(w.slug)
+                setDraft(buildFromRow(w))
+                setFeedback(null)
+                setCopied(false)
+              }}
+              className={
+                'rounded-lg border px-3 py-2 text-left transition ' +
+                (isActive
+                  ? 'border-[#8b5cf6] bg-[#8b5cf6]/10'
+                  : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50')
+              }
+            >
+              <div className="text-sm font-semibold text-slate-900">
+                {widgetTitle(w)}
+              </div>
+              <div className="text-xs text-slate-500">{MODE_LABEL[w.mode]}</div>
+            </button>
+          )
+        })}
       </div>
 
       {active && (
-        <div className="grid gap-3 lg:grid-cols-[1fr_400px]">
-          <section className="flex flex-col gap-2">
+        <div className="grid gap-4 lg:grid-cols-[1fr_400px]">
+          <section className="flex flex-col gap-4">
+            <div className="rounded-lg border border-slate-200 bg-white p-4">
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-semibold text-slate-900">
+                  {widgetTitle(active)}
+                </h3>
+                <ModeBadge mode={active.mode} />
+              </div>
+              <p className="mt-1 text-sm text-slate-600">
+                {MODE_BLURB[active.mode]}
+              </p>
+              {active.body && active.body.trim() && (
+                <p className="mt-2 whitespace-pre-wrap text-sm text-slate-500">
+                  {stripHeading(active.body).trim()}
+                </p>
+              )}
+            </div>
+
             {settings.show_embed_snippet && (
-              <div className="rounded border border-white/10 bg-white/5 p-3">
-                <div className="mb-1 flex items-center justify-between text-xs">
-                  <span className="font-medium opacity-70">Embed snippet</span>
+              <div className="rounded-lg border border-slate-200 bg-white p-4">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-sm font-medium text-slate-900">
+                    Add to your website
+                  </span>
                   <button
                     type="button"
                     onClick={() => {
                       void navigator.clipboard?.writeText(active.embed_snippet)
-                      setFeedback({ kind: 'ok', message: 'Copied embed snippet to clipboard.' })
+                      setCopied(true)
+                      window.setTimeout(() => setCopied(false), 2000)
                     }}
-                    className="text-[10px] underline opacity-70 hover:opacity-100"
+                    className="rounded-md bg-[#3b82f6] px-3 py-1 text-xs font-medium text-white hover:bg-[#2563eb]"
                   >
-                    Copy
+                    {copied ? 'Copied' : 'Copy code'}
                   </button>
                 </div>
-                <pre className="overflow-x-auto rounded bg-black/30 p-2 text-[10px]">
+                <p className="mb-2 text-xs text-slate-500">
+                  Paste this one line into your website where you want the widget
+                  to appear.
+                </p>
+                <pre className="overflow-x-auto rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800">
                   {active.embed_snippet}
                 </pre>
               </div>
             )}
 
-            <div className="rounded border border-white/10 bg-white/5 p-3">
-              <div className="mb-1 flex items-center justify-between text-xs">
-                <span className="font-medium opacity-70">
-                  Widget content (markdown + frontmatter)
-                </span>
-                <button
-                  type="button"
-                  onClick={() => void save()}
-                  disabled={busy}
-                  className="rounded px-2 py-0.5 text-xs font-medium disabled:opacity-40"
-                  style={{ background: accent, color: '#fff' }}
-                >
-                  {busy ? '…' : 'Save'}
-                </button>
-              </div>
-              <textarea
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                rows={14}
-                className="w-full resize-y rounded border border-white/10 bg-black/30 px-2 py-2 text-xs font-mono"
-                spellCheck={false}
-              />
-              {feedback && (
-                <div
-                  className={
-                    'mt-2 rounded border p-2 text-xs ' +
-                    (feedback.kind === 'ok'
-                      ? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
-                      : feedback.kind === 'warn'
-                        ? 'border-amber-400/30 bg-amber-400/10 text-amber-200'
-                        : 'border-red-400/30 bg-red-500/10 text-red-200')
-                  }
-                >
-                  {feedback.message}
+            {settings.show_live_demo && (
+              <div className="rounded-lg border border-slate-200 bg-white p-4">
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="text-sm font-medium text-slate-900">
+                    Live demo
+                  </span>
+                  {LIVE_MODES.has(active.mode) && (
+                    <a
+                      href={active.preview_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs font-medium text-[#3b82f6] hover:underline"
+                    >
+                      Open in new tab
+                    </a>
+                  )}
                 </div>
-              )}
-            </div>
+                <p className="text-xs text-slate-500">
+                  {LIVE_MODES.has(active.mode)
+                    ? 'This is exactly what your visitors will see.'
+                    : `${MODE_LABEL[active.mode]} widgets are coming soon. You can add the code now — it will go live automatically once this widget type is ready.`}
+                </p>
+              </div>
+            )}
 
-            <div className="text-[10px] opacity-60">
-              File: {active.filePath ?? '(missing — first save creates it)'}
-            </div>
-
-            <ChannelModeNote mode={active.mode} />
+            <details className="rounded-lg border border-slate-200 bg-white">
+              <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-slate-700">
+                Customize wording (advanced)
+              </summary>
+              <div className="border-t border-slate-200 p-4">
+                <p className="mb-2 text-xs text-slate-500">
+                  Edit the greeting and description shown in this widget. Changes
+                  are reviewed before they go live.
+                </p>
+                <textarea
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  rows={12}
+                  className="w-full resize-y rounded-md border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-xs text-slate-800 focus:border-[#3b82f6] focus:outline-none"
+                  spellCheck={false}
+                />
+                <div className="mt-2 flex items-center justify-end">
+                  <button
+                    type="button"
+                    onClick={() => void save()}
+                    disabled={busy}
+                    className="rounded-md bg-[#3b82f6] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#2563eb] disabled:opacity-50"
+                  >
+                    {busy ? 'Saving…' : 'Save changes'}
+                  </button>
+                </div>
+                {feedback && (
+                  <div
+                    className={
+                      'mt-3 rounded-md border p-2 text-xs ' +
+                      (feedback.kind === 'ok'
+                        ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                        : feedback.kind === 'warn'
+                          ? 'border-amber-200 bg-amber-50 text-amber-700'
+                          : 'border-red-200 bg-red-50 text-red-700')
+                    }
+                  >
+                    {feedback.message}
+                  </div>
+                )}
+              </div>
+            </details>
           </section>
 
-          {settings.show_live_demo && active.status === 'ready' && (
-            <aside className="rounded border border-white/10 bg-black/10 p-2">
-              <div className="mb-1 text-xs font-medium opacity-70">
-                Live preview ({active.mode})
+          {settings.show_live_demo && (
+            <aside className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div className="mb-2 text-sm font-medium text-slate-900">
+                Preview
               </div>
-              <iframe
-                title={`preview ${active.slug}`}
-                src={active.preview_url}
-                className="h-[480px] w-full rounded border border-white/10 bg-white"
-                sandbox="allow-scripts allow-same-origin allow-forms"
-              />
-              <div className="mt-1 break-all text-[10px] opacity-50">
-                {active.preview_url}
-              </div>
+              {LIVE_MODES.has(active.mode) && active.status === 'ready' ? (
+                <>
+                  <iframe
+                    title={`Preview of ${widgetTitle(active)}`}
+                    src={active.preview_url}
+                    className="h-[480px] w-full rounded-md border border-slate-200 bg-white"
+                    sandbox="allow-scripts allow-same-origin allow-forms"
+                  />
+                </>
+              ) : (
+                <div className="flex h-[480px] flex-col items-center justify-center rounded-md border border-dashed border-slate-300 bg-white p-6 text-center">
+                  <div className="text-sm font-medium text-slate-900">
+                    {MODE_LABEL[active.mode]} preview coming soon
+                  </div>
+                  <p className="mt-1 text-xs text-slate-500">
+                    {LIVE_MODES.has(active.mode)
+                      ? 'This widget is being set up. Your Huminic team can help finish it.'
+                      : 'This widget type is being finished. The embed code already works and the demo will appear here once it is live.'}
+                  </p>
+                </div>
+              )}
             </aside>
           )}
         </div>
       )}
     </div>
   )
+}
+
+function ModeBadge({ mode }: { mode: WidgetMode }) {
+  const live = LIVE_MODES.has(mode)
+  return (
+    <span
+      className={
+        'rounded-full px-2 py-0.5 text-[10px] font-medium ' +
+        (live
+          ? 'bg-[#3b82f6]/10 text-[#2563eb]'
+          : 'bg-slate-100 text-slate-500')
+      }
+    >
+      {live ? 'Live' : 'Coming soon'}
+    </span>
+  )
+}
+
+/** Drop a leading markdown "# Heading" line from the description preview. */
+function stripHeading(body: string): string {
+  return body.replace(/^\s*#[^\n]*\n?/, '')
 }
 
 function buildFromRow(row: WidgetRow): string {
@@ -290,50 +405,15 @@ function buildFromRow(row: WidgetRow): string {
     `slug: ${row.slug}`,
     `mode: ${row.mode}`,
     `agent: ${row.agent}`,
-    `title: ${row.slug}`,
-    `greeting: Welcome to ${row.slug}`,
+    `title: ${prettifySlug(row.slug)}`,
+    `greeting: Welcome to ${prettifySlug(row.slug)}`,
     'type: widget',
     'status: draft',
     '---',
     '',
-    `# ${row.slug}`,
+    `# ${prettifySlug(row.slug)}`,
     '',
-    `Edit this widget content. The public ${row.preview_url} page renders the body below the greeting.`,
+    'Edit this widget content. Your changes are reviewed before they go live.',
     '',
   ].join('\n')
-}
-
-function ChannelModeNote({
-  mode,
-}: {
-  mode: 'chat' | 'voice' | 'video' | 'form'
-}) {
-  const labels: Record<
-    typeof mode,
-    { label: string; note: string }
-  > = {
-    chat: {
-      label: 'Chat (production)',
-      note: 'Routes via /api/public/widget-chat through Hermes or the openai-direct fallback.',
-    },
-    voice: {
-      label: 'Voice (Vapi)',
-      note: 'Requires VAPI_API_KEY in the profile .env. The adapter scaffold ships in C.6 and shows "unconfigured" until credentials land.',
-    },
-    video: {
-      label: 'Video (Tavus AI avatar)',
-      note: 'Requires TAVUS_API_KEY + TAVUS_PERSONA_ID. Same scaffold pattern.',
-    },
-    form: {
-      label: 'Form (inbound → Comms)',
-      note: 'Posts to /api/messaging/threads as channel: form, domain: sales. No external creds required.',
-    },
-  }
-  const meta = labels[mode]
-  return (
-    <div className="rounded border border-white/10 bg-white/5 p-2 text-xs">
-      <div className="font-medium opacity-70">{meta.label}</div>
-      <div className="opacity-60">{meta.note}</div>
-    </div>
-  )
 }

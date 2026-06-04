@@ -20,6 +20,9 @@
  * did not reply.
  */
 
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import { extractFrontmatter } from '../lib/frontmatter'
 import {
   readAgentSoulForProfile,
@@ -67,6 +70,189 @@ let providerCall: ProviderCall = noProviderCall
 
 export function setAutonomousReplyProvider(fn: ProviderCall): void {
   providerCall = fn
+}
+
+// ── Default provider (D3: Hermes-first → claude-sonnet-4-6 direct) ────────
+//
+// The inbound-reply pipeline (rules, business hours, turn caps, human
+// takeover, audit jobs, SSE) is channel-agnostic and already builds the
+// system prompt (SOUL + channel persona) and the trailing message window.
+// The provider's only job is inference: given that context, return reply
+// text. Per NEXXUS_FIT_SPEC §1.4 + §WS-3 this is the inbound reply on an
+// EXISTING conversation, so the model is told to answer the latest inbound
+// with a short, SMS-appropriate (1–3 sentence) reply, capped at 256 tokens.
+//
+// Inference order mirrors the proven customer/widget chat paths:
+//   1. Hermes /v1/chat/completions (keeps the call on-network, routes
+//      through the profile's gateway/agent).
+//   2. claude-sonnet-4-6 direct via the Anthropic Messages API when Hermes
+//      reports inference-not-configured or is unreachable.
+
+const HERMES_URL = process.env.HERMES_API_URL || 'http://hermes-agent:8642'
+const REPLY_MODEL = process.env.AUTONOMOUS_REPLY_MODEL || 'gpt-4.1'
+const ANTHROPIC_MODEL =
+  process.env.AUTONOMOUS_REPLY_FALLBACK_MODEL || 'claude-sonnet-4-6'
+const MAX_TOKENS = 256
+
+/**
+ * Read a key from the shared `~/.hermes/.env` on the studio volume. Mirrors
+ * the inline reader used by the widget/customer chat handlers (those keys
+ * live on the shared Hermes volume, not always in this process's env). Kept
+ * private here because the chat-handler copies are not exported and this
+ * task is scoped to the autonomous-reply module.
+ */
+function readKeyFromHermesEnv(varName: string): string | null {
+  try {
+    const envPath = path.join(os.homedir(), '.hermes', '.env')
+    const raw = fs.readFileSync(envPath, 'utf8')
+    for (const line of raw.split('\n')) {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith('#')) continue
+      const eq = trimmed.indexOf('=')
+      if (eq === -1) continue
+      const k = trimmed.slice(0, eq).trim()
+      if (k === varName) return trimmed.slice(eq + 1).trim()
+    }
+  } catch {
+    // missing or unreadable — fall through
+  }
+  return null
+}
+
+type FetchLike = typeof fetch
+
+/**
+ * Build the real default provider. `fetchImpl` is injectable so tests can
+ * exercise the Hermes-first / Anthropic-fallback branching without network.
+ */
+export function makeDefaultAutonomousReplyProvider(
+  fetchImpl: FetchLike = fetch,
+): ProviderCall {
+  return async ({ systemPrompt, messages }) => {
+    const hermesKey =
+      process.env.API_SERVER_KEY ||
+      process.env.HERMES_API_KEY ||
+      readKeyFromHermesEnv('API_SERVER_KEY')
+    const anthropicKey =
+      process.env.ANTHROPIC_API_KEY ||
+      readKeyFromHermesEnv('ANTHROPIC_API_KEY')
+
+    // OpenAI-style chat messages: system prompt first, then the trailing
+    // thread window already shaped by the pipeline.
+    const chatMessages = [
+      { role: 'system', content: systemPrompt },
+      ...messages.map((m) => ({
+        role:
+          m.role === 'assistant'
+            ? 'assistant'
+            : m.role === 'system'
+              ? 'system'
+              : 'user',
+        content: m.content,
+      })),
+    ]
+
+    // 1) Hermes-first.
+    if (hermesKey) {
+      try {
+        const res = await fetchImpl(`${HERMES_URL}/v1/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${hermesKey}`,
+          },
+          body: JSON.stringify({
+            model: REPLY_MODEL,
+            messages: chatMessages,
+            temperature: 0.4,
+            max_tokens: MAX_TOKENS,
+          }),
+        })
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: { message?: string }
+          choices?: Array<{ message?: { content?: string } }>
+        }
+        if (res.ok && !data.error) {
+          const reply = (data.choices?.[0]?.message?.content ?? '').trim()
+          if (reply) return { ok: true, reply, via: 'hermes' }
+        }
+        // else fall through to the Anthropic fallback
+      } catch {
+        // network/Hermes down — fall through to fallback
+      }
+    }
+
+    // 2) claude-sonnet-4-6 direct (Anthropic Messages API). System prompt is
+    // a top-level field; the message turns carry only user/assistant.
+    if (anthropicKey) {
+      try {
+        const res = await fetchImpl('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': anthropicKey,
+            'anthropic-version': '2023-06-01',
+          },
+          body: JSON.stringify({
+            model: ANTHROPIC_MODEL,
+            max_tokens: MAX_TOKENS,
+            temperature: 0.4,
+            system: systemPrompt,
+            messages: messages
+              .filter((m) => m.role !== 'system')
+              .map((m) => ({
+                role: m.role === 'assistant' ? 'assistant' : 'user',
+                content: m.content,
+              })),
+          }),
+        })
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: { message?: string; type?: string }
+          content?: Array<{ type?: string; text?: string }>
+        }
+        if (!res.ok || data.error) {
+          return {
+            ok: false,
+            reason:
+              data.error?.message ?? `Anthropic upstream error (${res.status})`,
+          }
+        }
+        const reply = (data.content ?? [])
+          .filter((b) => b.type === 'text')
+          .map((b) => b.text ?? '')
+          .join('')
+          .trim()
+        if (reply) return { ok: true, reply, via: 'openai-direct' }
+        return { ok: false, reason: 'Anthropic returned an empty reply' }
+      } catch (err) {
+        return {
+          ok: false,
+          reason:
+            err instanceof Error ? err.message : 'Anthropic call failed',
+        }
+      }
+    }
+
+    return {
+      ok: false,
+      reason:
+        'No inference provider configured. Set API_SERVER_KEY (Hermes) or ANTHROPIC_API_KEY.',
+    }
+  }
+}
+
+/**
+ * Install the real default provider exactly once, at the start of the
+ * inbound-reply path (app startup is request-driven here — there is no
+ * single long-running server-init hook; both inbound webhook routes funnel
+ * through `maybeAutonomousReply`). Guarded so it never clobbers a provider
+ * that has already been set explicitly — tests inject their own provider
+ * via `setAutonomousReplyProvider` and that injection wins.
+ */
+export function ensureAutonomousReplyProviderInstalled(): void {
+  if (providerCall === noProviderCall) {
+    providerCall = makeDefaultAutonomousReplyProvider()
+  }
 }
 
 function isWithinBusinessHours(ts: number): boolean {
@@ -162,6 +348,11 @@ export async function maybeAutonomousReply(input: {
 
   const subs = listSubscriptionsForThread(input.profile, input.threadId)
   if (subs.length === 0) return []
+
+  // Bootstrap: install the real default provider on first reach of the
+  // inbound-reply path. Idempotent + guarded — does nothing if a provider
+  // (e.g. a test's mock) was already set.
+  ensureAutonomousReplyProviderInstalled()
 
   const now = input.now ?? Date.now()
   const results: Array<AutonomousReplyResult> = []

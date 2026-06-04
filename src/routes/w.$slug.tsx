@@ -50,6 +50,8 @@ function renderWidgetHtml(widget: {
   const brand = (fm.brand as Record<string, unknown>) || {}
   const accent = String(brand.accent_color ?? '#0a7dff')
   const primary = String(brand.primary_color ?? '#222')
+  // Customer-facing brand label — never the raw profile slug.
+  const brandName = String(brand.name ?? fm.persona_name ?? fm.brand_name ?? '')
 
   const body = mode === 'chat' ? chatModeBody(widget) : stubBody(mode)
 
@@ -94,8 +96,8 @@ function renderWidgetHtml(widget: {
     </div>
     ${body}
     <div class="meta">
-      <span>Served by Huminic Studio</span>
-      <span>${escapeHtml(widget.profile)}</span>
+      <span>Powered by Huminic</span>
+      ${brandName ? `<span>${escapeHtml(brandName)}</span>` : ''}
     </div>
   </div>
 </div>
@@ -164,8 +166,7 @@ function chatModeBody(widget: {
         typing.style.display = 'none';
         send.disabled = false;
         if (res.status !== 200 || !res.body || !res.body.ok) {
-          var msg = (res.body && res.body.error) ? res.body.error : 'Sorry, something went wrong.';
-          append('agent', msg, 'error');
+          append('agent', 'Sorry, something went wrong. Please try again.', 'error');
           return;
         }
         var reply = res.body.reply || '';
@@ -175,17 +176,16 @@ function chatModeBody(widget: {
       .catch(function(err) {
         typing.style.display = 'none';
         send.disabled = false;
-        append('agent', 'Network error: ' + (err && err.message ? err.message : 'unknown'), 'error');
+        append('agent', 'Sorry, we could not reach the assistant. Please try again.', 'error');
       });
   });
 })();
 </script>`
 }
 
-function stubBody(mode: string): string {
+function stubBody(_mode: string): string {
   return `<div class="stub">
-  <p><strong>${escapeHtml(mode)} mode</strong> is declared on this widget but not yet implemented.</p>
-  <p>Phase 5 v2 — coming soon.</p>
+  <p>This experience is coming soon.</p>
 </div>`
 }
 

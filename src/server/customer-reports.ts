@@ -19,21 +19,51 @@
  */
 
 import { callCentralMcpTool } from './central-mcp'
+import { resolveLeadNames, resolveVinOrgId } from './vin-client'
 import {
-  aggregateMessages,
-  aggregateThreads,
   aggregateCampaignDeliveries,
-  type MessageStats,
-  type ThreadStats,
-  type CampaignStats,
+  aggregateMessages,
+  aggregateMessagesByAuthor,
+  aggregateThreads
 } from './messaging-hub-store'
+import { openBrain } from './brain-store'
+import { WATCHER_AUTHOR } from './vin-watcher'
 import { readStudioConfig } from './studio-config'
+import type {CampaignStats, MessageStats, ThreadStats} from './messaging-hub-store';
 import type { StudioConfig } from '../lib/studio-config'
 
 export type CommsReport = {
   window_days: number
   messages: MessageStats
   threads: ThreadStats
+  /** Convenience metric callouts the operator's dashboard tiles map to. */
+  calls_in: number
+  texts_out: number
+}
+
+/**
+ * Immediate + 24h follow-up performance (WS-2 vin-watcher). Combines the
+ * per-profile Brain trigger ledger (`vin_watcher_trigger`: how many distinct
+ * phones got an `immediate` vs `checkin` trigger, and the most-recent fire)
+ * with the hub messages the watcher actually authored (sent into a thread).
+ */
+export type FollowupReport = {
+  /** Distinct phones that received an immediate first-touch trigger. */
+  immediate_triggers: number
+  /** Distinct phones that received a 24h check-in trigger. */
+  checkin_triggers: number
+  /** Most-recent trigger fire across both kinds (epoch ms), or null. */
+  last_fire: number | null
+  /** Follow-up texts the watcher authored into the hub. */
+  sends: { total: number; outbound: number; by_channel: Record<string, number> }
+}
+
+/** A recent lead with its VIN-resolved name (two-step), for the funnel display. */
+export type LeadFunnelEntry = {
+  name: string | null
+  status: string
+  vehicle: string | null
+  created: string | null
 }
 
 export type LeadFunnelReport =
@@ -42,6 +72,10 @@ export type LeadFunnelReport =
       source: 'vin-live'
       total: number
       by_status: Record<string, number>
+      /** Most-recent leads with resolved names (≤ rate cap). */
+      recent: Array<LeadFunnelEntry>
+      /** How many leads had names resolved via vin_get_contact this build. */
+      resolved_names: number
     }
   | {
       available: false
@@ -53,6 +87,7 @@ export type CustomerReports = {
   profile: string
   generated_at: number
   comms: CommsReport
+  followups: FollowupReport
   campaigns: CampaignStats
   lead_funnel: LeadFunnelReport
 }
@@ -103,9 +138,15 @@ async function buildLeadFunnel(
         'No VIN federation read-scope on this profile. Lead funnel reads live VinSolutions; add a vin scope to studio.yaml federation.read_scopes to enable it.',
     }
   }
+  // VIN is keyed by the Nexxus org UUID (not the profile slug). Without it the
+  // broker can't map to the dealer — surface the gap rather than send a bad id.
+  const org = resolveVinOrgId(profile, config)
+  if (!org.ok) {
+    return { available: false, source: 'vin-live', reason: org.reason }
+  }
   const r = await callCentralMcpTool(
     'vin_query_leads',
-    { profile },
+    { orgId: org.orgId },
     { timeoutMs: opts.vinTimeoutMs ?? 15_000 },
   )
   if (!r.ok) {
@@ -130,7 +171,80 @@ async function buildLeadFunnel(
     const s = statusOf(lead)
     by_status[s] = (by_status[s] ?? 0) + 1
   }
-  return { available: true, source: 'vin-live', total: leads.length, by_status }
+  // Two-step: enrich the most-recent leads with real names (≤ rate cap).
+  const cap = config.vin.name_resolve_cap
+  const resolved = await resolveLeadNames(leads, {
+    orgId: org.orgId,
+    cap,
+    timeoutMs: opts.vinTimeoutMs ?? 15_000,
+  })
+  const recent: Array<LeadFunnelEntry> = resolved
+    .slice(0, cap)
+    .map((lead) => ({
+      name: lead.resolved_name,
+      status: statusOf(lead),
+      vehicle:
+        (typeof lead.vehicleOfInterest === 'string' && lead.vehicleOfInterest) ||
+        (typeof lead.vehicle === 'string' && lead.vehicle) ||
+        null,
+      created:
+        (typeof lead.createdUtc === 'string' && lead.createdUtc) ||
+        (typeof lead.created === 'string' && lead.created) ||
+        null,
+    }))
+  const resolved_names = resolved.filter((l) => l.resolved_name).length
+  return {
+    available: true,
+    source: 'vin-live',
+    total: leads.length,
+    by_status,
+    recent,
+    resolved_names,
+  }
+}
+
+/**
+ * Read the vin-watcher follow-up performance for a profile. The trigger ledger
+ * is per-profile in the Brain (`vin_watcher_trigger`), so a failed/absent Brain
+ * yields zeros rather than an error — the Data page shows "no follow-ups yet".
+ */
+function buildFollowupReport(profile: string, sinceMs: number): FollowupReport {
+  let immediate_triggers = 0
+  let checkin_triggers = 0
+  let last_fire: number | null = null
+  try {
+    const h = openBrain(profile)
+    // The table is created lazily by the watcher; guard with IF EXISTS via a
+    // try/catch so a profile that never ran the watcher just reports zeros.
+    h.exec(
+      `CREATE TABLE IF NOT EXISTS vin_watcher_trigger (
+         phone TEXT, kind TEXT, ts INTEGER, PRIMARY KEY (phone, kind)
+       )`,
+    )
+    const rows = h.all<{ kind: string; n: number; latest: number }>(
+      `SELECT kind, COUNT(*) AS n, MAX(ts) AS latest
+         FROM vin_watcher_trigger GROUP BY kind`,
+    )
+    for (const r of rows) {
+      if (r.kind === 'immediate') immediate_triggers = r.n
+      else if (r.kind === 'checkin') checkin_triggers = r.n
+      if (typeof r.latest === 'number')
+        last_fire = last_fire === null ? r.latest : Math.max(last_fire, r.latest)
+    }
+  } catch {
+    // Brain unavailable → report zeros (the hub sends below still surface).
+  }
+  const authored = aggregateMessagesByAuthor(profile, WATCHER_AUTHOR, sinceMs)
+  return {
+    immediate_triggers,
+    checkin_triggers,
+    last_fire,
+    sends: {
+      total: authored.total,
+      outbound: authored.outbound,
+      by_channel: authored.by_channel,
+    },
+  }
 }
 
 /**
@@ -147,16 +261,28 @@ export async function buildCustomerReports(
   const sinceMs = now - windowDays * 24 * 60 * 60 * 1000
   const { config } = readStudioConfig(profile)
 
+  const messages = aggregateMessages(profile, sinceMs)
   const comms: CommsReport = {
     window_days: windowDays,
-    messages: aggregateMessages(profile, sinceMs),
+    messages,
     threads: aggregateThreads(profile),
+    // calls in = inbound voice; texts out = outbound sms (incl. watcher).
+    calls_in: messages.by_channel.voice?.inbound ?? 0,
+    texts_out: messages.by_channel.sms?.outbound ?? 0,
   }
+  const followups = buildFollowupReport(profile, sinceMs)
   const campaigns = aggregateCampaignDeliveries(profile)
   const lead_funnel = await buildLeadFunnel(profile, config, {
     now,
     vinTimeoutMs: opts.vinTimeoutMs,
   })
 
-  return { profile, generated_at: now, comms, campaigns, lead_funnel }
+  return {
+    profile,
+    generated_at: now,
+    comms,
+    followups,
+    campaigns,
+    lead_funnel,
+  }
 }

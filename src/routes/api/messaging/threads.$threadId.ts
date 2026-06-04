@@ -10,6 +10,7 @@ import {
   resolveSession,
 } from '../../../server/customer-auth'
 import { getThread } from '../../../server/messaging-hub-store'
+import { isHumanAssigned } from '../../../server/thread-takeover'
 
 export const Route = createFileRoute('/api/messaging/threads/$threadId')({
   server: {
@@ -28,7 +29,13 @@ export const Route = createFileRoute('/api/messaging/threads/$threadId')({
         if (!thread || thread.profile !== profile) {
           return json({ ok: false, error: 'Not found' }, { status: 404 })
         }
-        return json({ ok: true, thread })
+        return json({
+          ok: true,
+          thread: {
+            ...thread,
+            human_assigned: isHumanAssigned(profile, thread.id),
+          },
+        })
       },
     },
   },

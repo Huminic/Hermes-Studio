@@ -91,6 +91,56 @@ const FederationSchema = z
   .default({ read_scopes: [] })
 
 /**
+ * Per-profile VinSolutions access. `org_id` is the **Nexxus org UUID** (NOT the
+ * VIN dealerId) — the central-mcp broker maps UUID→dealerId internally. Every
+ * live `vin_query_leads` / `vin_get_contact` call MUST carry this orgId; passing
+ * the profile slug silently fails. Operator-controlled (lives in studio.yaml).
+ * If absent here, the resolver falls back to the `VIN_ORG_ID` profile env var;
+ * if neither is set the VIN path is reported unconfigured (no silent fallback).
+ */
+/**
+ * VIN-watcher opt-in (WS-2). The new-lead follow-up agent polls vin_query_leads,
+ * resolves names, and texts new leads as the dealership. It is DEFAULT OFF — a
+ * profile must explicitly set `vin.watcher.enabled: true` in studio.yaml to be
+ * swept. `dealer_name` is what the templates speak as ("this is {dealer}"); it
+ * falls back to branding.persona_name when absent. The window/dedup knobs mirror
+ * the Nexxus trigger gates (see NEXXUS_FIT_SPEC §1.4) and rarely need changing.
+ */
+const VinWatcherSchema = z
+  .object({
+    enabled: z.boolean().optional().default(false),
+    /** Spoken dealership name; falls back to branding.persona_name. */
+    dealer_name: z.string().optional(),
+    /** IMMEDIATE: lead must have synced within this many minutes. */
+    synced_within_min: z.number().int().min(1).optional().default(30),
+    /** IMMEDIATE: lead must have been created within this many hours. */
+    created_within_hours: z.number().int().min(1).optional().default(4),
+    /** IMMEDIATE dedup window (hours): one immediate text per phone. */
+    immediate_dedup_hours: z.number().int().min(1).optional().default(24),
+    /** 24h CHECK-IN target delay after first contact (minutes). */
+    checkin_after_min: z.number().int().min(1).optional().default(1440),
+    /** 24h CHECK-IN tolerance band (± minutes) around the target. */
+    checkin_window_min: z.number().int().min(1).optional().default(30),
+    /** 24h CHECK-IN dedup window (hours): one check-in per phone. */
+    checkin_dedup_hours: z.number().int().min(1).optional().default(48),
+    /** Max leads processed per cycle (also caps name resolution). */
+    poll_limit: z.number().int().min(1).optional().default(10),
+  })
+  .optional()
+  .default({})
+
+const VinSchema = z
+  .object({
+    org_id: z.string().min(1).optional(),
+    /** Max contacts resolved via vin_get_contact per cycle (throttle guard). */
+    name_resolve_cap: z.number().int().min(0).optional().default(10),
+    /** WS-2 new-lead follow-up watcher (opt-in, default OFF). */
+    watcher: VinWatcherSchema,
+  })
+  .optional()
+  .default({})
+
+/**
  * Operator-side per-profile channel-credential selection. Each outbound channel
  * (SMS/TextMagic, Vapi voice, Tavus video, email) can use the SHARED ("united")
  * credentials brokered by central-mcp, or the profile's OWN credentials in its
@@ -126,6 +176,30 @@ const LeadNotificationsSchema = z
     sender_name: z.string().optional(),
     /** Name of the env var (in the profile .env or central-mcp tokens) that holds the Resend token used to send this profile's ADF emails. Defaults to CENTRAL_MCP_TOKEN. */
     resend_token_var: z.string().optional(),
+  })
+  .optional()
+  .default({})
+
+/**
+ * Per-profile DEALER notification format + recipient (WS-4). When an
+ * internal lead event fires for the store (Vapi end-of-call, new VIN lead),
+ * the dealership gets a notification in the format its DMS/CRM ingests:
+ *   - `adf-xml`  → structured ADF-XML (Serra stores; reuse the AC.6.8 emitter)
+ *   - `email`    → plain readable email (Columbia stores)
+ * `lead_recipient` is the dealer inbox the notification lands in. If absent,
+ * the dispatcher falls back to the legacy `lead_notifications.adf_email` and,
+ * failing that, reports `unconfigured` (no send, no throw). Default format is
+ * `email` so an unconfigured profile cannot accidentally emit ADF.
+ * Operator-controlled (studio.yaml); the store→format map lives in
+ * NEXXUS_FIT_SPEC §5.
+ */
+const NotificationsSchema = z
+  .object({
+    lead_format: z.enum(['adf-xml', 'email']).optional().default('email'),
+    lead_recipient: z
+      .union([z.literal(''), z.string().email()])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
   })
   .optional()
   .default({})
@@ -197,7 +271,9 @@ export const StudioConfigSchema = z.object({
   widgets: z.array(WidgetEntrySchema).optional().default([]),
   autonomous_reply_defaults: AutonomousReplyDefaultsSchema,
   federation: FederationSchema,
+  vin: VinSchema,
   lead_notifications: LeadNotificationsSchema,
+  notifications: NotificationsSchema,
   channel_credentials: ChannelCredentialsSchema,
   comms: CommsSchema,
 })
@@ -269,7 +345,21 @@ export function defaultStudioConfig(profile: string): StudioConfig {
       channels: [],
     },
     federation: { read_scopes: [] },
+    vin: {
+      name_resolve_cap: 10,
+      watcher: {
+        enabled: false,
+        synced_within_min: 30,
+        created_within_hours: 4,
+        immediate_dedup_hours: 24,
+        checkin_after_min: 1440,
+        checkin_window_min: 30,
+        checkin_dedup_hours: 48,
+        poll_limit: 10,
+      },
+    },
     lead_notifications: {},
+    notifications: { lead_format: 'email' },
     channel_credentials: { default: 'shared' },
     comms: {
       outbound_enabled: true,
