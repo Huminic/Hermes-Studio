@@ -55,6 +55,10 @@ import {
   callFederationTool,
 } from './federation-mcp-handlers'
 import { ROLLUP_TOOLS, callRollupTool } from './rollup-mcp-handlers'
+import {
+  KNOWLEDGE_TOOLS,
+  callKnowledgeTool,
+} from './knowledge-mcp-handlers'
 import { recordAudit } from './metadata-substrate'
 
 const ADMIN_TOOLS = new Set([
@@ -69,6 +73,7 @@ const BRAIN_TOOL_NAMES = new Set(BRAIN_TOOLS.map((t) => t.name))
 const COMMS_TOOL_NAMES = new Set(COMMS_TOOLS.map((t) => t.name))
 const FEDERATION_TOOL_NAMES = new Set(FEDERATION_TOOLS.map((t) => t.name))
 const ROLLUP_TOOL_NAMES = new Set(ROLLUP_TOOLS.map((t) => t.name))
+const KNOWLEDGE_TOOL_NAMES = new Set(KNOWLEDGE_TOOLS.map((t) => t.name))
 
 function profileDir(profile: string): string {
   return path.join(os.homedir(), '.hermes', 'profiles', profile)
@@ -510,6 +515,7 @@ export async function dispatchWikiMcp(
     return ok(id, {
       tools: [
         ...WIKI_TOOLS,
+        ...KNOWLEDGE_TOOLS,
         ...BRAIN_TOOLS,
         ...COMMS_TOOLS,
         ...FEDERATION_TOOLS,
@@ -607,6 +613,26 @@ export async function dispatchWikiMcp(
         result = { tokens: listTokens() }
         break
       default:
+        if (KNOWLEDGE_TOOL_NAMES.has(toolName)) {
+          const kRes = callKnowledgeTool(toolName, args, {
+            token_label: token.label,
+            token_allowed_profiles: token.allowed_profiles,
+            token_allowed_tools: token.allowed_tools,
+            token_admin: token.admin,
+          })
+          if (!kRes.ok) {
+            recordToolCall({
+              token,
+              profile: profileArg,
+              tool: toolName,
+              status: 'error',
+              error: kRes.error,
+            })
+            return err(id, -32009, kRes.error)
+          }
+          result = kRes.data
+          break
+        }
         if (ROLLUP_TOOL_NAMES.has(toolName)) {
           if (!token.admin && !token.allowed_profiles.includes('*')) {
             recordToolCall({

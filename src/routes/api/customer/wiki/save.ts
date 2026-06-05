@@ -9,11 +9,7 @@ import {
   isAuthorizedForProfile,
   resolveSession,
 } from '../../../../server/customer-auth'
-import {
-  readCustomerWikiFile,
-  writeCustomerWikiFile,
-} from '../../../../server/customer-wiki'
-import { evaluateWikiSave } from '../../../../server/ksg-gate'
+import { guardedWikiWrite } from '../../../../server/guarded-wiki'
 
 export const Route = createFileRoute('/api/customer/wiki/save')({
   server: {
@@ -38,27 +34,22 @@ export const Route = createFileRoute('/api/customer/wiki/save')({
         if (!isAuthorizedForProfile(session, profile)) {
           return json({ ok: false, error: 'Forbidden' }, { status: 403 })
         }
-        const prev = readCustomerWikiFile(profile, p)
-        const previousContent = prev.ok ? prev.content ?? null : null
-        const verdict = evaluateWikiSave({
-          relativePath: p,
-          previousContent,
-          newContent: content,
-        })
-        if (!verdict.ok) {
+        // Route through the SINGLE structural gate (rule gate → write →
+        // memorialize to Brain), the same entry point the knowledge MCP tool
+        // uses, under this customer-admin's recognized actor identity.
+        const actor = `user:${session?.username ?? 'customer-admin'}`
+        const result = guardedWikiWrite({ profile, relPath: p, content, actor })
+        if (!result.ok) {
           return json(
-            { ok: false, error: verdict.reason, rule: verdict.rule },
+            { ok: false, error: result.reason, rule: result.rule },
             { status: 422 },
           )
         }
-        const writeResult = writeCustomerWikiFile(profile, p, content)
-        if (!writeResult.ok) {
-          return json(writeResult, { status: 400 })
-        }
         return json({
           ok: true,
-          path: p,
-          warnings: verdict.warnings,
+          path: result.path,
+          warnings: result.warnings,
+          captured: result.memorialized,
         })
       },
     },
