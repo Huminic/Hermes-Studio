@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Serra Widget Verification Page</title>
+  <style>
+    :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --blue:#3b82f6; --bg:#f8fafc; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+    header { background:#fff; border-bottom:1px solid var(--line); padding:28px 24px; }
+    .wrap { max-width:1100px; margin:0 auto; padding:24px; }
+    h1 { margin:0 0 6px; font-size:24px; }
+    .sub { color:var(--muted); font-size:14px; max-width:760px; }
+    h2 { font-size:18px; margin:36px 0 4px; }
+    .storesub { color:var(--muted); font-size:13px; margin-bottom:14px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:18px; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px; }
+    .card h3 { margin:0 0 2px; font-size:15px; }
+    .tag { display:inline-block; font-size:11px; font-weight:600; color:var(--blue); background:#eff6ff; border-radius:999px; padding:2px 9px; margin-bottom:10px; }
+    .toggle { border:0; border-radius:999px; background:var(--blue); color:#fff; font-weight:700; font-size:13px; padding:9px 16px; cursor:pointer; }
+    .frameWrap { display:none; margin-top:12px; border:1px solid var(--line); border-radius:12px; overflow:hidden; height:520px; }
+    .frameWrap.open { display:block; }
+    .frameWrap iframe { width:100%; height:100%; border:0; }
+    .links { margin-top:12px; font-size:13px; }
+    .links a { color:var(--blue); text-decoration:none; font-weight:600; }
+    code { display:block; margin-top:10px; background:#0f172a; color:#e2e8f0; border-radius:10px; padding:10px 12px; font-size:11.5px; overflow:auto; white-space:pre-wrap; word-break:break-all; }
+    footer { color:var(--muted); font-size:12px; text-align:center; padding:32px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap" style="padding:0">
+      <h1>Serra Widget Verification Page</h1>
+      <p class="sub">Live preview of the embeddable chat, service, and contact widgets for the three Serra
+      stores. Click <strong>Show widget</strong> on any card to load it (the same surface that opens from the
+      website launcher). Each card also includes the one-line embed snippet to place on the dealership's pages
+      and a direct link to the widget. One live launcher is running in the lower-right of this page as a
+      working example of the visitor experience.</p>
+    </div>
+  </header>
+
+  <div class="wrap" id="root"></div>
+
+  <footer>Powered by Huminic · Serra Automotive Group</footer>
+
+  <!-- Live launcher example (real embed, same as a dealership page would use) -->
+  <script async src="/nexxus-widget.min.js?id=serra-honda-sales-chat"></script>
+
+  <script>
+    var ORIGIN = "https://studio.huminic.app"; // production host the embed snippet points at
+    var STORES = [
+      { name: "Serra Honda", slug: "serra-honda", widgets: [
+        { id: "serra-honda-sales-chat", label: "Sales Chat", mode: "Chat — Caroline (Sales)" },
+        { id: "serra-honda-service",    label: "Service Chat", mode: "Chat — Nancy (Service)" },
+        { id: "serra-honda-contact",    label: "Contact Form", mode: "Lead form" }
+      ]},
+      { name: "Serra Nissan", slug: "serra-nissan", widgets: [
+        { id: "serra-nissan-sales-chat", label: "Sales Chat", mode: "Chat — Caroline (Sales)" },
+        { id: "serra-nissan-service",    label: "Service Chat", mode: "Chat — Nancy (Service)" },
+        { id: "serra-nissan-contact",    label: "Contact Form", mode: "Lead form" }
+      ]},
+      { name: "Tony Serra Ford", slug: "tony-serra-ford", widgets: [
+        { id: "tony-serra-ford-sales-chat", label: "Sales Chat", mode: "Chat — Caroline (Sales)" },
+        { id: "tony-serra-ford-service",    label: "Service Chat", mode: "Chat — Nancy (Service)" },
+        { id: "tony-serra-ford-contact",    label: "Contact Form", mode: "Lead form" }
+      ]}
+    ];
+
+    var root = document.getElementById("root");
+    STORES.forEach(function (store) {
+      var h2 = document.createElement("h2"); h2.textContent = store.name; root.appendChild(h2);
+      var sub = document.createElement("div"); sub.className = "storesub";
+      sub.textContent = "Three widgets — embed any of them on a " + store.name + " page."; root.appendChild(sub);
+      var grid = document.createElement("div"); grid.className = "grid"; root.appendChild(grid);
+
+      store.widgets.forEach(function (w) {
+        var snippet = '<script async src="' + ORIGIN + '/nexxus-widget.min.js?id=' + w.id + '"><\/script>';
+        var card = document.createElement("div"); card.className = "card";
+        card.innerHTML =
+          '<div class="tag">' + w.mode + '</div>' +
+          '<h3>' + w.label + '</h3>' +
+          '<button class="toggle">Show widget &#9662;</button>' +
+          '<div class="frameWrap"></div>' +
+          '<div class="links"><a href="/w/' + w.id + '" target="_blank" rel="noopener">Open this widget in a new tab &#8599;</a></div>' +
+          '<code>' + snippet.replace(/</g, "&lt;") + '</code>';
+        var btn = card.querySelector(".toggle");
+        var fw = card.querySelector(".frameWrap");
+        btn.onclick = function () {
+          var open = !fw.classList.contains("open");
+          if (open && !fw.querySelector("iframe")) {
+            var f = document.createElement("iframe");
+            f.src = "/w/" + w.id; f.title = w.label; fw.appendChild(f);
+          }
+          fw.classList.toggle("open", open);
+          btn.innerHTML = open ? "Hide widget &#9652;" : "Show widget &#9662;";
+        };
+        grid.appendChild(card);
+      });
+    });
+  </script>
+</body>
+</html>
