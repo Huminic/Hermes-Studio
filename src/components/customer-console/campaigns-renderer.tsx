@@ -87,6 +87,16 @@ function channelLabel(value: string): string {
   return CHANNELS.find((c) => c.value === value)?.label ?? value
 }
 
+/** Channels a follow-up flow step may use (Text / Email / Call). */
+const FLOW_CHANNELS: Array<{ value: string; label: string }> = [
+  { value: 'sms', label: 'Text message' },
+  { value: 'email', label: 'Email' },
+  { value: 'voice', label: 'Phone call' },
+]
+const MAX_FLOW_STEPS = 3
+
+type FlowStep = { channel: string; wait_hours: number }
+
 function statusLabel(status: string): string {
   switch (status) {
     case 'complete':
@@ -135,7 +145,15 @@ export function CustomerCampaignsRenderer(props: {
   const [campaigns, setCampaigns] = useState<Array<Campaign>>([])
   const [templates, setTemplates] = useState<Array<CampaignTemplate>>([])
   const [audiences, setAudiences] = useState<Array<Audience>>([])
-  const [view, setView] = useState<'list' | 'build'>('list')
+  const [view, setView] = useState<'list' | 'build' | 'follow-up'>('list')
+
+  // Follow-up flow state.
+  const [flowEnabled, setFlowEnabled] = useState(false)
+  const [flowSteps, setFlowSteps] = useState<Array<FlowStep>>([
+    { channel: 'sms', wait_hours: 0 },
+  ])
+  const [accountEnabled, setAccountEnabled] = useState(true)
+  const [flowNote, setFlowNote] = useState<string | null>(null)
 
   // Build form state.
   const [channel, setChannel] = useState<string>('sms')
@@ -195,6 +213,72 @@ export function CustomerCampaignsRenderer(props: {
   useEffect(() => {
     void load()
   }, [load])
+
+  const loadFlow = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `/api/customer/lead-flow?profile=${encodeURIComponent(props.profile)}`,
+        { credentials: 'include' },
+      )
+      const j = (await res.json().catch(() => ({}))) as {
+        ok: boolean
+        flow?: { enabled: boolean; steps: Array<FlowStep> }
+        account_enabled?: boolean
+      }
+      if (res.ok && j.ok && j.flow) {
+        setFlowEnabled(!!j.flow.enabled)
+        setFlowSteps(
+          j.flow.steps.length ? j.flow.steps : [{ channel: 'sms', wait_hours: 0 }],
+        )
+        setAccountEnabled(!!j.account_enabled)
+      }
+    } catch {
+      // empty form renders
+    }
+  }, [props.profile])
+
+  const saveFlow = useCallback(async () => {
+    setBusy(true)
+    setFlowNote(null)
+    try {
+      const res = await fetch('/api/customer/lead-flow', {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profile: props.profile,
+          enabled: flowEnabled,
+          steps: flowSteps,
+        }),
+      })
+      const j = (await res.json().catch(() => ({}))) as {
+        ok: boolean
+        error?: string
+      }
+      setFlowNote(
+        res.ok && j.ok
+          ? 'Saved. New leads will follow this plan.'
+          : (j.error ?? 'We could not save that. Please try again.'),
+      )
+    } finally {
+      setBusy(false)
+    }
+  }, [flowEnabled, flowSteps, props.profile])
+
+  const setStepChannel = (i: number, channel: string) =>
+    setFlowSteps((prev) => prev.map((s, idx) => (idx === i ? { ...s, channel } : s)))
+  const setStepWait = (i: number, wait_hours: number) =>
+    setFlowSteps((prev) =>
+      prev.map((s, idx) => (idx === i ? { ...s, wait_hours } : s)),
+    )
+  const addStep = () =>
+    setFlowSteps((prev) =>
+      prev.length >= MAX_FLOW_STEPS
+        ? prev
+        : [...prev, { channel: 'email', wait_hours: 4 }],
+    )
+  const removeStep = () =>
+    setFlowSteps((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev))
 
   // Templates relevant to the chosen channel (sms/email have templates; call
   // and video reuse the text/email scripts as the spoken/sent message).
@@ -690,6 +774,129 @@ export function CustomerCampaignsRenderer(props: {
     )
   }
 
+  // ── Follow-up view ────────────────────────────────────────────────────────
+  if (view === 'follow-up') {
+    return (
+      <div className="flex flex-col gap-3 text-slate-900">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setView('list')}
+            className="text-xs text-slate-500 hover:text-slate-900"
+          >
+            ← Back
+          </button>
+          <h3 className="text-sm font-semibold">Follow-up for new leads</h3>
+        </div>
+
+        <p className="text-[11px] text-slate-500">
+          When a new lead comes in, reach out automatically. If they don’t reply,
+          try the next way to reach them. The moment they reply, follow-up stops.
+        </p>
+
+        {!accountEnabled && (
+          <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
+            Lead follow-up isn’t switched on for your account yet. Save your plan
+            here, then ask your Huminic rep to turn it on.
+          </div>
+        )}
+
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={flowEnabled}
+            onChange={(e) => setFlowEnabled(e.target.checked)}
+          />
+          <span className="font-medium">Turn on follow-up for new leads</span>
+        </label>
+
+        <section className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white p-3">
+          {flowSteps.map((step, i) => (
+            <div
+              key={i}
+              className="flex flex-wrap items-center gap-2 rounded-md border border-slate-100 bg-slate-50 p-2"
+            >
+              <span className="text-[11px] font-semibold text-slate-500">
+                Step {i + 1}
+              </span>
+              {i === 0 ? (
+                <span className="text-xs text-slate-600">send immediately by</span>
+              ) : (
+                <span className="text-xs text-slate-600">
+                  if no reply after
+                  <input
+                    type="number"
+                    min={1}
+                    value={step.wait_hours}
+                    onChange={(e) =>
+                      setStepWait(i, Math.max(1, Number(e.target.value) || 1))
+                    }
+                    className="mx-1 w-14 rounded-md border border-slate-200 bg-white px-1.5 py-1 text-sm text-slate-900"
+                  />
+                  hours, send
+                </span>
+              )}
+              <select
+                value={step.channel}
+                onChange={(e) => setStepChannel(i, e.target.value)}
+                className="rounded-md border border-slate-200 bg-white px-2 py-1 text-sm text-slate-900"
+              >
+                {FLOW_CHANNELS.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+
+          <div className="flex items-center gap-2">
+            {flowSteps.length < MAX_FLOW_STEPS && (
+              <button
+                type="button"
+                onClick={addStep}
+                className="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-700 hover:bg-slate-50"
+              >
+                + Add a step
+              </button>
+            )}
+            {flowSteps.length > 1 && (
+              <button
+                type="button"
+                onClick={removeStep}
+                className="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-500 hover:bg-slate-50"
+              >
+                Remove last step
+              </button>
+            )}
+          </div>
+
+          <div className="text-[11px] text-slate-400">
+            ✓ Follow-up always stops as soon as the customer replies.
+          </div>
+        </section>
+
+        {flowNote && (
+          <div className="rounded-md border border-slate-200 bg-slate-50 p-2 text-xs text-slate-700">
+            {flowNote}
+          </div>
+        )}
+
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => void saveFlow()}
+            disabled={busy}
+            className="rounded-md px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-40"
+            style={{ background: PRIMARY }}
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   // ── List view ───────────────────────────────────────────────────────────
   return (
     <div className="flex flex-col gap-3 text-slate-900">
@@ -701,6 +908,18 @@ export function CustomerCampaignsRenderer(props: {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setFlowNote(null)
+              setView('follow-up')
+              void loadFlow()
+            }}
+            className="rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+            title="Set up automatic follow-up for new leads."
+          >
+            Follow-up
+          </button>
           <button
             type="button"
             onClick={() => void sendNow()}

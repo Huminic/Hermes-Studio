@@ -16,6 +16,7 @@ import { listThreads, getThread } from './messaging-hub-store'
 import { publishMessagingEvent } from './messaging-hub-bus'
 import { tickCampaigns } from './campaign-worker'
 import { tickVinWatcher } from './vin-watcher'
+import { tickFlows } from './lead-flow'
 import { openBrain } from './brain-store'
 
 export const ESCALATE_AFTER_MS = 30 * 60_000
@@ -29,6 +30,10 @@ export type DueWorkSummary = {
   watcherSent: number
   /** VIN-watcher immediate triggers queued for next 07:00 (out-of-hours). */
   watcherQueued: number
+  /** Follow-up flow escalation steps advanced this pass. */
+  flowSent: number
+  /** Flow enrollments stopped because the lead replied. */
+  flowStopped: number
   errors: Array<{ profile: string; error: string }>
 }
 
@@ -114,6 +119,8 @@ export async function runDueWork(
     escalated: 0,
     watcherSent: 0,
     watcherQueued: 0,
+    flowSent: 0,
+    flowStopped: 0,
     errors: [],
   }
   for (const profile of profiles) {
@@ -140,6 +147,15 @@ export async function runDueWork(
       summary.watcherQueued += w.queued
     } catch (err) {
       summary.errors.push({ profile, error: `vin-watcher: ${(err as Error).message}` })
+    }
+    // Follow-up flow escalation steps (opt-in per profile; a profile with no
+    // configured/enabled flow returns a clean zero, not an error).
+    try {
+      const f = await tickFlows({ profile, now })
+      summary.flowSent += f.sent
+      summary.flowStopped += f.stopped
+    } catch (err) {
+      summary.errors.push({ profile, error: `lead-flow: ${(err as Error).message}` })
     }
   }
   return summary

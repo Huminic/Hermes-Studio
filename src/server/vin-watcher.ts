@@ -40,7 +40,9 @@ import {
   listThreads,
   getOrCreateThread,
   appendMessage,
+  getLeadFlow,
 } from './messaging-hub-store'
+import { enrollLead } from './lead-flow'
 import { openBrain } from './brain-store'
 import type { StudioConfig } from '../lib/studio-config'
 
@@ -180,6 +182,17 @@ function leadPhone(lead: ResolvedLead): string | null {
       (lead.cellPhone as unknown) ??
       (lead.phoneNumber as unknown),
   )
+}
+
+/** Best-effort email out of a raw lead row (for multi-channel escalation). */
+function leadEmail(lead: ResolvedLead): string | null {
+  const e =
+    (lead.resolved?.email as unknown) ??
+    (lead.email as unknown) ??
+    (lead.Email as unknown) ??
+    (lead.emailAddress as unknown)
+  if (typeof e === 'string' && e.trim() && e.includes('@')) return e.trim()
+  return null
 }
 
 function leadVehicle(lead: ResolvedLead): string | null {
@@ -508,6 +521,44 @@ async function evaluateLead(ctx: {
       reason: nextSevenAmNote(bh.tz),
       ...base,
     }
+  }
+
+  // When the customer has configured a follow-up FLOW, the flow takes over the
+  // first touch (and every escalation step after it). The flow path does NOT
+  // record a `triggerStore` 'immediate', so the hardcoded 24h check-in branch
+  // above stays dormant for flow-enrolled leads — the flow owns the cadence.
+  const flow = getLeadFlow(ctx.profile)
+  if (flow?.enabled && flow.steps.length > 0) {
+    const handles: Record<string, string> = { sms: phone, voice: phone }
+    const email = leadEmail(lead)
+    if (email) handles.email = email
+    const res = await enrollLead({
+      profile: ctx.profile,
+      contact_key: phone,
+      handles,
+      first_name: firstName,
+      vehicle,
+      dealer,
+      now,
+      deps: { dispatch: ctx.dispatch },
+    })
+    if (res.enrolled) {
+      const action: WatcherOutcome['action'] =
+        res.step_status === 'sent'
+          ? 'sent'
+          : res.step_status === 'blocked'
+            ? 'blocked'
+            : res.step_status === 'failed'
+              ? 'failed'
+              : 'skipped'
+      return {
+        kind: 'immediate',
+        action,
+        reason: `enrolled in follow-up flow (step 1 ${res.step_status})`,
+        ...base,
+      }
+    }
+    return { kind: 'immediate', action: 'skipped', reason: `flow: ${res.reason}`, ...base }
   }
 
   return send({

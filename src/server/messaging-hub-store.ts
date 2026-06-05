@@ -239,6 +239,31 @@ CREATE TABLE IF NOT EXISTS agent_reply_jobs (
   reason       TEXT
 );
 CREATE INDEX IF NOT EXISTS agent_reply_jobs_status ON agent_reply_jobs(status, attempted_at);
+
+CREATE TABLE IF NOT EXISTS lead_flow (
+  profile     TEXT PRIMARY KEY,
+  enabled     INTEGER NOT NULL DEFAULT 0,
+  steps       TEXT NOT NULL,
+  updated_at  INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS flow_enrollments (
+  id                TEXT PRIMARY KEY,
+  profile           TEXT NOT NULL,
+  contact_key       TEXT NOT NULL,
+  handles           TEXT NOT NULL,
+  first_name        TEXT,
+  vehicle           TEXT,
+  dealer            TEXT,
+  step_index        INTEGER NOT NULL,
+  last_step_sent_at INTEGER,
+  next_due_at       INTEGER,
+  status            TEXT NOT NULL DEFAULT 'active',
+  created_at        INTEGER NOT NULL,
+  updated_at        INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS flow_enrollments_active ON flow_enrollments(profile, status, next_due_at);
+CREATE INDEX IF NOT EXISTS flow_enrollments_contact ON flow_enrollments(profile, contact_key, status);
 `
 
 // ─── In-memory fallback ─────────────────────────────────────────────────────
@@ -263,6 +288,8 @@ type InMemoryStore = {
   subscriptions: Map<string, AgentSubscription>
   replyJobs: Map<string, AgentReplyJob>
   deliveries: Map<string, { id: string; campaign_id: string; contact_id: string; thread_id: string | null; status: string; sent_at: number | null; error: string | null }>
+  leadFlow: LeadFlowRow | null
+  enrollments: Map<string, FlowEnrollment>
 }
 
 function getStore(profile: string): InMemoryStore {
@@ -277,6 +304,8 @@ function getStore(profile: string): InMemoryStore {
       subscriptions: new Map(),
       replyJobs: new Map(),
       deliveries: new Map(),
+      leadFlow: null,
+      enrollments: new Map(),
     }
     _inMemory.set(profile, s)
   }
@@ -1312,6 +1341,282 @@ export function aggregateMessagesByAuthor(
     }
   }
   return stats
+}
+
+// ─── Lead follow-up flow (config + enrollments) ─────────────────────────────
+//
+// The customer-editable escalation flow (Text → no reply → Email → no reply →
+// Call) and the per-lead enrollment state that walks it. Config is ONE row per
+// profile; the operator master gate stays in studio.yaml (vin.watcher.enabled).
+// See docs/launch/NEXXUS_FOLLOWUP_FLOW_SPEC.md.
+
+export type LeadFlowStep = { channel: string; wait_hours: number }
+
+export type LeadFlowRow = {
+  profile: string
+  enabled: boolean
+  steps: Array<LeadFlowStep>
+  updated_at: number
+}
+
+export type FlowEnrollmentStatus = 'active' | 'replied' | 'completed' | 'stopped'
+
+export type FlowEnrollment = {
+  id: string
+  profile: string
+  /** Dedup key — the lead's phone. One active enrollment per key. */
+  contact_key: string
+  /** Resolved per-channel handles at enroll time: {sms?, voice?, email?}. */
+  handles: Record<string, string>
+  first_name: string | null
+  vehicle: string | null
+  dealer: string | null
+  /** 0-based index of the LAST step sent (-1 = none sent yet). */
+  step_index: number
+  last_step_sent_at: number | null
+  next_due_at: number | null
+  status: FlowEnrollmentStatus
+  created_at: number
+  updated_at: number
+}
+
+export function getLeadFlow(profile: string): LeadFlowRow | null {
+  const db = getDb(profile)
+  if (db) {
+    const row = db
+      .prepare(`SELECT * FROM lead_flow WHERE profile=?`)
+      .get(profile) as
+      | { profile: string; enabled: number; steps: string; updated_at: number }
+      | undefined
+    if (!row) return null
+    return {
+      profile: row.profile,
+      enabled: !!row.enabled,
+      steps: (safeJson(`{"v":${row.steps}}`).v as Array<LeadFlowStep>) ?? [],
+      updated_at: row.updated_at,
+    }
+  }
+  return getStore(profile).leadFlow
+}
+
+export function saveLeadFlow(input: {
+  profile: string
+  enabled: boolean
+  steps: Array<LeadFlowStep>
+}): LeadFlowRow {
+  const row: LeadFlowRow = {
+    profile: input.profile,
+    enabled: input.enabled,
+    steps: input.steps,
+    updated_at: Date.now(),
+  }
+  const db = getDb(input.profile)
+  if (db) {
+    db.prepare(
+      `INSERT INTO lead_flow(profile,enabled,steps,updated_at) VALUES(?,?,?,?)
+       ON CONFLICT(profile) DO UPDATE SET enabled=excluded.enabled, steps=excluded.steps, updated_at=excluded.updated_at`,
+    ).run(row.profile, row.enabled ? 1 : 0, JSON.stringify(row.steps), row.updated_at)
+  } else {
+    getStore(input.profile).leadFlow = row
+  }
+  return row
+}
+
+export function createFlowEnrollment(input: {
+  profile: string
+  contact_key: string
+  handles: Record<string, string>
+  first_name?: string | null
+  vehicle?: string | null
+  dealer?: string | null
+  step_index: number
+  last_step_sent_at: number | null
+  next_due_at: number | null
+  status?: FlowEnrollmentStatus
+}): FlowEnrollment {
+  const now = Date.now()
+  const e: FlowEnrollment = {
+    id: randomUUID(),
+    profile: input.profile,
+    contact_key: input.contact_key,
+    handles: input.handles,
+    first_name: input.first_name ?? null,
+    vehicle: input.vehicle ?? null,
+    dealer: input.dealer ?? null,
+    step_index: input.step_index,
+    last_step_sent_at: input.last_step_sent_at,
+    next_due_at: input.next_due_at,
+    status: input.status ?? 'active',
+    created_at: now,
+    updated_at: now,
+  }
+  const db = getDb(input.profile)
+  if (db) {
+    db.prepare(
+      `INSERT INTO flow_enrollments(id,profile,contact_key,handles,first_name,vehicle,dealer,step_index,last_step_sent_at,next_due_at,status,created_at,updated_at)
+       VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    ).run(
+      e.id,
+      e.profile,
+      e.contact_key,
+      JSON.stringify(e.handles),
+      e.first_name,
+      e.vehicle,
+      e.dealer,
+      e.step_index,
+      e.last_step_sent_at,
+      e.next_due_at,
+      e.status,
+      e.created_at,
+      e.updated_at,
+    )
+  } else {
+    getStore(input.profile).enrollments.set(e.id, e)
+  }
+  return e
+}
+
+function rowToEnrollment(r: {
+  id: string
+  profile: string
+  contact_key: string
+  handles: string
+  first_name: string | null
+  vehicle: string | null
+  dealer: string | null
+  step_index: number
+  last_step_sent_at: number | null
+  next_due_at: number | null
+  status: string
+  created_at: number
+  updated_at: number
+}): FlowEnrollment {
+  return {
+    id: r.id,
+    profile: r.profile,
+    contact_key: r.contact_key,
+    handles: safeJson(r.handles) as Record<string, string>,
+    first_name: r.first_name,
+    vehicle: r.vehicle,
+    dealer: r.dealer,
+    step_index: r.step_index,
+    last_step_sent_at: r.last_step_sent_at,
+    next_due_at: r.next_due_at,
+    status: r.status as FlowEnrollmentStatus,
+    created_at: r.created_at,
+    updated_at: r.updated_at,
+  }
+}
+
+/** Active enrollment for a contact_key, if any (dedup guard against re-enroll). */
+export function getActiveFlowEnrollment(
+  profile: string,
+  contactKey: string,
+): FlowEnrollment | null {
+  const db = getDb(profile)
+  if (db) {
+    const row = db
+      .prepare(
+        `SELECT * FROM flow_enrollments WHERE profile=? AND contact_key=? AND status='active' LIMIT 1`,
+      )
+      .get(profile, contactKey) as Parameters<typeof rowToEnrollment>[0] | undefined
+    return row ? rowToEnrollment(row) : null
+  }
+  for (const e of getStore(profile).enrollments.values()) {
+    if (e.contact_key === contactKey && e.status === 'active') return e
+  }
+  return null
+}
+
+/** All active enrollments for a profile (the engine filters by due time). */
+export function listActiveFlowEnrollments(profile: string): Array<FlowEnrollment> {
+  const db = getDb(profile)
+  if (db) {
+    const rows = db
+      .prepare(`SELECT * FROM flow_enrollments WHERE profile=? AND status='active'`)
+      .all(profile) as Array<Parameters<typeof rowToEnrollment>[0]>
+    return rows.map(rowToEnrollment)
+  }
+  return [...getStore(profile).enrollments.values()].filter(
+    (e) => e.status === 'active',
+  )
+}
+
+export function updateFlowEnrollment(
+  profile: string,
+  id: string,
+  patch: Partial<
+    Pick<
+      FlowEnrollment,
+      'step_index' | 'last_step_sent_at' | 'next_due_at' | 'status'
+    >
+  >,
+): void {
+  const now = Date.now()
+  const db = getDb(profile)
+  if (db) {
+    const sets: Array<string> = []
+    const vals: Array<unknown> = []
+    if (patch.step_index !== undefined) {
+      sets.push('step_index=?')
+      vals.push(patch.step_index)
+    }
+    if (patch.last_step_sent_at !== undefined) {
+      sets.push('last_step_sent_at=?')
+      vals.push(patch.last_step_sent_at)
+    }
+    if (patch.next_due_at !== undefined) {
+      sets.push('next_due_at=?')
+      vals.push(patch.next_due_at)
+    }
+    if (patch.status !== undefined) {
+      sets.push('status=?')
+      vals.push(patch.status)
+    }
+    sets.push('updated_at=?')
+    vals.push(now)
+    vals.push(id)
+    db.prepare(`UPDATE flow_enrollments SET ${sets.join(', ')} WHERE id=?`).run(...vals)
+  } else {
+    const e = getStore(profile).enrollments.get(id)
+    if (e) {
+      Object.assign(e, patch, { updated_at: now })
+    }
+  }
+}
+
+/**
+ * Did the contact send ANY inbound message (on any of these handles' threads)
+ * at or after `sinceMs`? The stop-on-reply signal for the flow engine. Reuses
+ * the hub thread model: a reply lands as an inbound message on the contact's
+ * thread regardless of which channel the step went out on.
+ */
+export function hasInboundSince(
+  profile: string,
+  handles: Array<string>,
+  sinceMs: number,
+): boolean {
+  const uniq = [...new Set(handles.filter(Boolean))]
+  if (uniq.length === 0) return false
+  const db = getDb(profile)
+  if (db) {
+    const placeholders = uniq.map(() => '?').join(',')
+    const row = db
+      .prepare(
+        `SELECT 1 FROM messages m JOIN threads t ON t.id = m.thread_id
+         WHERE t.profile=? AND t.contact_handle IN (${placeholders})
+           AND m.direction='inbound' AND m.created_at >= ? LIMIT 1`,
+      )
+      .get(profile, ...uniq, sinceMs) as { 1: number } | undefined
+    return !!row
+  }
+  for (const t of getStore(profile).threads.values()) {
+    if (!uniq.includes(t.contact_handle)) continue
+    for (const m of t.messages) {
+      if (m.direction === 'inbound' && m.created_at >= sinceMs) return true
+    }
+  }
+  return false
 }
 
 // ─── Test helpers ───────────────────────────────────────────────────────────
