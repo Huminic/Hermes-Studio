@@ -31,6 +31,10 @@ export async function callCentralMcpTool(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        // The broker uses the MCP streamable-HTTP transport, which requires the
+        // client to accept BOTH json and the SSE stream — omitting this yields
+        // "Not Acceptable: Client must accept both application/json and text/event-stream".
+        Accept: 'application/json, text/event-stream',
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({

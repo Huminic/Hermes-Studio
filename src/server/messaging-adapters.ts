@@ -70,6 +70,8 @@ async function callCentralMcpTool(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        // MCP streamable-HTTP transport requires both accept types (see central-mcp.ts).
+        Accept: 'application/json, text/event-stream',
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
@@ -357,6 +359,8 @@ async function dispatchEmail(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        // MCP streamable-HTTP transport requires both accept types (see central-mcp.ts).
+        Accept: 'application/json, text/event-stream',
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
