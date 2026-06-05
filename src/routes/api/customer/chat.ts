@@ -38,6 +38,7 @@ import {
   appendMessage,
   getOrCreateThread,
 } from '../../../server/messaging-hub-store'
+import { recallCompanyWikiTop, type RecallHit } from '../../../server/knowledge-mcp-handlers'
 
 const HERMES_URL = process.env.HERMES_API_URL || 'http://hermes-agent:8642'
 
@@ -74,24 +75,38 @@ type ChatRequest = {
   message?: string
 }
 
-function buildSystemPrompt(opts: {
+/** Cap each recalled page so the grounding context can't blow the prompt. */
+const WIKI_PAGE_CHAR_CAP = 1600
+
+export function buildSystemPrompt(opts: {
   profile: string
   agentName: string
   soul: string | null
   chatPersona: string | null
+  /** Whole company-wiki pages recalled for the user's question (the Info-Store). */
+  wikiContext?: Array<RecallHit>
 }): string {
   const segments: Array<string> = [
     `# Customer chat context`,
     `Profile: ${opts.profile}`,
     `Agent: ${opts.agentName}`,
     ``,
-    `You are this profile's agent talking to a logged-in customer-admin on the chat channel. Keep replies focused, helpful, and grounded in the SOUL fragment below. Do not invent facts you cannot derive from SOUL or persona.`,
+    `You are this profile's agent talking to a logged-in customer-admin on the chat channel. Answer from the COMPANY WIKI below (the organization's knowledge — how this business operates, its policies, procedures, and what you are and are not allowed to do) together with your SOUL and persona. The wiki is the source of truth. If the answer is not in the wiki/SOUL/persona, say you don't have that on record and offer to find out — do NOT invent it. Respect the limits your SOUL defines for you.`,
   ]
   if (opts.soul) {
-    segments.push('', '# Agent SOUL (governs your behavior)', '', opts.soul)
+    segments.push('', '# Agent SOUL (governs your behavior + limits)', '', opts.soul)
   }
   if (opts.chatPersona) {
     segments.push('', '# Chat channel persona', '', opts.chatPersona)
+  }
+  if (opts.wikiContext && opts.wikiContext.length > 0) {
+    segments.push('', '# Company wiki (Info-Store — answer from this)')
+    for (const hit of opts.wikiContext) {
+      const body = hit.content.length > WIKI_PAGE_CHAR_CAP
+        ? hit.content.slice(0, WIKI_PAGE_CHAR_CAP) + '\n…(truncated)'
+        : hit.content
+      segments.push('', `## ${hit.path}`, '', body)
+    }
   }
   return segments.join('\n')
 }
@@ -138,6 +153,9 @@ export const Route = createFileRoute('/api/customer/chat')({
 
         const soul = readAgentSoulForProfile(profile, agentId)
         const chatPersona = readChannelPersona(profile, agentId, 'chat')
+        // Ground the agent in the org's Info-Store: recall the most relevant
+        // whole wiki pages for this question (every agent reads the wiki).
+        const wikiContext = recallCompanyWikiTop(profile, message, 3)
 
         // Persist inbound message into messaging-hub.
         const thread = getOrCreateThread({
@@ -180,6 +198,7 @@ export const Route = createFileRoute('/api/customer/chat')({
               agentName: agent.name,
               soul,
               chatPersona,
+              wikiContext,
             }),
           },
           ...history,

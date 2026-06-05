@@ -91,24 +91,39 @@ function headings(md: string): string {
     .join(' ')
 }
 
-/** Addressing-based recall: best WHOLE page by query-term overlap. */
-export function recallCompanyWiki(
+export type RecallHit = { path: string; content: string; score: number }
+
+/**
+ * Addressing-based recall: the top WHOLE pages by query-term overlap against
+ * path + headings + body. Not RAG — whole governed pages, ranked. Returns up to
+ * `limit` hits with score > 0, best first.
+ */
+export function recallCompanyWikiTop(
   profile: string,
   query: string,
-): { path: string; content: string; score: number } | null {
+  limit = 3,
+): Array<RecallHit> {
   const terms = query.toLowerCase().match(/[a-z0-9]+/g) ?? []
-  if (terms.length === 0) return null
-  let best: { path: string; content: string; score: number } | null = null
+  if (terms.length === 0) return []
+  const hits: Array<RecallHit> = []
   for (const f of flatten(listCustomerWikiTree(profile).tree)) {
     const read = readCustomerWikiFile(profile, f.path)
     if (!read.ok || !read.content) continue
-    const hay = (f.path + '\n' + headings(read.content)).toLowerCase()
-    const score = terms.reduce((s, t) => s + (hay.includes(t) ? 1 : 0), 0)
-    if (score > 0 && (!best || score > best.score)) {
-      best = { path: f.path, content: read.content, score }
-    }
+    // Weight title/heading/path matches above body matches.
+    const head = (f.path + '\n' + headings(read.content)).toLowerCase()
+    const body = read.content.toLowerCase()
+    const score = terms.reduce(
+      (s, t) => s + (head.includes(t) ? 2 : 0) + (body.includes(t) ? 1 : 0),
+      0,
+    )
+    if (score > 0) hits.push({ path: f.path, content: read.content, score })
   }
-  return best
+  return hits.sort((a, b) => b.score - a.score).slice(0, limit)
+}
+
+/** Addressing-based recall: best WHOLE page by query-term overlap. */
+export function recallCompanyWiki(profile: string, query: string): RecallHit | null {
+  return recallCompanyWikiTop(profile, query, 1)[0] ?? null
 }
 
 /** Normalize a caller path to the company-wiki tree (so agents can omit the prefix). */
