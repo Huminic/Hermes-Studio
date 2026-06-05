@@ -31,13 +31,15 @@ const COPY_DIRS = ['company-wiki', 'governance/agents', 'knowledge']
 const TEXT_EXT = new Set(['.md', '.yaml', '.yml', '.json', '.txt'])
 
 type Group = 'serra' | 'columbia'
-type Dealer = { slug: string; brand: string; accent: string; group: Group }
+type Dealer = { slug: string; brand: string; accent: string; group: Group; orgId: string }
 
+// Nexxus org UUIDs (the orgId VIN calls require) — verified from the Nexxus
+// Supabase DB 2026-06-03, recorded in memory reference-store-org-uuid-map.
 const DEALERS: Array<Dealer> = [
-  { slug: 'serra-nissan', brand: 'Serra Nissan', accent: '#c3002f', group: 'serra' },
-  { slug: 'tony-serra-ford', brand: 'Tony Serra Ford', accent: '#1c3f94', group: 'serra' },
-  { slug: 'hyundai-of-columbia', brand: 'Hyundai of Columbia', accent: '#002c5f', group: 'columbia' },
-  { slug: 'ford-of-columbia', brand: 'Ford of Columbia', accent: '#1c3f94', group: 'columbia' },
+  { slug: 'serra-nissan', brand: 'Serra Nissan', accent: '#c3002f', group: 'serra', orgId: '4a23d5ad-38ff-4016-8af5-f4cfc9fd88cd' },
+  { slug: 'tony-serra-ford', brand: 'Tony Serra Ford', accent: '#1c3f94', group: 'serra', orgId: '2cbf687f-7cd5-480c-b81c-220cb632cd91' },
+  { slug: 'hyundai-of-columbia', brand: 'Hyundai of Columbia', accent: '#002c5f', group: 'columbia', orgId: 'f18cbf4e-bcbd-46fe-bf54-33bcee4afec8' },
+  { slug: 'ford-of-columbia', brand: 'Ford of Columbia', accent: '#1c3f94', group: 'columbia', orgId: '6ae2548b-f6ec-4b1e-8d8b-ae565123f0df' },
 ]
 
 function profilesRoot(): string {
@@ -116,7 +118,14 @@ function studioYaml(d: Dealer): string {
     '  max_agent_turns: 3',
     '  channels: []',
     'federation:',
-    '  read_scopes: []',
+    '  read_scopes:',
+    '    - vin            # VinSolutions live source (federated_search)',
+    '    - databrain      # per-profile DuckDB/Brain analytics',
+    'vin:',
+    `  org_id: ${d.orgId}   # Nexxus org UUID — required by vin_query_leads/vin_get_contact`,
+    '  name_resolve_cap: 10',
+    '  watcher:',
+    '    enabled: false   # operator master gate for lead follow-up (off until cutover)',
     'notifications:',
     `  lead_format: ${leadFormat}`,
     `  lead_recipient: ${TEST_LEAD_RECIPIENT}   # TEST inbox; operator points at the BDC list at cutover`,
@@ -145,13 +154,12 @@ async function standup(d: Dealer, force: boolean, dryRun: boolean): Promise<void
     log(`copied ${dir}/ (token-replaced)`) // dryRun also logs intent
   }
 
-  // studio.yaml
+  // studio.yaml — always (re)generated; it is operator-controlled config (the
+  // customer never hand-edits it), so regenerating keeps org IDs/flags current.
   const studioPath = path.join(dst, 'studio.yaml')
-  if (fs.existsSync(studioPath) && !force) {
-    log('studio.yaml exists — skip')
-  } else if (!dryRun) {
+  if (!dryRun) {
     fs.writeFileSync(studioPath, studioYaml(d), 'utf8')
-    log('wrote studio.yaml')
+    log('wrote studio.yaml (org_id wired)')
   } else {
     log('[dry-run] write studio.yaml')
   }
