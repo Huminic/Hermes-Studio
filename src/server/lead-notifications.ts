@@ -149,6 +149,8 @@ async function sendViaResend(input: {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        // MCP streamable-HTTP transport requires both accept types (see central-mcp.ts).
+        Accept: 'application/json, text/event-stream',
         Authorization: `Bearer ${input.token}`,
       },
       body: JSON.stringify({
