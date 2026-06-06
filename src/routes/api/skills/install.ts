@@ -5,7 +5,7 @@ import path from 'node:path'
 import { promisify } from 'node:util'
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 import {
   HERMES_API,
   ensureGatewayProbed,
@@ -155,8 +155,13 @@ export const Route = createFileRoute('/api/skills/install')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!isAuthenticated(request)) {
-          return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
+        // Operator-only. Installing a skill writes attacker-controllable
+        // instructions/code into the GLOBAL ~/.hermes/skills/ (loaded by every
+        // profile's agents), and accepts an arbitrary githubUrl. A customer-admin
+        // (storefront) session must NOT reach it — gate on is_admin, not mere
+        // authentication. In no-auth mode isAdmin defers to local-request only.
+        if (!isAdmin(request)) {
+          return json({ ok: false, error: 'Forbidden' }, { status: 403 })
         }
         try {
           const body = (await request.json()) as {

@@ -3,14 +3,16 @@ import os from 'node:os'
 import path from 'node:path'
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 
 export const Route = createFileRoute('/api/skills/uninstall')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!isAuthenticated(request)) {
-          return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
+        // Operator-only: removes from the GLOBAL ~/.hermes/skills/ (shared by
+        // every profile's agents). A customer-admin session must not reach it.
+        if (!isAdmin(request)) {
+          return json({ ok: false, error: 'Forbidden' }, { status: 403 })
         }
         try {
           const body = (await request.json()) as { skillId?: string }

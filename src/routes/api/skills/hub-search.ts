@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 import { BEARER_TOKEN, HERMES_API } from '../../../server/gateway-capabilities'
 import { readSkillsSettings } from './settings'
 
@@ -154,8 +154,11 @@ export const Route = createFileRoute('/api/skills/hub-search')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
-          return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
+        // Operator-only: the marketplace is an external (skillsmp.com) reach and
+        // the gateway to install. Customer-admin (storefront) sessions must not
+        // see it — gate on is_admin, not mere authentication.
+        if (!isAdmin(request)) {
+          return json({ ok: false, error: 'Forbidden' }, { status: 403 })
         }
         try {
           const url = new URL(request.url)

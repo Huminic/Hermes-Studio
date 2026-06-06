@@ -8,7 +8,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 
 const SETTINGS_PATH = path.join(
   os.homedir(),
@@ -44,8 +44,9 @@ export const Route = createFileRoute('/api/skills/settings')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
-          return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
+        // Operator-only: marketplace (skillsmp.com) credential config.
+        if (!isAdmin(request)) {
+          return json({ ok: false, error: 'Forbidden' }, { status: 403 })
         }
         const stored = readSkillsSettings()
         // Prefer env var, fall back to stored file value
@@ -60,8 +61,9 @@ export const Route = createFileRoute('/api/skills/settings')({
       },
 
       PATCH: async ({ request }) => {
-        if (!isAuthenticated(request)) {
-          return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
+        // Operator-only: marketplace (skillsmp.com) credential config.
+        if (!isAdmin(request)) {
+          return json({ ok: false, error: 'Forbidden' }, { status: 403 })
         }
         try {
           const body = (await request.json()) as { skillsmpApiKey?: string }
