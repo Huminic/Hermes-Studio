@@ -550,7 +550,7 @@ export async function notifyNewLead(input: {
   const cooldownKey = input.cooldownKey ?? input.contact_handle
   const cooldownHours =
     readStudioConfig(input.profile).config.notifications
-      .notify_cooldown_hours ?? 24
+      .notify_cooldown_hours ?? 4
   const cooldownMs = cooldownHours * 3_600_000
   if (wasLeadNotifiedWithin(input.profile, cooldownKey, cooldownMs)) {
     return {

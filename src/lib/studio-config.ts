@@ -206,9 +206,11 @@ const NotificationsSchema = z
      * SAME key for this many hours. Protects the BDC from a returning contact or
      * a bot opening many widget-chat sessions. 0 disables the cooldown.
      * Per-conversation spam is already prevented upstream (notify only on a NEW
-     * thread; ongoing messages reuse the open thread). Default 24h.
+     * thread; ongoing messages reuse the open thread). Default 4h (operator
+     * 2026-06-06 — keyed per CONTACT, not per thread; a future "smart" filter may
+     * replace the fixed window with a context-aware one, see #207).
      */
-    notify_cooldown_hours: z.number().min(0).optional().default(24),
+    notify_cooldown_hours: z.number().min(0).optional().default(4),
   })
   .optional()
   .default({})
