@@ -28,7 +28,10 @@ import {
   upsertContact,
 } from '../../../server/messaging-hub-store'
 import { isAdfXml, parseAdfXml } from '../../../server/adf-xml'
-import { maybeAutonomousReply } from '../../../server/agent-autonomous-reply'
+import {
+  ensureAutonomousSubscription,
+  maybeAutonomousReply,
+} from '../../../server/agent-autonomous-reply'
 import { notifyNewLead } from '../../../server/lead-notifications'
 
 function readInboundTokenFor(profile: string): string | null {
@@ -164,6 +167,13 @@ export const Route = createFileRoute('/api/messaging/inbound')({
           },
         })
 
+        // Move the store's comms agent onto this thread (no-op unless the store
+        // enabled autonomous reply; actual send still gated by OUTBOUND_LIVE_ENABLED).
+        try {
+          ensureAutonomousSubscription(profile, thread)
+        } catch {
+          // non-fatal
+        }
         // Fire agent-autonomous reply if any agents are subscribed in
         // mode: reply. Errors here are non-fatal — adapter still gets a 200.
         let autoResults: Array<unknown> = []

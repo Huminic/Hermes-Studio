@@ -33,6 +33,7 @@ import {
   enqueueAgentReplyJob,
   getThread,
   listSubscriptionsForThread,
+  subscribeAgentToThread,
   updateReplyJob,
   type AgentSubscription,
   type Message,
@@ -497,4 +498,54 @@ export function parseAutonomousReplyFromFrontmatter(
   const ar = fm.frontmatter.autonomous_reply
   if (!ar || typeof ar !== 'object') return null
   return ar as Record<string, unknown>
+}
+
+/**
+ * Subscribe the store's communication agent to a thread so the autonomous-reply
+ * engine handles it. This is the link that "moves the comms agent onto the new
+ * platform": inbound paths call it on each inbound; without a subscription the
+ * engine no-ops. Gated by `autonomous_reply_defaults.enabled` (per store) AND,
+ * at actual send time, by CommGate + OUTBOUND_LIVE_ENABLED — so enabling this
+ * is safe pre-launch (a reply is generated/attempted but the send stays blocked
+ * until go-live). Idempotent; resolves the agent from the thread's assignment,
+ * else the profile's default/first visible agent. Channel allowlist honored.
+ */
+export function ensureAutonomousSubscription(
+  profile: string,
+  thread: { id: string; assigned_agent_id: string | null; channel: string },
+): { subscribed: boolean; agent_id?: string; reason?: string } {
+  const { config } = readStudioConfig(profile)
+  const defaults = config.autonomous_reply_defaults
+  if (!defaults.enabled) return { subscribed: false, reason: 'disabled' }
+
+  const channels = defaults.channels ?? []
+  if (channels.length > 0 && !channels.includes(thread.channel as never)) {
+    return { subscribed: false, reason: 'channel-not-allowed' }
+  }
+
+  const agentId =
+    thread.assigned_agent_id ||
+    config.agent_picker.default_agent ||
+    config.agent_picker.visible_agents[0]
+  if (!agentId) return { subscribed: false, reason: 'no-agent' }
+
+  const existing = listSubscriptionsForThread(profile, thread.id)
+  if (existing.some((s) => s.agent_id === agentId && s.mode === 'reply')) {
+    return { subscribed: true, agent_id: agentId, reason: 'already' }
+  }
+
+  subscribeAgentToThread({
+    thread_id: thread.id,
+    agent_id: agentId,
+    profile,
+    channel: thread.channel,
+    mode: 'reply',
+    rules: {
+      allowed_channels: channels,
+      business_hours_only: defaults.business_hours_only,
+      max_agent_turns: defaults.max_agent_turns,
+    },
+    created_at: Date.now(),
+  })
+  return { subscribed: true, agent_id: agentId }
 }

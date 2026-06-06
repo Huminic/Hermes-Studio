@@ -25,7 +25,10 @@ import {
   getOrCreateThreadEx,
   upsertContact,
 } from '../../../server/messaging-hub-store'
-import { maybeAutonomousReply } from '../../../server/agent-autonomous-reply'
+import {
+  ensureAutonomousSubscription,
+  maybeAutonomousReply,
+} from '../../../server/agent-autonomous-reply'
 import { notifyNewLead } from '../../../server/lead-notifications'
 
 function readSecret(profile: string): string | null {
@@ -136,6 +139,13 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
             receiver,
           },
         })
+        // Move the store's comms agent onto this thread (no-op unless the store
+        // enabled autonomous reply; actual send still gated by OUTBOUND_LIVE_ENABLED).
+        try {
+          ensureAutonomousSubscription(profile, thread)
+        } catch {
+          // non-fatal
+        }
         let autonomous: Array<unknown> = []
         try {
           autonomous = await maybeAutonomousReply({
