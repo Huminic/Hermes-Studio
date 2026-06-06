@@ -200,6 +200,15 @@ const NotificationsSchema = z
       .union([z.literal(''), z.string().email()])
       .optional()
       .transform((v) => (v === '' ? undefined : v)),
+    /**
+     * Anti-spam cooldown: once a new-lead notification fires for a contact key
+     * (phone / email / chat-IP), suppress further new-lead notifications for the
+     * SAME key for this many hours. Protects the BDC from a returning contact or
+     * a bot opening many widget-chat sessions. 0 disables the cooldown.
+     * Per-conversation spam is already prevented upstream (notify only on a NEW
+     * thread; ongoing messages reuse the open thread). Default 24h.
+     */
+    notify_cooldown_hours: z.number().min(0).optional().default(24),
   })
   .optional()
   .default({})

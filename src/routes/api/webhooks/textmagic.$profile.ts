@@ -22,10 +22,11 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import {
   appendMessage,
-  getOrCreateThread,
+  getOrCreateThreadEx,
   upsertContact,
 } from '../../../server/messaging-hub-store'
 import { maybeAutonomousReply } from '../../../server/agent-autonomous-reply'
+import { notifyNewLead } from '../../../server/lead-notifications'
 
 function readSecret(profile: string): string | null {
   try {
@@ -100,13 +101,28 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
         })
         const url = new URL(request.url)
         const domain = url.searchParams.get('domain') ?? 'service'
-        const thread = getOrCreateThread({
+        const { thread, created } = getOrCreateThreadEx({
           profile,
           domain,
           channel: 'sms',
           contact_handle: sender,
           subject: `sms · ${sender}`,
         })
+        // A brand-new SMS thread is a new lead with a real callback number —
+        // alert the dealer (ADF for Serra, plain email for Columbia). Reusing an
+        // open thread means this is a reply in an ongoing conversation; do NOT
+        // re-notify (avoids spamming the BDC). Best-effort; never blocks intake.
+        let notified: { ok: boolean; via?: string } = { ok: false, via: 'skipped' }
+        if (created) {
+          notified = await notifyNewLead({
+            profile,
+            channel: 'SMS',
+            contact_handle: sender,
+            phone: sender,
+            message: text,
+            subjectPrefix: 'Inbound SMS',
+          })
+        }
         const inbound = appendMessage({
           thread_id: thread.id,
           direction: 'inbound',
@@ -134,6 +150,9 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
           ok: true,
           thread_id: thread.id,
           message_id: inbound.id,
+          new_lead: created,
+          notified: notified.ok,
+          notify_via: notified.via,
           autonomous_replies: autonomous,
         })
       },

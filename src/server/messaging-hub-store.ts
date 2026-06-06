@@ -264,6 +264,13 @@ CREATE TABLE IF NOT EXISTS flow_enrollments (
 );
 CREATE INDEX IF NOT EXISTS flow_enrollments_active ON flow_enrollments(profile, status, next_due_at);
 CREATE INDEX IF NOT EXISTS flow_enrollments_contact ON flow_enrollments(profile, contact_key, status);
+
+CREATE TABLE IF NOT EXISTS lead_notify_log (
+  profile        TEXT NOT NULL,
+  notify_key     TEXT NOT NULL,
+  last_notified  INTEGER NOT NULL,
+  PRIMARY KEY (profile, notify_key)
+);
 `
 
 // ─── In-memory fallback ─────────────────────────────────────────────────────
@@ -290,6 +297,7 @@ type InMemoryStore = {
   deliveries: Map<string, { id: string; campaign_id: string; contact_id: string; thread_id: string | null; status: string; sent_at: number | null; error: string | null }>
   leadFlow: LeadFlowRow | null
   enrollments: Map<string, FlowEnrollment>
+  notifyLog: Map<string, number> // notify_key -> last_notified ms
 }
 
 function getStore(profile: string): InMemoryStore {
@@ -306,6 +314,7 @@ function getStore(profile: string): InMemoryStore {
       deliveries: new Map(),
       leadFlow: null,
       enrollments: new Map(),
+      notifyLog: new Map(),
     }
     _inMemory.set(profile, s)
   }
@@ -323,12 +332,31 @@ export function getOrCreateThread(input: {
   contact_handle: string
   assigned_agent_id?: string | null
 }): Thread {
+  return getOrCreateThreadEx(input).thread
+}
+
+/**
+ * Like {@link getOrCreateThread} but also reports whether the thread was newly
+ * created (`created: true`) vs. an existing open thread reused (`created:
+ * false`). Inbound lead paths use this to fire a dealer notification ONLY on a
+ * brand-new thread (a new lead) instead of on every message in an ongoing
+ * conversation — which would spam the BDC.
+ */
+export function getOrCreateThreadEx(input: {
+  profile: string
+  domain: string
+  channel: string
+  existing_thread_id?: string
+  subject?: string
+  contact_handle: string
+  assigned_agent_id?: string | null
+}): { thread: Thread; created: boolean } {
   const now = Date.now()
   const db = getDb(input.profile)
 
   if (input.existing_thread_id) {
     const found = getThread(input.profile, input.existing_thread_id)
-    if (found) return found
+    if (found) return { thread: found, created: false }
   }
 
   // Try to reuse the most-recent open thread for this contact_handle+channel
@@ -338,7 +366,7 @@ export function getOrCreateThread(input: {
     channel: input.channel,
     domain: input.domain,
   })
-  if (reuse) return reuse
+  if (reuse) return { thread: reuse, created: false }
 
   const thread: Thread = {
     id: randomUUID(),
@@ -384,7 +412,50 @@ export function getOrCreateThread(input: {
     domain: thread.domain,
     channel: thread.channel,
   })
-  return thread
+  return { thread, created: true }
+}
+
+/**
+ * Anti-spam ledger for new-lead notifications. `wasLeadNotifiedWithin` is a
+ * read-only check: true if a notification for (profile, key) fired within
+ * `cooldownMs`. `recordLeadNotify` stamps a successful send. Split so the
+ * cooldown is consumed ONLY on a real send — a failed/unconfigured notify never
+ * locks out future alerts. cooldownMs <= 0 disables the check.
+ */
+export function wasLeadNotifiedWithin(
+  profile: string,
+  key: string,
+  cooldownMs: number,
+  now: number = Date.now(),
+): boolean {
+  if (cooldownMs <= 0) return false
+  const db = getDb(profile)
+  if (db) {
+    const row = db
+      .prepare(
+        `SELECT last_notified FROM lead_notify_log WHERE profile=? AND notify_key=?`,
+      )
+      .get(profile, key) as { last_notified: number } | undefined
+    return row !== undefined && now - row.last_notified < cooldownMs
+  }
+  const last = getStore(profile).notifyLog.get(key)
+  return last !== undefined && now - last < cooldownMs
+}
+
+export function recordLeadNotify(
+  profile: string,
+  key: string,
+  now: number = Date.now(),
+): void {
+  const db = getDb(profile)
+  if (db) {
+    db.prepare(
+      `INSERT INTO lead_notify_log(profile, notify_key, last_notified) VALUES(?,?,?)
+       ON CONFLICT(profile, notify_key) DO UPDATE SET last_notified=excluded.last_notified`,
+    ).run(profile, key, now)
+    return
+  }
+  getStore(profile).notifyLog.set(key, now)
 }
 
 function findOpenThreadFor(

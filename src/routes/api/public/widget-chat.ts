@@ -4,6 +4,12 @@ import path from 'node:path'
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { findPublicWidget, readAgentSoul } from '../../../server/public-widgets'
+import {
+  appendMessage,
+  getOrCreateThreadEx,
+  upsertContact,
+} from '../../../server/messaging-hub-store'
+import { notifyNewLead } from '../../../server/lead-notifications'
 
 const HERMES_URL = process.env.HERMES_API_URL || 'http://hermes-agent:8642'
 
@@ -145,6 +151,83 @@ export const Route = createFileRoute('/api/public/widget-chat')({
           widget.body.slice(0, 4000),
         ].join('\n')
 
+        // ── Capture the conversation into the Teambox (messaging-hub) ─────────
+        // The widget chat was previously stateless: replies were generated but
+        // the exchange never landed in the inbox and no lead alert fired. Persist
+        // the visitor's message NOW (before inference, so it survives even if the
+        // model is unreachable) and alert the dealer on the FIRST message of a
+        // session. All best-effort — capture/notify must never break the reply.
+        const sessionId = String(body.session_id ?? '') || clientKey(request)
+        const chatHandle = `chat:${sessionId}`
+        const chatDomain =
+          String(fm.domain ?? '') === 'service' ? 'service' : 'sales'
+        const lastUser = history[history.length - 1]
+        let chatThreadId: string | null = null
+        try {
+          upsertContact({
+            profile: widget.profile,
+            display_name: null,
+            identifiers: { chat: chatHandle },
+          })
+          const ex = getOrCreateThreadEx({
+            profile: widget.profile,
+            domain: chatDomain,
+            channel: 'chat',
+            contact_handle: chatHandle,
+            subject: `chat · ${persona}`,
+            assigned_agent_id: agentId || null,
+          })
+          chatThreadId = ex.thread.id
+          if (lastUser && lastUser.role !== 'assistant') {
+            appendMessage({
+              thread_id: ex.thread.id,
+              direction: 'inbound',
+              role: 'user',
+              channel: 'chat',
+              content: String(lastUser.content ?? ''),
+              author: chatHandle,
+              metadata: {
+                via: 'widget-chat',
+                slug: widget.slug,
+                session_id: sessionId,
+              },
+            })
+          }
+          if (ex.created) {
+            await notifyNewLead({
+              profile: widget.profile,
+              channel: 'website chat',
+              contact_handle: chatHandle,
+              message: String(lastUser?.content ?? ''),
+              subjectPrefix: 'Website chat',
+              // Anonymous sessions rotate the handle, so key the cooldown on the
+              // visitor IP — one bot/visitor can't blast the BDC across sessions.
+              cooldownKey: `chat:${widget.profile}:${clientKey(request)}`,
+            })
+          }
+        } catch {
+          // best-effort capture/notify — never block the visitor's reply
+        }
+
+        // Persist the agent's reply to the same thread (best-effort) so the
+        // Teambox shows the full exchange, not just the inbound side.
+        const persistReply = (reply: string, via: string): void => {
+          if (!chatThreadId || !reply) return
+          try {
+            appendMessage({
+              thread_id: chatThreadId,
+              direction: 'outbound',
+              role: 'assistant',
+              channel: 'chat',
+              content: reply,
+              author: agentId || persona,
+              metadata: { via: `widget-chat:${via}`, slug: widget.slug },
+            })
+          } catch {
+            // best-effort
+          }
+        }
+
         const messages: Array<{ role: string; content: string }> = [
           { role: 'system', content: systemPrompt },
           ...history.slice(-20).map((m) => ({
@@ -180,6 +263,7 @@ export const Route = createFileRoute('/api/public/widget-chat')({
             }
             if (res.ok && !data.error) {
               const reply = data.choices?.[0]?.message?.content ?? ''
+              persistReply(reply, 'hermes')
               return json({ ok: true, reply, via: 'hermes' })
             }
             // fall through to OpenAI fallback if Hermes returns an error
@@ -215,6 +299,7 @@ export const Route = createFileRoute('/api/public/widget-chat')({
               )
             }
             const reply = data.choices?.[0]?.message?.content ?? ''
+            persistReply(reply, 'openai-direct')
             return json({ ok: true, reply, via: 'openai-direct' })
           }
           return json(

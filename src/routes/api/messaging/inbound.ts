@@ -24,11 +24,12 @@ import { json } from '@tanstack/react-start'
 import { requireJsonContentType } from '../../../server/rate-limit'
 import {
   appendMessage,
-  getOrCreateThread,
+  getOrCreateThreadEx,
   upsertContact,
 } from '../../../server/messaging-hub-store'
 import { isAdfXml, parseAdfXml } from '../../../server/adf-xml'
 import { maybeAutonomousReply } from '../../../server/agent-autonomous-reply'
+import { notifyNewLead } from '../../../server/lead-notifications'
 
 function readInboundTokenFor(profile: string): string | null {
   try {
@@ -115,7 +116,7 @@ export const Route = createFileRoute('/api/messaging/inbound')({
             typeof body.display_name === 'string' ? body.display_name : null,
           identifiers,
         })
-        const thread = getOrCreateThread({
+        const { thread, created } = getOrCreateThreadEx({
           profile,
           domain,
           channel,
@@ -123,6 +124,32 @@ export const Route = createFileRoute('/api/messaging/inbound')({
           subject,
           assigned_agent_id: assignedAgent,
         })
+        // A brand-new thread from a normalized adapter inbound (email-ADF lead,
+        // Tavus session, generic chat, …) is a new lead — alert the dealer once.
+        // Reused thread = a reply in an ongoing conversation → no re-notify.
+        // NOTE: channels with their own dedicated receiver (TextMagic webhook,
+        // Vapi end-of-call webhook) notify there, not here; if an adapter is ever
+        // wired to BOTH, #207 (smart routing) owns the dedup.
+        let notified: { ok: boolean; via?: string } = { ok: false, via: 'skipped' }
+        if (created) {
+          const adfName =
+            leadMeta && typeof leadMeta === 'object'
+              ? ((leadMeta as { customer?: { full_name?: string } }).customer
+                  ?.full_name ?? null)
+              : null
+          notified = await notifyNewLead({
+            profile,
+            channel,
+            contact_handle: handle,
+            name:
+              adfName ??
+              (typeof body.display_name === 'string' ? body.display_name : null),
+            email: identifiers.email ?? null,
+            phone: identifiers.sms ?? identifiers.phone ?? null,
+            message: messageBody,
+            subjectPrefix: `Inbound ${channel}`,
+          })
+        }
         const inbound = appendMessage({
           thread_id: thread.id,
           direction: 'inbound',

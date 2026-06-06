@@ -17,10 +17,14 @@ import os from 'node:os'
 import path from 'node:path'
 import { buildAdfXml, type AdfLead } from './adf-xml'
 import { readStudioConfig } from './studio-config'
+import {
+  recordLeadNotify,
+  wasLeadNotifiedWithin,
+} from './messaging-hub-store'
 
 export type LeadNotificationResult = {
   ok: boolean
-  via: 'resend' | 'unconfigured' | 'failed'
+  via: 'resend' | 'unconfigured' | 'failed' | 'cooldown'
   reason?: string
   external_id?: string | null
   /** Format actually emitted (set by notifyDealer). */
@@ -508,4 +512,79 @@ function escapeHtml(s: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
+}
+
+/**
+ * Convenience wrapper for the inbound lead paths (SMS webhook, public
+ * widget-chat). Builds an {@link AdfLead} from loose contact fields and fires
+ * {@link notifyDealer} best-effort: a notify failure NEVER throws into the
+ * caller, because the lead is already captured in messaging-hub — the dealer
+ * alert is a secondary concern and must not break message capture. Callers
+ * should invoke this ONLY when a brand-new lead thread is created (see
+ * `getOrCreateThreadEx().created`), never on follow-on messages, so the BDC is
+ * not spammed mid-conversation.
+ */
+export async function notifyNewLead(input: {
+  profile: string
+  /** Source channel label for the subject line, e.g. 'SMS', 'website chat'. */
+  channel: string
+  contact_handle: string
+  name?: string | null
+  email?: string | null
+  phone?: string | null
+  message?: string | null
+  subjectPrefix?: string
+  /**
+   * Anti-spam cooldown key. Defaults to `contact_handle`. Pass a coarser key
+   * (e.g. `chat:<profile>:<ip>`) for anonymous channels where the handle rotates
+   * per session, so a bot opening many sessions can't blast the BDC.
+   */
+  cooldownKey?: string
+}): Promise<LeadNotificationResult> {
+  // Cooldown gate: suppress a repeat new-lead alert for the same key within the
+  // configured window. Per-conversation spam is already prevented upstream
+  // (callers only invoke this on a NEW thread); this guards the cross-thread /
+  // returning-contact / bot-session vectors. Checked read-only here; the window
+  // is consumed only after a successful send (below) so a failed/unconfigured
+  // notify never locks out future alerts.
+  const cooldownKey = input.cooldownKey ?? input.contact_handle
+  const cooldownHours =
+    readStudioConfig(input.profile).config.notifications
+      .notify_cooldown_hours ?? 24
+  const cooldownMs = cooldownHours * 3_600_000
+  if (wasLeadNotifiedWithin(input.profile, cooldownKey, cooldownMs)) {
+    return {
+      ok: false,
+      via: 'cooldown',
+      reason: `within ${cooldownHours}h cooldown for ${cooldownKey}`,
+    }
+  }
+
+  const lead: AdfLead = {
+    customer: {
+      full_name: input.name ?? undefined,
+      email: input.email ?? undefined,
+      phone: input.phone ?? undefined,
+    },
+    vehicles: [{ interest: 'unknown' }],
+    comments: input.message ?? undefined,
+    vendor: { name: input.profile },
+  }
+  try {
+    const res = await notifyDealer({
+      profile: input.profile,
+      event: lead,
+      subjectPrefix: input.subjectPrefix ?? `Inbound ${input.channel}`,
+    })
+    // Consume the cooldown window only on a real send, so a transient or
+    // unconfigured failure doesn't suppress the next legitimate lead alert.
+    if (res.ok) recordLeadNotify(input.profile, cooldownKey)
+    return res
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : 'notifyDealer threw'
+    console.warn(
+      `[notifyNewLead] ${input.profile}/${input.channel}: ${reason}`,
+    )
+    return { ok: false, via: 'failed', reason }
+  }
 }
