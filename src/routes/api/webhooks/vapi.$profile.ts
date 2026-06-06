@@ -31,7 +31,7 @@ import {
   getOrCreateThread,
   upsertContact,
 } from '../../../server/messaging-hub-store'
-import { notifyDealer } from '../../../server/lead-notifications'
+import { dispatchLeadNotification } from '../../../server/lead-notifications'
 import type { AdfLead } from '../../../server/adf-xml'
 
 function readSecret(profile: string): string | null {
@@ -183,13 +183,17 @@ export const Route = createFileRoute('/api/webhooks/vapi/$profile')({
         })
 
         const lead = buildLeadFromCall(call, event)
-        // WS-4: per-profile dealer notification. Format (adf-xml vs plain
-        // email) and recipient come from the profile's studio.yaml
-        // `notifications` block; the webhook stays format-agnostic.
-        const notification = await notifyDealer({
+        // WS-4 + #207: per-profile dealer notification, routed through the
+        // notification matrix (event: inbound_call → configured recipients,
+        // else lead_recipient). Format (adf-xml vs plain email) comes from the
+        // profile's studio.yaml `notifications` block; the webhook stays
+        // format-agnostic. cooldownKey = the caller's number.
+        const notification = await dispatchLeadNotification({
           profile,
-          event: lead,
+          event: 'inbound_call',
+          lead,
           subjectPrefix: 'Vapi lead',
+          cooldownKey: thread.contact_handle,
         })
 
         // Annotate the thread with the notification outcome so the operator

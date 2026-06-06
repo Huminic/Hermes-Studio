@@ -514,20 +514,144 @@ function escapeHtml(s: string): string {
     .replace(/'/g, '&#39;')
 }
 
+/** Lead/inbound event keys for notification routing (#207). */
+export type NotificationEvent =
+  | 'new_lead'
+  | 'inbound_sms'
+  | 'inbound_call'
+  | 'inbound_chat'
+  | 'website_form'
+
+/**
+ * Map a loose channel/source label (as passed by the inbound paths) to a
+ * routing event key. Unknown → 'new_lead' (the catch-all).
+ */
+export function eventForChannel(channel: string): NotificationEvent {
+  const c = channel.toLowerCase()
+  if (c.includes('sms') || c.includes('text')) return 'inbound_sms'
+  if (c.includes('call') || c.includes('voice') || c.includes('phone') || c.includes('vapi'))
+    return 'inbound_call'
+  if (c.includes('chat')) return 'inbound_chat'
+  if (c.includes('form')) return 'website_form'
+  return 'new_lead'
+}
+
+/**
+ * Resolve the EMAIL recipients for an event from the per-profile routing matrix
+ * (#207). Returns the matching enabled rules' email recipients plus a count of
+ * skipped sms rules (sms-to-staff is reserved for a later version). When this
+ * returns no emails, the caller falls back to the single `lead_recipient` so a
+ * lead is never left unnotified.
+ */
+export function resolveNotificationEmails(
+  config: { notifications: { routing?: Array<{ event: string; to: string; channel?: string; enabled?: boolean }> } },
+  event: string,
+): { emails: Array<string>; smsSkipped: number } {
+  const rules = config.notifications.routing ?? []
+  const matched = rules.filter(
+    (r) => r.enabled !== false && (r.event === event || r.event === 'all'),
+  )
+  const emails = matched
+    .filter((r) => (r.channel ?? 'email') === 'email')
+    .map((r) => r.to)
+  const smsSkipped = matched.filter((r) => r.channel === 'sms').length
+  return { emails: [...new Set(emails)], smsSkipped }
+}
+
+/**
+ * Routing + cooldown + fan-out core. Takes a fully-built {@link AdfLead} and an
+ * event, resolves the recipient(s) from the per-profile routing matrix (#207),
+ * applies the per-(profile, cooldownKey) anti-spam window, and fans the dealer
+ * notification out to each matched recipient (falling back to the single
+ * `lead_recipient` when no rule matches). Best-effort: never throws.
+ */
+export async function dispatchLeadNotification(input: {
+  profile: string
+  event: NotificationEvent
+  lead: AdfLead
+  subjectPrefix: string
+  cooldownKey: string
+}): Promise<LeadNotificationResult> {
+  const { config } = readStudioConfig(input.profile)
+  const cooldownHours = config.notifications.notify_cooldown_hours ?? 4
+  const cooldownMs = cooldownHours * 3_600_000
+  if (wasLeadNotifiedWithin(input.profile, input.cooldownKey, cooldownMs)) {
+    return {
+      ok: false,
+      via: 'cooldown',
+      reason: `within ${cooldownHours}h cooldown for ${input.cooldownKey}`,
+    }
+  }
+  const { emails, smsSkipped } = resolveNotificationEmails(config, input.event)
+  if (smsSkipped > 0) {
+    console.warn(
+      `[notify] ${input.profile}/${input.event}: ${smsSkipped} sms routing rule(s) skipped (email-only in this version)`,
+    )
+  }
+  try {
+    let results: Array<LeadNotificationResult>
+    if (emails.length === 0) {
+      // No routing email targets matched → legacy single-recipient path
+      // (notifyDealer resolves notifications.lead_recipient / adf_email itself).
+      results = [
+        await notifyDealer({
+          profile: input.profile,
+          event: input.lead,
+          subjectPrefix: input.subjectPrefix,
+        }),
+      ]
+    } else {
+      results = await Promise.all(
+        emails.map((to) =>
+          notifyDealer({
+            profile: input.profile,
+            event: input.lead,
+            subjectPrefix: input.subjectPrefix,
+            forceTo: to,
+          }),
+        ),
+      )
+    }
+    const anyOk = results.some((r) => r.ok)
+    // Consume the cooldown window only on a real send, so a transient or
+    // unconfigured failure doesn't suppress the next legitimate lead alert.
+    if (anyOk) {
+      recordLeadNotify(input.profile, input.cooldownKey)
+      return {
+        ok: true,
+        via: 'resend',
+        external_id: results.find((r) => r.external_id)?.external_id ?? null,
+        format: results.find((r) => r.format)?.format,
+      }
+    }
+    return results[0] ?? { ok: false, via: 'unconfigured' }
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : 'notifyDealer threw'
+    console.warn(`[notify] ${input.profile}/${input.event}: ${reason}`)
+    return { ok: false, via: 'failed', reason }
+  }
+}
+
 /**
  * Convenience wrapper for the inbound lead paths (SMS webhook, public
- * widget-chat). Builds an {@link AdfLead} from loose contact fields and fires
- * {@link notifyDealer} best-effort: a notify failure NEVER throws into the
- * caller, because the lead is already captured in messaging-hub — the dealer
- * alert is a secondary concern and must not break message capture. Callers
- * should invoke this ONLY when a brand-new lead thread is created (see
- * `getOrCreateThreadEx().created`), never on follow-on messages, so the BDC is
- * not spammed mid-conversation.
+ * widget-chat, generic inbound, form, voice). Builds an {@link AdfLead} from
+ * loose contact fields and fires {@link notifyDealer} best-effort: a notify
+ * failure NEVER throws into the caller, because the lead is already captured in
+ * messaging-hub — the dealer alert is a secondary concern and must not break
+ * message capture. Callers should invoke this ONLY when a brand-new lead thread
+ * is created (see `getOrCreateThreadEx().created`), never on follow-on messages,
+ * so the BDC is not spammed mid-conversation.
+ *
+ * Recipients are resolved from the per-profile notification routing matrix
+ * (#207) keyed by the event; when no routing rule matches, it falls back to the
+ * single `notifications.lead_recipient` (legacy behavior preserved).
  */
 export async function notifyNewLead(input: {
   profile: string
   /** Source channel label for the subject line, e.g. 'SMS', 'website chat'. */
   channel: string
+  /** Explicit routing event; derived from `channel` when omitted. */
+  event?: NotificationEvent
   contact_handle: string
   name?: string | null
   email?: string | null
@@ -541,25 +665,6 @@ export async function notifyNewLead(input: {
    */
   cooldownKey?: string
 }): Promise<LeadNotificationResult> {
-  // Cooldown gate: suppress a repeat new-lead alert for the same key within the
-  // configured window. Per-conversation spam is already prevented upstream
-  // (callers only invoke this on a NEW thread); this guards the cross-thread /
-  // returning-contact / bot-session vectors. Checked read-only here; the window
-  // is consumed only after a successful send (below) so a failed/unconfigured
-  // notify never locks out future alerts.
-  const cooldownKey = input.cooldownKey ?? input.contact_handle
-  const cooldownHours =
-    readStudioConfig(input.profile).config.notifications
-      .notify_cooldown_hours ?? 4
-  const cooldownMs = cooldownHours * 3_600_000
-  if (wasLeadNotifiedWithin(input.profile, cooldownKey, cooldownMs)) {
-    return {
-      ok: false,
-      via: 'cooldown',
-      reason: `within ${cooldownHours}h cooldown for ${cooldownKey}`,
-    }
-  }
-
   const lead: AdfLead = {
     customer: {
       full_name: input.name ?? undefined,
@@ -570,21 +675,11 @@ export async function notifyNewLead(input: {
     comments: input.message ?? undefined,
     vendor: { name: input.profile },
   }
-  try {
-    const res = await notifyDealer({
-      profile: input.profile,
-      event: lead,
-      subjectPrefix: input.subjectPrefix ?? `Inbound ${input.channel}`,
-    })
-    // Consume the cooldown window only on a real send, so a transient or
-    // unconfigured failure doesn't suppress the next legitimate lead alert.
-    if (res.ok) recordLeadNotify(input.profile, cooldownKey)
-    return res
-  } catch (err) {
-    const reason = err instanceof Error ? err.message : 'notifyDealer threw'
-    console.warn(
-      `[notifyNewLead] ${input.profile}/${input.channel}: ${reason}`,
-    )
-    return { ok: false, via: 'failed', reason }
-  }
+  return dispatchLeadNotification({
+    profile: input.profile,
+    event: input.event ?? eventForChannel(input.channel),
+    lead,
+    subjectPrefix: input.subjectPrefix ?? `Inbound ${input.channel}`,
+    cooldownKey: input.cooldownKey ?? input.contact_handle,
+  })
 }

@@ -24,6 +24,7 @@ import { CustomerToolsWidgetRenderer } from '../components/customer-console/tool
 import { CustomerCommsRenderer } from '../components/customer-console/comms-renderer'
 import { CustomerCampaignsRenderer } from '../components/customer-console/campaigns-renderer'
 import { CustomerDataRenderer } from '../components/customer-console/data-renderer'
+import { CustomerNotificationsRenderer } from '../components/customer-console/notifications-renderer'
 import { ConsultPanel } from '../components/customer-console/consult-panel'
 
 export type ConsoleRendererProps = {
@@ -150,6 +151,15 @@ function CampaignsRenderer(props: ConsoleRendererProps) {
   )
 }
 
+function NotificationsRenderer(props: ConsoleRendererProps) {
+  return (
+    <CustomerNotificationsRenderer
+      profile={props.profile}
+      config={props.config}
+    />
+  )
+}
+
 function WidgetPublicRenderer(props: ConsoleRendererProps) {
   return (
     <StubFrame
@@ -186,6 +196,7 @@ export const consoleRenderers: Record<string, ConsoleRenderer> = {
   'customer-console.data': DataRenderer,
   'customer-console.comms': CommsRenderer,
   'customer-console.campaigns': CampaignsRenderer,
+  'customer-console.notifications': NotificationsRenderer,
   'customer-console.widget-public': WidgetPublicRenderer,
   'customer-console.assistant-pane': AssistantPaneRenderer,
 }

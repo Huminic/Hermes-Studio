@@ -20,6 +20,7 @@ const TAB_TO_RENDERER: Record<string, string> = {
   data: 'customer-console.data',
   comms: 'customer-console.comms',
   campaigns: 'customer-console.campaigns',
+  notifications: 'customer-console.notifications',
 }
 
 type StudioConfigResponse = {

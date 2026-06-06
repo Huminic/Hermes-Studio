@@ -4,8 +4,8 @@ import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the dealer-notification send so the test asserts the WIRING, not a send.
-const notifySpy = vi.fn(async () => ({ ok: true, via: 'mock', format: 'adf-xml' as const }))
-vi.mock('@/server/lead-notifications', () => ({ notifyDealer: notifySpy }))
+const notifySpy = vi.fn(async () => ({ ok: true, via: 'mock' as const }))
+vi.mock('@/server/lead-notifications', () => ({ notifyNewLead: notifySpy }))
 
 let tmpHome: string
 const PROFILE = 'serra-honda'
@@ -74,10 +74,13 @@ describe('widget-form submission → lead lands + dealer notification trips', ()
     expect(notifySpy).toHaveBeenCalledTimes(1)
     const arg = notifySpy.mock.calls[0][0] as {
       profile: string
-      event: { customer: { email?: string; full_name?: string } }
+      event?: string
+      email?: string
+      name?: string
     }
     expect(arg.profile).toBe(PROFILE)
-    expect(arg.event.customer.email).toBe('jane@example.com')
-    expect(arg.event.customer.full_name).toBe('Jane Shopper')
+    expect(arg.event).toBe('website_form')
+    expect(arg.email).toBe('jane@example.com')
+    expect(arg.name).toBe('Jane Shopper')
   })
 })

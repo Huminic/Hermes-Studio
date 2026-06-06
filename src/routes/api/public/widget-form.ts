@@ -15,8 +15,7 @@ import {
   getOrCreateThread,
   upsertContact,
 } from '../../../server/messaging-hub-store'
-import { notifyDealer } from '../../../server/lead-notifications'
-import type { AdfLead } from '../../../server/adf-xml'
+import { notifyNewLead } from '../../../server/lead-notifications'
 
 export const Route = createFileRoute('/api/public/widget-form')({
   server: {
@@ -104,26 +103,18 @@ export const Route = createFileRoute('/api/public/widget-form')({
         // (ADF-XML for Serra, plain email for Columbia), same as the Vapi
         // end-of-call path. Best-effort: the lead is already saved, so a
         // notify failure (e.g. token unset in this env) must not fail the form.
-        const lead: AdfLead = {
-          customer: {
-            full_name: name ?? undefined,
-            email: email ?? undefined,
-            phone: phone ?? undefined,
-          },
-          vehicles: [{ interest: 'unknown' }],
-          comments: message || undefined,
-          vendor: { name: widget.profile },
-        }
-        let notified: { ok: boolean; via?: string } = { ok: false, via: 'skipped' }
-        try {
-          notified = await notifyDealer({
-            profile: widget.profile,
-            event: lead,
-            subjectPrefix: 'Website form',
-          })
-        } catch {
-          // best-effort
-        }
+        const notified = await notifyNewLead({
+          profile: widget.profile,
+          channel: 'website form',
+          event: 'website_form',
+          contact_handle: handle,
+          name,
+          email,
+          phone,
+          message,
+          subjectPrefix: 'Website form',
+          cooldownKey: email ?? phone ?? handle,
+        })
 
         return json({ ok: true, thread_id: thread.id, notified: notified.ok, via: notified.via })
       },

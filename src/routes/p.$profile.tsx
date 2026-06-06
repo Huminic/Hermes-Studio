@@ -52,6 +52,7 @@ const TABS: Array<{ id: string; label: string; menuKey: keyof StudioConfig['menu
   { id: 'data', label: 'Data', menuKey: 'data' },
   { id: 'comms', label: 'Teambox', menuKey: 'comms' },
   { id: 'campaigns', label: 'Campaigns', menuKey: 'campaigns' },
+  { id: 'notifications', label: 'Notifications', menuKey: 'notifications' },
 ]
 
 function StorefrontLandingRoute() {
@@ -179,6 +180,8 @@ function tabBlurb(id: string): string {
       return 'Unified inbox — Sales and Service across all channels'
     case 'campaigns':
       return 'Schedule outbound campaigns (Service)'
+    case 'notifications':
+      return 'Choose who gets alerted, and when'
     default:
       return ''
   }

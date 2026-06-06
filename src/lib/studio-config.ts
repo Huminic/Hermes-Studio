@@ -30,6 +30,7 @@ const MenuSchema = z
     data: z.boolean().optional().default(true),
     comms: z.boolean().optional().default(true),
     campaigns: z.boolean().optional().default(true),
+    notifications: z.boolean().optional().default(true),
   })
   .optional()
   .default({})
@@ -193,6 +194,41 @@ const LeadNotificationsSchema = z
  * Operator-controlled (studio.yaml); the store→format map lives in
  * NEXXUS_FIT_SPEC §5.
  */
+/**
+ * One notification routing rule (#207). Maps a CONDITION (an event id) to a
+ * recipient on a channel. The condition is an arbitrary string so the same
+ * matrix routes BOTH built-in lead/inbound events AND Guardian-produced
+ * conditions / query-result alerts (Business Guardian #208, Performance
+ * Guardian #209) — e.g. `perf_guardian:slow_first_response`,
+ * `lead_source_underperforming`. `event: 'all'` matches every condition. When
+ * no rule matches a lead event, dispatch falls back to the single
+ * `lead_recipient` (legacy behavior preserved). Producers resolve recipients
+ * via `resolveNotificationEmails`; the page is the routing layer in front of
+ * the alert bus.
+ */
+export const NotificationEvents = [
+  'new_lead', // generic / email lead (default catch-all)
+  'inbound_sms',
+  'inbound_call',
+  'inbound_chat',
+  'website_form',
+  'all',
+] as const
+
+const NotificationRuleSchema = z.object({
+  /** Condition id: a built-in lead event (see NotificationEvents) or any
+   * Guardian/query condition key. Free-form so new producers need no schema change. */
+  event: z.string().min(1),
+  /** Recipient: an email address for channel:email, a phone for channel:sms. */
+  to: z.string().min(1),
+  channel: z.enum(['email', 'sms']).optional().default('email'),
+  /** Optional human label for the UI (e.g. "Sales BDC", "Service Manager"). */
+  label: z.string().optional(),
+  enabled: z.boolean().optional().default(true),
+})
+
+export type NotificationRule = z.infer<typeof NotificationRuleSchema>
+
 const NotificationsSchema = z
   .object({
     lead_format: z.enum(['adf-xml', 'email']).optional().default('email'),
@@ -200,6 +236,8 @@ const NotificationsSchema = z
       .union([z.literal(''), z.string().email()])
       .optional()
       .transform((v) => (v === '' ? undefined : v)),
+    /** Per-event recipient × channel routing matrix (#207). Empty = use lead_recipient. */
+    routing: z.array(NotificationRuleSchema).optional().default([]),
     /**
      * Anti-spam cooldown: once a new-lead notification fires for a contact key
      * (phone / email / chat-IP), suppress further new-lead notifications for the
@@ -345,6 +383,7 @@ export function defaultStudioConfig(profile: string): StudioConfig {
       data: true,
       comms: true,
       campaigns: true,
+      notifications: true,
     },
     agent_picker: { visible_agents: [] },
     tools_widget: { show_embed_snippet: true, show_live_demo: true, consult: false },
@@ -370,7 +409,7 @@ export function defaultStudioConfig(profile: string): StudioConfig {
       },
     },
     lead_notifications: {},
-    notifications: { lead_format: 'email' },
+    notifications: { lead_format: 'email', routing: [] },
     channel_credentials: { default: 'shared' },
     comms: {
       outbound_enabled: true,

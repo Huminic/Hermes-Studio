@@ -8,9 +8,9 @@ import {
 } from '@/lib/console-renderers'
 import { defaultStudioConfig } from '@/lib/studio-config'
 
-// Phase C 6-page IA. 9 renderer keys total: 6 page renderers + tools-widget
-// sub-page + widget-public (public unauthenticated /w/$slug) + assistant-pane
-// (right-pane slot).
+// 7-page IA. 10 renderer keys total: 7 page renderers (incl. notifications) +
+// tools-widget sub-page + widget-public (public unauthenticated /w/$slug) +
+// assistant-pane (right-pane slot).
 const EXPECTED_KEYS = [
   'customer-console.chat',
   'customer-console.knowledge',
@@ -19,12 +19,13 @@ const EXPECTED_KEYS = [
   'customer-console.data',
   'customer-console.comms',
   'customer-console.campaigns',
+  'customer-console.notifications',
   'customer-console.widget-public',
   'customer-console.assistant-pane',
 ]
 
 describe('console-renderers registry', () => {
-  it('contains all 9 expected renderer keys', () => {
+  it('contains all expected renderer keys', () => {
     const keys = listRendererKeys()
     for (const key of EXPECTED_KEYS) {
       expect(keys).toContain(key)

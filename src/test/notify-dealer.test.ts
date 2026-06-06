@@ -185,7 +185,7 @@ describe('Vapi end-of-call webhook → notifyDealer', () => {
       format: 'adf-xml' as const,
     }))
     vi.doMock('@/server/lead-notifications', () => ({
-      notifyDealer: notifySpy,
+      dispatchLeadNotification: notifySpy,
     }))
     const store = await import('@/server/messaging-hub-store')
     store._resetForTests()
@@ -216,7 +216,10 @@ describe('Vapi end-of-call webhook → notifyDealer', () => {
     } as never)
     expect(res.status).toBe(200)
     expect(notifySpy).toHaveBeenCalledOnce()
-    expect(notifySpy.mock.calls[0][0]).toMatchObject({ profile: 'serra-honda' })
+    expect(notifySpy.mock.calls[0][0]).toMatchObject({
+      profile: 'serra-honda',
+      event: 'inbound_call',
+    })
   })
 })
 

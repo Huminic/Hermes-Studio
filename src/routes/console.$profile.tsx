@@ -61,6 +61,11 @@ function ConsoleLayoutRoute() {
       label: 'Campaigns',
       enabled: config.menu.campaigns ?? true,
     },
+    {
+      id: 'notifications',
+      label: 'Notifications',
+      enabled: config.menu.notifications ?? true,
+    },
   ]
 
   const AssistantRenderer = getRenderer('customer-console.assistant-pane')

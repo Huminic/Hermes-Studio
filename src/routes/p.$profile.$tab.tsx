@@ -7,6 +7,7 @@ import {
   InboxIcon,
   LibraryIcon,
   Megaphone01Icon,
+  Notification03Icon,
   Robot01Icon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
@@ -28,6 +29,7 @@ const TAB_TO_RENDERER: Record<string, string> = {
   data: 'customer-console.data',
   comms: 'customer-console.comms',
   campaigns: 'customer-console.campaigns',
+  notifications: 'customer-console.notifications',
 }
 
 type StudioConfigResponse = {
@@ -155,6 +157,7 @@ function StorefrontTabRoute() {
     { id: 'data', label: 'Data', icon: Analytics01Icon },
     { id: 'comms', label: 'Teambox', icon: InboxIcon },
     { id: 'campaigns', label: 'Campaigns', icon: Megaphone01Icon },
+    { id: 'notifications', label: 'Notifications', icon: Notification03Icon },
   ]
 
   // Display label for the active section (Nexxus header shows brand once + section).
