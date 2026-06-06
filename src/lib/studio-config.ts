@@ -312,12 +312,39 @@ const CommsSchema = z
   .optional()
   .default({})
 
+/**
+ * One custom dashboard card (data builder). `source` selects a metric the
+ * /api/customer/reports payload already computes (calls=vapi, video=tavus,
+ * sms, email, chat, leads=vin, service, sales, campaigns, followups). The
+ * renderer resolves the number; this just stores the user's chosen cards.
+ */
+export const DashboardSources = [
+  'calls',
+  'video',
+  'sms',
+  'email',
+  'chat',
+  'leads',
+  'service',
+  'sales',
+  'campaigns',
+  'followups',
+] as const
+
+const DashboardCardSchema = z.object({
+  title: z.string().min(1),
+  source: z.enum(DashboardSources),
+})
+
+export type DashboardCard = z.infer<typeof DashboardCardSchema>
+
 export const StudioConfigSchema = z.object({
   branding: BrandingSchema,
   menu: MenuSchema,
   agent_picker: AgentPickerSchema,
   tools_widget: ToolsWidgetSchema,
   widgets: z.array(WidgetEntrySchema).optional().default([]),
+  dashboards: z.array(DashboardCardSchema).optional().default([]),
   autonomous_reply_defaults: AutonomousReplyDefaultsSchema,
   federation: FederationSchema,
   vin: VinSchema,
@@ -388,6 +415,7 @@ export function defaultStudioConfig(profile: string): StudioConfig {
     agent_picker: { visible_agents: [] },
     tools_widget: { show_embed_snippet: true, show_live_demo: true, consult: false },
     widgets: [],
+    dashboards: [],
     autonomous_reply_defaults: {
       enabled: false,
       business_hours_only: false,

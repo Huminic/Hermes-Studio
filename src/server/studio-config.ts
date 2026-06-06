@@ -56,18 +56,14 @@ export type NotificationRuleInput = {
 }
 
 /**
- * Persist the per-profile notification routing matrix (#207) into studio.yaml,
- * leaving every other config key intact. Reads the raw YAML (or the default
- * config when the file is missing), replaces only `notifications.routing`,
- * validates the result against the schema, then writes. Returns the saved
- * routing on success.
+ * Mutate a single concern in a profile's studio.yaml, leaving every other key
+ * intact. Reads the raw YAML (or the default config when the file is missing),
+ * applies `mutate`, validates the result against the schema, then writes.
  */
-export function updateNotificationRouting(
+function mutateStudioYaml(
   profile: string,
-  routing: Array<NotificationRuleInput>,
-):
-  | { ok: true; routing: Array<NotificationRuleInput> }
-  | { ok: false; error: string } {
+  mutate: (obj: Record<string, unknown>) => void,
+): { ok: true } | { ok: false; error: string } {
   let root: string
   try {
     root = getProfileWorkspaceRoot(profile)
@@ -94,15 +90,9 @@ export function updateNotificationRouting(
     obj = defaultStudioConfig(profile) as unknown as Record<string, unknown>
   }
 
-  const notifications =
-    obj.notifications && typeof obj.notifications === 'object'
-      ? (obj.notifications as Record<string, unknown>)
-      : {}
-  notifications.routing = routing
-  obj.notifications = notifications
+  mutate(obj)
 
   const text = YAML.stringify(obj)
-  // Round-trip through the schema before committing to disk.
   const check = parseStudioConfig(text)
   if (!check.ok) {
     return {
@@ -111,5 +101,40 @@ export function updateNotificationRouting(
     }
   }
   fs.writeFileSync(file, text, 'utf8')
-  return { ok: true, routing }
+  return { ok: true }
+}
+
+/**
+ * Persist the per-profile notification routing matrix (#207) into studio.yaml.
+ */
+export function updateNotificationRouting(
+  profile: string,
+  routing: Array<NotificationRuleInput>,
+):
+  | { ok: true; routing: Array<NotificationRuleInput> }
+  | { ok: false; error: string } {
+  const res = mutateStudioYaml(profile, (obj) => {
+    const notifications =
+      obj.notifications && typeof obj.notifications === 'object'
+        ? (obj.notifications as Record<string, unknown>)
+        : {}
+    notifications.routing = routing
+    obj.notifications = notifications
+  })
+  return res.ok ? { ok: true, routing } : res
+}
+
+export type DashboardCardInput = { title: string; source: string }
+
+/**
+ * Persist the per-profile custom dashboard cards (data builder) into studio.yaml.
+ */
+export function updateDashboards(
+  profile: string,
+  dashboards: Array<DashboardCardInput>,
+): { ok: true; dashboards: Array<DashboardCardInput> } | { ok: false; error: string } {
+  const res = mutateStudioYaml(profile, (obj) => {
+    obj.dashboards = dashboards
+  })
+  return res.ok ? { ok: true, dashboards } : res
 }

@@ -139,6 +139,7 @@ import { Route as ApiCustomerReportsRouteImport } from './routes/api/customer/re
 import { Route as ApiCustomerNotificationsRouteImport } from './routes/api/customer/notifications'
 import { Route as ApiCustomerLeadFlowRouteImport } from './routes/api/customer/lead-flow'
 import { Route as ApiCustomerEngagementStateRouteImport } from './routes/api/customer/engagement-state'
+import { Route as ApiCustomerDashboardsRouteImport } from './routes/api/customer/dashboards'
 import { Route as ApiCustomerChatRouteImport } from './routes/api/customer/chat'
 import { Route as ApiCustomerAgentsRouteImport } from './routes/api/customer/agents'
 import { Route as ApiCrewsCrewIdRouteImport } from './routes/api/crews/$crewId'
@@ -838,6 +839,11 @@ const ApiCustomerEngagementStateRoute =
     path: '/api/customer/engagement-state',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiCustomerDashboardsRoute = ApiCustomerDashboardsRouteImport.update({
+  id: '/api/customer/dashboards',
+  path: '/api/customer/dashboards',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCustomerChatRoute = ApiCustomerChatRouteImport.update({
   id: '/api/customer/chat',
   path: '/api/customer/chat',
@@ -1180,6 +1186,7 @@ export interface FileRoutesByFullPath {
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
+  '/api/customer/dashboards': typeof ApiCustomerDashboardsRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
@@ -1357,6 +1364,7 @@ export interface FileRoutesByTo {
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
+  '/api/customer/dashboards': typeof ApiCustomerDashboardsRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
@@ -1536,6 +1544,7 @@ export interface FileRoutesById {
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
+  '/api/customer/dashboards': typeof ApiCustomerDashboardsRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
@@ -1716,6 +1725,7 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId'
     | '/api/customer/agents'
     | '/api/customer/chat'
+    | '/api/customer/dashboards'
     | '/api/customer/engagement-state'
     | '/api/customer/lead-flow'
     | '/api/customer/notifications'
@@ -1893,6 +1903,7 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId'
     | '/api/customer/agents'
     | '/api/customer/chat'
+    | '/api/customer/dashboards'
     | '/api/customer/engagement-state'
     | '/api/customer/lead-flow'
     | '/api/customer/notifications'
@@ -2071,6 +2082,7 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId'
     | '/api/customer/agents'
     | '/api/customer/chat'
+    | '/api/customer/dashboards'
     | '/api/customer/engagement-state'
     | '/api/customer/lead-flow'
     | '/api/customer/notifications'
@@ -2244,6 +2256,7 @@ export interface RootRouteChildren {
   ApiCrewsCrewIdRoute: typeof ApiCrewsCrewIdRouteWithChildren
   ApiCustomerAgentsRoute: typeof ApiCustomerAgentsRoute
   ApiCustomerChatRoute: typeof ApiCustomerChatRoute
+  ApiCustomerDashboardsRoute: typeof ApiCustomerDashboardsRoute
   ApiCustomerEngagementStateRoute: typeof ApiCustomerEngagementStateRoute
   ApiCustomerLeadFlowRoute: typeof ApiCustomerLeadFlowRoute
   ApiCustomerNotificationsRoute: typeof ApiCustomerNotificationsRoute
@@ -3216,6 +3229,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerEngagementStateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/dashboards': {
+      id: '/api/customer/dashboards'
+      path: '/api/customer/dashboards'
+      fullPath: '/api/customer/dashboards'
+      preLoaderRoute: typeof ApiCustomerDashboardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/customer/chat': {
       id: '/api/customer/chat'
       path: '/api/customer/chat'
@@ -3876,6 +3896,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCrewsCrewIdRoute: ApiCrewsCrewIdRouteWithChildren,
   ApiCustomerAgentsRoute: ApiCustomerAgentsRoute,
   ApiCustomerChatRoute: ApiCustomerChatRoute,
+  ApiCustomerDashboardsRoute: ApiCustomerDashboardsRoute,
   ApiCustomerEngagementStateRoute: ApiCustomerEngagementStateRoute,
   ApiCustomerLeadFlowRoute: ApiCustomerLeadFlowRoute,
   ApiCustomerNotificationsRoute: ApiCustomerNotificationsRoute,

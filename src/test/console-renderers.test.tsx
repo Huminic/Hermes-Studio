@@ -172,9 +172,9 @@ describe('console-renderers registry', () => {
       expect(txt).toContain('24h check-in')
       // Campaigns group:
       expect(txt).toContain('Campaigns')
-      // Build-your-own affordance, friendly (no backend strings):
+      // Build-your-own builder, friendly (no backend strings):
       expect(txt).toContain('Build your own dashboard')
-      expect(txt).toMatch(/coming to your account soon/i)
+      expect(txt).toMatch(/Add card/i)
       // No backend internals leak to the customer:
       expect(txt).not.toMatch(/central-mcp/i)
       expect(txt).not.toMatch(/metabase/i)

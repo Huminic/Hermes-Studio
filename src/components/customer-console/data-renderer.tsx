@@ -299,53 +299,200 @@ export function CustomerDataRenderer(props: {
       </Card>
 
       {/* Build your own dashboard */}
-      <BuildYourOwn />
+      <BuildYourOwn profile={props.profile} reports={reports} />
     </div>
   )
 }
 
-/**
- * "Build your own dashboard" affordance. When an embed URL is provisioned for
- * this account (server-injected at build/deploy time) we render it; otherwise
- * an honest, friendly "coming soon" placeholder. Never leaks backend internals.
- */
-function BuildYourOwn() {
-  const embedUrl =
-    typeof window !== 'undefined'
-      ? ((window as unknown as { __HUMINIC_DASHBOARD_EMBED__?: string })
-          .__HUMINIC_DASHBOARD_EMBED__ ?? null)
-      : null
+/** Friendly labels + value resolution for the dashboard-builder sources. */
+const SOURCE_LABELS: Record<string, string> = {
+  calls: 'Calls (Vapi)',
+  video: 'Video (Tavus)',
+  sms: 'Texts (SMS)',
+  email: 'Emails',
+  chat: 'Web chats',
+  leads: 'Leads (VIN)',
+  service: 'Service threads',
+  sales: 'Sales threads',
+  campaigns: 'Campaigns',
+  followups: 'Follow-up triggers',
+}
 
-  if (embedUrl) {
-    return (
-      <Card title="Build your own dashboard">
-        <iframe
-          title="Custom dashboard builder"
-          src={embedUrl}
-          className="h-[480px] w-full rounded-md border border-slate-200"
-        />
-      </Card>
-    )
+function chTotal(reports: Reports, ch: string): number {
+  const c = reports.comms.messages.by_channel[ch]
+  return c ? c.inbound + c.outbound : 0
+}
+
+function resolveCardValue(reports: Reports, source: string): number {
+  switch (source) {
+    case 'calls':
+      return chTotal(reports, 'voice') + chTotal(reports, 'vapi') + chTotal(reports, 'phone')
+    case 'video':
+      return chTotal(reports, 'video') + chTotal(reports, 'tavus')
+    case 'sms':
+      return chTotal(reports, 'sms')
+    case 'email':
+      return chTotal(reports, 'email') + chTotal(reports, 'email-adf')
+    case 'chat':
+      return chTotal(reports, 'chat')
+    case 'leads':
+      return reports.lead_funnel.available ? reports.lead_funnel.total : 0
+    case 'service':
+      return reports.comms.threads.by_domain['service'] ?? 0
+    case 'sales':
+      return reports.comms.threads.by_domain['sales'] ?? 0
+    case 'campaigns':
+      return reports.campaigns.campaigns
+    case 'followups':
+      return reports.followups.immediate_triggers + reports.followups.checkin_triggers
+    default:
+      return 0
+  }
+}
+
+type DashCard = { title: string; source: string }
+
+/**
+ * Build-your-own dashboard. The customer composes named cards, each sourced from
+ * a metric the reports payload already computes (calls=Vapi, video=Tavus, leads=VIN,
+ * service, …). Cards persist to studio.yaml via /api/customer/dashboards and
+ * render their live value from the same `reports` the page already loaded.
+ */
+function BuildYourOwn({
+  profile,
+  reports,
+}: {
+  profile: string
+  reports: Reports
+}) {
+  const [cards, setCards] = useState<Array<DashCard>>([])
+  const [sources, setSources] = useState<Array<string>>([])
+  const [draftSource, setDraftSource] = useState('calls')
+  const [draftTitle, setDraftTitle] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [msg, setMsg] = useState<string | null>(null)
+
+  useEffect(() => {
+    let alive = true
+    fetch(`/api/customer/dashboards?profile=${encodeURIComponent(profile)}`, {
+      credentials: 'include',
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (!alive || !d.ok) return
+        setCards(d.dashboards ?? [])
+        setSources(d.sources ?? [])
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [profile])
+
+  async function persist(next: Array<DashCard>) {
+    setSaving(true)
+    setMsg(null)
+    try {
+      const res = await fetch('/api/customer/dashboards', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ profile, dashboards: next }),
+      })
+      const d = await res.json()
+      if (d.ok) {
+        setCards(d.dashboards ?? next)
+        setMsg('Saved.')
+      } else {
+        setMsg(d.error ?? 'Save failed')
+      }
+    } catch {
+      setMsg('Save failed')
+    } finally {
+      setSaving(false)
+    }
   }
 
+  function addCard() {
+    const title = draftTitle.trim() || SOURCE_LABELS[draftSource] || draftSource
+    void persist([...cards, { title, source: draftSource }])
+    setDraftTitle('')
+  }
+  function removeCard(i: number) {
+    void persist(cards.filter((_, idx) => idx !== i))
+  }
+
+  const sourceOptions = sources.length > 0 ? sources : Object.keys(SOURCE_LABELS)
+
   return (
-    <section className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
-      <div
-        className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full"
-        style={{ background: '#eff6ff' }}
-      >
-        <span className="text-lg" style={{ color: PRIMARY }}>
-          ＋
-        </span>
+    <Card title="Build your own dashboard">
+      {cards.length > 0 && (
+        <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {cards.map((c, i) => (
+            <div
+              key={i}
+              className="relative rounded-lg border border-slate-200 bg-white p-3"
+            >
+              <button
+                type="button"
+                className="absolute right-2 top-2 text-xs text-slate-300 hover:text-red-500"
+                onClick={() => removeCard(i)}
+                aria-label="Remove card"
+              >
+                ✕
+              </button>
+              <div className="text-2xl font-semibold text-slate-900">
+                {resolveCardValue(reports, c.source).toLocaleString()}
+              </div>
+              <div className="mt-0.5 text-xs text-slate-500">{c.title}</div>
+              <div className="mt-0.5 text-[10px] uppercase tracking-wide text-slate-400">
+                {SOURCE_LABELS[c.source] ?? c.source}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-end gap-2 border-t border-slate-100 pt-3">
+        <label className="flex flex-col text-xs text-slate-500">
+          Metric
+          <select
+            className="mt-1 rounded border border-slate-200 bg-white px-2 py-1 text-sm text-slate-800"
+            value={draftSource}
+            onChange={(e) => setDraftSource(e.target.value)}
+          >
+            {sourceOptions.map((s) => (
+              <option key={s} value={s}>
+                {SOURCE_LABELS[s] ?? s}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-1 flex-col text-xs text-slate-500">
+          Card title (optional)
+          <input
+            className="mt-1 rounded border border-slate-200 bg-white px-2 py-1 text-sm text-slate-800"
+            placeholder={SOURCE_LABELS[draftSource] ?? draftSource}
+            value={draftTitle}
+            onChange={(e) => setDraftTitle(e.target.value)}
+          />
+        </label>
+        <button
+          type="button"
+          className="rounded px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
+          style={{ background: PRIMARY }}
+          onClick={addCard}
+          disabled={saving}
+        >
+          + Add card
+        </button>
+        {msg && <span className="text-xs text-slate-500">{msg}</span>}
       </div>
-      <h3 className="text-sm font-semibold text-slate-900">
-        Build your own dashboard
-      </h3>
-      <p className="mx-auto mt-1 max-w-md text-xs text-slate-500">
-        Custom dashboards are coming to your account soon. You’ll be able to drag
-        and drop your own tiles and charts from the metrics above.
+      <p className="mt-2 text-[11px] text-slate-400">
+        Cards read live from your messaging, calls, video, VIN leads, and
+        campaigns over the current window.
       </p>
-    </section>
+    </Card>
   )
 }
 
