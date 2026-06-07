@@ -156,6 +156,7 @@ import { Route as ApiCustomerAudiencesIndexRouteImport } from './routes/api/cust
 import { Route as ApiCrewsTemplatesIndexRouteImport } from './routes/api/crews/templates/index'
 import { Route as ApiWebhooksVapiProfileRouteImport } from './routes/api/webhooks/vapi.$profile'
 import { Route as ApiWebhooksTextmagicProfileRouteImport } from './routes/api/webhooks/textmagic.$profile'
+import { Route as ApiWebhooksTavusProfileRouteImport } from './routes/api/webhooks/tavus.$profile'
 import { Route as ApiTasksTaskIdMoveRouteImport } from './routes/api/tasks/$taskId.move'
 import { Route as ApiSessionsSessionKeyStatusRouteImport } from './routes/api/sessions/$sessionKey.status'
 import { Route as ApiSessionsSessionKeyActiveRunRouteImport } from './routes/api/sessions/$sessionKey.active-run'
@@ -927,6 +928,11 @@ const ApiWebhooksTextmagicProfileRoute =
     path: '/api/webhooks/textmagic/$profile',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiWebhooksTavusProfileRoute = ApiWebhooksTavusProfileRouteImport.update({
+  id: '/api/webhooks/tavus/$profile',
+  path: '/api/webhooks/tavus/$profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTasksTaskIdMoveRoute = ApiTasksTaskIdMoveRouteImport.update({
   id: '/move',
   path: '/move',
@@ -1262,6 +1268,7 @@ export interface FileRoutesByFullPath {
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
+  '/api/webhooks/tavus/$profile': typeof ApiWebhooksTavusProfileRoute
   '/api/webhooks/textmagic/$profile': typeof ApiWebhooksTextmagicProfileRoute
   '/api/webhooks/vapi/$profile': typeof ApiWebhooksVapiProfileRoute
   '/api/crews/templates/': typeof ApiCrewsTemplatesIndexRoute
@@ -1440,6 +1447,7 @@ export interface FileRoutesByTo {
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
+  '/api/webhooks/tavus/$profile': typeof ApiWebhooksTavusProfileRoute
   '/api/webhooks/textmagic/$profile': typeof ApiWebhooksTextmagicProfileRoute
   '/api/webhooks/vapi/$profile': typeof ApiWebhooksVapiProfileRoute
   '/api/crews/templates': typeof ApiCrewsTemplatesIndexRoute
@@ -1620,6 +1628,7 @@ export interface FileRoutesById {
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
+  '/api/webhooks/tavus/$profile': typeof ApiWebhooksTavusProfileRoute
   '/api/webhooks/textmagic/$profile': typeof ApiWebhooksTextmagicProfileRoute
   '/api/webhooks/vapi/$profile': typeof ApiWebhooksVapiProfileRoute
   '/api/crews/templates/': typeof ApiCrewsTemplatesIndexRoute
@@ -1801,6 +1810,7 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/active-run'
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
+    | '/api/webhooks/tavus/$profile'
     | '/api/webhooks/textmagic/$profile'
     | '/api/webhooks/vapi/$profile'
     | '/api/crews/templates/'
@@ -1979,6 +1989,7 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/active-run'
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
+    | '/api/webhooks/tavus/$profile'
     | '/api/webhooks/textmagic/$profile'
     | '/api/webhooks/vapi/$profile'
     | '/api/crews/templates'
@@ -2158,6 +2169,7 @@ export interface FileRouteTypes {
     | '/api/sessions/$sessionKey/active-run'
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
+    | '/api/webhooks/tavus/$profile'
     | '/api/webhooks/textmagic/$profile'
     | '/api/webhooks/vapi/$profile'
     | '/api/crews/templates/'
@@ -2309,6 +2321,7 @@ export interface RootRouteChildren {
   ApiPublicWidgetConfigIdRoute: typeof ApiPublicWidgetConfigIdRoute
   ApiPublicWidgetJsRoute: typeof ApiPublicWidgetJsRoute
   ApiPublicWidgetsWidgetKeyRoute: typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
+  ApiWebhooksTavusProfileRoute: typeof ApiWebhooksTavusProfileRoute
   ApiWebhooksTextmagicProfileRoute: typeof ApiWebhooksTextmagicProfileRoute
   ApiWebhooksVapiProfileRoute: typeof ApiWebhooksVapiProfileRoute
   ApiCrewsTemplatesIndexRoute: typeof ApiCrewsTemplatesIndexRoute
@@ -3348,6 +3361,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWebhooksTextmagicProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/webhooks/tavus/$profile': {
+      id: '/api/webhooks/tavus/$profile'
+      path: '/api/webhooks/tavus/$profile'
+      fullPath: '/api/webhooks/tavus/$profile'
+      preLoaderRoute: typeof ApiWebhooksTavusProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/tasks/$taskId/move': {
       id: '/api/tasks/$taskId/move'
       path: '/move'
@@ -3949,6 +3969,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWidgetConfigIdRoute: ApiPublicWidgetConfigIdRoute,
   ApiPublicWidgetJsRoute: ApiPublicWidgetJsRoute,
   ApiPublicWidgetsWidgetKeyRoute: ApiPublicWidgetsWidgetKeyRouteWithChildren,
+  ApiWebhooksTavusProfileRoute: ApiWebhooksTavusProfileRoute,
   ApiWebhooksTextmagicProfileRoute: ApiWebhooksTextmagicProfileRoute,
   ApiWebhooksVapiProfileRoute: ApiWebhooksVapiProfileRoute,
   ApiCrewsTemplatesIndexRoute: ApiCrewsTemplatesIndexRoute,

@@ -519,6 +519,7 @@ export type NotificationEvent =
   | 'new_lead'
   | 'inbound_sms'
   | 'inbound_call'
+  | 'inbound_video'
   | 'inbound_chat'
   | 'website_form'
 
@@ -531,6 +532,7 @@ export function eventForChannel(channel: string): NotificationEvent {
   if (c.includes('sms') || c.includes('text')) return 'inbound_sms'
   if (c.includes('call') || c.includes('voice') || c.includes('phone') || c.includes('vapi'))
     return 'inbound_call'
+  if (c.includes('video') || c.includes('tavus')) return 'inbound_video'
   if (c.includes('chat')) return 'inbound_chat'
   if (c.includes('form')) return 'website_form'
   return 'new_lead'
