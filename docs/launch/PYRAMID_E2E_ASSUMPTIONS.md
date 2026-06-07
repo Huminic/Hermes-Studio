@@ -31,6 +31,9 @@ pre-authorized or low-risk default.
 | D-04 | HIGH | Store-picker landing at `/` was shadowed by the Studio admin gateway LoginScreen (only `/p/` was exempted from the global auth gate in workspace-shell). Anonymous customers saw the wrong (admin) login. Found via headed browser pass. | Exempted `/` alongside `/p/` in workspace-shell's pre-auth gate so the public store-picker renders standalone. | FIXED (redeploying) |
 | D-03 | MED | Container `serra-service` was a thin stub (no widgets, `data:false`, `nancy.md` instead of `nancy-gaston.md`, login `serra-service@huminic.app`). | Replaced with full host build: service studio.yaml, 2 service widgets, full agent roster, login `serra-service-admin@huminic.dev`. | FIXED |
 
+| D-05 | LOW | Public store-picker `/` fires Studio admin pollers (`/api/sessions`, `/api/gateway-status`, `/api/files`) → 401s in console (page renders fine; pollers back off). | Cosmetic; deferred. Public landing should not mount admin data hooks — refactor later. | DEFERRED |
+| D-06 | MED | Customer `/api/customer/widgets` leaked the absolute server `filePath` (`/root/.hermes/profiles/.../widget.md`) to the client — info disclosure. Found via live probe. | Strip `filePath` from the response; keep server-internal. + regression test asserting no `/root/.hermes` in body. | **FIXED — verified live** (commit 2a17aa31c pushed 07:35; the LIVE container still served the leak until it restarted ~07:39; independent reviewer + my recheck at 07:40/07:42 confirm `filePath:0 /root:0`). **Correction:** I prematurely marked this "deployed" at push-time before the container picked up the build — per Core Value #1, "deployed" must mean *verified live*, which it now is. |
+
 ## Operator-only / out of scope (not done by agent)
 - DNS / Caddy flip to `live.huminic.app`.
 - Rotation of the leaked broker tokens (security debt — still outstanding).
