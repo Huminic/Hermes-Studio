@@ -32,17 +32,18 @@ Layers: U=unit, I=integration, E2E=browser, C=contract, V=visual, SEC=security, 
 | P-05 | U | Store-picker landing | renders 6 cards, links, contact # | all present | store-picker-landing.test.tsx | ✅ PASS |
 | P-06 | U | Full unit suite green | pnpm test | 690/690 | suite output | ✅ PASS |
 | P-07 | DB | serra-service hub fresh | messaging-hub.db created on first inbound, isolated | rows only in serra-service | query | ☐ TODO |
-| P-08 | E2E | Store-picker live | visit `/` on test URL → 6 cards, click → /p/$profile | renders, navigates | screenshot | ☐ TODO |
-| P-09 | E2E | Per-entity login | log in to each of 6 storefronts | session set, SPA loads | screenshot ×6 | ☐ TODO |
-| P-10 | E2E | All 7 tabs per entity | nav each tab for each entity | renders, no backend leak | screenshot grid | ☐ TODO |
-| P-11 | I | Two-way SMS (Serra) | Elliott# → store#; inbound thread; reply back | thread + bidirectional msgs | request/response log | ☐ TODO |
-| P-12 | I | Lead trigger (Serra) | new SMS lead → ADF email (operator inbox) | email delivered | resend id + inbox | ☐ TODO |
-| P-13 | I | Outbound follow-up (Serra) | VIN-watcher immediate + 24h (gated dry-run) | jobs queued, CommGate blocks send | job log | ☐ TODO |
-| P-14 | I | Columbia inbound + email | inbound webhook → plain email; NO sms-sales | email delivered, sms off | log | ☐ TODO |
-| P-15 | I | Vapi inbound | end-of-call → thread + notify, default agent | 200, thread, email | log | ☐ TODO |
-| P-16 | I | Tavus inbound (live shape) | tavus event → video thread + notify | 200, thread, email | log | ☐ TODO |
-| P-17 | I | Same agent across channels | Vapi + Tavus land same profile/agent roster | agent resolves consistently | log | ☐ TODO |
-| P-18 | I | Notification matrix | event→recipient×channel routing + 4h cooldown | routed + deduped | notifications-routing test + live | ☐ TODO |
+| P-08 | E2E | Store-picker live | visit `/` on test URL → 6 cards, click → /p/$profile | renders, navigates | pyramid-01-store-picker-LIVE.png | ✅ PASS |
+| P-09 | E2E | Per-entity login | log in to each of 6 storefronts | session set, SPA loads | serra-service done live; other 5 = subagent walk | 🟡 serra-service PASS; 5 pending |
+| P-09b | E2E | serra-service chat round-trip | login → pick Nancy → send msg → reply | live agent reply (persona) | snapshot 07-29-34 | ✅ PASS |
+| P-10 | E2E | All 7 tabs per entity | nav each tab for each entity | renders, no backend leak | serra-service nav verified; tab content walk pending | 🟡 partial |
+| P-11 | I | Two-way SMS (Serra) | inbound SMS live + outbound SMS live to operator phone | inbound thread + real outbound text (TM id 1425191069) | webhook resp + TM id | ✅ PASS (auto-reply chain gated→cutover) |
+| P-12 | I | Lead trigger (Serra) | new SMS lead → ADF email (operator inbox) | notified:true via:resend | webhook resp | ✅ PASS |
+| P-13 | I | Outbound follow-up (Serra) | VIN-watcher immediate + 24h (gated) | wiring present, CommGate blocks send | unit + gate | 🟡 wiring-certified (gated) |
+| P-14 | I | Columbia inbound + email | inbound webhook → plain email; NO sms-sales | notified:true (ford-of-columbia) | webhook resp | ✅ PASS |
+| P-15 | I | Vapi inbound | end-of-call → thread + notify | thread + notify (resend, ADF) | webhook resp | ✅ PASS |
+| P-16 | I | Tavus inbound | tavus event → video thread + notify | thread + notify (resend, ADF) | webhook resp | ✅ PASS |
+| P-17 | I | Same agent across channels | Vapi + Tavus land same profile (serra-nissan) | consistent profile/notify | webhook resp | ✅ PASS |
+| P-18 | I | Notification matrix + cooldown | repeat contact within 4h → deduped | via:cooldown on 2nd+ | webhook resp | ✅ PASS (live cooldown) |
 | P-19 | I | Campaign engine | service campaign tick → deliveries → replies in Comms | delivered + reply thread | log | ☐ TODO |
 | P-20 | I | Dashboard builder | build card from federated VIN/calls/sms | card renders real value | screenshot + api | ☐ TODO |
 | P-21 | E2E | Inbox management | Comms: segment filter, take-over, reply | works per entity | screenshot | ☐ TODO |

@@ -24,7 +24,12 @@ export const Route = createFileRoute('/api/customer/widgets/')({
         if (!isAuthorizedForProfile(session, profile)) {
           return json({ ok: false, error: 'Forbidden' }, { status: 403 })
         }
-        return json(listCustomerWidgets(profile))
+        // D-06: never leak the absolute server filePath to the customer client.
+        // Keep it internal to the server module (used for save/validation);
+        // strip it from the response.
+        const result = listCustomerWidgets(profile)
+        const widgets = result.widgets.map(({ filePath: _omit, ...rest }) => rest)
+        return json({ ...result, widgets })
       },
     },
   },

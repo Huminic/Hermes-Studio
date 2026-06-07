@@ -60,6 +60,12 @@ describe('/api/customer/widgets', () => {
     expect(form?.status).toBe('missing-file')
     // Single-ID embed (WS-7): one snippet carrying ?id=<slug>.
     expect(hero?.embed_snippet).toContain('nexxus-widget.min.js?id=hero-chat')
+    // D-06: the absolute server filePath must NEVER reach the customer client.
+    for (const w of body.widgets as Array<Record<string, unknown>>) {
+      expect(w.filePath).toBeUndefined()
+    }
+    expect(JSON.stringify(body)).not.toContain('/root/.hermes')
+    expect(JSON.stringify(body)).not.toContain(os.tmpdir())
   })
 })
 
