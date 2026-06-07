@@ -12,6 +12,9 @@ Source: Dexter's read-only audit of the live TextMagic UI, 2026-06-07. Verified 
 | serra-nissan | sales | **+1 855-395-5571** | Serra Nissan sub (exists) | `/api/webhooks/textmagic/serra-nissan` |
 | tony-serra-ford | sales | **+1 833-391-0294** | Tony Serra Ford sub (exists) | `/api/webhooks/textmagic/tony-serra-ford` |
 | (parked) | — | +1 833-809-6836 ("General") | Durran (hold/legacy) | — |
+
+**Number choice (CONFIRMED 2026-06-07, Dexter + Claude; Duane: "no numbers firm, pick the sensible shape"):** serra-honda keeps **833-893-5694** (the historical Caroline/sales number in Nexxus evidence). **833-809-6836 ("General")** is parked in the parent — it carries old/default backlog, and parking it keeps legacy traffic/noise out of the clean Honda sales lane. **Swap caveat:** if Durran identifies "General" as the *true active Honda public number*, swap it in **before callbacks go live** (T2) — not after.
+
 | hyundai-of-columbia | — | **none** (no SMS) | — | — |
 | ford-of-columbia | — | **none** (no SMS) | — | — |
 
