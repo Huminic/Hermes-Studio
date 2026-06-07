@@ -34,7 +34,7 @@ Each storefront has 7 tabs: `/p/<store>/{chat,knowledge,tools,data,comms,campaig
 | Voice (Vapi) | https://studio.huminic.app/api/webhooks/vapi/<profile> |
 | Video (Tavus) | https://studio.huminic.app/api/webhooks/tavus/<profile> |
 
-e.g. Serra Service SMS → https://studio.huminic.app/api/webhooks/textmagic/serra-service (number +19014361271, Nancy).
+e.g. Serra Service SMS → https://studio.huminic.app/api/webhooks/textmagic/serra-service (TextMagic # +1 833-978-5374). NOTE: +1 901-436-1271 is Nancy's **Vapi voice** number, not SMS. Full TextMagic map: `docs/launch/TEXTMAGIC_WIRING.md`.
 
 ## Operator go-live checklist (the pieces I cannot/should not flip)
 1. Register the inbound callbacks above in each TextMagic sub-account + Vapi + Tavus (diverts live inbound — do at cutover).
