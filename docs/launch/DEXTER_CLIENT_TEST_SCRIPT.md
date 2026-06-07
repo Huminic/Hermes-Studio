@@ -26,12 +26,13 @@ For each store: card → sign in → confirm:
 9. **Notifications:** routing table renders.
 - Capture one screenshot per store (the Agents tab is a good single shot).
 
-## C. Client-side INBOUND test (safe — notifies operator inbox only)
-This is the one live lead you can create from the browser:
-1. Open a public widget contact form: `https://studio.huminic.app/w/serra-service-contact` (and/or `/w/serra-honda-contact`).
-2. Submit with **synthetic** data: name "Dexter Test", email `neoweaver@gmail.com`, phone `+14126546500`, message "client-side validation test".
-3. **Expect:** success state, and within ~1 min a lead notification email in the operator inbox (Duane confirms). The conversation should appear in that store's **Teambox** (Service for serra-service-contact).
-- ⚠️ Do **not** submit real customer info, and do not send SMS/place calls — telephony legs are run server-side by Claude.
+## C. INBOUND lead path  (REVISED — credit: Dexter, 2026-06-07)
+**Correction:** form-mode widgets (`/w/<slug>` where mode=form) currently render an honest **"This experience is coming soon"** stub — there is **no browser contact-form UI yet** (only `mode: chat` widgets are live in the browser). So do NOT do a browser form submission. Two sub-checks instead:
+- **C1 (browser, Dexter):** open `https://studio.huminic.app/w/serra-service-contact` → **expect** the coming-soon stub (this is correct/honest behavior, not a bug). PASS = stub shown, no error/leak.
+- **C2 (ingestion, run by Claude server-side; Dexter validates result):** Claude POSTs synthetic data to `/api/public/widget-form` (the lead-capture API, which IS live). Verified 2026-06-07: `thread_id 8a8bf357…, notified:true via resend`. **Dexter validates in the browser:** log into serra-service → **Teambox → Service** → confirm the "Dexter Test" lead thread appears.
+- ⚠️ No real customer info; no SMS/calls — telephony + the API POST are server-side by Claude.
+
+> Open question for Duane: the browser **contact-form widget UI** is deferred (coming-soon). Chat widgets are fully live and form *ingestion* works via API. Decide whether the form-widget UI must ship for launch (see Claude's note).
 
 ## D. Negative / security checks
 1. **Bad login:** wrong password → "Invalid credentials" (and an unknown username gives the *same* message — no user enumeration).
