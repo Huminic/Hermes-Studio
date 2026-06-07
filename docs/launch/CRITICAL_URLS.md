@@ -49,6 +49,8 @@ Legend: **CODE-READY** = storefront + agents + webhook route + widgets all built
 | **hyundai-of-columbia** | ✅ READY | — no SMS (inbound webhook + plain email only) | n/a | Vapi/Tavus callback only | none (email via Resend) | OUTBOUND (no SMS) | ⏳ blocked on provider callback reg |
 | **ford-of-columbia** | ✅ READY | — no SMS (inbound webhook + plain email only) | n/a | Vapi/Tavus callback only | none (email via Resend) | OUTBOUND (no SMS) | ⏳ blocked on provider callback reg |
 
+**Voice (Vapi) side — prepped, awaiting go:** read-only audit captured the full assistant→store→number map (`docs/launch/VAPI_WIRING.md`); all 6 store assistants currently point at the old dev endpoint. `scripts/register-vapi-webhooks.ts` (dry-run-default) repoints each to `…/api/webhooks/vapi/<profile>` — one `--execute` per store on your go (diverts live inbound voice → cutover action). Tavus needs no console registration (per-conversation `callback_url`, already wired).
+
 **Critical path to first live store (Serra Honda):** Durran creates the "Serra Honda" sub-account + reassigns 833-893-5694 + generates an API key → Dexter sets the callback to `…/api/webhooks/textmagic/serra-honda` → Claude writes `channel_credentials.sms: own` + the sub's `TEXTMAGIC_USERNAME/API_KEY/FROM` into the profile `.env` (on your go) → operator flips `OUTBOUND_LIVE_ENABLED` + serra-honda `autonomous_reply` + `vin.watcher` → live two-way SMS verified to an operator-owned phone. **No store can flip without its sub active + callback set + outbound verified (goal constraint).**
 
 ## Operator go-live checklist (the pieces I cannot/should not flip)
