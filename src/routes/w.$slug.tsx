@@ -53,7 +53,12 @@ function renderWidgetHtml(widget: {
   // Customer-facing brand label — never the raw profile slug.
   const brandName = String(brand.name ?? fm.persona_name ?? fm.brand_name ?? '')
 
-  const body = mode === 'chat' ? chatModeBody(widget) : stubBody(mode)
+  const body =
+    mode === 'chat'
+      ? chatModeBody(widget)
+      : mode === 'form'
+        ? formModeBody(widget)
+        : stubBody(mode)
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -85,6 +90,19 @@ function renderWidgetHtml(widget: {
   .meta { padding: 12px 22px; border-top: 1px solid #ececec; font-size: 0.72rem; color: #888; display: flex; justify-content: space-between; }
   .stub { padding: 22px; text-align: center; color: #777; font-size: 0.95rem; }
   .typing { font-style: italic; opacity: .65; font-size: 0.88rem; padding: 4px 4px 0; }
+  .leadform { padding: 4px 22px 20px; }
+  .leadform .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 13px; }
+  .leadform label { font-size: 0.8rem; font-weight: 600; color: #444; }
+  .leadform label .req { color: var(--accent); margin-left: 2px; }
+  .leadform input, .leadform textarea { border: 1px solid #d8d8d8; border-radius: 8px; padding: 10px 12px; font-size: 0.95rem; font-family: inherit; outline: none; width: 100%; }
+  .leadform textarea { resize: vertical; min-height: 84px; }
+  .leadform input:focus, .leadform textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+  .leadform button { background: var(--accent); color: white; border: 0; border-radius: 8px; padding: 12px 18px; font-weight: 600; font-size: 0.95rem; cursor: pointer; width: 100%; }
+  .leadform button:disabled { opacity: .55; cursor: not-allowed; }
+  .leadform .formerr { background: #fde8e8; color: #b21212; border-radius: 8px; padding: 10px 12px; font-size: 0.85rem; margin-bottom: 12px; display: none; }
+  .leadform .ok { text-align: center; padding: 26px 8px; }
+  .leadform .ok .check { font-size: 2rem; line-height: 1; margin-bottom: 10px; }
+  .leadform .ok p { margin: 0; color: #444; line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -177,6 +195,98 @@ function chatModeBody(widget: {
         typing.style.display = 'none';
         send.disabled = false;
         append('agent', 'Sorry, we could not reach the assistant. Please try again.', 'error');
+      });
+  });
+})();
+</script>`
+}
+
+function formModeBody(widget: {
+  profile: string
+  slug: string
+  frontmatter: Record<string, unknown>
+}): string {
+  const fm = widget.frontmatter
+  const greeting = String(fm.greeting ?? 'Send us a message and we’ll be in touch.')
+  const fmDomain = typeof fm.domain === 'string' ? fm.domain : 'sales'
+  const domain = fmDomain === 'service' ? 'service' : 'sales'
+  const submitLabel = String(fm.submit_label ?? 'Submit')
+  const thanks = String(
+    fm.thank_you ??
+      'Thanks — your message has been received. A member of our team will reach out shortly.',
+  )
+  return `<div class="leadform">
+  <div class="greet">${escapeHtml(greeting)}</div>
+  <div id="formview">
+    <div class="formerr" id="formerr"></div>
+    <form id="leadform" autocomplete="on">
+      <div class="field">
+        <label for="lf-name">Name<span class="req">*</span></label>
+        <input type="text" id="lf-name" name="name" required />
+      </div>
+      <div class="field">
+        <label for="lf-email">Email<span class="req">*</span></label>
+        <input type="email" id="lf-email" name="email" required />
+      </div>
+      <div class="field">
+        <label for="lf-phone">Phone</label>
+        <input type="tel" id="lf-phone" name="phone" />
+      </div>
+      <div class="field">
+        <label for="lf-message">Message<span class="req">*</span></label>
+        <textarea id="lf-message" name="message" required></textarea>
+      </div>
+      <button type="submit" id="lf-submit">${escapeHtml(submitLabel)}</button>
+    </form>
+  </div>
+  <div class="ok" id="okview" style="display:none">
+    <div class="check">✓</div>
+    <p>${escapeHtml(thanks)}</p>
+  </div>
+</div>
+<script>
+(function() {
+  var profile = ${JSON.stringify(widget.profile)};
+  var slug = ${JSON.stringify(widget.slug)};
+  var domain = ${JSON.stringify(domain)};
+  var form = document.getElementById('leadform');
+  var errBox = document.getElementById('formerr');
+  var btn = document.getElementById('lf-submit');
+  function showErr(t) { errBox.textContent = t; errBox.style.display = 'block'; }
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    errBox.style.display = 'none';
+    var name = document.getElementById('lf-name').value.trim();
+    var email = document.getElementById('lf-email').value.trim();
+    var phone = document.getElementById('lf-phone').value.trim();
+    var message = document.getElementById('lf-message').value.trim();
+    if (!name || !email || !message) {
+      showErr('Please fill in your name, email, and a message.');
+      return;
+    }
+    btn.disabled = true;
+    var orig = btn.textContent;
+    btn.textContent = 'Sending…';
+    fetch('/api/public/widget-form', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ profile: profile, slug: slug, domain: domain, name: name, email: email, phone: phone, message: message }),
+    })
+      .then(function(r) { return r.json().then(function(d) { return { status: r.status, body: d }; }); })
+      .then(function(res) {
+        if (res.status !== 200 || !res.body || !res.body.ok) {
+          btn.disabled = false;
+          btn.textContent = orig;
+          showErr((res.body && res.body.error) ? res.body.error : 'Sorry, something went wrong. Please try again.');
+          return;
+        }
+        document.getElementById('formview').style.display = 'none';
+        document.getElementById('okview').style.display = 'block';
+      })
+      .catch(function() {
+        btn.disabled = false;
+        btn.textContent = orig;
+        showErr('Sorry, we could not submit the form. Please try again.');
       });
   });
 })();

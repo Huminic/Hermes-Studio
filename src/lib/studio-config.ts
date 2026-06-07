@@ -142,6 +142,21 @@ const VinSchema = z
   .default({})
 
 /**
+ * Per-store SMS identity. `inbound_numbers` lists the TextMagic number(s) that
+ * route to THIS profile. Used by the generic inbound webhook
+ * (/api/webhooks/textmagic) to map a payload's `receiver` (destination number)
+ * → profile when one TextMagic (sub)account holds multiple numbers and exposes
+ * a single account-level callback. The dedicated /api/webhooks/textmagic/$profile
+ * route does not need this (profile comes from the URL).
+ */
+const SmsSchema = z
+  .object({
+    inbound_numbers: z.array(z.string()).optional().default([]),
+  })
+  .optional()
+  .default({ inbound_numbers: [] })
+
+/**
  * Operator-side per-profile channel-credential selection. Each outbound channel
  * (SMS/TextMagic, Vapi voice, Tavus video, email) can use the SHARED ("united")
  * credentials brokered by central-mcp, or the profile's OWN credentials in its
@@ -348,6 +363,7 @@ export const StudioConfigSchema = z.object({
   autonomous_reply_defaults: AutonomousReplyDefaultsSchema,
   federation: FederationSchema,
   vin: VinSchema,
+  sms: SmsSchema,
   lead_notifications: LeadNotificationsSchema,
   notifications: NotificationsSchema,
   channel_credentials: ChannelCredentialsSchema,
