@@ -318,13 +318,14 @@ export function WorkspaceShell() {
       window.removeEventListener(SIDEBAR_TOGGLE_EVENT, handleToggleEvent)
   }, [isMobile, setSidebarCollapsed, toggleSidebar])
 
-  // Storefront /p/$profile/* routes bypass the Studio admin chrome (sidebar,
-  // header, page-title bar) and the Studio admin LoginScreen entirely.
-  // They render in their own self-contained branded shell and handle their
-  // own customer-admin login at the route level (AC.1.2). MUST be checked
-  // BEFORE the Studio admin auth gate below, otherwise unauthenticated
-  // storefront visitors get the wrong login form.
-  if (pathname.startsWith('/p/')) {
+  // Public, unauthenticated surfaces that must render WITHOUT the Studio admin
+  // gateway LoginScreen:
+  //   - `/`            the customer store-picker landing (choose a store → sign in)
+  //   - `/p/$profile*` the per-store branded storefront (own customer-admin login)
+  // Both render their own self-contained chrome. MUST be checked BEFORE the
+  // Studio admin auth gate below, otherwise anonymous visitors get the wrong
+  // (Studio admin) login form instead of the store picker / storefront.
+  if (pathname === '/' || pathname.startsWith('/p/')) {
     return (
       <div className="theme-bg theme-text min-h-dvh">
         <ErrorBoundary

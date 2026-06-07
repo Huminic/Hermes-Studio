@@ -23,6 +23,14 @@ pre-authorized or low-risk default.
 | A-14 | Columbia scope | Columbia (hyundai/ford) = inbound webhook + plain email only; no sales-SMS, no service billing | Operator memo 2026-06-06 | ACCEPTED |
 | A-15 | Outbound gating | OUTBOUND_LIVE_ENABLED + vin.watcher.enabled stay OFF until go-live; tests exercise wiring with CommGate engaged | Pre-launch safety; operator flips at cutover | ACCEPTED |
 
+## Discovered defects (found + fixed during this run)
+| ID | Severity | Finding | Fix | Status |
+|----|----------|---------|-----|--------|
+| D-01 | HIGH | Container storefronts referenced customer agents (`nancy-gaston`, `crm-guru`, `semantic-guardian` on all stores; `caroline` on all but serra-honda) whose SOUL files were MISSING on the live volume — agents would degrade to the generic profile SOUL. Host had the complete roster. | Migrated `governance/agents/*` host→container for all 6; verified all 4 customer agents present on every store. | FIXED |
+| D-02 | MED | Container stores lacked `company-wiki/` (the Knowledge default folder content); host had it. | Migrated `company-wiki/` host→container for all 6. | FIXED |
+| D-04 | HIGH | Store-picker landing at `/` was shadowed by the Studio admin gateway LoginScreen (only `/p/` was exempted from the global auth gate in workspace-shell). Anonymous customers saw the wrong (admin) login. Found via headed browser pass. | Exempted `/` alongside `/p/` in workspace-shell's pre-auth gate so the public store-picker renders standalone. | FIXED (redeploying) |
+| D-03 | MED | Container `serra-service` was a thin stub (no widgets, `data:false`, `nancy.md` instead of `nancy-gaston.md`, login `serra-service@huminic.app`). | Replaced with full host build: service studio.yaml, 2 service widgets, full agent roster, login `serra-service-admin@huminic.dev`. | FIXED |
+
 ## Operator-only / out of scope (not done by agent)
 - DNS / Caddy flip to `live.huminic.app`.
 - Rotation of the leaked broker tokens (security debt — still outstanding).
