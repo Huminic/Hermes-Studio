@@ -22,6 +22,8 @@ pre-authorized or low-risk default.
 | A-13 | Live comms test identities | Two-way SMS uses two operator-owned numbers (Elliott ↔ store line); email to duanekwells@/neoweaver@gmail.com only | Goal: no customer contact | ACCEPTED |
 | A-14 | Columbia scope | Columbia (hyundai/ford) = inbound webhook + plain email only; no sales-SMS, no service billing | Operator memo 2026-06-06 | ACCEPTED |
 | A-15 | Outbound gating | OUTBOUND_LIVE_ENABLED + vin.watcher.enabled stay OFF until go-live; tests exercise wiring with CommGate engaged | Pre-launch safety; operator flips at cutover | ACCEPTED |
+| A-16 | Inbound SMS routing (#212) | Generic receiver-router (`/api/webhooks/textmagic`, no profile) **NOT built** — superseded by the locked TextMagic design: each Serra sub-account has its own number + its own callback → existing `/api/webhooks/textmagic/$profile`. One sub = one number = one callback = one profile; no receiver-number routing needed. | TEXTMAGIC_WIRING.md (Dexter+Claude locked, OWN mode, per-sub callbacks). Avoids speculative routing the chosen architecture doesn't use. | ACCEPTED |
+| A-17 | Broker token rotation (B5) | NOT rotated autonomously despite operator pre-authorization — blast radius reaches **4 live systems** (central-mcp, vin-safe-mcp, LIVE Nexxus production, Studio); the leaked value is hardcoded as a fallback in committed Nexxus route source. Coordinated two-token overlap rotation required. | Rotating blind blocks live customer VIN/DNC → comms. Plan in `BROKER_TOKEN_ROTATION.md`; awaits operator "go" + window. | OPEN (Duane) |
 
 ## Discovered defects (found + fixed during this run)
 | ID | Severity | Finding | Fix | Status |
