@@ -27,12 +27,11 @@ For each store: card → sign in → confirm:
 - Capture one screenshot per store (the Agents tab is a good single shot).
 
 ## C. INBOUND lead path  (REVISED — credit: Dexter, 2026-06-07)
-**Correction:** form-mode widgets (`/w/<slug>` where mode=form) currently render an honest **"This experience is coming soon"** stub — there is **no browser contact-form UI yet** (only `mode: chat` widgets are live in the browser). So do NOT do a browser form submission. Two sub-checks instead:
-- **C1 (browser, Dexter):** open `https://studio.huminic.app/w/serra-service-contact` → **expect** the coming-soon stub (this is correct/honest behavior, not a bug). PASS = stub shown, no error/leak.
-- **C2 (ingestion, run by Claude server-side; Dexter validates result):** Claude POSTs synthetic data to `/api/public/widget-form` (the lead-capture API, which IS live). Verified 2026-06-07: `thread_id 8a8bf357…, notified:true via resend`. **Dexter validates in the browser:** log into serra-service → **Teambox → Service** → confirm the "Dexter Test" lead thread appears.
-- ⚠️ No real customer info; no SMS/calls — telephony + the API POST are server-side by Claude.
-
-> Open question for Duane: the browser **contact-form widget UI** is deferred (coming-soon). Chat widgets are fully live and form *ingestion* works via API. Decide whether the form-widget UI must ship for launch (see Claude's note).
+**Updated 2026-06-08 — form widget UI now LIVE (D-07, Option A).** `mode: form` widgets render a real lead form (Name* / Email* / Phone / Message*) and POST to `/api/public/widget-form`; the "coming soon" stub is gone for form mode (voice/video modes still stub by design — those run through Vapi/Tavus, not the browser widget). Test for real:
+- **C1 (browser form, Dexter):** open a form widget, e.g. `https://studio.huminic.app/w/serra-service-contact` → **expect** a real form with the store greeting + accent (Name*, Email*, Phone, Message*), **not** a stub. Submit synthetic data (name "Dexter Test", **your own** email, message "service inquiry") → expect the inline ✓ success message.
+- **C2 (lead landed):** log into **serra-service → Teambox → Service** → confirm the "Dexter Test" thread appears (service-domain widgets land in Service; sales-domain in Sales). Plain-email notification fires to the configured recipient.
+- **C3 (voice inbound, optional — needs a phone):** a Vapi test line is staged at **+1 839-272-9080** (Elliott test assistant → serra-honda webhook). Call it, short chat, hang up → a voice thread + ADF notification should appear in serra-honda's Teambox. Claude reverts the test assistant afterward.
+- ⚠️ Still **no real customer info** — your own email/phone only. Live two-way SMS is wired + validated server-side but stays gated until each store's TextMagic sub-account creds land.
 
 ## D. Negative / security checks
 1. **Bad login:** wrong password → "Invalid credentials" (and an unknown username gives the *same* message — no user enumeration).
