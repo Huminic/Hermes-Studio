@@ -1,6 +1,6 @@
 # TextMagic — exactly what I need to wire Serra Honda (sales) + Serra Service
 
-For Dexter / Durran. Server side is ready and validated; this is the only thing blocking the first two SMS stores. Priority order: **Serra Honda (sales) first, then Serra Service.**
+For **Dexter** (TextMagic console operator). **No Durran / no new sub-accounts needed** — any number/sub-account already in the account is usable. Just validate what exists now and assign two of them. Server side is ready and validated; this is the only thing blocking the first two SMS stores. Priority order: **Serra Honda (sales) first, then Serra Service.**
 
 ## What's already done (Claude, server side)
 - `serra-honda/studio.yaml`: `channel_credentials.sms: own`, `sms.inbound_domain: sales`, `notifications.lead_format: adf-xml` — validated.
@@ -8,18 +8,18 @@ For Dexter / Durran. Server side is ready and validated; this is the only thing 
 - Inbound webhook routes live: `/api/webhooks/textmagic/serra-honda` and `/api/webhooks/textmagic/serra-service`.
 - Outbound OWN-mode adapter verified (sends from the sub-account's own number via TextMagic v2 API), gated by `OUTBOUND_LIVE_ENABLED` until go-live.
 
-## What I need from you, per store (2 sub-accounts)
-For **each** of the two stores, pick one sub-account in the TextMagic console and give me:
+## What I need from you (validate what's available now, then fill this in)
+First: list the sub-accounts that already exist + their numbers (we believe ≥2). Then pick one existing sub per store and give me:
 
 | Field | Serra Honda (sales / Caroline) | Serra Service (Nancy) |
 |-------|-------------------------------|----------------------|
-| Sub-account chosen (name) | ? | ? |
+| Existing sub-account chosen (name) | ? | ? |
 | **TextMagic API key** (X-TM-Key) | ? | ? |
 | **Username** (X-TM-Username) | ? | ? |
-| **FROM number** on that sub (E.164) | ? (recommended 833-893-5694) | ? (recommended 833-978-5374) |
+| **FROM number** on that sub (E.164) | ? | ? |
 | (optional) webhook secret | ? | ? |
 
-…and in the console, **set each sub-account's inbound callback URL** to:
+…and in the console, **set each chosen sub-account's inbound callback URL** to:
 - Serra Honda → `https://studio.huminic.app/api/webhooks/textmagic/serra-honda`
 - Serra Service → `https://studio.huminic.app/api/webhooks/textmagic/serra-service`
 
