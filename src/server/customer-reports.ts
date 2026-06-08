@@ -128,7 +128,7 @@ function statusOf(lead: Record<string, unknown>): string {
 async function buildLeadFunnel(
   profile: string,
   config: StudioConfig,
-  opts: { now: number; vinTimeoutMs?: number },
+  opts: { now: number; sinceMs: number; vinTimeoutMs?: number },
 ): Promise<LeadFunnelReport> {
   if (!hasVinScope(config)) {
     return {
@@ -144,9 +144,15 @@ async function buildLeadFunnel(
   if (!org.ok) {
     return { available: false, source: 'vin-live', reason: org.reason }
   }
+  // vin_query_leads requires an ISO date window (startDate/endDate are not
+  // optional on the broker schema); derive it from the report window.
   const r = await callCentralMcpTool(
     'vin_query_leads',
-    { orgId: org.orgId },
+    {
+      orgId: org.orgId,
+      startDate: new Date(opts.sinceMs).toISOString(),
+      endDate: new Date(opts.now).toISOString(),
+    },
     { timeoutMs: opts.vinTimeoutMs ?? 15_000 },
   )
   if (!r.ok) {
@@ -274,6 +280,7 @@ export async function buildCustomerReports(
   const campaigns = aggregateCampaignDeliveries(profile)
   const lead_funnel = await buildLeadFunnel(profile, config, {
     now,
+    sinceMs,
     vinTimeoutMs: opts.vinTimeoutMs,
   })
 

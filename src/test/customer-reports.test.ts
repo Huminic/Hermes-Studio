@@ -200,7 +200,12 @@ describe('buildCustomerReports', () => {
     const reports = await buildCustomerReports('serra-honda')
     expect(callCentralMcpTool).toHaveBeenCalledWith(
       'vin_query_leads',
-      { orgId: 'org-uuid-test' },
+      expect.objectContaining({
+        orgId: 'org-uuid-test',
+        // vin_query_leads requires an ISO date window — derived from the report window.
+        startDate: expect.any(String),
+        endDate: expect.any(String),
+      }),
       expect.any(Object),
     )
     expect(reports.lead_funnel.available).toBe(true)
