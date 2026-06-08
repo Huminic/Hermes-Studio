@@ -36,20 +36,22 @@ Each storefront has 7 tabs: `/p/<store>/{chat,knowledge,tools,data,comms,campaig
 
 e.g. Serra Service SMS → https://studio.huminic.app/api/webhooks/textmagic/serra-service (TextMagic # +1 833-978-5374). NOTE: +1 901-436-1271 is Nancy's **Vapi voice** number, not SMS. Full TextMagic map: `docs/launch/TEXTMAGIC_WIRING.md`.
 
-## Per-store go-live state (rolling rollout — updated 2026-06-07)
+## Per-store go-live state (rolling rollout — updated 2026-06-08)
 
-Legend: **CODE-READY** = storefront + agents + webhook route + widgets all built & tested; nothing more for Claude to build. Remaining columns are the *external* gates before that store flips live, in order.
+Legend: **CODE-READY** = storefront + agents + webhook route + widgets all built & tested; nothing more for Claude to build. Remaining columns are the *external* gates before that store flips live, in order. Claude server-side `channel_credentials.sms: own` is now SET + schema-validated for the two priority Serra stores (only the per-sub `.env` API key/FROM remains, which needs Durran).
 
-| Store | Code | TextMagic sub + number | API key (Durran) | Callback set (Dexter) | Claude server-side (on go) | Operator cutover flip | LIVE? |
-|-------|------|------------------------|------------------|-----------------------|----------------------------|-----------------------|-------|
-| **serra-honda** (priority #1) | ✅ READY | ❌ create "Serra Honda" sub + move **833-893-5694** | ❌ | ❌ | `sms:own` + `.env` key/FROM | OUTBOUND + autonomous_reply + vin.watcher | ⏳ blocked on Durran |
-| **serra-service** | ✅ READY | ❌ create "Serra Service" sub + move **833-978-5374** | ❌ | ❌ | `sms:own` + `.env` key/FROM | OUTBOUND + autonomous_reply | ⏳ blocked on Durran |
-| **serra-nissan** | ✅ READY | ✅ sub exists (**855-395-5571**) | ❌ generate key | ❌ | `sms:own` + `.env` key/FROM | OUTBOUND + autonomous_reply + vin.watcher | ⏳ blocked on key+callback |
-| **tony-serra-ford** | ✅ READY | ✅ sub exists (**833-391-0294**) | ❌ generate key | ❌ | `sms:own` + `.env` key/FROM | OUTBOUND + autonomous_reply + vin.watcher | ⏳ blocked on key+callback |
+| Store | Code | TextMagic sub + number | API key (Durran) | Callback set (Dexter) | Claude server-side | Operator cutover flip | LIVE? |
+|-------|------|------------------------|------------------|-----------------------|--------------------|-----------------------|-------|
+| **serra-honda** (priority #1) | ✅ READY | ❌ pick sub + put **833-893-5694** on it | ❌ key+username | ❌ | ✅ `sms:own`+`inbound_domain:sales` set · ⏳ `.env` key/FROM on arrival | deploy branch + OUTBOUND + autonomous_reply + vin.watcher | ⏳ blocked on Durran key |
+| **serra-service** | ✅ READY | ❌ pick sub + put **833-978-5374** on it | ❌ key+username | ❌ | ✅ `sms:own`+`inbound_domain:service` set · ⏳ `.env` key/FROM on arrival | deploy branch + OUTBOUND + autonomous_reply | ⏳ blocked on Durran key |
+| **serra-nissan** | ✅ READY | ✅ sub exists (**855-395-5571**) | ❌ generate key | ❌ | ⏳ `sms:own` + `.env` key/FROM (when prioritized) | OUTBOUND + autonomous_reply + vin.watcher | ⏳ deferred (after honda/service) |
+| **tony-serra-ford** | ✅ READY | ✅ sub exists (**833-391-0294**) | ❌ generate key | ❌ | ⏳ `sms:own` + `.env` key/FROM (when prioritized) | OUTBOUND + autonomous_reply + vin.watcher | ⏳ deferred |
 | **hyundai-of-columbia** | ✅ READY | — no SMS (inbound webhook + plain email only) | n/a | Vapi/Tavus callback only | none (email via Resend) | OUTBOUND (no SMS) | ⏳ blocked on provider callback reg |
 | **ford-of-columbia** | ✅ READY | — no SMS (inbound webhook + plain email only) | n/a | Vapi/Tavus callback only | none (email via Resend) | OUTBOUND (no SMS) | ⏳ blocked on provider callback reg |
 
-**Voice (Vapi) side — prepped, awaiting go:** read-only audit captured the full assistant→store→number map (`docs/launch/VAPI_WIRING.md`); all 6 store assistants currently point at the old dev endpoint. `scripts/register-vapi-webhooks.ts` (dry-run-default) repoints each to `…/api/webhooks/vapi/<profile>` — one `--execute` per store on your go (diverts live inbound voice → cutover action). Tavus needs no console registration (per-conversation `callback_url`, already wired).
+**Voice (Vapi) side:** full assistant→store→number map captured (`docs/launch/VAPI_WIRING.md`). A **live inbound voice test is STAGED**: the isolated Elliott test assistant (`+1 839-272-9080`) is repointed to `…/api/webhooks/vapi/serra-honda` (Studio webhook confirmed reachable) — operator calls it to verify call→thread→notification, then Claude reverts. The 6 store assistants stay on their current `dev.huminicdev.com` endpoint (live — not mass-repointed without explicit go); `scripts/register-vapi-webhooks.ts --execute --only <profile>` flips each per store at its cutover. **Tavus** needs no console registration (per-conversation `callback_url`, already wired with `TAVUS_WEBHOOK_SECRET`).
+
+**Comms code fixes (committed on-branch, await a branch deploy before SMS go-live):** per-profile inbound SMS domain routing + TextMagic id capture (reviewer bugs 2/3) + OWN-mode config. Independent review re-confirmed CommGate fail-closed + per-profile DB isolation. 695 unit tests green.
 
 **Critical path to first live store (Serra Honda):** Durran creates the "Serra Honda" sub-account + reassigns 833-893-5694 + generates an API key → Dexter sets the callback to `…/api/webhooks/textmagic/serra-honda` → Claude writes `channel_credentials.sms: own` + the sub's `TEXTMAGIC_USERNAME/API_KEY/FROM` into the profile `.env` (on your go) → operator flips `OUTBOUND_LIVE_ENABLED` + serra-honda `autonomous_reply` + `vin.watcher` → live two-way SMS verified to an operator-owned phone. **No store can flip without its sub active + callback set + outbound verified (goal constraint).**
 
