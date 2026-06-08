@@ -120,7 +120,16 @@ function extractLeads(data: unknown): Array<Record<string, unknown>> | null {
 }
 
 function statusOf(lead: Record<string, unknown>): string {
-  for (const key of ['status', 'lead_status', 'stage', 'disposition']) {
+  // VinSolutions lead rows carry `leadStatus` (e.g. ACTIVE_NEW_LEAD) +
+  // `leadStatusType` (e.g. ACTIVE); keep the generic fallbacks too.
+  for (const key of [
+    'leadStatus',
+    'leadStatusType',
+    'status',
+    'lead_status',
+    'stage',
+    'disposition',
+  ]) {
     const v = lead[key]
     if (typeof v === 'string' && v.trim()) return v.trim().toLowerCase()
   }
@@ -174,6 +183,14 @@ async function buildLeadFunnel(
       reason: 'Unexpected VinSolutions response shape (no lead list found).',
     }
   }
+  // VinSolutions paginates (pageSize 50); `totalItems` is the true count for the
+  // window. by_status / recent reflect the most-recent page (a sample).
+  const totalItems =
+    r.data &&
+    typeof r.data === 'object' &&
+    typeof (r.data as { totalItems?: unknown }).totalItems === 'number'
+      ? (r.data as { totalItems: number }).totalItems
+      : leads.length
   const by_status: Record<string, number> = {}
   for (const lead of leads) {
     const s = statusOf(lead)
@@ -204,7 +221,7 @@ async function buildLeadFunnel(
   return {
     available: true,
     source: 'vin-live',
-    total: leads.length,
+    total: totalItems,
     by_status,
     recent,
     resolved_names,
