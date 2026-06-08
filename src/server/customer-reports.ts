@@ -109,7 +109,9 @@ export function hasVinScope(config: StudioConfig): boolean {
 function extractLeads(data: unknown): Array<Record<string, unknown>> | null {
   if (Array.isArray(data)) return data as Array<Record<string, unknown>>
   if (data && typeof data === 'object') {
-    for (const key of ['leads', 'data', 'results', 'records']) {
+    // VinSolutions paginated lead responses put the rows under `items`
+    // ({ totalItems, pageSize, pageNumber, items: [...] }).
+    for (const key of ['items', 'leads', 'data', 'results', 'records']) {
       const v = (data as Record<string, unknown>)[key]
       if (Array.isArray(v)) return v as Array<Record<string, unknown>>
     }
