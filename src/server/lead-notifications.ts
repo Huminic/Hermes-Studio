@@ -177,11 +177,29 @@ async function sendViaResend(input: {
     if (dataMatch) {
       try {
         const obj = JSON.parse(dataMatch[1]) as {
-          result?: { content?: Array<{ text?: string }> }
+          result?: { content?: Array<{ text?: string }>; isError?: boolean }
         }
         const inner = obj.result?.content?.[0]?.text
         if (inner) {
-          const innerObj = JSON.parse(inner) as { id?: string }
+          const innerObj = JSON.parse(inner) as {
+            id?: string
+            error?: string
+            message?: string
+            code?: string
+          }
+          // The broker returns HTTP 200 even when Resend itself rejects the
+          // call (e.g. an invalid `from`). A success body is `{ id }`; an error
+          // body carries `error`/`code`. Surface the rejection as a real
+          // failure instead of a silent false-positive `ok:true`.
+          if (obj.result?.isError || innerObj.error || innerObj.code) {
+            return {
+              ok: false,
+              via: 'failed',
+              reason: String(
+                innerObj.error ?? innerObj.message ?? 'resend rejected the send',
+              ).slice(0, 200),
+            }
+          }
           emailId = innerObj.id ?? null
         }
       } catch {
@@ -486,10 +504,18 @@ export async function notifyDealer(input: {
 
   // ADF feed uses the fixed brand from-address the DMS expects; the styled
   // card uses the per-profile sender name (or a profile-derived default).
+  // Resend requires `email@example.com` or `Name <email@example.com>`. The ADF
+  // feed uses the fixed brand address the DMS expects; the styled card uses the
+  // per-profile sender NAME, which must be wrapped into a valid address (the
+  // verified leads@huminic.ai domain) or Resend rejects the send.
+  const emailFromName =
+    config.lead_notifications.sender_name ?? `${orgName} new lead`
   const from =
     format === 'adf-xml'
       ? BRAND_ADF_FROM
-      : config.lead_notifications.sender_name ?? `${input.profile} new lead`
+      : emailFromName.includes('@')
+        ? emailFromName
+        : `${emailFromName} <leads@huminic.ai>`
 
   const result = await sendViaResend({
     central,
