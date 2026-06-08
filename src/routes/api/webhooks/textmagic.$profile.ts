@@ -4,10 +4,10 @@
  * TextMagic inbound SMS webhook receiver. Mirrors the field shape
  * TextMagic posts (text, sender, receiver, messageTime, messageId, ...).
  *
- * Lands the SMS as an inbound thread in messaging-hub (channel: 'sms',
- * domain: 'service' by default — TextMagic carries the dealer's service
- * number historically; widget frontmatter or `?domain=sales` query can
- * override).
+ * Lands the SMS as an inbound thread in messaging-hub (channel: 'sms').
+ * Domain (sales|service) comes from `?domain=` override → the profile's
+ * `sms.inbound_domain` in studio.yaml → 'service' (legacy default), so a
+ * sales store routes to the Sales segment without a query param.
  *
  * Then fires the autonomous-reply dispatcher per AC.5.8 so a subscribed
  * agent can reply on the same channel automatically.
@@ -30,6 +30,7 @@ import {
   maybeAutonomousReply,
 } from '../../../server/agent-autonomous-reply'
 import { notifyNewLead } from '../../../server/lead-notifications'
+import { readStudioConfig } from '../../../server/studio-config'
 
 function readSecret(profile: string): string | null {
   try {
@@ -90,7 +91,10 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
         const sender = body.sender ?? body.from ?? ''
         const receiver = body.receiver ?? body.to ?? ''
         const text = body.text ?? body.message ?? ''
-        const messageId = body.messageId ?? body.message_id ?? null
+        // TextMagic's inbound webhook posts the message id as `id`; keep the
+        // older aliases as fallbacks for other payload shapes.
+        const messageId =
+          body.id ?? body.messageId ?? body.message_id ?? null
         if (!sender || !text) {
           return json(
             { ok: false, error: 'sender and text required' },
@@ -102,8 +106,15 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
           display_name: null,
           identifiers: { sms: sender },
         })
+        // Domain (sales vs service) decides which Teambox segment the thread
+        // lands in. Priority: explicit `?domain=` override → the profile's
+        // configured `sms.inbound_domain` → 'service' (legacy default). A sales
+        // store like serra-honda (Caroline) sets `sms.inbound_domain: sales` so
+        // its inbound texts don't fall into the Service tab.
         const url = new URL(request.url)
-        const domain = url.searchParams.get('domain') ?? 'service'
+        const queryDomain = url.searchParams.get('domain')
+        const configuredDomain = readStudioConfig(profile).config.sms?.inbound_domain
+        const domain = queryDomain ?? configuredDomain ?? 'service'
         const { thread, created } = getOrCreateThreadEx({
           profile,
           domain,

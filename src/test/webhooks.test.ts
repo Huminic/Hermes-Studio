@@ -178,6 +178,74 @@ describe('/api/webhooks/textmagic/$profile', () => {
     expect(thread?.messages[0].content).toContain('schedule service')
   })
 
+  it('routes inbound to the profile-configured domain (sales) without a query param', async () => {
+    // serra-honda is a SALES store (Caroline). Its studio.yaml declares
+    // sms.inbound_domain: sales so texts do NOT fall into the Service tab.
+    const dir = path.join(tmpHome, '.hermes/profiles/serra-honda')
+    fs.writeFileSync(
+      path.join(dir, 'studio.yaml'),
+      [
+        'branding:',
+        '  persona_name: Serra Honda',
+        'sms:',
+        '  inbound_domain: sales',
+        'lead_notifications:',
+        '  adf_email: leads@example.com',
+        '',
+      ].join('\n'),
+    )
+    const { Route } = await import('@/routes/api/webhooks/textmagic.$profile')
+    const handler = Route.options.server.handlers.POST
+    const req = new Request(
+      'http://localhost/api/webhooks/textmagic/serra-honda',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sender: '+15555550100',
+          receiver: '+19012038267',
+          text: 'Looking to buy a Civic',
+          id: 'tm_inbound_777',
+        }),
+      },
+    )
+    const res = await handler({
+      request: req,
+      params: { profile: 'serra-honda' },
+    } as never)
+    const body = (await res.json()) as { thread_id: string }
+    const { getThread } = await import('@/server/messaging-hub-store')
+    const thread = getThread('serra-honda', body.thread_id)
+    expect(thread?.domain).toBe('sales')
+    // BUG-3 fix: TextMagic posts the id as `id`; it is captured as external_id.
+    expect(thread?.messages[0].metadata?.external_id).toBe('tm_inbound_777')
+  })
+
+  it('honors an explicit ?domain= override over the configured default', async () => {
+    const dir = path.join(tmpHome, '.hermes/profiles/serra-honda')
+    fs.writeFileSync(
+      path.join(dir, 'studio.yaml'),
+      ['branding:', '  persona_name: Serra Honda', 'sms:', '  inbound_domain: sales', ''].join('\n'),
+    )
+    const { Route } = await import('@/routes/api/webhooks/textmagic.$profile')
+    const handler = Route.options.server.handlers.POST
+    const req = new Request(
+      'http://localhost/api/webhooks/textmagic/serra-honda?domain=service',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sender: '+15555550199', text: 'oil change please' }),
+      },
+    )
+    const res = await handler({
+      request: req,
+      params: { profile: 'serra-honda' },
+    } as never)
+    const body = (await res.json()) as { thread_id: string }
+    const { getThread } = await import('@/server/messaging-hub-store')
+    expect(getThread('serra-honda', body.thread_id)?.domain).toBe('service')
+  })
+
   it('rejects when secret is required but not supplied', async () => {
     const dir = path.join(tmpHome, '.hermes/profiles/serra-honda')
     fs.writeFileSync(

@@ -152,6 +152,13 @@ const VinSchema = z
 const SmsSchema = z
   .object({
     inbound_numbers: z.array(z.string()).optional().default([]),
+    /**
+     * Default domain (sales|service) for inbound SMS landing on this profile's
+     * webhook, when the callback URL does not carry a `?domain=` override. A
+     * sales store (e.g. serra-honda / Caroline) sets `sales`; a service store
+     * (serra-service / Nancy) sets `service`. Absent → 'service' (legacy default).
+     */
+    inbound_domain: z.enum(['sales', 'service']).optional(),
   })
   .optional()
   .default({ inbound_numbers: [] })
