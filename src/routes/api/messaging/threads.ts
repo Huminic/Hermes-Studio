@@ -10,6 +10,7 @@ import {
   resolveSession,
 } from '../../../server/customer-auth'
 import { listThreads, type ThreadStatus } from '../../../server/messaging-hub-store'
+import { scrubThreadListItem } from '../../../server/dealer-safe'
 
 export const Route = createFileRoute('/api/messaging/threads')({
   server: {
@@ -43,7 +44,8 @@ export const Route = createFileRoute('/api/messaging/threads')({
         })
         return json({
           ok: true,
-          threads: threads.map((t) => ({
+          // LC-BLOCKER-004: scrub stale provider terms from dealer-visible fields.
+          threads: threads.map((t) => scrubThreadListItem({
             id: t.id,
             profile: t.profile,
             domain: t.domain,

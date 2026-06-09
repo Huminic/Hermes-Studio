@@ -11,6 +11,7 @@ import {
 } from '../../../server/customer-auth'
 import { getThread } from '../../../server/messaging-hub-store'
 import { isHumanAssigned } from '../../../server/thread-takeover'
+import { scrubThreadDetail } from '../../../server/dealer-safe'
 
 export const Route = createFileRoute('/api/messaging/threads/$threadId')({
   server: {
@@ -31,10 +32,11 @@ export const Route = createFileRoute('/api/messaging/threads/$threadId')({
         }
         return json({
           ok: true,
-          thread: {
+          // LC-BLOCKER-004: scrub stale provider terms + drop internal metadata.
+          thread: scrubThreadDetail({
             ...thread,
             human_assigned: isHumanAssigned(profile, thread.id),
-          },
+          }),
         })
       },
     },

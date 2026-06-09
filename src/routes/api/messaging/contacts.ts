@@ -10,6 +10,7 @@ import {
   resolveSession,
 } from '../../../server/customer-auth'
 import { listContacts } from '../../../server/messaging-hub-store'
+import { scrubContact } from '../../../server/dealer-safe'
 
 export const Route = createFileRoute('/api/messaging/contacts')({
   server: {
@@ -24,7 +25,8 @@ export const Route = createFileRoute('/api/messaging/contacts')({
         if (!isAuthorizedForProfile(session, profile)) {
           return json({ ok: false, error: 'Forbidden' }, { status: 403 })
         }
-        return json({ ok: true, contacts: listContacts(profile) })
+        // LC-BLOCKER-004: scrub stale provider terms from dealer-visible contacts.
+        return json({ ok: true, contacts: listContacts(profile).map(scrubContact) })
       },
     },
   },
