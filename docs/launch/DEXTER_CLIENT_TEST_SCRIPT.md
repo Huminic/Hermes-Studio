@@ -75,9 +75,17 @@ This is the floating circle on the **public storefront landing** (no login). It 
 3. **G1 — Web Chat:** click → chat opens in the panel; send "Hi" → coherent reply (Caroline).
 4. **G2 — Contact Form:** click → the contact form loads in the panel; submit synthetic data (your own email) → success. Then confirm the lead in Teambox (Sales) + an email at **duanekwells@gmail.com**.
 5. **G3 — Instant Call Back:** click → name + phone form; submit (name "Dexter Test", **your own** phone) → "We'll call you back shortly." Confirm a **Call-back request** thread in Teambox (Sales) + an email at duanekwells@gmail.com. (No SMS is sent — this just alerts the store to call back.)
-6. **G4 — Two-Way Video (serra-honda only):** click → fullscreen "Connecting to video chat…" then a **live video session with Caroline** (allow camera/mic). Talk briefly, then close (X). Confirm a **video thread** lands in Teambox + an email at duanekwells@gmail.com. On the other 5 stores the video row is intentionally absent.
+6. **G4 — Two-Way Video (all 5 stores):** click → fullscreen "Connecting to video chat…" then a **live video session with Caroline** (allow camera/mic). Talk briefly, then close (X). Confirm a **video thread** lands in Teambox + an email at duanekwells@gmail.com.
 7. **G5 — back/close:** the back arrow returns to the menu; the X closes the launcher.
 8. **G6 — vendor names:** nowhere in the widget (header, options, video screen) may `tavus`/`vapi`/`textmagic` appear. "Two-Way Video" + "Face-to-face with Caroline" only. Hard fail if a vendor name shows.
+9. **G7 — all 5 storefronts:** repeat G1–G6 on `/p/serra-nissan`, `/p/tony-serra-ford`, `/p/hyundai-of-columbia`, `/p/ford-of-columbia` — each shows its own store name + all four options working.
+
+## G-EMBED. ⭐ Self-hosted embed on a dealer.com-style page (the contractual deliverable)
+The same launcher must work embedded on the dealer's **own** external site via one script tag.
+1. Open `https://studio.huminic.app/dealer-widget-verification.html` (the "pretend dealer.com" page). Click each store button → its teal launcher appears bottom-right.
+2. Confirm the launcher + all four options behave exactly as in section G (Web Chat, Contact Form, Instant Call Back → lead+email, Two-Way Video → live session).
+3. The one-tag snippet per store (and all URLs) is listed in **`docs/launch/WIDGET_URLS.md`**. The embed path `…/widget/dealer/<slug>.js` matches the old Nexxus path, so existing dealer.com embeds keep working after cutover.
+4. **G-EMBED vendor names:** view-source on the embed page — no `tavus`/`vapi`/`textmagic`/persona ids in the served bundle. Hard fail if found.
 
 ## Record results
 | ID | Check | Store | PASS/FAIL | Screenshot | Notes |
@@ -97,6 +105,8 @@ This is the floating circle on the **public storefront landing** (no login). It 
 | G4 | unified widget · Two-Way Video (live Caroline) | serra-honda | | | |
 | G5 | unified widget · back/close | serra-honda | | | |
 | G6 | unified widget · NO vendor names | serra-honda | | | |
+| G7 | unified widget · full G1–G6 | each of 5 | | | |
+| G-EMBED | self-hosted embed on dealer.com page | each of 5 | | | |
 
-**Deferred (do NOT test / not failures):** SMS (separate feature run). Two-Way Video on the **non-serra-honda** stores (video row intentionally off until each store's video agent is mapped).
+**Deferred (do NOT test / not failures):** SMS (separate feature run).
 **Note:** the live Nexxus app is scheduled to be shut down before the final acceptance test; voice/lead traffic then flows only to Studio.

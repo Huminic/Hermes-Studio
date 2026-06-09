@@ -152,9 +152,9 @@ The Data tab dim state is intentional. Your account manager flips it on when you
 | **Contact Form** | Your contact form | A lead in Comms (Sales) **+ a notification email** |
 | **Two-Way Video** | A live face-to-face video session with your AI agent | A video thread in Comms **+ a notification email** |
 
-**Where it works today.** The launcher renders on your Studio-hosted storefront landing (`/p/<your-slug>`). A self-hosted single-tag embed for your own external site (dealer.com) — `<script src=".../widget/dealer/<your-slug>.js">` — is the next step and is **not live yet**; do not advertise it to your site team until your account manager confirms it.
+**Where it works.** Two places: (1) your Studio storefront landing (`/p/<your-slug>`), and (2) **self-hosted on your own external site (dealer.com)** via one script tag — `<script async src="https://studio.huminic.app/widget/dealer/<your-slug>.js"></script>`. The full per-store URL list is in `docs/launch/WIDGET_URLS.md`. The path matches the old Nexxus path, so existing embeds keep working after cutover.
 
-**Configuration.** Which options appear, the accent color, and the video agent are set by your account manager in `studio.yaml` under `unified_widget` (operator-controlled — not customer-editable). At launch, **Two-Way Video is live on serra-honda** (agent Caroline); other stores show Web Chat / Instant Call Back / Contact Form until each store's video agent is mapped. No third-party vendor names ever appear to a visitor — the video option reads "Two-Way Video" / "Face-to-face with <agent>".
+**Configuration.** Which options appear, the accent color, and the video agent are set by your account manager in `studio.yaml` under `unified_widget` (operator-controlled — not customer-editable). **Two-Way Video is live on all five dealer storefronts** (agent Caroline). No third-party vendor names ever appear to a visitor — the video option reads "Two-Way Video" / "Face-to-face with <agent>".
 
 ---
 
