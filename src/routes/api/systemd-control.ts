@@ -11,7 +11,7 @@ import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { join, dirname } from 'node:path'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 
 const execFileAsync = promisify(execFile)
 
@@ -69,7 +69,7 @@ export const Route = createFileRoute('/api/systemd-control')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return Response.json({ ok: false }, { status: 401 })
         }
 

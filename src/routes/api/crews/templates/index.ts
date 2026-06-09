@@ -4,7 +4,7 @@
  */
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../../server/auth-middleware'
+import { isAdmin } from '../../../../server/auth-middleware'
 import { requireJsonContentType } from '../../../../server/rate-limit'
 import {
   listTemplates,
@@ -25,14 +25,14 @@ export const Route = createFileRoute('/api/crews/templates/')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         return json({ ok: true, templates: listTemplates() })
       },
 
       POST: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const csrfCheck = requireJsonContentType(request)

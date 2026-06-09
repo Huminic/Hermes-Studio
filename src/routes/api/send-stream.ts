@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { createFileRoute } from '@tanstack/react-router'
 import { resolveSessionKey } from '../../server/session-utils'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 import { requireJsonContentType } from '../../server/rate-limit'
 import { publishChatEvent } from '../../server/chat-event-bus'
 import {
@@ -269,7 +269,7 @@ export const Route = createFileRoute('/api/send-stream')({
     handlers: {
       POST: async ({ request }) => {
         // Auth check
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return new Response(
             JSON.stringify({ ok: false, error: 'Unauthorized' }),
             { status: 401, headers: { 'Content-Type': 'application/json' } },

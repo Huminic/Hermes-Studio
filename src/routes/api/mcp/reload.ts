@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 import { BEARER_TOKEN, HERMES_API } from '../../../server/gateway-capabilities'
 
 type AuthResult = Response | true
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/api/mcp/reload')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const authResult = isAuthenticated(request) as AuthResult
+        const authResult = isAdmin(request) as AuthResult
         if (authResult !== true) return authResult
 
         for (const path of RELOAD_PATHS) {

@@ -3,7 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 import {
   ensureGatewayProbed,
   getCapabilities,
@@ -392,7 +392,7 @@ export const Route = createFileRoute('/api/skills')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         await ensureGatewayProbed()
@@ -475,7 +475,7 @@ export const Route = createFileRoute('/api/skills')({
         }
       },
       POST: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const csrfCheck = requireJsonContentType(request)

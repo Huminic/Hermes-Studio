@@ -2,7 +2,7 @@
  * Conductor mission stop — kills worker session keys.
  */
 import { createFileRoute } from '@tanstack/react-router'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 import { requireJsonContentType } from '../../server/rate-limit'
 import { deleteSession } from '../../server/hermes-api'
 import { ensureGatewayProbed } from '../../server/gateway-capabilities'
@@ -11,7 +11,7 @@ export const Route = createFileRoute('/api/conductor-stop')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return new Response(JSON.stringify({ ok: false, error: 'Unauthorized' }), {
             status: 401,
             headers: { 'Content-Type': 'application/json' },

@@ -3,7 +3,7 @@
  * Returns { run_id, status: "started" } immediately (202).
  */
 import { createFileRoute } from '@tanstack/react-router'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 import {
   HERMES_API,
   ensureGatewayProbed,
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/api/hermes-runs')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return new Response(JSON.stringify({ error: 'Unauthorized' }), {
             status: 401,
             headers: { 'Content-Type': 'application/json' },

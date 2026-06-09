@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 import { createFileRoute } from '@tanstack/react-router'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 import { requireJsonContentType } from '../../server/rate-limit'
 import {
   HERMES_API,
@@ -166,7 +166,7 @@ export const Route = createFileRoute('/api/conductor-spawn')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return new Response(JSON.stringify({ ok: false, error: 'Unauthorized' }), {
             status: 401,
             headers: { 'Content-Type': 'application/json' },

@@ -1,6 +1,12 @@
 export interface AuthStatus {
   authenticated: boolean
   authRequired: boolean
+  /** Studio-admin session — may access Global Huminic Studio routes/APIs. */
+  is_admin?: boolean
+  /** Workspace (customer-admin) session — confined to its own /p/<profile>/*. */
+  is_customer_admin?: boolean
+  /** The session's profile (for routing a Workspace session to /p/<profile>/chat). */
+  profile?: string | null
   error?: string
 }
 

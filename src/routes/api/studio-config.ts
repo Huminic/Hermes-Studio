@@ -1,16 +1,18 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../server/auth-middleware'
 import { readStudioConfig } from '../../server/studio-config'
 import { publicUnifiedWidget } from '../../lib/studio-config'
+import { isAuthorizedForProfile, resolveSession } from '../../server/customer-auth'
 
 /**
  * GET /api/studio-config?profile=X
  *
- * Returns the per-profile studio.yaml. Unauthenticated visitors get the
- * PUBLIC subset (branding + menu visibility) so the storefront landing
- * page can render brand chrome before login. Authenticated callers get
- * the full config including agent_picker, federation scopes, etc.
+ * Returns the per-profile studio.yaml. The FULL config (agent_picker, federation
+ * scopes, etc.) is returned only to a Studio admin OR the customer-admin of THAT
+ * profile (own Workspace) — so a customer-admin cannot read another store's full
+ * config (LC-BLOCKER-006). Everyone else (anonymous storefront visitors, or a
+ * customer-admin reading a different profile) gets the PUBLIC subset so the
+ * branded storefront launcher can still render.
  */
 export const Route = createFileRoute('/api/studio-config')({
   server: {
@@ -23,7 +25,8 @@ export const Route = createFileRoute('/api/studio-config')({
             return json({ error: 'profile query param required' }, { status: 400 })
           }
           const full = readStudioConfig(profile)
-          if (isAuthenticated(request)) {
+          // Admin (any profile) or the customer-admin of THIS profile → full config.
+          if (isAuthorizedForProfile(resolveSession(request), profile)) {
             return json(full)
           }
           // Public subset: branding + menu + the unified-widget DISPLAY config

@@ -5,7 +5,7 @@
  */
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 import { requireJsonContentType } from '../../../server/rate-limit'
 import {
   getAgent,
@@ -17,7 +17,7 @@ export const Route = createFileRoute('/api/agents/$agentId')({
   server: {
     handlers: {
       GET: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const agent = getAgent(params.agentId)
@@ -26,7 +26,7 @@ export const Route = createFileRoute('/api/agents/$agentId')({
       },
 
       PATCH: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const csrfCheck = requireJsonContentType(request)
@@ -71,7 +71,7 @@ export const Route = createFileRoute('/api/agents/$agentId')({
       },
 
       DELETE: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
 

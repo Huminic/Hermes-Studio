@@ -6,14 +6,14 @@ import {
   requireJsonContentType,
 } from '../../server/rate-limit'
 import { getTerminalSession } from '../../server/terminal-sessions'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 
 export const Route = createFileRoute('/api/terminal-input')({
   server: {
     handlers: {
       POST: async ({ request }) => {
         // Auth check
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return new Response(
             JSON.stringify({ ok: false, error: 'Unauthorized' }),
             { status: 401, headers: { 'Content-Type': 'application/json' } },

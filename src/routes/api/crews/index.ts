@@ -5,7 +5,7 @@
 import { randomUUID } from 'node:crypto'
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 import { requireJsonContentType } from '../../../server/rate-limit'
 import { AGENT_PERSONAS } from '../../../lib/agent-personas'
 import { listAgents } from '../../../server/agent-definitions-store'
@@ -57,14 +57,14 @@ export const Route = createFileRoute('/api/crews/')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         return json({ ok: true, crews: listCrews() })
       },
 
       POST: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const csrfCheck = requireJsonContentType(request)

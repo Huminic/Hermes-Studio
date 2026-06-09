@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { requireLocalOrAuth } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 import {
   HERMES_API,
   ensureGatewayProbed,
@@ -12,7 +12,7 @@ export const Route = createFileRoute('/api/memory')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!requireLocalOrAuth(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
 

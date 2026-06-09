@@ -10,7 +10,7 @@ import {
   HERMES_API,
   BEARER_TOKEN,
 } from '../../server/gateway-capabilities'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 
 type UsageLine = {
   type: 'progress' | 'text' | 'badge'
@@ -212,7 +212,7 @@ export const Route = createFileRoute('/api/provider-usage')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return Response.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
 

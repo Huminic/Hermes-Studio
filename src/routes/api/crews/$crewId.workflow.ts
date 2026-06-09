@@ -5,7 +5,7 @@
  */
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 import { requireJsonContentType } from '../../../server/rate-limit'
 import { getCrew } from '../../../server/crew-store'
 import {
@@ -50,7 +50,7 @@ export const Route = createFileRoute('/api/crews/$crewId/workflow')({
   server: {
     handlers: {
       GET: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         if (!getCrew(params.crewId)) {
@@ -60,7 +60,7 @@ export const Route = createFileRoute('/api/crews/$crewId/workflow')({
       },
 
       PUT: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const csrfCheck = requireJsonContentType(request)
@@ -109,7 +109,7 @@ export const Route = createFileRoute('/api/crews/$crewId/workflow')({
       },
 
       DELETE: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         deleteWorkflow(params.crewId)

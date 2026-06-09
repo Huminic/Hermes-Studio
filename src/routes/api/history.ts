@@ -13,13 +13,13 @@ import {
   toLocalChatMessage,
 } from '../../server/local-session-store'
 import { resolveSessionKey } from '../../server/session-utils'
-import { isAuthenticated } from '@/server/auth-middleware'
+import { isAdmin } from '@/server/auth-middleware'
 
 export const Route = createFileRoute('/api/history')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         await ensureGatewayProbed()

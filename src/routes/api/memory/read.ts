@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 import { ensureGatewayProbed } from '../../../server/gateway-capabilities'
 import { readMemoryFile } from '../../../server/memory-browser'
 
@@ -8,7 +8,7 @@ export const Route = createFileRoute('/api/memory/read')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ error: 'Unauthorized' }, { status: 401 })
         }
         await ensureGatewayProbed()

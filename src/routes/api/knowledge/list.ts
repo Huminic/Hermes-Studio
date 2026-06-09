@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 import {
   getKnowledgeRoot,
   knowledgeRootExists,
@@ -11,7 +11,7 @@ export const Route = createFileRoute('/api/knowledge/list')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ error: 'Unauthorized' }, { status: 401 })
         }
 

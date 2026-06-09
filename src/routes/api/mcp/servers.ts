@@ -3,7 +3,7 @@ import path from 'node:path'
 import os from 'node:os'
 import { createFileRoute } from '@tanstack/react-router'
 import YAML from 'yaml'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 import { requireJsonContentType } from '../../../server/rate-limit'
 import {
   BEARER_TOKEN,
@@ -143,7 +143,7 @@ export const Route = createFileRoute('/api/mcp/servers')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const authResult = isAuthenticated(request) as AuthResult
+        const authResult = isAdmin(request) as AuthResult
         if (authResult !== true) return authResult
 
         await ensureGatewayProbed()
@@ -182,7 +182,7 @@ export const Route = createFileRoute('/api/mcp/servers')({
       },
 
       PUT: async ({ request }) => {
-        const authResult = isAuthenticated(request) as AuthResult
+        const authResult = isAdmin(request) as AuthResult
         if (authResult !== true) return authResult
         const csrfCheck = requireJsonContentType(request)
         if (csrfCheck) return csrfCheck

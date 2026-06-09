@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import {
+  getSessionMetadata,
+  getSessionTokenFromCookie,
   isAuthenticated,
   isPasswordProtectionEnabled,
 } from '../../server/auth-middleware'
@@ -46,9 +48,20 @@ export const Route = createFileRoute('/api/auth-check')({
         const authRequired = isPasswordProtectionEnabled()
         const authenticated = isAuthenticated(request)
 
+        // Expose the session's role so the client shell can gate Global Studio
+        // routes on is_admin and route a Workspace (customer-admin) session to
+        // its own /p/<profile>/* console (LC-BLOCKER-006).
+        const meta = authRequired
+          ? getSessionMetadata(
+              getSessionTokenFromCookie(request.headers.get('cookie')) ?? '',
+            )
+          : null
         return json({
           authenticated,
           authRequired,
+          is_admin: authRequired ? meta?.is_admin === true : true,
+          is_customer_admin: meta?.is_customer_admin === true,
+          profile: meta?.profile ?? null,
         })
       },
     },

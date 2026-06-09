@@ -3,7 +3,7 @@ import path from 'node:path'
 import os from 'node:os'
 import { json } from '@tanstack/react-start'
 import { createFileRoute } from '@tanstack/react-router'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 import {
   ensureGatewayProbed,
   getGatewayCapabilities,
@@ -134,7 +134,7 @@ export const Route = createFileRoute('/api/models')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         await ensureGatewayProbed()

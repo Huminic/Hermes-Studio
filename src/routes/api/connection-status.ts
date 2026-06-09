@@ -12,7 +12,7 @@ import {
   ensureGatewayProbed,
   getChatMode,
 } from '../../server/gateway-capabilities'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 
 const CONFIG_PATH = path.join(os.homedir(), '.hermes', 'config.yaml')
 
@@ -49,10 +49,10 @@ export const Route = createFileRoute('/api/connection-status')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        // isAuthenticated returns a boolean. The previous code returned that
+        // isAdmin returns a boolean. The previous code returned that
         // boolean cast as a Response, so an unauthenticated caller got a 500
         // ("HTTPError") instead of a 401 (GAP-API-CONNECTION-STATUS-500).
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return Response.json({ error: 'Unauthorized' }, { status: 401 })
         }
 

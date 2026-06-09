@@ -10,7 +10,7 @@ import { promisify } from 'node:util'
 import { existsSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 
 const execFileAsync = promisify(execFile)
 
@@ -50,7 +50,7 @@ export const Route = createFileRoute('/api/systemd-status')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return Response.json({ ok: false }, { status: 401 })
         }
 

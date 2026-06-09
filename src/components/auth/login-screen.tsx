@@ -51,7 +51,14 @@ export function LoginScreen() {
       const data = await res.json()
 
       if (data.ok) {
-        window.location.reload()
+        // LC-BLOCKER-006: a Workspace (customer-admin, non-admin) login at the
+        // Global Studio gateway goes to its own /p/<profile>/* console, not the
+        // operator backend. Admins reload into Global Studio.
+        if (data.is_customer_admin === true && data.is_admin !== true && data.profile) {
+          window.location.href = `/p/${encodeURIComponent(data.profile)}/chat`
+        } else {
+          window.location.reload()
+        }
       } else {
         setError(data.error || 'Invalid credentials')
         setLoading(false)

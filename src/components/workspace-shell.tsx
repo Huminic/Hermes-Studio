@@ -184,6 +184,26 @@ export function WorkspaceShell() {
     }
   }, [isClient])
 
+  // LC-BLOCKER-006: a Workspace (customer-admin, non-admin) session must never
+  // reach Global Huminic Studio. When one lands on a global route, route it to
+  // its own /p/<profile>/* console.
+  useEffect(() => {
+    if (!isClient || !authStatus) return
+    const onGlobalRoute =
+      pathname !== '/' &&
+      !pathname.startsWith('/p/') &&
+      !pathname.startsWith('/w/')
+    if (
+      authStatus.authenticated &&
+      authStatus.is_admin === false &&
+      onGlobalRoute
+    ) {
+      window.location.href = authStatus.profile
+        ? `/p/${encodeURIComponent(authStatus.profile)}/chat`
+        : '/'
+    }
+  }, [isClient, authStatus, pathname])
+
   // Derive active session from URL
   const mobilePageTitle = (() => {
     if (pathname.startsWith('/terminal')) return 'Terminal'
@@ -360,6 +380,29 @@ export function WorkspaceShell() {
     PROTECTED_PATH_PREFIXES.some((p) => pathname.startsWith(p))
   ) {
     return <LoginScreen />
+  }
+
+  // LC-BLOCKER-006: deny the Global Studio admin chrome to a Workspace
+  // (customer-admin, non-admin) session — the effect above redirects them to
+  // their own /p/<profile>/* console. is_admin === false is strict, so admins
+  // and pre-resolve (undefined) render the chrome normally.
+  if (
+    authStatus?.authenticated &&
+    authStatus.is_admin === false &&
+    pathname !== '/' &&
+    !pathname.startsWith('/p/') &&
+    !pathname.startsWith('/w/')
+  ) {
+    return (
+      <div className="theme-bg theme-text flex min-h-dvh items-center justify-center p-8 text-center">
+        <div>
+          <p className="text-sm font-medium">Redirecting to your workspace…</p>
+          <p className="mt-1 text-xs opacity-60">
+            This account doesn’t have Global Studio access.
+          </p>
+        </div>
+      </div>
+    )
   }
 
   const shellStyle: React.CSSProperties & Record<'--titlebar-h', string> = {

@@ -8,7 +8,7 @@
 import os from 'node:os'
 import fs from 'node:fs'
 import { createFileRoute } from '@tanstack/react-router'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 
 export type SystemHealthResponse = {
   ok: boolean
@@ -57,7 +57,7 @@ export const Route = createFileRoute('/api/system-health')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return Response.json({ ok: false }, { status: 401 })
         }
 

@@ -3,7 +3,7 @@ import { json } from '@tanstack/react-start'
 import {
   getSessionMetadata,
   getSessionTokenFromCookie,
-  isAuthenticated,
+  isAdmin,
 } from '../../../server/auth-middleware'
 import { hasAnyProfileAuth } from '../../../server/profile-auth'
 import { setActiveProfile } from '../../../server/profiles-browser'
@@ -13,7 +13,7 @@ export const Route = createFileRoute('/api/profiles/activate')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ error: 'Unauthorized' }, { status: 401 })
         }
 

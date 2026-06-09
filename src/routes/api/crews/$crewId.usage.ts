@@ -5,7 +5,7 @@
  */
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 import { requireJsonContentType } from '../../../server/rate-limit'
 import { getCrew } from '../../../server/crew-store'
 import {
@@ -18,7 +18,7 @@ export const Route = createFileRoute('/api/crews/$crewId/usage')({
   server: {
     handlers: {
       GET: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         if (!getCrew(params.crewId)) {
@@ -28,7 +28,7 @@ export const Route = createFileRoute('/api/crews/$crewId/usage')({
       },
 
       POST: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const csrfCheck = requireJsonContentType(request)
@@ -73,7 +73,7 @@ export const Route = createFileRoute('/api/crews/$crewId/usage')({
       },
 
       DELETE: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         resetCrewUsage(params.crewId)

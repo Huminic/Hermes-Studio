@@ -5,7 +5,7 @@
  */
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 import { requireJsonContentType } from '../../../server/rate-limit'
 import { getTask, updateTask, deleteTask } from '../../../server/task-store'
 import type { TaskColumn, TaskPriority } from '../../../types/task'
@@ -17,7 +17,7 @@ export const Route = createFileRoute('/api/tasks/$taskId')({
   server: {
     handlers: {
       GET: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const task = getTask(params.taskId)
@@ -28,7 +28,7 @@ export const Route = createFileRoute('/api/tasks/$taskId')({
       },
 
       PATCH: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const csrfCheck = requireJsonContentType(request)
@@ -64,7 +64,7 @@ export const Route = createFileRoute('/api/tasks/$taskId')({
       },
 
       DELETE: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const deleted = deleteTask(params.taskId)

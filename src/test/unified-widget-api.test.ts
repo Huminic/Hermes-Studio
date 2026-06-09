@@ -17,7 +17,12 @@ vi.mock('@/server/central-mcp', () => ({
 }))
 
 // Public studio-config test needs the unauthenticated branch.
-vi.mock('@/server/auth-middleware', () => ({ isAuthenticated: () => false }))
+// studio-config now scopes the FULL config to admin/own-profile via customer-auth.
+// Simulate an unauthenticated visitor → public subset. (LC-BLOCKER-006)
+vi.mock('@/server/customer-auth', () => ({
+  resolveSession: () => null,
+  isAuthorizedForProfile: () => false,
+}))
 
 let tmpHome: string
 const PROFILE = 'serra-honda'

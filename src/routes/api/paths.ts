@@ -2,7 +2,7 @@ import path from 'node:path'
 import os from 'node:os'
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 
 const HERMES_HOME =
   process.env.HERMES_HOME || path.join(os.homedir(), '.hermes')
@@ -11,7 +11,7 @@ export const Route = createFileRoute('/api/paths')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         return json({

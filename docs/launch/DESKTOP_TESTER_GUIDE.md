@@ -30,6 +30,18 @@ You don't need to be technical. Just follow along, and for every numbered check 
 
 You only need the login for **Platform 6** (the staff back-office). Everything else is public — no login.
 
+## Access model — three separate surfaces (important)
+
+The system has **three distinct surfaces**. Keep them separate when testing:
+
+| Surface | What it is | URL | Who gets in |
+|---|---|---|---|
+| **Storefront / Widgets** | Public shopper-facing launcher, embeds, standalone widget/contact pages | `/p/<store>` landing, `/widget/dealer/<store>.js`, `/w/<slug>` | Anyone (public) |
+| **Workspace** | The dealer/staff profile-scoped console (manage AI, inbox, campaigns, etc.) | `/p/<store>/*` (after login) | That store's **customer-admin** login only |
+| **Global Huminic Studio** | The operator/admin back-end (all profiles, system ops). **Not** part of dealer testing. | direct to `/dashboard` (operator only) | **`is_admin` only** |
+
+**For this test you use the Storefront (no login) and the Workspace (the store logins in the table above).** The store logins are **Workspace-only** — they must **not** be able to reach Global Huminic Studio. If a store login ever lands you in an operator backend listing *many* stores/profiles, that's a security failure — record it. (The `/` root is the **store picker**, not the admin login.)
+
 ---
 
 # PLATFORM 1 — The Website Chat Widget (what a car shopper sees)
@@ -157,10 +169,12 @@ That leads arrive, in the right format, with no vendor names.
 
 ---
 
-# PLATFORM 6 — The Store Admin Console (dealership staff back-office)
+# PLATFORM 6 — The Workspace (dealership staff console)
 
 ### What you're looking at
-This is the **private back-office** that a dealership's own staff use — not the public shopper view. It has tabs across the top to manage the AI, knowledge, widgets, reports, the inbox of conversations, and campaigns. **This is the only part that needs a login** (from the table at the top).
+This is the **Workspace** — the dealer/staff console for a single store, at `/p/<store>/*`. It's the dealership's own working area (manage the AI, knowledge, widgets, reports, the inbox of conversations, campaigns). It is **profile-scoped**: a store login only ever sees its **own** store. **This is the only part that needs a login** (from the table at the top).
+
+> **Not** the same as **Global Huminic Studio** (the operator/admin backend across all stores). A store/Workspace login must **never** reach Global Studio. Verify this in **S2** below — a Workspace login that reaches an operator backend listing many stores is a **security failure**.
 
 ### What's being tested
 That each store's staff console loads correctly and shows that store's own data — including the leads you created in earlier platforms.
@@ -209,6 +223,7 @@ Behind the scenes the system uses third-party technology providers, but a **cust
 - **S1 — Bad login.** A wrong password shows "Invalid credentials." An unknown username shows the **same** message (it must not reveal which part was wrong).
 - **S2 — Wrong store.** While logged into one store, try opening another store's page (e.g. `/p/serra-nissan/comms` while logged in as serra-honda). You should hit a **login wall**, not see the other store's data.
 - **S3 — No technical leakage.** You should never see server file paths (like `/root/...`), internal setting names, long secret keys, or raw error/crash text.
+- **S4 — Global Studio boundary (important).** While logged in with a **store (Workspace) credential**, try to open the operator backend directly — `https://studio.huminic.app/dashboard` (and `/profiles`). You must **not** reach an operator console listing many stores: you should be **redirected to your own `/p/<store>/chat`** (or shown a "no Global Studio access" message). A Workspace login that reaches the global operator backend or a multi-store list is a **security failure** — record it. (Only `is_admin` operator accounts may reach Global Huminic Studio.)
 
 ---
 

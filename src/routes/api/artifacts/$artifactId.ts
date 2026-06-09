@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 import { requireJsonContentType } from '../../../server/rate-limit'
 import {
   deleteArtifact,
@@ -15,7 +15,7 @@ export const Route = createFileRoute('/api/artifacts/$artifactId')({
   server: {
     handlers: {
       GET: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const artifact = getArtifact(params.artifactId)
@@ -26,7 +26,7 @@ export const Route = createFileRoute('/api/artifacts/$artifactId')({
       },
 
       PATCH: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const csrfCheck = requireJsonContentType(request)
@@ -51,7 +51,7 @@ export const Route = createFileRoute('/api/artifacts/$artifactId')({
       },
 
       DELETE: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const deleted = deleteArtifact(params.artifactId)

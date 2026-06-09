@@ -7,7 +7,7 @@ import path from 'node:path'
 import os from 'node:os'
 import { createFileRoute } from '@tanstack/react-router'
 import YAML from 'yaml'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 import { ensureGatewayProbed } from '../../server/gateway-capabilities'
 
 type AuthResult = Response | true
@@ -159,7 +159,7 @@ export const Route = createFileRoute('/api/hermes-config')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const authResult = isAuthenticated(request) as AuthResult
+        const authResult = isAdmin(request) as AuthResult
         if (authResult !== true) return authResult
         await ensureGatewayProbed()
         const config = readConfig()
@@ -217,7 +217,7 @@ export const Route = createFileRoute('/api/hermes-config')({
       },
 
       PATCH: async ({ request }) => {
-        const authResult = isAuthenticated(request) as AuthResult
+        const authResult = isAdmin(request) as AuthResult
         if (authResult !== true) return authResult
         await ensureGatewayProbed()
         const body = (await request.json()) as Record<string, unknown>

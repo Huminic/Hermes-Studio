@@ -3,7 +3,7 @@
  */
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../../server/auth-middleware'
+import { isAdmin } from '../../../server/auth-middleware'
 import { requireJsonContentType } from '../../../server/rate-limit'
 import { moveTask } from '../../../server/task-store'
 import type { TaskColumn } from '../../../types/task'
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/api/tasks/$taskId/move')({
   server: {
     handlers: {
       POST: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const csrfCheck = requireJsonContentType(request)

@@ -7,7 +7,7 @@
 
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 import { requireJsonContentType } from '../../server/rate-limit'
 import {
   ensureGatewayProbed,
@@ -20,7 +20,7 @@ export const Route = createFileRoute('/api/approvals/$approvalId/deny')({
   server: {
     handlers: {
       POST: async ({ request, params }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return json({ ok: false, error: 'Unauthorized' }, { status: 401 })
         }
         const csrfCheck = requireJsonContentType(request)

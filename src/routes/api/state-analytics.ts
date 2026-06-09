@@ -10,7 +10,7 @@
  * unavailable (better-sqlite3 native binding not present).
  */
 import { createFileRoute } from '@tanstack/react-router'
-import { isAuthenticated } from '../../server/auth-middleware'
+import { isAdmin } from '../../server/auth-middleware'
 import { getAnalytics } from '../../server/event-store'
 
 export type StateAnalyticsResponse = ReturnType<typeof getAnalytics> & {
@@ -21,7 +21,7 @@ export const Route = createFileRoute('/api/state-analytics')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!isAuthenticated(request)) {
+        if (!isAdmin(request)) {
           return Response.json({ ok: false }, { status: 401 })
         }
         const analytics = getAnalytics()
