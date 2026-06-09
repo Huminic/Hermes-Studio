@@ -1,5 +1,5 @@
 /**
- * POST /api/public/video-session   (public — storefront unified widget)
+ * POST /api/public/video-session   (public, CORS-open — storefront + dealer embed)
  *
  * Mints a Two-Way Video session for a profile and returns the join URL. The
  * video persona is resolved SERVER-SIDE from the profile's studio.yaml
@@ -9,6 +9,9 @@
  * unreachable), responds `{ ok: false }` so the widget degrades to
  * "temporarily unavailable" rather than erroring.
  *
+ * CORS-open (OPTIONS preflight + ACAO:*) so the self-hosted dealer.com embed can
+ * call it cross-origin.
+ *
  * Body: { profile }
  * Returns: { ok: true, conversationUrl } | { ok: false, error }
  */
@@ -17,9 +20,20 @@ import { json } from '@tanstack/react-start'
 import { readStudioConfig } from '../../../server/studio-config'
 import { callCentralMcpTool } from '../../../server/central-mcp'
 
+const CORS: Record<string, string> = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+}
+
+function reply(data: unknown, status = 200): Response {
+  return json(data as never, { status, headers: CORS })
+}
+
 export const Route = createFileRoute('/api/public/video-session')({
   server: {
     handlers: {
+      OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
       POST: async ({ request }) => {
         const body = (await request.json().catch(() => ({}))) as Record<
           string,
@@ -27,24 +41,24 @@ export const Route = createFileRoute('/api/public/video-session')({
         >
         const profile = typeof body.profile === 'string' ? body.profile : ''
         if (!profile) {
-          return json({ ok: false, error: 'profile required' }, { status: 400 })
+          return reply({ ok: false, error: 'profile required' }, 400)
         }
 
         let config
         try {
           config = readStudioConfig(profile).config
         } catch {
-          return json({ ok: false, error: 'unknown profile' }, { status: 404 })
+          return reply({ ok: false, error: 'unknown profile' }, 404)
         }
 
         const uw = config.unified_widget
         if (uw.enabled === false || uw.channels?.video === false) {
-          return json({ ok: false, error: 'video disabled' })
+          return reply({ ok: false, error: 'video disabled' })
         }
         const personaId = uw.video_persona_id
         if (!personaId) {
           // Honest degrade — no persona configured for this store yet.
-          return json({ ok: false, error: 'video not configured' })
+          return reply({ ok: false, error: 'video not configured' })
         }
 
         const r = await callCentralMcpTool('tavus_create_conversation', {
@@ -55,7 +69,7 @@ export const Route = createFileRoute('/api/public/video-session')({
         if (!r.ok) {
           // Detail to the server log; generic to the visitor (no vendor names).
           console.warn(`[video-session] ${profile} mint failed: ${r.error}`)
-          return json({ ok: false, error: 'video temporarily unavailable' })
+          return reply({ ok: false, error: 'video temporarily unavailable' })
         }
         const data = (r.data ?? {}) as {
           conversation_url?: string
@@ -64,9 +78,9 @@ export const Route = createFileRoute('/api/public/video-session')({
         const conversationUrl = data.conversation_url ?? data.conversationUrl
         if (!conversationUrl) {
           console.warn(`[video-session] ${profile} mint returned no URL`)
-          return json({ ok: false, error: 'video temporarily unavailable' })
+          return reply({ ok: false, error: 'video temporarily unavailable' })
         }
-        return json({ ok: true, conversationUrl })
+        return reply({ ok: true, conversationUrl })
       },
     },
   },

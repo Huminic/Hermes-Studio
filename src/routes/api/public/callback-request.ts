@@ -20,9 +20,20 @@ import {
 } from '../../../server/messaging-hub-store'
 import { notifyNewLead } from '../../../server/lead-notifications'
 
+const CORS: Record<string, string> = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+}
+
+function reply(data: unknown, status = 200): Response {
+  return json(data as never, { status, headers: CORS })
+}
+
 export const Route = createFileRoute('/api/public/callback-request')({
   server: {
     handlers: {
+      OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
       POST: async ({ request }) => {
         const body = (await request.json().catch(() => ({}))) as Record<
           string,
@@ -34,10 +45,10 @@ export const Route = createFileRoute('/api/public/callback-request')({
         const message =
           typeof body.message === 'string' ? body.message.trim() : ''
         if (!profile) {
-          return json({ ok: false, error: 'profile required' }, { status: 400 })
+          return reply({ ok: false, error: 'profile required' }, 400)
         }
         if (!phone) {
-          return json({ ok: false, error: 'phone required' }, { status: 400 })
+          return reply({ ok: false, error: 'phone required' }, 400)
         }
         // Validate the profile exists (readStudioConfig falls back to defaults,
         // so guard against a bogus slug by requiring a real studio.yaml file).
@@ -45,10 +56,10 @@ export const Route = createFileRoute('/api/public/callback-request')({
         try {
           source = readStudioConfig(profile).source
         } catch {
-          return json({ ok: false, error: 'unknown profile' }, { status: 404 })
+          return reply({ ok: false, error: 'unknown profile' }, 404)
         }
         if (source !== 'file') {
-          return json({ ok: false, error: 'unknown profile' }, { status: 404 })
+          return reply({ ok: false, error: 'unknown profile' }, 404)
         }
 
         const handle = phone
@@ -89,7 +100,7 @@ export const Route = createFileRoute('/api/public/callback-request')({
           cooldownKey: phone,
         })
 
-        return json({
+        return reply({
           ok: true,
           thread_id: thread.id,
           notified: notified.ok,

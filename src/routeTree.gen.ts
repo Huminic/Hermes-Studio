@@ -97,6 +97,7 @@ import { Route as ApiAuditIndexRouteImport } from './routes/api/audit/index'
 import { Route as ApiArtifactsIndexRouteImport } from './routes/api/artifacts/index'
 import { Route as ApiAgentsIndexRouteImport } from './routes/api/agents/index'
 import { Route as ApiAgentMigrationsIndexRouteImport } from './routes/api/agent-migrations/index'
+import { Route as WidgetDealerSlugDotjsRouteImport } from './routes/widget/dealer/$slug[.]js'
 import { Route as PProfileTabRouteImport } from './routes/p.$profile.$tab'
 import { Route as ConsoleProfileTabRouteImport } from './routes/console.$profile.$tab'
 import { Route as ApiWidgetsProfileRouteImport } from './routes/api/widgets/$profile'
@@ -628,6 +629,11 @@ const ApiAgentsIndexRoute = ApiAgentsIndexRouteImport.update({
 const ApiAgentMigrationsIndexRoute = ApiAgentMigrationsIndexRouteImport.update({
   id: '/api/agent-migrations/',
   path: '/api/agent-migrations/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WidgetDealerSlugDotjsRoute = WidgetDealerSlugDotjsRouteImport.update({
+  id: '/widget/dealer/$slug.js',
+  path: '/widget/dealer/$slug.js',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PProfileTabRoute = PProfileTabRouteImport.update({
@@ -1250,6 +1256,7 @@ export interface FileRoutesByFullPath {
   '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
   '/console/$profile/$tab': typeof ConsoleProfileTabRoute
   '/p/$profile/$tab': typeof PProfileTabRoute
+  '/widget/dealer/$slug.js': typeof WidgetDealerSlugDotjsRoute
   '/api/agent-migrations/': typeof ApiAgentMigrationsIndexRoute
   '/api/agents/': typeof ApiAgentsIndexRoute
   '/api/artifacts/': typeof ApiArtifactsIndexRoute
@@ -1431,6 +1438,7 @@ export interface FileRoutesByTo {
   '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
   '/console/$profile/$tab': typeof ConsoleProfileTabRoute
   '/p/$profile/$tab': typeof PProfileTabRoute
+  '/widget/dealer/$slug.js': typeof WidgetDealerSlugDotjsRoute
   '/api/agent-migrations': typeof ApiAgentMigrationsIndexRoute
   '/api/agents': typeof ApiAgentsIndexRoute
   '/api/artifacts': typeof ApiArtifactsIndexRoute
@@ -1614,6 +1622,7 @@ export interface FileRoutesById {
   '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
   '/console/$profile/$tab': typeof ConsoleProfileTabRoute
   '/p/$profile/$tab': typeof PProfileTabRoute
+  '/widget/dealer/$slug.js': typeof WidgetDealerSlugDotjsRoute
   '/api/agent-migrations/': typeof ApiAgentMigrationsIndexRoute
   '/api/agents/': typeof ApiAgentsIndexRoute
   '/api/artifacts/': typeof ApiArtifactsIndexRoute
@@ -1798,6 +1807,7 @@ export interface FileRouteTypes {
     | '/api/widgets/$profile'
     | '/console/$profile/$tab'
     | '/p/$profile/$tab'
+    | '/widget/dealer/$slug.js'
     | '/api/agent-migrations/'
     | '/api/agents/'
     | '/api/artifacts/'
@@ -1979,6 +1989,7 @@ export interface FileRouteTypes {
     | '/api/widgets/$profile'
     | '/console/$profile/$tab'
     | '/p/$profile/$tab'
+    | '/widget/dealer/$slug.js'
     | '/api/agent-migrations'
     | '/api/agents'
     | '/api/artifacts'
@@ -2161,6 +2172,7 @@ export interface FileRouteTypes {
     | '/api/widgets/$profile'
     | '/console/$profile/$tab'
     | '/p/$profile/$tab'
+    | '/widget/dealer/$slug.js'
     | '/api/agent-migrations/'
     | '/api/agents/'
     | '/api/artifacts/'
@@ -2325,6 +2337,7 @@ export interface RootRouteChildren {
   ApiPublicWidgetFormRoute: typeof ApiPublicWidgetFormRoute
   ApiTasksTaskIdRoute: typeof ApiTasksTaskIdRouteWithChildren
   ApiWidgetsProfileRoute: typeof ApiWidgetsProfileRoute
+  WidgetDealerSlugDotjsRoute: typeof WidgetDealerSlugDotjsRoute
   ApiAgentMigrationsIndexRoute: typeof ApiAgentMigrationsIndexRoute
   ApiAgentsIndexRoute: typeof ApiAgentsIndexRoute
   ApiArtifactsIndexRoute: typeof ApiArtifactsIndexRoute
@@ -2973,6 +2986,13 @@ declare module '@tanstack/react-router' {
       path: '/api/agent-migrations'
       fullPath: '/api/agent-migrations/'
       preLoaderRoute: typeof ApiAgentMigrationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/widget/dealer/$slug.js': {
+      id: '/widget/dealer/$slug.js'
+      path: '/widget/dealer/$slug.js'
+      fullPath: '/widget/dealer/$slug.js'
+      preLoaderRoute: typeof WidgetDealerSlugDotjsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/$profile/$tab': {
@@ -3989,6 +4009,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWidgetFormRoute: ApiPublicWidgetFormRoute,
   ApiTasksTaskIdRoute: ApiTasksTaskIdRouteWithChildren,
   ApiWidgetsProfileRoute: ApiWidgetsProfileRoute,
+  WidgetDealerSlugDotjsRoute: WidgetDealerSlugDotjsRoute,
   ApiAgentMigrationsIndexRoute: ApiAgentMigrationsIndexRoute,
   ApiAgentsIndexRoute: ApiAgentsIndexRoute,
   ApiArtifactsIndexRoute: ApiArtifactsIndexRoute,

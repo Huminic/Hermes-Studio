@@ -171,6 +171,55 @@ describe('POST /api/public/video-session', () => {
   })
 })
 
+describe('GET /widget/dealer/<slug>.js (self-hosted embed bundle)', () => {
+  it('serves a config-injected bundle without leaking the video persona id', async () => {
+    writeStudio(
+      BASE_YAML +
+        '\nunified_widget:\n  enabled: true\n  video_persona_id: p9eb007721f4\n  video_agent_name: Caroline\n',
+    )
+    const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
+    const handler = Route.options.server.handlers.GET
+    const req = new Request('https://studio.huminic.app/widget/dealer/serra-honda.js')
+    const res = await handler({ params: { slug: PROFILE }, request: req } as never)
+    expect(res.headers.get('Content-Type')).toContain('javascript')
+    expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*')
+    const body = await res.text()
+    // Config is injected (origin, profile, persona display name, agent name).
+    expect(body).toContain('huminic-dealer-widget')
+    expect(body).toContain('serra-honda')
+    expect(body).toContain('Caroline')
+    expect(body).toContain('https://studio.huminic.app')
+    // The Tavus persona id is a server-side secret — must NOT be in the bundle.
+    expect(body).not.toContain('p9eb007721f4')
+  })
+
+  it('serves a harmless no-op for an unknown store', async () => {
+    const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
+    const handler = Route.options.server.handlers.GET
+    const req = new Request('https://studio.huminic.app/widget/dealer/no-such.js')
+    const res = await handler({ params: { slug: 'no-such-store' }, request: req } as never)
+    const body = await res.text()
+    expect(body).toContain('unknown store')
+    expect(body).not.toContain('huminic-dealer-widget')
+  })
+})
+
+describe('CORS preflight on public widget endpoints', () => {
+  it('video-session OPTIONS returns 204 with ACAO', async () => {
+    const { Route } = await import('@/routes/api/public/video-session')
+    const res = await Route.options.server.handlers.OPTIONS!({} as never)
+    expect(res.status).toBe(204)
+    expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*')
+  })
+
+  it('callback-request OPTIONS returns 204 with ACAO', async () => {
+    const { Route } = await import('@/routes/api/public/callback-request')
+    const res = await Route.options.server.handlers.OPTIONS!({} as never)
+    expect(res.status).toBe(204)
+    expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*')
+  })
+})
+
 describe('GET /api/studio-config (public subset)', () => {
   it('exposes unified-widget display config but strips the video persona id', async () => {
     writeStudio(
