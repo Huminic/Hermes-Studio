@@ -145,8 +145,8 @@ async function buildLeadFunnel(
     return {
       available: false,
       source: 'none',
-      reason:
-        'No VIN federation read-scope on this profile. Lead funnel reads live VinSolutions; add a vin scope to studio.yaml federation.read_scopes to enable it.',
+      // Dealer-facing reason: keep it generic (no vendor/CRM/config internals).
+      reason: 'Lead reporting is not enabled for this store yet.',
     }
   }
   // VIN is keyed by the Nexxus org UUID (not the profile slug). Without it the
@@ -167,20 +167,24 @@ async function buildLeadFunnel(
     { timeoutMs: opts.vinTimeoutMs ?? 15_000 },
   )
   if (!r.ok) {
+    // Detailed cause stays in the server log; the dealer-facing reason is generic
+    // (no vendor/CRM/provider names in customer-visible surfaces).
+    console.warn(
+      `[lead-funnel] ${profile} live lead query failed: ${r.unconfigured ? 'unconfigured' : r.error}`,
+    )
     return {
       available: false,
       source: 'vin-live',
-      reason: r.unconfigured
-        ? 'central-mcp / VinSolutions not configured (token missing).'
-        : `VinSolutions query failed: ${r.error}`,
+      reason: 'Lead reporting is temporarily unavailable.',
     }
   }
   const leads = extractLeads(r.data)
   if (!leads) {
+    console.warn(`[lead-funnel] ${profile} unexpected lead response shape`)
     return {
       available: false,
       source: 'vin-live',
-      reason: 'Unexpected VinSolutions response shape (no lead list found).',
+      reason: 'Lead reporting is temporarily unavailable.',
     }
   }
   // VinSolutions paginates (pageSize 50); `totalItems` is the true count for the

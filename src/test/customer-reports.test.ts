@@ -229,7 +229,9 @@ describe('buildCustomerReports', () => {
     expect(reports.lead_funnel.available).toBe(false)
     if (!reports.lead_funnel.available) {
       expect(reports.lead_funnel.source).toBe('vin-live')
-      expect(reports.lead_funnel.reason).toMatch(/not configured/i)
+      // Dealer-facing reason is generic (no vendor/CRM names leaked).
+      expect(reports.lead_funnel.reason).toBe('Lead reporting is temporarily unavailable.')
+      expect(reports.lead_funnel.reason).not.toMatch(/vinsolutions|vapi|tavus|central-mcp/i)
     }
   })
 

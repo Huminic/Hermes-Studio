@@ -107,7 +107,9 @@ function buildLeadFromSession(event: TavusEvent): AdfLead {
       normalizeTranscript(props.transcript) ??
       normalizeTranscript(event.transcript) ??
       undefined,
-    vendor: { name: 'tavus', service: props.persona_id ?? props.replica_id ?? '' },
+    // Dealer-facing "Source" (email row + ADF <vendorname>). MUST NOT name a
+    // third-party vendor — use the channel. Internal ids stay in thread metadata.
+    vendor: { name: 'Video call' },
   }
 }
 
@@ -154,7 +156,7 @@ export const Route = createFileRoute('/api/webhooks/tavus/$profile')({
         const handle =
           phone ||
           props.customer_email ||
-          `tavus-${event.conversation_id ?? Date.now()}`
+          `video-${event.conversation_id ?? Date.now()}`
         upsertContact({
           profile,
           display_name: props.customer_name ?? null,
@@ -168,7 +170,7 @@ export const Route = createFileRoute('/api/webhooks/tavus/$profile')({
           domain: 'sales',
           channel: 'video',
           contact_handle: handle,
-          subject: `tavus session · ${(event.conversation_id ?? '').slice(0, 8)}`,
+          subject: props.customer_name ? `Video call · ${props.customer_name}` : 'Video call',
           assigned_agent_id: null,
         })
         const message = appendMessage({
@@ -196,7 +198,7 @@ export const Route = createFileRoute('/api/webhooks/tavus/$profile')({
           profile,
           event: 'inbound_video',
           lead,
-          subjectPrefix: 'Tavus lead',
+          subjectPrefix: 'New video lead',
           cooldownKey: thread.contact_handle,
         })
 

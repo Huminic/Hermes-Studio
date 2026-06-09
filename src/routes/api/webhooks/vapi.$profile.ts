@@ -105,7 +105,9 @@ function buildLeadFromCall(call: VapiCall, event: VapiEvent): AdfLead {
       event.transcript ??
       call.transcript ??
       undefined,
-    vendor: { name: 'vapi', service: call.assistantId ?? '' },
+    // Dealer-facing "Source" (email row + ADF <vendorname>). MUST NOT name a
+    // third-party vendor — use the channel. Internal ids stay in thread metadata.
+    vendor: { name: 'Phone call' },
   }
 }
 
@@ -146,7 +148,7 @@ export const Route = createFileRoute('/api/webhooks/vapi/$profile')({
           })
         }
         const phone = call.customer?.number ?? call.phoneNumber?.number ?? ''
-        const handle = phone || `vapi-${call.id ?? Date.now()}`
+        const handle = phone || `call-${call.id ?? Date.now()}`
         upsertContact({
           profile,
           display_name: call.customer?.name ?? null,
@@ -157,7 +159,7 @@ export const Route = createFileRoute('/api/webhooks/vapi/$profile')({
           domain: 'sales',
           channel: 'voice',
           contact_handle: handle,
-          subject: `vapi call · ${call.assistantId?.slice(0, 8) ?? ''}`,
+          subject: call.customer?.name ? `Phone call · ${call.customer.name}` : 'Phone call',
           assigned_agent_id: null,
         })
         const message = appendMessage({
@@ -192,7 +194,7 @@ export const Route = createFileRoute('/api/webhooks/vapi/$profile')({
           profile,
           event: 'inbound_call',
           lead,
-          subjectPrefix: 'Vapi lead',
+          subjectPrefix: 'New voice lead',
           cooldownKey: thread.contact_handle,
         })
 
