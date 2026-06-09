@@ -206,6 +206,19 @@ describe('GET /widget/dealer/<slug>.js (self-hosted embed bundle)', () => {
     expect(body).not.toContain('unknown store')
   })
 
+  it('forces an https origin for a real host even when the proxy forwards http', async () => {
+    writeStudio(BASE_YAML + '\nunified_widget:\n  enabled: true\n')
+    const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
+    const handler = Route.options.server.handlers.GET
+    // Caddy terminates TLS and forwards http:// internally — the bundle must
+    // still target https so it is not blocked as mixed content on dealer.com.
+    const req = new Request('http://studio.huminic.app/widget/dealer/serra-honda.js')
+    const res = await handler({ params: {}, request: req } as never)
+    const body = await res.text()
+    expect(body).toContain('https://studio.huminic.app')
+    expect(body).not.toContain('http://studio.huminic.app')
+  })
+
   it('serves a harmless no-op for an unknown store', async () => {
     const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
     const handler = Route.options.server.handlers.GET

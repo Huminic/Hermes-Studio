@@ -51,7 +51,15 @@ export const Route = createFileRoute('/widget/dealer/$slug.js')({
         const uw = config.unified_widget
         if (uw.enabled === false) return noop('widget disabled')
 
-        const origin = url.origin
+        // Behind the reverse proxy (Caddy terminates TLS, forwards HTTP), so
+        // request.url is http://. The bundle runs on HTTPS dealer.com pages — an
+        // http:// iframe/fetch would be blocked as mixed content. Honor the
+        // forwarded proto, else assume https for any non-local host.
+        const host = request.headers.get('host') ?? url.host
+        const proto =
+          request.headers.get('x-forwarded-proto') ??
+          (/^(localhost|127\.|0\.0\.0\.0)/.test(host) ? 'http' : 'https')
+        const origin = `${proto}://${host}`
         const cfg = {
           profile: slug,
           origin,
