@@ -193,13 +193,14 @@ describe('GET /widget/dealer/<slug>.js (self-hosted embed bundle)', () => {
     expect(body).not.toContain('p9eb007721f4')
   })
 
-  it('strips a trailing .js if the router leaves it on the slug param', async () => {
+  it('derives the slug from the URL path and strips the .js extension', async () => {
     writeStudio(BASE_YAML + '\nunified_widget:\n  enabled: true\n')
     const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
     const handler = Route.options.server.handlers.GET
+    // The literal-.js route does not populate params.slug at runtime, so the
+    // handler must read the path: /widget/dealer/serra-honda.js → serra-honda.
     const req = new Request('https://studio.huminic.app/widget/dealer/serra-honda.js')
-    // Simulate the router capturing the literal extension in the param.
-    const res = await handler({ params: { slug: `${PROFILE}.js` }, request: req } as never)
+    const res = await handler({ params: {}, request: req } as never)
     const body = await res.text()
     expect(body).toContain('huminic-dealer-widget')
     expect(body).not.toContain('unknown store')
@@ -209,7 +210,7 @@ describe('GET /widget/dealer/<slug>.js (self-hosted embed bundle)', () => {
     const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
     const handler = Route.options.server.handlers.GET
     const req = new Request('https://studio.huminic.app/widget/dealer/no-such.js')
-    const res = await handler({ params: { slug: 'no-such-store' }, request: req } as never)
+    const res = await handler({ params: {}, request: req } as never)
     const body = await res.text()
     expect(body).toContain('unknown store')
     expect(body).not.toContain('huminic-dealer-widget')

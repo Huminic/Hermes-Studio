@@ -32,11 +32,14 @@ function noop(reason: string): Response {
 export const Route = createFileRoute('/widget/dealer/$slug.js')({
   server: {
     handlers: {
-      GET: async ({ params, request }) => {
-        // The route path carries a literal `.js`; depending on the router's
-        // segment parsing the captured param can include it. Strip defensively
-        // so `/widget/dealer/serra-honda.js` resolves the `serra-honda` profile.
-        const slug = params.slug.replace(/\.js$/, '')
+      GET: async ({ request }) => {
+        // The literal-`.js` route matches, but the `$slug` param is NOT reliably
+        // populated at runtime for this pattern (it arrives undefined). Derive the
+        // slug from the URL path instead: `/widget/dealer/serra-honda.js` → `serra-honda`.
+        const url = new URL(request.url)
+        const last = url.pathname.split('/').pop() ?? ''
+        const slug = decodeURIComponent(last).replace(/\.js$/, '')
+        if (!slug) return noop('missing slug')
         let config
         try {
           const r = readStudioConfig(slug)
@@ -48,7 +51,7 @@ export const Route = createFileRoute('/widget/dealer/$slug.js')({
         const uw = config.unified_widget
         if (uw.enabled === false) return noop('widget disabled')
 
-        const origin = new URL(request.url).origin
+        const origin = url.origin
         const cfg = {
           profile: slug,
           origin,
@@ -99,7 +102,9 @@ type EmbedConfig = {
  * public endpoints (CORS-open).
  */
 function buildScript(cfg: EmbedConfig): string {
-  const CFG = JSON.stringify(cfg)
+  // Escape `<` so an operator-set name/subtitle containing `</script>` can never
+  // break out, even if this bundle is ever inlined into HTML (defense-in-depth).
+  const CFG = JSON.stringify(cfg).replace(/</g, '\\u003c')
   return `(function(){
   var CFG = ${CFG};
   var FLAG = '__huminicWidget_' + CFG.profile.replace(/[^a-z0-9]/gi,'_');
