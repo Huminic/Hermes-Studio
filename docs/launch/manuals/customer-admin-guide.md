@@ -141,6 +141,21 @@ The Data tab dim state is intentional. Your account manager flips it on when you
 
 **Channel modes.** Each widget has a `mode` in its frontmatter: `chat`, `voice`, `video`, `form`. Chat mode works for all dealers at launch. Voice (Vapi), video (Tavus), and form modes require per-dealer adapter credentials (`OP-002`); status shows `unconfigured` on the widget row until your account manager provisions credentials.
 
+### The unified storefront widget ("Choose how to connect")
+
+**What it is.** The floating round button in the bottom-right of your **public storefront landing** (`https://studio.huminic.app/p/<your-slug>`). Anyone visiting the page — no login — can click it to open a menu titled "<Store> · Choose how to connect" with up to four ways to reach you:
+
+| Option | What the visitor gets | Where it lands for you |
+|---|---|---|
+| **Web Chat** | Live chat with your sales AI assistant | A chat thread in **Comms → Sales** |
+| **Instant Call Back** | Leaves their name + phone asking you to call back | A **Call-back request** lead in Comms (Sales) **+ a notification email** to your BDC. (No text message is sent — it just alerts you to call them.) |
+| **Contact Form** | Your contact form | A lead in Comms (Sales) **+ a notification email** |
+| **Two-Way Video** | A live face-to-face video session with your AI agent | A video thread in Comms **+ a notification email** |
+
+**Where it works today.** The launcher renders on your Studio-hosted storefront landing (`/p/<your-slug>`). A self-hosted single-tag embed for your own external site (dealer.com) — `<script src=".../widget/dealer/<your-slug>.js">` — is the next step and is **not live yet**; do not advertise it to your site team until your account manager confirms it.
+
+**Configuration.** Which options appear, the accent color, and the video agent are set by your account manager in `studio.yaml` under `unified_widget` (operator-controlled — not customer-editable). At launch, **Two-Way Video is live on serra-honda** (agent Caroline); other stores show Web Chat / Instant Call Back / Contact Form until each store's video agent is mapped. No third-party vendor names ever appear to a visitor — the video option reads "Two-Way Video" / "Face-to-face with <agent>".
+
 ---
 
 ## 6. Data tab

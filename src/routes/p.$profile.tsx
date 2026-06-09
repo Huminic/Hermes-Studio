@@ -9,6 +9,7 @@ import {
   defaultStudioConfig,
   type StudioConfig,
 } from '@/lib/studio-config'
+import { UnifiedWidget } from '@/components/customer-console/unified-widget'
 
 export const Route = createFileRoute('/p/$profile')({
   component: StorefrontLandingRoute,
@@ -162,6 +163,12 @@ function StorefrontLandingRoute() {
       <footer className="border-t border-slate-200 p-4 text-[10px] text-slate-400">
         Powered by Huminic
       </footer>
+
+      <UnifiedWidget
+        profile={profile}
+        personaName={config.branding.persona_name}
+        unified={config.unified_widget}
+      />
     </div>
   )
 }

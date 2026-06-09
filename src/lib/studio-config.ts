@@ -360,6 +360,53 @@ const DashboardCardSchema = z.object({
 
 export type DashboardCard = z.infer<typeof DashboardCardSchema>
 
+/**
+ * Unified storefront widget (the floating circle + dropdown menu on the public
+ * `/p/<profile>` page, ported from Nexxus). One launcher that fans out to up to
+ * four connect options. Display fields (accent/subtitle/channels/agent name) are
+ * PUBLIC — served to unauthenticated storefront visitors. `video_persona_id` is
+ * NOT public: the Two-Way Video session is minted server-side via the broker, so
+ * the persona id never reaches the browser. Absent persona → the video option
+ * degrades to "temporarily unavailable" rather than failing.
+ */
+const UnifiedWidgetChannelsSchema = z
+  .object({
+    chat: z.boolean().optional().default(true),
+    callback: z.boolean().optional().default(true),
+    form: z.boolean().optional().default(true),
+    video: z.boolean().optional().default(true),
+  })
+  .optional()
+  .default({})
+
+const UnifiedWidgetSchema = z
+  .object({
+    /** Master toggle for the floating launcher on the public storefront. */
+    enabled: z.boolean().optional().default(true),
+    /** Header/launcher accent. Nexxus used teal #0d9488 across all stores. */
+    accent: z
+      .string()
+      .regex(/^#[0-9a-fA-F]{6}$/)
+      .optional()
+      .default('#0d9488'),
+    /** Header subtitle under the store name. */
+    subtitle: z.string().optional().default('Choose how to connect'),
+    /** Which of the four connect options appear (in this fixed order). */
+    channels: UnifiedWidgetChannelsSchema,
+    /** Widget slug opened by Web Chat. Defaults to `<profile>-sales-chat`. */
+    chat_slug: z.string().optional(),
+    /** Widget slug opened by Contact Form. Defaults to `<profile>-contact`. */
+    form_slug: z.string().optional(),
+    /** Tavus persona minted for Two-Way Video. Server-side only (never public). */
+    video_persona_id: z.string().optional(),
+    /** Name spoken in "Face-to-face with <name>". Defaults to 'our team'. */
+    video_agent_name: z.string().optional(),
+  })
+  .optional()
+  .default({})
+
+export type UnifiedWidgetConfig = z.infer<typeof UnifiedWidgetSchema>
+
 export const StudioConfigSchema = z.object({
   branding: BrandingSchema,
   menu: MenuSchema,
@@ -375,6 +422,7 @@ export const StudioConfigSchema = z.object({
   notifications: NotificationsSchema,
   channel_credentials: ChannelCredentialsSchema,
   comms: CommsSchema,
+  unified_widget: UnifiedWidgetSchema,
 })
 
 export type StudioConfig = z.infer<typeof StudioConfigSchema>
@@ -470,5 +518,25 @@ export function defaultStudioConfig(profile: string): StudioConfig {
       vin_check_fail_open: false,
       rate_caps: {},
     },
+    unified_widget: {
+      enabled: true,
+      accent: '#0d9488',
+      subtitle: 'Choose how to connect',
+      channels: { chat: true, callback: true, form: true, video: true },
+    },
   }
+}
+
+/**
+ * Public display subset of the unified-widget config — what an UNAUTHENTICATED
+ * storefront visitor may receive. Strips `video_persona_id` (server-side secret;
+ * the Two-Way Video session is minted by the broker, never the browser).
+ */
+export type UnifiedWidgetPublic = Omit<UnifiedWidgetConfig, 'video_persona_id'>
+
+export function publicUnifiedWidget(
+  config: StudioConfig,
+): UnifiedWidgetPublic {
+  const { video_persona_id: _omit, ...rest } = config.unified_widget
+  return rest
 }

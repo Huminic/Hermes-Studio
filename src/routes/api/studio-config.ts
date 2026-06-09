@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { isAuthenticated } from '../../server/auth-middleware'
 import { readStudioConfig } from '../../server/studio-config'
+import { publicUnifiedWidget } from '../../lib/studio-config'
 
 /**
  * GET /api/studio-config?profile=X
@@ -25,9 +26,11 @@ export const Route = createFileRoute('/api/studio-config')({
           if (isAuthenticated(request)) {
             return json(full)
           }
-          // Public subset: branding + menu only. Anything that reveals
-          // agent rosters, federation scopes, autonomous-reply defaults
-          // or widget configuration stays behind auth.
+          // Public subset: branding + menu + the unified-widget DISPLAY config
+          // (the floating storefront launcher must render for anonymous visitors).
+          // `video_persona_id` is stripped — the Two-Way Video session is minted
+          // server-side. Anything that reveals agent rosters, federation scopes,
+          // autonomous-reply defaults or per-mode widget configuration stays behind auth.
           return json({
             config: {
               branding: full.config.branding,
@@ -38,6 +41,7 @@ export const Route = createFileRoute('/api/studio-config')({
               autonomous_reply_defaults: { enabled: false, business_hours_only: false, max_agent_turns: 0, channels: [] },
               federation: { read_scopes: [] },
               lead_notifications: {},
+              unified_widget: publicUnifiedWidget(full.config),
             },
             source: full.source,
           })
