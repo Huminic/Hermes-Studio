@@ -340,12 +340,14 @@ export function WorkspaceShell() {
 
   // Public, unauthenticated surfaces that must render WITHOUT the Studio admin
   // gateway LoginScreen:
-  //   - `/`            the customer store-picker landing (choose a store → sign in)
-  //   - `/p/$profile*` the per-store branded storefront (own customer-admin login)
+  //   - `/stores`      the optional store-picker landing (choose a store → sign in)
+  //   - `/p/$profile*` the per-store branded Storefront / Workspace login
   // Both render their own self-contained chrome. MUST be checked BEFORE the
-  // Studio admin auth gate below, otherwise anonymous visitors get the wrong
-  // (Studio admin) login form instead of the store picker / storefront.
-  if (pathname === '/' || pathname.startsWith('/p/')) {
+  // Studio admin auth gate below. NOTE: `/` is NOT here — it is the Global
+  // Huminic Studio backend root and redirects to /dashboard (Duane's entrypoint
+  // correction); only is_admin reaches it, Workspace sessions are routed to
+  // their own /p/<profile>/chat.
+  if (pathname === '/stores' || pathname.startsWith('/p/')) {
     return (
       <div className="theme-bg theme-text min-h-dvh">
         <ErrorBoundary

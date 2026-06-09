@@ -26,9 +26,9 @@ vi.mock('@tanstack/react-router', () => ({
     ),
 }))
 
-describe('store-picker landing (/)', () => {
+describe('store-picker landing (/stores)', () => {
   it('lists all 6 entities, each linking to its storefront, with the admin contact', async () => {
-    const mod = await import('@/routes/index')
+    const mod = await import('@/routes/stores')
     const Landing = (mod.Route as { component: React.ComponentType }).component
     const { container } = render(<Landing />)
     const txt = container.textContent ?? ''

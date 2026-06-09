@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WidgetsRouteImport } from './routes/widgets'
 import { Route as TerminalRouteImport } from './routes/terminal'
 import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as StoresRouteImport } from './routes/stores'
 import { Route as SkillsRouteImport } from './routes/skills'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SessionHistoryRouteImport } from './routes/session-history'
@@ -205,6 +206,11 @@ const TerminalRoute = TerminalRouteImport.update({
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoresRoute = StoresRouteImport.update({
+  id: '/stores',
+  path: '/stores',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SkillsRoute = SkillsRouteImport.update({
@@ -1150,6 +1156,7 @@ export interface FileRoutesByFullPath {
   '/session-history': typeof SessionHistoryRoute
   '/settings': typeof SettingsRouteWithChildren
   '/skills': typeof SkillsRoute
+  '/stores': typeof StoresRoute
   '/tasks': typeof TasksRoute
   '/terminal': typeof TerminalRoute
   '/widgets': typeof WidgetsRoute
@@ -1333,6 +1340,7 @@ export interface FileRoutesByTo {
   '/reset': typeof ResetRoute
   '/session-history': typeof SessionHistoryRoute
   '/skills': typeof SkillsRoute
+  '/stores': typeof StoresRoute
   '/tasks': typeof TasksRoute
   '/terminal': typeof TerminalRoute
   '/widgets': typeof WidgetsRoute
@@ -1518,6 +1526,7 @@ export interface FileRoutesById {
   '/session-history': typeof SessionHistoryRoute
   '/settings': typeof SettingsRouteWithChildren
   '/skills': typeof SkillsRoute
+  '/stores': typeof StoresRoute
   '/tasks': typeof TasksRoute
   '/terminal': typeof TerminalRoute
   '/widgets': typeof WidgetsRoute
@@ -1704,6 +1713,7 @@ export interface FileRouteTypes {
     | '/session-history'
     | '/settings'
     | '/skills'
+    | '/stores'
     | '/tasks'
     | '/terminal'
     | '/widgets'
@@ -1887,6 +1897,7 @@ export interface FileRouteTypes {
     | '/reset'
     | '/session-history'
     | '/skills'
+    | '/stores'
     | '/tasks'
     | '/terminal'
     | '/widgets'
@@ -2071,6 +2082,7 @@ export interface FileRouteTypes {
     | '/session-history'
     | '/settings'
     | '/skills'
+    | '/stores'
     | '/tasks'
     | '/terminal'
     | '/widgets'
@@ -2256,6 +2268,7 @@ export interface RootRouteChildren {
   SessionHistoryRoute: typeof SessionHistoryRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   SkillsRoute: typeof SkillsRoute
+  StoresRoute: typeof StoresRoute
   TasksRoute: typeof TasksRoute
   TerminalRoute: typeof TerminalRoute
   WidgetsRoute: typeof WidgetsRoute
@@ -2404,6 +2417,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof TasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stores': {
+      id: '/stores'
+      path: '/stores'
+      fullPath: '/stores'
+      preLoaderRoute: typeof StoresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/skills': {
@@ -3936,6 +3956,7 @@ const rootRouteChildren: RootRouteChildren = {
   SessionHistoryRoute: SessionHistoryRoute,
   SettingsRoute: SettingsRouteWithChildren,
   SkillsRoute: SkillsRoute,
+  StoresRoute: StoresRoute,
   TasksRoute: TasksRoute,
   TerminalRoute: TerminalRoute,
   WidgetsRoute: WidgetsRoute,

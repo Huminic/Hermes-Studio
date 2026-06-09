@@ -37,10 +37,21 @@ The system has **three distinct surfaces**. Keep them separate when testing:
 | Surface | What it is | URL | Who gets in |
 |---|---|---|---|
 | **Storefront / Widgets** | Public shopper-facing launcher, embeds, standalone widget/contact pages | `/p/<store>` landing, `/widget/dealer/<store>.js`, `/w/<slug>` | Anyone (public) |
-| **Workspace** | The dealer/staff profile-scoped console (manage AI, inbox, campaigns, etc.) | `/p/<store>/*` (after login) | That store's **customer-admin** login only |
-| **Global Huminic Studio** | The operator/admin back-end (all profiles, system ops). **Not** part of dealer testing. | direct to `/dashboard` (operator only) | **`is_admin` only** |
+| **Workspace** | The dealer/staff profile-scoped console (manage AI, inbox, campaigns, etc.) | `/p/<store>/chat` (after login) | That store's **customer-admin** login only |
+| **Global Huminic Studio** | The operator/admin back-end (all profiles, system ops). **Not** part of dealer testing. | **`https://studio.huminic.app/`** (root) — fallback `/dashboard` | **`is_admin` only** |
 
-**For this test you use the Storefront (no login) and the Workspace (the store logins in the table above).** The store logins are **Workspace-only** — they must **not** be able to reach Global Huminic Studio. If a store login ever lands you in an operator backend listing *many* stores/profiles, that's a security failure — record it. (The `/` root is the **store picker**, not the admin login.)
+**Entry URLs:**
+- **Global Huminic Studio login:** `https://studio.huminic.app/`  *(fallback/direct: `https://studio.huminic.app/dashboard`)*
+- **Workspace logins (the stores you test):**
+  - `https://studio.huminic.app/p/serra-honda/chat`
+  - `https://studio.huminic.app/p/serra-nissan/chat`
+  - `https://studio.huminic.app/p/tony-serra-ford/chat`
+  - `https://studio.huminic.app/p/hyundai-of-columbia/chat`
+  - `https://studio.huminic.app/p/ford-of-columbia/chat`
+  - `https://studio.huminic.app/p/serra-service/chat`
+- Optional store chooser (not the Studio root): `https://studio.huminic.app/stores`
+
+**For this test you use the Storefront (no login) and the Workspace (the store logins in the table above).** The store logins are **Workspace-only** — they must **not** be able to reach Global Huminic Studio. If a store login lands you in an operator backend listing *many* stores/profiles, that's a security failure — record it. The Studio **root `/` is the operator login** (it redirects to the Studio dashboard); a store login that reaches `/` is sent on to its own `/p/<store>/chat`.
 
 ---
 
