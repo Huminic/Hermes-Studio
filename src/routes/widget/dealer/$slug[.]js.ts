@@ -33,7 +33,10 @@ export const Route = createFileRoute('/widget/dealer/$slug.js')({
   server: {
     handlers: {
       GET: async ({ params, request }) => {
-        const slug = params.slug
+        // The route path carries a literal `.js`; depending on the router's
+        // segment parsing the captured param can include it. Strip defensively
+        // so `/widget/dealer/serra-honda.js` resolves the `serra-honda` profile.
+        const slug = params.slug.replace(/\.js$/, '')
         let config
         try {
           const r = readStudioConfig(slug)

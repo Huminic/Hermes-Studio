@@ -306,12 +306,12 @@ export function CustomerDataRenderer(props: {
 
 /** Friendly labels + value resolution for the dashboard-builder sources. */
 const SOURCE_LABELS: Record<string, string> = {
-  calls: 'Calls (Vapi)',
-  video: 'Video (Tavus)',
+  calls: 'Calls',
+  video: 'Video',
   sms: 'Texts (SMS)',
   email: 'Emails',
   chat: 'Web chats',
-  leads: 'Leads (VIN)',
+  leads: 'Leads',
   service: 'Service threads',
   sales: 'Sales threads',
   campaigns: 'Campaigns',
@@ -489,7 +489,7 @@ function BuildYourOwn({
         {msg && <span className="text-xs text-slate-500">{msg}</span>}
       </div>
       <p className="mt-2 text-[11px] text-slate-400">
-        Cards read live from your messaging, calls, video, VIN leads, and
+        Cards read live from your messaging, calls, video, leads, and
         campaigns over the current window.
       </p>
     </Card>

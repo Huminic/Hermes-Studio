@@ -193,6 +193,18 @@ describe('GET /widget/dealer/<slug>.js (self-hosted embed bundle)', () => {
     expect(body).not.toContain('p9eb007721f4')
   })
 
+  it('strips a trailing .js if the router leaves it on the slug param', async () => {
+    writeStudio(BASE_YAML + '\nunified_widget:\n  enabled: true\n')
+    const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
+    const handler = Route.options.server.handlers.GET
+    const req = new Request('https://studio.huminic.app/widget/dealer/serra-honda.js')
+    // Simulate the router capturing the literal extension in the param.
+    const res = await handler({ params: { slug: `${PROFILE}.js` }, request: req } as never)
+    const body = await res.text()
+    expect(body).toContain('huminic-dealer-widget')
+    expect(body).not.toContain('unknown store')
+  })
+
   it('serves a harmless no-op for an unknown store', async () => {
     const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
     const handler = Route.options.server.handlers.GET

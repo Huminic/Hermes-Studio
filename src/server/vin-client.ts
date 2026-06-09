@@ -48,9 +48,9 @@ export function resolveVinOrgId(profile: string, config?: StudioConfig): VinOrgI
   return {
     ok: false,
     unconfigured: true,
-    reason:
-      'VIN org UUID unconfigured for this profile. Set vin.org_id in studio.yaml ' +
-      '(or the VIN_ORG_ID profile env var) to the Nexxus org UUID — NOT the dealerId.',
+    // Dealer-facing-typed (flows into lead_funnel.reason) — keep it generic, no
+    // CRM/vendor/config internals. The detailed cause is for the server log.
+    reason: 'Lead reporting is not enabled for this store yet.',
   }
 }
 

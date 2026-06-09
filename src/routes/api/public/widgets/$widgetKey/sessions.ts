@@ -29,7 +29,7 @@ export const Route = createFileRoute('/api/public/widgets/$widgetKey/sessions')(
           {
             ok: false,
             error:
-              'Session minting is not connected yet. Map this agent to Vapi/Tavus during migration and add server credentials before enabling live sessions.',
+              'Live sessions are not enabled for this agent yet.',
             profile: widget.profile,
             agentId,
             channel,

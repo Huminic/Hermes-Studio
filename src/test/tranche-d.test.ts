@@ -396,7 +396,12 @@ federation:
     )
     if (prevEnvOrg !== undefined) process.env.VIN_ORG_ID = prevEnvOrg
     expect(res.ok).toBe(false)
-    if (!res.ok) expect(res.error).toMatch(/unconfigured/i)
+    // The dealer-facing reason is generic (no CRM/vendor/config internals); the
+    // `unconfigured` flag still distinguishes this from a live failure.
+    if (!res.ok) {
+      expect(res.error).toMatch(/not enabled/i)
+      expect(res.error).not.toMatch(/nexxus|vinsolutions|VIN_ORG_ID/i)
+    }
     // It must NOT have reached the broker with a bad/absent orgId.
     expect(callCentralMcpTool).not.toHaveBeenCalled()
   })
