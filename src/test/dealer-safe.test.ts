@@ -4,6 +4,7 @@ import {
   scrubThreadListItem,
   scrubThreadDetail,
   scrubContact,
+  VENDOR_GUARDRAIL,
 } from '@/server/dealer-safe'
 
 const VENDOR = /tavus|vapi|textmagic|vinsolutions|signalwire|resend/i
@@ -25,6 +26,19 @@ describe('scrubVendorTerms (LC-BLOCKER-004)', () => {
     expect(scrubVendorTerms(null)).toBeNull()
     expect(scrubVendorTerms('+19015550100')).toBe('+19015550100')
     expect(scrubVendorTerms('Phone call · Pat')).toBe('Phone call · Pat')
+  })
+})
+
+describe('VENDOR_GUARDRAIL (LC-BLOCKER-008)', () => {
+  it('instructs the agent to never reveal vendor/tech-stack names, even when baited', () => {
+    expect(VENDOR_GUARDRAIL).toMatch(/never reveal/i)
+    expect(VENDOR_GUARDRAIL).toMatch(/bait/i)
+    expect(VENDOR_GUARDRAIL).toMatch(/powered by Huminic/i)
+    // the don't-list names the banned providers (this lives in the system
+    // prompt only; model OUTPUT is additionally scrubbed by scrubVendorTerms).
+    for (const v of ['Vapi', 'Tavus', 'TextMagic', 'VinSolutions', 'SignalWire', 'Resend']) {
+      expect(VENDOR_GUARDRAIL).toContain(v)
+    }
   })
 })
 

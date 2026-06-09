@@ -34,6 +34,7 @@ import {
   resolveSession,
 } from '../../../server/customer-auth'
 import { requireJsonContentType } from '../../../server/rate-limit'
+import { VENDOR_GUARDRAIL, scrubVendorTerms } from '../../../server/dealer-safe'
 import {
   appendMessage,
   getOrCreateThread,
@@ -87,6 +88,10 @@ export function buildSystemPrompt(opts: {
   wikiContext?: Array<RecallHit>
 }): string {
   const segments: Array<string> = [
+    // LC-BLOCKER-008: vendor-name confidentiality guardrail first (outranks the
+    // wiki/SOUL that follows). Dealer staff is still a dealer-facing surface.
+    VENDOR_GUARDRAIL,
+    ``,
     `# Customer chat context`,
     `Profile: ${opts.profile}`,
     `Agent: ${opts.agentName}`,
@@ -236,7 +241,7 @@ export const Route = createFileRoute('/api/customer/chat')({
                 choices?: Array<{ message?: { content?: string } }>
               }
               if (res.ok && !data.error) {
-                const reply = data.choices?.[0]?.message?.content ?? ''
+                const reply = scrubVendorTerms(data.choices?.[0]?.message?.content ?? '')
                 return { ok: true, reply, via: 'hermes' }
               }
             }
@@ -268,7 +273,7 @@ export const Route = createFileRoute('/api/customer/chat')({
                   error: data.error?.message ?? 'Upstream provider error.',
                 }
               }
-              const reply = data.choices?.[0]?.message?.content ?? ''
+              const reply = scrubVendorTerms(data.choices?.[0]?.message?.content ?? '')
               return { ok: true, reply, via: 'openai-direct' }
             }
             return {

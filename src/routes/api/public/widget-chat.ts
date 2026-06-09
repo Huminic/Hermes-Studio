@@ -10,6 +10,7 @@ import {
   upsertContact,
 } from '../../../server/messaging-hub-store'
 import { notifyNewLead } from '../../../server/lead-notifications'
+import { VENDOR_GUARDRAIL, scrubVendorTerms } from '../../../server/dealer-safe'
 
 const HERMES_URL = process.env.HERMES_API_URL || 'http://hermes-agent:8642'
 
@@ -134,6 +135,10 @@ export const Route = createFileRoute('/api/public/widget-chat')({
           ? readAgentSoul(widget.profile, agentId)
           : null
         const systemPrompt = [
+          // LC-BLOCKER-008: vendor-name confidentiality guardrail FIRST so it
+          // outranks the SOUL/body context that follows.
+          VENDOR_GUARDRAIL,
+          ``,
           `# Widget context`,
           `Profile: ${widget.profile}`,
           `Slug: ${widget.slug}`,
@@ -262,7 +267,9 @@ export const Route = createFileRoute('/api/public/widget-chat')({
               choices?: Array<{ message?: { content?: string } }>
             }
             if (res.ok && !data.error) {
-              const reply = data.choices?.[0]?.message?.content ?? ''
+              // LC-BLOCKER-008 backstop: scrub any vendor term the model emits
+            // before it reaches the visitor OR the Teambox.
+            const reply = scrubVendorTerms(data.choices?.[0]?.message?.content ?? '')
               persistReply(reply, 'hermes')
               return json({ ok: true, reply, via: 'hermes' })
             }
@@ -298,7 +305,9 @@ export const Route = createFileRoute('/api/public/widget-chat')({
                 { status: 502 },
               )
             }
-            const reply = data.choices?.[0]?.message?.content ?? ''
+            // LC-BLOCKER-008 backstop: scrub any vendor term the model emits
+            // before it reaches the visitor OR the Teambox.
+            const reply = scrubVendorTerms(data.choices?.[0]?.message?.content ?? '')
             persistReply(reply, 'openai-direct')
             return json({ ok: true, reply, via: 'openai-direct' })
           }
