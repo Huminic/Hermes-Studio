@@ -12,6 +12,11 @@
  * CORS-open (OPTIONS preflight + ACAO:*) so the self-hosted dealer.com embed can
  * call it cross-origin.
  *
+ * LC-BLOCKER-001: the returned `conversationUrl` is a SAME-ORIGIN wrapper
+ * (`/widget/video-room?c=<id>`), NOT the provider room URL — so no banned vendor
+ * host ever appears in this JSON response or in the public iframe `src`. The
+ * wrapper embeds the real room one frame down on our origin.
+ *
  * Body: { profile }
  * Returns: { ok: true, conversationUrl } | { ok: false, error }
  */
@@ -72,14 +77,30 @@ export const Route = createFileRoute('/api/public/video-session')({
           return reply({ ok: false, error: 'video temporarily unavailable' })
         }
         const data = (r.data ?? {}) as {
+          conversation_id?: string
           conversation_url?: string
           conversationUrl?: string
         }
-        const conversationUrl = data.conversation_url ?? data.conversationUrl
-        if (!conversationUrl) {
-          console.warn(`[video-session] ${profile} mint returned no URL`)
+        const rawUrl = data.conversation_url ?? data.conversationUrl
+        // Resolve an OPAQUE conversation id (no vendor host). Prefer the explicit
+        // id; else take the last path segment of the provider room URL.
+        const lastSeg = rawUrl
+          ? rawUrl.split('?')[0].split('/').filter(Boolean).pop()
+          : undefined
+        const conversationId = data.conversation_id ?? lastSeg
+        if (!conversationId || !/^[A-Za-z0-9_-]{6,64}$/.test(conversationId)) {
+          console.warn(`[video-session] ${profile} mint returned no usable id`)
           return reply({ ok: false, error: 'video temporarily unavailable' })
         }
+        // Return a SAME-ORIGIN wrapper URL — the provider host never leaves the
+        // server. https-forced because the proxy forwards http internally and the
+        // bundle runs on HTTPS dealer.com pages (mixed-content otherwise).
+        const url = new URL(request.url)
+        const host = request.headers.get('host') ?? url.host
+        const proto =
+          request.headers.get('x-forwarded-proto') ??
+          (/^(localhost|127\.|0\.0\.0\.0)/.test(host) ? 'http' : 'https')
+        const conversationUrl = `${proto}://${host}/widget/video-room?c=${conversationId}`
         return reply({ ok: true, conversationUrl })
       },
     },

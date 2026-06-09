@@ -40,6 +40,7 @@ import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as EngagementsIndexRouteImport } from './routes/engagements.index'
 import { Route as CrewsIndexRouteImport } from './routes/crews/index'
 import { Route as ChatIndexRouteImport } from './routes/chat/index'
+import { Route as WidgetVideoRoomRouteImport } from './routes/widget/video-room'
 import { Route as WSlugRouteImport } from './routes/w.$slug'
 import { Route as SettingsProvidersRouteImport } from './routes/settings/providers'
 import { Route as SettingsMcpTokensRouteImport } from './routes/settings/mcp-tokens'
@@ -344,6 +345,11 @@ const CrewsIndexRoute = CrewsIndexRouteImport.update({
 const ChatIndexRoute = ChatIndexRouteImport.update({
   id: '/chat/',
   path: '/chat/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WidgetVideoRoomRoute = WidgetVideoRoomRouteImport.update({
+  id: '/widget/video-room',
+  path: '/widget/video-room',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WSlugRoute = WSlugRouteImport.update({
@@ -1196,6 +1202,7 @@ export interface FileRoutesByFullPath {
   '/settings/mcp-tokens': typeof SettingsMcpTokensRoute
   '/settings/providers': typeof SettingsProvidersRoute
   '/w/$slug': typeof WSlugRoute
+  '/widget/video-room': typeof WidgetVideoRoomRoute
   '/chat/': typeof ChatIndexRoute
   '/crews/': typeof CrewsIndexRoute
   '/engagements/': typeof EngagementsIndexRoute
@@ -1378,6 +1385,7 @@ export interface FileRoutesByTo {
   '/settings/mcp-tokens': typeof SettingsMcpTokensRoute
   '/settings/providers': typeof SettingsProvidersRoute
   '/w/$slug': typeof WSlugRoute
+  '/widget/video-room': typeof WidgetVideoRoomRoute
   '/chat': typeof ChatIndexRoute
   '/crews': typeof CrewsIndexRoute
   '/engagements': typeof EngagementsIndexRoute
@@ -1562,6 +1570,7 @@ export interface FileRoutesById {
   '/settings/mcp-tokens': typeof SettingsMcpTokensRoute
   '/settings/providers': typeof SettingsProvidersRoute
   '/w/$slug': typeof WSlugRoute
+  '/widget/video-room': typeof WidgetVideoRoomRoute
   '/chat/': typeof ChatIndexRoute
   '/crews/': typeof CrewsIndexRoute
   '/engagements/': typeof EngagementsIndexRoute
@@ -1747,6 +1756,7 @@ export interface FileRouteTypes {
     | '/settings/mcp-tokens'
     | '/settings/providers'
     | '/w/$slug'
+    | '/widget/video-room'
     | '/chat/'
     | '/crews/'
     | '/engagements/'
@@ -1929,6 +1939,7 @@ export interface FileRouteTypes {
     | '/settings/mcp-tokens'
     | '/settings/providers'
     | '/w/$slug'
+    | '/widget/video-room'
     | '/chat'
     | '/crews'
     | '/engagements'
@@ -2112,6 +2123,7 @@ export interface FileRouteTypes {
     | '/settings/mcp-tokens'
     | '/settings/providers'
     | '/w/$slug'
+    | '/widget/video-room'
     | '/chat/'
     | '/crews/'
     | '/engagements/'
@@ -2293,6 +2305,7 @@ export interface RootRouteChildren {
   EngagementsCustomerRoute: typeof EngagementsCustomerRoute
   PProfileRoute: typeof PProfileRouteWithChildren
   WSlugRoute: typeof WSlugRoute
+  WidgetVideoRoomRoute: typeof WidgetVideoRoomRoute
   ChatIndexRoute: typeof ChatIndexRoute
   CrewsIndexRoute: typeof CrewsIndexRoute
   EngagementsIndexRoute: typeof EngagementsIndexRoute
@@ -2587,6 +2600,13 @@ declare module '@tanstack/react-router' {
       path: '/chat'
       fullPath: '/chat/'
       preLoaderRoute: typeof ChatIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/widget/video-room': {
+      id: '/widget/video-room'
+      path: '/widget/video-room'
+      fullPath: '/widget/video-room'
+      preLoaderRoute: typeof WidgetVideoRoomRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/w/$slug': {
@@ -3965,6 +3985,7 @@ const rootRouteChildren: RootRouteChildren = {
   EngagementsCustomerRoute: EngagementsCustomerRoute,
   PProfileRoute: PProfileRouteWithChildren,
   WSlugRoute: WSlugRoute,
+  WidgetVideoRoomRoute: WidgetVideoRoomRoute,
   ChatIndexRoute: ChatIndexRoute,
   CrewsIndexRoute: CrewsIndexRoute,
   EngagementsIndexRoute: EngagementsIndexRoute,
