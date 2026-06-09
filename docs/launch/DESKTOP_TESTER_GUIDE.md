@@ -51,6 +51,8 @@ The system has **three distinct surfaces**. Keep them separate when testing:
   - `https://studio.huminic.app/p/serra-service/chat`
 - Optional store chooser (not the Studio root): `https://studio.huminic.app/stores`
 
+> **About `/p/<store>` (bare URL):** this is the store's **Workspace entry / sign-in page** (it reads "This is your dealership Workspace. Sign in to manage:"). It **also hosts the public Storefront widget** (the floating "Choose how to connect" launcher) so you can demo/certify the shopper widget from the same page. The **pure shopper-facing Storefront surfaces** are the self-hosted embed (`/widget/dealer/<store>.js`) and the standalone widgets (`/w/<slug>`). Signing in there takes staff into the Workspace (`/p/<store>/chat` …).
+
 **For this test you use the Storefront (no login) and the Workspace (the store logins in the table above).** The store logins are **Workspace-only** — they must **not** be able to reach Global Huminic Studio. If a store login lands you in an operator backend listing *many* stores/profiles, that's a security failure — record it. The Studio **root `/` is the operator login** (it redirects to the Studio dashboard); a store login that reaches `/` is sent on to its own `/p/<store>/chat`.
 
 ---

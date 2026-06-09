@@ -118,7 +118,7 @@ function StorefrontLandingRoute() {
             Welcome to {config.branding.persona_name}
           </h2>
           <p className="text-sm text-slate-500">
-            This is your customer storefront. Six pages live behind sign-in:
+            This is your dealership Workspace. Sign in to manage:
           </p>
         </section>
 
