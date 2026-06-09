@@ -163,11 +163,11 @@ function buildScript(cfg: EmbedConfig): string {
     var h = '<div style="display:flex;align-items:center;justify-content:space-between;padding:16px;color:#fff;background:'+ACCENT+'">'
       + '<div style="display:flex;align-items:center;gap:8px">'
       + (withBack
-          ? '<button data-act="back" style="background:none;border:0;color:rgba(255,255,255,.85);cursor:pointer;display:flex">'+svg(ICON.back,16,'#fff')+'</button>'
+          ? '<button data-act="back" aria-label="Back" style="background:none;border:0;color:rgba(255,255,255,.85);cursor:pointer;display:flex">'+svg(ICON.back,16,'#fff')+'</button>'
           : '<div style="width:32px;height:32px;border-radius:9999px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center">'+svg(ICON.chat,16,'#fff')+'</div>')
       + '<div><div style="font-size:14px;font-weight:600">'+esc(title)+'</div><div style="font-size:12px;color:rgba(255,255,255,.7)">'+esc(sub)+'</div></div>'
       + '</div>'
-      + '<button data-act="close" style="background:none;border:0;color:rgba(255,255,255,.7);cursor:pointer;display:flex">'+svg(ICON.x,16,'#fff')+'</button>'
+      + '<button data-act="close" aria-label="Close" style="background:none;border:0;color:rgba(255,255,255,.7);cursor:pointer;display:flex">'+svg(ICON.x,16,'#fff')+'</button>'
       + '</div>';
     return h;
   }
@@ -244,7 +244,7 @@ function buildScript(cfg: EmbedConfig): string {
   function startVideo(){
     overlay = document.createElement('div');
     overlay.style.cssText='position:fixed;inset:0;z-index:2147483647;background:#000;display:flex;align-items:center;justify-content:center';
-    overlay.innerHTML='<button data-vclose style="position:absolute;top:16px;right:16px;z-index:10;border:0;border-radius:9999px;background:rgba(255,255,255,.15);color:#fff;padding:8px;cursor:pointer">'+svg(ICON.x,18,'#fff')+'</button><p style="color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:40px">Connecting to video chat…</p>';
+    overlay.innerHTML='<button data-vclose aria-label="End video" style="position:absolute;top:16px;right:16px;z-index:10;border:0;border-radius:9999px;background:rgba(255,255,255,.15);color:#fff;padding:8px;cursor:pointer">'+svg(ICON.x,18,'#fff')+'</button><p style="color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:40px">Connecting to video chat…</p>';
     document.body.appendChild(overlay);
     overlay.querySelector('[data-vclose]').onclick=endVideo;
     fetch(O+'/api/public/video-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({profile:CFG.profile})})
@@ -262,7 +262,7 @@ function buildScript(cfg: EmbedConfig): string {
       })
       .catch(videoError);
   }
-  function videoError(){ if(overlay) overlay.innerHTML='<button data-vclose style="position:absolute;top:16px;right:16px;border:0;border-radius:9999px;background:rgba(255,255,255,.15);color:#fff;padding:8px;cursor:pointer">'+svg(ICON.x,18,'#fff')+'</button><p style="color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:40px">Video chat is temporarily unavailable. Please try Web Chat instead.</p>'; if(overlay){var b=overlay.querySelector('[data-vclose]'); if(b)b.onclick=endVideo;} }
+  function videoError(){ if(overlay) overlay.innerHTML='<button data-vclose aria-label="End video" style="position:absolute;top:16px;right:16px;border:0;border-radius:9999px;background:rgba(255,255,255,.15);color:#fff;padding:8px;cursor:pointer">'+svg(ICON.x,18,'#fff')+'</button><p style="color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:40px">Video chat is temporarily unavailable. Please try Web Chat instead.</p>'; if(overlay){var b=overlay.querySelector('[data-vclose]'); if(b)b.onclick=endVideo;} }
   function endVideo(){ if(overlay){overlay.remove();overlay=null;} }
 })();
 `

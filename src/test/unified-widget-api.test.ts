@@ -194,6 +194,10 @@ describe('GET /widget/dealer/<slug>.js (self-hosted embed bundle)', () => {
     expect(body).toContain('https://studio.huminic.app')
     // The Tavus persona id is a server-side secret — must NOT be in the bundle.
     expect(body).not.toContain('p9eb007721f4')
+    // LC-MINOR-002: icon-only controls expose accessible names (parity w/ React).
+    expect(body).toContain('aria-label="Back"')
+    expect(body).toContain('aria-label="Close"')
+    expect(body).toContain('aria-label="End video"')
   })
 
   it('derives the slug from the URL path and strips the .js extension', async () => {
