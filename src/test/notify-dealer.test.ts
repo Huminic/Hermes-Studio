@@ -90,8 +90,8 @@ describe('notifyDealer — adf-xml profile (Serra)', () => {
     expect(args.to).toBe('leads@serra.example.com')
     // Match Nexxus: subject "New Lead - First Last".
     expect(args.subject).toBe('New Lead - Elliott Test')
-    // Match Nexxus from-address for the DMS feed.
-    expect(args.from).toBe('Nexxus Connect <leads@huminic.ai>')
+    // LC-MAJOR-005: brand flipped to Huminic; sender ADDRESS unchanged for the DMS feed.
+    expect(args.from).toBe('Huminic <leads@huminic.ai>')
     // Body text is the raw ADF-XML and must round-trip through the parser.
     const reparsed = parseAdfXml(args.text)
     expect(reparsed).not.toBeNull()
@@ -133,7 +133,7 @@ describe('notifyDealer — email profile (Columbia / default)', () => {
     expect(args.html).toContain('Ford of Columbia')
     expect(args.html).toContain('Elliott Test')
     expect(args.html).toContain('+15555550100')
-    expect(args.html).toContain('Powered by Nexxus AI Platform')
+    expect(args.html).toContain('Powered by Huminic')
   })
 
   it('defaults to email format when notifications block is absent', async () => {
@@ -267,7 +267,7 @@ describe('renderDealerNotificationEmail — pure renderer', () => {
     expect(out.html).toContain('+15555550100')
     // Footer.
     expect(out.html).toContain('Questions or issues?')
-    expect(out.html).toContain('Powered by Nexxus AI Platform')
+    expect(out.html).toContain('Powered by Huminic')
     expect(out.html).toContain('support@huminic.ai')
     // No ADF attachment on the card.
     expect(out.attachments).toBeUndefined()

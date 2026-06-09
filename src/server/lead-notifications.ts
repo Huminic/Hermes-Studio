@@ -32,22 +32,21 @@ export type LeadNotificationResult = {
 }
 
 // ---------------------------------------------------------------------------
-// BRAND CONSTANTS — brand-flip points (Nexxus → Huminic) for later.
+// BRAND CONSTANTS — flipped Nexxus → Huminic at launch (LC-MAJOR-005).
 //
-// These default to the CURRENT Nexxus production values so the email Studio
-// sends is byte-for-byte the same look as what Nexxus sends today. When the
-// brand flips, change these four (and the from-name) in one place; the render
-// structure stays identical.
-//   - notificationService.ts shared HTML template footer:
-//       "Powered by Nexxus AI Platform", support@huminic.ai
-//   - webhooks.ts lead email gradient: #667eea → #764ba2 (voice lead)
-//   - webhooks.ts ADF email: from 'Nexxus Connect <leads@huminic.ai>'
+// These previously defaulted to the legacy Nexxus production values so the
+// transition email matched the old system byte-for-byte. At launch cert the
+// brand is flipped to Huminic to match the storefront ("Powered by Huminic")
+// and every other customer-facing surface. Only the brand NAME changes — the
+// sender ADDRESS (leads@huminic.ai) and the render structure are unchanged, so
+// DMS routing/filtering keyed on the address is unaffected. The ADF XML body
+// (<vendorname> = the channel) was already vendor-clean.
 // ---------------------------------------------------------------------------
 
-/** ADF lead email from-address (matches webhooks.ts Serra/DMS feed). */
-const BRAND_ADF_FROM = 'Nexxus Connect <leads@huminic.ai>'
-/** Footer "Powered by …" line (matches notificationService.ts template). */
-const BRAND_PLATFORM_NAME = 'Nexxus AI Platform'
+/** ADF lead email from-name. Address unchanged (leads@huminic.ai) for DMS routing. */
+const BRAND_ADF_FROM = 'Huminic <leads@huminic.ai>'
+/** Footer "Powered by …" line — matches the storefront "Powered by Huminic". */
+const BRAND_PLATFORM_NAME = 'Huminic'
 /** Footer support contact (matches SUPPORT_EMAIL default). */
 const BRAND_SUPPORT_EMAIL = 'support@huminic.ai'
 /** Card header gradient (matches the voice-lead gradient in webhooks.ts). */
