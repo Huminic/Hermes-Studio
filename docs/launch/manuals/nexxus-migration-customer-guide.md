@@ -108,7 +108,7 @@ Before your account manager runs the consultative pass:
 
 1. **Inventory your active Nexxus capabilities.** Which agents do you actually use? Which campaigns? Which inbound channels? Which CRM integrations? Write a short list — your account manager will ask.
 2. **Decide your cutover sequence.** All at once OR one channel at a time? Most dealers do one channel at a time (start with SMS, then add voice, then add video). Faster rollback if something goes wrong.
-3. **Gather your channel credentials.** TextMagic API key, Vapi assistant config, Tavus persona ids, Resend domain verification. Your account manager will need these to provision your Huminic adapters (`OP-002`).
+3. **Gather your channel credentials.** SMS service API keys, voice assistant configuration, video service IDs, and email domain verification. Your account manager will need these to provision your Huminic adapters (`OP-002`).
 4. **Identify your power users.** Who will be your dealership's customer-admin on Huminic? At launch only one user per dealership profile (`GAP-CUSTOMER-INVITE-001`). Pick the person who will own the Huminic surface.
 5. **Park any in-flight Nexxus customizations.** If your dealership was mid-rollout of a Nexxus customization, finish or abandon it before cutover. The consultative engagement assumes a stable starting state.
 
@@ -144,8 +144,8 @@ Once gates approved:
 
 Per channel, the procedure is:
 
-1. **Provision the adapter** — your account manager sets the per-dealer real credentials in Coolify env vars + redeploys.
-2. **Test inbound.** Send yourself a test inbound (an SMS to your TextMagic number, a Vapi test call, etc.). Verify it lands in your Comms tab.
+1. **Provision the adapter** — your account manager sets the per-dealer real credentials in the system configuration + redeploys.
+2. **Test inbound.** Send yourself a test inbound (an SMS to your phone number, a test call, etc.). Verify it lands in your Comms tab.
 3. **Test outbound.** Send yourself a test outbound from the Comms composer. Verify it reaches you on the channel.
 4. **Configure agent subscriptions.** Decide which agents handle inbound on this channel autonomously vs. monitor-only. Subscription rules live per thread + per channel.
 5. **Update your forwarding** (if applicable). If you had Nexxus forwarding inbound from a third party (a lead provider, a missed-call forwarder), update the forward target to point at your Huminic adapter endpoint.
@@ -173,7 +173,7 @@ You can run with both running for a period. The two systems do NOT cross-sync (n
 
 Most likely cause: adapter credential issue or webhook misconfiguration.
 
-**Action.** Park the channel — turn off the forwarding from third-party providers. Your inbound stays at Nexxus until the issue is resolved. Tell your account manager; check `/audit` together.
+**Action.** Park the channel — turn off the forwarding from third-party services. Your inbound stays at Nexxus until the issue is resolved. Tell your account manager; check `/audit` together.
 
 ### You realize an agent persona is wrong after first 24 hours
 

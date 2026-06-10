@@ -2,7 +2,7 @@
 
 **Audience.** A dealer principal, GM, or designated staff member with `is_customer_admin: true` on your dealership's profile. You log in at `https://studio.huminic.app/p/<your-slug>/` — not at the bare Studio URL.
 
-**What you can do.** Hold conversations with your dealership's AI agents (Chat tab), edit your wiki within governed bounds (Knowledge tab), manage your widget embeds (Tools tab), reply to inbound customer messages across SMS/email/voice/video (Comms tab), schedule service campaigns (Campaigns tab). The Data tab is disabled at launch — your data is being indexed, but the customer-facing dashboards are not yet built.
+**What you can do.** Hold conversations with your dealership's AI agents (Chat tab), edit your wiki within governed bounds (Knowledge tab), manage your widget embeds (Tools tab), view and build custom dashboards (Data tab), reply to inbound customer messages across SMS/email/voice/video (Comms tab), schedule service campaigns (Campaigns tab).
 
 **What you can't do.** Touch other dealers' data. Edit your canonical knowledge directly (canon updates go through your account manager). Send outbound to recipients outside your allowlist. Approve your own readiness gates on engagements.
 
@@ -12,13 +12,14 @@
 
 ```mermaid
 flowchart TD
-    L[Login at /p/your-slug/]:::ok --> H[Storefront home: 6-tab nav]:::ok
-    H --> C[Chat: talk to your agents]:::ok
+    L[Login at /p/your-slug/]:::ok --> H[Workspace home: 7-tab nav]:::ok
+    H --> C[Agents: talk to your agents]:::ok
     H --> K[Knowledge: edit your wiki]:::ok
-    H --> T[Tools: widget embed + edit]:::ok
-    H --> CO[Comms: inbox SMS/email/voice/video]:::partial
+    H --> T[Widgets: widget embed + edit]:::ok
+    H --> CO[Teambox: inbox SMS/email/voice/video]:::partial
     H --> CP[Campaigns: schedule Service sends]:::partial
-    H --> D[Data: DISABLED at launch]:::gap
+    H --> D[Data: dashboards + custom cards]:::ok
+    H --> N[Notifications: configure alerts]:::ok
 
     K -->|Save draft| KSG[KSG gate]:::ok
     KSG -->|Approved| KD[draft saved]:::ok
@@ -56,27 +57,26 @@ flowchart TD
 
 ---
 
-## 2. The 6 tabs
+## 2. The 7 tabs
 
-After login, the storefront shell renders a top nav with up to 6 tabs. Which tabs are visible depends on your `studio.yaml` menu visibility flags (your account manager set these during provisioning). At launch all 10 dealer storefronts have:
+After login, the Workspace shell renders a left nav with 7 tabs. Which tabs are visible depends on your `studio.yaml` menu visibility flags (your account manager set these during provisioning). At launch all dealer Workspaces have:
 
-- **Chat** — visible
+- **Agents** (Chat) — visible
 - **Knowledge** — visible
-- **Tools** — visible (including the Widget sub-page)
-- **Data** — **disabled at launch** per SRS-D3 (data tile is dimmed; the brain.db data is being collected but the dashboard renderer is post-launch)
-- **Comms** — visible
+- **Widgets** (Tools) — visible
+- **Data** — visible with dashboards and custom dashboard builder
+- **Teambox** (Comms) — visible
 - **Campaigns** — visible (Service sub-page only per operator decision 2026-05-29)
-
-The Data tab dim state is intentional. Your account manager flips it on when your data dashboard is ready.
+- **Notifications** — visible
 
 ---
 
-## 3. Chat tab
+## 3. Agents tab
 
 **What it does.** Lets you hold a multi-turn conversation with any agent on your dealership's roster.
 
 **Click path.**
-1. Click "Chat" in the top nav.
+1. Click "Agents" in the left nav.
 2. The right pane shows an agent picker — a list of your dealership's agents pulled from `<your-slug>/governance/agents/*.md`. Each row shows: agent name, role one-liner, channel persona.
 3. Click an agent → new session opens. The chat input is at the bottom; the agent's first message is its greeting from its `chat.md` persona fragment.
 4. Type a question → Enter. Conversation persists in messaging-hub as `channel: chat`, `domain: chat`.
@@ -95,7 +95,7 @@ The Data tab dim state is intentional. Your account manager flips it on when you
 - `knowledge/inbox/` — your scratch space; nothing is canon until you promote it.
 - `knowledge/drafts/` — works-in-progress.
 - `knowledge/published/` — your dealership's canonical pages. Edits here require gate approval.
-- `knowledge/widgets/` — widget config files; also editable via the Tools/Widget sub-page.
+- `knowledge/widgets/` — widget config files; also editable via the Widgets sub-page.
 
 **What you cannot edit.**
 - `canon/` — Huminic-the-company's canonical knowledge. Read-only on your path.
@@ -103,7 +103,7 @@ The Data tab dim state is intentional. Your account manager flips it on when you
 - `archive/`, `.git`, `db` — system paths.
 
 **Click path.**
-1. Click "Knowledge" in the top nav.
+1. Click "Knowledge" in the left nav.
 2. Tree-view of your editable paths in the left pane.
 3. Click a markdown file → editor opens on the right. Frontmatter shows as a structured panel above the body.
 4. Edit body and/or frontmatter → "Save".
@@ -124,13 +124,13 @@ The Data tab dim state is intentional. Your account manager flips it on when you
 
 ---
 
-## 5. Tools tab — Widget sub-page
+## 5. Widgets tab
 
 **What it does.** Lets you see your widget embeds, copy the snippet for your site, and edit greeting/agent-assignment/color.
 
 **Click path.**
-1. Click "Tools" in the top nav.
-2. Sub-nav: "Widget" (always visible) + "Consult" (huminic profile only — flips on if `studio.yaml.tools_widget.consult: true`).
+1. Click "Widgets" in the left nav.
+2. Sub-nav: "Widget" (always visible) + "Consult" (huminic profile only — flips on if `studio.yaml.widgets.consult: true`).
 3. Widget sub-page lists each widget you own: name, status (`ready` / `missing-file` / `misconfigured`), live preview iframe, embed snippet, edit form.
 4. Click a widget row → edit form: greeting, accent color, agent assignment.
 5. "Save" → KSG runs (same rules as Knowledge tab) → writes back to `knowledge/widgets/<slug>.md`.
@@ -139,39 +139,45 @@ The Data tab dim state is intentional. Your account manager flips it on when you
 
 **Public widget URL.** Each widget has a public URL: `https://studio.huminic.app/w/<widget-slug>`. Test it in an incognito window — should render without authentication.
 
-**Channel modes.** Each widget has a `mode` in its frontmatter: `chat`, `voice`, `video`, `form`. Chat mode works for all dealers at launch. Voice (Vapi), video (Tavus), and form modes require per-dealer adapter credentials (`OP-002`); status shows `unconfigured` on the widget row until your account manager provisions credentials.
+**Channel modes.** Each widget has a `mode` in its frontmatter: `chat`, `voice`, `video`, `form`. Chat mode works for all dealers at launch. Voice, video, and form modes require per-dealer adapter credentials (`OP-002`); status shows `unconfigured` on the widget row until your account manager provisions credentials.
 
-### The unified storefront widget ("Choose how to connect")
+### The unified widget ("Choose how to connect")
 
-**What it is.** The floating round button in the bottom-right of your **public storefront landing** (`https://studio.huminic.app/p/<your-slug>`). Anyone visiting the page — no login — can click it to open a menu titled "<Store> · Choose how to connect" with up to four ways to reach you:
+**What it is.** The floating round button that can be embedded on your public website. Anyone visiting the page — no login — can click it to open a menu titled "<Store> · Choose how to connect" with up to four ways to reach you:
 
 | Option | What the visitor gets | Where it lands for you |
 |---|---|---|
-| **Web Chat** | Live chat with your sales AI assistant | A chat thread in **Comms → Sales** |
-| **Instant Call Back** | Leaves their name + phone asking you to call back | A **Call-back request** lead in Comms (Sales) **+ a notification email** to your BDC. (No text message is sent — it just alerts you to call them.) |
-| **Contact Form** | Your contact form | A lead in Comms (Sales) **+ a notification email** |
-| **Two-Way Video** | A live face-to-face video session with your AI agent | A video thread in Comms **+ a notification email** |
+| **Web Chat** | Live chat with your sales AI assistant | A chat thread in **Teambox → Sales** |
+| **Instant Call Back** | Leaves their name + phone asking you to call back | A **Call-back request** lead in Teambox (Sales) **+ a notification email** to your BDC. (No text message is sent — it just alerts you to call them.) |
+| **Contact Form** | Your contact form | A lead in Teambox (Sales) **+ a notification email** |
+| **Two-Way Video** | A live face-to-face video session with your AI agent | A video thread in Teambox **+ a notification email** |
 
-**Where it works.** Two places: (1) your Studio storefront landing (`/p/<your-slug>`), and (2) **self-hosted on your own external site (dealer.com)** via one script tag — `<script async src="https://studio.huminic.app/widget/dealer/<your-slug>.js"></script>`. The full per-store URL list is in `docs/launch/WIDGET_URLS.md`. The path matches the old Nexxus path, so existing embeds keep working after cutover.
+**Where it works.** Self-hosted on your own external site (dealer.com or similar) via one script tag — `<script async src="https://studio.huminic.app/widget/dealer/<your-slug>.js"></script>`. The full per-store URL list is in `docs/launch/WIDGET_URLS.md`.
 
-**Configuration.** Which options appear, the accent color, and the video agent are set by your account manager in `studio.yaml` under `unified_widget` (operator-controlled — not customer-editable). **Two-Way Video is live on all five dealer storefronts** (agent Caroline). No third-party vendor names ever appear to a visitor — the video option reads "Two-Way Video" / "Face-to-face with <agent>".
+**Configuration.** Which options appear, the accent color, and the video agent are set by your account manager in `studio.yaml` under `unified_widget` (operator-controlled — not customer-editable). **Two-Way Video is live on all dealer widgets** (agent Caroline). Channel options use customer-friendly language like "Web Chat", "Instant Call Back", "Contact Form", and "Two-Way Video".
 
 ---
 
 ## 6. Data tab
 
-**Disabled at launch.** The tile is dimmed and clicking does nothing. Your data IS being indexed in your Brain (per-profile sqlite at `<your-slug>/brain/brain.db`); the dashboard renderer is post-launch.
+**What it does.** Shows dashboards for your dealership's metrics and activity. You can view pre-built dashboards and create custom dashboard cards using the dashboard builder.
 
-**Workaround at launch.** If you need a one-off data lookup, ask your account manager — they can query via `mcp_rollup_query` or the brain MCP tool on your behalf.
+**Click path.**
+1. Click "Data" in the left nav.
+2. View available dashboards showing your metrics, leads, campaigns, and activity.
+3. Use the custom dashboard builder to add, configure, and restore custom data cards.
+4. Cards persist to your Brain and are available across sessions.
+
+**Custom dashboards.** The dashboard builder allows you to create custom data cards from available sources. These cards are stored in your dealership's Brain database and can be added or restored via the dashboard API.
 
 ---
 
-## 7. Comms tab
+## 7. Teambox tab
 
 **What it does.** Shows your inbound + outbound messages across all channels in a unified inbox. Split into Sales and Service segments per `domain` tag.
 
 **Click path.**
-1. Click "Comms" in the top nav.
+1. Click "Teambox" in the left nav.
 2. Three-column layout: segment switcher (Sales | Service) — thread list — thread detail + composer.
 3. Click a thread → detail opens. Each message shows a channel chip (📧 email, 💬 SMS, 📞 voice, 🎥 video) + the contact card + assigned-agent badge (if a runtime agent is on the thread).
 4. Type a reply in the composer → pick reply channel → "Send". Comms substrate enforces rate-cap + allowlist, then dispatches via the right adapter.
@@ -182,9 +188,9 @@ The Data tab dim state is intentional. Your account manager flips it on when you
 
 **Per-customer real credentials.**
 
-> **Gap.** `OP-002` — until your account manager provisions your real TextMagic / Vapi / Tavus / Resend credentials, outbound dispatch returns `unconfigured` on those channels. You'll see the failure in the audit log + a status badge on the thread.
+> **Gap.** `OP-002` — until your account manager provisions your real SMS, voice, video, and email service credentials, outbound dispatch returns `unconfigured` on those channels. You'll see the failure in the audit log + a status badge on the thread.
 
-**ADF email inbound.** If your dealership receives leads as ADF-formatted email (e.g., from a third-party lead provider), the Comms substrate parses ADF automatically and tags the thread `channel: email-adf`, `domain: sales`, with `lead_meta` extracted (customer name, vehicle of interest, trade, etc.). You'll see the parsed fields inline on the inbound message.
+**ADF email inbound.** If your dealership receives leads as ADF-formatted email from a third-party lead provider, the Teambox system parses ADF automatically and tags the thread `channel: email-adf`, `domain: sales`, with `lead_meta` extracted (customer name, vehicle of interest, trade, etc.). You'll see the parsed fields inline on the inbound message.
 
 ---
 
@@ -192,10 +198,10 @@ The Data tab dim state is intentional. Your account manager flips it on when you
 
 **Scope.** Service campaigns only at launch (per operator decision 2026-05-29 — Sales campaigns dropped from launch scope).
 
-**What you can do.** Build an audience from your contacts, pick a Service template (Service Recall, Service Due, Follow-up Lead), schedule the send, watch deliveries land in Comms as replies.
+**What you can do.** Build an audience from your contacts, pick a Service template (Service Recall, Service Due, Follow-up Lead), schedule the send, watch deliveries land in Teambox as replies.
 
 **Click path.**
-1. Click "Campaigns" in the top nav.
+1. Click "Campaigns" in the left nav.
 2. Campaign list view (left) + builder (right).
 3. "New campaign" → pick template → builder opens.
 4. Build audience: simple DSL filters (channel = SMS, last contact > 90 days, etc.).
@@ -207,7 +213,20 @@ The Data tab dim state is intentional. Your account manager flips it on when you
 
 ---
 
-## 9. Failure & recovery for the customer-admin
+## 9. Notifications tab
+
+**What it does.** Configure who gets alerted when specific events occur — new leads, inbound calls, Guardian conditions, etc.
+
+**Click path.**
+1. Click "Notifications" in the left nav.
+2. View existing notification rules and their recipients.
+3. Add or edit notification routes to map events to recipients + channels.
+
+**Notification channels.** Email (plain or ADF-XML format), SMS (where configured), internal dashboard alerts.
+
+---
+
+## 10. Failure & recovery for the customer-admin
 
 ### KSG blocks a save you thought was valid
 
@@ -216,7 +235,7 @@ Read the verdict text — it names the rule that fired. Common cases:
 - **canonical-frozen** → the file has `status: canonical` frontmatter. You can't overwrite it. Ask your account manager to update canon.
 - **missing-frontmatter** → add `type`, `status`, `title` to the frontmatter block at the top.
 
-### Send failure on outbound
+### Send failure on outbound (Teambox)
 
 Check the thread for a status badge (`failed`, `unconfigured`, `rate_cap`, `allowlist_denied`).
 - `unconfigured` → adapter credentials not provisioned. Tell your account manager (`OP-002`).
@@ -232,18 +251,18 @@ Tokens are valid 15 minutes. Request a new one — POST `/api/auth/reset-request
 
 You saved a draft + later it looks like your changes are missing. Check git history via your account manager — every save is committed to the profile's git repo. Recover the lost content if needed; talk to account manager about coordination.
 
-### Storefront not rendering correctly (brand wrong, tiles wrong)
+### Workspace not rendering correctly (brand wrong, tiles wrong)
 
 Likely a `studio.yaml` schema fallback like P-FIX-003. Ask your account manager to verify your `studio.yaml` uses `branding.persona_name` (not `brand.display_name`) and your menu visibility flags are set correctly. Fix is on the production volume + a redeploy.
 
 ---
 
-## 10. Cross-references
+## 11. Cross-references
 
 - Workflow ids covered: `WF-CA-001` through `WF-CA-008`, plus `WF-F&R-002`, `WF-F&R-005`.
 - Companion: `studio-admin-guide.md` (your account manager's side).
 - Public widget URLs: `https://studio.huminic.app/w/<widget-slug>`.
-- Storefront landing: `https://studio.huminic.app/p/<your-slug>/`.
+- Workspace entry: `https://studio.huminic.app/p/<your-slug>/`.
 
 ---
 

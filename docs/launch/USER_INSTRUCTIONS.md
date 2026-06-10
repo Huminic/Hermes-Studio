@@ -3,13 +3,13 @@
 _What changed from Nexxus, and how to use the new system. Plain-language; for BDC/sales/service staff and for validation._
 
 ## 1. Getting in
-1. Go to the platform URL (test: **https://studio.huminic.app/**; live URL after cutover).
-2. You'll land on a **store picker** — a page of store cards. **Click your store.**
-3. Sign in with the username + password your administrator gave you.
-4. No login? Call or text the administrator at **412.654.6500**.
-5. One login = one store. Need another store? Ask the administrator (per-user multi-store access comes later).
+1. Go directly to your store's Workspace URL: **https://studio.huminic.app/p/your-store** (your administrator will provide your specific URL).
+   - OR use the Global Studio at **https://studio.huminic.app/** and navigate to the store chooser at `/stores` if needed.
+2. Sign in with the username + password your administrator gave you.
+3. No login? Call or text the administrator at **412.654.6500**.
+4. One login = one store. Need another store? Ask the administrator (per-user multi-store access comes later).
 
-> **Change from Nexxus:** there's now a store-picker front door, and each store is its own workspace. You only see your store's data.
+> **Change from Nexxus:** Each store is now its own Workspace. You only see your store's data.
 
 ## 2. The workspace — 7 tabs (left nav)
 | Tab | What it's for |
@@ -23,7 +23,7 @@ _What changed from Nexxus, and how to use the new system. Plain-language; for BD
 | **Notifications** | Configure **who gets alerted, and when** — map an event (new lead, inbound call, a Guardian condition) to recipients + channel. |
 
 ## 3. How leads flow now
-- A customer texts, calls (Vapi), does a video chat (Tavus), or fills a website form → it lands as a **conversation in Teambox** under Sales or Service.
+- A customer texts, calls, does a video chat, or fills a website form → it lands as a **conversation in Teambox** under Sales or Service.
 - The right people get a **notification** (Serra sales = ADF-XML lead email into the CRM; Service + Columbia = plain email) per the **Notifications** settings.
 - Your AI agent can **reply automatically** (two-way) on text — or a human can **take over** the thread at any time.
 - A built-in **4-hour anti-spam window** means repeat contact from the same person inside 4h won't re-alert.

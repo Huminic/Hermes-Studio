@@ -1,25 +1,26 @@
 # Critical URLs & Logins — 6-Entity Launch (test deployment)
 
 **Base:** https://studio.huminic.app  (test URL; DNS flip to the live host is the operator's step)
-**Interim login (all 6):** password `HuminicLaunch2026` — operator rotates at go-live.
+**Interim login (all 6):** password `De@ler$ucce$$2026` — operator rotates at go-live.
 
 ## Public entry
 | What | URL |
 |------|-----|
-| Store-picker landing (customers start here) | https://studio.huminic.app/ |
-| Studio admin (operator) | https://studio.huminic.app/chat |
+| Global Huminic Studio (operator) | https://studio.huminic.app/ |
+| Global Studio Dashboard | https://studio.huminic.app/dashboard |
+| Store chooser (optional) | https://studio.huminic.app/stores |
 
-## Per-store storefronts + logins
-| Store | Storefront | Username | Notif format |
+## Per-store Workspaces + logins
+| Store | Workspace Entry | Username | Notif format |
 |-------|-----------|----------|--------------|
-| Serra Honda | /p/serra-honda | serra-honda-admin@huminic.dev | ADF-XML |
-| **Serra Service** *(new 6th)* | /p/serra-service | serra-service-admin@huminic.dev | plain email |
-| Serra Nissan | /p/serra-nissan | serra-nissan-admin@huminic.dev | ADF-XML |
-| Tony Serra Ford | /p/tony-serra-ford | tony-serra-ford-admin@huminic.dev | ADF-XML |
-| Hyundai of Columbia | /p/hyundai-of-columbia | hyundai-of-columbia-admin@huminic.dev | plain email |
-| Ford of Columbia | /p/ford-of-columbia | ford-of-columbia-admin@huminic.dev | plain email |
+| Serra Honda | /p/serra-honda | serra-honda-admin | ADF-XML |
+| **Serra Service** *(new 6th)* | /p/serra-service | serra-service-admin | plain email |
+| Serra Nissan | /p/serra-nissan | serra-nissan-admin | ADF-XML |
+| Tony Serra Ford | /p/tony-serra-ford | tony-serra-ford-admin | ADF-XML |
+| Hyundai of Columbia | /p/hyundai-of-columbia | hyundai-of-columbia-admin | plain email |
+| Ford of Columbia | /p/ford-of-columbia | ford-of-columbia-admin | plain email |
 
-Each storefront has 7 tabs: `/p/<store>/{chat,knowledge,tools,data,comms,campaigns,notifications}`
+Each Workspace has 7 tabs: `/p/<store>/{chat,knowledge,tools,data,comms,campaigns,notifications}`
 (labelled Agents · Knowledge · Widgets · Data · Teambox · Campaigns · Notifications).
 
 ## Widgets (embed)

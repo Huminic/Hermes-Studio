@@ -58,8 +58,8 @@ describe('/api/customer/widgets', () => {
     const form = body.widgets.find((w) => w.slug === 'lead-form')
     expect(hero?.status).toBe('ready')
     expect(form?.status).toBe('missing-file')
-    // Single-ID embed (WS-7): one snippet carrying ?id=<slug>.
-    expect(hero?.embed_snippet).toContain('nexxus-widget.min.js?id=hero-chat')
+    // Unified dealer embed snippet uses current Huminic path
+    expect(hero?.embed_snippet).toContain('/widget/dealer/huminic.js')
     // D-06: the absolute server filePath must NEVER reach the customer client.
     for (const w of body.widgets as Array<Record<string, unknown>>) {
       expect(w.filePath).toBeUndefined()

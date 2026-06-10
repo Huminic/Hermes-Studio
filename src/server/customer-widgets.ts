@@ -96,12 +96,11 @@ function originHint(): string {
   return process.env.STUDIO_PUBLIC_ORIGIN ?? 'https://studio.huminic.app'
 }
 
-function buildEmbedSnippet(slug: string): string {
+function buildEmbedSnippet(slug: string, profile: string): string {
   const origin = originHint()
-  // Single-ID embed (WS-7): one snippet, one id. The id IS the slug. The
-  // minified bundle reads ?id=<slug> and resolves all config from
-  // /api/public/widget-config/<slug>. No domain key, no per-dealer script.
-  return `<script async src="${origin}/nexxus-widget.min.js?id=${encodeURIComponent(slug)}"></script>`
+  // Unified dealer embed snippet: uses current Huminic path
+  // The profile parameter is passed from the calling context
+  return `<script async src="${origin}/widget/dealer/${encodeURIComponent(profile)}.js"></script>`
 }
 
 function buildPreviewUrl(slug: string): string {
@@ -155,7 +154,7 @@ export function listCustomerWidgets(profile: string): {
       greeting,
       title,
       body,
-      embed_snippet: buildEmbedSnippet(decl.slug),
+      embed_snippet: buildEmbedSnippet(decl.slug, profile),
       preview_url: buildPreviewUrl(decl.slug),
     })
   }
