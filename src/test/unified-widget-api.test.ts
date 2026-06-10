@@ -133,10 +133,9 @@ describe('POST /api/public/video-session', () => {
     const res = await Route.options.server.handlers.POST({ request: req } as never)
     const body = (await res.json()) as { ok: boolean; conversationUrl?: string }
     expect(body.ok).toBe(true)
-    // LC-BLOCKER-001: response carries a SAME-ORIGIN wrapper URL (opaque id),
-    // never the provider room host.
-    expect(body.conversationUrl).toContain('/widget/video-room?c=abc123')
-    expect(body.conversationUrl).not.toMatch(/tavus|daily/i)
+    // Returns the live room URL directly (simple handoff; the room is grey-label,
+    // its URL may show — only dealer-facing TEXT must be vendor-free).
+    expect(body.conversationUrl).toBe('https://tavus.daily.co/abc123')
     // Persona resolved server-side and passed to the broker tool.
     expect(mcpSpy).toHaveBeenCalledTimes(1)
     const [tool, args] = mcpSpy.mock.calls[0] as [
@@ -239,36 +238,6 @@ describe('GET /widget/dealer/<slug>.js (self-hosted embed bundle)', () => {
     const body = await res.text()
     expect(body).toContain('unknown store')
     expect(body).not.toContain('huminic-dealer-widget')
-  })
-})
-
-describe('GET /widget/video-room (same-origin video wrapper — LC-BLOCKER-001)', () => {
-  it('embeds the room one frame down for a valid opaque id', async () => {
-    const { Route } = await import('@/routes/widget/video-room')
-    const handler = Route.options.server.handlers.GET
-    const req = new Request('https://studio.huminic.app/widget/video-room?c=c7d8eaae2dd23460')
-    const res = await handler({ request: req } as never)
-    expect(res.headers.get('Content-Type')).toContain('text/html')
-    // Must be framable by the storefront + any dealer.com page.
-    expect(res.headers.get('Content-Security-Policy')).toBe('frame-ancestors *')
-    const body = await res.text()
-    expect(body).toContain('<iframe')
-    expect(body).toContain('c7d8eaae2dd23460')
-    expect(body).toContain('allow="microphone; camera')
-  })
-
-  it('degrades safely for a missing or malformed id (no iframe, no injection)', async () => {
-    const { Route } = await import('@/routes/widget/video-room')
-    const handler = Route.options.server.handlers.GET
-    for (const bad of ['', '../evil', 'a', 'x".evil.com/y', 'abc 123']) {
-      const req = new Request(
-        `https://studio.huminic.app/widget/video-room?c=${encodeURIComponent(bad)}`,
-      )
-      const res = await handler({ request: req } as never)
-      const body = await res.text()
-      expect(body).not.toContain('<iframe')
-      expect(body).toContain('temporarily unavailable')
-    }
   })
 })
 

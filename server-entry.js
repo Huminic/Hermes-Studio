@@ -137,9 +137,6 @@ const httpServer = createServer(async (req, res) => {
     // stays frame-locked (clickjacking protection).
     const embeddable =
       url.pathname.startsWith('/w/') ||
-      // Same-origin Two-Way Video wrapper (LC-BLOCKER-001) — framed by the
-      // storefront + dealer.com embed, so it must NOT be X-Frame-Options: DENY.
-      url.pathname === '/widget/video-room' ||
       url.pathname === '/nexxus-widget.js' ||
       url.pathname === '/nexxus-widget.min.js'
     if (embeddable) {
