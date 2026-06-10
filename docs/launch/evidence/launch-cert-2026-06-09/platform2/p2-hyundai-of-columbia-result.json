@@ -1,0 +1,21 @@
+{
+  "store": "hyundai-of-columbia",
+  "checks": {
+    "snippetPass": true,
+    "menuPass": true,
+    "menuCounts": {
+      "webChat": 1,
+      "callback": 1,
+      "contact": 1,
+      "video": 1
+    },
+    "menuTextVendorLeak": false,
+    "chatPass": true,
+    "backAfterChat": "data-act",
+    "contactRealForm": true,
+    "contactSuccess": true,
+    "backAfterContact": "data-act",
+    "callbackSuccess": true
+  },
+  "errors": []
+}

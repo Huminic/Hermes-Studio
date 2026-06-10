@@ -1,0 +1,1350 @@
+{
+  "ts": "2026-06-09T17:41:45.417Z",
+  "store": "tony-serra-ford",
+  "name": "Tony Serra Ford",
+  "login": {
+    "method": "ui-form",
+    "snap": {
+      "url": "https://studio.huminic.app/p/tony-serra-ford/chat",
+      "title": "Huminic Studio",
+      "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nTony Serra Ford\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nTony Serra Ford AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nSay hi to Caroline to start the conversation.\nSend\nTony Serra Ford\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Message Caroline…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Caroline",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "CRM Guru",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Nancy Gaston",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Semantic Guardian",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        }
+      ]
+    }
+  },
+  "tabs": {
+    "agentsBefore": {
+      "url": "https://studio.huminic.app/p/tony-serra-ford/chat",
+      "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nTony Serra Ford\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nTony Serra Ford AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nSay hi to Caroline to start the conversation.\nSend\nTony Serra Ford\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Message Caroline…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Caroline",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "CRM Guru",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Nancy Gaston",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Semantic Guardian",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        }
+      ]
+    },
+    "agentsAfter": {
+      "url": "https://studio.huminic.app/p/tony-serra-ford/chat",
+      "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nTony Serra Ford\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nTony Serra Ford AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nHi, what do you have?\nHi! This is Caroline from Tony Serra Ford. Thanks for reaching out. How can I help you today? If you need info about inventory, pricing, appointments, or anything else sales-related, just let me know!\nSend\nTony Serra Ford\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Message Caroline…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Caroline",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "CRM Guru",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Nancy Gaston",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Semantic Guardian",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        }
+      ]
+    },
+    "agents": {
+      "url": "https://studio.huminic.app/p/tony-serra-ford/chat",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nTony Serra Ford\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nTony Serra Ford AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nSay hi to Caroline to start the conversation.\nSend\nTony Serra Ford\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Message Caroline…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Caroline",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "CRM Guru",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Nancy Gaston",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Semantic Guardian",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        }
+      ]
+    },
+    "knowledge": {
+      "url": "https://studio.huminic.app/p/tony-serra-ford/knowledge",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nTony Serra Ford\n·\nKnowledge\nCOMPANY WIKI\n↻\nStart here\nCompany overview\nGlossary\nHow to edit this wiki\nWelcome\nPeople and culture\nPolicies\nBenefits\nOrg chart\nValues\nOperations\nIt setup\nProcurement\nTools and access\nSales\nLead handling\nProcess\nScripts\nService\nProcess\nRecalls\nScheduling\nTeams\nFinance\nParts\nSales\nService\nProjects\nOverview\nAssets\nNothing here yet.\nPolicies\nNothing here yet.\nTemplates\nMeeting notes\nRfc\nOverview\nSelect a page from the wiki to read or edit it. Your changes are saved straight to your company wiki.\nTony Serra Ford\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "↻",
+          "href": null,
+          "aria": "Refresh",
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Company overview",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Glossary",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "How to edit this wiki",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Welcome",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 12,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 13,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 14,
+          "tag": "BUTTON",
+          "text": "Benefits",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 15,
+          "tag": "BUTTON",
+          "text": "Org chart",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 16,
+          "tag": "BUTTON",
+          "text": "Values",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 17,
+          "tag": "BUTTON",
+          "text": "It setup",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 18,
+          "tag": "BUTTON",
+          "text": "Procurement",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 19,
+          "tag": "BUTTON",
+          "text": "Tools and access",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 20,
+          "tag": "BUTTON",
+          "text": "Lead handling",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 21,
+          "tag": "BUTTON",
+          "text": "Process",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 22,
+          "tag": "BUTTON",
+          "text": "Scripts",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 23,
+          "tag": "BUTTON",
+          "text": "Process",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 24,
+          "tag": "BUTTON",
+          "text": "Recalls",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 25,
+          "tag": "BUTTON",
+          "text": "Scheduling",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 26,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 27,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 28,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 29,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 30,
+          "tag": "BUTTON",
+          "text": "Overview",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 31,
+          "tag": "BUTTON",
+          "text": "Meeting notes",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 32,
+          "tag": "BUTTON",
+          "text": "Rfc",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 33,
+          "tag": "BUTTON",
+          "text": "Overview",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "widgets": {
+      "url": "https://studio.huminic.app/p/tony-serra-ford/tools",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nTony Serra Ford\n·\nWidgets\nWidget\nTony Serra Ford Sales\nLive chat\nTony Serra Ford Service\nLive chat\nContact Tony Serra Ford\nContact form\nTony Serra Ford Sales\nLive\n\nA chat bubble your visitors can open to talk with your AI assistant in real time.\n\nCaroline answers shopper questions about Honda inventory, pricing, financing,\ntrade-in value, and test-drive scheduling, then captures the lead for the BDC\nteam. Embed this on inventory and landing pages where shoppers are browsing\nvehicles.\n\nAdd to your website\nCopy code\n\nPaste this one line into your website where you want the widget to appear.\n\n<script async src=\"https://studio.huminic.app/nexxus-widget.min.js?id=tony-serra-ford-sales-chat\"></script>\nLive demo\nOpen in new tab\n\nThis is exactly what your visitors will see.\n\nCustomize wording (advanced)\nPreview\nTony Serra Ford\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": null,
+          "value": "---\nslug: tony-serra-ford-sales-chat\nmode: chat\nagent: caroline\ntitle: Tony Serra Ford Sales\ngreeting: Hi! I'm Caroline at Tony Serra Ford. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\ntype: widget\nstatus: draft\n---\n\n# Tony Serra Ford Sales Chat\n\nCaroline answers shopper questions about Honda inventory, pricing, financing,\ntrade-in value, and test-drive scheduling, then captures the lead for the BDC\nteam. Embed this on inventory and landing pages where shoppers are browsing\nvehicles.\n"
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Widget",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Tony Serra Ford Sales\nLive chat",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Tony Serra Ford Service\nLive chat",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Contact Tony Serra Ford\nContact form",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Copy code",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 12,
+          "tag": "A",
+          "text": "Open in new tab",
+          "href": "https://studio.huminic.app/w/tony-serra-ford-sales-chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 13,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "data": {
+      "url": "https://studio.huminic.app/p/tony-serra-ford/data",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nTony Serra Ford\n·\nData\nDashboard\n\nYour activity over the last 30 days.\n\nRefresh\n2\nCalls received\nNo texts yet\nTexts sent\n356\nLeads\nNo campaigns yet\nCampaigns\nMessages\n23\nTotal\n14\nReceived\n9\nSent\nChannel\tReceived\tSent\nChat\t6\t6\nForm\t5\t0\nCall\t2\t2\nVideo\t1\t1\nConversations\n10\nTotal\n10\nOpen\n0\nClosed\nSales: 8\nChat: 2\nFollow-up performance\n0\nImmediate\n0\n24h check-in\n0\nTexts sent\n\nNo automated follow-ups sent yet.\n\nCampaigns\n0\nCampaigns\n0\nDelivered\n0\nFailed\nNo campaigns yet.\nLeads\n356\nTotal leads\nStatus\tLeads\nActive_waiting_for_prospect_response\t23\nBad_duplicate_lead\t23\nActive_new_lead\t4\nBuild your own dashboard\nMetric\nCalls\nVideo\nTexts (SMS)\nEmails\nWeb chats\nLeads\nService threads\nSales threads\nCampaigns\nFollow-up triggers\nCard title (optional)\n+ Add card\n\nCards read live from your messaging, calls, video, leads, and campaigns over the current window.\n\nTony Serra Ford\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "INPUT",
+          "type": null,
+          "placeholder": "Calls",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Refresh",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "+ Add card",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "teambox": {
+      "url": "https://studio.huminic.app/p/tony-serra-ford/comms",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nTony Serra Ford\n·\nTeambox\nSales\nService\nj / k to move · r to reply\nAll\nText\nEmail\nCall\nVideo\nChat\nAgent\nAll agents\nCaroline\nNancy Gaston\nUnassigned\n· duanekwells@gmail.com\n4:20 AM\nMESSAGE\nCaroline\nLaunch certification standalone Tony Serra Ford contact form test.\n💬 chat:ce2f1df4-40ab-4dd0-8e61-81e691698379\n4:18 AM\nCHAT\nNancy Gaston\nYes, I can help schedule your oil change for tomorrow morning. May I have your vehicle details and preferred time?\n💬 chat:8481683c-5c97-452e-b666-bbbacb97c882\n4:15 AM\nCHAT\nCaroline\nYes, we have new Ford trucks available and you can book a test drive. Would you like to schedule it for a specific date and time?\n· +14126546500\n3:37 AM\nMESSAGE\nLaunch certification synthetic embed callback request for Tony Serra Ford. Timestamp 2026-06-09.\n💬 chat:2d3b2046-e5cd-4592-b269-1f76162e2f35\n3:36 AM\nCHAT\nCaroline\nWe have a wide selection of new and pre-owned Ford vehicles, plus great financing options and trade-in offers. Are you interested in a specific model or looking\n🎥 video-cert_tony-serra-ford_5550002004\nJun 8\nVIDEO\ncert\n☎️ +15550001004\nJun 8\nCALL\ncert\n☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore.\nDexter Launch Cert Standalone Tony Serra Ford Contact\n· Message · Sales\nCAROLINE\nOPEN\n↙ RECEIVED\nLaunch certification synthetic web form lead for Tony Serra Ford. Timestamp 2026-06-09.\nDexter Launch Cert Standalone Tony Serra Ford Contact · Message · 3:20 AM\n↙ RECEIVED\nLaunch certification synthetic embed form lead for Tony Serra Ford. Timestamp 2026-06-09.\nDexter Launch Cert Standalone Tony Serra Ford Contact · Message · 3:37 AM\n↙ RECEIVED\nLaunch certification standalone Tony Serra Ford contact form test.\nDexter Launch Cert Standalone Tony Serra Ford Contact · Message · 4:20 AM\nReply via\nMessage\nChat\nEmail\nText\nSend\nCUSTOMER\nDexter Launch Cert Standalone Tony Serra Ford Contact\nEmail\nduanekwells@gmail.com\nPhone\n+14126546500\nContact\nduanekwells@gmail.com\nType\nSales\nChannel\nMessage\nStatus\nOpen\nHandled by\nCaroline\nTake over\n\nThe AI agent may auto-reply. Take over to pause it and reply yourself.\n\nTony Serra Ford\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Type your reply…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Sales",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Service",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "All",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Text",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Email",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 12,
+          "tag": "BUTTON",
+          "text": "Call",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 13,
+          "tag": "BUTTON",
+          "text": "Video",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 14,
+          "tag": "BUTTON",
+          "text": "Chat",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 15,
+          "tag": "BUTTON",
+          "text": "· duanekwells@gmail.com\n4:20 AM\nMESSAGE\nCaroline\nLaunch certification standalone Tony Serra Ford contact form test.",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 16,
+          "tag": "BUTTON",
+          "text": "💬 chat:ce2f1df4-40ab-4dd0-8e61-81e691698379\n4:18 AM\nCHAT\nNancy Gaston\nYes, I can help schedule your oil change for tomorrow morning. May I have your vehicle details and preferred time?",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 17,
+          "tag": "BUTTON",
+          "text": "💬 chat:8481683c-5c97-452e-b666-bbbacb97c882\n4:15 AM\nCHAT\nCaroline\nYes, we have new Ford trucks available and you can book a test drive. Would you like to schedule it for a specific date and time?",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 18,
+          "tag": "BUTTON",
+          "text": "· +14126546500\n3:37 AM\nMESSAGE\nLaunch certification synthetic embed callback request for Tony Serra Ford. Timestamp 2026-06-09.",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 19,
+          "tag": "BUTTON",
+          "text": "💬 chat:2d3b2046-e5cd-4592-b269-1f76162e2f35\n3:36 AM\nCHAT\nCaroline\nWe have a wide selection of new and pre-owned Ford vehicles, plus great financing options and trade-in offers. Are you interested in a specific model or looking",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 20,
+          "tag": "BUTTON",
+          "text": "🎥 video-cert_tony-serra-ford_5550002004\nJun 8\nVIDEO\ncert",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 21,
+          "tag": "BUTTON",
+          "text": "☎️ +15550001004\nJun 8\nCALL\ncert",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 22,
+          "tag": "BUTTON",
+          "text": "☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore.",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 23,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        },
+        {
+          "i": 24,
+          "tag": "BUTTON",
+          "text": "Take over",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "campaigns": {
+      "url": "https://studio.huminic.app/p/tony-serra-ford/campaigns",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nTony Serra Ford\n·\nCampaigns\nCampaigns\nReach your customers by text, email, call, or video.\nFollow-up\nSend now\nNew campaign\n\n“Send now” sends any ready campaign to its audience immediately.\n\nYour lists\nNo lists yet. Create a campaign or upload a .csv to build one.\nCampaigns\nNo campaigns yet. Create one to reach your customers.\nTony Serra Ford\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Follow-up",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Send now",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "New campaign",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "notifications": {
+      "url": "https://studio.huminic.app/p/tony-serra-ford/notifications",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nTony Serra Ford\n·\nNotifications\nNotifications\n\nDecide who gets alerted when something happens — a new lead, an inbound message, or (as they come online) a Guardian condition or query result. Each rule is “when this happens, notify this person.”\n\nNo rules yet — new leads currently fall back to duanekwells@gmail.com. Add a rule to route specific conditions to specific people.\nWhen (condition)\tNotify (recipient)\tChannel\tLabel\tOn\t\nNo routing rules. Add one below.\n+ Add rule\nSave\n\nSMS notifications are reserved (email is delivered today). Guardian conditions become selectable once the Business / Performance Guardians are live; until then you can type a custom condition id to pre-stage a rule.\n\nTony Serra Ford\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/tony-serra-ford/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "+ Add rule",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Save",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    }
+  },
+  "checks": {
+    "tabsPresent": true,
+    "headerStoreName": true,
+    "rosterExpected": true,
+    "forbiddenAgentsAbsent": true,
+    "defaultAgentReply": true,
+    "knowledgeLoads": true,
+    "widgetsReady": true,
+    "dataLoads": true,
+    "metricLabelsPlain": true,
+    "teamboxLoads": true,
+    "teamboxLeadVisible": true,
+    "campaignsLoads": true,
+    "notificationsLoads": true,
+    "noVendorTerms": true,
+    "noRawLeakage": true
+  },
+  "screenshot": "p6-tony-serra-ford-agents.png",
+  "bannedMatches": [],
+  "rawLeakMatches": [],
+  "status": "PASS"
+}

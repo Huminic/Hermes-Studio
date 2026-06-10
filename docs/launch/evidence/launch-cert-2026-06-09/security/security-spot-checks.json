@@ -1,0 +1,117 @@
+{
+  "ts": "2026-06-09T19:05:30.409Z",
+  "checks": {
+    "badLoginSameMessage": true,
+    "wrongStoreBlocked": true,
+    "directTabBlocked": true
+  },
+  "wrongPassword": {
+    "text": "Serra Honda\nSERRA-HONDA\nCustomer admin sign-in for this storefront.\nUsername\nPassword\nInvalid credentials\nSign in\n← back to landing",
+    "url": "https://studio.huminic.app/p/serra-honda/chat",
+    "invalidCredentials": true,
+    "rateLimited": false,
+    "rawLeak": false
+  },
+  "unknownUser": {
+    "text": "Serra Honda\nSERRA-HONDA\nCustomer admin sign-in for this storefront.\nUsername\nPassword\nInvalid credentials\nSign in\n← back to landing",
+    "url": "https://studio.huminic.app/p/serra-honda/chat",
+    "invalidCredentials": true,
+    "rateLimited": false,
+    "rawLeak": false
+  },
+  "validLogin": {
+    "url": "https://studio.huminic.app/p/serra-honda/chat",
+    "title": "Huminic Studio",
+    "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Honda\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nSerra Honda AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nSay hi to Caroline to start the conversation.\nSend\nSerra Honda\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+    "inputs": [],
+    "controls": [
+      {
+        "i": 0,
+        "tag": "A",
+        "text": "Agents",
+        "href": "https://studio.huminic.app/p/serra-honda/chat"
+      },
+      {
+        "i": 1,
+        "tag": "A",
+        "text": "Knowledge",
+        "href": "https://studio.huminic.app/p/serra-honda/knowledge"
+      },
+      {
+        "i": 2,
+        "tag": "A",
+        "text": "Widgets",
+        "href": "https://studio.huminic.app/p/serra-honda/tools"
+      },
+      {
+        "i": 3,
+        "tag": "A",
+        "text": "Data",
+        "href": "https://studio.huminic.app/p/serra-honda/data"
+      },
+      {
+        "i": 4,
+        "tag": "A",
+        "text": "Teambox",
+        "href": "https://studio.huminic.app/p/serra-honda/comms"
+      },
+      {
+        "i": 5,
+        "tag": "A",
+        "text": "Campaigns",
+        "href": "https://studio.huminic.app/p/serra-honda/campaigns"
+      },
+      {
+        "i": 6,
+        "tag": "A",
+        "text": "Notifications",
+        "href": "https://studio.huminic.app/p/serra-honda/notifications"
+      },
+      {
+        "i": 7,
+        "tag": "BUTTON",
+        "text": "Caroline",
+        "href": null
+      },
+      {
+        "i": 8,
+        "tag": "BUTTON",
+        "text": "CRM Guru",
+        "href": null
+      },
+      {
+        "i": 9,
+        "tag": "BUTTON",
+        "text": "Nancy Gaston",
+        "href": null
+      },
+      {
+        "i": 10,
+        "tag": "BUTTON",
+        "text": "Semantic Guardian",
+        "href": null
+      },
+      {
+        "i": 11,
+        "tag": "BUTTON",
+        "text": "Send",
+        "href": null
+      }
+    ]
+  },
+  "wrongStore": {
+    "text": "h\nHuminic\nStudio\nSerra Nissan\nSERRA-NISSAN\nCustomer admin sign-in for this storefront.\nUsername\nPassword\nSign in\n← back to landing",
+    "url": "https://studio.huminic.app/p/serra-nissan/comms",
+    "loginWall": true,
+    "noOtherStoreData": true,
+    "rawLeak": false
+  },
+  "unauthDirectTab": {
+    "text": "h\nHuminic\nStudio\nSerra Honda\nSERRA-HONDA\nCustomer admin sign-in for this storefront.\nUsername\nPassword\nSign in\n← back to landing",
+    "url": "https://studio.huminic.app/p/serra-honda/data",
+    "loginWall": true,
+    "noDataVisible": true,
+    "rawLeak": false
+  },
+  "status": "PASS"
+}

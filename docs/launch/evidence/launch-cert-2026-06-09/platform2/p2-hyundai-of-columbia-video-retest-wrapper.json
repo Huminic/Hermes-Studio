@@ -1,0 +1,16 @@
+{
+  "ts": "2026-06-09T08:09:48.116Z",
+  "platform": "Platform 2 dealer embed",
+  "store": "hyundai-of-columbia",
+  "snippetContainsBanned": false,
+  "widgetParentDomContainsBanned": false,
+  "topLevelVideoIframeClean": true,
+  "widgetIframeSrcs": [],
+  "allIframeSrcs": [
+    "https://studio.huminic.app/widget/video-room?c=c5bec0c61cffd4d9"
+  ],
+  "widgetTextSample": "",
+  "widgetIframes": [],
+  "parentDomContainsBanned": false,
+  "passScope": "all page iframes after dealer embed video handoff"
+}

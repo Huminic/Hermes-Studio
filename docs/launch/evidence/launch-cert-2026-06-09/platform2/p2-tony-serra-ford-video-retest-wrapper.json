@@ -1,0 +1,16 @@
+{
+  "ts": "2026-06-09T08:09:31.454Z",
+  "platform": "Platform 2 dealer embed",
+  "store": "tony-serra-ford",
+  "snippetContainsBanned": false,
+  "widgetParentDomContainsBanned": false,
+  "topLevelVideoIframeClean": true,
+  "widgetIframeSrcs": [],
+  "allIframeSrcs": [
+    "https://studio.huminic.app/widget/video-room?c=ce6d69ac25e69458"
+  ],
+  "widgetTextSample": "",
+  "widgetIframes": [],
+  "parentDomContainsBanned": false,
+  "passScope": "all page iframes after dealer embed video handoff"
+}

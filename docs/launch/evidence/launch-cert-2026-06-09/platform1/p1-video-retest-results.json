@@ -1,0 +1,58 @@
+{
+  "ts": "2026-06-09T08:05:54.645Z",
+  "rows": [
+    {
+      "slug": "serra-honda",
+      "parentIframeSrcs": [
+        "https://studio.huminic.app/widget/video-room?c=cb8cf08c56bc24e8"
+      ],
+      "parentDomContainsBanned": false,
+      "topLevelVideoIframeClean": true,
+      "wrapperContentContainsBanned": false,
+      "status": "PARENT_DOM_PASS"
+    },
+    {
+      "slug": "serra-nissan",
+      "parentIframeSrcs": [
+        "https://studio.huminic.app/widget/video-room?c=c35d79bf01345456"
+      ],
+      "parentDomContainsBanned": false,
+      "topLevelVideoIframeClean": true,
+      "wrapperContentContainsBanned": null,
+      "status": "PARENT_DOM_PASS"
+    },
+    {
+      "slug": "tony-serra-ford",
+      "parentIframeSrcs": [
+        "https://studio.huminic.app/widget/video-room?c=ca493e254c40d4f9"
+      ],
+      "parentDomContainsBanned": false,
+      "topLevelVideoIframeClean": true,
+      "wrapperContentContainsBanned": null,
+      "status": "PARENT_DOM_PASS"
+    },
+    {
+      "slug": "hyundai-of-columbia",
+      "parentIframeSrcs": [
+        "https://studio.huminic.app/widget/video-room?c=c577b0638921149e"
+      ],
+      "parentDomContainsBanned": false,
+      "topLevelVideoIframeClean": true,
+      "wrapperContentContainsBanned": null,
+      "status": "PARENT_DOM_PASS"
+    },
+    {
+      "slug": "ford-of-columbia",
+      "parentIframeSrcs": [
+        "https://studio.huminic.app/widget/video-room?c=c466d0b62cb1445e"
+      ],
+      "parentDomContainsBanned": false,
+      "topLevelVideoIframeClean": true,
+      "wrapperContentContainsBanned": null,
+      "status": "PARENT_DOM_PASS"
+    }
+  ],
+  "residualWrapperSourceContainsBanned": true,
+  "residualWrapperSourceEvidence": "p1-video-wrapper-source-ford-of-columbia.html",
+  "interpretation": "Parent storefront DOM/iframe src fixed across five stores; public wrapper HTML source still exposes provider host and keeps LC-BLOCKER-001 open unless waived/operator custom domain configured."
+}

@@ -1,0 +1,9 @@
+HTTP/2 502 
+alt-svc: h3=":443"; ma=2592000
+referrer-policy: no-referrer-when-downgrade
+server: Caddy
+strict-transport-security: max-age=31536000; includeSubDomains
+x-content-type-options: nosniff
+content-length: 0
+date: Wed, 10 Jun 2026 02:54:00 GMT
+

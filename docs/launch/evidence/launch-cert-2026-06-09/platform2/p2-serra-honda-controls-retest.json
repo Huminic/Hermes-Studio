@@ -1,0 +1,35 @@
+{
+  "ts": "2026-06-09T17:46:14.237Z",
+  "platform": "Platform 2 dealer embed controls retest",
+  "store": "serra-honda",
+  "buttons": [
+    {
+      "aria": "Choose how to connect",
+      "dataAct": null,
+      "index": 0,
+      "text": "",
+      "title": null,
+      "type": "button"
+    },
+    {
+      "aria": "Back",
+      "dataAct": "back",
+      "index": 1,
+      "text": "",
+      "title": null,
+      "type": null
+    },
+    {
+      "aria": "Close",
+      "dataAct": "close",
+      "index": 2,
+      "text": "",
+      "title": null,
+      "type": null
+    }
+  ],
+  "backNamed": true,
+  "closeNamed": true,
+  "visibleText": "Serra Honda\nWeb Chat",
+  "status": "PASS"
+}

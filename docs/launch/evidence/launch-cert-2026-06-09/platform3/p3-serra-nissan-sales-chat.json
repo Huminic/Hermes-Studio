@@ -1,0 +1,46 @@
+{
+  "ts": "2026-06-09T08:15:39.518Z",
+  "store": "serra-nissan",
+  "kind": "sales-chat",
+  "url": "https://studio.huminic.app/w/serra-nissan-sales-chat",
+  "resolvedUrl": "https://studio.huminic.app/w/serra-nissan-sales-chat",
+  "title": "Serra Nissan Sales",
+  "beforeText": "CHAT WIDGET\nSerra Nissan Sales\nHi! I'm Caroline at Serra Nissan. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\nSend\nPowered by Huminic",
+  "realChatInput": true,
+  "beforeInputs": [
+    {
+      "i": 0,
+      "name": null,
+      "placeholder": "Type a message…",
+      "tag": "INPUT",
+      "type": "text"
+    }
+  ],
+  "beforeButtons": [
+    {
+      "disabled": false,
+      "i": 0,
+      "text": "Send",
+      "type": "submit"
+    }
+  ],
+  "visibleText": "CHAT WIDGET\nSerra Nissan Sales\nHi! I'm Caroline at Serra Nissan. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\nLaunch certification test: do you have new Nissan SUVs and can I book a test drive?\nYes, we have new Nissan SUVs available. I can help you book a test drive—what day and time work best for you?\nSend\nPowered by Huminic",
+  "containsBanned": false,
+  "placeholderOrComingSoon": false,
+  "replyLikelyPresent": true,
+  "afterInputs": [
+    {
+      "i": 0,
+      "placeholder": "Type a message…",
+      "value": ""
+    }
+  ],
+  "afterButtons": [
+    {
+      "disabled": false,
+      "i": 0,
+      "text": "Send"
+    }
+  ],
+  "status": "PASS"
+}

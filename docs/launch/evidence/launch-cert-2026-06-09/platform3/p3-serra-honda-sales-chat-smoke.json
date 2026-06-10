@@ -1,0 +1,24 @@
+{
+  "ts": "2026-06-09T08:13:50.585Z",
+  "url": "https://studio.huminic.app/w/serra-honda-sales-chat",
+  "type": "sales-chat",
+  "store": "serra-honda",
+  "visibleText": "CHAT WIDGET\nSerra Honda Sales\nHi! I'm Caroline at Serra Honda. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\nLaunch certification test: do you have new Honda SUVs and can I book a test drive?\nYes, we have new Honda SUVs available. I can help you book a test drive—what day and time works best for you?\nSend\nPowered by Huminic",
+  "containsBanned": false,
+  "placeholderOrComingSoon": false,
+  "replyLikelyPresent": true,
+  "inputs": [
+    {
+      "i": 0,
+      "placeholder": "Type a message…",
+      "value": ""
+    }
+  ],
+  "buttons": [
+    {
+      "disabled": false,
+      "i": 0,
+      "text": "Send"
+    }
+  ]
+}

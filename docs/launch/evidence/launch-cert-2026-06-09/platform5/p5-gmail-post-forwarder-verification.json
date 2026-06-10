@@ -1,0 +1,69 @@
+{
+  "ts": "2026-06-09T21:36:00Z",
+  "gmailQuery": "\"Dexter Gmail Route Check\" newer_than:1d -in:trash -in:spam",
+  "postForwarderResult": "PASS",
+  "summary": {
+    "messagesFound": 3,
+    "allToDuanekwellsGmail": true,
+    "allInInbox": true,
+    "deliveryWindow": "Messages arrived between 2026-06-09T21:03:41Z and 2026-06-09T21:31:50Z, within seconds of their corresponding submissions.",
+    "mailboxScopeNote": "A Gmail search for from:leads@huminic.ai newer_than:1d -in:trash -in:spam returned these same 3 messages. A Gmail search for Nexxus/Powered by Nexxus over the same sender/date also returned these same 3 messages.",
+    "explicitBannedVendorTermsFound": [],
+    "legacyBrandingObserved": [
+      "Powered by Nexxus AI Platform",
+      "Nexxus Connect sender on Serra Honda ADF lead"
+    ]
+  },
+  "messages": [
+    {
+      "id": "19eae4c873bb0d49",
+      "store": "ford-of-columbia",
+      "type": "callback",
+      "from": "Ford of Columbia new lead <leads@huminic.ai>",
+      "to": "duanekwells@gmail.com",
+      "subject": "Call-back request — Dexter Gmail Route Check 20260609-213138 Ford Callback",
+      "email_ts": "2026-06-09T21:31:50Z",
+      "labels": ["UNREAD", "CATEGORY_UPDATES", "INBOX"],
+      "bodyFormat": "plain readable email",
+      "sourceLine": "Source: ford-of-columbia",
+      "bodyContainsExpectedLeadName": true,
+      "bodyContainsExpectedPhone": true,
+      "bodyContainsExplicitBannedVendorTerm": false,
+      "legacyBrandingObserved": "Powered by Nexxus AI Platform"
+    },
+    {
+      "id": "19eae464d33a671a",
+      "store": "hyundai-of-columbia",
+      "type": "website form",
+      "from": "Hyundai of Columbia new lead <leads@huminic.ai>",
+      "to": "duanekwells@gmail.com",
+      "subject": "Website form — Dexter Gmail Route Check 20260609-212450 Hyundai Form",
+      "email_ts": "2026-06-09T21:25:02Z",
+      "labels": ["UNREAD", "CATEGORY_UPDATES", "INBOX"],
+      "bodyFormat": "plain readable email",
+      "sourceLine": "Source: hyundai-of-columbia",
+      "bodyContainsExpectedLeadName": true,
+      "bodyContainsExpectedPhone": true,
+      "bodyContainsExpectedEmail": true,
+      "bodyContainsExplicitBannedVendorTerm": false,
+      "legacyBrandingObserved": "Powered by Nexxus AI Platform"
+    },
+    {
+      "id": "19eae32bf89067a1",
+      "store": "serra-honda",
+      "type": "website form",
+      "from": "Nexxus Connect <leads@huminic.ai>",
+      "to": "duanekwells@gmail.com",
+      "subject": "New Lead - Dexter Gmail Route Check 202606092103 Serra Honda Form",
+      "email_ts": "2026-06-09T21:03:41Z",
+      "labels": ["UNREAD", "CATEGORY_UPDATES", "INBOX"],
+      "bodyFormat": "ADF/XML-like body rendered as plain extracted text by Gmail connector",
+      "sourceLine": "serra-honda",
+      "bodyContainsExpectedLeadName": true,
+      "bodyContainsExpectedPhone": true,
+      "bodyContainsExpectedEmail": true,
+      "bodyContainsExplicitBannedVendorTerm": false,
+      "legacyBrandingObserved": "Nexxus Connect sender"
+    }
+  ]
+}

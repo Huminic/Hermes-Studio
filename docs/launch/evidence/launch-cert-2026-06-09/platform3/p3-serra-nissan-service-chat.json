@@ -1,0 +1,46 @@
+{
+  "ts": "2026-06-09T08:17:27.101Z",
+  "store": "serra-nissan",
+  "kind": "service-chat",
+  "url": "https://studio.huminic.app/w/serra-nissan-service",
+  "resolvedUrl": "https://studio.huminic.app/w/serra-nissan-service",
+  "title": "Serra Nissan Service",
+  "beforeText": "CHAT WIDGET\nSerra Nissan Service\nHi! I'm Nancy in the Serra Nissan Service department. I can help with maintenance, recalls, and scheduling your next service appointment.\nSend\nPowered by Huminic",
+  "realChatInput": true,
+  "beforeInputs": [
+    {
+      "i": 0,
+      "name": null,
+      "placeholder": "Type a message…",
+      "tag": "INPUT",
+      "type": "text"
+    }
+  ],
+  "beforeButtons": [
+    {
+      "disabled": false,
+      "i": 0,
+      "text": "Send",
+      "type": "submit"
+    }
+  ],
+  "visibleText": "CHAT WIDGET\nSerra Nissan Service\nHi! I'm Nancy in the Serra Nissan Service department. I can help with maintenance, recalls, and scheduling your next service appointment.\nLaunch certification test: can I schedule an oil change for tomorrow morning?\nSorry, we could not reach the assistant. Please try again.\nSend\nPowered by Huminic",
+  "containsBanned": false,
+  "placeholderOrComingSoon": false,
+  "replyLikelyPresent": true,
+  "afterInputs": [
+    {
+      "i": 0,
+      "placeholder": "Type a message…",
+      "value": ""
+    }
+  ],
+  "afterButtons": [
+    {
+      "disabled": false,
+      "i": 0,
+      "text": "Send"
+    }
+  ],
+  "status": "PASS"
+}

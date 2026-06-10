@@ -1,0 +1,15 @@
+{
+  "ts": "2026-06-09T08:19:53.488Z",
+  "store": "ford-of-columbia",
+  "kind": "service-chat",
+  "url": "https://studio.huminic.app/w/ford-of-columbia-service",
+  "resolvedUrl": "https://studio.huminic.app/w/ford-of-columbia-service",
+  "title": "Ford of Columbia Service",
+  "beforeText": "CHAT WIDGET\nFord of Columbia Service\nHi! I'm Nancy in the Ford of Columbia Service department. I can help with maintenance, recalls, and scheduling your next service appointment.\nSend\nPowered by Huminic",
+  "visibleText": "CHAT WIDGET\nFord of Columbia Service\nHi! I'm Nancy in the Ford of Columbia Service department. I can help with maintenance, recalls, and scheduling your next service appointment.\nLaunch certification test: can I schedule an oil change for tomorrow morning?\nI'm unable to check the current service schedule right now. Would you like me to connect you to one of our service advisors to confirm availability for tomorrow morning?\nSend\nPowered by Huminic",
+  "realChatInput": true,
+  "containsBanned": false,
+  "placeholderOrComingSoon": false,
+  "replyLikelyPresent": true,
+  "status": "PASS"
+}

@@ -1,0 +1,82 @@
+{
+  "ts": "2026-06-09T08:20:31.809Z",
+  "store": "serra-nissan",
+  "kind": "contact-form",
+  "url": "https://studio.huminic.app/w/serra-nissan-contact",
+  "resolvedUrl": "https://studio.huminic.app/w/serra-nissan-contact",
+  "title": "Contact Serra Nissan",
+  "beforeText": "FORM WIDGET\nContact Serra Nissan\nLeave your details and the Serra Nissan team will reach out shortly.\nName*\nEmail*\nPhone\nMessage*\nSubmit\nPowered by Huminic",
+  "beforeFields": [
+    {
+      "i": 0,
+      "name": "name",
+      "placeholder": null,
+      "tag": "INPUT",
+      "type": "text"
+    },
+    {
+      "i": 1,
+      "name": "email",
+      "placeholder": null,
+      "tag": "INPUT",
+      "type": "email"
+    },
+    {
+      "i": 2,
+      "name": "phone",
+      "placeholder": null,
+      "tag": "INPUT",
+      "type": "tel"
+    },
+    {
+      "i": 3,
+      "name": "message",
+      "placeholder": null,
+      "tag": "TEXTAREA",
+      "type": null
+    }
+  ],
+  "beforeButtons": [
+    {
+      "disabled": false,
+      "i": 0,
+      "text": "Submit",
+      "type": "submit"
+    }
+  ],
+  "realForm": true,
+  "visibleText": "FORM WIDGET\nContact Serra Nissan\nLeave your details and the Serra Nissan team will reach out shortly.\n✓\n\nThanks — your message has been received. A member of our team will reach out shortly.\n\nPowered by Huminic",
+  "afterFields": [
+    {
+      "i": 0,
+      "name": "name",
+      "value": "Dexter Launch Cert Standalone Serra Nissan Contact"
+    },
+    {
+      "i": 1,
+      "name": "email",
+      "value": "duanekwells@gmail.com"
+    },
+    {
+      "i": 2,
+      "name": "phone",
+      "value": "+14126546500"
+    },
+    {
+      "i": 3,
+      "name": "message",
+      "value": "Launch certification standalone Serra Nissan contact form test."
+    }
+  ],
+  "afterButtons": [
+    {
+      "disabled": true,
+      "i": 0,
+      "text": "Sending…"
+    }
+  ],
+  "containsBanned": false,
+  "placeholderOrComingSoon": false,
+  "successLikely": true,
+  "status": "PASS"
+}

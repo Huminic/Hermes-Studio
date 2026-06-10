@@ -1,0 +1,799 @@
+{
+  "ts": "2026-06-09T21:49:25.012Z",
+  "checks": [
+    {
+      "store": "serra-honda",
+      "expected": [
+        "Post-forwarder Gmail route check 202606092103 for Serra Honda ADF.",
+        "Launch certification post-forwarder Gmail routing check 20260609-212450 for Serra Honda contact form."
+      ],
+      "groupingNote": "Repeated form submissions from the same email/phone are grouped into one contact thread; the visible title may be the latest submitted name.",
+      "login": {
+        "method": "ui-form",
+        "success": true,
+        "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Honda\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nSerra Honda AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nSay hi to Caroline to start the conversation.\nSend\nSerra Honda\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic"
+      },
+      "snapshot": {
+        "url": "https://studio.huminic.app/p/serra-honda/comms",
+        "title": "Huminic Studio",
+        "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Honda\n·\nTeambox\nSales\nService\nj / k to move · r to reply\nAll\nText\nEmail\nCall\nVideo\nChat\nAgent\nAll agents\nCaroline\nNancy Gaston\nUnassigned\n· duanekwells@gmail.com\n5:25 PM\nMESSAGE\nCaroline\nLaunch certification post-forwarder Gmail routing check 20260609-212535 for Serra Honda contact form.\n💬 chat:8832ad8f-ad6d-4ce4-8a08-e3440e60e110\n4:14 AM\nCHAT\nNancy Gaston\nI can help with that! May I have your vehicle’s year and model, and do you have a preferred time tomorrow morning?\n💬 chat:460ca98c-b290-4457-8b15-08665c04676f\n4:13 AM\nCHAT\nCaroline\nYes, we have new Honda SUVs available. I can help you book a test drive—what day and time works best for you?\n· +14126546500\n3:34 AM\nMESSAGE\nLaunch certification synthetic embed callback request for Serra Honda. Timestamp 2026-06-09.\n💬 chat:f6ddc97d-6259-4969-b2b4-a1826f49a8af\n3:34 AM\nCHAT\nCaroline\nI can help you browse Serra Honda's new and pre-owned inventory, provide information on pricing, help with trade-in questions, and schedule test drives. What ar\n· +19015550199\n2:17 AM\nMESSAGE\nEmbed callback verification\n· scrubtest+1780980940@huminic.dev\n12:55 AM\nMESSAGE\nCaroline\nWeb form lead — checking for clean notification content.\n☎️ +15557940001\n12:55 AM\nCALL\nInterested in a 2026 Civic, wants a quote.\n☎️ +19012038267\nJun 8\nCALL\nCaroline from Sarah Honda of Sylacauga introduced herself as a personal car buying assistant, asking the user about their car preferences to schedule a test dri\n· cert@huminic.dev\nJun 8\nMESSAGE\nCaroline\ncert form\n🎥 video-cert_serra-honda_5550002001\nJun 8\nVIDEO\ncert\n☎️ +15550001001\nJun 8\nCALL\ncert\n☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore.\n🎥 video-verify_video_1780893916\nJun 8\nVIDEO\nSynthetic video verification (non-customer) — interested in CR-V.\n· studio-verify@huminic.dev\nJun 8\nMESSAGE\nCaroline\nNon-SMS go-live verification — please ignore. Interested in a Civic.\n🎥 +14126546500\nJun 7\nVIDEO\nVideo visitor Elliott asked to compare CR-V trims.\n☎️ +14126546500\nJun 7\nCALL\nCaller Elliott asked about 2026 Pilot lease specials.\n☎️ +19015550100\nMay 30\nCALL\nElliott called Serra Honda asking about 2026 Civic availability. Wants to schedule a test drive.\nDexter Gmail Route Check 20260609-212535 Serra Honda Form\n· Message · Sales\nCAROLINE\nOPEN\n↙ RECEIVED\nLaunch certification synthetic web form lead for Serra Honda. Interested in a Civic. Timestamp 2026-06-09T07:15Z.\nDexter Gmail Route Check 20260609-212535 Serra Honda Form · Message · 3:11 AM\n↙ RECEIVED\nLaunch certification synthetic embed form lead for Serra Honda. Timestamp 2026-06-09.\nDexter Gmail Route Check 20260609-212535 Serra Honda Form · Message · 3:34 AM\n↙ RECEIVED\nLaunch certification standalone contact form test.\nDexter Gmail Route Check 20260609-212535 Serra Honda Form · Message · 4:14 AM\n↙ RECEIVED\nPost-forwarder Gmail route check 202606092103 for Serra Honda ADF.\nDexter Gmail Route Check 20260609-212535 Serra Honda Form · Message · 5:03 PM\n↙ RECEIVED\nLaunch certification post-forwarder Gmail routing check 20260609-212450 for Serra Honda contact form.\nDexter Gmail Route Check 20260609-212535 Serra Honda Form · Message · 5:24 PM\n↙ RECEIVED\nLaunch certification post-forwarder Gmail routing check 20260609-212535 for Serra Honda contact form.\nDexter Gmail Route Check 20260609-212535 Serra Honda Form · Message · 5:25 PM\nReply via\nMessage\nChat\nEmail\nText\nSend\nCUSTOMER\nDexter Gmail Route Check 20260609-212535 Serra Honda Form\nEmail\nduanekwells@gmail.com\nPhone\n+14126546500\nContact\nduanekwells@gmail.com\nType\nSales\nChannel\nMessage\nStatus\nOpen\nHandled by\nCaroline\nTake over\n\nThe AI agent may auto-reply. Take over to pause it and reply yourself.\n\nSerra Honda\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+        "controls": [
+          {
+            "i": 0,
+            "tag": "A",
+            "text": "Agents",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/serra-honda/chat",
+            "disabled": false
+          },
+          {
+            "i": 1,
+            "tag": "A",
+            "text": "Knowledge",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/serra-honda/knowledge",
+            "disabled": false
+          },
+          {
+            "i": 2,
+            "tag": "A",
+            "text": "Widgets",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/serra-honda/tools",
+            "disabled": false
+          },
+          {
+            "i": 3,
+            "tag": "A",
+            "text": "Data",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/serra-honda/data",
+            "disabled": false
+          },
+          {
+            "i": 4,
+            "tag": "A",
+            "text": "Teambox",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/serra-honda/comms",
+            "disabled": false
+          },
+          {
+            "i": 5,
+            "tag": "A",
+            "text": "Campaigns",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/serra-honda/campaigns",
+            "disabled": false
+          },
+          {
+            "i": 6,
+            "tag": "A",
+            "text": "Notifications",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/serra-honda/notifications",
+            "disabled": false
+          },
+          {
+            "i": 7,
+            "tag": "BUTTON",
+            "text": "Sales",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 8,
+            "tag": "BUTTON",
+            "text": "Service",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 9,
+            "tag": "BUTTON",
+            "text": "All",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 10,
+            "tag": "BUTTON",
+            "text": "Text",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 11,
+            "tag": "BUTTON",
+            "text": "Email",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 12,
+            "tag": "BUTTON",
+            "text": "Call",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 13,
+            "tag": "BUTTON",
+            "text": "Video",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 14,
+            "tag": "BUTTON",
+            "text": "Chat",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 15,
+            "tag": "BUTTON",
+            "text": "· duanekwells@gmail.com\n5:25 PM\nMESSAGE\nCaroline\nLaunch certification post-forwarder Gmail routing check 20260609-212535 for Serra Honda contact form.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 16,
+            "tag": "BUTTON",
+            "text": "💬 chat:8832ad8f-ad6d-4ce4-8a08-e3440e60e110\n4:14 AM\nCHAT\nNancy Gaston\nI can help with that! May I have your vehicle’s year and model, and do you have a preferred time tomorrow morning?",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 17,
+            "tag": "BUTTON",
+            "text": "💬 chat:460ca98c-b290-4457-8b15-08665c04676f\n4:13 AM\nCHAT\nCaroline\nYes, we have new Honda SUVs available. I can help you book a test drive—what day and time works best for you?",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 18,
+            "tag": "BUTTON",
+            "text": "· +14126546500\n3:34 AM\nMESSAGE\nLaunch certification synthetic embed callback request for Serra Honda. Timestamp 2026-06-09.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 19,
+            "tag": "BUTTON",
+            "text": "💬 chat:f6ddc97d-6259-4969-b2b4-a1826f49a8af\n3:34 AM\nCHAT\nCaroline\nI can help you browse Serra Honda's new and pre-owned inventory, provide information on pricing, help with trade-in questions, and schedule test drives. What ar",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 20,
+            "tag": "BUTTON",
+            "text": "· +19015550199\n2:17 AM\nMESSAGE\nEmbed callback verification",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 21,
+            "tag": "BUTTON",
+            "text": "· scrubtest+1780980940@huminic.dev\n12:55 AM\nMESSAGE\nCaroline\nWeb form lead — checking for clean notification content.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 22,
+            "tag": "BUTTON",
+            "text": "☎️ +15557940001\n12:55 AM\nCALL\nInterested in a 2026 Civic, wants a quote.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 23,
+            "tag": "BUTTON",
+            "text": "☎️ +19012038267\nJun 8\nCALL\nCaroline from Sarah Honda of Sylacauga introduced herself as a personal car buying assistant, asking the user about their car preferences to schedule a test dri",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 24,
+            "tag": "BUTTON",
+            "text": "· cert@huminic.dev\nJun 8\nMESSAGE\nCaroline\ncert form",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 25,
+            "tag": "BUTTON",
+            "text": "🎥 video-cert_serra-honda_5550002001\nJun 8\nVIDEO\ncert",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 26,
+            "tag": "BUTTON",
+            "text": "☎️ +15550001001\nJun 8\nCALL\ncert",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 27,
+            "tag": "BUTTON",
+            "text": "☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 28,
+            "tag": "BUTTON",
+            "text": "🎥 video-verify_video_1780893916\nJun 8\nVIDEO\nSynthetic video verification (non-customer) — interested in CR-V.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 29,
+            "tag": "BUTTON",
+            "text": "· studio-verify@huminic.dev\nJun 8\nMESSAGE\nCaroline\nNon-SMS go-live verification — please ignore. Interested in a Civic.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 30,
+            "tag": "BUTTON",
+            "text": "🎥 +14126546500\nJun 7\nVIDEO\nVideo visitor Elliott asked to compare CR-V trims.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 31,
+            "tag": "BUTTON",
+            "text": "☎️ +14126546500\nJun 7\nCALL\nCaller Elliott asked about 2026 Pilot lease specials.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 32,
+            "tag": "BUTTON",
+            "text": "☎️ +19015550100\nMay 30\nCALL\nElliott called Serra Honda asking about 2026 Civic availability. Wants to schedule a test drive.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 33,
+            "tag": "BUTTON",
+            "text": "Send",
+            "aria": null,
+            "href": null,
+            "disabled": true
+          },
+          {
+            "i": 34,
+            "tag": "BUTTON",
+            "text": "Take over",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          }
+        ]
+      },
+      "matches": [
+        {
+          "needle": "Post-forwarder Gmail route check 202606092103 for Serra Honda ADF.",
+          "found": true
+        },
+        {
+          "needle": "Launch certification post-forwarder Gmail routing check 20260609-212450 for Serra Honda contact form.",
+          "found": true
+        }
+      ],
+      "bannedMatches": [],
+      "noExplicitBannedTerms": true,
+      "status": "PASS"
+    },
+    {
+      "store": "hyundai-of-columbia",
+      "expected": [
+        "Launch certification post-forwarder Gmail routing check 20260609-212450 for Hyundai of Columbia contact form."
+      ],
+      "groupingNote": "Repeated form submissions from the same email/phone are grouped into one contact thread; the visible title may be the latest submitted name.",
+      "login": {
+        "method": "ui-form",
+        "success": true,
+        "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nHyundai of Columbia\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nHyundai of Columbia AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nSay hi to Caroline to start the conversation.\nSend\nHyundai of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic"
+      },
+      "snapshot": {
+        "url": "https://studio.huminic.app/p/hyundai-of-columbia/comms",
+        "title": "Huminic Studio",
+        "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nHyundai of Columbia\n·\nTeambox\nSales\nService\nj / k to move · r to reply\nAll\nText\nEmail\nCall\nVideo\nChat\nAgent\nAll agents\nCaroline\nNancy Gaston\nUnassigned\n· duanekwells@gmail.com\n5:25 PM\nMESSAGE\nCaroline\nLaunch certification post-forwarder Gmail routing check 20260609-212535 for Hyundai of Columbia contact form.\n💬 chat:3a31dec8-ce34-48ec-82bd-c64cba7efce3\n4:19 AM\nCHAT\nNancy Gaston\nYes, I can help with that! May I have your vehicle model and preferred time in the morning? I'll check our schedule and book your oil change.\n💬 chat:cc21d055-c4b3-4cff-8f07-eb795a2e41f9\n4:16 AM\nCHAT\nCaroline\nYes, we have Hyundai SUVs available. I can help you book a test drive—what day and time work best for you?\n· +14126546500\n3:38 AM\nMESSAGE\nLaunch certification synthetic embed callback request for Hyundai of Columbia. Timestamp 2026-06-09.\n💬 chat:eca3c31f-a7ea-4f9b-a598-7787f2fda6a8\n3:37 AM\nCHAT\nCaroline\nI can help you with new and pre-owned Hyundai vehicles, pricing, financing options, trade-in info, and scheduling test drives. What are you interested in today?\n☎️ +16155984818\nJun 8\nCALL\nThe user called Hyundai of Columbia to follow up on a missed callback from a salesperson, who was supposed to contact them after a previous conversation with a\n☎️ +19316291424\nJun 8\nCALL\nAn AI assistant from Hyundai of Columbia, Elizabeth, introduced herself and offered to help the customer find a car and schedule a test drive. However, the call\n🎥 video-cert_hyundai-of-columbia_5550002005\nJun 8\nVIDEO\ncert\n☎️ +15550001005\nJun 8\nCALL\ncert\n☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore.\n· cert-lead@example.com\nJun 6\nMESSAGE\nCaroline\nE2E CERT service inquiry, please ignore\nDexter Gmail Route Check 20260609-212535 Hyundai Form\n· Message · Sales\nCAROLINE\nOPEN\n↙ RECEIVED\nLaunch certification synthetic web form lead for Hyundai of Columbia. Timestamp 2026-06-09.\nDexter Gmail Route Check 20260609-212535 Hyundai Form · Message · 3:21 AM\n↙ RECEIVED\nLaunch certification synthetic embed form lead for Hyundai of Columbia. Timestamp 2026-06-09.\nDexter Gmail Route Check 20260609-212535 Hyundai Form · Message · 3:38 AM\n↙ RECEIVED\nLaunch certification standalone Hyundai of Columbia contact form test.\nDexter Gmail Route Check 20260609-212535 Hyundai Form · Message · 4:20 AM\n↙ RECEIVED\nLaunch certification post-forwarder Gmail routing check 20260609-212450 for Hyundai of Columbia contact form.\nDexter Gmail Route Check 20260609-212535 Hyundai Form · Message · 5:25 PM\n↙ RECEIVED\nLaunch certification post-forwarder Gmail routing check 20260609-212535 for Hyundai of Columbia contact form.\nDexter Gmail Route Check 20260609-212535 Hyundai Form · Message · 5:25 PM\nReply via\nMessage\nChat\nEmail\nText\nSend\nCUSTOMER\nDexter Gmail Route Check 20260609-212535 Hyundai Form\nEmail\nduanekwells@gmail.com\nPhone\n+14126546500\nContact\nduanekwells@gmail.com\nType\nSales\nChannel\nMessage\nStatus\nOpen\nHandled by\nCaroline\nTake over\n\nThe AI agent may auto-reply. Take over to pause it and reply yourself.\n\nHyundai of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+        "controls": [
+          {
+            "i": 0,
+            "tag": "A",
+            "text": "Agents",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/hyundai-of-columbia/chat",
+            "disabled": false
+          },
+          {
+            "i": 1,
+            "tag": "A",
+            "text": "Knowledge",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/hyundai-of-columbia/knowledge",
+            "disabled": false
+          },
+          {
+            "i": 2,
+            "tag": "A",
+            "text": "Widgets",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/hyundai-of-columbia/tools",
+            "disabled": false
+          },
+          {
+            "i": 3,
+            "tag": "A",
+            "text": "Data",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/hyundai-of-columbia/data",
+            "disabled": false
+          },
+          {
+            "i": 4,
+            "tag": "A",
+            "text": "Teambox",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/hyundai-of-columbia/comms",
+            "disabled": false
+          },
+          {
+            "i": 5,
+            "tag": "A",
+            "text": "Campaigns",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/hyundai-of-columbia/campaigns",
+            "disabled": false
+          },
+          {
+            "i": 6,
+            "tag": "A",
+            "text": "Notifications",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/hyundai-of-columbia/notifications",
+            "disabled": false
+          },
+          {
+            "i": 7,
+            "tag": "BUTTON",
+            "text": "Sales",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 8,
+            "tag": "BUTTON",
+            "text": "Service",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 9,
+            "tag": "BUTTON",
+            "text": "All",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 10,
+            "tag": "BUTTON",
+            "text": "Text",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 11,
+            "tag": "BUTTON",
+            "text": "Email",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 12,
+            "tag": "BUTTON",
+            "text": "Call",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 13,
+            "tag": "BUTTON",
+            "text": "Video",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 14,
+            "tag": "BUTTON",
+            "text": "Chat",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 15,
+            "tag": "BUTTON",
+            "text": "· duanekwells@gmail.com\n5:25 PM\nMESSAGE\nCaroline\nLaunch certification post-forwarder Gmail routing check 20260609-212535 for Hyundai of Columbia contact form.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 16,
+            "tag": "BUTTON",
+            "text": "💬 chat:3a31dec8-ce34-48ec-82bd-c64cba7efce3\n4:19 AM\nCHAT\nNancy Gaston\nYes, I can help with that! May I have your vehicle model and preferred time in the morning? I'll check our schedule and book your oil change.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 17,
+            "tag": "BUTTON",
+            "text": "💬 chat:cc21d055-c4b3-4cff-8f07-eb795a2e41f9\n4:16 AM\nCHAT\nCaroline\nYes, we have Hyundai SUVs available. I can help you book a test drive—what day and time work best for you?",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 18,
+            "tag": "BUTTON",
+            "text": "· +14126546500\n3:38 AM\nMESSAGE\nLaunch certification synthetic embed callback request for Hyundai of Columbia. Timestamp 2026-06-09.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 19,
+            "tag": "BUTTON",
+            "text": "💬 chat:eca3c31f-a7ea-4f9b-a598-7787f2fda6a8\n3:37 AM\nCHAT\nCaroline\nI can help you with new and pre-owned Hyundai vehicles, pricing, financing options, trade-in info, and scheduling test drives. What are you interested in today?",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 20,
+            "tag": "BUTTON",
+            "text": "☎️ +16155984818\nJun 8\nCALL\nThe user called Hyundai of Columbia to follow up on a missed callback from a salesperson, who was supposed to contact them after a previous conversation with a",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 21,
+            "tag": "BUTTON",
+            "text": "☎️ +19316291424\nJun 8\nCALL\nAn AI assistant from Hyundai of Columbia, Elizabeth, introduced herself and offered to help the customer find a car and schedule a test drive. However, the call",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 22,
+            "tag": "BUTTON",
+            "text": "🎥 video-cert_hyundai-of-columbia_5550002005\nJun 8\nVIDEO\ncert",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 23,
+            "tag": "BUTTON",
+            "text": "☎️ +15550001005\nJun 8\nCALL\ncert",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 24,
+            "tag": "BUTTON",
+            "text": "☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 25,
+            "tag": "BUTTON",
+            "text": "· cert-lead@example.com\nJun 6\nMESSAGE\nCaroline\nE2E CERT service inquiry, please ignore",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 26,
+            "tag": "BUTTON",
+            "text": "Send",
+            "aria": null,
+            "href": null,
+            "disabled": true
+          },
+          {
+            "i": 27,
+            "tag": "BUTTON",
+            "text": "Take over",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          }
+        ]
+      },
+      "matches": [
+        {
+          "needle": "Launch certification post-forwarder Gmail routing check 20260609-212450 for Hyundai of Columbia contact form.",
+          "found": true
+        }
+      ],
+      "bannedMatches": [],
+      "noExplicitBannedTerms": true,
+      "status": "PASS"
+    },
+    {
+      "store": "ford-of-columbia",
+      "expected": [
+        "Dexter Gmail Route Check 20260609-213138 Ford Callback"
+      ],
+      "groupingNote": null,
+      "login": {
+        "method": "ui-form",
+        "success": true,
+        "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nFord of Columbia\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nFord of Columbia AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nSay hi to Caroline to start the conversation.\nSend\nFord of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic"
+      },
+      "snapshot": {
+        "url": "https://studio.huminic.app/p/ford-of-columbia/comms",
+        "title": "Huminic Studio",
+        "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nFord of Columbia\n·\nTeambox\nSales\nService\nj / k to move · r to reply\nAll\nText\nEmail\nCall\nVideo\nChat\nAgent\nAll agents\nCaroline\nNancy Gaston\nUnassigned\n· +14126546500\n5:31 PM\nMESSAGE\nLaunch certification post-forwarder Gmail routing check 20260609-213138 for Ford of Columbia callback.\n· duanekwells@gmail.com\n4:21 AM\nMESSAGE\nCaroline\nLaunch certification standalone Ford of Columbia contact form test.\n💬 chat:1c5ddcc6-56c7-49f8-8081-2b0aa1c5abc8\n4:19 AM\nCHAT\nNancy Gaston\nI'm unable to check the current service schedule right now. Would you like me to connect you to one of our service advisors to confirm availability for tomorrow\n💬 chat:d9ca38b9-0191-4e0e-a0e9-ba694bb2df33\n4:16 AM\nCHAT\nCaroline\nYes, we have Ford SUVs available. I can help you schedule a test drive—what day and time work best for you?\n💬 chat:ebce1332-3bff-42ba-b697-ec78aee2e392\n3:38 AM\nCHAT\nCaroline\nHi! I can help you with info about our new and pre-owned vehicles, pricing, trade-in process, financing, and scheduling test drives at Ford of Columbia. What ar\n🎥 video-cert_ford-of-columbia_5550002006\nJun 8\nVIDEO\ncert\n☎️ +15550001006\nJun 8\nCALL\ncert\n☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore.\nDexter Gmail Route Check 20260609-213138 Ford Callback\n· Message · Sales\nAI AGENT\nOPEN\n↙ RECEIVED\nLaunch certification synthetic callback request for Ford of Columbia. Timestamp 2026-06-09.\nDexter Gmail Route Check 20260609-213138 Ford Callback · Message · 3:22 AM\n↙ RECEIVED\nLaunch certification synthetic embed callback request for Ford of Columbia. Timestamp 2026-06-09.\nDexter Gmail Route Check 20260609-213138 Ford Callback · Message · 3:39 AM\n↙ RECEIVED\nLaunch certification post-forwarder Gmail routing check 20260609-213138 for Ford of Columbia callback.\nDexter Gmail Route Check 20260609-213138 Ford Callback · Message · 5:31 PM\nReply via\nMessage\nChat\nEmail\nText\nSend\nCUSTOMER\nDexter Gmail Route Check 20260609-213138 Ford Callback\nEmail\nduanekwells@gmail.com\nPhone\n+14126546500\nContact\n+14126546500\nType\nSales\nChannel\nMessage\nStatus\nOpen\nHandled by\nAI agent\nTake over\n\nThe AI agent may auto-reply. Take over to pause it and reply yourself.\n\nFord of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+        "controls": [
+          {
+            "i": 0,
+            "tag": "A",
+            "text": "Agents",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/ford-of-columbia/chat",
+            "disabled": false
+          },
+          {
+            "i": 1,
+            "tag": "A",
+            "text": "Knowledge",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/ford-of-columbia/knowledge",
+            "disabled": false
+          },
+          {
+            "i": 2,
+            "tag": "A",
+            "text": "Widgets",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/ford-of-columbia/tools",
+            "disabled": false
+          },
+          {
+            "i": 3,
+            "tag": "A",
+            "text": "Data",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/ford-of-columbia/data",
+            "disabled": false
+          },
+          {
+            "i": 4,
+            "tag": "A",
+            "text": "Teambox",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/ford-of-columbia/comms",
+            "disabled": false
+          },
+          {
+            "i": 5,
+            "tag": "A",
+            "text": "Campaigns",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/ford-of-columbia/campaigns",
+            "disabled": false
+          },
+          {
+            "i": 6,
+            "tag": "A",
+            "text": "Notifications",
+            "aria": null,
+            "href": "https://studio.huminic.app/p/ford-of-columbia/notifications",
+            "disabled": false
+          },
+          {
+            "i": 7,
+            "tag": "BUTTON",
+            "text": "Sales",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 8,
+            "tag": "BUTTON",
+            "text": "Service",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 9,
+            "tag": "BUTTON",
+            "text": "All",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 10,
+            "tag": "BUTTON",
+            "text": "Text",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 11,
+            "tag": "BUTTON",
+            "text": "Email",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 12,
+            "tag": "BUTTON",
+            "text": "Call",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 13,
+            "tag": "BUTTON",
+            "text": "Video",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 14,
+            "tag": "BUTTON",
+            "text": "Chat",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 15,
+            "tag": "BUTTON",
+            "text": "· +14126546500\n5:31 PM\nMESSAGE\nLaunch certification post-forwarder Gmail routing check 20260609-213138 for Ford of Columbia callback.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 16,
+            "tag": "BUTTON",
+            "text": "· duanekwells@gmail.com\n4:21 AM\nMESSAGE\nCaroline\nLaunch certification standalone Ford of Columbia contact form test.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 17,
+            "tag": "BUTTON",
+            "text": "💬 chat:1c5ddcc6-56c7-49f8-8081-2b0aa1c5abc8\n4:19 AM\nCHAT\nNancy Gaston\nI'm unable to check the current service schedule right now. Would you like me to connect you to one of our service advisors to confirm availability for tomorrow",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 18,
+            "tag": "BUTTON",
+            "text": "💬 chat:d9ca38b9-0191-4e0e-a0e9-ba694bb2df33\n4:16 AM\nCHAT\nCaroline\nYes, we have Ford SUVs available. I can help you schedule a test drive—what day and time work best for you?",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 19,
+            "tag": "BUTTON",
+            "text": "💬 chat:ebce1332-3bff-42ba-b697-ec78aee2e392\n3:38 AM\nCHAT\nCaroline\nHi! I can help you with info about our new and pre-owned vehicles, pricing, trade-in process, financing, and scheduling test drives at Ford of Columbia. What ar",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 20,
+            "tag": "BUTTON",
+            "text": "🎥 video-cert_ford-of-columbia_5550002006\nJun 8\nVIDEO\ncert",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 21,
+            "tag": "BUTTON",
+            "text": "☎️ +15550001006\nJun 8\nCALL\ncert",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 22,
+            "tag": "BUTTON",
+            "text": "☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore.",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          },
+          {
+            "i": 23,
+            "tag": "BUTTON",
+            "text": "Send",
+            "aria": null,
+            "href": null,
+            "disabled": true
+          },
+          {
+            "i": 24,
+            "tag": "BUTTON",
+            "text": "Take over",
+            "aria": null,
+            "href": null,
+            "disabled": false
+          }
+        ]
+      },
+      "matches": [
+        {
+          "needle": "Dexter Gmail Route Check 20260609-213138 Ford Callback",
+          "found": true
+        }
+      ],
+      "bannedMatches": [],
+      "noExplicitBannedTerms": true,
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS"
+}

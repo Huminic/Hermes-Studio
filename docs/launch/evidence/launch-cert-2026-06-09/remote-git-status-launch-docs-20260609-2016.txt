@@ -1,0 +1,6 @@
+ M docs/launch/EVIDENCE_INDEX.md
+ M docs/launch/LAUNCH_CLOSEOUT_REPORT.md
+?? docs/launch/LAUNCH_CERT_FINDINGS.md
+?? docs/launch/LAUNCH_DECISION_PACKET.md
+?? docs/launch/LAUNCH_REQUIREMENTS_AUDIT.md
+?? docs/launch/evidence/launch-cert-2026-06-09/

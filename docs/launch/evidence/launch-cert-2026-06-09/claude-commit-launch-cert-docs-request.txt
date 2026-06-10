@@ -1,0 +1,27 @@
+Claude handoff from Codex/Dexter — launch-cert packet commit request
+
+Please commit the current launch-certification documentation/evidence packet only. Do not change product code, server config, or certification statuses.
+
+Scope to review/stage:
+- docs/launch/EVIDENCE_INDEX.md
+- docs/launch/LAUNCH_CLOSEOUT_REPORT.md
+- docs/launch/LAUNCH_CERT_FINDINGS.md
+- docs/launch/LAUNCH_DECISION_PACKET.md
+- docs/launch/LAUNCH_REQUIREMENTS_AUDIT.md
+- docs/launch/evidence/launch-cert-2026-06-09/
+
+Suggested commit message:
+docs(launch): add 2026-06-09 launch certification packet
+
+Important guardrails:
+- DO NOT record a waiver for LC-BLOCKER-001 unless Duane explicitly provides that instruction in chat.
+- DO NOT mark the launch certified.
+- DO NOT provision Durran or any partner/store as `is_admin:true`.
+- This is a documentation/evidence commit only. The certification verdict remains: not yet unconditional launch certification.
+
+Current open gates that must remain open unless Duane decides otherwise:
+- LC-BLOCKER-001: video wrapper-source provider-host exposure needs fix/disable/explicit waiver.
+- LC-BLOCKER-011: phone testing needs outbound-call approval or representative caller path.
+- LC-MAJOR-007: partner/group admin decision remains open: per-store Workspace logins for launch vs scoped Partner/Admin RBAC.
+
+I could not safely use the tmux prompt because stale input text saying "Duane waives LC-BLOCKER-001..." is visible and would be unsafe to submit. Please clear any stale prompt text before acting.

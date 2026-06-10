@@ -5,6 +5,17 @@
 
 A criterion can be marked GREEN in `ACCEPTANCE_CRITERIA.md` only when its anchor here references a real artifact.
 
+## 2026-06-09 Launch Certification Addendum
+
+The current launch-certification packet for `https://studio.huminic.app` is:
+
+- `docs/launch/LAUNCH_REQUIREMENTS_AUDIT.md` — guide-platform crosswalk, current evidence, and launch impact.
+- `docs/launch/LAUNCH_CERT_FINDINGS.md` — detailed finding ledger and certification log.
+- `docs/launch/LAUNCH_DECISION_PACKET.md` — concise operator decision packet.
+- `docs/launch/evidence/launch-cert-2026-06-09/` — current evidence bundle.
+
+Current status from the 2026-06-09 certification run: **not yet an unconditional launch certification**. Most tested surfaces are PASS, but launch still depends on decisions or approved testing for `LC-BLOCKER-001` video wrapper-source provider-host exposure, `LC-BLOCKER-011` phone-line testing, and `LC-MAJOR-007` partner/group admin scope. No tester waiver has been submitted.
+
 ---
 
 ## Status legend
@@ -264,3 +275,17 @@ A criterion can be marked GREEN in `ACCEPTANCE_CRITERIA.md` only when its anchor
 ### #launch-closeout-report — `P-RPT-004` — AC-FC-001..005
 - **Status:** PENDING
 - **Target:** `docs/launch/LAUNCH_CLOSEOUT_REPORT.md` per Section 12 format.
+
+## 2026-06-10 Updates
+
+Following the 2026-06-09 certification run, bounded content fix sprints closed LC-MAJOR-013 and LC-MAJOR-014:
+
+- **LC-MAJOR-013**: Nexxus migration guide documentation updated (commit `29399b7b1`)
+- **LC-MAJOR-014**: Contact form widgets marked as live (commit `29399b7b1`, deployed `t59orjyiqr0zkjeh0384vdg6`)
+- **LC-MAJOR-012**: Evidence boundary clarified; live provider state unverified without operator credentials
+
+Current verified runtime: commit `29399b7b150fb93e06d07cf175c984cf4e213dc0`
+
+Latest workflow dry-run evidence: `work/launch-cert/evidence/workflow-dry-run/launch-workflow-dry-run-20260610115538.json`
+
+Launch handoff materials added: `HUMINIC_LAUNCH_STATUS_2026-06-10.md`, `LAUNCH_OPEN_DECISIONS_2026-06-10.md`, `MORNING_WALKTHROUGH_SCRIPT_2026-06-10.md`, `DRAFT_LAUNCH_EMAILS_2026-06-10.md`

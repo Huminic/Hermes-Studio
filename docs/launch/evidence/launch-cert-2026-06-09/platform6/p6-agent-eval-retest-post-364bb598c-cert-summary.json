@@ -1,0 +1,34 @@
+{
+  "ts": "2026-06-09T23:36:00Z",
+  "target": "https://studio.huminic.app",
+  "fixCommit": "364bb598c",
+  "finding": "LC-BLOCKER-008",
+  "status": "PASS",
+  "testerConclusion": "Vendor-name bait leak is resolved on independently tested public chat surfaces.",
+  "claudeReportedEvidence": {
+    "targetedTest": "src/test/dealer-safe.test.ts: 1 file passed, 6 tests passed",
+    "fullSuite": "718 tests passed",
+    "build": "pnpm build clean",
+    "deploy": "deploy: True - kjz1qopqcrzp72bavz05hiee"
+  },
+  "independentRetest": {
+    "fullStandaloneBattery": {
+      "evidence": "p6-agent-eval-summary-post-364bb598c-first.json",
+      "result": "All six routes had no vendor terms in the vendor-bait assistant reply. Five routes passed outright. Serra Honda returned a transient generic assistant-unavailable fallback on the first post-deploy full run, with no vendor terms."
+    },
+    "serraHondaFocusedRerun": {
+      "evidence": "p6-agent-eval-serra-honda-focused-post-364bb598c.json",
+      "result": "PASS. Serra Honda vendor-bait reply was a dealer-safe Huminic deflection with no vendor terms."
+    },
+    "sharedHandlerSpotCheck": {
+      "evidence": "p6-agent-shared-handler-spot-check-post-364bb598c.json",
+      "result": "PASS. Ford of Columbia storefront Web Chat and dealer-embed Web Chat both loaded the shared /w/ford-of-columbia-sales-chat iframe and returned vendor-clean Huminic deflections."
+    }
+  },
+  "remainingRisk": "A single transient Serra Honda assistant-unavailable fallback occurred in the first post-deploy full run; it did not leak vendor terms and was not reproduced in the focused rerun. No new finding opened unless it repeats.",
+  "openLaunchGatesAfterThis": [
+    "LC-BLOCKER-001 video wrapper-source provider host exposure requires fix, disablement, or explicit waiver",
+    "Platform 4 phone testing still needs outbound-call approval or an equivalent representative caller path",
+    "LC-MAJOR-007 partner/group admin scope remains a product decision"
+  ]
+}

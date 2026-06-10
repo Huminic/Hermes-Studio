@@ -1,0 +1,587 @@
+{
+  "ts": "2026-06-09T08:26:38.290Z",
+  "store": "serra-honda",
+  "name": "Serra Honda",
+  "tabs": {
+    "agentsBefore": {
+      "url": "https://studio.huminic.app/p/serra-honda/chat",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Honda\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nSerra Honda AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nSay hi to Caroline to start the conversation.\nSend\nSerra Honda\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "buttons": [
+        {
+          "href": "https://studio.huminic.app/p/serra-honda/chat",
+          "i": 0,
+          "tag": "A",
+          "text": "Agents"
+        },
+        {
+          "href": "https://studio.huminic.app/p/serra-honda/knowledge",
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge"
+        },
+        {
+          "href": "https://studio.huminic.app/p/serra-honda/tools",
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets"
+        },
+        {
+          "href": "https://studio.huminic.app/p/serra-honda/data",
+          "i": 3,
+          "tag": "A",
+          "text": "Data"
+        },
+        {
+          "href": "https://studio.huminic.app/p/serra-honda/comms",
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox"
+        },
+        {
+          "href": "https://studio.huminic.app/p/serra-honda/campaigns",
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns"
+        },
+        {
+          "href": "https://studio.huminic.app/p/serra-honda/notifications",
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications"
+        },
+        {
+          "href": null,
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Caroline"
+        },
+        {
+          "href": null,
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "CRM Guru"
+        },
+        {
+          "href": null,
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Nancy Gaston"
+        },
+        {
+          "href": null,
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Semantic Guardian"
+        },
+        {
+          "href": null,
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Send"
+        }
+      ],
+      "textareas": [
+        {
+          "i": 0,
+          "placeholder": "Message Caroline…",
+          "value": ""
+        }
+      ]
+    },
+    "agentsAfter": {
+      "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Honda\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nSerra Honda AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nSay hi to Caroline to start the conversation.\nSend\nSerra Honda\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic"
+    },
+    "knowledge": {
+      "url": "https://studio.huminic.app/p/serra-honda/knowledge",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Honda\n·\nKnowledge\nCOMPANY WIKI\n↻\nStart here\nCompany overview\nGlossary\nHow to edit this wiki\nWelcome\nPeople and culture\nPolicies\nBenefits\nOrg chart\nValues\nOperations\nIt setup\nProcurement\nTools and access\nSales\nLead handling\nProcess\nScripts\nService\nProcess\nRecalls\nScheduling\nTeams\nFinance\nParts\nSales\nService\nProjects\nOverview\nAssets\nNothing here yet.\nPolicies\nNothing here yet.\nTemplates\nMeeting notes\nRfc\nOverview\nSelect a page from the wiki to read or edit it. Your changes are saved straight to your company wiki.\nSerra Honda\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "buttons": [
+        {
+          "aria": "Refresh",
+          "disabled": false,
+          "i": 0,
+          "text": "↻"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 1,
+          "text": "Company overview"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 2,
+          "text": "Glossary"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 3,
+          "text": "How to edit this wiki"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 4,
+          "text": "Welcome"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 5,
+          "text": ""
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 6,
+          "text": ""
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 7,
+          "text": "Benefits"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 8,
+          "text": "Org chart"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 9,
+          "text": "Values"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 10,
+          "text": "It setup"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 11,
+          "text": "Procurement"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 12,
+          "text": "Tools and access"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 13,
+          "text": "Lead handling"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 14,
+          "text": "Process"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 15,
+          "text": "Scripts"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 16,
+          "text": "Process"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 17,
+          "text": "Recalls"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 18,
+          "text": "Scheduling"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 19,
+          "text": ""
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 20,
+          "text": ""
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 21,
+          "text": ""
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 22,
+          "text": ""
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 23,
+          "text": "Overview"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 24,
+          "text": "Meeting notes"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 25,
+          "text": "Rfc"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 26,
+          "text": "Overview"
+        }
+      ],
+      "inputs": []
+    },
+    "widgets": {
+      "url": "https://studio.huminic.app/p/serra-honda/tools",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Honda\n·\nWidgets\nWidget\nSerra Honda Sales\nLive chat\nSerra Honda Service\nLive chat\nContact Serra Honda\nContact form\nSerra Honda Sales\nLive\n\nA chat bubble your visitors can open to talk with your AI assistant in real time.\n\nCaroline answers shopper questions about Honda inventory, pricing, financing,\ntrade-in value, and test-drive scheduling, then captures the lead for the BDC\nteam. Embed this on inventory and landing pages where shoppers are browsing\nvehicles.\n\nAdd to your website\nCopy code\n\nPaste this one line into your website where you want the widget to appear.\n\n<script async src=\"https://studio.huminic.app/nexxus-widget.min.js?id=serra-honda-sales-chat\"></script>\nLive demo\nOpen in new tab\n\nThis is exactly what your visitors will see.\n\nCustomize wording (advanced)\nPreview\nSerra Honda\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "buttons": [
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 0,
+          "text": "Widget"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 1,
+          "text": "Serra Honda Sales\nLive chat"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 2,
+          "text": "Serra Honda Service\nLive chat"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 3,
+          "text": "Contact Serra Honda\nContact form"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 4,
+          "text": "Copy code"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 5,
+          "text": ""
+        }
+      ],
+      "inputs": [
+        {
+          "i": 0,
+          "placeholder": null,
+          "tag": "TEXTAREA",
+          "type": null,
+          "value": "---\nslug: serra-honda-sales-chat\nmode: chat\nagent: caroline\ntitle: Serra Honda Sales\ngreeting: Hi! I'm Caroline at Serra Honda. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\ntype: widget\nstatus: draft\n---\n\n# Serra Honda Sales Chat\n\nCaroline answers shopper questions about Honda inventory, pricing, financing,\ntrade-in value, and test-drive scheduling, then captures the lead for the BDC\nteam. Embed this on inventory and landing pages where shoppers are browsing\nvehicles.\n"
+        }
+      ]
+    },
+    "data": {
+      "url": "https://studio.huminic.app/p/serra-honda/data",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Honda\n·\nData\nDashboard\n\nYour activity over the last 30 days.\n\nRefresh\n7\nCalls received\nNo texts yet\nTexts sent\n586\nLeads\nNo campaigns yet\nCampaigns\nMessages\n42\nTotal\n26\nReceived\n16\nSent\nChannel\tReceived\tSent\nCall\t7\t7\nChat\t6\t6\nForm\t9\t0\nVideo\t3\t3\nText\t1\t0\nConversations\n20\nTotal\n20\nOpen\n0\nClosed\nSales: 18\nService: 1\nChat: 1\nFollow-up performance\n0\nImmediate\n0\n24h check-in\n0\nTexts sent\n\nNo automated follow-ups sent yet.\n\nCampaigns\n0\nCampaigns\n0\nDelivered\n0\nFailed\nNo campaigns yet.\nLeads\n586\nTotal leads\nStatus\tLeads\nActive_waiting_for_prospect_response\t22\nBad_duplicate_lead\t22\nActive_new_lead\t5\nBad_no_intent_to_buy\t1\nBuild your own dashboard\nMetric\nCalls\nVideo\nTexts (SMS)\nEmails\nWeb chats\nLeads\nService threads\nSales threads\nCampaigns\nFollow-up triggers\nCard title (optional)\n+ Add card\n\nCards read live from your messaging, calls, video, leads, and campaigns over the current window.\n\nSerra Honda\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "buttons": [
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 0,
+          "text": "Refresh"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 1,
+          "text": "+ Add card"
+        }
+      ],
+      "inputs": [
+        {
+          "i": 0,
+          "placeholder": "Calls",
+          "tag": "INPUT",
+          "type": null,
+          "value": ""
+        }
+      ]
+    },
+    "teambox": {
+      "url": "https://studio.huminic.app/p/serra-honda/comms",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Honda\n·\nTeambox\nSales\nService\nj / k to move · r to reply\nAll\nText\nEmail\nCall\nVideo\nChat\nAgent\nAll agents\nCaroline\nNancy Gaston\nUnassigned\n· duanekwells@gmail.com\n4:14 AM\nMESSAGE\nCaroline\nLaunch certification standalone contact form test.\n💬 chat:8832ad8f-ad6d-4ce4-8a08-e3440e60e110\n4:14 AM\nCHAT\nNancy Gaston\nI can help with that! May I have your vehicle’s year and model, and do you have a preferred time tomorrow morning?\n💬 chat:460ca98c-b290-4457-8b15-08665c04676f\n4:13 AM\nCHAT\nCaroline\nYes, we have new Honda SUVs available. I can help you book a test drive—what day and time works best for you?\n· +14126546500\n3:34 AM\nMESSAGE\nLaunch certification synthetic embed callback request for Serra Honda. Timestamp 2026-06-09.\n💬 chat:f6ddc97d-6259-4969-b2b4-a1826f49a8af\n3:34 AM\nCHAT\nCaroline\nI can help you browse Serra Honda's new and pre-owned inventory, provide information on pricing, help with trade-in questions, and schedule test drives. What ar\n· +19015550199\n2:17 AM\nMESSAGE\nEmbed callback verification\n· scrubtest+1780980940@huminic.dev\n12:55 AM\nMESSAGE\nCaroline\nWeb form lead — checking for clean notification content.\n☎️ +15557940001\n12:55 AM\nCALL\nInterested in a 2026 Civic, wants a quote.\n☎️ +19012038267\nJun 8\nCALL\nCaroline from Sarah Honda of Sylacauga introduced herself as a personal car buying assistant, asking the user about their car preferences to schedule a test dri\n· cert@huminic.dev\nJun 8\nMESSAGE\nCaroline\ncert form\n🎥 tavus-cert_serra-honda_5550002001\nJun 8\nVIDEO\ncert\n☎️ +15550001001\nJun 8\nCALL\ncert\n☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore.\n🎥 tavus-verify_tavus_1780893916\nJun 8\nVIDEO\nSynthetic video verification (non-customer) — interested in CR-V.\n· studio-verify@huminic.dev\nJun 8\nMESSAGE\nCaroline\nNon-SMS go-live verification — please ignore. Interested in a Civic.\n🎥 +14126546500\nJun 7\nVIDEO\nVideo visitor Elliott asked to compare CR-V trims.\n☎️ +14126546500\nJun 7\nCALL\nCaller Elliott asked about 2026 Pilot lease specials.\n☎️ +19015550100\nMay 30\nCALL\nElliott called Serra Honda asking about 2026 Civic availability. Wants to schedule a test drive.\nDexter Launch Cert Standalone Serra Honda Contact\n· Message · Sales\nCAROLINE\nOPEN\n↙ RECEIVED\nLaunch certification synthetic web form lead for Serra Honda. Interested in a Civic. Timestamp 2026-06-09T07:15Z.\nDexter Launch Cert Standalone Serra Honda Contact · Message · 3:11 AM\n↙ RECEIVED\nLaunch certification synthetic embed form lead for Serra Honda. Timestamp 2026-06-09.\nDexter Launch Cert Standalone Serra Honda Contact · Message · 3:34 AM\n↙ RECEIVED\nLaunch certification standalone contact form test.\nDexter Launch Cert Standalone Serra Honda Contact · Message · 4:14 AM\nReply via\nMessage\nChat\nEmail\nText\nSend\nCUSTOMER\nDexter Launch Cert Standalone Serra Honda Contact\nEmail\nduanekwells@gmail.com\nPhone\n+14126546500\nContact\nduanekwells@gmail.com\nType\nSales\nChannel\nMessage\nStatus\nOpen\nHandled by\nCaroline\nTake over\n\nThe AI agent may auto-reply. Take over to pause it and reply yourself.\n\nSerra Honda\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "buttons": [
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 0,
+          "text": "Sales"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 1,
+          "text": "Service"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 2,
+          "text": "All"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 3,
+          "text": "Text"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 4,
+          "text": "Email"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 5,
+          "text": "Call"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 6,
+          "text": "Video"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 7,
+          "text": "Chat"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 8,
+          "text": "· duanekwells@gmail.com\n4:14 AM\nMESSAGE\nCaroline\nLaunch certification standalone contact form test."
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 9,
+          "text": "💬 chat:8832ad8f-ad6d-4ce4-8a08-e3440e60e110\n4:14 AM\nCHAT\nNancy Gaston\nI can help with that! May I have your vehicle’s year and model, and do you have a preferred time tomorrow morning?"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 10,
+          "text": "💬 chat:460ca98c-b290-4457-8b15-08665c04676f\n4:13 AM\nCHAT\nCaroline\nYes, we have new Honda SUVs available. I can help you book a test drive—what day and time works best for you?"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 11,
+          "text": "· +14126546500\n3:34 AM\nMESSAGE\nLaunch certification synthetic embed callback request for Serra Honda. Timestamp 2026-06-09."
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 12,
+          "text": "💬 chat:f6ddc97d-6259-4969-b2b4-a1826f49a8af\n3:34 AM\nCHAT\nCaroline\nI can help you browse Serra Honda's new and pre-owned inventory, provide information on pricing, help with trade-in questions, and schedule test drives. What ar"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 13,
+          "text": "· +19015550199\n2:17 AM\nMESSAGE\nEmbed callback verification"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 14,
+          "text": "· scrubtest+1780980940@huminic.dev\n12:55 AM\nMESSAGE\nCaroline\nWeb form lead — checking for clean notification content."
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 15,
+          "text": "☎️ +15557940001\n12:55 AM\nCALL\nInterested in a 2026 Civic, wants a quote."
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 16,
+          "text": "☎️ +19012038267\nJun 8\nCALL\nCaroline from Sarah Honda of Sylacauga introduced herself as a personal car buying assistant, asking the user about their car preferences to schedule a test dri"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 17,
+          "text": "· cert@huminic.dev\nJun 8\nMESSAGE\nCaroline\ncert form"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 18,
+          "text": "🎥 tavus-cert_serra-honda_5550002001\nJun 8\nVIDEO\ncert"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 19,
+          "text": "☎️ +15550001001\nJun 8\nCALL\ncert"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 20,
+          "text": "☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore."
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 21,
+          "text": "🎥 tavus-verify_tavus_1780893916\nJun 8\nVIDEO\nSynthetic video verification (non-customer) — interested in CR-V."
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 22,
+          "text": "· studio-verify@huminic.dev\nJun 8\nMESSAGE\nCaroline\nNon-SMS go-live verification — please ignore. Interested in a Civic."
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 23,
+          "text": "🎥 +14126546500\nJun 7\nVIDEO\nVideo visitor Elliott asked to compare CR-V trims."
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 24,
+          "text": "☎️ +14126546500\nJun 7\nCALL\nCaller Elliott asked about 2026 Pilot lease specials."
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 25,
+          "text": "☎️ +19015550100\nMay 30\nCALL\nElliott called Serra Honda asking about 2026 Civic availability. Wants to schedule a test drive."
+        },
+        {
+          "aria": null,
+          "disabled": true,
+          "i": 26,
+          "text": "Send"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 27,
+          "text": "Take over"
+        }
+      ],
+      "inputs": [
+        {
+          "i": 0,
+          "placeholder": "Type your reply…",
+          "tag": "TEXTAREA",
+          "type": null,
+          "value": ""
+        }
+      ]
+    },
+    "campaigns": {
+      "url": "https://studio.huminic.app/p/serra-honda/campaigns",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Honda\n·\nCampaigns\nCampaigns\nReach your customers by text, email, call, or video.\nFollow-up\nSend now\nNew campaign\n\n“Send now” sends any ready campaign to its audience immediately.\n\nYour lists\nNo lists yet. Create a campaign or upload a .csv to build one.\nCampaigns\nNo campaigns yet. Create one to reach your customers.\nSerra Honda\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "buttons": [
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 0,
+          "text": "Follow-up"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 1,
+          "text": "Send now"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 2,
+          "text": "New campaign"
+        }
+      ],
+      "inputs": []
+    },
+    "notifications": {
+      "url": "https://studio.huminic.app/p/serra-honda/notifications",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Honda\n·\nNotifications\nNotifications\n\nDecide who gets alerted when something happens — a new lead, an inbound message, or (as they come online) a Guardian condition or query result. Each rule is “when this happens, notify this person.”\n\nNo rules yet — new leads currently fall back to duanekwells@gmail.com. Add a rule to route specific conditions to specific people.\nWhen (condition)\tNotify (recipient)\tChannel\tLabel\tOn\t\nNo routing rules. Add one below.\n+ Add rule\nSave\n\nSMS notifications are reserved (email is delivered today). Guardian conditions become selectable once the Business / Performance Guardians are live; until then you can type a custom condition id to pre-stage a rule.\n\nSerra Honda\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "buttons": [
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 0,
+          "text": "+ Add rule"
+        },
+        {
+          "aria": null,
+          "disabled": false,
+          "i": 1,
+          "text": "Save"
+        }
+      ],
+      "inputs": []
+    }
+  },
+  "checks": {
+    "tabsPresent": true,
+    "headerStoreName": true,
+    "rosterExpected": true,
+    "defaultAgentReply": false,
+    "knowledgeLoads": true,
+    "widgetsReady": true,
+    "dataLoads": false,
+    "metricLabelsPlain": true,
+    "teamboxLoads": true,
+    "teamboxLeadVisible": true,
+    "campaignsLoads": true,
+    "notificationsLoads": true,
+    "noVendorTerms": false,
+    "noRawLeakage": true
+  },
+  "screenshotError": "Error: Timed out running CDP command \"Page.captureScreenshot\" for tab 30",
+  "status": "FAIL"
+}

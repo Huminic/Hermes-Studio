@@ -1,0 +1,58 @@
+{
+  "ts": "2026-06-09T08:11:17.006Z",
+  "rows": [
+    {
+      "store": "serra-honda",
+      "snippetContainsBanned": false,
+      "parentDomContainsBanned": false,
+      "topLevelVideoIframeClean": true,
+      "allIframeSrcs": [
+        "https://studio.huminic.app/widget/video-room?c=cca30370ea45643c"
+      ],
+      "status": "PARENT_DOM_PASS"
+    },
+    {
+      "store": "serra-nissan",
+      "snippetContainsBanned": false,
+      "parentDomContainsBanned": false,
+      "topLevelVideoIframeClean": true,
+      "allIframeSrcs": [
+        "https://studio.huminic.app/widget/video-room?c=ce68760e6f1cc4fa"
+      ],
+      "status": "PARENT_DOM_PASS"
+    },
+    {
+      "store": "tony-serra-ford",
+      "snippetContainsBanned": false,
+      "parentDomContainsBanned": false,
+      "topLevelVideoIframeClean": true,
+      "allIframeSrcs": [
+        "https://studio.huminic.app/widget/video-room?c=ce6d69ac25e69458"
+      ],
+      "status": "PARENT_DOM_PASS"
+    },
+    {
+      "store": "hyundai-of-columbia",
+      "snippetContainsBanned": false,
+      "parentDomContainsBanned": false,
+      "topLevelVideoIframeClean": true,
+      "allIframeSrcs": [
+        "https://studio.huminic.app/widget/video-room?c=c5bec0c61cffd4d9"
+      ],
+      "status": "PARENT_DOM_PASS"
+    },
+    {
+      "store": "ford-of-columbia",
+      "snippetContainsBanned": false,
+      "parentDomContainsBanned": false,
+      "topLevelVideoIframeClean": true,
+      "allIframeSrcs": [
+        "https://studio.huminic.app/widget/video-room?c=cbad47c419ff44f3"
+      ],
+      "status": "PARENT_DOM_PASS"
+    }
+  ],
+  "residualWrapperSourceContainsBanned": true,
+  "residualWrapperSourceEvidence": "../platform1/p1-video-wrapper-source-ford-of-columbia.html",
+  "interpretation": "Dealer embed install snippet and parent page iframe handoff are clean across all five stores; shared public /widget/video-room wrapper source remains LC-BLOCKER-001."
+}

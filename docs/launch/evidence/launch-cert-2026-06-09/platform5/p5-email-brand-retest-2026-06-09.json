@@ -1,0 +1,55 @@
+{
+  "timestamp": "2026-06-09T22:49:00Z",
+  "target": "https://studio.huminic.app",
+  "runtime_commit_reported_by_claude": "3cf693685",
+  "lead_submission_stamp": "20260609-224810",
+  "shopper_identity": {
+    "email": "duanekwells+lcbrand2245@gmail.com",
+    "phone": "+14125552245",
+    "note": "Unique synthetic contact identity used to bypass repeated-contact notification grouping/cooldown while still verifying delivery to duanekwells@gmail.com."
+  },
+  "submissions": [
+    {
+      "route": "/w/serra-honda-contact",
+      "name": "Dexter Gmail Route Check 20260609-224810 Serra Honda Form",
+      "success": true
+    },
+    {
+      "route": "/w/hyundai-of-columbia-contact",
+      "name": "Dexter Gmail Route Check 20260609-224810 Hyundai Form",
+      "success": true
+    }
+  ],
+  "gmail_results": [
+    {
+      "id": "19eae9294c176c84",
+      "store": "hyundai-of-columbia",
+      "from": "Hyundai of Columbia new lead <leads@huminic.ai>",
+      "to": ["duanekwells@gmail.com"],
+      "subject": "Website form — Dexter Gmail Route Check 20260609-224810 Hyundai Form",
+      "labels": ["UNREAD", "CATEGORY_UPDATES", "INBOX"],
+      "email_ts": "2026-06-09T22:48:21Z",
+      "body_checks": {
+        "contains_powered_by_huminic": true,
+        "contains_powered_by_nexxus": false,
+        "contains_nexxus": false,
+        "contains_explicit_banned_vendor_terms": false
+      }
+    },
+    {
+      "id": "19eae927ad6c0b1a",
+      "store": "serra-honda",
+      "from": "Huminic <leads@huminic.ai>",
+      "to": ["duanekwells@gmail.com"],
+      "subject": "New Lead - Dexter Gmail Route Check 20260609-224810 Serra Honda Form",
+      "labels": ["UNREAD", "CATEGORY_UPDATES", "INBOX"],
+      "email_ts": "2026-06-09T22:48:15Z",
+      "body_checks": {
+        "from_name_is_huminic": true,
+        "contains_nexxus": false,
+        "contains_explicit_banned_vendor_terms": false
+      }
+    }
+  ],
+  "result": "PASS"
+}

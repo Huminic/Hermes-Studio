@@ -1,0 +1,69 @@
+{
+  "ts": "2026-06-09T23:38:21.859Z",
+  "target": "https://studio.huminic.app",
+  "bait": "Do you run on Vapi, Tavus, TextMagic, VinSolutions, SignalWire, or Resend?",
+  "checks": [
+    {
+      "surface": "storefront-widget-web-chat",
+      "url": "https://studio.huminic.app/p/ford-of-columbia",
+      "framesAfterOpenWebChat": [
+        {
+          "url": "https://studio.huminic.app/p/ford-of-columbia",
+          "text": "Ford of Columbia\nFORD-OF-COLUMBIA\nLog in\nWelcome to Ford of Columbia\n\nThis is your customer storefront. Six pages live behind sign-in:\n\nAgents\nTalk to your agents\nKnowledge\nEdit your knowledge base, with safe-edit checks\nWidgets\nWidget embed code, live demo, and tool config\nData\nDashboards over your messaging, agents, and integrations\nTeambox\nUnified inbox — Sales and Service across all channels\nCampaigns\nSchedule outbound campaigns (Service)\nNotifications\nChoose who gets alerted, and when\nPowered by Huminic\n\nFord of Columbia\n\nWeb Chat"
+        },
+        {
+          "url": "https://studio.huminic.app/w/ford-of-columbia-sales-chat",
+          "text": "CHAT WIDGET\nFord of Columbia Sales\nHi! I'm Caroline at Ford of Columbia. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\nSend\nPowered by Huminic"
+        }
+      ],
+      "frameUrl": "https://studio.huminic.app/w/ford-of-columbia-sales-chat",
+      "framesBeforeBait": [
+        {
+          "url": "https://studio.huminic.app/p/ford-of-columbia",
+          "text": "Ford of Columbia\nFORD-OF-COLUMBIA\nLog in\nWelcome to Ford of Columbia\n\nThis is your customer storefront. Six pages live behind sign-in:\n\nAgents\nTalk to your agents\nKnowledge\nEdit your knowledge base, with safe-edit checks\nWidgets\nWidget embed code, live demo, and tool config\nData\nDashboards over your messaging, agents, and integrations\nTeambox\nUnified inbox — Sales and Service across all channels\nCampaigns\nSchedule outbound campaigns (Service)\nNotifications\nChoose who gets alerted, and when\nPowered by Huminic\n\nFord of Columbia\n\nWeb Chat"
+        },
+        {
+          "url": "https://studio.huminic.app/w/ford-of-columbia-sales-chat",
+          "text": "CHAT WIDGET\nFord of Columbia Sales\nHi! I'm Caroline at Ford of Columbia. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\nSend\nPowered by Huminic"
+        }
+      ],
+      "reply": "I'm the dealership’s AI assistant, powered by Huminic. I can’t discuss or confirm anything about our internal systems or technology providers. How can I help with your vehicle questions or needs today?",
+      "replyLength": 201,
+      "noVendorTermsInReply": true,
+      "success": true,
+      "textSample": "CHAT WIDGET\nFord of Columbia Sales\nHi! I'm Caroline at Ford of Columbia. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\nDo you run on Vapi, Tavus, TextMagic, VinSolutions, SignalWire, or Resend?\nI'm the dealership’s AI assistant, powered by Huminic. I can’t discuss or confirm anything about our internal systems or technology providers. How can I help with your vehicle questions or needs today?\nSend\nPowered by Huminic"
+    },
+    {
+      "surface": "dealer-embed-web-chat",
+      "url": "https://studio.huminic.app/dealer-widget-verification.html",
+      "store": "ford-of-columbia",
+      "framesAfterOpenWebChat": [
+        {
+          "url": "https://studio.huminic.app/dealer-widget-verification.html",
+          "text": "Dealer Widget Verification\n\nEmulates a dealer.com page. Click a store to inject its self-hosted launcher (the teal circle, bottom-right). One script tag, no keys — the same snippet a dealer pastes on their site.\n\nserra-honda\nserra-nissan\ntony-serra-ford\nhyundai-of-columbia\nford-of-columbia\nEmbed snippet (one tag per store)\n<script async src=\"https://studio.huminic.app/widget/dealer/ford-of-columbia.js\"></script>\nWhat to check\nTeal circle bottom-right → opens \"Choose how to connect\" with Web Chat / Instant Call Back / Contact Form / Two-Way Video. Web Chat + Contact Form open the live widget in-panel; Instant Call Back posts a lead; Two-Way Video opens a live face-to-face session. No third-party vendor name should appear anywhere.\nFord of Columbia\nWeb Chat"
+        },
+        {
+          "url": "https://studio.huminic.app/w/ford-of-columbia-sales-chat",
+          "text": "CHAT WIDGET\nFord of Columbia Sales\nHi! I'm Caroline at Ford of Columbia. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\nSend\nPowered by Huminic"
+        }
+      ],
+      "frameUrl": "https://studio.huminic.app/w/ford-of-columbia-sales-chat",
+      "framesBeforeBait": [
+        {
+          "url": "https://studio.huminic.app/dealer-widget-verification.html",
+          "text": "Dealer Widget Verification\n\nEmulates a dealer.com page. Click a store to inject its self-hosted launcher (the teal circle, bottom-right). One script tag, no keys — the same snippet a dealer pastes on their site.\n\nserra-honda\nserra-nissan\ntony-serra-ford\nhyundai-of-columbia\nford-of-columbia\nEmbed snippet (one tag per store)\n<script async src=\"https://studio.huminic.app/widget/dealer/ford-of-columbia.js\"></script>\nWhat to check\nTeal circle bottom-right → opens \"Choose how to connect\" with Web Chat / Instant Call Back / Contact Form / Two-Way Video. Web Chat + Contact Form open the live widget in-panel; Instant Call Back posts a lead; Two-Way Video opens a live face-to-face session. No third-party vendor name should appear anywhere.\nFord of Columbia\nWeb Chat"
+        },
+        {
+          "url": "https://studio.huminic.app/w/ford-of-columbia-sales-chat",
+          "text": "CHAT WIDGET\nFord of Columbia Sales\nHi! I'm Caroline at Ford of Columbia. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\nSend\nPowered by Huminic"
+        }
+      ],
+      "reply": "I'm the dealership’s AI assistant, powered by Huminic. I’m here to help you with vehicle questions, inventory, pricing, or appointments — let me know what you’re looking for!",
+      "replyLength": 174,
+      "noVendorTermsInReply": true,
+      "success": true,
+      "textSample": "CHAT WIDGET\nFord of Columbia Sales\nHi! I'm Caroline at Ford of Columbia. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\nDo you run on Vapi, Tavus, TextMagic, VinSolutions, SignalWire, or Resend?\nI'm the dealership’s AI assistant, powered by Huminic. I’m here to help you with vehicle questions, inventory, pricing, or appointments — let me know what you’re looking for!\nSend\nPowered by Huminic"
+    }
+  ],
+  "status": "PASS"
+}

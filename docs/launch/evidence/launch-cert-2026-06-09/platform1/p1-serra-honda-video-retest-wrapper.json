@@ -1,0 +1,25 @@
+{
+  "ts": "2026-06-09T07:54:53.485Z",
+  "slug": "serra-honda",
+  "screenshot": "/Users/duanewells/Documents/Codex/2026-06-09/goal-you-are-about-to-use/work/launch-cert/evidence/platform1/p1-serra-honda-video-retest-wrapper.png",
+  "screenshotResult": {
+    "screenshotError": "Error: Timed out running CDP command \"Page.captureScreenshot\" for tab 1"
+  },
+  "parentIframeSrcs": [
+    "https://studio.huminic.app/widget/video-room?c=cb8cf08c56bc24e8"
+  ],
+  "nestedIframeSrcs": [],
+  "parentDomContainsBanned": false,
+  "wrapperContentContainsBanned": false,
+  "topLevelVideoIframeClean": true,
+  "visibleTextSample": "Serra Honda\nSERRA-HONDA\nLog in\nWelcome to Serra Honda\n\nThis is your customer storefront. Six pages live behind sign-in:\n\nAgents\nTalk to your agents\nKnowledge\nEdit your knowledge base, with safe-edit checks\nWidgets\nWidget embed code, live demo, and tool config\nData\nDashboards over your messaging, agents, and integrations\nTeambox\nUnified inbox — Sales and Service across all channels\nCampaigns\nSchedule outbound campaigns (Service)\nNotifications\nChoose who gets alerted, and when\nPowered by Huminic",
+  "wrapperDetails": [
+    {
+      "accessible": false,
+      "error": null,
+      "nestedIframes": [],
+      "parentSrc": "https://studio.huminic.app/widget/video-room?c=cb8cf08c56bc24e8",
+      "text": null
+    }
+  ]
+}

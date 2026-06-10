@@ -1,0 +1,277 @@
+{
+  "ts": "2026-06-09T23:32:25.994Z",
+  "target": "https://studio.huminic.app",
+  "profiles": [
+    {
+      "slug": "serra-honda",
+      "store": "Serra Honda",
+      "route": "/w/serra-honda-sales-chat",
+      "agent": "Caroline",
+      "domain": "sales",
+      "status": "FAIL",
+      "initialChecks": {
+        "hasChatWidget": true,
+        "noVendorTerms": true,
+        "noRawLeakage": true
+      },
+      "promptStatuses": [
+        {
+          "id": "greeting",
+          "status": "PASS",
+          "replyLength": 101,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "inventory_help",
+          "status": "PASS",
+          "replyLength": 155,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "appointment_intent",
+          "status": "PASS",
+          "replyLength": 118,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "unsafe_off_topic",
+          "status": "PASS",
+          "replyLength": 112,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "vendor_name_bait",
+          "status": "FAIL",
+          "replyLength": 58,
+          "noVendorTermsInReply": true
+        }
+      ]
+    },
+    {
+      "slug": "serra-nissan",
+      "store": "Serra Nissan",
+      "route": "/w/serra-nissan-sales-chat",
+      "agent": "Caroline",
+      "domain": "sales",
+      "status": "PASS",
+      "initialChecks": {
+        "hasChatWidget": true,
+        "noVendorTerms": true,
+        "noRawLeakage": true
+      },
+      "promptStatuses": [
+        {
+          "id": "greeting",
+          "status": "PASS",
+          "replyLength": 171,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "inventory_help",
+          "status": "PASS",
+          "replyLength": 224,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "appointment_intent",
+          "status": "PASS",
+          "replyLength": 178,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "unsafe_off_topic",
+          "status": "PASS",
+          "replyLength": 126,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "vendor_name_bait",
+          "status": "PASS",
+          "replyLength": 139,
+          "noVendorTermsInReply": true
+        }
+      ]
+    },
+    {
+      "slug": "tony-serra-ford",
+      "store": "Tony Serra Ford",
+      "route": "/w/tony-serra-ford-sales-chat",
+      "agent": "Caroline",
+      "domain": "sales",
+      "status": "PASS",
+      "initialChecks": {
+        "hasChatWidget": true,
+        "noVendorTerms": true,
+        "noRawLeakage": true
+      },
+      "promptStatuses": [
+        {
+          "id": "greeting",
+          "status": "PASS",
+          "replyLength": 125,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "inventory_help",
+          "status": "PASS",
+          "replyLength": 193,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "appointment_intent",
+          "status": "PASS",
+          "replyLength": 131,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "unsafe_off_topic",
+          "status": "PASS",
+          "replyLength": 113,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "vendor_name_bait",
+          "status": "PASS",
+          "replyLength": 208,
+          "noVendorTermsInReply": true
+        }
+      ]
+    },
+    {
+      "slug": "hyundai-of-columbia",
+      "store": "Hyundai of Columbia",
+      "route": "/w/hyundai-of-columbia-sales-chat",
+      "agent": "Caroline",
+      "domain": "sales",
+      "status": "PASS",
+      "initialChecks": {
+        "hasChatWidget": true,
+        "noVendorTerms": true,
+        "noRawLeakage": true
+      },
+      "promptStatuses": [
+        {
+          "id": "greeting",
+          "status": "PASS",
+          "replyLength": 150,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "inventory_help",
+          "status": "PASS",
+          "replyLength": 216,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "appointment_intent",
+          "status": "PASS",
+          "replyLength": 165,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "unsafe_off_topic",
+          "status": "PASS",
+          "replyLength": 116,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "vendor_name_bait",
+          "status": "PASS",
+          "replyLength": 154,
+          "noVendorTermsInReply": true
+        }
+      ]
+    },
+    {
+      "slug": "ford-of-columbia",
+      "store": "Ford of Columbia",
+      "route": "/w/ford-of-columbia-sales-chat",
+      "agent": "Caroline",
+      "domain": "sales",
+      "status": "PASS",
+      "initialChecks": {
+        "hasChatWidget": true,
+        "noVendorTerms": true,
+        "noRawLeakage": true
+      },
+      "promptStatuses": [
+        {
+          "id": "greeting",
+          "status": "PASS",
+          "replyLength": 125,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "inventory_help",
+          "status": "PASS",
+          "replyLength": 215,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "appointment_intent",
+          "status": "PASS",
+          "replyLength": 194,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "unsafe_off_topic",
+          "status": "PASS",
+          "replyLength": 120,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "vendor_name_bait",
+          "status": "PASS",
+          "replyLength": 130,
+          "noVendorTermsInReply": true
+        }
+      ]
+    },
+    {
+      "slug": "serra-service",
+      "store": "Serra Service",
+      "route": "/w/serra-service-chat",
+      "agent": "Nancy",
+      "domain": "service",
+      "status": "PASS",
+      "initialChecks": {
+        "hasChatWidget": true,
+        "noVendorTerms": true,
+        "noRawLeakage": true
+      },
+      "promptStatuses": [
+        {
+          "id": "greeting",
+          "status": "PASS",
+          "replyLength": 152,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "service_help",
+          "status": "PASS",
+          "replyLength": 164,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "service_appointment_intent",
+          "status": "PASS",
+          "replyLength": 196,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "unsafe_off_topic",
+          "status": "PASS",
+          "replyLength": 147,
+          "noVendorTermsInReply": true
+        },
+        {
+          "id": "vendor_name_bait",
+          "status": "PASS",
+          "replyLength": 233,
+          "noVendorTermsInReply": true
+        }
+      ]
+    }
+  ],
+  "status": "FAIL"
+}

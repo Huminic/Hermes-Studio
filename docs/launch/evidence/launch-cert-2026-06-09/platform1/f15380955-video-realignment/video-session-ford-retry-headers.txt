@@ -1,0 +1,14 @@
+HTTP/2 200 
+access-control-allow-headers: Content-Type
+access-control-allow-methods: POST, OPTIONS
+access-control-allow-origin: *
+alt-svc: h3=":443"; ma=2592000
+content-security-policy: frame-ancestors 'none'
+content-type: application/json
+date: Wed, 10 Jun 2026 02:55:02 GMT
+referrer-policy: no-referrer-when-downgrade
+strict-transport-security: max-age=31536000; includeSubDomains
+via: 1.1 Caddy
+x-content-type-options: nosniff
+x-frame-options: DENY
+

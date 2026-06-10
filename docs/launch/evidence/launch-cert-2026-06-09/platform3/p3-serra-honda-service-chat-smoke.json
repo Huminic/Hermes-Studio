@@ -1,0 +1,26 @@
+{
+  "ts": "2026-06-09T08:14:27.094Z",
+  "url": "https://studio.huminic.app/w/serra-honda-service",
+  "type": "service-chat",
+  "store": "serra-honda",
+  "beforeText": "CHAT WIDGET\nSerra Honda Service\nHi! I'm Nancy in the Serra Honda Service department. I can help with maintenance, recalls, and scheduling your next service appointment.\nSend\nPowered by Huminic",
+  "visibleText": "CHAT WIDGET\nSerra Honda Service\nHi! I'm Nancy in the Serra Honda Service department. I can help with maintenance, recalls, and scheduling your next service appointment.\nLaunch certification test: can I schedule an oil change for tomorrow morning?\nI can help with that! May I have your vehicle’s year and model, and do you have a preferred time tomorrow morning?\nSend\nPowered by Huminic",
+  "containsBanned": false,
+  "placeholderOrComingSoon": false,
+  "realChatInput": true,
+  "replyLikelyPresent": true,
+  "inputs": [
+    {
+      "i": 0,
+      "placeholder": "Type a message…",
+      "value": ""
+    }
+  ],
+  "buttons": [
+    {
+      "disabled": false,
+      "i": 0,
+      "text": "Send"
+    }
+  ]
+}

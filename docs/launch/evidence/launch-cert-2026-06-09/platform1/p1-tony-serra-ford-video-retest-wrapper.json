@@ -1,0 +1,19 @@
+{
+  "ts": "2026-06-09T08:03:48.266Z",
+  "platform": "Platform 1 storefront",
+  "slug": "tony-serra-ford",
+  "parentIframeSrcs": [
+    "https://studio.huminic.app/widget/video-room?c=ca493e254c40d4f9"
+  ],
+  "parentDomContainsBanned": false,
+  "topLevelVideoIframeClean": true,
+  "visibleTextSample": "Tony Serra Ford\nTONY-SERRA-FORD\nLog in\nWelcome to Tony Serra Ford\n\nThis is your customer storefront. Six pages live behind sign-in:\n\nAgents\nTalk to your agents\nKnowledge\nEdit your knowledge base, with safe-edit checks\nWidgets\nWidget embed code, live demo, and tool config\nData\nDashboards over your messaging, agents, and integrations\nTeambox\nUnified inbox — Sales and Service across all channels\nCampaigns\nSchedule outbound campaigns (Service)\nNotifications\nChoose who gets alerted, and when\nPowered by Huminic",
+  "parentIframes": [
+    {
+      "allow": "microphone; camera; autoplay; display-capture",
+      "index": 0,
+      "src": "https://studio.huminic.app/widget/video-room?c=ca493e254c40d4f9",
+      "title": "Video chat"
+    }
+  ]
+}

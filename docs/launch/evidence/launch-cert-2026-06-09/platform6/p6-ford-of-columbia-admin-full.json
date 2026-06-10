@@ -1,0 +1,1350 @@
+{
+  "ts": "2026-06-09T17:44:32.037Z",
+  "store": "ford-of-columbia",
+  "name": "Ford of Columbia",
+  "login": {
+    "method": "ui-form",
+    "snap": {
+      "url": "https://studio.huminic.app/p/ford-of-columbia/chat",
+      "title": "Huminic Studio",
+      "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nFord of Columbia\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nFord of Columbia AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nSay hi to Caroline to start the conversation.\nSend\nFord of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Message Caroline…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Caroline",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "CRM Guru",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Nancy Gaston",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Semantic Guardian",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        }
+      ]
+    }
+  },
+  "tabs": {
+    "agentsBefore": {
+      "url": "https://studio.huminic.app/p/ford-of-columbia/chat",
+      "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nFord of Columbia\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nFord of Columbia AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nSay hi to Caroline to start the conversation.\nSend\nFord of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Message Caroline…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Caroline",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "CRM Guru",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Nancy Gaston",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Semantic Guardian",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        }
+      ]
+    },
+    "agentsAfter": {
+      "url": "https://studio.huminic.app/p/ford-of-columbia/chat",
+      "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nFord of Columbia\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nFord of Columbia AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nHi, what do you have?\nHi! This is Caroline from Ford of Columbia. How can I help you today? If you have questions about our sales process, inventory, scheduling test drives, or anything else related to buying or servicing a Honda, just let me know!\nSend\nFord of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Message Caroline…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Caroline",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "CRM Guru",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Nancy Gaston",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Semantic Guardian",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        }
+      ]
+    },
+    "agents": {
+      "url": "https://studio.huminic.app/p/ford-of-columbia/chat",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nFord of Columbia\n·\nAgents\nPICK AN AGENT\nCaroline\nCRM Guru\nNancy Gaston\nSemantic Guardian\nFord of Columbia AI Sales Agent. Handles inbound leads, appointment scheduling, and customer follow-ups across voice, video, and SMS.\nSay hi to Caroline to start the conversation.\nSend\nFord of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Message Caroline…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Caroline",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "CRM Guru",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Nancy Gaston",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Semantic Guardian",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        }
+      ]
+    },
+    "knowledge": {
+      "url": "https://studio.huminic.app/p/ford-of-columbia/knowledge",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nFord of Columbia\n·\nKnowledge\nCOMPANY WIKI\n↻\nStart here\nCompany overview\nGlossary\nHow to edit this wiki\nWelcome\nPeople and culture\nPolicies\nBenefits\nOrg chart\nValues\nOperations\nIt setup\nProcurement\nTools and access\nSales\nLead handling\nProcess\nScripts\nService\nProcess\nRecalls\nScheduling\nTeams\nFinance\nParts\nSales\nService\nProjects\nOverview\nAssets\nNothing here yet.\nPolicies\nNothing here yet.\nTemplates\nMeeting notes\nRfc\nOverview\nSelect a page from the wiki to read or edit it. Your changes are saved straight to your company wiki.\nFord of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "↻",
+          "href": null,
+          "aria": "Refresh",
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Company overview",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Glossary",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "How to edit this wiki",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Welcome",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 12,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 13,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 14,
+          "tag": "BUTTON",
+          "text": "Benefits",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 15,
+          "tag": "BUTTON",
+          "text": "Org chart",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 16,
+          "tag": "BUTTON",
+          "text": "Values",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 17,
+          "tag": "BUTTON",
+          "text": "It setup",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 18,
+          "tag": "BUTTON",
+          "text": "Procurement",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 19,
+          "tag": "BUTTON",
+          "text": "Tools and access",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 20,
+          "tag": "BUTTON",
+          "text": "Lead handling",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 21,
+          "tag": "BUTTON",
+          "text": "Process",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 22,
+          "tag": "BUTTON",
+          "text": "Scripts",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 23,
+          "tag": "BUTTON",
+          "text": "Process",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 24,
+          "tag": "BUTTON",
+          "text": "Recalls",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 25,
+          "tag": "BUTTON",
+          "text": "Scheduling",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 26,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 27,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 28,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 29,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 30,
+          "tag": "BUTTON",
+          "text": "Overview",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 31,
+          "tag": "BUTTON",
+          "text": "Meeting notes",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 32,
+          "tag": "BUTTON",
+          "text": "Rfc",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 33,
+          "tag": "BUTTON",
+          "text": "Overview",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "widgets": {
+      "url": "https://studio.huminic.app/p/ford-of-columbia/tools",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nFord of Columbia\n·\nWidgets\nWidget\nFord of Columbia Sales\nLive chat\nFord of Columbia Service\nLive chat\nContact Ford of Columbia\nContact form\nFord of Columbia Sales\nLive\n\nA chat bubble your visitors can open to talk with your AI assistant in real time.\n\nCaroline answers shopper questions about Honda inventory, pricing, financing,\ntrade-in value, and test-drive scheduling, then captures the lead for the BDC\nteam. Embed this on inventory and landing pages where shoppers are browsing\nvehicles.\n\nAdd to your website\nCopy code\n\nPaste this one line into your website where you want the widget to appear.\n\n<script async src=\"https://studio.huminic.app/nexxus-widget.min.js?id=ford-of-columbia-sales-chat\"></script>\nLive demo\nOpen in new tab\n\nThis is exactly what your visitors will see.\n\nCustomize wording (advanced)\nPreview\nFord of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": null,
+          "value": "---\nslug: ford-of-columbia-sales-chat\nmode: chat\nagent: caroline\ntitle: Ford of Columbia Sales\ngreeting: Hi! I'm Caroline at Ford of Columbia. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\ntype: widget\nstatus: draft\n---\n\n# Ford of Columbia Sales Chat\n\nCaroline answers shopper questions about Honda inventory, pricing, financing,\ntrade-in value, and test-drive scheduling, then captures the lead for the BDC\nteam. Embed this on inventory and landing pages where shoppers are browsing\nvehicles.\n"
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Widget",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Ford of Columbia Sales\nLive chat",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Ford of Columbia Service\nLive chat",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Contact Ford of Columbia\nContact form",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Copy code",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 12,
+          "tag": "A",
+          "text": "Open in new tab",
+          "href": "https://studio.huminic.app/w/ford-of-columbia-sales-chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 13,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "data": {
+      "url": "https://studio.huminic.app/p/ford-of-columbia/data",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nFord of Columbia\n·\nData\nDashboard\n\nYour activity over the last 30 days.\n\nRefresh\n2\nCalls received\nNo texts yet\nTexts sent\n1,919\nLeads\nNo campaigns yet\nCampaigns\nMessages\n24\nTotal\n15\nReceived\n9\nSent\nChannel\tReceived\tSent\nChat\t6\t6\nForm\t5\t0\nCall\t2\t2\nVideo\t1\t1\nText\t1\t0\nConversations\n11\nTotal\n11\nOpen\n0\nClosed\nSales: 8\nChat: 2\nService: 1\nFollow-up performance\n0\nImmediate\n0\n24h check-in\n0\nTexts sent\n\nNo automated follow-ups sent yet.\n\nCampaigns\n0\nCampaigns\n0\nDelivered\n0\nFailed\nNo campaigns yet.\nLeads\n1,919\nTotal leads\nStatus\tLeads\nBad_duplicate_lead\t19\nActive_new_lead\t18\nActive_waiting_for_prospect_response\t13\nBuild your own dashboard\nMetric\nCalls\nVideo\nTexts (SMS)\nEmails\nWeb chats\nLeads\nService threads\nSales threads\nCampaigns\nFollow-up triggers\nCard title (optional)\n+ Add card\n\nCards read live from your messaging, calls, video, leads, and campaigns over the current window.\n\nFord of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "INPUT",
+          "type": null,
+          "placeholder": "Calls",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Refresh",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "+ Add card",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "teambox": {
+      "url": "https://studio.huminic.app/p/ford-of-columbia/comms",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nFord of Columbia\n·\nTeambox\nSales\nService\nj / k to move · r to reply\nAll\nText\nEmail\nCall\nVideo\nChat\nAgent\nAll agents\nCaroline\nNancy Gaston\nUnassigned\n· duanekwells@gmail.com\n4:21 AM\nMESSAGE\nCaroline\nLaunch certification standalone Ford of Columbia contact form test.\n💬 chat:1c5ddcc6-56c7-49f8-8081-2b0aa1c5abc8\n4:19 AM\nCHAT\nNancy Gaston\nI'm unable to check the current service schedule right now. Would you like me to connect you to one of our service advisors to confirm availability for tomorrow\n💬 chat:d9ca38b9-0191-4e0e-a0e9-ba694bb2df33\n4:16 AM\nCHAT\nCaroline\nYes, we have Ford SUVs available. I can help you schedule a test drive—what day and time work best for you?\n· +14126546500\n3:39 AM\nMESSAGE\nLaunch certification synthetic embed callback request for Ford of Columbia. Timestamp 2026-06-09.\n💬 chat:ebce1332-3bff-42ba-b697-ec78aee2e392\n3:38 AM\nCHAT\nCaroline\nHi! I can help you with info about our new and pre-owned vehicles, pricing, trade-in process, financing, and scheduling test drives at Ford of Columbia. What ar\n🎥 video-cert_ford-of-columbia_5550002006\nJun 8\nVIDEO\ncert\n☎️ +15550001006\nJun 8\nCALL\ncert\n☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore.\nDexter Launch Cert Standalone Ford of Columbia Contact\n· Message · Sales\nCAROLINE\nOPEN\n↙ RECEIVED\nLaunch certification synthetic web form lead for Ford of Columbia. Timestamp 2026-06-09.\nDexter Launch Cert Standalone Ford of Columbia Contact · Message · 3:22 AM\n↙ RECEIVED\nLaunch certification synthetic embed form lead for Ford of Columbia. Timestamp 2026-06-09.\nDexter Launch Cert Standalone Ford of Columbia Contact · Message · 3:39 AM\n↙ RECEIVED\nLaunch certification standalone Ford of Columbia contact form test.\nDexter Launch Cert Standalone Ford of Columbia Contact · Message · 4:21 AM\nReply via\nMessage\nChat\nEmail\nText\nSend\nCUSTOMER\nDexter Launch Cert Standalone Ford of Columbia Contact\nEmail\nduanekwells@gmail.com\nPhone\n+14126546500\nContact\nduanekwells@gmail.com\nType\nSales\nChannel\nMessage\nStatus\nOpen\nHandled by\nCaroline\nTake over\n\nThe AI agent may auto-reply. Take over to pause it and reply yourself.\n\nFord of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Type your reply…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Sales",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Service",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "All",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Text",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Email",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 12,
+          "tag": "BUTTON",
+          "text": "Call",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 13,
+          "tag": "BUTTON",
+          "text": "Video",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 14,
+          "tag": "BUTTON",
+          "text": "Chat",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 15,
+          "tag": "BUTTON",
+          "text": "· duanekwells@gmail.com\n4:21 AM\nMESSAGE\nCaroline\nLaunch certification standalone Ford of Columbia contact form test.",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 16,
+          "tag": "BUTTON",
+          "text": "💬 chat:1c5ddcc6-56c7-49f8-8081-2b0aa1c5abc8\n4:19 AM\nCHAT\nNancy Gaston\nI'm unable to check the current service schedule right now. Would you like me to connect you to one of our service advisors to confirm availability for tomorrow",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 17,
+          "tag": "BUTTON",
+          "text": "💬 chat:d9ca38b9-0191-4e0e-a0e9-ba694bb2df33\n4:16 AM\nCHAT\nCaroline\nYes, we have Ford SUVs available. I can help you schedule a test drive—what day and time work best for you?",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 18,
+          "tag": "BUTTON",
+          "text": "· +14126546500\n3:39 AM\nMESSAGE\nLaunch certification synthetic embed callback request for Ford of Columbia. Timestamp 2026-06-09.",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 19,
+          "tag": "BUTTON",
+          "text": "💬 chat:ebce1332-3bff-42ba-b697-ec78aee2e392\n3:38 AM\nCHAT\nCaroline\nHi! I can help you with info about our new and pre-owned vehicles, pricing, trade-in process, financing, and scheduling test drives at Ford of Columbia. What ar",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 20,
+          "tag": "BUTTON",
+          "text": "🎥 video-cert_ford-of-columbia_5550002006\nJun 8\nVIDEO\ncert",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 21,
+          "tag": "BUTTON",
+          "text": "☎️ +15550001006\nJun 8\nCALL\ncert",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 22,
+          "tag": "BUTTON",
+          "text": "☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore.",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 23,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        },
+        {
+          "i": 24,
+          "tag": "BUTTON",
+          "text": "Take over",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "campaigns": {
+      "url": "https://studio.huminic.app/p/ford-of-columbia/campaigns",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nFord of Columbia\n·\nCampaigns\nCampaigns\nReach your customers by text, email, call, or video.\nFollow-up\nSend now\nNew campaign\n\n“Send now” sends any ready campaign to its audience immediately.\n\nYour lists\nNo lists yet. Create a campaign or upload a .csv to build one.\nCampaigns\nNo campaigns yet. Create one to reach your customers.\nFord of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Follow-up",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Send now",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "New campaign",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "notifications": {
+      "url": "https://studio.huminic.app/p/ford-of-columbia/notifications",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nFord of Columbia\n·\nNotifications\nNotifications\n\nDecide who gets alerted when something happens — a new lead, an inbound message, or (as they come online) a Guardian condition or query result. Each rule is “when this happens, notify this person.”\n\nNo rules yet — new leads currently fall back to duanekwells@gmail.com. Add a rule to route specific conditions to specific people.\nWhen (condition)\tNotify (recipient)\tChannel\tLabel\tOn\t\nNo routing rules. Add one below.\n+ Add rule\nSave\n\nSMS notifications are reserved (email is delivered today). Guardian conditions become selectable once the Business / Performance Guardians are live; until then you can type a custom condition id to pre-stage a rule.\n\nFord of Columbia\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/ford-of-columbia/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "+ Add rule",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Save",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    }
+  },
+  "checks": {
+    "tabsPresent": true,
+    "headerStoreName": true,
+    "rosterExpected": true,
+    "forbiddenAgentsAbsent": true,
+    "defaultAgentReply": true,
+    "knowledgeLoads": true,
+    "widgetsReady": true,
+    "dataLoads": true,
+    "metricLabelsPlain": true,
+    "teamboxLoads": true,
+    "teamboxLeadVisible": true,
+    "campaignsLoads": true,
+    "notificationsLoads": true,
+    "noVendorTerms": true,
+    "noRawLeakage": true
+  },
+  "screenshot": "p6-ford-of-columbia-agents.png",
+  "bannedMatches": [],
+  "rawLeakMatches": [],
+  "status": "PASS"
+}

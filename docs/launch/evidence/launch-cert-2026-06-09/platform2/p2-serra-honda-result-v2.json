@@ -1,0 +1,17 @@
+{
+  "store": "serra-honda",
+  "checks": {
+    "snippetPass": true,
+    "menuPass": true,
+    "menuCounts": {
+      "webChat": 1,
+      "callback": 1,
+      "contact": 1,
+      "video": 1
+    },
+    "menuTextVendorLeak": false
+  },
+  "errors": [
+    "chat input count 0"
+  ]
+}

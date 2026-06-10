@@ -1,0 +1,19 @@
+{
+  "ts": "2026-06-09T08:04:45.014Z",
+  "platform": "Platform 1 storefront",
+  "slug": "ford-of-columbia",
+  "parentIframeSrcs": [
+    "https://studio.huminic.app/widget/video-room?c=c466d0b62cb1445e"
+  ],
+  "parentDomContainsBanned": false,
+  "topLevelVideoIframeClean": true,
+  "visibleTextSample": "Ford of Columbia\nFORD-OF-COLUMBIA\nLog in\nWelcome to Ford of Columbia\n\nThis is your customer storefront. Six pages live behind sign-in:\n\nAgents\nTalk to your agents\nKnowledge\nEdit your knowledge base, with safe-edit checks\nWidgets\nWidget embed code, live demo, and tool config\nData\nDashboards over your messaging, agents, and integrations\nTeambox\nUnified inbox — Sales and Service across all channels\nCampaigns\nSchedule outbound campaigns (Service)\nNotifications\nChoose who gets alerted, and when\nPowered by Huminic",
+  "parentIframes": [
+    {
+      "allow": "microphone; camera; autoplay; display-capture",
+      "index": 0,
+      "src": "https://studio.huminic.app/widget/video-room?c=c466d0b62cb1445e",
+      "title": "Video chat"
+    }
+  ]
+}

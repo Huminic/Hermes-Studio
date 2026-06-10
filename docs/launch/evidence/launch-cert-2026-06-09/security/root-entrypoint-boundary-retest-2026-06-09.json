@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-06-09T22:33:00Z",
+  "target": "https://studio.huminic.app",
+  "runtime_commit_reported_by_claude": "3cf693685",
+  "root_entrypoint": {
+    "http_status": 307,
+    "location": "https://studio.huminic.app/dashboard",
+    "browser_final_url": "https://studio.huminic.app/dashboard",
+    "browser_title": "Huminic Studio",
+    "browser_visible_state": "Huminic Studio password screen",
+    "store_chooser_visible_at_root": false
+  },
+  "optional_store_chooser": {
+    "url": "https://studio.huminic.app/stores",
+    "http_status": 200,
+    "browser_visible_state": "store chooser",
+    "store_chooser_visible": true
+  },
+  "workspace_route": {
+    "url": "https://studio.huminic.app/p/serra-honda/chat",
+    "browser_visible_state": "Serra Honda customer-admin sign-in",
+    "store_chooser_visible": false,
+    "operator_global_navigation_visible": false
+  },
+  "api_boundary": {
+    "store_session_global_profiles_list_status": 401,
+    "store_session_own_messaging_threads_status": 200,
+    "admin_session_global_profiles_list_status": 200
+  },
+  "result": "PASS",
+  "notes": [
+    "Root studio.huminic.app no longer serves the store chooser.",
+    "The optional chooser is preserved at /stores.",
+    "Workspace direct login URL remains profile-scoped.",
+    "The LC-BLOCKER-006 store-admin/global-admin boundary remains intact after the root entrypoint change."
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "ts": "2026-06-09T23:44:00Z",
+  "target": "https://studio.huminic.app",
+  "fixCommit": "364bb598c",
+  "finding": "LC-BLOCKER-008",
+  "status": "PASS",
+  "scannedTerms": [
+    "vapi",
+    "tavus",
+    "textmagic",
+    "vinsolutions",
+    "vin solutions",
+    "signalwire",
+    "resend"
+  ],
+  "surfaces": [
+    {
+      "url": "https://studio.huminic.app/w/ford-of-columbia-sales-chat",
+      "savedEvidence": "p6-post-364bb598c-ford-chat-source.html",
+      "result": "No scanned terms found in fetched HTML source."
+    },
+    {
+      "url": "https://studio.huminic.app/widget/dealer/ford-of-columbia.js",
+      "savedEvidence": "p6-post-364bb598c-ford-dealer-widget.js",
+      "result": "No scanned terms found in fetched dealer widget JavaScript."
+    }
+  ]
+}

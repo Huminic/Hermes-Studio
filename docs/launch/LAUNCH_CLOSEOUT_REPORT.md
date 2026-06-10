@@ -5,6 +5,8 @@
 **Branch merged to main:** PR #46 → commit `7f0e276fb`
 **Status:** GO WITH CONDITIONS — see Section 16 and Section 18 for the exact remaining conditions.
 
+> **2026-06-09 certification note:** this report is historical closeout context from June 1. The current launch-certification packet for `https://studio.huminic.app` is `docs/launch/LAUNCH_REQUIREMENTS_AUDIT.md`, `docs/launch/LAUNCH_CERT_FINDINGS.md`, and `docs/launch/LAUNCH_DECISION_PACKET.md`. As of the 2026-06-09 certification run, the app is **not yet an unconditional launch certification** because `LC-BLOCKER-001`, `LC-BLOCKER-011`, and `LC-MAJOR-007` remain open as documented in those current files.
+
 ---
 
 ## 1. Executive completion statement
@@ -232,3 +234,25 @@ Code-reviewer subagent verdict (2026-06-01T07:55Z): **GO**. 9/9 claims PASS with
 - Vitest 512/512 — verified by independent `pnpm test` run
 
 Full code-reviewer report saved to `docs/launch/CLOSEOUT_REVIEW_2026-06-01.md` (this run's output stored verbatim).
+
+## 2026-06-10 Status Update
+
+**Current Runtime:**
+- Commit: `29399b7b150fb93e06d07cf175c984cf4e213dc0`
+- Deployment: `t59orjyiqr0zkjeh0384vdg6`
+- Container: `hermes-studio-nh5vnz9kz226cj9ib3nodg1j-114305174167`
+- Tests: 716/716 passed
+- Build: Production bundle complete
+
+**Closed Since 2026-06-09:**
+- **LC-MAJOR-013**: Documentation drift resolved - migration guide reflects live Data tab, 7-tab IA, correct labels
+- **LC-MAJOR-014**: Widget content resolved - contact forms marked live, stale "coming-soon" text replaced
+
+**Still Open:**
+- **LC-MAJOR-012**: Voice webhook shared-secret hardening (evidence boundary clarified; awaiting operator decision)
+- **LC-MAJOR-007**: Partner/group admin tier (recommend six per-store logins for launch)
+- Platform 4: Live phone conversation demo or acceptance
+- Sales campaign scope wording confirmation
+- Final Chrome walkthrough with Duane
+
+**Final Certification:** Pending resolution of open decisions and collaborative walkthrough. See `HUMINIC_LAUNCH_STATUS_2026-06-10.md` and `LAUNCH_OPEN_DECISIONS_2026-06-10.md` for current readiness state.

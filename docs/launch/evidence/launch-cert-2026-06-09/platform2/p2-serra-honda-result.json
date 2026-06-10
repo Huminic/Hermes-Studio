@@ -1,0 +1,18 @@
+{
+  "store": "serra-honda",
+  "checks": {
+    "snippet": "<script async src=\"https://studio.huminic.app/widget/dealer/serra-honda.js\"></script>",
+    "snippetPass": true,
+    "menuCounts": {
+      "webChat": 1,
+      "callback": 1,
+      "contact": 1,
+      "video": 1
+    },
+    "menuPass": true,
+    "chatPass": true
+  },
+  "errors": [
+    "back after chat count 0"
+  ]
+}

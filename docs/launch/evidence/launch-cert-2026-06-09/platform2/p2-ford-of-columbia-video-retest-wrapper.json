@@ -1,0 +1,21 @@
+{
+  "ts": "2026-06-09T08:10:57.223Z",
+  "platform": "Platform 2 dealer embed",
+  "store": "ford-of-columbia",
+  "snippetContainsBanned": false,
+  "parentDomContainsBanned": false,
+  "topLevelVideoIframeClean": true,
+  "allIframeSrcs": [
+    "https://studio.huminic.app/widget/video-room?c=cbad47c419ff44f3"
+  ],
+  "pageTextSample": "Dealer Widget Verification\n\nEmulates a dealer.com page. Click a store to inject its self-hosted launcher (the teal circle, bottom-right). One script tag, no keys — the same snippet a dealer pastes on their site.\n\nserra-honda\nserra-nissan\ntony-serra-ford\nhyundai-of-columbia\nford-of-columbia\nEmbed snippet (one tag per store)\n<script async src=\"https://studio.huminic.app/widget/dealer/ford-of-columbia.js\"></script>\nWhat to check\nTeal circle bottom-right → opens \"Choose how to connect\" with Web Chat / Instant Call Back / Contact Form / Two-Way Video. Web Chat + Contact Form open the live widget in-panel; Instant Call Back posts a lead; Two-Way Video opens a live face-to-face session. No third-party vendor name should appear anywhere.",
+  "allIframes": [
+    {
+      "allow": "microphone; camera; autoplay; display-capture",
+      "index": 0,
+      "src": "https://studio.huminic.app/widget/video-room?c=cbad47c419ff44f3",
+      "title": "Video chat"
+    }
+  ],
+  "passScope": "all page iframes after dealer embed video handoff"
+}

@@ -1,0 +1,1310 @@
+{
+  "ts": "2026-06-09T17:40:26.741Z",
+  "store": "serra-service",
+  "name": "Serra Service",
+  "login": {
+    "method": "ui-form",
+    "snap": {
+      "url": "https://studio.huminic.app/p/serra-service/chat",
+      "title": "Huminic Studio",
+      "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Service\n·\nAgents\nPICK AN AGENT\nCRM Guru\nNancy Gaston\nSemantic Guardian\nSerra Honda AI Service Agent. Service campaign management, recall notifications, maintenance scheduling, and service knowledge.\nSay hi to Nancy Gaston to start the conversation.\nSend\nSerra Service\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Message Nancy Gaston…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/serra-service/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/serra-service/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/serra-service/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/serra-service/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/serra-service/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/serra-service/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/serra-service/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "CRM Guru",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Nancy Gaston",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Semantic Guardian",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        }
+      ]
+    }
+  },
+  "tabs": {
+    "agentsBefore": {
+      "url": "https://studio.huminic.app/p/serra-service/chat",
+      "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Service\n·\nAgents\nPICK AN AGENT\nCRM Guru\nNancy Gaston\nSemantic Guardian\nSerra Honda AI Service Agent. Service campaign management, recall notifications, maintenance scheduling, and service knowledge.\nSay hi to Nancy Gaston to start the conversation.\nSend\nSerra Service\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Message Nancy Gaston…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/serra-service/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/serra-service/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/serra-service/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/serra-service/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/serra-service/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/serra-service/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/serra-service/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "CRM Guru",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Nancy Gaston",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Semantic Guardian",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        }
+      ]
+    },
+    "agentsAfter": {
+      "url": "https://studio.huminic.app/p/serra-service/chat",
+      "text": "Agents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Service\n·\nAgents\nPICK AN AGENT\nCRM Guru\nNancy Gaston\nSemantic Guardian\nSerra Honda AI Service Agent. Service campaign management, recall notifications, maintenance scheduling, and service knowledge.\nHi, can you help me schedule service?\nThank you for your interest in scheduling an oil change. Could you please provide the following details so I can check availability:\n\n- Your preferred day and time this week\n- Your vehicle model and year\n\nOnce I have this information, I’ll review our open slots and confirm the soonest appointment for you.\nSend\nSerra Service\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Message Nancy Gaston…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/serra-service/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/serra-service/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/serra-service/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/serra-service/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/serra-service/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/serra-service/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/serra-service/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "CRM Guru",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Nancy Gaston",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Semantic Guardian",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        }
+      ]
+    },
+    "agents": {
+      "url": "https://studio.huminic.app/p/serra-service/chat",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Service\n·\nAgents\nPICK AN AGENT\nCRM Guru\nNancy Gaston\nSemantic Guardian\nSerra Honda AI Service Agent. Service campaign management, recall notifications, maintenance scheduling, and service knowledge.\nSay hi to Nancy Gaston to start the conversation.\nSend\nSerra Service\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Message Nancy Gaston…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/serra-service/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/serra-service/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/serra-service/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/serra-service/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/serra-service/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/serra-service/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/serra-service/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "CRM Guru",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Nancy Gaston",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Semantic Guardian",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        }
+      ]
+    },
+    "knowledge": {
+      "url": "https://studio.huminic.app/p/serra-service/knowledge",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Service\n·\nKnowledge\nCOMPANY WIKI\n↻\nStart here\nCompany overview\nGlossary\nHow to edit this wiki\nWelcome\nPeople and culture\nPolicies\nBenefits\nOrg chart\nValues\nOperations\nIt setup\nProcurement\nTools and access\nSales\nLead handling\nProcess\nScripts\nService\nProcess\nRecalls\nScheduling\nTeams\nFinance\nParts\nSales\nService\nProjects\nOverview\nAssets\nNothing here yet.\nPolicies\nNothing here yet.\nTemplates\nMeeting notes\nRfc\nOverview\nSelect a page from the wiki to read or edit it. Your changes are saved straight to your company wiki.\nSerra Service\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/serra-service/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/serra-service/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/serra-service/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/serra-service/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/serra-service/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/serra-service/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/serra-service/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "↻",
+          "href": null,
+          "aria": "Refresh",
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Company overview",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Glossary",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "How to edit this wiki",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Welcome",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 12,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 13,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 14,
+          "tag": "BUTTON",
+          "text": "Benefits",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 15,
+          "tag": "BUTTON",
+          "text": "Org chart",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 16,
+          "tag": "BUTTON",
+          "text": "Values",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 17,
+          "tag": "BUTTON",
+          "text": "It setup",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 18,
+          "tag": "BUTTON",
+          "text": "Procurement",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 19,
+          "tag": "BUTTON",
+          "text": "Tools and access",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 20,
+          "tag": "BUTTON",
+          "text": "Lead handling",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 21,
+          "tag": "BUTTON",
+          "text": "Process",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 22,
+          "tag": "BUTTON",
+          "text": "Scripts",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 23,
+          "tag": "BUTTON",
+          "text": "Process",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 24,
+          "tag": "BUTTON",
+          "text": "Recalls",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 25,
+          "tag": "BUTTON",
+          "text": "Scheduling",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 26,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 27,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 28,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 29,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 30,
+          "tag": "BUTTON",
+          "text": "Overview",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 31,
+          "tag": "BUTTON",
+          "text": "Meeting notes",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 32,
+          "tag": "BUTTON",
+          "text": "Rfc",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 33,
+          "tag": "BUTTON",
+          "text": "Overview",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "widgets": {
+      "url": "https://studio.huminic.app/p/serra-service/tools",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Service\n·\nWidgets\nWidget\nSerra Service\nLive chat\nContact Serra Service\nContact form\nSerra Service\nLive\n\nA chat bubble your visitors can open to talk with your AI assistant in real time.\n\nNancy handles service questions, recall notifications, maintenance guidance, and\nappointment scheduling. Embed this on the Service and Schedule-Service pages so\ncustomers can get answers and book without a phone call.\n\nAdd to your website\nCopy code\n\nPaste this one line into your website where you want the widget to appear.\n\n<script async src=\"https://studio.huminic.app/nexxus-widget.min.js?id=serra-service-chat\"></script>\nLive demo\nOpen in new tab\n\nThis is exactly what your visitors will see.\n\nCustomize wording (advanced)\nPreview\nSerra Service\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": null,
+          "value": "---\nslug: serra-service-chat\nmode: chat\nagent: nancy-gaston\ntitle: Serra Service\ngreeting: Hi! I'm Nancy with Serra Service. I can help with maintenance, recalls, and scheduling your next service appointment.\ntype: widget\nstatus: draft\n---\n\n# Serra Service Chat\n\nNancy handles service questions, recall notifications, maintenance guidance, and\nappointment scheduling. Embed this on the Service and Schedule-Service pages so\ncustomers can get answers and book without a phone call.\n"
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/serra-service/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/serra-service/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/serra-service/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/serra-service/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/serra-service/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/serra-service/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/serra-service/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Widget",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Serra Service\nLive chat",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "Contact Serra Service\nContact form",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Copy code",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "A",
+          "text": "Open in new tab",
+          "href": "https://studio.huminic.app/w/serra-service-chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 12,
+          "tag": "BUTTON",
+          "text": "",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "data": {
+      "url": "https://studio.huminic.app/p/serra-service/data",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Service\n·\nData\nDashboard\n\nYour activity over the last 30 days.\n\nRefresh\n4\nCalls received\nNo texts yet\nTexts sent\n589\nLeads\nNo campaigns yet\nCampaigns\nMessages\n21\nTotal\n12\nReceived\n9\nSent\nChannel\tReceived\tSent\nChat\t4\t4\nCall\t4\t4\nForm\t2\t0\nVideo\t1\t1\nText\t1\t0\nConversations\n10\nTotal\n10\nOpen\n0\nClosed\nSales: 8\nService: 1\nChat: 1\nFollow-up performance\n0\nImmediate\n0\n24h check-in\n0\nTexts sent\n\nNo automated follow-ups sent yet.\n\nCampaigns\n0\nCampaigns\n0\nDelivered\n0\nFailed\nNo campaigns yet.\nLeads\n589\nTotal leads\nStatus\tLeads\nActive_waiting_for_prospect_response\t23\nBad_duplicate_lead\t22\nActive_new_lead\t4\nBad_no_intent_to_buy\t1\nBuild your own dashboard\nMetric\nCalls\nVideo\nTexts (SMS)\nEmails\nWeb chats\nLeads\nService threads\nSales threads\nCampaigns\nFollow-up triggers\nCard title (optional)\n+ Add card\n\nCards read live from your messaging, calls, video, leads, and campaigns over the current window.\n\nSerra Service\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "INPUT",
+          "type": null,
+          "placeholder": "Calls",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/serra-service/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/serra-service/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/serra-service/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/serra-service/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/serra-service/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/serra-service/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/serra-service/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Refresh",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "+ Add card",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "teambox": {
+      "url": "https://studio.huminic.app/p/serra-service/comms",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Service\n·\nTeambox\nSales\nService\nj / k to move · r to reply\nAll\nText\nEmail\nCall\nVideo\nChat\nAgent\nAll agents\nNancy Gaston\nUnassigned\n· duanekwells@gmail.com\n4:21 AM\nMESSAGE\nNancy Gaston\nLaunch certification standalone Serra Service contact form test.\n💬 chat:db2489a0-29d1-4541-a52b-aabfe456e553\n4:16 AM\nCHAT\nNancy Gaston\nYes, I can help with that! May I have your vehicle information and your preferred time tomorrow morning? Also, please let me know if you need a specific service\n☎️ +15550007001\nJun 8\nCALL\nregression\n☎️ +15550009911\nJun 8\nCALL\nemail-path re-verify (non-customer)\n🎥 video-cert_serra-service_5550002002\nJun 8\nVIDEO\ncert\n☎️ +15550001002\nJun 8\nCALL\ncert\n☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore.\n· neoweaver@gmail.com\nJun 7\nMESSAGE\nNancy Gaston\nclient-side validation: form ingestion path\nDexter Launch Cert Standalone Serra Service Contact\n· Message · Sales\nNANCY GASTON\nOPEN\n↙ RECEIVED\nLaunch certification standalone Serra Service contact form test.\nDexter Launch Cert Standalone Serra Service Contact · Message · 4:21 AM\nReply via\nMessage\nChat\nEmail\nText\nSend\nCUSTOMER\nDexter Launch Cert Standalone Serra Service Contact\nEmail\nduanekwells@gmail.com\nPhone\n+14126546500\nContact\nduanekwells@gmail.com\nType\nSales\nChannel\nMessage\nStatus\nOpen\nHandled by\nNancy Gaston\nTake over\n\nThe AI agent may auto-reply. Take over to pause it and reply yourself.\n\nSerra Service\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [
+        {
+          "i": 0,
+          "tag": "TEXTAREA",
+          "type": null,
+          "placeholder": "Type your reply…",
+          "value": ""
+        }
+      ],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/serra-service/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/serra-service/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/serra-service/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/serra-service/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/serra-service/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/serra-service/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/serra-service/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Sales",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Service",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "All",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "BUTTON",
+          "text": "Text",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "text": "Email",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 12,
+          "tag": "BUTTON",
+          "text": "Call",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 13,
+          "tag": "BUTTON",
+          "text": "Video",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 14,
+          "tag": "BUTTON",
+          "text": "Chat",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 15,
+          "tag": "BUTTON",
+          "text": "· duanekwells@gmail.com\n4:21 AM\nMESSAGE\nNancy Gaston\nLaunch certification standalone Serra Service contact form test.",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 16,
+          "tag": "BUTTON",
+          "text": "💬 chat:db2489a0-29d1-4541-a52b-aabfe456e553\n4:16 AM\nCHAT\nNancy Gaston\nYes, I can help with that! May I have your vehicle information and your preferred time tomorrow morning? Also, please let me know if you need a specific service",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 17,
+          "tag": "BUTTON",
+          "text": "☎️ +15550007001\nJun 8\nCALL\nregression",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 18,
+          "tag": "BUTTON",
+          "text": "☎️ +15550009911\nJun 8\nCALL\nemail-path re-verify (non-customer)",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 19,
+          "tag": "BUTTON",
+          "text": "🎥 video-cert_serra-service_5550002002\nJun 8\nVIDEO\ncert",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 20,
+          "tag": "BUTTON",
+          "text": "☎️ +15550001002\nJun 8\nCALL\ncert",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 21,
+          "tag": "BUTTON",
+          "text": "☎️ +15555550100\nJun 8\nCALL\nGo-live pipeline check — please ignore.",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 22,
+          "tag": "BUTTON",
+          "text": "· neoweaver@gmail.com\nJun 7\nMESSAGE\nNancy Gaston\nclient-side validation: form ingestion path",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 23,
+          "tag": "BUTTON",
+          "text": "Send",
+          "href": null,
+          "aria": null,
+          "disabled": true
+        },
+        {
+          "i": 24,
+          "tag": "BUTTON",
+          "text": "Take over",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "campaigns": {
+      "url": "https://studio.huminic.app/p/serra-service/campaigns",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Service\n·\nCampaigns\nCampaigns\nReach your customers by text, email, call, or video.\nFollow-up\nSend now\nNew campaign\n\n“Send now” sends any ready campaign to its audience immediately.\n\nYour lists\nNo lists yet. Create a campaign or upload a .csv to build one.\nCampaigns\nNo campaigns yet. Create one to reach your customers.\nSerra Service\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/serra-service/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/serra-service/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/serra-service/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/serra-service/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/serra-service/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/serra-service/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/serra-service/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "Follow-up",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Send now",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "text": "New campaign",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "notifications": {
+      "url": "https://studio.huminic.app/p/serra-service/notifications",
+      "text": "h\nHuminic\nStudio\nAgents\nKnowledge\nWidgets\nData\nTeambox\nCampaigns\nNotifications\nSerra Service\n·\nNotifications\nNotifications\n\nDecide who gets alerted when something happens — a new lead, an inbound message, or (as they come online) a Guardian condition or query result. Each rule is “when this happens, notify this person.”\n\nNo rules yet — new leads currently fall back to duanekwells@gmail.com. Add a rule to route specific conditions to specific people.\nWhen (condition)\tNotify (recipient)\tChannel\tLabel\tOn\t\nNo routing rules. Add one below.\n+ Add rule\nSave\n\nSMS notifications are reserved (email is delivered today). Guardian conditions become selectable once the Business / Performance Guardians are live; until then you can type a custom condition id to pre-stage a rule.\n\nSerra Service\nRight-pane assistant slot. Wires to the profile's primary agent in Phase C.2.\nPowered by Huminic",
+      "inputs": [],
+      "controls": [
+        {
+          "i": 0,
+          "tag": "A",
+          "text": "Agents",
+          "href": "https://studio.huminic.app/p/serra-service/chat",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "A",
+          "text": "Knowledge",
+          "href": "https://studio.huminic.app/p/serra-service/knowledge",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "A",
+          "text": "Widgets",
+          "href": "https://studio.huminic.app/p/serra-service/tools",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 3,
+          "tag": "A",
+          "text": "Data",
+          "href": "https://studio.huminic.app/p/serra-service/data",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "A",
+          "text": "Teambox",
+          "href": "https://studio.huminic.app/p/serra-service/comms",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 5,
+          "tag": "A",
+          "text": "Campaigns",
+          "href": "https://studio.huminic.app/p/serra-service/campaigns",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "A",
+          "text": "Notifications",
+          "href": "https://studio.huminic.app/p/serra-service/notifications",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "text": "+ Add rule",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "BUTTON",
+          "text": "Save",
+          "href": null,
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    }
+  },
+  "checks": {
+    "tabsPresent": true,
+    "headerStoreName": true,
+    "rosterExpected": true,
+    "forbiddenAgentsAbsent": true,
+    "defaultAgentReply": true,
+    "knowledgeLoads": true,
+    "widgetsReady": true,
+    "dataLoads": true,
+    "metricLabelsPlain": true,
+    "teamboxLoads": true,
+    "teamboxLeadVisible": true,
+    "campaignsLoads": true,
+    "notificationsLoads": true,
+    "noVendorTerms": true,
+    "noRawLeakage": true
+  },
+  "screenshot": "p6-serra-service-agents.png",
+  "bannedMatches": [],
+  "rawLeakMatches": [],
+  "status": "PASS"
+}

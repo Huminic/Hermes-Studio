@@ -1,0 +1,3789 @@
+{
+  "ts": "2026-06-09T21:55:59.502Z",
+  "scenarios": [
+    {
+      "label": "anonymous",
+      "profilesSnapshot": {
+        "url": "https://studio.huminic.app/profiles",
+        "title": "Huminic Studio",
+        "text": "Huminic Studio\nSign in\n\nSign in with your profile credentials\n\nContinue\n\nPowered by Huminic",
+        "inputs": [
+          {
+            "i": 0,
+            "type": "text",
+            "placeholder": "Username",
+            "value": ""
+          },
+          {
+            "i": 1,
+            "type": "password",
+            "placeholder": "Password",
+            "value": ""
+          }
+        ],
+        "controls": [
+          {
+            "i": 0,
+            "tag": "BUTTON",
+            "text": "Continue",
+            "href": null,
+            "aria": null,
+            "disabled": true
+          },
+          {
+            "i": 1,
+            "tag": "A",
+            "text": "Huminic",
+            "href": "https://github.com/NousResearch/hermes-agent",
+            "aria": null,
+            "disabled": false
+          }
+        ]
+      },
+      "authSession": {
+        "status": 200,
+        "body": {
+          "authenticated": false,
+          "profile_auth_mode": true
+        }
+      },
+      "authCheck": {
+        "status": 200,
+        "body": {
+          "authenticated": false,
+          "authRequired": true
+        }
+      },
+      "profilesList": {
+        "status": 401,
+        "body": {
+          "error": "Unauthorized"
+        }
+      },
+      "dashboardSnapshot": {
+        "url": "https://studio.huminic.app/dashboard",
+        "title": "Huminic Studio",
+        "text": "Huminic Studio\nSign in\n\nSign in with your profile credentials\n\nContinue\n\nPowered by Huminic",
+        "inputs": [
+          {
+            "i": 0,
+            "type": "text",
+            "placeholder": "Username",
+            "value": ""
+          },
+          {
+            "i": 1,
+            "type": "password",
+            "placeholder": "Password",
+            "value": ""
+          }
+        ],
+        "controls": [
+          {
+            "i": 0,
+            "tag": "BUTTON",
+            "text": "Continue",
+            "href": null,
+            "aria": null,
+            "disabled": true
+          },
+          {
+            "i": 1,
+            "tag": "A",
+            "text": "Huminic",
+            "href": "https://github.com/NousResearch/hermes-agent",
+            "aria": null,
+            "disabled": false
+          }
+        ]
+      },
+      "findings": {
+        "loginScreenVisible": true,
+        "usernameFieldVisible": true,
+        "globalShellVisible": false,
+        "profilesPageVisible": false,
+        "dashboardPageVisible": false,
+        "profileListApiOk": false,
+        "isAdmin": false,
+        "isCustomerAdmin": false,
+        "profile": null
+      }
+    },
+    {
+      "label": "customer-admin-serra-honda",
+      "profilesSnapshot": {
+        "url": "https://studio.huminic.app/profiles",
+        "title": "Profiles — Hermes",
+        "text": "◈\nHERMES OS\n│\nNO ACTIVE SESSION\ngpt-4.1\n│\nONLINE\nh\nHuminic Studio\nSearch\nNew Session\nMAIN\nDashboard\nChat\nFiles\nTerminal\nJobs\nCrews\nConductor\nOperations\nTasks\nAgents\nEngagements\nArtifacts\nWidget\nPatterns\nAnalytics\nSession History\nPlugins\nMCP Tokens\nAudit Trail\nLogs\nKNOWLEDGE\nMemory\nSkills\nProfiles\nHelp\nDocumentation\nSESSIONS\nmain\nmain\nSession 5b5f7bbb\nID 5b5f7bbb\nSession 92066587\nID 92066587\nUser\nProfiles\n\nBrowse and manage Huminic profiles stored under ~/.hermes/profiles.\n\nCreate profile\nh\nACTIVE\nconsultative-agent\ncustom\n87\nSKILLS\n35\nSESSIONS\ngpt-4.1\nMODEL\n✓\nENV\nJun 9, 2026, 5:54 PM\nActivate\nDetails\nRename\nDelete\nh\ndefault\ncustom\n89\nSKILLS\n12\nSESSIONS\ngpt-4.1\nMODEL\n✓\nENV\nJun 9, 2026, 5:56 PM\nActivate\nDetails\nRename\nDelete\nh\nserra-nissan\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4o\nMODEL\n—\nENV\nJun 9, 2026, 1:41 PM\nActivate\nDetails\nRename\nDelete\nh\nford-of-columbia\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4o\nMODEL\n—\nENV\nJun 9, 2026, 2:38 AM\nActivate\nDetails\nRename\nDelete\nh\nhyundai-of-columbia\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4o\nMODEL\n—\nENV\nJun 9, 2026, 2:38 AM\nActivate\nDetails\nRename\nDelete\nh\ntony-serra-ford\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4o\nMODEL\n—\nENV\nJun 9, 2026, 2:38 AM\nActivate\nDetails\nRename\nDelete\nh\nserra-service\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4o\nMODEL\n—\nENV\nJun 9, 2026, 2:38 AM\nActivate\nDetails\nRename\nDelete\nh\nserra-honda\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4o\nMODEL\n—\nENV\nJun 9, 2026, 2:38 AM\nActivate\nDetails\nRename\nDelete\nh\nstrukture-data-governor\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4.1\nMODEL\n—\nENV\nJun 2, 2026, 11:24 AM\nActivate\nDetails\nRename\nDelete\nh\nserra-automotive-data-governor\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4.1\nMODEL\n—\nENV\nJun 2, 2026, 11:24 AM\nActivate\nDetails\nRename\nDelete\nh\nhuminic-data-governor\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4.1\nMODEL\n—\nENV\nJun 2, 2026, 11:24 AM\nActivate\nDetails\nRename\nDelete\nh\ncedar-ridge-automotive-data-governor\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4.1\nMODEL\n—\nENV\nJun 2, 2026, 11:24 AM\nActivate\nDetails\nRename\nDelete\nh\ntony-serra-ford-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nserra-service-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nserra-nissan-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nserra-honda-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nhyundai-of-columbia-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nhuminic-motors-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nhuminic-motors\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nford-of-columbia-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nhuminic\ncustom\n86\nSKILLS\n1\nSESSIONS\ngpt-4.1\nMODEL\n✓\nENV\nJun 1, 2026, 9:08 PM\nActivate\nDetails\nRename\nDelete\nh\nserra-automotive\ncustom\n90\nSKILLS\n12\nSESSIONS\ngpt-4.1\nMODEL\n✓\nENV\nJun 1, 2026, 3:54 AM\nActivate\nDetails\nRename\nDelete\nh\nstrukture\ncustom\n87\nSKILLS\n1\nSESSIONS\ngpt-4.1\nMODEL\n✓\nENV\nJun 1, 2026, 3:54 AM\nActivate\nDetails\nRename\nDelete\nh\ncedar-ridge-automotive\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4.1\nMODEL\n—\nENV\nMay 31, 2026, 5:53 AM\nActivate\nDetails\nRename\nDelete\n                                ",
+        "inputs": [],
+        "controls": [
+          {
+            "i": 0,
+            "tag": "A",
+            "text": "h\nHuminic Studio",
+            "href": "https://studio.huminic.app/chat",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 1,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Close Sidebar",
+            "disabled": false
+          },
+          {
+            "i": 2,
+            "tag": "BUTTON",
+            "text": "Search",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 3,
+            "tag": "A",
+            "text": "New Session",
+            "href": "https://studio.huminic.app/chat/new",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 4,
+            "tag": "A",
+            "text": "MAIN",
+            "href": "https://studio.huminic.app/chat",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 5,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Collapse Main",
+            "disabled": false
+          },
+          {
+            "i": 6,
+            "tag": "A",
+            "text": "Dashboard",
+            "href": "https://studio.huminic.app/dashboard",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 7,
+            "tag": "A",
+            "text": "Chat",
+            "href": "https://studio.huminic.app/chat",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 8,
+            "tag": "A",
+            "text": "Files",
+            "href": "https://studio.huminic.app/files",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 9,
+            "tag": "A",
+            "text": "Terminal",
+            "href": "https://studio.huminic.app/terminal",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 10,
+            "tag": "A",
+            "text": "Jobs",
+            "href": "https://studio.huminic.app/jobs",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 11,
+            "tag": "A",
+            "text": "Crews",
+            "href": "https://studio.huminic.app/crews",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 12,
+            "tag": "A",
+            "text": "Conductor",
+            "href": "https://studio.huminic.app/conductor",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 13,
+            "tag": "A",
+            "text": "Operations",
+            "href": "https://studio.huminic.app/operations",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 14,
+            "tag": "A",
+            "text": "Tasks",
+            "href": "https://studio.huminic.app/tasks",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 15,
+            "tag": "A",
+            "text": "Agents",
+            "href": "https://studio.huminic.app/agents",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 16,
+            "tag": "A",
+            "text": "Engagements",
+            "href": "https://studio.huminic.app/engagements",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 17,
+            "tag": "A",
+            "text": "Artifacts",
+            "href": "https://studio.huminic.app/artifacts",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 18,
+            "tag": "A",
+            "text": "Widget",
+            "href": "https://studio.huminic.app/widgets",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 19,
+            "tag": "A",
+            "text": "Patterns",
+            "href": "https://studio.huminic.app/patterns",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 20,
+            "tag": "A",
+            "text": "Analytics",
+            "href": "https://studio.huminic.app/analytics",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 21,
+            "tag": "A",
+            "text": "Session History",
+            "href": "https://studio.huminic.app/session-history",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 22,
+            "tag": "A",
+            "text": "Plugins",
+            "href": "https://studio.huminic.app/plugins",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 23,
+            "tag": "A",
+            "text": "MCP Tokens",
+            "href": "https://studio.huminic.app/mcp-tokens",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 24,
+            "tag": "A",
+            "text": "Audit Trail",
+            "href": "https://studio.huminic.app/audit",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 25,
+            "tag": "A",
+            "text": "Logs",
+            "href": "https://studio.huminic.app/logs",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 26,
+            "tag": "A",
+            "text": "KNOWLEDGE",
+            "href": "https://studio.huminic.app/memory",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 27,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Collapse Knowledge",
+            "disabled": false
+          },
+          {
+            "i": 28,
+            "tag": "A",
+            "text": "Memory",
+            "href": "https://studio.huminic.app/memory",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 29,
+            "tag": "A",
+            "text": "Skills",
+            "href": "https://studio.huminic.app/skills",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 30,
+            "tag": "A",
+            "text": "Profiles",
+            "href": "https://studio.huminic.app/profiles",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 31,
+            "tag": "A",
+            "text": "Help",
+            "href": "https://studio.huminic.app/help",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 32,
+            "tag": "A",
+            "text": "Documentation",
+            "href": "https://studio.huminic.app/docs",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 33,
+            "tag": "BUTTON",
+            "text": "SESSIONS",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 34,
+            "tag": "A",
+            "text": "main\nmain",
+            "href": "https://studio.huminic.app/chat/main",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 35,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Session options",
+            "disabled": false
+          },
+          {
+            "i": 36,
+            "tag": "A",
+            "text": "Session 5b5f7bbb\nID 5b5f7bbb",
+            "href": "https://studio.huminic.app/chat/5b5f7bbb-eba2-4bf1-80e6-25f92e2225f4",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 37,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Session options",
+            "disabled": false
+          },
+          {
+            "i": 38,
+            "tag": "A",
+            "text": "Session 92066587\nID 92066587",
+            "href": "https://studio.huminic.app/chat/92066587-f917-450f-ba73-5849e9d4bff9",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 39,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Session options",
+            "disabled": false
+          },
+          {
+            "i": 40,
+            "tag": "BUTTON",
+            "text": "User",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 41,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Settings",
+            "disabled": false
+          },
+          {
+            "i": 42,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 43,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "AI Debug analysis",
+            "disabled": false
+          },
+          {
+            "i": 44,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "New terminal tab",
+            "disabled": false
+          },
+          {
+            "i": 45,
+            "tag": "BUTTON",
+            "text": "Create profile",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 46,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": true
+          },
+          {
+            "i": 47,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 48,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 49,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": true
+          },
+          {
+            "i": 50,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 51,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 52,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 53,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 54,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 55,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 56,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 57,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 58,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 59,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 60,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 61,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 62,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 63,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 64,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 65,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 66,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 67,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 68,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 69,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 70,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 71,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 72,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 73,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 74,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 75,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 76,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 77,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 78,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 79,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 80,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 81,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 82,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 83,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 84,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 85,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 86,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 87,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 88,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 89,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 90,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 91,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 92,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 93,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 94,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 95,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 96,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 97,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 98,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 99,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 100,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 101,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 102,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 103,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 104,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 105,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 106,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 107,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 108,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 109,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 110,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 111,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 112,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 113,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 114,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 115,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 116,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 117,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 118,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 119,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          }
+        ]
+      },
+      "authSession": {
+        "status": 200,
+        "body": {
+          "authenticated": true,
+          "profile_auth_mode": true,
+          "profile": "serra-honda",
+          "username": "serra-honda",
+          "is_admin": false,
+          "is_customer_admin": true
+        }
+      },
+      "authCheck": {
+        "status": 200,
+        "body": {
+          "authenticated": true,
+          "authRequired": true
+        }
+      },
+      "profilesList": {
+        "status": 200,
+        "body": {
+          "profiles": [
+            {
+              "name": "consultative-agent",
+              "path": "/root/.hermes/profiles/consultative-agent",
+              "active": true,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 87,
+              "sessionCount": 35,
+              "hasEnv": true,
+              "updatedAt": "2026-06-09T21:54:22.510Z"
+            },
+            {
+              "name": "default",
+              "path": "/root/.hermes",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 89,
+              "sessionCount": 12,
+              "hasEnv": true,
+              "updatedAt": "2026-06-09T21:56:18.730Z"
+            },
+            {
+              "name": "serra-nissan",
+              "path": "/root/.hermes/profiles/serra-nissan",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4o",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-09T17:41:40.253Z"
+            },
+            {
+              "name": "ford-of-columbia",
+              "path": "/root/.hermes/profiles/ford-of-columbia",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4o",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-09T06:38:05.827Z"
+            },
+            {
+              "name": "hyundai-of-columbia",
+              "path": "/root/.hermes/profiles/hyundai-of-columbia",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4o",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-09T06:38:05.803Z"
+            },
+            {
+              "name": "tony-serra-ford",
+              "path": "/root/.hermes/profiles/tony-serra-ford",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4o",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-09T06:38:05.783Z"
+            },
+            {
+              "name": "serra-service",
+              "path": "/root/.hermes/profiles/serra-service",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4o",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-09T06:38:05.731Z"
+            },
+            {
+              "name": "serra-honda",
+              "path": "/root/.hermes/profiles/serra-honda",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4o",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-09T06:38:05.711Z"
+            },
+            {
+              "name": "strukture-data-governor",
+              "path": "/root/.hermes/profiles/strukture-data-governor",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:24:08.246Z"
+            },
+            {
+              "name": "serra-automotive-data-governor",
+              "path": "/root/.hermes/profiles/serra-automotive-data-governor",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:24:07.966Z"
+            },
+            {
+              "name": "huminic-data-governor",
+              "path": "/root/.hermes/profiles/huminic-data-governor",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:24:07.798Z"
+            },
+            {
+              "name": "cedar-ridge-automotive-data-governor",
+              "path": "/root/.hermes/profiles/cedar-ridge-automotive-data-governor",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:24:07.566Z"
+            },
+            {
+              "name": "tony-serra-ford-data-governor",
+              "path": "/root/.hermes/profiles/tony-serra-ford-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:26.210Z"
+            },
+            {
+              "name": "serra-service-data-governor",
+              "path": "/root/.hermes/profiles/serra-service-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:25.226Z"
+            },
+            {
+              "name": "serra-nissan-data-governor",
+              "path": "/root/.hermes/profiles/serra-nissan-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:24.734Z"
+            },
+            {
+              "name": "serra-honda-data-governor",
+              "path": "/root/.hermes/profiles/serra-honda-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:24.310Z"
+            },
+            {
+              "name": "hyundai-of-columbia-data-governor",
+              "path": "/root/.hermes/profiles/hyundai-of-columbia-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:23.386Z"
+            },
+            {
+              "name": "huminic-motors-data-governor",
+              "path": "/root/.hermes/profiles/huminic-motors-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:22.946Z"
+            },
+            {
+              "name": "huminic-motors",
+              "path": "/root/.hermes/profiles/huminic-motors",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:22.710Z"
+            },
+            {
+              "name": "ford-of-columbia-data-governor",
+              "path": "/root/.hermes/profiles/ford-of-columbia-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:22.062Z"
+            },
+            {
+              "name": "huminic",
+              "path": "/root/.hermes/profiles/huminic",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 86,
+              "sessionCount": 1,
+              "hasEnv": true,
+              "updatedAt": "2026-06-02T01:08:57.568Z"
+            },
+            {
+              "name": "serra-automotive",
+              "path": "/root/.hermes/profiles/serra-automotive",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 90,
+              "sessionCount": 12,
+              "hasEnv": true,
+              "updatedAt": "2026-06-01T07:54:05.070Z"
+            },
+            {
+              "name": "strukture",
+              "path": "/root/.hermes/profiles/strukture",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 87,
+              "sessionCount": 1,
+              "hasEnv": true,
+              "updatedAt": "2026-06-01T07:54:05.062Z"
+            },
+            {
+              "name": "cedar-ridge-automotive",
+              "path": "/root/.hermes/profiles/cedar-ridge-automotive",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-05-31T09:53:48.812Z"
+            }
+          ],
+          "activeProfile": "consultative-agent"
+        }
+      },
+      "dashboardSnapshot": {
+        "url": "https://studio.huminic.app/dashboard",
+        "title": "Dashboard — Hermes",
+        "text": "◈\nHERMES OS\n│\nNO ACTIVE SESSION\ngpt-4.1\n│\nONLINE\nh\nHuminic Studio\nSearch\nNew Session\nMAIN\nDashboard\nChat\nFiles\nTerminal\nJobs\nCrews\nConductor\nOperations\nTasks\nAgents\nEngagements\nArtifacts\nWidget\nPatterns\nAnalytics\nSession History\nPlugins\nMCP Tokens\nAudit Trail\nLogs\nKNOWLEDGE\nMemory\nSkills\nProfiles\nHelp\nDocumentation\nSESSIONS\nmain\nmain\nSession 5b5f7bbb\nID 5b5f7bbb\nSession 92066587\nID 92066587\nUser\nh\nHuminic Studio\n💬\nNew Chat\n💻\nTerminal\n🧩\nSkills\n⚙️\nSettings\nSESSIONS\n3\n💬\nMESSAGES\n4\n✉️\nTOOL CALLS\n0\n🔧\nTOKENS\n0\n~$0.00\n⚡\nACTIVITY\n14 days\nMay 28\nMay 30\nJun 1\nJun 3\nJun 5\nJun 7\nJun 9\n0\n1\n2\n3\n4\n0\n1\n2\n3\n4\nSessions\nMessages\nMODEL & GATEWAY HEALTH\nOnline\n🤖\ngpt-4.1\ncustom · https://api.openai.com/v1\nGateway health is reachable; core chat is ready.\nSKILLS\n8 installed\n📦\nairtable\n📦\napple-notes\n📦\napple-reminders\n📦\narchitecture-diagram\n📦\narxiv\n📦\nascii-art\nRECENT SESSIONS\nView all →\nmain\n4 msgs\n5b5f7bbb-eba2-4bf1-80e6-25f92e2225f4\n0 msgs\n92066587-f917-450f-ba73-5849e9d4bff9\n0 msgs\n0\n                                ",
+        "inputs": [],
+        "controls": [
+          {
+            "i": 0,
+            "tag": "A",
+            "text": "h\nHuminic Studio",
+            "href": "https://studio.huminic.app/chat",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 1,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Close Sidebar",
+            "disabled": false
+          },
+          {
+            "i": 2,
+            "tag": "BUTTON",
+            "text": "Search",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 3,
+            "tag": "A",
+            "text": "New Session",
+            "href": "https://studio.huminic.app/chat/new",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 4,
+            "tag": "A",
+            "text": "MAIN",
+            "href": "https://studio.huminic.app/chat",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 5,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Collapse Main",
+            "disabled": false
+          },
+          {
+            "i": 6,
+            "tag": "A",
+            "text": "Dashboard",
+            "href": "https://studio.huminic.app/dashboard",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 7,
+            "tag": "A",
+            "text": "Chat",
+            "href": "https://studio.huminic.app/chat",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 8,
+            "tag": "A",
+            "text": "Files",
+            "href": "https://studio.huminic.app/files",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 9,
+            "tag": "A",
+            "text": "Terminal",
+            "href": "https://studio.huminic.app/terminal",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 10,
+            "tag": "A",
+            "text": "Jobs",
+            "href": "https://studio.huminic.app/jobs",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 11,
+            "tag": "A",
+            "text": "Crews",
+            "href": "https://studio.huminic.app/crews",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 12,
+            "tag": "A",
+            "text": "Conductor",
+            "href": "https://studio.huminic.app/conductor",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 13,
+            "tag": "A",
+            "text": "Operations",
+            "href": "https://studio.huminic.app/operations",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 14,
+            "tag": "A",
+            "text": "Tasks",
+            "href": "https://studio.huminic.app/tasks",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 15,
+            "tag": "A",
+            "text": "Agents",
+            "href": "https://studio.huminic.app/agents",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 16,
+            "tag": "A",
+            "text": "Engagements",
+            "href": "https://studio.huminic.app/engagements",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 17,
+            "tag": "A",
+            "text": "Artifacts",
+            "href": "https://studio.huminic.app/artifacts",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 18,
+            "tag": "A",
+            "text": "Widget",
+            "href": "https://studio.huminic.app/widgets",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 19,
+            "tag": "A",
+            "text": "Patterns",
+            "href": "https://studio.huminic.app/patterns",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 20,
+            "tag": "A",
+            "text": "Analytics",
+            "href": "https://studio.huminic.app/analytics",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 21,
+            "tag": "A",
+            "text": "Session History",
+            "href": "https://studio.huminic.app/session-history",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 22,
+            "tag": "A",
+            "text": "Plugins",
+            "href": "https://studio.huminic.app/plugins",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 23,
+            "tag": "A",
+            "text": "MCP Tokens",
+            "href": "https://studio.huminic.app/mcp-tokens",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 24,
+            "tag": "A",
+            "text": "Audit Trail",
+            "href": "https://studio.huminic.app/audit",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 25,
+            "tag": "A",
+            "text": "Logs",
+            "href": "https://studio.huminic.app/logs",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 26,
+            "tag": "A",
+            "text": "KNOWLEDGE",
+            "href": "https://studio.huminic.app/memory",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 27,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Collapse Knowledge",
+            "disabled": false
+          },
+          {
+            "i": 28,
+            "tag": "A",
+            "text": "Memory",
+            "href": "https://studio.huminic.app/memory",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 29,
+            "tag": "A",
+            "text": "Skills",
+            "href": "https://studio.huminic.app/skills",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 30,
+            "tag": "A",
+            "text": "Profiles",
+            "href": "https://studio.huminic.app/profiles",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 31,
+            "tag": "A",
+            "text": "Help",
+            "href": "https://studio.huminic.app/help",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 32,
+            "tag": "A",
+            "text": "Documentation",
+            "href": "https://studio.huminic.app/docs",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 33,
+            "tag": "BUTTON",
+            "text": "SESSIONS",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 34,
+            "tag": "A",
+            "text": "main\nmain",
+            "href": "https://studio.huminic.app/chat/main",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 35,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Session options",
+            "disabled": false
+          },
+          {
+            "i": 36,
+            "tag": "A",
+            "text": "Session 5b5f7bbb\nID 5b5f7bbb",
+            "href": "https://studio.huminic.app/chat/5b5f7bbb-eba2-4bf1-80e6-25f92e2225f4",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 37,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Session options",
+            "disabled": false
+          },
+          {
+            "i": 38,
+            "tag": "A",
+            "text": "Session 92066587\nID 92066587",
+            "href": "https://studio.huminic.app/chat/92066587-f917-450f-ba73-5849e9d4bff9",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 39,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Session options",
+            "disabled": false
+          },
+          {
+            "i": 40,
+            "tag": "BUTTON",
+            "text": "User",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 41,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Settings",
+            "disabled": false
+          },
+          {
+            "i": 42,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 43,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "AI Debug analysis",
+            "disabled": false
+          },
+          {
+            "i": 44,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "New terminal tab",
+            "disabled": false
+          },
+          {
+            "i": 45,
+            "tag": "BUTTON",
+            "text": "💬\nNew Chat",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 46,
+            "tag": "BUTTON",
+            "text": "💻\nTerminal",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 47,
+            "tag": "BUTTON",
+            "text": "🧩\nSkills",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 48,
+            "tag": "BUTTON",
+            "text": "⚙️\nSettings",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 49,
+            "tag": "BUTTON",
+            "text": "View all →",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 50,
+            "tag": "BUTTON",
+            "text": "main\n4 msgs",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 51,
+            "tag": "BUTTON",
+            "text": "5b5f7bbb-eba2-4bf1-80e6-25f92e2225f4\n0 msgs",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 52,
+            "tag": "BUTTON",
+            "text": "92066587-f917-450f-ba73-5849e9d4bff9\n0 msgs",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 53,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Open chat",
+            "disabled": false
+          },
+          {
+            "i": 54,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Collapse navigation sidebar",
+            "disabled": false
+          },
+          {
+            "i": 55,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Close menu",
+            "disabled": false
+          },
+          {
+            "i": 56,
+            "tag": "BUTTON",
+            "text": "Chat",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 57,
+            "tag": "BUTTON",
+            "text": "Dashboard",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 58,
+            "tag": "BUTTON",
+            "text": "Terminal",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 59,
+            "tag": "BUTTON",
+            "text": "Jobs",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 60,
+            "tag": "BUTTON",
+            "text": "Memory",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 61,
+            "tag": "BUTTON",
+            "text": "Skills",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 62,
+            "tag": "BUTTON",
+            "text": "Profiles",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 63,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Settings",
+            "disabled": false
+          },
+          {
+            "i": 64,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Toggle theme",
+            "disabled": false
+          }
+        ]
+      },
+      "findings": {
+        "loginScreenVisible": true,
+        "usernameFieldVisible": false,
+        "globalShellVisible": true,
+        "profilesPageVisible": true,
+        "dashboardPageVisible": true,
+        "profileListApiOk": true,
+        "isAdmin": false,
+        "isCustomerAdmin": true,
+        "profile": "serra-honda"
+      }
+    },
+    {
+      "label": "studio-admin-duane",
+      "profilesSnapshot": {
+        "url": "https://studio.huminic.app/profiles",
+        "title": "Profiles — Hermes",
+        "text": "◈\nHERMES OS\n│\nNO ACTIVE SESSION\ngpt-4.1\n│\nONLINE\nh\nHuminic Studio\nSearch\nNew Session\nMAIN\nDashboard\nChat\nFiles\nTerminal\nJobs\nCrews\nConductor\nOperations\nTasks\nAgents\nEngagements\nArtifacts\nWidget\nPatterns\nAnalytics\nSession History\nPlugins\nMCP Tokens\nAudit Trail\nLogs\nKNOWLEDGE\nMemory\nSkills\nProfiles\nHelp\nDocumentation\nSESSIONS\nmain\nmain\nSession 5b5f7bbb\nID 5b5f7bbb\nSession 92066587\nID 92066587\nUser\nProfiles\n\nBrowse and manage Huminic profiles stored under ~/.hermes/profiles.\n\nCreate profile\nh\nACTIVE\nconsultative-agent\ncustom\n87\nSKILLS\n35\nSESSIONS\ngpt-4.1\nMODEL\n✓\nENV\nJun 9, 2026, 5:54 PM\nActivate\nDetails\nRename\nDelete\nh\ndefault\ncustom\n89\nSKILLS\n12\nSESSIONS\ngpt-4.1\nMODEL\n✓\nENV\nJun 9, 2026, 5:56 PM\nActivate\nDetails\nRename\nDelete\nh\nserra-nissan\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4o\nMODEL\n—\nENV\nJun 9, 2026, 1:41 PM\nActivate\nDetails\nRename\nDelete\nh\nford-of-columbia\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4o\nMODEL\n—\nENV\nJun 9, 2026, 2:38 AM\nActivate\nDetails\nRename\nDelete\nh\nhyundai-of-columbia\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4o\nMODEL\n—\nENV\nJun 9, 2026, 2:38 AM\nActivate\nDetails\nRename\nDelete\nh\ntony-serra-ford\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4o\nMODEL\n—\nENV\nJun 9, 2026, 2:38 AM\nActivate\nDetails\nRename\nDelete\nh\nserra-service\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4o\nMODEL\n—\nENV\nJun 9, 2026, 2:38 AM\nActivate\nDetails\nRename\nDelete\nh\nserra-honda\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4o\nMODEL\n—\nENV\nJun 9, 2026, 2:38 AM\nActivate\nDetails\nRename\nDelete\nh\nstrukture-data-governor\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4.1\nMODEL\n—\nENV\nJun 2, 2026, 11:24 AM\nActivate\nDetails\nRename\nDelete\nh\nserra-automotive-data-governor\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4.1\nMODEL\n—\nENV\nJun 2, 2026, 11:24 AM\nActivate\nDetails\nRename\nDelete\nh\nhuminic-data-governor\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4.1\nMODEL\n—\nENV\nJun 2, 2026, 11:24 AM\nActivate\nDetails\nRename\nDelete\nh\ncedar-ridge-automotive-data-governor\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4.1\nMODEL\n—\nENV\nJun 2, 2026, 11:24 AM\nActivate\nDetails\nRename\nDelete\nh\ntony-serra-ford-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nserra-service-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nserra-nissan-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nserra-honda-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nhyundai-of-columbia-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nhuminic-motors-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nhuminic-motors\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nford-of-columbia-data-governor\nno provider\n0\nSKILLS\n0\nSESSIONS\n—\nMODEL\n—\nENV\nJun 2, 2026, 11:07 AM\nActivate\nDetails\nRename\nDelete\nh\nhuminic\ncustom\n86\nSKILLS\n1\nSESSIONS\ngpt-4.1\nMODEL\n✓\nENV\nJun 1, 2026, 9:08 PM\nActivate\nDetails\nRename\nDelete\nh\nserra-automotive\ncustom\n90\nSKILLS\n12\nSESSIONS\ngpt-4.1\nMODEL\n✓\nENV\nJun 1, 2026, 3:54 AM\nActivate\nDetails\nRename\nDelete\nh\nstrukture\ncustom\n87\nSKILLS\n1\nSESSIONS\ngpt-4.1\nMODEL\n✓\nENV\nJun 1, 2026, 3:54 AM\nActivate\nDetails\nRename\nDelete\nh\ncedar-ridge-automotive\ncustom\n0\nSKILLS\n0\nSESSIONS\ngpt-4.1\nMODEL\n—\nENV\nMay 31, 2026, 5:53 AM\nActivate\nDetails\nRename\nDelete\n                                ",
+        "inputs": [],
+        "controls": [
+          {
+            "i": 0,
+            "tag": "A",
+            "text": "h\nHuminic Studio",
+            "href": "https://studio.huminic.app/chat",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 1,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Close Sidebar",
+            "disabled": false
+          },
+          {
+            "i": 2,
+            "tag": "BUTTON",
+            "text": "Search",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 3,
+            "tag": "A",
+            "text": "New Session",
+            "href": "https://studio.huminic.app/chat/new",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 4,
+            "tag": "A",
+            "text": "MAIN",
+            "href": "https://studio.huminic.app/chat",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 5,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Collapse Main",
+            "disabled": false
+          },
+          {
+            "i": 6,
+            "tag": "A",
+            "text": "Dashboard",
+            "href": "https://studio.huminic.app/dashboard",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 7,
+            "tag": "A",
+            "text": "Chat",
+            "href": "https://studio.huminic.app/chat",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 8,
+            "tag": "A",
+            "text": "Files",
+            "href": "https://studio.huminic.app/files",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 9,
+            "tag": "A",
+            "text": "Terminal",
+            "href": "https://studio.huminic.app/terminal",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 10,
+            "tag": "A",
+            "text": "Jobs",
+            "href": "https://studio.huminic.app/jobs",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 11,
+            "tag": "A",
+            "text": "Crews",
+            "href": "https://studio.huminic.app/crews",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 12,
+            "tag": "A",
+            "text": "Conductor",
+            "href": "https://studio.huminic.app/conductor",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 13,
+            "tag": "A",
+            "text": "Operations",
+            "href": "https://studio.huminic.app/operations",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 14,
+            "tag": "A",
+            "text": "Tasks",
+            "href": "https://studio.huminic.app/tasks",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 15,
+            "tag": "A",
+            "text": "Agents",
+            "href": "https://studio.huminic.app/agents",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 16,
+            "tag": "A",
+            "text": "Engagements",
+            "href": "https://studio.huminic.app/engagements",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 17,
+            "tag": "A",
+            "text": "Artifacts",
+            "href": "https://studio.huminic.app/artifacts",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 18,
+            "tag": "A",
+            "text": "Widget",
+            "href": "https://studio.huminic.app/widgets",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 19,
+            "tag": "A",
+            "text": "Patterns",
+            "href": "https://studio.huminic.app/patterns",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 20,
+            "tag": "A",
+            "text": "Analytics",
+            "href": "https://studio.huminic.app/analytics",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 21,
+            "tag": "A",
+            "text": "Session History",
+            "href": "https://studio.huminic.app/session-history",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 22,
+            "tag": "A",
+            "text": "Plugins",
+            "href": "https://studio.huminic.app/plugins",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 23,
+            "tag": "A",
+            "text": "MCP Tokens",
+            "href": "https://studio.huminic.app/mcp-tokens",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 24,
+            "tag": "A",
+            "text": "Audit Trail",
+            "href": "https://studio.huminic.app/audit",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 25,
+            "tag": "A",
+            "text": "Logs",
+            "href": "https://studio.huminic.app/logs",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 26,
+            "tag": "A",
+            "text": "KNOWLEDGE",
+            "href": "https://studio.huminic.app/memory",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 27,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Collapse Knowledge",
+            "disabled": false
+          },
+          {
+            "i": 28,
+            "tag": "A",
+            "text": "Memory",
+            "href": "https://studio.huminic.app/memory",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 29,
+            "tag": "A",
+            "text": "Skills",
+            "href": "https://studio.huminic.app/skills",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 30,
+            "tag": "A",
+            "text": "Profiles",
+            "href": "https://studio.huminic.app/profiles",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 31,
+            "tag": "A",
+            "text": "Help",
+            "href": "https://studio.huminic.app/help",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 32,
+            "tag": "A",
+            "text": "Documentation",
+            "href": "https://studio.huminic.app/docs",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 33,
+            "tag": "BUTTON",
+            "text": "SESSIONS",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 34,
+            "tag": "A",
+            "text": "main\nmain",
+            "href": "https://studio.huminic.app/chat/main",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 35,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Session options",
+            "disabled": false
+          },
+          {
+            "i": 36,
+            "tag": "A",
+            "text": "Session 5b5f7bbb\nID 5b5f7bbb",
+            "href": "https://studio.huminic.app/chat/5b5f7bbb-eba2-4bf1-80e6-25f92e2225f4",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 37,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Session options",
+            "disabled": false
+          },
+          {
+            "i": 38,
+            "tag": "A",
+            "text": "Session 92066587\nID 92066587",
+            "href": "https://studio.huminic.app/chat/92066587-f917-450f-ba73-5849e9d4bff9",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 39,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Session options",
+            "disabled": false
+          },
+          {
+            "i": 40,
+            "tag": "BUTTON",
+            "text": "User",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 41,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Settings",
+            "disabled": false
+          },
+          {
+            "i": 42,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 43,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "AI Debug analysis",
+            "disabled": false
+          },
+          {
+            "i": 44,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "New terminal tab",
+            "disabled": false
+          },
+          {
+            "i": 45,
+            "tag": "BUTTON",
+            "text": "Create profile",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 46,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": true
+          },
+          {
+            "i": 47,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 48,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 49,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": true
+          },
+          {
+            "i": 50,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 51,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 52,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 53,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 54,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 55,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 56,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 57,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 58,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 59,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 60,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 61,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 62,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 63,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 64,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 65,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 66,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 67,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 68,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 69,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 70,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 71,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 72,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 73,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 74,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 75,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 76,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 77,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 78,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 79,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 80,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 81,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 82,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 83,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 84,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 85,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 86,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 87,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 88,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 89,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 90,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 91,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 92,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 93,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 94,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 95,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 96,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 97,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 98,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 99,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 100,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 101,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 102,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 103,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 104,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 105,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 106,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 107,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 108,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 109,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 110,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 111,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 112,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 113,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 114,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 115,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 116,
+            "tag": "BUTTON",
+            "text": "Rename",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 117,
+            "tag": "BUTTON",
+            "text": "Delete",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 118,
+            "tag": "BUTTON",
+            "text": "Activate",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 119,
+            "tag": "BUTTON",
+            "text": "Details",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          }
+        ]
+      },
+      "authSession": {
+        "status": 200,
+        "body": {
+          "authenticated": true,
+          "profile_auth_mode": true,
+          "profile": "huminic",
+          "username": "duane",
+          "is_admin": true,
+          "is_customer_admin": true
+        }
+      },
+      "authCheck": {
+        "status": 200,
+        "body": {
+          "authenticated": true,
+          "authRequired": true
+        }
+      },
+      "profilesList": {
+        "status": 200,
+        "body": {
+          "profiles": [
+            {
+              "name": "consultative-agent",
+              "path": "/root/.hermes/profiles/consultative-agent",
+              "active": true,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 87,
+              "sessionCount": 35,
+              "hasEnv": true,
+              "updatedAt": "2026-06-09T21:54:22.510Z"
+            },
+            {
+              "name": "default",
+              "path": "/root/.hermes",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 89,
+              "sessionCount": 12,
+              "hasEnv": true,
+              "updatedAt": "2026-06-09T21:56:38.770Z"
+            },
+            {
+              "name": "serra-nissan",
+              "path": "/root/.hermes/profiles/serra-nissan",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4o",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-09T17:41:40.253Z"
+            },
+            {
+              "name": "ford-of-columbia",
+              "path": "/root/.hermes/profiles/ford-of-columbia",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4o",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-09T06:38:05.827Z"
+            },
+            {
+              "name": "hyundai-of-columbia",
+              "path": "/root/.hermes/profiles/hyundai-of-columbia",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4o",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-09T06:38:05.803Z"
+            },
+            {
+              "name": "tony-serra-ford",
+              "path": "/root/.hermes/profiles/tony-serra-ford",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4o",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-09T06:38:05.783Z"
+            },
+            {
+              "name": "serra-service",
+              "path": "/root/.hermes/profiles/serra-service",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4o",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-09T06:38:05.731Z"
+            },
+            {
+              "name": "serra-honda",
+              "path": "/root/.hermes/profiles/serra-honda",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4o",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-09T06:38:05.711Z"
+            },
+            {
+              "name": "strukture-data-governor",
+              "path": "/root/.hermes/profiles/strukture-data-governor",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:24:08.246Z"
+            },
+            {
+              "name": "serra-automotive-data-governor",
+              "path": "/root/.hermes/profiles/serra-automotive-data-governor",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:24:07.966Z"
+            },
+            {
+              "name": "huminic-data-governor",
+              "path": "/root/.hermes/profiles/huminic-data-governor",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:24:07.798Z"
+            },
+            {
+              "name": "cedar-ridge-automotive-data-governor",
+              "path": "/root/.hermes/profiles/cedar-ridge-automotive-data-governor",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:24:07.566Z"
+            },
+            {
+              "name": "tony-serra-ford-data-governor",
+              "path": "/root/.hermes/profiles/tony-serra-ford-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:26.210Z"
+            },
+            {
+              "name": "serra-service-data-governor",
+              "path": "/root/.hermes/profiles/serra-service-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:25.226Z"
+            },
+            {
+              "name": "serra-nissan-data-governor",
+              "path": "/root/.hermes/profiles/serra-nissan-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:24.734Z"
+            },
+            {
+              "name": "serra-honda-data-governor",
+              "path": "/root/.hermes/profiles/serra-honda-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:24.310Z"
+            },
+            {
+              "name": "hyundai-of-columbia-data-governor",
+              "path": "/root/.hermes/profiles/hyundai-of-columbia-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:23.386Z"
+            },
+            {
+              "name": "huminic-motors-data-governor",
+              "path": "/root/.hermes/profiles/huminic-motors-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:22.946Z"
+            },
+            {
+              "name": "huminic-motors",
+              "path": "/root/.hermes/profiles/huminic-motors",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:22.710Z"
+            },
+            {
+              "name": "ford-of-columbia-data-governor",
+              "path": "/root/.hermes/profiles/ford-of-columbia-data-governor",
+              "active": false,
+              "exists": true,
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-06-02T15:07:22.062Z"
+            },
+            {
+              "name": "huminic",
+              "path": "/root/.hermes/profiles/huminic",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 86,
+              "sessionCount": 1,
+              "hasEnv": true,
+              "updatedAt": "2026-06-02T01:08:57.568Z"
+            },
+            {
+              "name": "serra-automotive",
+              "path": "/root/.hermes/profiles/serra-automotive",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 90,
+              "sessionCount": 12,
+              "hasEnv": true,
+              "updatedAt": "2026-06-01T07:54:05.070Z"
+            },
+            {
+              "name": "strukture",
+              "path": "/root/.hermes/profiles/strukture",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 87,
+              "sessionCount": 1,
+              "hasEnv": true,
+              "updatedAt": "2026-06-01T07:54:05.062Z"
+            },
+            {
+              "name": "cedar-ridge-automotive",
+              "path": "/root/.hermes/profiles/cedar-ridge-automotive",
+              "active": false,
+              "exists": true,
+              "model": "gpt-4.1",
+              "provider": "custom",
+              "skillCount": 0,
+              "sessionCount": 0,
+              "hasEnv": false,
+              "updatedAt": "2026-05-31T09:53:48.812Z"
+            }
+          ],
+          "activeProfile": "consultative-agent"
+        }
+      },
+      "dashboardSnapshot": {
+        "url": "https://studio.huminic.app/dashboard",
+        "title": "Dashboard — Hermes",
+        "text": "◈\nHERMES OS\n│\nNO ACTIVE SESSION\ngpt-4.1\n│\nONLINE\nh\nHuminic Studio\nSearch\nNew Session\nMAIN\nDashboard\nChat\nFiles\nTerminal\nJobs\nCrews\nConductor\nOperations\nTasks\nAgents\nEngagements\nArtifacts\nWidget\nPatterns\nAnalytics\nSession History\nPlugins\nMCP Tokens\nAudit Trail\nLogs\nKNOWLEDGE\nMemory\nSkills\nProfiles\nHelp\nDocumentation\nSESSIONS\nmain\nmain\nSession 5b5f7bbb\nID 5b5f7bbb\nSession 92066587\nID 92066587\nUser\nh\nHuminic Studio\n💬\nNew Chat\n💻\nTerminal\n🧩\nSkills\n⚙️\nSettings\nSESSIONS\n3\n💬\nMESSAGES\n4\n✉️\nTOOL CALLS\n0\n🔧\nTOKENS\n0\n~$0.00\n⚡\nACTIVITY\n14 days\nMay 28\nMay 30\nJun 1\nJun 3\nJun 5\nJun 7\nJun 9\n0\n1\n2\n3\n4\n0\n1\n2\n3\n4\nSessions\nMessages\nMODEL & GATEWAY HEALTH\nOnline\n🤖\ngpt-4.1\ncustom · https://api.openai.com/v1\nGateway health is reachable; core chat is ready.\nSKILLS\n8 installed\n📦\nairtable\n📦\napple-notes\n📦\napple-reminders\n📦\narchitecture-diagram\n📦\narxiv\n📦\nascii-art\nRECENT SESSIONS\nView all →\nmain\n4 msgs\n5b5f7bbb-eba2-4bf1-80e6-25f92e2225f4\n0 msgs\n92066587-f917-450f-ba73-5849e9d4bff9\n0 msgs\n0\n                                ",
+        "inputs": [],
+        "controls": [
+          {
+            "i": 0,
+            "tag": "A",
+            "text": "h\nHuminic Studio",
+            "href": "https://studio.huminic.app/chat",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 1,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Close Sidebar",
+            "disabled": false
+          },
+          {
+            "i": 2,
+            "tag": "BUTTON",
+            "text": "Search",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 3,
+            "tag": "A",
+            "text": "New Session",
+            "href": "https://studio.huminic.app/chat/new",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 4,
+            "tag": "A",
+            "text": "MAIN",
+            "href": "https://studio.huminic.app/chat",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 5,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Collapse Main",
+            "disabled": false
+          },
+          {
+            "i": 6,
+            "tag": "A",
+            "text": "Dashboard",
+            "href": "https://studio.huminic.app/dashboard",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 7,
+            "tag": "A",
+            "text": "Chat",
+            "href": "https://studio.huminic.app/chat",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 8,
+            "tag": "A",
+            "text": "Files",
+            "href": "https://studio.huminic.app/files",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 9,
+            "tag": "A",
+            "text": "Terminal",
+            "href": "https://studio.huminic.app/terminal",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 10,
+            "tag": "A",
+            "text": "Jobs",
+            "href": "https://studio.huminic.app/jobs",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 11,
+            "tag": "A",
+            "text": "Crews",
+            "href": "https://studio.huminic.app/crews",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 12,
+            "tag": "A",
+            "text": "Conductor",
+            "href": "https://studio.huminic.app/conductor",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 13,
+            "tag": "A",
+            "text": "Operations",
+            "href": "https://studio.huminic.app/operations",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 14,
+            "tag": "A",
+            "text": "Tasks",
+            "href": "https://studio.huminic.app/tasks",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 15,
+            "tag": "A",
+            "text": "Agents",
+            "href": "https://studio.huminic.app/agents",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 16,
+            "tag": "A",
+            "text": "Engagements",
+            "href": "https://studio.huminic.app/engagements",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 17,
+            "tag": "A",
+            "text": "Artifacts",
+            "href": "https://studio.huminic.app/artifacts",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 18,
+            "tag": "A",
+            "text": "Widget",
+            "href": "https://studio.huminic.app/widgets",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 19,
+            "tag": "A",
+            "text": "Patterns",
+            "href": "https://studio.huminic.app/patterns",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 20,
+            "tag": "A",
+            "text": "Analytics",
+            "href": "https://studio.huminic.app/analytics",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 21,
+            "tag": "A",
+            "text": "Session History",
+            "href": "https://studio.huminic.app/session-history",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 22,
+            "tag": "A",
+            "text": "Plugins",
+            "href": "https://studio.huminic.app/plugins",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 23,
+            "tag": "A",
+            "text": "MCP Tokens",
+            "href": "https://studio.huminic.app/mcp-tokens",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 24,
+            "tag": "A",
+            "text": "Audit Trail",
+            "href": "https://studio.huminic.app/audit",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 25,
+            "tag": "A",
+            "text": "Logs",
+            "href": "https://studio.huminic.app/logs",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 26,
+            "tag": "A",
+            "text": "KNOWLEDGE",
+            "href": "https://studio.huminic.app/memory",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 27,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Collapse Knowledge",
+            "disabled": false
+          },
+          {
+            "i": 28,
+            "tag": "A",
+            "text": "Memory",
+            "href": "https://studio.huminic.app/memory",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 29,
+            "tag": "A",
+            "text": "Skills",
+            "href": "https://studio.huminic.app/skills",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 30,
+            "tag": "A",
+            "text": "Profiles",
+            "href": "https://studio.huminic.app/profiles",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 31,
+            "tag": "A",
+            "text": "Help",
+            "href": "https://studio.huminic.app/help",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 32,
+            "tag": "A",
+            "text": "Documentation",
+            "href": "https://studio.huminic.app/docs",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 33,
+            "tag": "BUTTON",
+            "text": "SESSIONS",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 34,
+            "tag": "A",
+            "text": "main\nmain",
+            "href": "https://studio.huminic.app/chat/main",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 35,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Session options",
+            "disabled": false
+          },
+          {
+            "i": 36,
+            "tag": "A",
+            "text": "Session 5b5f7bbb\nID 5b5f7bbb",
+            "href": "https://studio.huminic.app/chat/5b5f7bbb-eba2-4bf1-80e6-25f92e2225f4",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 37,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Session options",
+            "disabled": false
+          },
+          {
+            "i": 38,
+            "tag": "A",
+            "text": "Session 92066587\nID 92066587",
+            "href": "https://studio.huminic.app/chat/92066587-f917-450f-ba73-5849e9d4bff9",
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 39,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Session options",
+            "disabled": false
+          },
+          {
+            "i": 40,
+            "tag": "BUTTON",
+            "text": "User",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 41,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Settings",
+            "disabled": false
+          },
+          {
+            "i": 42,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 43,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "AI Debug analysis",
+            "disabled": false
+          },
+          {
+            "i": 44,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "New terminal tab",
+            "disabled": false
+          },
+          {
+            "i": 45,
+            "tag": "BUTTON",
+            "text": "💬\nNew Chat",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 46,
+            "tag": "BUTTON",
+            "text": "💻\nTerminal",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 47,
+            "tag": "BUTTON",
+            "text": "🧩\nSkills",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 48,
+            "tag": "BUTTON",
+            "text": "⚙️\nSettings",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 49,
+            "tag": "BUTTON",
+            "text": "View all →",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 50,
+            "tag": "BUTTON",
+            "text": "main\n4 msgs",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 51,
+            "tag": "BUTTON",
+            "text": "5b5f7bbb-eba2-4bf1-80e6-25f92e2225f4\n0 msgs",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 52,
+            "tag": "BUTTON",
+            "text": "92066587-f917-450f-ba73-5849e9d4bff9\n0 msgs",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 53,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Open chat",
+            "disabled": false
+          },
+          {
+            "i": 54,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Collapse navigation sidebar",
+            "disabled": false
+          },
+          {
+            "i": 55,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Close menu",
+            "disabled": false
+          },
+          {
+            "i": 56,
+            "tag": "BUTTON",
+            "text": "Chat",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 57,
+            "tag": "BUTTON",
+            "text": "Dashboard",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 58,
+            "tag": "BUTTON",
+            "text": "Terminal",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 59,
+            "tag": "BUTTON",
+            "text": "Jobs",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 60,
+            "tag": "BUTTON",
+            "text": "Memory",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 61,
+            "tag": "BUTTON",
+            "text": "Skills",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 62,
+            "tag": "BUTTON",
+            "text": "Profiles",
+            "href": null,
+            "aria": null,
+            "disabled": false
+          },
+          {
+            "i": 63,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Settings",
+            "disabled": false
+          },
+          {
+            "i": 64,
+            "tag": "BUTTON",
+            "text": "",
+            "href": null,
+            "aria": "Toggle theme",
+            "disabled": false
+          }
+        ]
+      },
+      "findings": {
+        "loginScreenVisible": true,
+        "usernameFieldVisible": false,
+        "globalShellVisible": true,
+        "profilesPageVisible": true,
+        "dashboardPageVisible": true,
+        "profileListApiOk": true,
+        "isAdmin": true,
+        "isCustomerAdmin": true,
+        "profile": "huminic"
+      }
+    }
+  ],
+  "summary": [
+    {
+      "label": "anonymous",
+      "findings": {
+        "loginScreenVisible": true,
+        "usernameFieldVisible": true,
+        "globalShellVisible": false,
+        "profilesPageVisible": false,
+        "dashboardPageVisible": false,
+        "profileListApiOk": false,
+        "isAdmin": false,
+        "isCustomerAdmin": false,
+        "profile": null
+      },
+      "profilesUrl": "https://studio.huminic.app/profiles",
+      "dashboardUrl": "https://studio.huminic.app/dashboard",
+      "profilesTextHead": "Huminic Studio\nSign in\n\nSign in with your profile credentials\n\nContinue\n\nPowered by Huminic",
+      "dashboardTextHead": "Huminic Studio\nSign in\n\nSign in with your profile credentials\n\nContinue\n\nPowered by Huminic",
+      "profilesListStatus": 401
+    },
+    {
+      "label": "customer-admin-serra-honda",
+      "findings": {
+        "loginScreenVisible": true,
+        "usernameFieldVisible": false,
+        "globalShellVisible": true,
+        "profilesPageVisible": true,
+        "dashboardPageVisible": true,
+        "profileListApiOk": true,
+        "isAdmin": false,
+        "isCustomerAdmin": true,
+        "profile": "serra-honda"
+      },
+      "profilesUrl": "https://studio.huminic.app/profiles",
+      "dashboardUrl": "https://studio.huminic.app/dashboard",
+      "profilesTextHead": "◈\nHERMES OS\n│\nNO ACTIVE SESSION\ngpt-4.1\n│\nONLINE\nh\nHuminic Studio\nSearch\nNew Session\nMAIN\nDashboard\nChat\nFiles\nTerminal\nJobs\nCrews\nConductor\nOperations\nTasks\nAgents\nEngagements\nArtifacts\nWidget\nPatterns\nAnalytics\nSession History\nPlugins\nMCP",
+      "dashboardTextHead": "◈\nHERMES OS\n│\nNO ACTIVE SESSION\ngpt-4.1\n│\nONLINE\nh\nHuminic Studio\nSearch\nNew Session\nMAIN\nDashboard\nChat\nFiles\nTerminal\nJobs\nCrews\nConductor\nOperations\nTasks\nAgents\nEngagements\nArtifacts\nWidget\nPatterns\nAnalytics\nSession History\nPlugins\nMCP",
+      "profilesListStatus": 200
+    },
+    {
+      "label": "studio-admin-duane",
+      "findings": {
+        "loginScreenVisible": true,
+        "usernameFieldVisible": false,
+        "globalShellVisible": true,
+        "profilesPageVisible": true,
+        "dashboardPageVisible": true,
+        "profileListApiOk": true,
+        "isAdmin": true,
+        "isCustomerAdmin": true,
+        "profile": "huminic"
+      },
+      "profilesUrl": "https://studio.huminic.app/profiles",
+      "dashboardUrl": "https://studio.huminic.app/dashboard",
+      "profilesTextHead": "◈\nHERMES OS\n│\nNO ACTIVE SESSION\ngpt-4.1\n│\nONLINE\nh\nHuminic Studio\nSearch\nNew Session\nMAIN\nDashboard\nChat\nFiles\nTerminal\nJobs\nCrews\nConductor\nOperations\nTasks\nAgents\nEngagements\nArtifacts\nWidget\nPatterns\nAnalytics\nSession History\nPlugins\nMCP",
+      "dashboardTextHead": "◈\nHERMES OS\n│\nNO ACTIVE SESSION\ngpt-4.1\n│\nONLINE\nh\nHuminic Studio\nSearch\nNew Session\nMAIN\nDashboard\nChat\nFiles\nTerminal\nJobs\nCrews\nConductor\nOperations\nTasks\nAgents\nEngagements\nArtifacts\nWidget\nPatterns\nAnalytics\nSession History\nPlugins\nMCP",
+      "profilesListStatus": 200
+    }
+  ],
+  "status": "COMPLETE"
+}

@@ -1,0 +1,10 @@
+HTTP/2 404 
+alt-svc: h3=":443"; ma=2592000
+content-security-policy: frame-ancestors *
+content-type: text/plain
+date: Tue, 09 Jun 2026 08:21:29 GMT
+referrer-policy: no-referrer-when-downgrade
+strict-transport-security: max-age=31536000; includeSubDomains
+via: 1.1 Caddy
+x-content-type-options: nosniff
+

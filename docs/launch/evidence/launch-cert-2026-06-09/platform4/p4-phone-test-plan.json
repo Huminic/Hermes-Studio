@@ -1,0 +1,54 @@
+{
+  "ts": "2026-06-09T21:45:00Z",
+  "status": "PENDING_OUTBOUND_CALL_APPROVAL",
+  "validatedNonManualMethod": false,
+  "claudeResponse": "No validated non-manual agent-call method is available. Local Mac calling is the representative path and requires explicit outbound-call confirmation.",
+  "testScript": {
+    "caller": "local Mac / approved caller path",
+    "conversationPrompt": "Ask for help with a vehicle or service appointment, confirm the AI answers for the correct store, then hang up after a short coherent exchange.",
+    "postCallVerification": [
+      "Gmail: matching lead email lands in duanekwells@gmail.com Inbox",
+      "Admin Teambox: matching phone lead appears in the correct store/segment",
+      "Read-only logs if needed: messaging store + lead_notify_log + provider call lookup through Claude"
+    ],
+    "repeatCallRisk": "Claude noted a 4-hour notify-cooldown caveat for repeat calls from the same caller number."
+  },
+  "numbers": [
+    {
+      "store": "serra-honda",
+      "phone": "+19012038267",
+      "status": "PENDING",
+      "expectedAssistant": "Serra Honda sales AI / Caroline"
+    },
+    {
+      "store": "serra-service",
+      "phone": "+19014361271",
+      "status": "PENDING",
+      "expectedAssistant": "Serra Service AI / Nancy"
+    },
+    {
+      "store": "serra-nissan",
+      "phone": "+12568623318",
+      "status": "PENDING",
+      "expectedAssistant": "Serra Nissan sales AI / Caroline"
+    },
+    {
+      "store": "tony-serra-ford",
+      "phone": "+12564599707",
+      "status": "PENDING",
+      "expectedAssistant": "Tony Serra Ford sales AI / Caroline"
+    },
+    {
+      "store": "hyundai-of-columbia",
+      "phone": "+19012039398",
+      "status": "PENDING",
+      "expectedAssistant": "Hyundai of Columbia sales AI / Caroline"
+    },
+    {
+      "store": "ford-of-columbia",
+      "phone": "+19313692815",
+      "status": "PENDING",
+      "expectedAssistant": "Ford of Columbia sales AI / Caroline"
+    }
+  ]
+}

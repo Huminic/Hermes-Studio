@@ -1,0 +1,54 @@
+[
+  {
+    "store": "serra-nissan",
+    "checks": {
+      "launcherCount": 1,
+      "menuHasStore": true,
+      "menuHasAllOptions": false,
+      "menuVendorLeak": false
+    },
+    "vendorVisible": [],
+    "errors": [
+      "chat button missing"
+    ]
+  },
+  {
+    "store": "tony-serra-ford",
+    "checks": {
+      "launcherCount": 1,
+      "menuHasStore": true,
+      "menuHasAllOptions": false,
+      "menuVendorLeak": false
+    },
+    "vendorVisible": [],
+    "errors": [
+      "chat button missing"
+    ]
+  },
+  {
+    "store": "hyundai-of-columbia",
+    "checks": {
+      "launcherCount": 1,
+      "menuHasStore": true,
+      "menuHasAllOptions": false,
+      "menuVendorLeak": false
+    },
+    "vendorVisible": [],
+    "errors": [
+      "chat button missing"
+    ]
+  },
+  {
+    "store": "ford-of-columbia",
+    "checks": {
+      "launcherCount": 1,
+      "menuHasStore": true,
+      "menuHasAllOptions": false,
+      "menuVendorLeak": false
+    },
+    "vendorVisible": [],
+    "errors": [
+      "chat button missing"
+    ]
+  }
+]

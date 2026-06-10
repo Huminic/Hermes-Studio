@@ -1,0 +1,94 @@
+[
+  {
+    "store": "serra-nissan",
+    "checks": {
+      "menuCounts": {
+        "webChat": 1,
+        "callback": 1,
+        "contact": 1,
+        "video": 1
+      },
+      "menuPass": true,
+      "menuVendorLeakVisibleText": false,
+      "chatInputCount": 1,
+      "chatReplyPass": true,
+      "chatPowered": true,
+      "chatVendorLeak": false,
+      "contactRealForm": true,
+      "contactSuccess": true,
+      "contactVendorLeak": false,
+      "callbackSuccess": true,
+      "callbackVendorLeak": false
+    },
+    "errors": []
+  },
+  {
+    "store": "tony-serra-ford",
+    "checks": {
+      "menuCounts": {
+        "webChat": 1,
+        "callback": 1,
+        "contact": 1,
+        "video": 1
+      },
+      "menuPass": true,
+      "menuVendorLeakVisibleText": false,
+      "chatInputCount": 1,
+      "chatReplyPass": true,
+      "chatPowered": true,
+      "chatVendorLeak": false,
+      "contactRealForm": true,
+      "contactSuccess": true,
+      "contactVendorLeak": false,
+      "callbackSuccess": true,
+      "callbackVendorLeak": false
+    },
+    "errors": []
+  },
+  {
+    "store": "hyundai-of-columbia",
+    "checks": {
+      "menuCounts": {
+        "webChat": 1,
+        "callback": 1,
+        "contact": 1,
+        "video": 1
+      },
+      "menuPass": true,
+      "menuVendorLeakVisibleText": false,
+      "chatInputCount": 1,
+      "chatReplyPass": true,
+      "chatPowered": true,
+      "chatVendorLeak": false,
+      "contactRealForm": true,
+      "contactSuccess": true,
+      "contactVendorLeak": false,
+      "callbackSuccess": true,
+      "callbackVendorLeak": false
+    },
+    "errors": []
+  },
+  {
+    "store": "ford-of-columbia",
+    "checks": {
+      "menuCounts": {
+        "webChat": 1,
+        "callback": 1,
+        "contact": 1,
+        "video": 1
+      },
+      "menuPass": true,
+      "menuVendorLeakVisibleText": false,
+      "chatInputCount": 1,
+      "chatReplyPass": true,
+      "chatPowered": true,
+      "chatVendorLeak": false,
+      "contactRealForm": true,
+      "contactSuccess": true,
+      "contactVendorLeak": false,
+      "callbackSuccess": true,
+      "callbackVendorLeak": false
+    },
+    "errors": []
+  }
+]

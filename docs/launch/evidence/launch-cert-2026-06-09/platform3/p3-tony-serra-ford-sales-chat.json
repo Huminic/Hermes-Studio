@@ -1,0 +1,46 @@
+{
+  "ts": "2026-06-09T08:15:54.248Z",
+  "store": "tony-serra-ford",
+  "kind": "sales-chat",
+  "url": "https://studio.huminic.app/w/tony-serra-ford-sales-chat",
+  "resolvedUrl": "https://studio.huminic.app/w/tony-serra-ford-sales-chat",
+  "title": "Tony Serra Ford Sales",
+  "beforeText": "CHAT WIDGET\nTony Serra Ford Sales\nHi! I'm Caroline at Tony Serra Ford. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\nSend\nPowered by Huminic",
+  "realChatInput": true,
+  "beforeInputs": [
+    {
+      "i": 0,
+      "name": null,
+      "placeholder": "Type a message…",
+      "tag": "INPUT",
+      "type": "text"
+    }
+  ],
+  "beforeButtons": [
+    {
+      "disabled": false,
+      "i": 0,
+      "text": "Send",
+      "type": "submit"
+    }
+  ],
+  "visibleText": "CHAT WIDGET\nTony Serra Ford Sales\nHi! I'm Caroline at Tony Serra Ford. Ask me about new and pre-owned inventory, pricing, trade-ins, or book a test drive.\nLaunch certification test: do you have new Ford trucks and can I book a test drive?\nYes, we have new Ford trucks available and you can book a test drive. Would you like to schedule it for a specific date and time?\nSend\nPowered by Huminic",
+  "containsBanned": false,
+  "placeholderOrComingSoon": false,
+  "replyLikelyPresent": true,
+  "afterInputs": [
+    {
+      "i": 0,
+      "placeholder": "Type a message…",
+      "value": ""
+    }
+  ],
+  "afterButtons": [
+    {
+      "disabled": false,
+      "i": 0,
+      "text": "Send"
+    }
+  ],
+  "status": "PASS"
+}

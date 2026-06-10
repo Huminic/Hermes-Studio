@@ -1,0 +1,11 @@
+HTTP/2 200 
+alt-svc: h3=":443"; ma=2592000
+content-security-policy: frame-ancestors 'none'
+content-type: text/html; charset=utf-8
+date: Wed, 10 Jun 2026 02:54:26 GMT
+referrer-policy: no-referrer-when-downgrade
+strict-transport-security: max-age=31536000; includeSubDomains
+via: 1.1 Caddy
+x-content-type-options: nosniff
+x-frame-options: DENY
+
