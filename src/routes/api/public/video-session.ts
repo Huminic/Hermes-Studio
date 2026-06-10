@@ -68,10 +68,13 @@ export const Route = createFileRoute('/api/public/video-session')({
           return reply({ ok: false, error: 'video not configured' })
         }
 
+        const origin = new URL(request.url).origin
+        const callback_url = `${origin}/api/webhooks/tavus/${profile}`
         const r = await callCentralMcpTool('tavus_create_conversation', {
           persona_id: personaId,
           conversation_name: `${config.branding.persona_name} storefront`,
           custom_greeting: `Hi! Thanks for visiting ${config.branding.persona_name}. How can I help you today?`,
+          callback_url,
         })
         if (!r.ok) {
           // Detail to the server log; generic to the visitor (no vendor names).

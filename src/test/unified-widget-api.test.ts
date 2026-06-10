@@ -136,14 +136,15 @@ describe('POST /api/public/video-session', () => {
     // Returns the live room URL directly (simple handoff; the room is grey-label,
     // its URL may show — only dealer-facing TEXT must be vendor-free).
     expect(body.conversationUrl).toBe('https://tavus.daily.co/abc123')
-    // Persona resolved server-side and passed to the broker tool.
+    // Persona resolved server-side and passed to the broker tool with callback URL.
     expect(mcpSpy).toHaveBeenCalledTimes(1)
     const [tool, args] = mcpSpy.mock.calls[0] as [
       string,
-      { persona_id?: string },
+      { persona_id?: string; callback_url?: string },
     ]
     expect(tool).toBe('tavus_create_conversation')
     expect(args.persona_id).toBe('p9eb007721f4')
+    expect(args.callback_url).toBe('http://localhost/api/webhooks/tavus/serra-honda')
   })
 
   it('degrades to ok:false (no broker call) when no persona is configured', async () => {
