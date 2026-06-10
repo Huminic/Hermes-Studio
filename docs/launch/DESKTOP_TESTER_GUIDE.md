@@ -36,7 +36,7 @@ The system has **three distinct surfaces**. Keep them separate when testing:
 
 | Surface | What it is | URL | Who gets in |
 |---|---|---|---|
-| **Storefront / Widgets** | Public shopper-facing launcher, embeds, standalone widget/contact pages | `/p/<store>` landing, `/widget/dealer/<store>.js`, `/w/<slug>` | Anyone (public) |
+| **Storefront / Widgets** | Public shopper-facing launcher, embeds, standalone widget/contact pages | `/p/<store>` public widget host on the Workspace entry, `/widget/dealer/<store>.js`, `/w/<slug>` | Anyone (public) |
 | **Workspace** | The dealer/staff profile-scoped console (manage AI, inbox, campaigns, etc.) | `/p/<store>/chat` (after login) | That store's **customer-admin** login only |
 | **Global Huminic Studio** | The operator/admin back-end (all profiles, system ops). **Not** part of dealer testing. | **`https://studio.huminic.app/`** (root) — fallback `/dashboard` | **`is_admin` only** |
 
@@ -60,10 +60,10 @@ The system has **three distinct surfaces**. Keep them separate when testing:
 # PLATFORM 1 — The Website Chat Widget (what a car shopper sees)
 
 ### What you're looking at
-This is the **storefront landing page** for each dealership. In the bottom-right corner there's a round **teal button** — the "widget." This is the AI front door for shoppers: one button that lets them chat, request a call-back, fill a form, or start a live video. Behind the scenes, clicking an option connects the shopper straight to that store's AI assistant (named **Caroline**) and quietly creates a sales lead for the dealership.
+This is the **public shopper widget** on each dealership's **Workspace entry page** (`/p/<store>`). In the bottom-right corner there's a round **teal button** — the "widget." This is the AI front door for shoppers: one button that lets them chat, request a call-back, fill a form, or start a live video. Behind the scenes, clicking an option connects the shopper straight to that store's AI assistant (named **Caroline**) and quietly creates a sales lead for the dealership. (The page itself is the staff **Workspace** sign-in; the widget on it is the public **Storefront** surface.)
 
 ### What's being tested
-The launcher button, the pop-up menu, and each of its **four** ways to connect — on **all five** sales storefronts.
+The launcher button, the pop-up menu, and each of its **four** ways to connect — the public widget on **all five** sales stores' Workspace entry pages.
 
 ### The pages (open each in incognito — no login)
 - https://studio.huminic.app/p/serra-honda
@@ -96,7 +96,7 @@ The launcher button, the pop-up menu, and each of its **four** ways to connect �
 
 **1.6 — Close behavior.** The back arrow (←) always returns to the menu; the **X** closes the widget entirely.
 
-> Repeat 1.1–1.6 on all five storefronts. Take at least one screenshot of the open menu per store.
+> Repeat 1.1–1.6 on all five stores' entry pages (`/p/<store>`). Take at least one screenshot of the open menu per store.
 
 ---
 
@@ -115,7 +115,7 @@ That the self-hosted widget loads and fully works when embedded on an outside we
 
 **2.2 — Load a store.** Click a store button (e.g. **serra-honda**). Its **teal widget** appears bottom-right, exactly like Platform 1.
 
-**2.3 — Run the full menu.** For each store button, repeat checks **1.1 through 1.5** (open menu, Web Chat, Contact Form, Instant Call Back, Two-Way Video). Everything must behave the same as on the real storefront.
+**2.3 — Run the full menu.** For each store button, repeat checks **1.1 through 1.5** (open menu, Web Chat, Contact Form, Instant Call Back, Two-Way Video). Everything must behave the same as the widget on the store's Workspace entry page (Platform 1).
 *PASS = all four options work for all five stores from this outside page.*
 
 **2.4 — The install snippet (reference only — you don't install anything).** Each store's widget is added to a real site with a single line like:
