@@ -7,6 +7,8 @@ export interface AuthStatus {
   is_customer_admin?: boolean
   /** The session's profile (for routing a Workspace session to /p/<profile>/chat). */
   profile?: string | null
+  /** Scoped partner admin — list of profiles this session can access. */
+  scope_profiles?: string[]
   error?: string
 }
 

@@ -50,7 +50,8 @@ export const Route = createFileRoute('/api/auth-check')({
 
         // Expose the session's role so the client shell can gate Global Studio
         // routes on is_admin and route a Workspace (customer-admin) session to
-        // its own /p/<profile>/* console (LC-BLOCKER-006).
+        // its own /p/<profile>/* console (LC-BLOCKER-006). Scoped partner admins
+        // are allowed in Global Studio with filtered profile access.
         const meta = authRequired
           ? getSessionMetadata(
               getSessionTokenFromCookie(request.headers.get('cookie')) ?? '',
@@ -62,6 +63,7 @@ export const Route = createFileRoute('/api/auth-check')({
           is_admin: authRequired ? meta?.is_admin === true : true,
           is_customer_admin: meta?.is_customer_admin === true,
           profile: meta?.profile ?? null,
+          scope_profiles: meta?.scope_profiles ?? undefined,
         })
       },
     },

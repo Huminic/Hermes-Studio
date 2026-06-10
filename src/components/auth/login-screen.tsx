@@ -53,10 +53,18 @@ export function LoginScreen() {
       if (data.ok) {
         // LC-BLOCKER-006: a Workspace (customer-admin, non-admin) login at the
         // Global Studio gateway goes to its own /p/<profile>/* console, not the
-        // operator backend. Admins reload into Global Studio.
-        if (data.is_customer_admin === true && data.is_admin !== true && data.profile) {
+        // operator backend. Scoped partner admins and super-admins reload into
+        // Global Studio.
+        if (
+          data.is_customer_admin === true &&
+          data.is_admin !== true &&
+          !data.scope_profiles &&
+          data.profile
+        ) {
+          // Single-store customer admin: route to their store
           window.location.href = `/p/${encodeURIComponent(data.profile)}/chat`
         } else {
+          // Super-admin or scoped partner admin: reload to Global Studio
           window.location.reload()
         }
       } else {

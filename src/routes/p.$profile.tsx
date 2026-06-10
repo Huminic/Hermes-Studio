@@ -27,6 +27,7 @@ type AuthSession = {
   username?: string | null
   is_admin?: boolean
   is_customer_admin?: boolean
+  scope_profiles?: string[]
 }
 
 async function fetchStudioConfig(
@@ -79,7 +80,9 @@ function StorefrontLandingRoute() {
   const session = authQuery.data
   const matchesProfile =
     !!session?.authenticated &&
-    (session.is_admin || session.profile === profile)
+    (session.is_admin ||
+      session.profile === profile ||
+      session.scope_profiles?.includes(profile))
 
   if (!isLandingPath) {
     // Render the child tab route — sub-routes handle their own auth + UI.

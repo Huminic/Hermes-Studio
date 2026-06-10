@@ -186,16 +186,20 @@ export function WorkspaceShell() {
 
   // LC-BLOCKER-006: a Workspace (customer-admin, non-admin) session must never
   // reach Global Huminic Studio. When one lands on a global route, route it to
-  // its own /p/<profile>/* console.
+  // its own /p/<profile>/* console. Scoped partner admins are allowed in Global
+  // Studio to access the profile chooser/dashboard.
   useEffect(() => {
     if (!isClient || !authStatus) return
     const onGlobalRoute =
       pathname !== '/' &&
       !pathname.startsWith('/p/') &&
       !pathname.startsWith('/w/')
+    const isScopedPartner =
+      authStatus.scope_profiles && authStatus.scope_profiles.length > 0
     if (
       authStatus.authenticated &&
       authStatus.is_admin === false &&
+      !isScopedPartner &&
       onGlobalRoute
     ) {
       window.location.href = authStatus.profile
@@ -386,11 +390,15 @@ export function WorkspaceShell() {
 
   // LC-BLOCKER-006: deny the Global Studio admin chrome to a Workspace
   // (customer-admin, non-admin) session — the effect above redirects them to
-  // their own /p/<profile>/* console. is_admin === false is strict, so admins
-  // and pre-resolve (undefined) render the chrome normally.
+  // their own /p/<profile>/* console. Scoped partner admins are allowed.
+  // is_admin === false is strict, so admins and pre-resolve (undefined) render
+  // the chrome normally.
+  const isScopedPartner =
+    authStatus?.scope_profiles && authStatus.scope_profiles.length > 0
   if (
     authStatus?.authenticated &&
     authStatus.is_admin === false &&
+    !isScopedPartner &&
     pathname !== '/' &&
     !pathname.startsWith('/p/') &&
     !pathname.startsWith('/w/')
@@ -400,7 +408,7 @@ export function WorkspaceShell() {
         <div>
           <p className="text-sm font-medium">Redirecting to your workspace…</p>
           <p className="mt-1 text-xs opacity-60">
-            This account doesn’t have Global Studio access.
+            This account doesn't have Global Studio access.
           </p>
         </div>
       </div>

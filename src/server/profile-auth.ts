@@ -39,6 +39,7 @@ export const ProfileAuthSchema = z.object({
   password_hash: z.string().refine(isHashString, 'invalid password_hash format'),
   is_admin: z.boolean().optional().default(false),
   is_customer_admin: z.boolean().optional().default(false),
+  scope_profiles: z.array(z.string()).optional(), // Partner/group admin: scoped profile list
 })
 
 export type ProfileAuth = z.infer<typeof ProfileAuthSchema>
@@ -89,6 +90,7 @@ export type LoginResult =
       username: string
       is_admin: boolean
       is_customer_admin: boolean
+      scope_profiles?: string[]
     }
   | { ok: false; reason: 'not_found' | 'bad_password' | 'no_users' }
 
@@ -112,5 +114,6 @@ export async function loginWithProfileCredentials(
     username: match.auth.username,
     is_admin: match.auth.is_admin ?? false,
     is_customer_admin: match.auth.is_customer_admin ?? false,
+    scope_profiles: match.auth.scope_profiles,
   }
 }

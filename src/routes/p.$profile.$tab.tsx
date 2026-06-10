@@ -44,6 +44,7 @@ type AuthSession = {
   username?: string | null
   is_admin?: boolean
   is_customer_admin?: boolean
+  scope_profiles?: string[]
 }
 
 type LoginResponse = {
@@ -52,6 +53,7 @@ type LoginResponse = {
   username?: string
   is_admin?: boolean
   is_customer_admin?: boolean
+  scope_profiles?: string[]
   error?: string
 }
 
@@ -103,11 +105,12 @@ function StorefrontTabRoute() {
   const config = configQuery.data?.config ?? defaultStudioConfig(profile)
   const session = authQuery.data
 
-  // Gate: customer-admin matching THIS profile, OR Studio admin (super-user).
+  // Gate: customer-admin matching THIS profile, OR scoped partner admin with this profile in scope, OR Studio admin (super-user).
   const allowed =
     !!session?.authenticated &&
     (session.is_admin === true ||
-      (session.is_customer_admin === true && session.profile === profile))
+      (session.is_customer_admin === true && session.profile === profile) ||
+      (session.scope_profiles && session.scope_profiles.includes(profile)))
 
   if (authQuery.isLoading) {
     return (
@@ -260,11 +263,13 @@ function CustomerLogin({
         setError(data.error ?? 'Invalid credentials')
         return
       }
-      // Verify the session is scoped to THIS profile (or is Studio admin).
+      // Verify the session is scoped to THIS profile (or is Studio admin or scoped partner admin).
       const isAdmin = data.is_admin === true
+      const isScopedPartner =
+        data.scope_profiles && data.scope_profiles.includes(profile)
       const matchesProfile =
         data.is_customer_admin === true && data.profile === profile
-      if (!isAdmin && !matchesProfile) {
+      if (!isAdmin && !matchesProfile && !isScopedPartner) {
         setError(
           "This login isn't authorized for this store. Please use the login for this store.",
         )

@@ -12,6 +12,8 @@ export type SessionMetadata = {
   is_admin: boolean
   /** Whether the session is a customer-admin for the scoped profile (storefront /p/$profile/* surfaces). */
   is_customer_admin: boolean
+  /** Partner/group admin: list of profiles this session can access. Null/undefined for super-admin (sees all) or single-profile customer-admin. */
+  scope_profiles?: string[]
   /** Username from the profile's auth.yaml. Null in legacy mode. */
   username: string | null
   /** Creation epoch ms. */

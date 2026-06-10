@@ -9,6 +9,7 @@ export type CustomerSession = {
   profile: string | null
   is_admin: boolean
   is_customer_admin: boolean
+  scope_profiles?: string[]
 }
 
 /**
@@ -35,19 +36,22 @@ export function resolveSession(request: Request): CustomerSession | null {
     profile: meta.profile ?? null,
     is_admin: meta.is_admin === true,
     is_customer_admin: meta.is_customer_admin === true,
+    scope_profiles: meta.scope_profiles,
   }
 }
 
 /**
  * True if the session is authorized for the given customer profile:
- * either Studio admin (super-user) or a customer-admin scoped to THIS
- * profile.
+ * - Studio admin (super-user) sees all profiles
+ * - Partner/group admin sees only profiles in scope_profiles array
+ * - Customer-admin sees only their own profile
  */
 export function isAuthorizedForProfile(
   session: CustomerSession | null,
   profile: string,
 ): boolean {
   if (!session) return false
-  if (session.is_admin) return true
-  return session.is_customer_admin && session.profile === profile
+  if (session.is_admin) return true // super-admin sees all
+  if (session.scope_profiles?.includes(profile)) return true // partner admin sees scoped profiles
+  return session.is_customer_admin && session.profile === profile // store admin sees own profile
 }

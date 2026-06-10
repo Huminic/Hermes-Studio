@@ -43,6 +43,7 @@ export const Route = createFileRoute('/api/auth-session')({
           username: meta?.username ?? null,
           is_admin: meta?.is_admin ?? true,
           is_customer_admin: meta?.is_customer_admin ?? false,
+          scope_profiles: meta?.scope_profiles ?? undefined,
         })
       },
     },
