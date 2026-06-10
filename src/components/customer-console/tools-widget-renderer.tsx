@@ -37,10 +37,11 @@ type ListResponse = {
   source: 'file' | 'default'
 }
 
-// Chat is production-ready; the other modes render an honest "coming soon"
-// preview until their adapters ship. This drives both the live-demo gating and
-// the per-widget status pill so the customer is never shown a broken demo.
-const LIVE_MODES: ReadonlySet<WidgetMode> = new Set<WidgetMode>(['chat'])
+// Chat and form are production-ready and render live demos. Voice and video
+// modes remain honest "coming soon" stubs until their adapters ship. This drives
+// both the live-demo gating and the per-widget status pill so the customer is
+// never shown a broken demo.
+const LIVE_MODES: ReadonlySet<WidgetMode> = new Set<WidgetMode>(['chat', 'form'])
 
 const MODE_LABEL: Record<WidgetMode, string> = {
   chat: 'Live chat',

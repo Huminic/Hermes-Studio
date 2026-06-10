@@ -48,8 +48,8 @@ flowchart TD
 - **Wiki-first workflows.** In Nexxus, business logic lived inside agent prompts + custom code. In Huminic, business logic lives in *wiki pages* you can read and edit (under the Knowledge tab). When an agent does something, it's reading a wiki page you can inspect.
 - **Storefront URL.** You log in at `https://studio.huminic.app/p/<your-slug>/`. Each dealership has its own storefront URL; you don't share a multi-tenant dashboard.
 - **Knowledge gates (KSG/DSG).** Your edits go through a *semantic guardian* that enforces governance rules. You'll see verdict text on rejected saves with a specific reason. This isn't a bug — it's the policy your account manager and you co-authored during the consultative engagement.
-- **Six-page IA** (Chat, Knowledge, Tools, Data, Comms, Campaigns). The old Nexxus 4-tab IA (Chat/Dashboard/Widget/Service) doesn't map 1:1 — see Section 3 for the new mapping.
-- **Data dashboards are post-launch.** The Data tab is dimmed at launch. Nexxus's metrics/stats dashboards are not directly replaced; the operator's plan is a Metabase-based self-serve dashboard layer (post-launch, Phase C.9 deferred).
+- **Seven-tab IA** (Agents, Knowledge, Widgets, Data, Teambox, Campaigns, Notifications). The old Nexxus 4-tab IA (Chat/Dashboard/Widget/Service) doesn't map 1:1 — see Section 3 for the new mapping.
+- **Data tab includes dashboards and custom dashboard builder.** At launch you can view your dealership's metrics and create custom dashboard cards. Additional Metabase integration planned post-launch (Phase C.9 deferred).
 - **Sales campaigns dropped from launch scope** per operator decision 2026-05-29. Service campaigns only. If you were running Sales campaigns in Nexxus, you'll need to either run them externally during launch OR wait for the Sales campaign surface to land post-launch.
 - **TeamBox not ported.** If you used Nexxus's TeamBox for human-rep collaboration on threads, that surface is replaced by Huminic's Comms tab + agent-autonomous-reply subscriptions. Different UX; functionally similar for the most common workflows.
 
@@ -89,14 +89,14 @@ Your CRM stays where it is. Huminic federates *into* your CRM via per-dealer MCP
 
 | Nexxus surface | Closest Huminic tab | Notes |
 |---|---|---|
-| Chat with assistant | Chat | Agent picker + multi-turn session. |
-| Dashboard / metrics | Data | **Disabled at launch**; post-launch via Metabase. |
-| Widget editor | Tools / Widget sub-page | Same idea; per-widget greeting / agent / mode / channel. |
-| Service queue | Comms (Service segment) + Campaigns (Service templates) | Split between read (Comms Service tab) + author (Campaigns Service templates). |
-| Inbox (unified) | Comms | Three-column inbox; keyboard nav; SSE updates. |
-| TeamBox | Comms thread assignment + agent subscriptions | Different UX. Human-rep handoff via subscription rules + thread assignment, not a separate team-collab panel. |
-| Custom dashboards | (none at launch) | Post-launch. |
-| Sales campaigns | (none at launch) | Dropped from launch scope. |
+| Chat with assistant | Agents | Agent picker + multi-turn session. |
+| Dashboard / metrics | Data | Dashboards + custom dashboard builder at launch; additional Metabase integration post-launch. |
+| Widget editor | Widgets / Widget sub-page | Same idea; per-widget greeting / agent / mode / channel. |
+| Service queue | Teambox (Service segment) + Campaigns (Service templates) | Split between read (Teambox Service tab) + author (Campaigns Service templates). |
+| Inbox (unified) | Teambox | Three-column inbox; keyboard nav; SSE updates. |
+| TeamBox | Teambox thread assignment + agent subscriptions | Different UX. Human-rep handoff via subscription rules + thread assignment, not a separate team-collab panel. |
+| Custom dashboards | Data | Dashboard builder available at launch for creating custom data cards. |
+| Sales campaigns | Campaigns (Service only) | Sales campaigns dropped from launch scope. Service campaigns live at launch. |
 | Service campaigns | Campaigns / Service sub-page | Service Recall / Service Due / Follow-up Lead templates. |
 | Knowledge base / FAQ | Knowledge | Wiki-first; KSG-gated. |
 
@@ -189,9 +189,9 @@ The agent is replying in a tone you don't want, or surfacing the wrong vehicle i
 
 Read the verdict text. If you believe the gate is wrong (e.g., it's claiming `protected-tree` on a path that should be customer-editable), tell your account manager. KSG rules are governance — they're tuneable, but the tuning lives in your `governance/scope-contract.md` (read-only on your customer-admin path).
 
-### You want a Nexxus-style custom dashboard during the launch period
+### You want a specific metric not shown in the default dashboards
 
-Not available at launch. Workaround: your account manager can query `mcp_rollup_query` or the brain MCP on your behalf for a one-off data lookup. For repeated needs, document the requirement — it becomes input for the post-launch Data tab work.
+Use the custom dashboard builder in the Data tab to create a custom data card showing your metric. If the data source you need is not available in the builder, tell your account manager — your account manager can query `mcp_rollup_query` or the brain MCP on your behalf for a one-off data lookup, and document the requirement for future builder enhancements.
 
 ---
 
