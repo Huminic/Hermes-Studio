@@ -153,30 +153,22 @@ export function DocsScreen() {
             <li>Capability probing results are cached for 120 seconds and refreshed automatically.</li>
           </ol>
 
-          <h3 style={h3Style}>Feature Matrix</h3>
-          <table style={tableStyle}>
-            <thead>
-              <tr>
-                <th style={thStyle}>Feature</th>
-                <th style={thStyle}>Core Mode</th>
-                <th style={thStyle}>Enhanced Mode</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td style={tdStyle}>Chat with streaming</td><td style={tdStyle}>Yes</td><td style={tdStyle}>Yes</td></tr>
-              <tr><td style={tdStyle}>Session management</td><td style={tdStyle}>No</td><td style={tdStyle}>Yes</td></tr>
-              <tr><td style={tdStyle}>Tool execution &amp; approvals</td><td style={tdStyle}>No</td><td style={tdStyle}>Yes</td></tr>
-              <tr><td style={tdStyle}>Multi-agent crews</td><td style={tdStyle}>No</td><td style={tdStyle}>Yes</td></tr>
-              <tr><td style={tdStyle}>Conductor orchestration</td><td style={tdStyle}>No</td><td style={tdStyle}>Yes</td></tr>
-              <tr><td style={tdStyle}>Cron jobs</td><td style={tdStyle}>No</td><td style={tdStyle}>Yes</td></tr>
-              <tr><td style={tdStyle}>Memory &amp; knowledge</td><td style={tdStyle}>No</td><td style={tdStyle}>Yes</td></tr>
-              <tr><td style={tdStyle}>Skills installation</td><td style={tdStyle}>No</td><td style={tdStyle}>Yes</td></tr>
-              <tr><td style={tdStyle}>File browser</td><td style={tdStyle}>No</td><td style={tdStyle}>Yes</td></tr>
-              <tr><td style={tdStyle}>Terminal</td><td style={tdStyle}>No</td><td style={tdStyle}>Yes</td></tr>
-              <tr><td style={tdStyle}>Analytics</td><td style={tdStyle}>Partial</td><td style={tdStyle}>Yes</td></tr>
-              <tr><td style={tdStyle}>Model selection</td><td style={tdStyle}>Yes</td><td style={tdStyle}>Yes</td></tr>
-            </tbody>
-          </table>
+          <h3 style={h3Style}>Studio Capabilities</h3>
+          <p style={pStyle}>
+            The mental model is simple: <strong>agents + artifacts</strong>. You put agents to work and they produce artifacts. Every Studio capability below supports that loop.
+          </p>
+          <ul style={ulStyle}>
+            <li>Chat with streaming</li>
+            <li>Tool execution &amp; approvals</li>
+            <li>Multi-agent crews</li>
+            <li>Conductor orchestration</li>
+            <li>Cron jobs</li>
+            <li>Memory &amp; knowledge</li>
+            <li>Skills installation</li>
+            <li>File browser</li>
+            <li>Terminal</li>
+            <li>Analytics</li>
+          </ul>
         </section>
 
         {/* ════════════════════════════════════════════════════════════════

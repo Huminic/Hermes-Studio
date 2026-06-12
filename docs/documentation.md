@@ -37,22 +37,20 @@
 * 		If enhanced capabilities are detected, Studio operates in full-featured mode with session management, tools, and approval workflows.  
 * 		If only core capabilities are available, Studio degrades gracefully to a basic chat interface.  
 * 		Capability probing results are cached for 120 seconds and refreshed automatically.  
-**Feature Matrix**  
+**Studio Capabilities**  
 
-| Feature                    | Core Mode | Enhanced Mode |
-| -------------------------- | --------- | ------------- |
-| Chat with streaming        | Yes       | Yes           |
-| Session management         | No        | Yes           |
-| Tool execution & approvals | No        | Yes           |
-| Multi-agent crews          | No        | Yes           |
-| Conductor orchestration    | No        | Yes           |
-| Cron jobs                  | No        | Yes           |
-| Memory & knowledge         | No        | Yes           |
-| Skills installation        | No        | Yes           |
-| File browser               | No        | Yes           |
-| Terminal                   | No        | Yes           |
-| Analytics                  | Partial   | Yes           |
-| Model selection            | Yes       | Yes           |
+The mental model is simple: **agents + artifacts**. You put agents to work and they produce artifacts. Every Studio capability below supports that loop.
+
+* Chat with streaming
+* Tool execution & approvals
+* Multi-agent crews
+* Conductor orchestration
+* Cron jobs
+* Memory & knowledge
+* Skills installation
+* File browser
+* Terminal
+* Analytics
   
 ****2. Screens Reference****  
 **Huminic Studio contains 18 distinct screens, each accessible via the sidebar navigation or keyboard shortcuts. Below is a reference for each screen.**  
