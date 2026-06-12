@@ -128,9 +128,9 @@ export function ReskinNavPreview() {
   }
 
   return (
-    <div className="flex min-h-dvh bg-white font-sans text-slate-900">
-      {/* Proposed grouped left nav */}
-      <aside className="flex w-64 shrink-0 flex-col border-r border-slate-200 bg-slate-50">
+    <div className="flex min-h-dvh flex-col bg-white font-sans text-slate-900 md:flex-row">
+      {/* Proposed grouped left nav — full-width stacked on mobile, side rail on md+ */}
+      <aside className="flex w-full flex-col border-b border-slate-200 bg-slate-50 md:w-64 md:shrink-0 md:border-b-0 md:border-r">
         <div className="flex h-14 items-center gap-2 border-b border-slate-200 px-4">
           <span
             className="inline-block h-2.5 w-2.5 rounded-full"
@@ -256,17 +256,17 @@ export function ReskinNavPreview() {
 
       {/* Right side: explanatory panel (not the real app content) */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4">
-          <div className="flex items-baseline gap-2">
-            <span className="text-sm font-semibold text-slate-900">
+        <header className="flex min-h-14 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-slate-200 bg-white px-4 py-2 md:h-14 md:flex-nowrap md:py-0">
+          <div className="flex min-w-0 items-baseline gap-2">
+            <span className="truncate text-sm font-semibold text-slate-900">
               Navigation reskin
             </span>
             <span className="text-slate-300">·</span>
-            <span className="text-sm text-slate-500">
+            <span className="truncate text-sm text-slate-500">
               {activeId === 'settings' ? 'Settings' : activeLeaf?.label}
             </span>
           </div>
-          <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-medium text-amber-800">
+          <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-medium text-amber-800">
             Prototype — not production
           </span>
         </header>
