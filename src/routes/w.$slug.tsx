@@ -82,10 +82,10 @@ function renderWidgetHtml(widget: {
   .msg.you { background: #eef0f3; align-self: flex-end; border-bottom-right-radius: 4px; }
   .msg.agent { background: #f7f0e8; align-self: flex-start; border-bottom-left-radius: 4px; }
   .msg.error { background: #fde8e8; color: #b21212; align-self: stretch; font-size: 0.85rem; }
-  .composer { display: flex; gap: 8px; border-top: 1px solid #ececec; padding: 14px 0 0; }
-  .composer input { flex: 1; border: 1px solid #d8d8d8; border-radius: 8px; padding: 10px 12px; font-size: 0.95rem; outline: none; }
+  .composer { display: flex; flex-wrap: nowrap; gap: 8px; border-top: 1px solid #ececec; padding: 14px 0 0; }
+  .composer input { flex: 1 1 auto; min-width: 0; width: 100%; border: 1px solid #d8d8d8; border-radius: 8px; padding: 10px 12px; font-size: 0.95rem; outline: none; }
   .composer input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
-  .composer button { background: var(--accent); color: white; border: 0; border-radius: 8px; padding: 0 18px; font-weight: 600; cursor: pointer; min-width: 80px; }
+  .composer button { flex: 0 0 auto; background: var(--accent); color: white; border: 0; border-radius: 8px; padding: 0 18px; font-weight: 600; cursor: pointer; }
   .composer button:disabled { opacity: .55; cursor: not-allowed; }
   .meta { padding: 12px 22px; border-top: 1px solid #ececec; font-size: 0.72rem; color: #888; display: flex; justify-content: space-between; }
   .stub { padding: 22px; text-align: center; color: #777; font-size: 0.95rem; }
