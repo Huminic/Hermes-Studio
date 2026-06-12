@@ -88,6 +88,43 @@ describe('/api/webhooks/tavus/$profile', () => {
     expect(thread!.messages[0].content).toContain('CR-V')
   })
 
+  it('strips injected system/context turns from the stored transcript (PFF-007)', async () => {
+    const { Route } = await import('@/routes/api/webhooks/tavus.$profile')
+    const handler = Route.options.server.handlers.POST
+    // No `summary` → content falls back to the serialized transcript. The
+    // transcript opens with a `system` turn carrying the persona system
+    // prompt; it must NOT reach the stored message / dealer preview.
+    const req = new Request('http://localhost/api/webhooks/tavus/serra-honda', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_type: 'application.transcription_ready',
+        conversation_id: 'tavus_conv_sys',
+        properties: {
+          transcript: [
+            { role: 'system', content: 'Core Identity & Mission: You are…' },
+            { role: 'user', content: 'Do you have a CR-V in stock?' },
+            { role: 'assistant', content: 'Yes — want to come test drive it?' },
+          ],
+          customer_name: 'Sysleak Test',
+          customer_phone: '+15555550111',
+        },
+      }),
+    })
+    const res = await handler({
+      request: req,
+      params: { profile: 'serra-honda' },
+    } as never)
+    expect(res.status).toBe(200)
+    const body = (await res.json()) as { ok: boolean; thread_id: string }
+    const { getThread } = await import('@/server/messaging-hub-store')
+    const thread = getThread('serra-honda', body.thread_id)
+    const inbound = thread?.messages.find((m) => m.direction === 'inbound')
+    expect(inbound?.content).toContain('CR-V')
+    expect(inbound?.content).not.toContain('Core Identity')
+    expect(inbound?.content).not.toMatch(/system:/i)
+  })
+
   it('ignores non-terminal Tavus lifecycle events with 200', async () => {
     const { Route } = await import('@/routes/api/webhooks/tavus.$profile')
     const handler = Route.options.server.handlers.POST

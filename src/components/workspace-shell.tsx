@@ -425,14 +425,25 @@ export function WorkspaceShell() {
     '--titlebar-h': isElectron ? '40px' : '0px',
   }
 
+  // Legacy agent-OS chrome — the HERMES OS telemetry strip and the Hermes
+  // reconnect banner ("agent not connected") — is operator/developer surface
+  // tied to the underlying agent backend. Scoped partners and store admins
+  // never run that backend, so for them it reads as a confusing "OFFLINE / NO
+  // ACTIVE SESSION" first impression (PFF-006). Show it only to global Studio
+  // admins (and pre-resolve/self-hosted, where is_admin is undefined).
+  const showAgentChrome =
+    !isScopedPartner && authStatus?.is_admin !== false
+
   return (
     <>
       <div
         className="relative overflow-hidden theme-bg theme-text flex flex-col"
         style={shellStyle}
       >
-        <AgentStatusStrip />
-        <HermesReconnectBanner enabled={authState.checked} />
+        {showAgentChrome && <AgentStatusStrip />}
+        {showAgentChrome && (
+          <HermesReconnectBanner enabled={authState.checked} />
+        )}
         {/* Electron: native-style title bar (absolute over the padding) */}
         {isElectron && (
           <div

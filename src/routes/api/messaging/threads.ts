@@ -61,9 +61,18 @@ export const Route = createFileRoute('/api/messaging/threads')({
             // system/notification annotation (which can carry internal text).
             last_message_preview: (() => {
               const visible = t.messages.filter((m) => m.role !== 'system')
-              return visible.length
-                ? visible[visible.length - 1].content.slice(0, 160)
-                : ''
+              if (!visible.length) return ''
+              // Defense-in-depth (PFF-007): legacy/video threads can carry a
+              // serialized transcript whose stored content still has injected
+              // "system: …" context lines (persona system prompt) even though
+              // the message role is not 'system'. Strip those lines so no
+              // internal/system-prompt text reaches the dealer-facing preview.
+              const cleaned = visible[visible.length - 1].content
+                .split('\n')
+                .filter((line) => !/^\s*system\s*:/i.test(line))
+                .join('\n')
+                .trim()
+              return cleaned.slice(0, 160)
             })(),
           })),
         })

@@ -191,8 +191,8 @@ function AssistantPaneRenderer(props: ConsoleRendererProps) {
         {props.config.branding.persona_name}
       </div>
       <div className="opacity-60">
-        Right-pane assistant slot. Wires to the profile's primary agent in
-        Phase C.2.
+        Your store assistant. It greets shoppers, answers questions, and helps
+        start a conversation for this Workspace.
       </div>
     </div>
   )

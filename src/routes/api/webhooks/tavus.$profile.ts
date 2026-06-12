@@ -81,6 +81,10 @@ function normalizeTranscript(
   if (typeof t === 'string') return t
   if (Array.isArray(t)) {
     return t
+      // Drop injected system/context turns (the persona system prompt, e.g.
+      // "Core Identity & Mission…"). They are not part of the human-visible
+      // dialogue and must never reach a dealer preview/notification (PFF-007).
+      .filter((turn) => (turn.role ?? 'user').toLowerCase() !== 'system')
       .map((turn) => `${turn.role ?? 'user'}: ${turn.content ?? ''}`)
       .join('\n')
   }
