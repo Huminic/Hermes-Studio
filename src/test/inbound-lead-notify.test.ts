@@ -91,7 +91,13 @@ describe('inbound SMS → lead lands + dealer notified ONCE (new thread only)', 
     expect(second.thread_id).toBe(first.thread_id)
     const { getThread } = await import('@/server/messaging-hub-store')
     const thread = getThread(PROFILE, first.thread_id)
-    expect(thread?.messages.length).toBe(2)
+    // SMS #1 inbound + Slice-A delivery annotation + SMS #2 follow-up inbound.
+    expect(thread?.messages.length).toBe(3)
+    expect(
+      thread?.messages.some(
+        (m) => m.role === 'system' && m.content.startsWith('Lead notification'),
+      ),
+    ).toBe(true)
   })
 })
 
@@ -175,9 +181,19 @@ describe('public widget-chat → conversation captured in Teambox + dealer alert
     const threads = listThreads({ profile: PROFILE, channel: 'chat' })
     expect(threads.length).toBe(1)
     const thread = getThread(PROFILE, threads[0].id)
-    expect(thread?.messages.length).toBe(2) // visitor inbound + agent outbound
+    // visitor inbound + agent outbound + Slice-A delivery annotation.
+    expect(thread?.messages.length).toBe(3)
     expect(thread?.messages[0].direction).toBe('inbound')
-    expect(thread?.messages[1].direction).toBe('outbound')
+    expect(
+      thread?.messages.some(
+        (m) => m.direction === 'outbound' && m.content === 'Happy to help!',
+      ),
+    ).toBe(true)
+    expect(
+      thread?.messages.some(
+        (m) => m.role === 'system' && m.content.startsWith('Lead notification'),
+      ),
+    ).toBe(true)
 
     // Dealer alerted exactly once on the first message of the session.
     expect(notifySpy).toHaveBeenCalledTimes(1)

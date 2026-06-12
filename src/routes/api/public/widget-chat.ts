@@ -288,7 +288,10 @@ export const Route = createFileRoute('/api/public/widget-chat')({
             // before it reaches the visitor OR the Teambox.
             const reply = scrubVendorTerms(data.choices?.[0]?.message?.content ?? '')
               persistReply(reply, 'hermes')
-              return json({ ok: true, reply, via: 'hermes' })
+              // Public response: reply only. The provider/gateway identity
+              // ('hermes') stays in thread metadata for diagnostics, never on
+              // the wire — dealer-vendor-confidentiality (LC-BLOCKER-008).
+              return json({ ok: true, reply })
             }
             // fall through to OpenAI fallback if Hermes returns an error
           }
@@ -314,10 +317,12 @@ export const Route = createFileRoute('/api/public/widget-chat')({
               choices?: Array<{ message?: { content?: string } }>
             }
             if (!res.ok || data.error) {
+              // Neutral, generic message — never surface the upstream
+              // provider name or its raw error string to the visitor.
               return json(
                 {
                   ok: false,
-                  error: data.error?.message || 'OpenAI upstream error.',
+                  error: 'The assistant is temporarily unavailable.',
                 },
                 { status: 502 },
               )
@@ -326,24 +331,29 @@ export const Route = createFileRoute('/api/public/widget-chat')({
             // before it reaches the visitor OR the Teambox.
             const reply = scrubVendorTerms(data.choices?.[0]?.message?.content ?? '')
             persistReply(reply, 'openai-direct')
-            return json({ ok: true, reply, via: 'openai-direct' })
+            // Public response: reply only. The provider identity
+            // ('openai-direct') stays in thread metadata for diagnostics,
+            // never on the wire — dealer-vendor-confidentiality.
+            return json({ ok: true, reply })
           }
+          // Generic, non-infra message on the public wire. The specific
+          // missing-credential hint (which names the Hermes/OpenAI env vars)
+          // is for operators — it must not reach a dealer page or visitor.
           return json(
             {
               ok: false,
-              error:
-                'No inference provider configured. Set API_SERVER_KEY (Hermes) or OPENAI_API_KEY.',
+              error: 'Widget chat is not configured.',
             },
             { status: 503 },
           )
         } catch (err) {
+          // The thrown error can embed the internal gateway hostname
+          // (HERMES_URL) — return a neutral message and keep details server-side.
+          console.error('[widget-chat] upstream failure', err)
           return json(
             {
               ok: false,
-              error:
-                err instanceof Error
-                  ? err.message
-                  : 'Failed to reach upstream.',
+              error: 'The assistant is temporarily unavailable.',
             },
             { status: 502 },
           )

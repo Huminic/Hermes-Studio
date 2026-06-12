@@ -134,7 +134,10 @@ export const Route = createFileRoute('/api/public/widget-form')({
           },
         })
 
-        return json({ ok: true, thread_id: thread.id, notified: notified.ok, via: notified.via })
+        // Public response: expose only the neutral delivery boolean. The raw
+        // `notified.via` ('resend' / etc.) names infra/providers and stays in
+        // the thread metadata above for diagnostics — never on the wire.
+        return json({ ok: true, thread_id: thread.id, notified: notified.ok })
       },
     },
   },
