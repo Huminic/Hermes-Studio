@@ -2,7 +2,7 @@
 
 **Audience.** A dealer principal, GM, or designated staff member with `is_customer_admin: true` on your dealership's profile. You log in at `https://studio.huminic.app/p/<your-slug>/` — not at the bare Studio URL.
 
-**What you can do.** Hold conversations with your dealership's AI agents (Chat tab), edit your wiki within governed bounds (Knowledge tab), manage your widget embeds (Tools tab), view and build custom dashboards (Data tab), reply to inbound customer messages across SMS/email/voice/video (Comms tab), schedule service campaigns (Campaigns tab).
+**What you can do.** Hold conversations with your dealership's AI agents (Agents tab), edit your wiki within governed bounds (Knowledge tab), manage your widget embeds (Widgets tab), view and build custom dashboards (Data tab), reply to inbound customer messages across SMS/email/voice/video (Teambox tab), schedule service campaigns (Campaigns tab).
 
 **What you can't do.** Touch other dealers' data. Edit your canonical knowledge directly (canon updates go through your account manager). Send outbound to recipients outside your allowlist. Approve your own readiness gates on engagements.
 
@@ -43,7 +43,7 @@ flowchart TD
 
 **Where to log in.** `https://studio.huminic.app/p/<your-slug>/`. Replace `<your-slug>` with what your account manager gave you (examples: `huminic-motors`, `serra-honda`, `ford-of-columbia`). The dealership home page (your branded landing) renders without authentication; clicking any of the 6 tabs prompts the login form.
 
-**First-time credential.** Your account manager will send you a temporary password — typically the launch convention is `De@l$ucce$`. You'll be asked to set a new password on first login via the reset flow.
+**First-time credential.** Your account manager will send you a temporary password through the agreed secure channel (never in plain email). You'll be asked to set a new password on first login via the reset flow.
 
 **Reset your password.**
 1. POST to `/api/auth/reset-request` with `{"email": "<your-username>"}`. The simplest way: click "Forgot password?" on the login form (which makes the same request). You always get a 200 response — this is anti-enumeration, not a bug.
@@ -53,7 +53,7 @@ flowchart TD
 
 **Sign out.** No "Sign out" button exists today (`GAP-LOGOUT-001`). Workaround: open your browser DevTools → Application tab → clear cookies for `studio.huminic.app`, then refresh. Or use an incognito session for short-lived work.
 
-**Single-user-per-profile.** Today, one `auth.yaml` = one user per dealership. You cannot invite additional staff users to share your storefront — your account manager has to provision them via CLI (`GAP-CUSTOMER-INVITE-001`).
+**Single-user-per-profile.** Today, one `auth.yaml` = one user per dealership. You cannot invite additional staff users to share your Workspace — your account manager has to provision them via CLI (`GAP-CUSTOMER-INVITE-001`).
 
 ---
 
@@ -154,7 +154,7 @@ After login, the Workspace shell renders a left nav with 7 tabs. Which tabs are 
 
 **Where it works.** Self-hosted on your own external site (dealer.com or similar) via one script tag — `<script async src="https://studio.huminic.app/widget/dealer/<your-slug>.js"></script>`. The full per-store URL list is in `docs/launch/WIDGET_URLS.md`.
 
-**Configuration.** Which options appear, the accent color, and the video agent are set by your account manager in `studio.yaml` under `unified_widget` (operator-controlled — not customer-editable). **Two-Way Video is live on all dealer widgets** (agent Caroline). Channel options use customer-friendly language like "Web Chat", "Instant Call Back", "Contact Form", and "Two-Way Video".
+**Configuration.** Which options appear, the accent color, and the video agent are set by your account manager in `studio.yaml` under `unified_widget` (operator-controlled — not customer-editable). The five sales stores (Serra Honda, Serra Nissan, Tony Serra Ford, Hyundai of Columbia, Ford of Columbia) present **Web Chat, Instant Call Back, Contact Form, and Two-Way Video**; **Serra Service presents Web Chat, Instant Call Back, and Contact Form — Two-Way Video is off by design** for the service rooftop. The video agent's display name is configured per store. Channel options use customer-friendly language like "Web Chat", "Instant Call Back", "Contact Form", and "Two-Way Video". (Two-Way Video is render-verified across the sales stores; the live face-to-face handoff is confirmed during the walkthrough before it's called final.)
 
 ---
 

@@ -21,6 +21,9 @@ One script tag per store. No keys, no other code. Drop it on the dealer's site:
 | Tony Serra Ford | `https://studio.huminic.app/widget/dealer/tony-serra-ford.js` |
 | Hyundai of Columbia | `https://studio.huminic.app/widget/dealer/hyundai-of-columbia.js` |
 | Ford of Columbia | `https://studio.huminic.app/widget/dealer/ford-of-columbia.js` |
+| Serra Service | `https://studio.huminic.app/widget/dealer/serra-service.js` |
+
+> **Serra Service** is its own account. Its widget presents **Web Chat · Instant Call Back · Contact Form** — **Two-Way Video is off by design** for the service rooftop. The five sales stores above present all four modes.
 
 **Path matches Nexxus exactly** (`/widget/dealer/<slug>.js`). After the host cutover (live.huminic.app → Studio), the embeds already on the dealer.com sites keep working **with zero changes** — only the host they resolve to moves.
 
@@ -37,6 +40,7 @@ The same launcher also renders on the store's Studio storefront landing — no l
 | Tony Serra Ford | `https://studio.huminic.app/p/tony-serra-ford` |
 | Hyundai of Columbia | `https://studio.huminic.app/p/hyundai-of-columbia` |
 | Ford of Columbia | `https://studio.huminic.app/p/ford-of-columbia` |
+| Serra Service | `https://studio.huminic.app/p/serra-service` |
 
 ## 3. Verification / demo page
 
@@ -57,7 +61,7 @@ A "pretend dealer.com" page that injects each store's embed so you can see it li
 | **Contact Form** | The store contact form | opens `/w/<slug>-contact` in-panel → Comms · Sales lead **+ email** |
 | **Two-Way Video** | Live face-to-face video session with the AI agent | `POST /api/public/video-session` mints a session server-side → fullscreen video → Comms · video thread **+ email** |
 
-**Two-Way Video** is live on **all 5 stores**, agent **Caroline** (the shared default sales agent across the dealer storefronts). Visitor-facing copy reads "Two-Way Video" / "Face-to-face with Caroline" — **no third-party vendor name appears anywhere**.
+**Two-Way Video** is enabled on the **5 sales stores** (Serra Service has video off by design). The video agent's **display name is configured per store** (server-side `video_agent_name`); visitor-facing copy reads "Two-Way Video" / "Face-to-face with <agent>" — **no third-party vendor name appears anywhere**. Video is **render-verified** across the sales stores; the live face-to-face handoff is confirmed during the walkthrough before it is called final.
 
 ## 5. Underlying public endpoints (CORS-open for cross-origin embedding)
 

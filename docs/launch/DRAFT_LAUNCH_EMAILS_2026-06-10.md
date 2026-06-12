@@ -1,5 +1,18 @@
 # Draft Launch Emails - 2026-06-10
 
+> ⚠️ **SUPERSEDED — DO NOT SEND.** These drafts are stale as of 2026-06-12 and are kept only for history. Use the current review-ready drafts instead:
+> - `work/launch-cert/EMAIL_DRAFTS_SPRINT_2026-06-12.md` (Claude, queued for Duane review)
+> - `outputs/LAUNCH_EMAIL_DRAFTS_FOR_REVIEW_2026-06-12.md` (Codex)
+>
+> Known stale claims in the text below (corrected in the current drafts):
+> - **Partner admin** — the scoped partner admin (one login → all six in-scope Workspaces) is **live and verified**; the "one Workspace login per store / broader admin being finalized" framing in §3 is outdated.
+> - **Two-Way Video** — present on the **five sales stores only**; **Serra Service has video off by design**. Do not state video as final-approved until the walkthrough handoff check is done.
+> - **Terminology** — Workspace = staff area; Storefront = customer-facing widget/notification layer.
+>
+> No external email is sent without Duane's explicit go.
+
+---
+
 These are drafts only. Do not send until after the morning walkthrough and final open decisions are resolved or explicitly accepted.
 
 ## 1. Dealer.com Certification / Install Follow-Up

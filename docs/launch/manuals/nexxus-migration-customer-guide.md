@@ -6,7 +6,9 @@
 
 **Scope.** What's different between Nexxus and Huminic from a dealer-staff perspective, where your old data is (and isn't), how to do the things you used to do, and the cutover steps from your side.
 
-**Companion.** Read `customer-admin-guide.md` first — that's the full Huminic Studio storefront manual. This guide overlays the migration-specific parts on top.
+**Companion.** Read `customer-admin-guide.md` first — that's the full Huminic Studio Workspace manual. This guide overlays the migration-specific parts on top.
+
+> **Terminology.** **Workspace** = your staff/store operating area (where you log in and work). **Storefront** = the customer-facing widget/notification layer your shoppers see. They are different surfaces; this guide keeps them distinct.
 
 ---
 
@@ -46,12 +48,12 @@ flowchart TD
 ### Different
 
 - **Wiki-first workflows.** In Nexxus, business logic lived inside agent prompts + custom code. In Huminic, business logic lives in *wiki pages* you can read and edit (under the Knowledge tab). When an agent does something, it's reading a wiki page you can inspect.
-- **Storefront URL.** You log in at `https://studio.huminic.app/p/<your-slug>/`. Each dealership has its own storefront URL; you don't share a multi-tenant dashboard.
+- **Workspace URL.** You log in to your staff **Workspace** at `https://studio.huminic.app/p/<your-slug>/`. Each dealership has its own Workspace; you don't share a multi-tenant dashboard. (Your customer-facing widget/notification layer — the **Storefront** — is a separate, public surface.)
 - **Knowledge gates (KSG/DSG).** Your edits go through a *semantic guardian* that enforces governance rules. You'll see verdict text on rejected saves with a specific reason. This isn't a bug — it's the policy your account manager and you co-authored during the consultative engagement.
 - **Seven-tab IA** (Agents, Knowledge, Widgets, Data, Teambox, Campaigns, Notifications). The old Nexxus 4-tab IA (Chat/Dashboard/Widget/Service) doesn't map 1:1 — see Section 3 for the new mapping.
 - **Data tab includes dashboards and custom dashboard builder.** At launch you can view your dealership's metrics and create custom dashboard cards. Additional Metabase integration planned post-launch (Phase C.9 deferred).
-- **Sales campaigns dropped from launch scope** per operator decision 2026-05-29. Service campaigns only. If you were running Sales campaigns in Nexxus, you'll need to either run them externally during launch OR wait for the Sales campaign surface to land post-launch.
-- **TeamBox not ported.** If you used Nexxus's TeamBox for human-rep collaboration on threads, that surface is replaced by Huminic's Comms tab + agent-autonomous-reply subscriptions. Different UX; functionally similar for the most common workflows.
+- **Service campaigns are the immediate launch focus.** The campaign engine is built once and shared; Service runs first, and Sales-store campaign parity is staged to follow where expected — it is not permanently dropped. If you ran Sales campaigns in Nexxus, coordinate timing with your account manager.
+- **Teambox is live (verified).** Huminic's **Teambox** tab is your unified inbox and human-takeover surface — verified working at launch. If you used Nexxus's TeamBox for human-rep collaboration on threads, the equivalent here is Teambox plus agent-autonomous-reply subscriptions and thread assignment. Different UX; functionally similar for the most common workflows.
 
 ---
 
@@ -96,7 +98,7 @@ Your CRM stays where it is. Huminic federates *into* your CRM via per-dealer MCP
 | Inbox (unified) | Teambox | Three-column inbox; keyboard nav; SSE updates. |
 | TeamBox | Teambox thread assignment + agent subscriptions | Different UX. Human-rep handoff via subscription rules + thread assignment, not a separate team-collab panel. |
 | Custom dashboards | Data | Dashboard builder available at launch for creating custom data cards. |
-| Sales campaigns | Campaigns (Service only) | Sales campaigns dropped from launch scope. Service campaigns live at launch. |
+| Sales campaigns | Campaigns | Service is the immediate focus; Sales-store parity staged to follow where expected. |
 | Service campaigns | Campaigns / Service sub-page | Service Recall / Service Due / Follow-up Lead templates. |
 | Knowledge base / FAQ | Knowledge | Wiki-first; KSG-gated. |
 
@@ -133,10 +135,10 @@ Timeline: typically 1–2 weeks from onboarding call to readiness for provisioni
 Once gates approved:
 
 1. **Operator runs provisioning** (today via script; tomorrow via Provisioner agent — `GAP-PROV-001`). Takes ~10 minutes for a clean provision.
-2. **You get an invite email** with your customer-admin credential + storefront URL.
+2. **You get your customer-admin credential + Workspace URL** through the agreed secure channel (not plain email).
 3. **Reset your password** on first login (per `customer-admin-guide.md` Section 1).
-4. **Verify your storefront renders correctly.** Brand name, accent color, persona name in the header should match your dealership. If something's wrong, tell your account manager immediately — schema fallback (`P-FIX-003`-style) is the most common issue and easy to fix at this stage.
-5. **Verify your agent roster** under the Chat tab. Should match the agentic-design doc from the consultative prescription. Agents `enabled: false` will not appear; that's intentional — your account manager flips them on per the rollout sequence.
+4. **Verify your Workspace renders correctly.** Brand name, accent color, persona name in the header should match your dealership. If something's wrong, tell your account manager immediately — schema fallback (`P-FIX-003`-style) is the most common issue and easy to fix at this stage.
+5. **Verify your agent roster** under the Agents tab. Should match the agentic-design doc from the consultative prescription. Agents `enabled: false` will not appear; that's intentional — your account manager flips them on per the rollout sequence.
 
 ---
 
@@ -199,7 +201,7 @@ Use the custom dashboard builder in the Data tab to create a custom data card sh
 
 This is the operator's call — `AC.12.4` — not yours and not your account manager's. The decision happens when:
 
-- Your Huminic storefront has been running stably for ≥ 30 days.
+- Your Huminic Workspace has been running stably for ≥ 30 days.
 - All inbound channels are cut over.
 - All historical data you need has been bulk-imported into Huminic Brain (if you opted in) OR you've explicitly accepted that historical data stays read-only in Nexxus until eventual archive.
 - No open P-FIX or customer-blocking GAP rows attributed to your dealership in `PLAN.md` running log.
