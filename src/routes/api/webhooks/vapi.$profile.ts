@@ -108,6 +108,8 @@ function buildLeadFromCall(call: VapiCall, event: VapiEvent): AdfLead {
     // Dealer-facing "Source" (email row + ADF <vendorname>). MUST NOT name a
     // third-party vendor — use the channel. Internal ids stay in thread metadata.
     vendor: { name: 'Phone call' },
+    // Hosted call recording → dealer notification (ADF comments + email link).
+    recording_url: event.recordingUrl ?? call.recordingUrl,
   }
 }
 

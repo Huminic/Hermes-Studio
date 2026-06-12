@@ -426,16 +426,32 @@ export function renderDealerNotificationEmail(input: {
   const details = leadDetailRows(lead)
   const who = lead.customer.full_name ?? fallbackName
   const subject = `${input.subjectPrefix ?? 'New lead'} — ${who}`
+  // Detail values are escaped for the card. The recording link is appended
+  // AFTER escaping as a clickable anchor (escape only the URL itself).
+  const cardDetails = details.map((d) => ({
+    label: d.label,
+    value: escapeHtml(d.value),
+  }))
+  if (lead.recording_url) {
+    const safeUrl = escapeHtml(lead.recording_url)
+    // Only render a clickable anchor for http(s) URLs (the provider always
+    // returns a hosted https link). Anything else is shown as escaped text so a
+    // non-http scheme (e.g. javascript:) can never become a live href.
+    const isHttp = /^https?:\/\//i.test(lead.recording_url)
+    cardDetails.push({
+      label: 'Call recording',
+      value: isHttp
+        ? `<a href="${safeUrl}" style="color: ${BRAND_GRADIENT_START}; text-decoration: none;">Listen to the call recording</a>`
+        : safeUrl,
+    })
+  }
   const html = renderLeadCardHtml({
     orgName: input.orgName,
     headerTitle: 'Has a New Lead!',
     summaryText: `A new lead just came in for <strong>${escapeHtml(
       input.orgName,
     )}</strong>. Here are the details:`,
-    details: details.map((d) => ({
-      label: d.label,
-      value: escapeHtml(d.value),
-    })),
+    details: cardDetails,
     footerNote:
       'Reply promptly to keep the lead warm. This notification was generated automatically.',
   })
@@ -443,6 +459,7 @@ export function renderDealerNotificationEmail(input: {
     `New lead — ${input.orgName}`,
     '',
     ...details.map((d) => `${d.label}: ${d.value}`),
+    ...(lead.recording_url ? [`Call recording: ${lead.recording_url}`] : []),
   ].join('\n')
   return { subject, html, text }
 }

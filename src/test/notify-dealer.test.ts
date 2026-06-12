@@ -294,4 +294,69 @@ describe('renderDealerNotificationEmail — pure renderer', () => {
     expect(reparsed?.vehicles[0]?.model).toBe('Civic')
     expect(out.attachments?.[0]?.filename).toMatch(/\.adf\.xml$/)
   })
+
+  it('email format renders a clickable recording link + a text line when recording_url is present', async () => {
+    const { renderDealerNotificationEmail } = await import(
+      '@/server/lead-notifications'
+    )
+    const out = renderDealerNotificationEmail({
+      format: 'email',
+      lead: { ...LEAD_NAMED, recording_url: 'https://rec.example.com/abc.mp3' },
+      orgName: 'Ford of Columbia',
+    })
+    // Clickable anchor in the card (URL is the href, not just escaped text).
+    expect(out.html).toContain('href="https://rec.example.com/abc.mp3"')
+    expect(out.html).toContain('Listen to the call recording')
+    // Plain-text fallback carries the bare URL.
+    expect(out.text).toContain('Call recording: https://rec.example.com/abc.mp3')
+  })
+
+  it('adf-xml format folds the recording link into <comments> (CRM ingestion)', async () => {
+    const { renderDealerNotificationEmail } = await import(
+      '@/server/lead-notifications'
+    )
+    const { parseAdfXml } = await import('@/server/adf-xml')
+    const out = renderDealerNotificationEmail({
+      format: 'adf-xml',
+      lead: { ...LEAD_NAMED, recording_url: 'https://rec.example.com/abc.mp3' },
+      orgName: 'Serra Honda',
+    })
+    expect(out.text).toContain('Call recording: https://rec.example.com/abc.mp3')
+    const reparsed = parseAdfXml(out.text)
+    expect(reparsed?.comments).toContain('https://rec.example.com/abc.mp3')
+    // The original comment text is preserved alongside the link.
+    expect(reparsed?.comments).toContain('Caller interested in a 2026 Civic.')
+  })
+
+  it('adf-xml emits only the recording link when comments are empty (no malformed XML)', async () => {
+    const { renderDealerNotificationEmail } = await import(
+      '@/server/lead-notifications'
+    )
+    const { parseAdfXml } = await import('@/server/adf-xml')
+    const out = renderDealerNotificationEmail({
+      format: 'adf-xml',
+      lead: {
+        ...LEAD_NAMED,
+        comments: undefined,
+        recording_url: 'https://rec.example.com/abc.mp3',
+      },
+      orgName: 'Serra Honda',
+    })
+    const reparsed = parseAdfXml(out.text)
+    expect(reparsed).not.toBeNull()
+    expect(reparsed?.comments).toBe('Call recording: https://rec.example.com/abc.mp3')
+  })
+
+  it('email format renders a non-http recording value as escaped text, never a live href', async () => {
+    const { renderDealerNotificationEmail } = await import(
+      '@/server/lead-notifications'
+    )
+    const out = renderDealerNotificationEmail({
+      format: 'email',
+      lead: { ...LEAD_NAMED, recording_url: 'javascript:alert(1)' },
+      orgName: 'Ford of Columbia',
+    })
+    expect(out.html).not.toContain('href="javascript:')
+    expect(out.html).not.toContain('href="javascript&')
+  })
 })

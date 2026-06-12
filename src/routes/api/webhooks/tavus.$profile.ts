@@ -110,6 +110,8 @@ function buildLeadFromSession(event: TavusEvent): AdfLead {
     // Dealer-facing "Source" (email row + ADF <vendorname>). MUST NOT name a
     // third-party vendor — use the channel. Internal ids stay in thread metadata.
     vendor: { name: 'Video call' },
+    // Hosted recording → dealer notification (ADF comments + email link).
+    recording_url: props.recording_url,
   }
 }
 

@@ -42,6 +42,13 @@ export type AdfLead = {
   trade?: AdfVehicle | null
   vendor?: { name?: string; service?: string }
   comments?: string
+  /**
+   * Hosted call/video-recording link, when the channel provides one (Vapi
+   * `recordingUrl`, Tavus `recording_url`). Surfaced to the dealer in the
+   * notification: appended to ADF `<comments>` (so the CRM ingests it) and
+   * rendered as a clickable link in the email card.
+   */
+  recording_url?: string
 }
 
 /**
@@ -257,8 +264,15 @@ export function buildAdfXml(lead: AdfLead): string {
     lines.push(`      <phone>${encodeXml(customer.phone)}</phone>`)
   }
   lines.push('      </contact>')
-  if (lead.comments) {
-    lines.push(`      <comments>${encodeXml(lead.comments)}</comments>`)
+  // Fold the hosted recording link into <comments> so any ADF-consuming DMS
+  // surfaces it (no standard ADF element exists for a recording URL).
+  const commentsText = lead.recording_url
+    ? [lead.comments, `Call recording: ${lead.recording_url}`]
+        .filter(Boolean)
+        .join('\n\n')
+    : lead.comments
+  if (commentsText) {
+    lines.push(`      <comments>${encodeXml(commentsText)}</comments>`)
   }
   lines.push('    </customer>')
   if (lead.vendor) {
