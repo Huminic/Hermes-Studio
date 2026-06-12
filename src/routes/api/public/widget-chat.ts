@@ -14,6 +14,15 @@ import {
   notifyActiveConversation,
 } from '../../../server/lead-notifications'
 import { VENDOR_GUARDRAIL, scrubVendorTerms } from '../../../server/dealer-safe'
+import { recallCompanyWikiTop } from '../../../server/knowledge-mcp-handlers'
+
+// Information-Store grounding for the PUBLIC widget chat (C). recallCompanyWikiTop
+// scores pages by query-term overlap (heading match = 2/term, body = 1/term).
+// Require a STRONG match before injecting so thin/boilerplate scaffold pages —
+// which match incidental common words — are not force-fed into shopper answers.
+// Below the bar we inject nothing and fall back to SOUL + widget body.
+const WIDGET_MIN_RECALL_SCORE = 3
+const WIDGET_WIKI_PAGE_CHAR_CAP = 1200
 
 const HERMES_URL = process.env.HERMES_API_URL || 'http://hermes-agent:8642'
 
@@ -137,6 +146,19 @@ export const Route = createFileRoute('/api/public/widget-chat')({
         const agentSoul = agentId
           ? readAgentSoul(widget.profile, agentId)
           : null
+        // Ground on the store's Information Store (company wiki) when the
+        // visitor's latest question matches it strongly enough — same recall
+        // the authenticated in-app chat uses, gated by a safe score threshold
+        // so generic scaffold content isn't forced into answers (C).
+        const latestVisitor = history[history.length - 1]
+        const wikiHits =
+          latestVisitor && latestVisitor.role !== 'assistant'
+            ? recallCompanyWikiTop(
+                widget.profile,
+                String(latestVisitor.content ?? ''),
+                3,
+              ).filter((h) => h.score >= WIDGET_MIN_RECALL_SCORE)
+            : []
         const systemPrompt = [
           // LC-BLOCKER-008: vendor-name confidentiality guardrail FIRST so it
           // outranks the SOUL/body context that follows.
@@ -157,6 +179,24 @@ export const Route = createFileRoute('/api/public/widget-chat')({
           ``,
           `# Widget body (additional context)`,
           widget.body.slice(0, 4000),
+          // Information-Store grounding (only when a strong match cleared the
+          // threshold). The agent answers from this when relevant; if it does
+          // not cover the question it must not invent — offer a human handoff.
+          ...(wikiHits.length
+            ? [
+                ``,
+                `# Dealership knowledge (Information Store — answer from this when relevant; if it does not cover the question, do not invent, offer to connect them to the team)`,
+                ...wikiHits.flatMap((h) => [
+                  ``,
+                  `## ${h.path}`,
+                  ``,
+                  h.content.length > WIDGET_WIKI_PAGE_CHAR_CAP
+                    ? h.content.slice(0, WIDGET_WIKI_PAGE_CHAR_CAP) +
+                      '\n…(truncated)'
+                    : h.content,
+                ]),
+              ]
+            : []),
         ].join('\n')
 
         // ── Capture the conversation into the Teambox (messaging-hub) ─────────
