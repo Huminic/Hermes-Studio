@@ -196,7 +196,9 @@ export const Route = createFileRoute('/api/webhooks/vapi/$profile')({
           profile,
           event: 'inbound_call',
           lead,
-          subjectPrefix: 'New voice lead',
+          // Subtle "AI" reference in the subject (operator 2026-06-12). Used by
+          // the email format only; ADF subject is the CRM-parsed "New Lead - …".
+          subjectPrefix: 'New AI voice lead',
           cooldownKey: thread.contact_handle,
         })
 

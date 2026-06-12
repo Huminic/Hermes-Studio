@@ -200,7 +200,9 @@ export const Route = createFileRoute('/api/webhooks/tavus/$profile')({
           profile,
           event: 'inbound_video',
           lead,
-          subjectPrefix: 'New video lead',
+          // Subtle "AI" reference in the subject (operator 2026-06-12). Used by
+          // the email format only; ADF subject is the CRM-parsed "New Lead - …".
+          subjectPrefix: 'New AI video lead',
           cooldownKey: thread.contact_handle,
         })
 

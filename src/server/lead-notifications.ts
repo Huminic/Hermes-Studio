@@ -447,7 +447,10 @@ export function renderDealerNotificationEmail(input: {
   }
   const html = renderLeadCardHtml({
     orgName: input.orgName,
-    headerTitle: 'Has a New Lead!',
+    // Subtle "AI" reference so the dealer feels the AI value they paid for
+    // (operator 2026-06-12). Email format only — ADF subject/structure is
+    // CRM-parsed and stays untouched.
+    headerTitle: 'Has a New AI Lead!',
     summaryText: `A new lead just came in for <strong>${escapeHtml(
       input.orgName,
     )}</strong>. Here are the details:`,

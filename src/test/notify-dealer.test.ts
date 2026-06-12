@@ -262,6 +262,8 @@ describe('renderDealerNotificationEmail — pure renderer', () => {
     )
     // Org name in the header.
     expect(out.html).toContain('Ford of Columbia')
+    // Subtle "AI" reference in the card header (email format only).
+    expect(out.html).toContain('Has a New AI Lead!')
     // Details row with name + phone.
     expect(out.html).toContain('Elliott Test')
     expect(out.html).toContain('+15555550100')
