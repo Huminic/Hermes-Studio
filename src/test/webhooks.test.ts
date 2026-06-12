@@ -175,7 +175,10 @@ describe('/api/webhooks/textmagic/$profile', () => {
     const { getThread } = await import('@/server/messaging-hub-store')
     const thread = getThread('serra-honda', body.thread_id)
     expect(thread?.channel).toBe('sms')
-    expect(thread?.messages[0].content).toContain('schedule service')
+    // Find the inbound SMS by direction (a Slice-A delivery-annotation system
+    // message also lives on the thread; message order is newest-first).
+    const inbound = thread?.messages.find((m) => m.direction === 'inbound')
+    expect(inbound?.content).toContain('schedule service')
   })
 
   it('routes inbound to the profile-configured domain (sales) without a query param', async () => {
@@ -218,7 +221,10 @@ describe('/api/webhooks/textmagic/$profile', () => {
     const thread = getThread('serra-honda', body.thread_id)
     expect(thread?.domain).toBe('sales')
     // BUG-3 fix: TextMagic posts the id as `id`; it is captured as external_id.
-    expect(thread?.messages[0].metadata?.external_id).toBe('tm_inbound_777')
+    // Assert on the inbound message specifically (a Slice-A delivery-annotation
+    // system message also lives on the thread; order is newest-first).
+    const inbound = thread?.messages.find((m) => m.direction === 'inbound')
+    expect(inbound?.metadata?.external_id).toBe('tm_inbound_777')
   })
 
   it('honors an explicit ?domain= override over the configured default', async () => {
