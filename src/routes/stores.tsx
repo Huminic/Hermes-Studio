@@ -48,19 +48,20 @@ function StorePickerLanding() {
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-6 py-10">
-        <section className="flex flex-col gap-4">
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-900">
-            Choose your store to sign in
-          </h2>
-          <div className="max-w-3xl space-y-3 text-sm leading-relaxed text-slate-600">
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-6 py-10">
+        <h2 className="text-center text-3xl font-semibold tracking-tight text-slate-900">
+          Choose your store to sign in
+        </h2>
+
+        <div className="grid flex-1 grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+          <section className="space-y-3 text-sm leading-relaxed text-slate-600">
             <p>
               Welcome to your upgraded platform. Each store now has its own
-              dedicated workspace — your agents, your inbox, your widgets, your
+              dedicated Workspace — your agents, your inbox, your widgets, your
               dashboards, and your campaigns, all in one place. To get started,
-              select your store from the cards below and sign in with the
-              credentials provided to you. Everything you used before is here,
-              organized by store so the right people see the right work.
+              select your store and sign in with the credentials provided to
+              you. Everything you used before is here, organized by store so the
+              right people see the right work.
             </p>
             <p>
               If you don't have a login yet, or you're not sure which store is
@@ -75,11 +76,10 @@ function StorePickerLanding() {
               login — each account is tied to a single store, and access to
               additional stores can be arranged through your administrator.
             </p>
-          </div>
-        </section>
+          </section>
 
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {STORES.map((store) => (
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {STORES.map((store) => (
             <li key={store.profile}>
               <Link
                 to="/p/$profile"
@@ -116,7 +116,8 @@ function StorePickerLanding() {
               </Link>
             </li>
           ))}
-        </ul>
+          </ul>
+        </div>
       </main>
 
       <footer className="flex items-center justify-between border-t border-slate-200 bg-white px-6 py-4 text-[11px] text-slate-400">
