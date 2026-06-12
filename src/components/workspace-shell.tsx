@@ -351,7 +351,11 @@ export function WorkspaceShell() {
   // Huminic Studio backend root and redirects to /dashboard (Duane's entrypoint
   // correction); only is_admin reaches it, Workspace sessions are routed to
   // their own /p/<profile>/chat.
-  if (pathname === '/stores' || pathname.startsWith('/p/')) {
+  if (
+    pathname === '/stores' ||
+    pathname === '/reskin-preview' || // non-prod nav reskin prototype (slice F)
+    pathname.startsWith('/p/')
+  ) {
     return (
       <div className="theme-bg theme-text min-h-dvh">
         <ErrorBoundary
