@@ -55,6 +55,11 @@ function ConsoleLayoutRoute() {
     },
     { id: 'tools', label: 'Tools', enabled: config.menu.tools ?? true },
     { id: 'data', label: 'Data', enabled: config.menu.data ?? true },
+    {
+      id: 'dashboard',
+      label: 'Dashboard',
+      enabled: config.menu.dashboard ?? true,
+    },
     { id: 'comms', label: 'Comms', enabled: config.menu.comms ?? true },
     {
       id: 'campaigns',

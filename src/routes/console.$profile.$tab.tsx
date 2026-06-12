@@ -18,6 +18,7 @@ const TAB_TO_RENDERER: Record<string, string> = {
   knowledge: 'customer-console.knowledge',
   tools: 'customer-console.tools',
   data: 'customer-console.data',
+  dashboard: 'customer-console.performance',
   comms: 'customer-console.comms',
   campaigns: 'customer-console.campaigns',
   notifications: 'customer-console.notifications',

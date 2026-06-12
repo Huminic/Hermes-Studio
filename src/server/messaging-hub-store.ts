@@ -1311,6 +1311,92 @@ export function aggregateThreads(profile: string): ThreadStats {
   return stats
 }
 
+/**
+ * Per-store performance rollup — the Dashboard backend. Read-only over the
+ * existing threads + messages tables for a profile. Groups thread (lead) counts
+ * and message counts by channel and by domain/type (sales/service), with
+ * aggregate totals. `sinceMs` (epoch ms) optionally bounds threads/messages to
+ * a recent window (created_at >= sinceMs); omit for all-time.
+ *
+ * Mirrors `aggregateMessages` / `aggregateThreads` (same SQL/in-memory dual
+ * path), combined into one pass so the Dashboard can switch views client-side
+ * without re-querying.
+ */
+export type PerformanceStats = {
+  /** Threads = leads. */
+  threads: {
+    total: number
+    by_channel: Record<string, number>
+    by_domain: Record<string, number>
+  }
+  messages: {
+    total: number
+    by_channel: Record<string, number>
+    by_domain: Record<string, number>
+  }
+}
+
+export function aggregatePerformance(
+  profile: string,
+  sinceMs?: number,
+): PerformanceStats {
+  const stats: PerformanceStats = {
+    threads: { total: 0, by_channel: {}, by_domain: {} },
+    messages: { total: 0, by_channel: {}, by_domain: {} },
+  }
+  const tallyThread = (channel: string, domain: string) => {
+    stats.threads.total += 1
+    stats.threads.by_channel[channel] =
+      (stats.threads.by_channel[channel] ?? 0) + 1
+    stats.threads.by_domain[domain] =
+      (stats.threads.by_domain[domain] ?? 0) + 1
+  }
+  const tallyMessage = (channel: string, domain: string) => {
+    stats.messages.total += 1
+    stats.messages.by_channel[channel] =
+      (stats.messages.by_channel[channel] ?? 0) + 1
+    stats.messages.by_domain[domain] =
+      (stats.messages.by_domain[domain] ?? 0) + 1
+  }
+  const db = getDb(profile)
+  if (db) {
+    const threadRows = db
+      .prepare(
+        `SELECT channel, domain FROM threads WHERE profile=?${
+          sinceMs ? ' AND created_at >= ?' : ''
+        }`,
+      )
+      .all(...(sinceMs ? [profile, sinceMs] : [profile])) as Array<{
+      channel: string
+      domain: string
+    }>
+    for (const r of threadRows) tallyThread(r.channel, r.domain)
+    // Message domain comes from the parent thread (messages carry channel, not
+    // domain), so join to threads for the sales/service split.
+    const msgRows = db
+      .prepare(
+        `SELECT m.channel AS channel, t.domain AS domain
+           FROM messages m JOIN threads t ON t.id = m.thread_id
+          WHERE t.profile=?${sinceMs ? ' AND m.created_at >= ?' : ''}`,
+      )
+      .all(...(sinceMs ? [profile, sinceMs] : [profile])) as Array<{
+      channel: string
+      domain: string
+    }>
+    for (const r of msgRows) tallyMessage(r.channel, r.domain)
+    return stats
+  }
+  for (const t of getStore(profile).threads.values()) {
+    if (sinceMs && t.created_at < sinceMs) continue
+    tallyThread(t.channel, t.domain)
+    for (const m of t.messages) {
+      if (sinceMs && m.created_at < sinceMs) continue
+      tallyMessage(m.channel, t.domain)
+    }
+  }
+  return stats
+}
+
 /** Campaign rollup: campaign counts by status + delivery sent/failed totals. */
 export function aggregateCampaignDeliveries(profile: string): CampaignStats {
   const stats: CampaignStats = {

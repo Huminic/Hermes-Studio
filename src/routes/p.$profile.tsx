@@ -52,6 +52,7 @@ const TABS: Array<{ id: string; label: string; menuKey: keyof StudioConfig['menu
   { id: 'knowledge', label: 'Knowledge', menuKey: 'knowledge' },
   { id: 'tools', label: 'Widgets', menuKey: 'tools' },
   { id: 'data', label: 'Data', menuKey: 'data' },
+  { id: 'dashboard', label: 'Dashboard', menuKey: 'dashboard' },
   { id: 'comms', label: 'Teambox', menuKey: 'comms' },
   { id: 'campaigns', label: 'Campaigns', menuKey: 'campaigns' },
   { id: 'notifications', label: 'Notifications', menuKey: 'notifications' },
@@ -186,6 +187,8 @@ function tabBlurb(id: string): string {
       return 'Widget embed code, live demo, and tool config'
     case 'data':
       return 'Dashboards over your messaging, agents, and integrations'
+    case 'dashboard':
+      return 'Performance metrics across channels — leads and messages'
     case 'comms':
       return 'Unified inbox — Sales and Service across all channels'
     case 'campaigns':

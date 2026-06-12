@@ -140,6 +140,7 @@ import { Route as ApiHermesProxySplatRouteImport } from './routes/api/hermes-pro
 import { Route as ApiHermesJobsJobIdRouteImport } from './routes/api/hermes-jobs.$jobId'
 import { Route as ApiEventsReplayRouteImport } from './routes/api/events/replay'
 import { Route as ApiCustomerReportsRouteImport } from './routes/api/customer/reports'
+import { Route as ApiCustomerPerformanceRouteImport } from './routes/api/customer/performance'
 import { Route as ApiCustomerNotificationsRouteImport } from './routes/api/customer/notifications'
 import { Route as ApiCustomerLeadFlowRouteImport } from './routes/api/customer/lead-flow'
 import { Route as ApiCustomerEngagementStateRouteImport } from './routes/api/customer/engagement-state'
@@ -848,6 +849,11 @@ const ApiCustomerReportsRoute = ApiCustomerReportsRouteImport.update({
   path: '/api/customer/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerPerformanceRoute = ApiCustomerPerformanceRouteImport.update({
+  id: '/api/customer/performance',
+  path: '/api/customer/performance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCustomerNotificationsRoute =
   ApiCustomerNotificationsRouteImport.update({
     id: '/api/customer/notifications',
@@ -1222,6 +1228,7 @@ export interface FileRoutesByFullPath {
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
+  '/api/customer/performance': typeof ApiCustomerPerformanceRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
@@ -1405,6 +1412,7 @@ export interface FileRoutesByTo {
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
+  '/api/customer/performance': typeof ApiCustomerPerformanceRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
@@ -1590,6 +1598,7 @@ export interface FileRoutesById {
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
+  '/api/customer/performance': typeof ApiCustomerPerformanceRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
@@ -1776,6 +1785,7 @@ export interface FileRouteTypes {
     | '/api/customer/engagement-state'
     | '/api/customer/lead-flow'
     | '/api/customer/notifications'
+    | '/api/customer/performance'
     | '/api/customer/reports'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
@@ -1959,6 +1969,7 @@ export interface FileRouteTypes {
     | '/api/customer/engagement-state'
     | '/api/customer/lead-flow'
     | '/api/customer/notifications'
+    | '/api/customer/performance'
     | '/api/customer/reports'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
@@ -2143,6 +2154,7 @@ export interface FileRouteTypes {
     | '/api/customer/engagement-state'
     | '/api/customer/lead-flow'
     | '/api/customer/notifications'
+    | '/api/customer/performance'
     | '/api/customer/reports'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
@@ -2322,6 +2334,7 @@ export interface RootRouteChildren {
   ApiCustomerEngagementStateRoute: typeof ApiCustomerEngagementStateRoute
   ApiCustomerLeadFlowRoute: typeof ApiCustomerLeadFlowRoute
   ApiCustomerNotificationsRoute: typeof ApiCustomerNotificationsRoute
+  ApiCustomerPerformanceRoute: typeof ApiCustomerPerformanceRoute
   ApiCustomerReportsRoute: typeof ApiCustomerReportsRoute
   ApiHermesProxySplatRoute: typeof ApiHermesProxySplatRoute
   ApiKnowledgeGraphRoute: typeof ApiKnowledgeGraphRoute
@@ -3302,6 +3315,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/performance': {
+      id: '/api/customer/performance'
+      path: '/api/customer/performance'
+      fullPath: '/api/customer/performance'
+      preLoaderRoute: typeof ApiCustomerPerformanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/customer/notifications': {
       id: '/api/customer/notifications'
       path: '/api/customer/notifications'
@@ -4002,6 +4022,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCustomerEngagementStateRoute: ApiCustomerEngagementStateRoute,
   ApiCustomerLeadFlowRoute: ApiCustomerLeadFlowRoute,
   ApiCustomerNotificationsRoute: ApiCustomerNotificationsRoute,
+  ApiCustomerPerformanceRoute: ApiCustomerPerformanceRoute,
   ApiCustomerReportsRoute: ApiCustomerReportsRoute,
   ApiHermesProxySplatRoute: ApiHermesProxySplatRoute,
   ApiKnowledgeGraphRoute: ApiKnowledgeGraphRoute,

@@ -3,6 +3,7 @@ import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   Analytics01Icon,
+  Chart01Icon,
   GridIcon,
   InboxIcon,
   LibraryIcon,
@@ -27,6 +28,7 @@ const TAB_TO_RENDERER: Record<string, string> = {
   knowledge: 'customer-console.knowledge',
   tools: 'customer-console.tools',
   data: 'customer-console.data',
+  dashboard: 'customer-console.performance',
   comms: 'customer-console.comms',
   campaigns: 'customer-console.campaigns',
   notifications: 'customer-console.notifications',
@@ -158,6 +160,7 @@ function StorefrontTabRoute() {
     { id: 'knowledge', label: 'Knowledge', icon: LibraryIcon },
     { id: 'tools', label: 'Widgets', icon: GridIcon },
     { id: 'data', label: 'Data', icon: Analytics01Icon },
+    { id: 'dashboard', label: 'Dashboard', icon: Chart01Icon },
     { id: 'comms', label: 'Teambox', icon: InboxIcon },
     { id: 'campaigns', label: 'Campaigns', icon: Megaphone01Icon },
     { id: 'notifications', label: 'Notifications', icon: Notification03Icon },

@@ -17,6 +17,7 @@ const EXPECTED_KEYS = [
   'customer-console.tools',
   'customer-console.tools-widget',
   'customer-console.data',
+  'customer-console.performance',
   'customer-console.comms',
   'customer-console.campaigns',
   'customer-console.notifications',

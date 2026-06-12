@@ -24,6 +24,7 @@ import { CustomerToolsWidgetRenderer } from '../components/customer-console/tool
 import { CustomerCommsRenderer } from '../components/customer-console/comms-renderer'
 import { CustomerCampaignsRenderer } from '../components/customer-console/campaigns-renderer'
 import { CustomerDataRenderer } from '../components/customer-console/data-renderer'
+import { CustomerPerformanceRenderer } from '../components/customer-console/performance-renderer'
 import { CustomerNotificationsRenderer } from '../components/customer-console/notifications-renderer'
 import { ConsultPanel } from '../components/customer-console/consult-panel'
 
@@ -138,6 +139,15 @@ function DataRenderer(props: ConsoleRendererProps) {
   return <CustomerDataRenderer profile={props.profile} config={props.config} />
 }
 
+function PerformanceRenderer(props: ConsoleRendererProps) {
+  return (
+    <CustomerPerformanceRenderer
+      profile={props.profile}
+      config={props.config}
+    />
+  )
+}
+
 function CommsRenderer(props: ConsoleRendererProps) {
   return <CustomerCommsRenderer profile={props.profile} config={props.config} />
 }
@@ -194,6 +204,7 @@ export const consoleRenderers: Record<string, ConsoleRenderer> = {
   'customer-console.tools': ToolsRenderer,
   'customer-console.tools-widget': ToolsWidgetRenderer,
   'customer-console.data': DataRenderer,
+  'customer-console.performance': PerformanceRenderer,
   'customer-console.comms': CommsRenderer,
   'customer-console.campaigns': CampaignsRenderer,
   'customer-console.notifications': NotificationsRenderer,
