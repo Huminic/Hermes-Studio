@@ -169,6 +169,61 @@ describe('notifyDealer — unconfigured recipient', () => {
   })
 })
 
+describe('dispatchLeadNotification — multi-recipient routing fan-out (Columbia)', () => {
+  it('fans out to every routing recipient, each carrying the AI subject + recording link', async () => {
+    writeStudioYaml('hyundai-of-columbia', [
+      'branding:',
+      '  persona_name: Hyundai of Columbia',
+      'notifications:',
+      '  lead_format: email',
+      '  lead_recipient: fallback@huminic.ai',
+      '  routing:',
+      '    - event: all',
+      '      to: sam.mayfield@bc.auto',
+      '      channel: email',
+      '    - event: all',
+      '      to: durran@cageautomotive.com',
+      '      channel: email',
+      '    - event: all',
+      '      to: duane.wells@huminic.ai',
+      '      channel: email',
+    ])
+    const store = await import('@/server/messaging-hub-store')
+    store._resetForTests()
+    const { dispatchLeadNotification } = await import('@/server/lead-notifications')
+    const result = await dispatchLeadNotification({
+      profile: 'hyundai-of-columbia',
+      event: 'inbound_call',
+      lead: {
+        customer: { full_name: 'Test Caller', phone: '+15555551234' },
+        vehicles: [],
+        comments: 'Interested in a Tucson',
+        vendor: { name: 'Phone call' },
+        recording_url: 'https://storage.vapi.ai/abc.mp3',
+      },
+      subjectPrefix: 'New AI voice lead',
+      cooldownKey: '+15555551234',
+    })
+    expect(result.ok).toBe(true)
+    const fetchMock = globalThis.fetch as ReturnType<typeof vi.fn>
+    // One Resend send per routing recipient (3) — NOT the single fallback.
+    expect(fetchMock).toHaveBeenCalledTimes(3)
+    const tos = fetchMock.mock.calls
+      .map((c) => JSON.parse((c[1] as { body: string }).body).params.arguments.to)
+      .sort()
+    expect(tos).toEqual([
+      'duane.wells@huminic.ai',
+      'durran@cageautomotive.com',
+      'sam.mayfield@bc.auto',
+    ])
+    const args0 = JSON.parse(
+      (fetchMock.mock.calls[0][1] as { body: string }).body,
+    ).params.arguments
+    expect(args0.subject).toContain('New AI voice lead')
+    expect(args0.html).toContain('Listen to the call recording')
+  })
+})
+
 describe('Vapi end-of-call webhook → notifyDealer', () => {
   it('invokes notifyDealer once with the request profile on end-of-call', async () => {
     writeStudioYaml('serra-honda', [
