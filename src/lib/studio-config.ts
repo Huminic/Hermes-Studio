@@ -130,6 +130,101 @@ const VinWatcherSchema = z
   .optional()
   .default({})
 
+/**
+ * SMS FAST-FOLLOW TRIGGERS (operator spec, 2026-06). A per-profile, DEFAULT-OFF
+ * config for the two approved trigger texts. This block ONLY carries config +
+ * the verbatim approved copy; it does NOT itself send anything. Every send still
+ * flows through dispatchOutbound → CommGate (OUTBOUND_LIVE_ENABLED, TCPA hours,
+ * blacklist, VIN-DNC) and the pre-launch allowlist, exactly like the existing
+ * watcher/flow paths.
+ *
+ *   Trigger 1 (immediate): THIRD-PARTY leads only (not our own widget/system
+ *     leads). Caroline/Nancy-style outreach to open a dialogue toward a test
+ *     drive / service appointment; the human salesperson completes the booking
+ *     by phone. Gated by `trigger1.third_party_only` (DEFAULT true) — the actual
+ *     lead-source classification is a Duane decision (which VIN/lead field marks
+ *     a third-party source), so the gate is SCAFFOLDED behind this flag, not
+ *     wired to a live source field yet.
+ *   Trigger 2 (24h): ALL leads. Check-in / insurance follow-up.
+ *
+ * `domain` selects which copy variant renders: `sales` → Caroline/Serra Honda;
+ * `service` → Nancy/Serra Service. Absent → falls back to comms/sms inbound
+ * domain semantics at the call site. Both triggers DEFAULT enabled:false so no
+ * existing profile changes behavior; the whole block is optional.
+ *
+ * Templates use `{{first_name}}` and an OPTIONAL vehicle clause written as
+ * `{{ <literal text> <vehicle>}}` — the inner clause renders only when a vehicle
+ * is known, with `<vehicle>` replaced by the vehicle string; when no vehicle is
+ * known the entire `{{ ... }}` clause (including its leading space) is omitted.
+ */
+const SmsTriggerDomain = z.enum(['sales', 'service'])
+
+const SmsTrigger1Schema = z
+  .object({
+    /** DEFAULT OFF — must be explicitly enabled per profile. */
+    enabled: z.boolean().optional().default(false),
+    /**
+     * Restrict Trigger 1 to THIRD-PARTY-sourced leads only (not our own
+     * widget/system leads). DEFAULT true. The live source classification is a
+     * Duane decision and is NOT yet wired — see sms-triggers.ts isThirdParty().
+     */
+    third_party_only: z.boolean().optional().default(true),
+    /** Sales copy (Caroline / Serra Honda). Verbatim approved draft default. */
+    template_sales: z
+      .string()
+      .optional()
+      .default(
+        "Hi {{first_name}}, I'm Caroline with Serra Honda. I saw you were looking at{{ the <vehicle>}} — we'd love to get you in for a test drive, but I need a couple quick details first so we set it up right. What's the best day for you to come by? Reply STOP to opt out.",
+      ),
+    /** Service copy (Nancy / Serra Service). Verbatim approved draft default. */
+    template_service: z
+      .string()
+      .optional()
+      .default(
+        "Hi {{first_name}}, this is Nancy with Serra Service. I saw your service request{{ for your <vehicle>}}. I'd love to get you scheduled — just need a little more info first. What's going on with the vehicle, and when works to bring it in? Reply STOP to opt out.",
+      ),
+  })
+  .optional()
+  .default({})
+
+const SmsTrigger2Schema = z
+  .object({
+    /** DEFAULT OFF — must be explicitly enabled per profile. */
+    enabled: z.boolean().optional().default(false),
+    /** Delay after first contact before the 24h check-in fires (minutes). */
+    window_min: z.number().int().min(1).optional().default(1440),
+    /** Sales check-in copy (Caroline). Verbatim approved draft default. */
+    template_sales: z
+      .string()
+      .optional()
+      .default(
+        "Hi {{first_name}}, it's Caroline at Serra Honda. Just making sure someone got in touch with you{{ about the <vehicle>}}. Is everything okay with your experience? If something's off I can make sure our manager knows — or let me know how else I can help.",
+      ),
+    /** Service check-in copy (Nancy). Verbatim approved draft default. */
+    template_service: z
+      .string()
+      .optional()
+      .default(
+        "Hi {{first_name}}, it's Nancy at Serra Service. Just checking that someone followed up{{ on your <vehicle>}}. Is everything okay with your experience so far? If anything's off I'll flag it for our service manager — or tell me what else I can help with.",
+      ),
+  })
+  .optional()
+  .default({})
+
+const SmsTriggersSchema = z
+  .object({
+    /** Which copy variant these triggers speak as. Absent → resolved at call site. */
+    domain: SmsTriggerDomain.optional(),
+    /** Immediate, third-party-only outreach. */
+    trigger1: SmsTrigger1Schema,
+    /** 24h check-in for all leads. */
+    trigger2: SmsTrigger2Schema,
+  })
+  .optional()
+  .default({})
+
+export type SmsTriggersConfig = z.infer<typeof SmsTriggersSchema>
+
 const VinSchema = z
   .object({
     org_id: z.string().min(1).optional(),
@@ -422,6 +517,8 @@ export const StudioConfigSchema = z.object({
   notifications: NotificationsSchema,
   channel_credentials: ChannelCredentialsSchema,
   comms: CommsSchema,
+  /** SMS fast-follow triggers (operator spec). Optional, both default OFF. */
+  sms_triggers: SmsTriggersSchema,
   unified_widget: UnifiedWidgetSchema,
 })
 
@@ -517,6 +614,24 @@ export function defaultStudioConfig(profile: string): StudioConfig {
       vin_check: true,
       vin_check_fail_open: false,
       rate_caps: {},
+    },
+    sms_triggers: {
+      trigger1: {
+        enabled: false,
+        third_party_only: true,
+        template_sales:
+          "Hi {{first_name}}, I'm Caroline with Serra Honda. I saw you were looking at{{ the <vehicle>}} — we'd love to get you in for a test drive, but I need a couple quick details first so we set it up right. What's the best day for you to come by? Reply STOP to opt out.",
+        template_service:
+          "Hi {{first_name}}, this is Nancy with Serra Service. I saw your service request{{ for your <vehicle>}}. I'd love to get you scheduled — just need a little more info first. What's going on with the vehicle, and when works to bring it in? Reply STOP to opt out.",
+      },
+      trigger2: {
+        enabled: false,
+        window_min: 1440,
+        template_sales:
+          "Hi {{first_name}}, it's Caroline at Serra Honda. Just making sure someone got in touch with you{{ about the <vehicle>}}. Is everything okay with your experience? If something's off I can make sure our manager knows — or let me know how else I can help.",
+        template_service:
+          "Hi {{first_name}}, it's Nancy at Serra Service. Just checking that someone followed up{{ on your <vehicle>}}. Is everything okay with your experience so far? If anything's off I'll flag it for our service manager — or tell me what else I can help with.",
+      },
     },
     unified_widget: {
       enabled: true,
