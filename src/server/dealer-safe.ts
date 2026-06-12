@@ -64,6 +64,59 @@ export function scrubVendorTerms(value: string | null): string | null {
   return out
 }
 
+/**
+ * Persona/system-prompt markers. A thread-list preview must show shopper-facing
+ * content only — never the agent's identity/instruction prompt (PFF-007).
+ * Legacy/seed/video threads can store the persona prompt as a NON-system-role
+ * message (e.g. "You are Caroline, a professional sales assistant at Serra
+ * Honda…"), so filtering by message role alone misses it.
+ */
+const PERSONA_INSTRUCTION_MARKERS: Array<RegExp> = [
+  /^\s*you are\s+\w+/im, // "You are Caroline…" at a line start
+  /\byou represent\b/i,
+  /\bprofessional\b[^\n]*\bassistant\b/i, // "professional sales assistant"
+  /\bcore identity\b/i,
+  /\bsystem prompt\b/i,
+  /\byour (role|mission|persona|objective|identity)\b/i,
+]
+
+/** True if a message body reads like agent persona/system instructions. */
+export function looksLikeAgentInstructions(content: string): boolean {
+  return PERSONA_INSTRUCTION_MARKERS.some((re) => re.test(content))
+}
+
+/** Drop serialized-transcript "system:" lines from a single message body. */
+function stripSystemTranscriptLines(content: string): string {
+  return content
+    .split('\n')
+    .filter((line) => !/^\s*system\s*:/i.test(line))
+    .join('\n')
+    .trim()
+}
+
+/**
+ * Build the dealer-safe thread-list preview. Walks visible (non-system-role)
+ * messages newest→oldest and returns the first whose content is real
+ * shopper-facing text: injected "system:" transcript lines are stripped, and
+ * any message that reads like agent persona/system instructions is skipped
+ * entirely — so we fall back to an older real message rather than leak the
+ * prompt. Returns '' if nothing safe remains (PFF-007).
+ */
+export function safeThreadPreview(
+  messages: Array<{ role: string; content: string }>,
+  limit = 160,
+): string {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const m = messages[i]
+    if (m.role === 'system') continue
+    const cleaned = stripSystemTranscriptLines(m.content)
+    if (!cleaned) continue
+    if (looksLikeAgentInstructions(cleaned)) continue
+    return cleaned.slice(0, limit)
+  }
+  return ''
+}
+
 type ThreadListItem = {
   subject: string
   contact_handle: string

@@ -10,7 +10,7 @@ import {
   resolveSession,
 } from '../../../server/customer-auth'
 import { listThreads, type ThreadStatus } from '../../../server/messaging-hub-store'
-import { scrubThreadListItem } from '../../../server/dealer-safe'
+import { safeThreadPreview, scrubThreadListItem } from '../../../server/dealer-safe'
 
 export const Route = createFileRoute('/api/messaging/threads')({
   server: {
@@ -57,23 +57,13 @@ export const Route = createFileRoute('/api/messaging/threads')({
             created_at: t.created_at,
             updated_at: t.updated_at,
             message_count: t.messages.length,
-            // Preview from the last CUSTOMER-VISIBLE message — never a
-            // system/notification annotation (which can carry internal text).
-            last_message_preview: (() => {
-              const visible = t.messages.filter((m) => m.role !== 'system')
-              if (!visible.length) return ''
-              // Defense-in-depth (PFF-007): legacy/video threads can carry a
-              // serialized transcript whose stored content still has injected
-              // "system: …" context lines (persona system prompt) even though
-              // the message role is not 'system'. Strip those lines so no
-              // internal/system-prompt text reaches the dealer-facing preview.
-              const cleaned = visible[visible.length - 1].content
-                .split('\n')
-                .filter((line) => !/^\s*system\s*:/i.test(line))
-                .join('\n')
-                .trim()
-              return cleaned.slice(0, 160)
-            })(),
+            // Preview from the most recent SHOPPER-FACING message. Skips
+            // system/notification annotations AND any message that reads like
+            // the agent persona/system prompt — including legacy rows that
+            // start directly with "You are Caroline…" (no `system:` prefix).
+            // Falls back to an older real message rather than leak the prompt
+            // (PFF-007). Non-destructive — render-time only.
+            last_message_preview: safeThreadPreview(t.messages),
           })),
         })
       },

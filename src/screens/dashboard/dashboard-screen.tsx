@@ -595,6 +595,27 @@ function SessionRow({
 
 export function DashboardScreen() {
   const navigate = useNavigate()
+  // Operator telemetry (model/gateway health, "Offline") is meaningless to a
+  // scoped partner or store admin and reads as a broken first impression
+  // (PFF-006). Show it only to global Studio admins (and pre-resolve, where
+  // is_admin is undefined / self-hosted).
+  const authQuery = useQuery({
+    queryKey: ['auth-session'],
+    queryFn: async () => {
+      const res = await fetch('/api/auth-session', { credentials: 'include' })
+      if (!res.ok) return null
+      return res.json() as Promise<{
+        is_admin?: boolean
+        scope_profiles?: string[]
+      }>
+    },
+    staleTime: 10_000,
+  })
+  const isScopedPartner =
+    !!authQuery.data?.scope_profiles &&
+    authQuery.data.scope_profiles.length > 0
+  const showOperatorTelemetry =
+    !isScopedPartner && authQuery.data?.is_admin !== false
   const sessionsQuery = useQuery({
     // Use a dedicated query key — NOT chatQueryKeys.sessions — to avoid
     // cache collisions with the chat sidebar which fetches fewer sessions
@@ -732,13 +753,15 @@ export function DashboardScreen() {
 
       {/* ── Charts + Model + Skills ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
-        <div className="lg:col-span-5">
+        <div className={showOperatorTelemetry ? 'lg:col-span-5' : 'lg:col-span-8'}>
           <ActivityChart sessions={sessions} />
         </div>
-        <div className="lg:col-span-4">
-          <ModelCard />
-        </div>
-        <div className="lg:col-span-3">
+        {showOperatorTelemetry && (
+          <div className="lg:col-span-4">
+            <ModelCard />
+          </div>
+        )}
+        <div className={showOperatorTelemetry ? 'lg:col-span-3' : 'lg:col-span-4'}>
           <SkillsWidget />
         </div>
       </div>
