@@ -366,6 +366,18 @@ const NotificationsSchema = z
      * replace the fixed window with a context-aware one, see #207).
      */
     notify_cooldown_hours: z.number().min(0).optional().default(4),
+    /**
+     * Slice H — active-conversation human-takeover alert. DEFAULT-OFF safety
+     * flag. When TRUE, the FIRST follow-on customer message on an existing
+     * thread (the conversation becoming active, NOT the first inbound that
+     * already fired the new-lead alert) emails the SAME routing recipients an
+     * EMAIL-format alert (never ADF, even for adf-xml profiles) with a "Stop the
+     * AI conversation, I'll take it from here" takeover button. Deduped once per
+     * thread. MUST stay false in every live profile until the operator
+     * explicitly enables it per profile — widget chat is LIVE and we must not
+     * start emailing real dealer admins automatically.
+     */
+    active_conversation_alert: z.boolean().optional().default(false),
   })
   .optional()
   .default({})
@@ -605,7 +617,13 @@ export function defaultStudioConfig(profile: string): StudioConfig {
       },
     },
     lead_notifications: {},
-    notifications: { lead_format: 'email', routing: [] },
+    sms: { inbound_numbers: [] },
+    notifications: {
+      lead_format: 'email',
+      routing: [],
+      notify_cooldown_hours: 4,
+      active_conversation_alert: false,
+    },
     channel_credentials: { default: 'shared' },
     comms: {
       outbound_enabled: true,

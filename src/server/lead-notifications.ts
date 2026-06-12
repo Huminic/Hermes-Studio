@@ -12,6 +12,7 @@
  * on per profile after they've verified the test flow.
  */
 
+import crypto from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -761,4 +762,335 @@ export async function notifyNewLead(input: {
     subjectPrefix: input.subjectPrefix ?? `Inbound ${input.channel}`,
     cooldownKey: input.cooldownKey ?? input.contact_handle,
   })
+}
+
+// ===========================================================================
+// SLICE H — active-conversation human-takeover alert (DEFAULT-OFF).
+//
+// When a customer sends a FOLLOW-ON message on an EXISTING thread (the
+// conversation becoming "active" — distinct from the first inbound that
+// already fired the new-lead alert), notify the SAME routing recipients with
+// an EMAIL-format alert (NEVER ADF, even for adf-xml profiles) carrying a
+// takeover button. Clicking the button hits /api/teambox/takeover, which
+// validates an HMAC token and calls assignThreadToHuman → the autonomous-reply
+// engine stops auto-replying for that thread (isHumanAssigned gate).
+//
+// Gated by the per-profile `notifications.active_conversation_alert` flag which
+// DEFAULTS FALSE. Deduped once per thread via the lead-notify ledger with a
+// distinct `active-convo:<thread_id>` key and an effectively-permanent window.
+// ===========================================================================
+
+/**
+ * Resolve the HMAC signing secret for takeover tokens. Reuses the existing
+ * app/gateway shared secret `API_SERVER_KEY` (also read from the shared Hermes
+ * .env on the studio volume — see agent-autonomous-reply / widget-chat). Falls
+ * back to a dedicated `TAKEOVER_TOKEN_SECRET` env var if it is set. When NO
+ * secret is configured, token generation returns null and the alert omits the
+ * button (the alert still informs the human; they fall back to the inbox).
+ *
+ * NOTE (documented dependency): in production `API_SERVER_KEY` is already set
+ * for the Hermes gateway, so the button works without new config.
+ */
+function takeoverSigningSecret(): string | null {
+  return (
+    process.env.TAKEOVER_TOKEN_SECRET ||
+    process.env.API_SERVER_KEY ||
+    readKeyFromSharedHermesEnv('API_SERVER_KEY') ||
+    null
+  )
+}
+
+/** Read a single key from the shared ~/.hermes/.env (studio volume). */
+function readKeyFromSharedHermesEnv(varName: string): string | null {
+  try {
+    const envPath = path.join(os.homedir(), '.hermes', '.env')
+    const raw = fs.readFileSync(envPath, 'utf8')
+    for (const line of raw.split('\n')) {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith('#')) continue
+      const eq = trimmed.indexOf('=')
+      if (eq === -1) continue
+      if (trimmed.slice(0, eq).trim() === varName) {
+        return trimmed.slice(eq + 1).trim()
+      }
+    }
+  } catch {
+    // missing/unreadable — no secret from this source
+  }
+  return null
+}
+
+/**
+ * Mint an opaque, URL-safe takeover token binding (profile, threadId). Format:
+ * `<base64url(profile|threadId)>.<base64url(hmac-sha256)>`. No expiry field —
+ * the token authorizes pausing the AI on one specific thread; replaying it just
+ * re-pauses an already-paused thread (idempotent). Returns null when no secret
+ * is configured.
+ */
+export function mintTakeoverToken(
+  profile: string,
+  threadId: string,
+  secret: string | null = takeoverSigningSecret(),
+): string | null {
+  if (!secret) return null
+  const payload = `${profile}|${threadId}`
+  const body = Buffer.from(payload, 'utf8').toString('base64url')
+  const sig = crypto
+    .createHmac('sha256', secret)
+    .update(body)
+    .digest('base64url')
+  return `${body}.${sig}`
+}
+
+/**
+ * Verify a takeover token. Returns the bound { profile, threadId } on success,
+ * or null on any failure (missing secret, malformed token, bad signature,
+ * profile mismatch). Constant-time signature comparison.
+ */
+export function verifyTakeoverToken(
+  token: string,
+  opts: { expectedProfile?: string; secret?: string | null } = {},
+): { profile: string; threadId: string } | null {
+  const secret = opts.secret ?? takeoverSigningSecret()
+  if (!secret || !token) return null
+  const dot = token.indexOf('.')
+  if (dot === -1) return null
+  const body = token.slice(0, dot)
+  const sig = token.slice(dot + 1)
+  const expectedSig = crypto
+    .createHmac('sha256', secret)
+    .update(body)
+    .digest('base64url')
+  const a = Buffer.from(sig)
+  const b = Buffer.from(expectedSig)
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return null
+  let payload: string
+  try {
+    payload = Buffer.from(body, 'base64url').toString('utf8')
+  } catch {
+    return null
+  }
+  const sep = payload.indexOf('|')
+  if (sep === -1) return null
+  const profile = payload.slice(0, sep)
+  const threadId = payload.slice(sep + 1)
+  if (!profile || !threadId) return null
+  if (opts.expectedProfile && opts.expectedProfile !== profile) return null
+  return { profile, threadId }
+}
+
+/** Absolute base URL for the takeover button link. */
+function takeoverBaseUrl(): string {
+  return (
+    process.env.PUBLIC_BASE_URL ||
+    process.env.STUDIO_PUBLIC_URL ||
+    'https://studio.huminic.ai'
+  ).replace(/\/+$/, '')
+}
+
+/**
+ * Render the active-conversation alert email (EMAIL format only — never ADF).
+ * Pure (no I/O) so it is unit-testable. Reuses the styled card with a takeover
+ * call-to-action button. When `takeoverUrl` is null (no signing secret) the
+ * button is omitted and a note points the human to the inbox.
+ */
+export function renderActiveConversationEmail(input: {
+  orgName: string
+  /** Customer display label (name / phone / handle). */
+  who: string
+  /** The customer's latest message (preview). */
+  message?: string | null
+  channel: string
+  takeoverUrl: string | null
+}): { subject: string; html: string; text: string } {
+  const subject = `AI conversation active — ${input.who}`
+  const safeWho = escapeHtml(input.who)
+  const safeOrg = escapeHtml(input.orgName)
+  const channelLabel = sourceLabelForChannel(input.channel)
+  const buttonBlock =
+    input.takeoverUrl && /^https?:\/\//i.test(input.takeoverUrl)
+      ? `
+          <tr>
+            <td style="padding: 0 40px 30px; text-align: center;">
+              <a href="${escapeHtml(input.takeoverUrl)}" style="display: inline-block; background: linear-gradient(135deg, ${BRAND_GRADIENT_START} 0%, ${BRAND_GRADIENT_END} 100%); color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; padding: 14px 28px; border-radius: 8px;">
+                Stop the AI conversation, and I will take it over from here.
+              </a>
+            </td>
+          </tr>`
+      : `
+          <tr>
+            <td style="padding: 0 40px 30px;">
+              <p style="margin: 0; font-size: 14px; color: #b34700;">
+                Takeover link unavailable (no signing secret configured). Open the conversation in the inbox to take it over manually.
+              </p>
+            </td>
+          </tr>`
+
+  const highlightBlock = input.message
+    ? `
+          <tr>
+            <td style="padding: 0 40px 20px;">
+              <div style="background: #f8f9fa; border-left: 4px solid ${BRAND_GRADIENT_START}; padding: 16px 20px; border-radius: 4px;">
+                <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 0.5px;">Latest message</h3>
+                <p style="margin: 0; font-size: 15px; color: #333; line-height: 1.6;">${escapeHtml(
+                  input.message,
+                )}</p>
+              </div>
+            </td>
+          </tr>`
+    : ''
+
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${escapeHtml(
+    subject,
+  )}</title></head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <table role="presentation" style="max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <tr>
+            <td style="background: linear-gradient(135deg, ${BRAND_GRADIENT_START} 0%, ${BRAND_GRADIENT_END} 100%); padding: 30px 40px; text-align: center;">
+              <h1 style="margin: 0; color: white; font-size: 24px; font-weight: 600;">${BRAND_HEADER_EMOJI} ${safeOrg}</h1>
+              <p style="margin: 10px 0 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">A customer is actively chatting with your AI</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 30px 40px 20px;">
+              <p style="margin: 0; font-size: 16px; color: #333; line-height: 1.5;">
+                <strong>${safeWho}</strong> just replied on an active ${escapeHtml(
+                  channelLabel,
+                )} conversation. The AI is handling it. If you want to step in, take the conversation over and the AI will stop replying.
+              </p>
+            </td>
+          </tr>
+          ${highlightBlock}
+          ${buttonBlock}
+          <tr>
+            <td style="padding: 20px 40px 30px; border-top: 1px solid #e9ecef;">
+              <p style="margin: 0; font-size: 12px; color: #666; line-height: 1.5;"><strong>Questions or issues?</strong> Contact <a href="mailto:${BRAND_SUPPORT_EMAIL}" style="color: ${BRAND_GRADIENT_START}; text-decoration: none;">${BRAND_SUPPORT_EMAIL}</a></p>
+              <p style="margin: 15px 0 0 0; font-size: 11px; color: #999;">Powered by ${BRAND_PLATFORM_NAME}</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
+
+  const text = [
+    `AI conversation active — ${input.orgName}`,
+    '',
+    `${input.who} just replied on an active ${channelLabel} conversation.`,
+    ...(input.message ? ['', `Latest message: ${input.message}`] : []),
+    '',
+    input.takeoverUrl
+      ? `Stop the AI conversation and take it over: ${input.takeoverUrl}`
+      : 'Takeover link unavailable — open the conversation in the inbox to take it over.',
+  ].join('\n')
+
+  return { subject, html, text }
+}
+
+/**
+ * Fire the active-conversation alert for a thread that has just become active.
+ * Gated by `notifications.active_conversation_alert` (DEFAULT-OFF). EMAIL
+ * format ONLY (never ADF). Resolves the SAME routing recipients as the lead
+ * alert (falling back to lead_recipient / adf_email). Deduped once per thread.
+ * Best-effort: never throws into the caller.
+ */
+export async function notifyActiveConversation(input: {
+  profile: string
+  threadId: string
+  channel: string
+  /** Customer display label (name / phone / handle). */
+  who?: string | null
+  message?: string | null
+}): Promise<LeadNotificationResult> {
+  try {
+    const { config } = readStudioConfig(input.profile)
+    // SAFETY GATE: default-off. No alert unless the operator explicitly enabled
+    // it for this profile.
+    if (config.notifications.active_conversation_alert !== true) {
+      return { ok: false, via: 'unconfigured', reason: 'active_conversation_alert disabled', format: 'email' }
+    }
+
+    // Dedupe: once per thread. Reuse the lead-notify ledger with a distinct
+    // key and an effectively-permanent window (10 years).
+    const dedupeKey = `active-convo:${input.threadId}`
+    const TEN_YEARS_MS = 10 * 365 * 24 * 3_600_000
+    if (wasLeadNotifiedWithin(input.profile, dedupeKey, TEN_YEARS_MS)) {
+      return { ok: false, via: 'cooldown', reason: 'already alerted for this thread', format: 'email' }
+    }
+
+    // Resolve recipients: SAME routing matrix as the lead alert (email channel),
+    // falling back to the single lead_recipient / legacy adf_email.
+    const { emails } = resolveNotificationEmails(config, eventForChannel(input.channel))
+    const fallback = config.notifications.lead_recipient ?? config.lead_notifications.adf_email
+    const recipients = emails.length > 0 ? emails : fallback ? [fallback] : []
+    if (recipients.length === 0) {
+      return { ok: false, via: 'unconfigured', reason: 'no routing recipients or lead_recipient', format: 'email' }
+    }
+
+    // Resolve central-mcp creds (mirror notifyDealer).
+    const env = readEnvFromProfile(input.profile)
+    const tokenVar = config.lead_notifications.resend_token_var ?? 'CENTRAL_MCP_TOKEN'
+    const token = env[tokenVar] ?? process.env[tokenVar] ?? null
+    const central =
+      env.CENTRAL_MCP_URL ?? process.env.CENTRAL_MCP_URL ?? 'http://localhost:4002/mcp'
+    if (!token) {
+      return { ok: false, via: 'unconfigured', reason: `central-mcp token not set (var=${tokenVar})`, format: 'email' }
+    }
+
+    const orgName = config.branding?.persona_name ?? input.profile
+    const who = input.who?.trim() || 'A customer'
+    const tokenStr = mintTakeoverToken(input.profile, input.threadId)
+    const takeoverUrl = tokenStr
+      ? `${takeoverBaseUrl()}/api/teambox/takeover?token=${encodeURIComponent(tokenStr)}`
+      : null
+
+    const rendered = renderActiveConversationEmail({
+      orgName,
+      who,
+      message: input.message,
+      channel: input.channel,
+      takeoverUrl,
+    })
+
+    // EMAIL format always — wrap the sender NAME into the verified address.
+    const senderName = config.lead_notifications.sender_name ?? `${orgName} conversation`
+    const from = senderName.includes('@') ? senderName : `${senderName} <leads@huminic.ai>`
+
+    const results = await Promise.all(
+      recipients.map((to) =>
+        sendViaResend({
+          central,
+          token,
+          to,
+          from,
+          subject: rendered.subject,
+          html: rendered.html,
+          text: rendered.text,
+        }),
+      ),
+    )
+    const anyOk = results.some((r) => r.ok)
+    if (anyOk) {
+      recordLeadNotify(input.profile, dedupeKey)
+      return {
+        ok: true,
+        via: 'resend',
+        external_id: results.find((r) => r.external_id)?.external_id ?? null,
+        format: 'email',
+      }
+    }
+    return { ...(results[0] ?? { ok: false, via: 'unconfigured' as const }), format: 'email' }
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : 'notifyActiveConversation threw'
+    console.warn(`[notifyActiveConversation] ${input.profile}: ${reason}`)
+    return { ok: false, via: 'failed', reason, format: 'email' }
+  }
 }

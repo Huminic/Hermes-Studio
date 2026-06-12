@@ -103,6 +103,7 @@ import { Route as WidgetDealerSlugDotjsRouteImport } from './routes/widget/deale
 import { Route as PProfileTabRouteImport } from './routes/p.$profile.$tab'
 import { Route as ConsoleProfileTabRouteImport } from './routes/console.$profile.$tab'
 import { Route as ApiWidgetsProfileRouteImport } from './routes/api/widgets/$profile'
+import { Route as ApiTeamboxTakeoverRouteImport } from './routes/api/teambox/takeover'
 import { Route as ApiTasksTaskIdRouteImport } from './routes/api/tasks/$taskId'
 import { Route as ApiSkillsUninstallRouteImport } from './routes/api/skills/uninstall'
 import { Route as ApiSkillsSettingsRouteImport } from './routes/api/skills/settings'
@@ -662,6 +663,11 @@ const ConsoleProfileTabRoute = ConsoleProfileTabRouteImport.update({
 const ApiWidgetsProfileRoute = ApiWidgetsProfileRouteImport.update({
   id: '/api/widgets/$profile',
   path: '/api/widgets/$profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTeamboxTakeoverRoute = ApiTeamboxTakeoverRouteImport.update({
+  id: '/api/teambox/takeover',
+  path: '/api/teambox/takeover',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiTasksTaskIdRoute = ApiTasksTaskIdRouteImport.update({
@@ -1274,6 +1280,7 @@ export interface FileRoutesByFullPath {
   '/api/skills/settings': typeof ApiSkillsSettingsRoute
   '/api/skills/uninstall': typeof ApiSkillsUninstallRoute
   '/api/tasks/$taskId': typeof ApiTasksTaskIdRouteWithChildren
+  '/api/teambox/takeover': typeof ApiTeamboxTakeoverRoute
   '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
   '/console/$profile/$tab': typeof ConsoleProfileTabRoute
   '/p/$profile/$tab': typeof PProfileTabRoute
@@ -1459,6 +1466,7 @@ export interface FileRoutesByTo {
   '/api/skills/settings': typeof ApiSkillsSettingsRoute
   '/api/skills/uninstall': typeof ApiSkillsUninstallRoute
   '/api/tasks/$taskId': typeof ApiTasksTaskIdRouteWithChildren
+  '/api/teambox/takeover': typeof ApiTeamboxTakeoverRoute
   '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
   '/console/$profile/$tab': typeof ConsoleProfileTabRoute
   '/p/$profile/$tab': typeof PProfileTabRoute
@@ -1646,6 +1654,7 @@ export interface FileRoutesById {
   '/api/skills/settings': typeof ApiSkillsSettingsRoute
   '/api/skills/uninstall': typeof ApiSkillsUninstallRoute
   '/api/tasks/$taskId': typeof ApiTasksTaskIdRouteWithChildren
+  '/api/teambox/takeover': typeof ApiTeamboxTakeoverRoute
   '/api/widgets/$profile': typeof ApiWidgetsProfileRoute
   '/console/$profile/$tab': typeof ConsoleProfileTabRoute
   '/p/$profile/$tab': typeof PProfileTabRoute
@@ -1834,6 +1843,7 @@ export interface FileRouteTypes {
     | '/api/skills/settings'
     | '/api/skills/uninstall'
     | '/api/tasks/$taskId'
+    | '/api/teambox/takeover'
     | '/api/widgets/$profile'
     | '/console/$profile/$tab'
     | '/p/$profile/$tab'
@@ -2019,6 +2029,7 @@ export interface FileRouteTypes {
     | '/api/skills/settings'
     | '/api/skills/uninstall'
     | '/api/tasks/$taskId'
+    | '/api/teambox/takeover'
     | '/api/widgets/$profile'
     | '/console/$profile/$tab'
     | '/p/$profile/$tab'
@@ -2205,6 +2216,7 @@ export interface FileRouteTypes {
     | '/api/skills/settings'
     | '/api/skills/uninstall'
     | '/api/tasks/$taskId'
+    | '/api/teambox/takeover'
     | '/api/widgets/$profile'
     | '/console/$profile/$tab'
     | '/p/$profile/$tab'
@@ -2375,6 +2387,7 @@ export interface RootRouteChildren {
   ApiPublicWidgetChatRoute: typeof ApiPublicWidgetChatRoute
   ApiPublicWidgetFormRoute: typeof ApiPublicWidgetFormRoute
   ApiTasksTaskIdRoute: typeof ApiTasksTaskIdRouteWithChildren
+  ApiTeamboxTakeoverRoute: typeof ApiTeamboxTakeoverRoute
   ApiWidgetsProfileRoute: typeof ApiWidgetsProfileRoute
   WidgetDealerSlugDotjsRoute: typeof WidgetDealerSlugDotjsRoute
   ApiAgentMigrationsIndexRoute: typeof ApiAgentMigrationsIndexRoute
@@ -3067,6 +3080,13 @@ declare module '@tanstack/react-router' {
       path: '/api/widgets/$profile'
       fullPath: '/api/widgets/$profile'
       preLoaderRoute: typeof ApiWidgetsProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/teambox/takeover': {
+      id: '/api/teambox/takeover'
+      path: '/api/teambox/takeover'
+      fullPath: '/api/teambox/takeover'
+      preLoaderRoute: typeof ApiTeamboxTakeoverRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/tasks/$taskId': {
@@ -4071,6 +4091,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWidgetChatRoute: ApiPublicWidgetChatRoute,
   ApiPublicWidgetFormRoute: ApiPublicWidgetFormRoute,
   ApiTasksTaskIdRoute: ApiTasksTaskIdRouteWithChildren,
+  ApiTeamboxTakeoverRoute: ApiTeamboxTakeoverRoute,
   ApiWidgetsProfileRoute: ApiWidgetsProfileRoute,
   WidgetDealerSlugDotjsRoute: WidgetDealerSlugDotjsRoute,
   ApiAgentMigrationsIndexRoute: ApiAgentMigrationsIndexRoute,

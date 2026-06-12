@@ -29,7 +29,10 @@ import {
   ensureAutonomousSubscription,
   maybeAutonomousReply,
 } from '../../../server/agent-autonomous-reply'
-import { notifyNewLead } from '../../../server/lead-notifications'
+import {
+  notifyNewLead,
+  notifyActiveConversation,
+} from '../../../server/lead-notifications'
 import { readStudioConfig } from '../../../server/studio-config'
 
 function readSecret(profile: string): string | null {
@@ -172,6 +175,23 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
             receiver,
           },
         })
+        // Slice H — conversation became ACTIVE (customer replied on an EXISTING
+        // thread, NOT the first inbound). Gated by the per-profile DEFAULT-OFF
+        // `notifications.active_conversation_alert` flag and deduped once per
+        // thread. EMAIL format with a takeover button. Best-effort; never blocks.
+        if (!created) {
+          try {
+            await notifyActiveConversation({
+              profile,
+              threadId: thread.id,
+              channel: 'sms',
+              who: sender,
+              message: text,
+            })
+          } catch {
+            // non-fatal
+          }
+        }
         // Move the store's comms agent onto this thread (no-op unless the store
         // enabled autonomous reply; actual send still gated by OUTBOUND_LIVE_ENABLED).
         try {

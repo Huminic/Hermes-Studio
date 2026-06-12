@@ -9,7 +9,10 @@ import {
   getOrCreateThreadEx,
   upsertContact,
 } from '../../../server/messaging-hub-store'
-import { notifyNewLead } from '../../../server/lead-notifications'
+import {
+  notifyNewLead,
+  notifyActiveConversation,
+} from '../../../server/lead-notifications'
 import { VENDOR_GUARDRAIL, scrubVendorTerms } from '../../../server/dealer-safe'
 
 const HERMES_URL = process.env.HERMES_API_URL || 'http://hermes-agent:8642'
@@ -196,6 +199,20 @@ export const Route = createFileRoute('/api/public/widget-chat')({
                 slug: widget.slug,
                 session_id: sessionId,
               },
+            })
+          }
+          // Slice H — conversation became ACTIVE (visitor sent a follow-on on
+          // an EXISTING chat thread, NOT the first message). Gated by the
+          // per-profile DEFAULT-OFF `notifications.active_conversation_alert`
+          // flag, deduped once per thread, EMAIL format with a takeover button.
+          // Best-effort; never blocks the visitor's reply.
+          if (!ex.created && lastUser && lastUser.role !== 'assistant') {
+            await notifyActiveConversation({
+              profile: widget.profile,
+              threadId: ex.thread.id,
+              channel: 'chat',
+              who: persona,
+              message: String(lastUser.content ?? ''),
             })
           }
           if (ex.created) {
