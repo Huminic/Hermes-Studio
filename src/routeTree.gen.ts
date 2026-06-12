@@ -16,6 +16,7 @@ import { Route as StoresRouteImport } from './routes/stores'
 import { Route as SkillsRouteImport } from './routes/skills'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SessionHistoryRouteImport } from './routes/session-history'
+import { Route as ReskinPreviewRouteImport } from './routes/reskin-preview'
 import { Route as ResetRouteImport } from './routes/reset'
 import { Route as ProfilesRouteImport } from './routes/profiles'
 import { Route as PluginsRouteImport } from './routes/plugins'
@@ -226,6 +227,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const SessionHistoryRoute = SessionHistoryRouteImport.update({
   id: '/session-history',
   path: '/session-history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReskinPreviewRoute = ReskinPreviewRouteImport.update({
+  id: '/reskin-preview',
+  path: '/reskin-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetRoute = ResetRouteImport.update({
@@ -1153,6 +1159,7 @@ export interface FileRoutesByFullPath {
   '/plugins': typeof PluginsRoute
   '/profiles': typeof ProfilesRoute
   '/reset': typeof ResetRoute
+  '/reskin-preview': typeof ReskinPreviewRoute
   '/session-history': typeof SessionHistoryRoute
   '/settings': typeof SettingsRouteWithChildren
   '/skills': typeof SkillsRoute
@@ -1338,6 +1345,7 @@ export interface FileRoutesByTo {
   '/plugins': typeof PluginsRoute
   '/profiles': typeof ProfilesRoute
   '/reset': typeof ResetRoute
+  '/reskin-preview': typeof ReskinPreviewRoute
   '/session-history': typeof SessionHistoryRoute
   '/skills': typeof SkillsRoute
   '/stores': typeof StoresRoute
@@ -1523,6 +1531,7 @@ export interface FileRoutesById {
   '/plugins': typeof PluginsRoute
   '/profiles': typeof ProfilesRoute
   '/reset': typeof ResetRoute
+  '/reskin-preview': typeof ReskinPreviewRoute
   '/session-history': typeof SessionHistoryRoute
   '/settings': typeof SettingsRouteWithChildren
   '/skills': typeof SkillsRoute
@@ -1710,6 +1719,7 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/profiles'
     | '/reset'
+    | '/reskin-preview'
     | '/session-history'
     | '/settings'
     | '/skills'
@@ -1895,6 +1905,7 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/profiles'
     | '/reset'
+    | '/reskin-preview'
     | '/session-history'
     | '/skills'
     | '/stores'
@@ -2079,6 +2090,7 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/profiles'
     | '/reset'
+    | '/reskin-preview'
     | '/session-history'
     | '/settings'
     | '/skills'
@@ -2265,6 +2277,7 @@ export interface RootRouteChildren {
   PluginsRoute: typeof PluginsRoute
   ProfilesRoute: typeof ProfilesRoute
   ResetRoute: typeof ResetRoute
+  ReskinPreviewRoute: typeof ReskinPreviewRoute
   SessionHistoryRoute: typeof SessionHistoryRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   SkillsRoute: typeof SkillsRoute
@@ -2445,6 +2458,13 @@ declare module '@tanstack/react-router' {
       path: '/session-history'
       fullPath: '/session-history'
       preLoaderRoute: typeof SessionHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reskin-preview': {
+      id: '/reskin-preview'
+      path: '/reskin-preview'
+      fullPath: '/reskin-preview'
+      preLoaderRoute: typeof ReskinPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset': {
@@ -3953,6 +3973,7 @@ const rootRouteChildren: RootRouteChildren = {
   PluginsRoute: PluginsRoute,
   ProfilesRoute: ProfilesRoute,
   ResetRoute: ResetRoute,
+  ReskinPreviewRoute: ReskinPreviewRoute,
   SessionHistoryRoute: SessionHistoryRoute,
   SettingsRoute: SettingsRouteWithChildren,
   SkillsRoute: SkillsRoute,
