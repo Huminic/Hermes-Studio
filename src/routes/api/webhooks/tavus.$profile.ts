@@ -112,6 +112,7 @@ function buildLeadFromSession(event: TavusEvent): AdfLead {
     vendor: { name: 'Video call' },
     // Hosted recording → dealer notification (ADF comments + email link).
     recording_url: props.recording_url,
+    recording_kind: 'video',
   }
 }
 

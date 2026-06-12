@@ -126,7 +126,12 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
         // alert the dealer (ADF for Serra, plain email for Columbia). Reusing an
         // open thread means this is a reply in an ongoing conversation; do NOT
         // re-notify (avoids spamming the BDC). Best-effort; never blocks intake.
-        let notified: { ok: boolean; via?: string } = { ok: false, via: 'skipped' }
+        let notified: {
+          ok: boolean
+          via?: string
+          external_id?: string | null
+          reason?: string
+        } = { ok: false, via: 'skipped' }
         if (created) {
           notified = await notifyNewLead({
             profile,
@@ -135,6 +140,23 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
             phone: sender,
             message: text,
             subjectPrefix: 'Inbound SMS',
+          })
+          // Annotate the thread with the delivery outcome (system-role — never
+          // rendered to the customer; diagnostics live in metadata, not
+          // content). Only on the new-lead path. Parity with voice/video.
+          appendMessage({
+            thread_id: thread.id,
+            direction: 'outbound',
+            role: 'system',
+            channel: 'sms',
+            content: `Lead notification: ${notified.ok ? 'sent' : 'not delivered'}`,
+            author: 'system',
+            metadata: {
+              via: 'lead-notification',
+              delivery: notified.via,
+              external_id: notified.external_id ?? null,
+              reason: notified.reason ?? null,
+            },
           })
         }
         const inbound = appendMessage({

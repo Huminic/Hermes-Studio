@@ -432,6 +432,13 @@ export function renderDealerNotificationEmail(input: {
     label: d.label,
     value: escapeHtml(d.value),
   }))
+  // Media wording matches the channel: video leads say "Video recording" /
+  // "Watch …"; everything else keeps the audio wording.
+  const isVideo = lead.recording_kind === 'video'
+  const recordingLabel = isVideo ? 'Video recording' : 'Call recording'
+  const recordingAnchor = isVideo
+    ? 'Watch the video recording'
+    : 'Listen to the call recording'
   if (lead.recording_url) {
     const safeUrl = escapeHtml(lead.recording_url)
     // Only render a clickable anchor for http(s) URLs (the provider always
@@ -439,9 +446,9 @@ export function renderDealerNotificationEmail(input: {
     // non-http scheme (e.g. javascript:) can never become a live href.
     const isHttp = /^https?:\/\//i.test(lead.recording_url)
     cardDetails.push({
-      label: 'Call recording',
+      label: recordingLabel,
       value: isHttp
-        ? `<a href="${safeUrl}" style="color: ${BRAND_GRADIENT_START}; text-decoration: none;">Listen to the call recording</a>`
+        ? `<a href="${safeUrl}" style="color: ${BRAND_GRADIENT_START}; text-decoration: none;">${recordingAnchor}</a>`
         : safeUrl,
     })
   }
@@ -462,7 +469,7 @@ export function renderDealerNotificationEmail(input: {
     `New lead — ${input.orgName}`,
     '',
     ...details.map((d) => `${d.label}: ${d.value}`),
-    ...(lead.recording_url ? [`Call recording: ${lead.recording_url}`] : []),
+    ...(lead.recording_url ? [`${recordingLabel}: ${lead.recording_url}`] : []),
   ].join('\n')
   return { subject, html, text }
 }
@@ -680,6 +687,29 @@ export async function dispatchLeadNotification(input: {
 }
 
 /**
+ * Map a loose channel label to a clean, dealer-facing "Source" string (the
+ * email "Source" row + ADF `<vendorname>`). NEVER returns the raw profile slug
+ * — an unrecognized channel falls back to a Title-Cased version of the channel.
+ * Mirrors the matching style of {@link eventForChannel}.
+ */
+export function sourceLabelForChannel(channel: string): string {
+  const c = channel.toLowerCase()
+  if (c.includes('sms') || c.includes('text')) return 'Text message'
+  if (c.includes('chat')) return 'Website chat'
+  if (c.includes('form')) return 'Website form'
+  if (c.includes('call-back') || c.includes('callback')) return 'Call-back request'
+  if (c.includes('voice') || c.includes('phone') || c.includes('call'))
+    return 'Phone call'
+  if (c.includes('video')) return 'Video call'
+  return channel
+    .trim()
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ')
+}
+
+/**
  * Convenience wrapper for the inbound lead paths (SMS webhook, public
  * widget-chat, generic inbound, form, voice). Builds an {@link AdfLead} from
  * loose contact fields and fires {@link notifyDealer} best-effort: a notify
@@ -720,7 +750,9 @@ export async function notifyNewLead(input: {
     },
     vehicles: [{ interest: 'unknown' }],
     comments: input.message ?? undefined,
-    vendor: { name: input.profile },
+    // Dealer-facing "Source" — a clean channel label, NEVER the profile slug
+    // (which would leak the internal account name to the dealer's CRM).
+    vendor: { name: sourceLabelForChannel(input.channel) },
   }
   return dispatchLeadNotification({
     profile: input.profile,

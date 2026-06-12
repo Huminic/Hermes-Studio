@@ -116,6 +116,24 @@ export const Route = createFileRoute('/api/public/widget-form')({
           cooldownKey: email ?? phone ?? handle,
         })
 
+        // Annotate the thread with the delivery outcome (system-role — never
+        // rendered to the customer; diagnostics live in metadata, not content).
+        // Parity with the voice/video webhooks.
+        appendMessage({
+          thread_id: thread.id,
+          direction: 'outbound',
+          role: 'system',
+          channel: 'form',
+          content: `Lead notification: ${notified.ok ? 'sent' : 'not delivered'}`,
+          author: 'system',
+          metadata: {
+            via: 'lead-notification',
+            delivery: notified.via,
+            external_id: notified.external_id ?? null,
+            reason: notified.reason ?? null,
+          },
+        })
+
         return json({ ok: true, thread_id: thread.id, notified: notified.ok, via: notified.via })
       },
     },

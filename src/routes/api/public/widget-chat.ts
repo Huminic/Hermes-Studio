@@ -199,7 +199,7 @@ export const Route = createFileRoute('/api/public/widget-chat')({
             })
           }
           if (ex.created) {
-            await notifyNewLead({
+            const notified = await notifyNewLead({
               profile: widget.profile,
               channel: 'website chat',
               contact_handle: chatHandle,
@@ -208,6 +208,23 @@ export const Route = createFileRoute('/api/public/widget-chat')({
               // Anonymous sessions rotate the handle, so key the cooldown on the
               // visitor IP — one bot/visitor can't blast the BDC across sessions.
               cooldownKey: `chat:${widget.profile}:${clientKey(request)}`,
+            })
+            // Annotate the thread with the delivery outcome (system-role —
+            // never rendered to the customer; diagnostics live in metadata).
+            // Parity with the voice/video webhooks.
+            appendMessage({
+              thread_id: ex.thread.id,
+              direction: 'outbound',
+              role: 'system',
+              channel: 'chat',
+              content: `Lead notification: ${notified.ok ? 'sent' : 'not delivered'}`,
+              author: 'system',
+              metadata: {
+                via: 'lead-notification',
+                delivery: notified.via,
+                external_id: notified.external_id ?? null,
+                reason: notified.reason ?? null,
+              },
             })
           }
         } catch {

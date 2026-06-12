@@ -110,6 +110,7 @@ function buildLeadFromCall(call: VapiCall, event: VapiEvent): AdfLead {
     vendor: { name: 'Phone call' },
     // Hosted call recording → dealer notification (ADF comments + email link).
     recording_url: event.recordingUrl ?? call.recordingUrl,
+    recording_kind: 'audio',
   }
 }
 

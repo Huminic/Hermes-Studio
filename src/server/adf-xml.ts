@@ -49,6 +49,13 @@ export type AdfLead = {
    * rendered as a clickable link in the email card.
    */
   recording_url?: string
+  /**
+   * Media type of `recording_url`, so the dealer-facing wording matches the
+   * channel: voice → 'audio' ("Call recording" / "Listen to …"), video →
+   * 'video' ("Video recording" / "Watch …"). Defaults to audio wording when
+   * absent.
+   */
+  recording_kind?: 'audio' | 'video'
 }
 
 /**
@@ -265,9 +272,12 @@ export function buildAdfXml(lead: AdfLead): string {
   }
   lines.push('      </contact>')
   // Fold the hosted recording link into <comments> so any ADF-consuming DMS
-  // surfaces it (no standard ADF element exists for a recording URL).
+  // surfaces it (no standard ADF element exists for a recording URL). The label
+  // matches the media type so a video lead doesn't read as a "Call recording".
+  const recordingLabel =
+    lead.recording_kind === 'video' ? 'Video recording' : 'Call recording'
   const commentsText = lead.recording_url
-    ? [lead.comments, `Call recording: ${lead.recording_url}`]
+    ? [lead.comments, `${recordingLabel}: ${lead.recording_url}`]
         .filter(Boolean)
         .join('\n\n')
     : lead.comments

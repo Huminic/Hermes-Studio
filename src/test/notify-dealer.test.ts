@@ -224,6 +224,49 @@ describe('dispatchLeadNotification — multi-recipient routing fan-out (Columbia
   })
 })
 
+describe('notifyNewLead — dealer-facing Source label (no slug leak)', () => {
+  it('renders a clean channel Source ("Website form"), never the profile slug', async () => {
+    writeStudioYaml('serra-honda', [
+      'branding:',
+      '  persona_name: Serra Honda',
+      'notifications:',
+      '  lead_format: email',
+      '  lead_recipient: leads@serra.example.com',
+    ])
+    const store = await import('@/server/messaging-hub-store')
+    store._resetForTests()
+    const { notifyNewLead } = await import('@/server/lead-notifications')
+    const result = await notifyNewLead({
+      profile: 'serra-honda',
+      channel: 'website form',
+      event: 'website_form',
+      contact_handle: 'lead@example.com',
+      name: 'Pat Buyer',
+      email: 'lead@example.com',
+      subjectPrefix: 'Website form',
+    })
+    expect(result.ok).toBe(true)
+    const args = lastResendArgs(globalThis.fetch as ReturnType<typeof vi.fn>)
+    // The email "Source" row carries the clean channel label, NOT the slug.
+    expect(args.html).toContain('Website form')
+    expect(args.html).not.toContain('serra-honda')
+    expect(args.text).toContain('Source: Website form')
+    expect(args.text).not.toContain('serra-honda')
+  })
+
+  it('sourceLabelForChannel maps known channels and Title-Cases the rest', async () => {
+    const { sourceLabelForChannel } = await import('@/server/lead-notifications')
+    expect(sourceLabelForChannel('SMS')).toBe('Text message')
+    expect(sourceLabelForChannel('website chat')).toBe('Website chat')
+    expect(sourceLabelForChannel('website form')).toBe('Website form')
+    expect(sourceLabelForChannel('call-back request')).toBe('Call-back request')
+    expect(sourceLabelForChannel('voice')).toBe('Phone call')
+    expect(sourceLabelForChannel('video')).toBe('Video call')
+    // Unknown channel → Title-Cased, never a raw slug.
+    expect(sourceLabelForChannel('partner_referral')).toBe('Partner Referral')
+  })
+})
+
 describe('Vapi end-of-call webhook → notifyDealer', () => {
   it('invokes notifyDealer once with the request profile on end-of-call', async () => {
     writeStudioYaml('serra-honda', [
@@ -402,6 +445,44 @@ describe('renderDealerNotificationEmail — pure renderer', () => {
     const reparsed = parseAdfXml(out.text)
     expect(reparsed).not.toBeNull()
     expect(reparsed?.comments).toBe('Call recording: https://rec.example.com/abc.mp3')
+  })
+
+  it('video recording_kind renders "Watch the video recording" + "Video recording:" wording', async () => {
+    const { renderDealerNotificationEmail } = await import(
+      '@/server/lead-notifications'
+    )
+    const out = renderDealerNotificationEmail({
+      format: 'email',
+      lead: {
+        ...LEAD_NAMED,
+        recording_url: 'https://rec.example.com/vid.mp4',
+        recording_kind: 'video',
+      },
+      orgName: 'Ford of Columbia',
+    })
+    expect(out.html).toContain('href="https://rec.example.com/vid.mp4"')
+    expect(out.html).toContain('Watch the video recording')
+    expect(out.html).not.toContain('Listen to the call recording')
+    expect(out.text).toContain('Video recording: https://rec.example.com/vid.mp4')
+    expect(out.text).not.toContain('Call recording:')
+  })
+
+  it('audio path still says "Listen to the call recording" / "Call recording:"', async () => {
+    const { renderDealerNotificationEmail } = await import(
+      '@/server/lead-notifications'
+    )
+    const out = renderDealerNotificationEmail({
+      format: 'email',
+      lead: {
+        ...LEAD_NAMED,
+        recording_url: 'https://rec.example.com/abc.mp3',
+        recording_kind: 'audio',
+      },
+      orgName: 'Ford of Columbia',
+    })
+    expect(out.html).toContain('Listen to the call recording')
+    expect(out.html).not.toContain('Watch the video recording')
+    expect(out.text).toContain('Call recording: https://rec.example.com/abc.mp3')
   })
 
   it('email format renders a non-http recording value as escaped text, never a live href', async () => {

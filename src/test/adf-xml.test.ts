@@ -120,4 +120,29 @@ describe('buildAdfXml + parseAdfXml round-trip', () => {
     expect(reparsed!.vehicles[0].make).toBe('Toyota')
     expect(reparsed!.vehicles[0].interest).toBe('buy')
   })
+
+  it('folds a video recording link into <comments> with "Video recording:" wording', () => {
+    const xml = buildAdfXml({
+      customer: { full_name: 'Vid Lead', email: 'vid@example.com' },
+      vehicles: [{ interest: 'unknown' as const }],
+      comments: 'Asked about availability',
+      recording_url: 'https://rec.example.com/vid.mp4',
+      recording_kind: 'video',
+    })
+    expect(xml).toContain('Video recording: https://rec.example.com/vid.mp4')
+    expect(xml).not.toContain('Call recording:')
+    const reparsed = parseAdfXml(xml)
+    expect(reparsed?.comments).toContain('Video recording: https://rec.example.com/vid.mp4')
+    expect(reparsed?.comments).toContain('Asked about availability')
+  })
+
+  it('defaults to "Call recording:" wording when recording_kind is absent', () => {
+    const xml = buildAdfXml({
+      customer: { full_name: 'Aud Lead' },
+      vehicles: [{ interest: 'unknown' as const }],
+      recording_url: 'https://rec.example.com/abc.mp3',
+    })
+    expect(xml).toContain('Call recording: https://rec.example.com/abc.mp3')
+    expect(xml).not.toContain('Video recording:')
+  })
 })
