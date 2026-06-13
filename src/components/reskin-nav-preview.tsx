@@ -106,7 +106,7 @@ const NAV_GROUPS: Array<NavCategory> = [
     label: 'Storefront',
     icon: Store01Icon,
     items: [
-      { id: 'tools', label: 'Widgets', icon: GridIcon, hint: '/p/$profile/tools' },
+      { id: 'tools', label: 'StoreFront', icon: GridIcon, hint: '/p/$profile/tools' },
     ],
   },
 ]

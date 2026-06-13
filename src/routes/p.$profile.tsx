@@ -50,7 +50,7 @@ async function fetchAuthSession(): Promise<AuthSession> {
 const TABS: Array<{ id: string; label: string; menuKey: keyof StudioConfig['menu'] }> = [
   { id: 'chat', label: 'Agents', menuKey: 'chat' },
   { id: 'knowledge', label: 'Knowledge', menuKey: 'knowledge' },
-  { id: 'tools', label: 'Widgets', menuKey: 'tools' },
+  { id: 'tools', label: 'StoreFront', menuKey: 'tools' },
   { id: 'data', label: 'Data', menuKey: 'data' },
   { id: 'dashboard', label: 'Dashboard', menuKey: 'dashboard' },
   { id: 'comms', label: 'Teambox', menuKey: 'comms' },

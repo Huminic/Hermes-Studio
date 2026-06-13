@@ -158,7 +158,7 @@ function StorefrontTabRoute() {
   }> = [
     { id: 'chat', label: 'Agents', icon: Robot01Icon },
     { id: 'knowledge', label: 'Knowledge', icon: LibraryIcon },
-    { id: 'tools', label: 'Widgets', icon: GridIcon },
+    { id: 'tools', label: 'StoreFront', icon: GridIcon },
     { id: 'data', label: 'Data', icon: Analytics01Icon },
     { id: 'dashboard', label: 'Dashboard', icon: Chart01Icon },
     { id: 'comms', label: 'Teambox', icon: InboxIcon },
