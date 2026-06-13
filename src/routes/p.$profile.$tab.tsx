@@ -7,6 +7,7 @@ import {
   GridIcon,
   InboxIcon,
   LibraryIcon,
+  Logout03Icon,
   Megaphone01Icon,
   Notification03Icon,
   Robot01Icon,
@@ -89,8 +90,19 @@ async function postLogin(
   return (await res.json()) as LoginResponse
 }
 
+async function postLogout(): Promise<{ ok: boolean }> {
+  const res = await fetch('/api/auth/logout', {
+    method: 'POST',
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return (await res.json()) as { ok: boolean }
+}
+
 function StorefrontTabRoute() {
   const { profile, tab } = Route.useParams()
+  const queryClient = useQueryClient()
+  const router = useRouter()
 
   const configQuery = useQuery({
     queryKey: ['studio-config', profile],
@@ -106,6 +118,17 @@ function StorefrontTabRoute() {
 
   const config = configQuery.data?.config ?? defaultStudioConfig(profile)
   const session = authQuery.data
+
+  const logoutMutation = useMutation({
+    mutationFn: postLogout,
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['auth-session'] })
+      router.invalidate()
+      if (typeof window !== 'undefined') {
+        window.location.href = `/p/${encodeURIComponent(profile)}`
+      }
+    },
+  })
 
   // Gate: customer-admin matching THIS profile, OR scoped partner admin with this profile in scope, OR Studio admin (super-user).
   const allowed =
@@ -166,10 +189,6 @@ function StorefrontTabRoute() {
     { id: 'notifications', label: 'Notifications', icon: Notification03Icon },
   ]
 
-  // Display label for the active section (Nexxus header shows brand once + section).
-  const sectionLabel =
-    tabsList.find((t) => t.id === tab)?.label ?? tab
-
   return (
     <div className="flex min-h-dvh bg-white font-sans text-slate-900">
       <aside className="flex w-[72px] shrink-0 flex-col items-center gap-1 border-r border-slate-200 bg-slate-50 py-3">
@@ -210,16 +229,34 @@ function StorefrontTabRoute() {
             </Link>
           )
         })}
+        <div className="mt-auto flex w-full border-t border-slate-200 pt-2">
+          <button
+            type="button"
+            onClick={() => logoutMutation.mutate()}
+            disabled={logoutMutation.isPending}
+            className="group relative flex w-full flex-col items-center gap-1 px-1 py-2.5 text-[10px] text-slate-500 transition-colors hover:text-slate-900 disabled:opacity-50"
+            title="Log out"
+            aria-label="Log out"
+          >
+            <HugeiconsIcon
+              icon={Logout03Icon}
+              size={22}
+              strokeWidth={1.8}
+              color="currentColor"
+            />
+            <span className="leading-tight">Log out</span>
+          </button>
+        </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4">
-          <div className="flex items-baseline gap-2">
-            <span className="text-sm font-semibold text-slate-900">
+          <div className="flex min-w-0 items-baseline gap-2">
+            <span className="truncate text-sm font-semibold text-slate-900">
               {config.branding.persona_name}
             </span>
-            <span className="text-slate-300">·</span>
-            <span className="text-sm text-slate-500">{sectionLabel}</span>
+            <span className="text-slate-300">|</span>
+            <span className="text-sm text-slate-500">Workspace</span>
           </div>
         </header>
 

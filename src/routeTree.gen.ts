@@ -155,6 +155,7 @@ import { Route as ApiBrainReadinessRouteImport } from './routes/api/brain/readin
 import { Route as ApiBrainAssumptionsRouteImport } from './routes/api/brain/assumptions'
 import { Route as ApiAuthResetRequestRouteImport } from './routes/api/auth.reset-request'
 import { Route as ApiAuthResetConfirmRouteImport } from './routes/api/auth.reset-confirm'
+import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth.logout'
 import { Route as ApiArtifactsArtifactIdRouteImport } from './routes/api/artifacts/$artifactId'
 import { Route as ApiAgentsAgentIdRouteImport } from './routes/api/agents/$agentId'
 import { Route as ApiCustomerWidgetsIndexRouteImport } from './routes/api/customer/widgets/index'
@@ -928,6 +929,11 @@ const ApiAuthResetConfirmRoute = ApiAuthResetConfirmRouteImport.update({
   path: '/reset-confirm',
   getParentRoute: () => ApiAuthRoute,
 } as any)
+const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
+  id: '/logout',
+  path: '/logout',
+  getParentRoute: () => ApiAuthRoute,
+} as any)
 const ApiArtifactsArtifactIdRoute = ApiArtifactsArtifactIdRouteImport.update({
   id: '/api/artifacts/$artifactId',
   path: '/api/artifacts/$artifactId',
@@ -1229,6 +1235,7 @@ export interface FileRoutesByFullPath {
   '/w/': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/reset-confirm': typeof ApiAuthResetConfirmRoute
   '/api/auth/reset-request': typeof ApiAuthResetRequestRoute
   '/api/brain/assumptions': typeof ApiBrainAssumptionsRoute
@@ -1415,6 +1422,7 @@ export interface FileRoutesByTo {
   '/w': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/reset-confirm': typeof ApiAuthResetConfirmRoute
   '/api/auth/reset-request': typeof ApiAuthResetRequestRoute
   '/api/brain/assumptions': typeof ApiBrainAssumptionsRoute
@@ -1603,6 +1611,7 @@ export interface FileRoutesById {
   '/w/': typeof WIndexRoute
   '/api/agents/$agentId': typeof ApiAgentsAgentIdRoute
   '/api/artifacts/$artifactId': typeof ApiArtifactsArtifactIdRouteWithChildren
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/reset-confirm': typeof ApiAuthResetConfirmRoute
   '/api/auth/reset-request': typeof ApiAuthResetRequestRoute
   '/api/brain/assumptions': typeof ApiBrainAssumptionsRoute
@@ -1792,6 +1801,7 @@ export interface FileRouteTypes {
     | '/w/'
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
+    | '/api/auth/logout'
     | '/api/auth/reset-confirm'
     | '/api/auth/reset-request'
     | '/api/brain/assumptions'
@@ -1978,6 +1988,7 @@ export interface FileRouteTypes {
     | '/w'
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
+    | '/api/auth/logout'
     | '/api/auth/reset-confirm'
     | '/api/auth/reset-request'
     | '/api/brain/assumptions'
@@ -2165,6 +2176,7 @@ export interface FileRouteTypes {
     | '/w/'
     | '/api/agents/$agentId'
     | '/api/artifacts/$artifactId'
+    | '/api/auth/logout'
     | '/api/auth/reset-confirm'
     | '/api/auth/reset-request'
     | '/api/brain/assumptions'
@@ -3446,6 +3458,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthResetConfirmRouteImport
       parentRoute: typeof ApiAuthRoute
     }
+    '/api/auth/logout': {
+      id: '/api/auth/logout'
+      path: '/logout'
+      fullPath: '/api/auth/logout'
+      preLoaderRoute: typeof ApiAuthLogoutRouteImport
+      parentRoute: typeof ApiAuthRoute
+    }
     '/api/artifacts/$artifactId': {
       id: '/api/artifacts/$artifactId'
       path: '/api/artifacts/$artifactId'
@@ -3741,11 +3760,13 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 )
 
 interface ApiAuthRouteChildren {
+  ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiAuthResetConfirmRoute: typeof ApiAuthResetConfirmRoute
   ApiAuthResetRequestRoute: typeof ApiAuthResetRequestRoute
 }
 
 const ApiAuthRouteChildren: ApiAuthRouteChildren = {
+  ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiAuthResetConfirmRoute: ApiAuthResetConfirmRoute,
   ApiAuthResetRequestRoute: ApiAuthResetRequestRoute,
 }

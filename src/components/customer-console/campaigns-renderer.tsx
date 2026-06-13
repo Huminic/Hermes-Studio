@@ -956,10 +956,13 @@ export function CustomerCampaignsRenderer(props: {
 
       {/* Audiences */}
       <div className="rounded-lg border border-slate-200 bg-white p-3">
-        <div className="text-xs font-semibold text-slate-600">Your lists</div>
+        <div className="text-xs font-semibold text-slate-600">
+          Saved audience lists
+        </div>
         {audiences.length === 0 ? (
           <div className="mt-1 text-xs text-slate-500">
-            No lists yet. Create a campaign or upload a .csv to build one.
+            No saved lists yet. Use New campaign, then upload a CSV or save a
+            filtered audience.
           </div>
         ) : (
           <ul className="mt-1 divide-y divide-slate-100 text-xs">

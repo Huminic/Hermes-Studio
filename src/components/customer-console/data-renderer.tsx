@@ -137,7 +137,9 @@ export function CustomerDataRenderer(props: {
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-5">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">Dashboard</h2>
+          <h2 className="text-lg font-semibold text-slate-900">
+            Data dashboard
+          </h2>
           <p className="text-xs text-slate-500">
             Your activity over the last {comms.window_days} days.
           </p>

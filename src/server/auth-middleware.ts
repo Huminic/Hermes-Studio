@@ -243,3 +243,7 @@ export function createSessionCookie(token: string): string {
   // maxAge: 30 days
   return `hermes-auth=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${30 * 24 * 60 * 60}`
 }
+
+export function createExpiredSessionCookie(): string {
+  return 'hermes-auth=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+}
