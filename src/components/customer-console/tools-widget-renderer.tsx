@@ -42,6 +42,7 @@ type ListResponse = {
 // both the live-demo gating and the per-widget status pill so the customer is
 // never shown a broken demo.
 const LIVE_MODES: ReadonlySet<WidgetMode> = new Set<WidgetMode>(['chat', 'form'])
+const UNIFIED_WIDGET_SLUG = '__unified_widget__'
 
 const MODE_LABEL: Record<WidgetMode, string> = {
   chat: 'Live chat',
@@ -74,7 +75,7 @@ export function CustomerToolsWidgetRenderer(props: {
 }) {
   const [widgets, setWidgets] = useState<Array<WidgetRow>>([])
   const [loadFailed, setLoadFailed] = useState(false)
-  const [activeSlug, setActiveSlug] = useState<string | null>(null)
+  const [activeSlug, setActiveSlug] = useState<string>(UNIFIED_WIDGET_SLUG)
   const [draft, setDraft] = useState<string>('')
   const [feedback, setFeedback] = useState<{
     kind: 'ok' | 'err' | 'warn'
@@ -97,7 +98,11 @@ export function CustomerToolsWidgetRenderer(props: {
       }
       setLoadFailed(false)
       setWidgets(j.widgets)
-      if (j.widgets.length > 0 && !activeSlug) {
+      if (
+        activeSlug !== UNIFIED_WIDGET_SLUG &&
+        j.widgets.length > 0 &&
+        !j.widgets.some((w) => w.slug === activeSlug)
+      ) {
         setActiveSlug(j.widgets[0].slug)
         setDraft(buildFromRow(j.widgets[0]))
       }
@@ -110,6 +115,7 @@ export function CustomerToolsWidgetRenderer(props: {
     void load()
   }, [load])
 
+  const isUnifiedActive = activeSlug === UNIFIED_WIDGET_SLUG
   const active = widgets.find((w) => w.slug === activeSlug) ?? null
 
   const save = useCallback(async () => {
@@ -169,23 +175,28 @@ export function CustomerToolsWidgetRenderer(props: {
     )
   }
 
-  if (widgets.length === 0) {
-    return (
-      <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center">
-        <div className="text-sm font-medium text-slate-900">
-          No widgets are set up yet.
-        </div>
-        <div className="mt-1 text-sm text-slate-600">
-          Your Huminic team can add chat, voice, video, and contact-form widgets
-          for your website.
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            setActiveSlug(UNIFIED_WIDGET_SLUG)
+            setFeedback(null)
+            setCopied(false)
+          }}
+          className={
+            'rounded-lg border px-3 py-2 text-left transition ' +
+            (isUnifiedActive
+              ? 'border-[#8b5cf6] bg-[#8b5cf6]/10'
+              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50')
+          }
+        >
+          <div className="text-sm font-semibold text-slate-900">
+            Unified Widget
+          </div>
+          <div className="text-xs text-slate-500">All-in-one launcher</div>
+        </button>
         {widgets.map((w) => {
           const isActive = w.slug === activeSlug
           return (
@@ -214,7 +225,28 @@ export function CustomerToolsWidgetRenderer(props: {
         })}
       </div>
 
-      {active && (
+      {isUnifiedActive && (
+        <UnifiedWidgetPanel
+          profile={props.profile}
+          settings={settings}
+          copied={copied}
+          setCopied={setCopied}
+        />
+      )}
+
+      {!isUnifiedActive && !active && (
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center">
+          <div className="text-sm font-medium text-slate-900">
+            No widgets are set up yet.
+          </div>
+          <div className="mt-1 text-sm text-slate-600">
+            Your Huminic team can add chat, voice, video, and contact-form
+            widgets for your website.
+          </div>
+        </div>
+      )}
+
+      {!isUnifiedActive && active && (
         <div className="grid gap-4 lg:grid-cols-[1fr_400px]">
           <section className="flex flex-col gap-4">
             <div className="rounded-lg border border-slate-200 bg-white p-4">
@@ -365,6 +397,100 @@ export function CustomerToolsWidgetRenderer(props: {
   )
 }
 
+function UnifiedWidgetPanel(props: {
+  profile: string
+  settings: StudioConfig['tools_widget']
+  copied: boolean
+  setCopied: (value: boolean) => void
+}) {
+  const origin = getPublicOrigin()
+  const embedSnippet = `<script async src="${origin}/widget/dealer/${props.profile}.js"></script>`
+  const publicPreviewUrl = `${origin}/p/${encodeURIComponent(props.profile)}`
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-[1fr_400px]">
+      <section className="flex flex-col gap-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
+          <div className="flex items-center gap-2">
+            <h3 className="text-base font-semibold text-slate-900">
+              Unified Widget
+            </h3>
+            <span className="rounded-full bg-[#3b82f6]/10 px-2 py-0.5 text-[10px] font-medium text-[#2563eb]">
+              Live
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-slate-600">
+            One launcher lets visitors choose Web Chat, Instant Call Back,
+            Contact Form, or Two-Way Video from the same website button.
+          </p>
+        </div>
+
+        {props.settings.show_embed_snippet && (
+          <div className="rounded-lg border border-slate-200 bg-white p-4">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-sm font-medium text-slate-900">
+                Add to your website
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  void navigator.clipboard?.writeText(embedSnippet)
+                  props.setCopied(true)
+                  window.setTimeout(() => props.setCopied(false), 2000)
+                }}
+                className="rounded-md bg-[#3b82f6] px-3 py-1 text-xs font-medium text-white hover:bg-[#2563eb]"
+              >
+                {props.copied ? 'Copied' : 'Copy code'}
+              </button>
+            </div>
+            <p className="mb-2 text-xs text-slate-500">
+              Paste this one line into your website where you want the launcher
+              to appear.
+            </p>
+            <pre className="overflow-x-auto rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800">
+              {embedSnippet}
+            </pre>
+          </div>
+        )}
+
+        {props.settings.show_live_demo && (
+          <div className="rounded-lg border border-slate-200 bg-white p-4">
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-sm font-medium text-slate-900">
+                Live demo
+              </span>
+              <a
+                href={publicPreviewUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs font-medium text-[#3b82f6] hover:underline"
+              >
+                Open in new tab
+              </a>
+            </div>
+            <p className="text-xs text-slate-500">
+              This uses the same unified launcher your website visitors will
+              see.
+            </p>
+          </div>
+        )}
+      </section>
+
+      {props.settings.show_live_demo && (
+        <aside className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+          <div className="mb-2 text-sm font-medium text-slate-900">Preview</div>
+          <iframe
+            title="Preview of Unified Widget"
+            srcDoc={buildUnifiedPreviewHtml(origin, props.profile)}
+            className="h-[480px] w-full rounded-md border border-slate-200 bg-white"
+            sandbox="allow-scripts allow-same-origin allow-forms"
+          />
+        </aside>
+      )}
+    </div>
+  )
+}
+
 function ModeBadge({ mode }: { mode: WidgetMode }) {
   const live = LIVE_MODES.has(mode)
   return (
@@ -379,6 +505,91 @@ function ModeBadge({ mode }: { mode: WidgetMode }) {
       {live ? 'Live' : 'Coming soon'}
     </span>
   )
+}
+
+function getPublicOrigin(): string {
+  if (typeof window === 'undefined' || !window.location?.origin) {
+    return 'https://studio.huminic.app'
+  }
+  return window.location.origin
+}
+
+function buildUnifiedPreviewHtml(origin: string, profile: string): string {
+  const widgetSrc = `${origin}/widget/dealer/${profile}.js`
+  const title = prettifySlug(profile)
+  return `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #0f172a;
+      background: #f8fafc;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f8fafc;
+    }
+    main {
+      box-sizing: border-box;
+      min-height: 100vh;
+      padding: 28px;
+    }
+    .preview-page {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 22px;
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+    }
+    .eyebrow {
+      margin: 0 0 8px;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      line-height: 1.2;
+    }
+    p {
+      margin: 0;
+      max-width: 28rem;
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="preview-page">
+      <p class="eyebrow">Website preview</p>
+      <h1>${escapeHtml(title)}</h1>
+      <p>The unified launcher appears in the corner of this preview, just like it will on the dealership website.</p>
+    </section>
+  </main>
+  <script async src="${escapeAttribute(widgetSrc)}"></script>
+</body>
+</html>`
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}
+
+function escapeAttribute(value: string): string {
+  return escapeHtml(value).replace(/"/g, '&quot;')
 }
 
 /** Drop a leading markdown "# Heading" line from the description preview. */
