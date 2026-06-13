@@ -838,7 +838,7 @@ function ChatSidebarComponent({
       kind: 'link',
       to: '/widgets',
       icon: Chat01Icon,
-      label: 'Widget',
+      label: 'StoreFront',
       active: isWidgetsActive,
     },
     {

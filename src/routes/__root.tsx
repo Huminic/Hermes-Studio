@@ -314,7 +314,8 @@ function RootRouteSwitch() {
     <>
       <GlobalShortcutListener />
       <TerminalShortcutListener />
-      <MobilePromptTrigger />
+      {/* WF-003: Mobile/Tailscale prompt disabled for launch. Manual access preserved via ?mobile-preview=1 query param. */}
+      {/* <MobilePromptTrigger /> */}
       <WorkspaceShell />
       <SearchModal />
       <OnboardingTour />

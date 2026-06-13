@@ -18,6 +18,7 @@ async function readJson<T>(url: string, init?: RequestInit): Promise<T> {
 export function WidgetsScreen() {
   const queryClient = useQueryClient()
   const [profile, setProfile] = useState('default')
+  const [activeTab, setActiveTab] = useState<'sales' | 'service' | 'contact' | 'unified'>('unified')
   const origin = typeof window === 'undefined' ? '' : window.location.origin
 
   const profilesQuery = useQuery({
@@ -148,6 +149,73 @@ export function WidgetsScreen() {
           {!profiles.length && <option value="default">default</option>}
         </select>
       </header>
+
+      {/* WF-004: Tab selector for different widget types */}
+      <div
+        className="flex gap-1 border-b px-6 pt-2"
+        style={{ borderColor: 'var(--theme-border)' }}
+      >
+        <button
+          className={`px-4 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'unified'
+              ? 'border-b-2 border-accent-500 text-accent-500'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+          style={
+            activeTab === 'unified'
+              ? { borderColor: 'var(--theme-accent)', color: 'var(--theme-accent)' }
+              : { color: 'var(--theme-muted)' }
+          }
+          onClick={() => setActiveTab('unified')}
+        >
+          Unified Widget
+        </button>
+        <button
+          className={`px-4 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'sales'
+              ? 'border-b-2 border-accent-500 text-accent-500'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+          style={
+            activeTab === 'sales'
+              ? { borderColor: 'var(--theme-accent)', color: 'var(--theme-accent)' }
+              : { color: 'var(--theme-muted)' }
+          }
+          onClick={() => setActiveTab('sales')}
+        >
+          Sales Live Chat
+        </button>
+        <button
+          className={`px-4 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'service'
+              ? 'border-b-2 border-accent-500 text-accent-500'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+          style={
+            activeTab === 'service'
+              ? { borderColor: 'var(--theme-accent)', color: 'var(--theme-accent)' }
+              : { color: 'var(--theme-muted)' }
+          }
+          onClick={() => setActiveTab('service')}
+        >
+          Service Live Chat
+        </button>
+        <button
+          className={`px-4 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'contact'
+              ? 'border-b-2 border-accent-500 text-accent-500'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+          style={
+            activeTab === 'contact'
+              ? { borderColor: 'var(--theme-accent)', color: 'var(--theme-accent)' }
+              : { color: 'var(--theme-muted)' }
+          }
+          onClick={() => setActiveTab('contact')}
+        >
+          Contact Form
+        </button>
+      </div>
 
       <main className="grid flex-1 gap-4 overflow-auto p-6 lg:grid-cols-[1.2fr_.8fr]">
         <section className="rounded-xl border p-5" style={{ borderColor: 'var(--theme-border)' }}>
