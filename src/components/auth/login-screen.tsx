@@ -170,17 +170,10 @@ export function LoginScreen() {
           </form>
         </div>
 
-        {/* Footer */}
+        {/* Footer — WF-001: neutral, Huminic-owned, unlinked (no third-party
+            repo link on the public pre-auth login surface). */}
         <p className="mt-6 text-center text-xs text-slate-400">
-          Powered by{' '}
-          <a
-            href="https://github.com/NousResearch/hermes-agent"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-300 hover:text-blue-200 transition-colors"
-          >
-            Huminic
-          </a>
+          Powered by Huminic
         </p>
       </div>
     </div>
