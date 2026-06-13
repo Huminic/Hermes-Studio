@@ -483,7 +483,7 @@ function UnifiedWidgetPanel(props: {
             title="Preview of Unified Widget"
             srcDoc={buildUnifiedPreviewHtml(origin, props.profile)}
             className="h-[480px] w-full rounded-md border border-slate-200 bg-white"
-            sandbox="allow-scripts allow-same-origin allow-forms"
+            sandbox="allow-scripts allow-forms"
           />
         </aside>
       )}
