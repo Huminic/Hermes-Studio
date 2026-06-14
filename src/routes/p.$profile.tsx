@@ -5,10 +5,7 @@ import {
   useRouterState,
 } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import {
-  defaultStudioConfig,
-  type StudioConfig,
-} from '@/lib/studio-config'
+import { defaultStudioConfig, type StudioConfig } from '@/lib/studio-config'
 import { UnifiedWidget } from '@/components/customer-console/unified-widget'
 
 export const Route = createFileRoute('/p/$profile')({
@@ -47,11 +44,14 @@ async function fetchAuthSession(): Promise<AuthSession> {
   return (await res.json()) as AuthSession
 }
 
-const TABS: Array<{ id: string; label: string; menuKey: keyof StudioConfig['menu'] }> = [
+const TABS: Array<{
+  id: string
+  label: string
+  menuKey: keyof StudioConfig['menu']
+}> = [
   { id: 'chat', label: 'Agents', menuKey: 'chat' },
-  { id: 'knowledge', label: 'Knowledge', menuKey: 'knowledge' },
+  { id: 'infostore', label: 'InfoStore', menuKey: 'infostore' },
   { id: 'tools', label: 'StoreFront', menuKey: 'tools' },
-  { id: 'data', label: 'Data', menuKey: 'data' },
   { id: 'dashboard', label: 'Dashboard', menuKey: 'dashboard' },
   { id: 'comms', label: 'Teambox', menuKey: 'comms' },
   { id: 'campaigns', label: 'Campaigns', menuKey: 'campaigns' },
@@ -64,7 +64,8 @@ function StorefrontLandingRoute() {
 
   // Only render landing chrome when on the landing path itself; child tab
   // routes render their own content (and their own auth gate).
-  const isLandingPath = pathname === `/p/${profile}` || pathname === `/p/${profile}/`
+  const isLandingPath =
+    pathname === `/p/${profile}` || pathname === `/p/${profile}/`
 
   const configQuery = useQuery({
     queryKey: ['studio-config', profile],
@@ -123,8 +124,8 @@ function StorefrontLandingRoute() {
           </h2>
           <p className="max-w-prose text-sm leading-relaxed text-slate-600">
             This is your store Workspace — the staff side of Huminic. Sign in to
-            manage your agents, conversations, widgets, dashboards, and
-            campaigns.
+            manage your agents, conversations, InfoStore, StoreFront,
+            dashboards, and campaigns.
           </p>
           <Link
             to="/p/$profile/$tab"
@@ -202,10 +203,12 @@ function tabBlurb(id: string): string {
   switch (id) {
     case 'chat':
       return 'Talk to your agents'
-    case 'knowledge':
-      return 'Edit your knowledge base, with safe-edit checks'
+    case 'infostore':
+      return 'Knowledge, data, and guardian hunches in one place'
     case 'tools':
       return 'Widget embed code, live demo, and tool config'
+    case 'knowledge':
+      return 'Edit your knowledge base, with safe-edit checks'
     case 'data':
       return 'Dashboards over your messaging, agents, and integrations'
     case 'dashboard':

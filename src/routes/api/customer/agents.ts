@@ -16,7 +16,10 @@ import {
   filterByVisibleAgents,
   listAgentsForProfile,
 } from '../../../server/customer-agents'
-import { isAuthorizedForProfile, resolveSession } from '../../../server/customer-auth'
+import {
+  isAuthorizedForProfile,
+  resolveSession,
+} from '../../../server/customer-auth'
 import { readStudioConfig } from '../../../server/studio-config'
 
 export const Route = createFileRoute('/api/customer/agents')({
@@ -44,10 +47,19 @@ export const Route = createFileRoute('/api/customer/agents')({
           roster,
           config.agent_picker.visible_agents,
         )
+        // WF-009: the Semantic Guardian (and its Knowledge/Data halves) governs
+        // the Information Store — it is NOT a selectable chat persona. Exclude
+        // guardian SOULs from the chat picker; InfoStore surfaces them as
+        // governance/status instead.
+        const GUARDIAN_ID =
+          /(semantic|knowledge|data)[-_ ]?guardian|^(ksg|dsg)$/i
+        const visibleAgents = filtered.agents.filter(
+          (a) => !GUARDIAN_ID.test(a.id) && !GUARDIAN_ID.test(a.name),
+        )
         return json({
           ok: true,
           profile: filtered.profile,
-          agents: filtered.agents.map((a) => ({
+          agents: visibleAgents.map((a) => ({
             id: a.id,
             name: a.name,
             summary: a.summary,

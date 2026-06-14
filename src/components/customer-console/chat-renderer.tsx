@@ -53,6 +53,18 @@ function roleLabel(a: CustomerAgent): string | null {
   return s
 }
 
+function isGovernanceAgent(a: CustomerAgent): boolean {
+  const text = `${a.id} ${a.name} ${a.summary} ${a.scope ?? ''}`.toLowerCase()
+  return (
+    text.includes('semantic guardian') ||
+    text.includes('knowledge semantic guardian') ||
+    text.includes('data semantic guardian') ||
+    text.includes('data-governor') ||
+    text.includes('knowledge-governor') ||
+    text.includes('guardian')
+  )
+}
+
 export function CustomerChatRenderer(props: {
   profile: string
   config: StudioConfig
@@ -69,10 +81,9 @@ export function CustomerChatRenderer(props: {
 
   useEffect(() => {
     let cancelled = false
-    fetch(
-      `/api/customer/agents?profile=${encodeURIComponent(props.profile)}`,
-      { credentials: 'include' },
-    )
+    fetch(`/api/customer/agents?profile=${encodeURIComponent(props.profile)}`, {
+      credentials: 'include',
+    })
       .then(async (res) => {
         const j = (await res.json().catch(() => ({}))) as AgentRosterResponse
         if (cancelled) return
@@ -80,9 +91,14 @@ export function CustomerChatRenderer(props: {
           setRosterError(j.error ?? `HTTP ${res.status}`)
           return
         }
-        setRoster(j)
-        if (j.agents.length > 0) {
-          setAgentId(j.default_agent ?? j.agents[0].id)
+        const chatAgents = j.agents.filter((a) => !isGovernanceAgent(a))
+        const defaultAgent =
+          j.default_agent && chatAgents.some((a) => a.id === j.default_agent)
+            ? j.default_agent
+            : (chatAgents[0]?.id ?? null)
+        setRoster({ ...j, agents: chatAgents, default_agent: defaultAgent })
+        if (defaultAgent) {
+          setAgentId(defaultAgent)
         }
       })
       .catch((err) => {
@@ -116,7 +132,11 @@ export function CustomerChatRenderer(props: {
     if (!message || !agentId || busy) return
     setBusy(true)
     setError(null)
-    const userTurn: ChatTurn = { role: 'user', content: message, ts: Date.now() }
+    const userTurn: ChatTurn = {
+      role: 'user',
+      content: message,
+      ts: Date.now(),
+    }
     setTurns((prev) => [...prev, userTurn])
     setDraft('')
     try {

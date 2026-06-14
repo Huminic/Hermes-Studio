@@ -2,11 +2,10 @@ import { useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  Analytics01Icon,
   Chart01Icon,
+  Database01Icon,
   GridIcon,
   InboxIcon,
-  LibraryIcon,
   Logout03Icon,
   Megaphone01Icon,
   Notification03Icon,
@@ -14,10 +13,7 @@ import {
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import type { IconSvgElement } from '@hugeicons/react'
-import {
-  defaultStudioConfig,
-  type StudioConfig,
-} from '@/lib/studio-config'
+import { defaultStudioConfig, type StudioConfig } from '@/lib/studio-config'
 import { getRenderer } from '@/lib/console-renderers'
 
 export const Route = createFileRoute('/p/$profile/$tab')({
@@ -26,13 +22,27 @@ export const Route = createFileRoute('/p/$profile/$tab')({
 
 const TAB_TO_RENDERER: Record<string, string> = {
   chat: 'customer-console.chat',
-  knowledge: 'customer-console.knowledge',
+  infostore: 'customer-console.infostore',
+  knowledge: 'customer-console.infostore',
   tools: 'customer-console.tools',
-  data: 'customer-console.data',
+  data: 'customer-console.infostore',
   dashboard: 'customer-console.performance',
   comms: 'customer-console.comms',
   campaigns: 'customer-console.campaigns',
   notifications: 'customer-console.notifications',
+}
+
+function normalizeActiveTab(tab: string): string {
+  return tab === 'knowledge' || tab === 'data' ? 'infostore' : tab
+}
+
+function isMenuEnabled(config: StudioConfig, id: string): boolean {
+  if (id === 'infostore') {
+    return (
+      config.menu.infostore ?? config.menu.knowledge ?? config.menu.data ?? true
+    )
+  }
+  return config.menu[id as keyof StudioConfig['menu']] ?? true
 }
 
 type StudioConfigResponse = {
@@ -171,6 +181,7 @@ function StorefrontTabRoute() {
 
   // Nexxus brand/active-nav accent (purple-500). Primary blue is #3b82f6.
   const NAV_ACCENT = '#8b5cf6'
+  const activeTab = normalizeActiveTab(tab)
 
   // Nexxus-style icon sidebar items. Each label sits below its line icon.
   // `id` is the internal route param (unchanged); `label` is display text.
@@ -180,9 +191,8 @@ function StorefrontTabRoute() {
     icon: IconSvgElement
   }> = [
     { id: 'chat', label: 'Agents', icon: Robot01Icon },
-    { id: 'knowledge', label: 'Knowledge', icon: LibraryIcon },
+    { id: 'infostore', label: 'InfoStore', icon: Database01Icon },
     { id: 'tools', label: 'StoreFront', icon: GridIcon },
-    { id: 'data', label: 'Data', icon: Analytics01Icon },
     { id: 'dashboard', label: 'Dashboard', icon: Chart01Icon },
     { id: 'comms', label: 'Teambox', icon: InboxIcon },
     { id: 'campaigns', label: 'Campaigns', icon: Megaphone01Icon },
@@ -193,9 +203,8 @@ function StorefrontTabRoute() {
     <div className="flex min-h-dvh bg-white font-sans text-slate-900">
       <aside className="flex w-[72px] shrink-0 flex-col items-center gap-1 border-r border-slate-200 bg-slate-50 py-3">
         {tabsList.map((item) => {
-          const enabled =
-            config.menu[item.id as keyof StudioConfig['menu']] ?? true
-          const active = item.id === tab
+          const enabled = isMenuEnabled(config, item.id)
+          const active = item.id === activeTab
           return (
             <Link
               key={item.id}

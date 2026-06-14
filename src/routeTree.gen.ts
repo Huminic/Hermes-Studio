@@ -145,6 +145,7 @@ import { Route as ApiCustomerReportsRouteImport } from './routes/api/customer/re
 import { Route as ApiCustomerPerformanceRouteImport } from './routes/api/customer/performance'
 import { Route as ApiCustomerNotificationsRouteImport } from './routes/api/customer/notifications'
 import { Route as ApiCustomerLeadFlowRouteImport } from './routes/api/customer/lead-flow'
+import { Route as ApiCustomerHunchesRouteImport } from './routes/api/customer/hunches'
 import { Route as ApiCustomerEngagementStateRouteImport } from './routes/api/customer/engagement-state'
 import { Route as ApiCustomerDashboardsRouteImport } from './routes/api/customer/dashboards'
 import { Route as ApiCustomerChatRouteImport } from './routes/api/customer/chat'
@@ -878,6 +879,11 @@ const ApiCustomerLeadFlowRoute = ApiCustomerLeadFlowRouteImport.update({
   path: '/api/customer/lead-flow',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerHunchesRoute = ApiCustomerHunchesRouteImport.update({
+  id: '/api/customer/hunches',
+  path: '/api/customer/hunches',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCustomerEngagementStateRoute =
   ApiCustomerEngagementStateRouteImport.update({
     id: '/api/customer/engagement-state',
@@ -1246,6 +1252,7 @@ export interface FileRoutesByFullPath {
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/dashboards': typeof ApiCustomerDashboardsRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
+  '/api/customer/hunches': typeof ApiCustomerHunchesRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
@@ -1433,6 +1440,7 @@ export interface FileRoutesByTo {
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/dashboards': typeof ApiCustomerDashboardsRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
+  '/api/customer/hunches': typeof ApiCustomerHunchesRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
@@ -1622,6 +1630,7 @@ export interface FileRoutesById {
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/dashboards': typeof ApiCustomerDashboardsRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
+  '/api/customer/hunches': typeof ApiCustomerHunchesRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
@@ -1812,6 +1821,7 @@ export interface FileRouteTypes {
     | '/api/customer/chat'
     | '/api/customer/dashboards'
     | '/api/customer/engagement-state'
+    | '/api/customer/hunches'
     | '/api/customer/lead-flow'
     | '/api/customer/notifications'
     | '/api/customer/performance'
@@ -1999,6 +2009,7 @@ export interface FileRouteTypes {
     | '/api/customer/chat'
     | '/api/customer/dashboards'
     | '/api/customer/engagement-state'
+    | '/api/customer/hunches'
     | '/api/customer/lead-flow'
     | '/api/customer/notifications'
     | '/api/customer/performance'
@@ -2187,6 +2198,7 @@ export interface FileRouteTypes {
     | '/api/customer/chat'
     | '/api/customer/dashboards'
     | '/api/customer/engagement-state'
+    | '/api/customer/hunches'
     | '/api/customer/lead-flow'
     | '/api/customer/notifications'
     | '/api/customer/performance'
@@ -2369,6 +2381,7 @@ export interface RootRouteChildren {
   ApiCustomerChatRoute: typeof ApiCustomerChatRoute
   ApiCustomerDashboardsRoute: typeof ApiCustomerDashboardsRoute
   ApiCustomerEngagementStateRoute: typeof ApiCustomerEngagementStateRoute
+  ApiCustomerHunchesRoute: typeof ApiCustomerHunchesRoute
   ApiCustomerLeadFlowRoute: typeof ApiCustomerLeadFlowRoute
   ApiCustomerNotificationsRoute: typeof ApiCustomerNotificationsRoute
   ApiCustomerPerformanceRoute: typeof ApiCustomerPerformanceRoute
@@ -3388,6 +3401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerLeadFlowRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/hunches': {
+      id: '/api/customer/hunches'
+      path: '/api/customer/hunches'
+      fullPath: '/api/customer/hunches'
+      preLoaderRoute: typeof ApiCustomerHunchesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/customer/engagement-state': {
       id: '/api/customer/engagement-state'
       path: '/api/customer/engagement-state'
@@ -4082,6 +4102,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCustomerChatRoute: ApiCustomerChatRoute,
   ApiCustomerDashboardsRoute: ApiCustomerDashboardsRoute,
   ApiCustomerEngagementStateRoute: ApiCustomerEngagementStateRoute,
+  ApiCustomerHunchesRoute: ApiCustomerHunchesRoute,
   ApiCustomerLeadFlowRoute: ApiCustomerLeadFlowRoute,
   ApiCustomerNotificationsRoute: ApiCustomerNotificationsRoute,
   ApiCustomerPerformanceRoute: ApiCustomerPerformanceRoute,

@@ -5,8 +5,8 @@
  * studio.yaml that the customer-console plugin reads to drive branding,
  * menu visibility, widget list, agent picker, and federation scopes.
  *
- * Phase C IA (6 pages): Chat, Knowledge, Tools (with Widget sub-page),
- * Data, Comms (Sales/Service segments), Campaigns (Service sub-page).
+ * Phase C IA (6 pages): Chat, InfoStore, Tools (with Widget sub-page),
+ * Dashboard, Comms (Sales/Service segments), Campaigns (Service sub-page).
  * The previous IA (Chat/Dashboard/Widget/Service) was retired in C.0.
  */
 
@@ -25,9 +25,12 @@ const BrandingSchema = z.object({
 const MenuSchema = z
   .object({
     chat: z.boolean().optional().default(true),
+    infostore: z.boolean().optional().default(true),
+    /** Legacy flags retained so older studio.yaml files continue parsing. */
     knowledge: z.boolean().optional().default(true),
     tools: z.boolean().optional().default(true),
     data: z.boolean().optional().default(true),
+    dashboard: z.boolean().optional().default(true),
     comms: z.boolean().optional().default(true),
     campaigns: z.boolean().optional().default(true),
     notifications: z.boolean().optional().default(true),
@@ -394,8 +397,16 @@ const BusinessHoursSchema = z
     /** IANA tz, e.g. America/New_York. */
     tz: z.string().optional().default('America/New_York'),
     /** 24h "HH:MM". */
-    start: z.string().regex(/^\d{2}:\d{2}$/).optional().default('08:00'),
-    end: z.string().regex(/^\d{2}:\d{2}$/).optional().default('21:00'),
+    start: z
+      .string()
+      .regex(/^\d{2}:\d{2}$/)
+      .optional()
+      .default('08:00'),
+    end: z
+      .string()
+      .regex(/^\d{2}:\d{2}$/)
+      .optional()
+      .default('21:00'),
   })
   .optional()
   .default({})
@@ -585,15 +596,21 @@ export function defaultStudioConfig(profile: string): StudioConfig {
     branding: { persona_name: profile },
     menu: {
       chat: true,
+      infostore: true,
       knowledge: true,
       tools: true,
       data: true,
+      dashboard: true,
       comms: true,
       campaigns: true,
       notifications: true,
     },
     agent_picker: { visible_agents: [] },
-    tools_widget: { show_embed_snippet: true, show_live_demo: true, consult: false },
+    tools_widget: {
+      show_embed_snippet: true,
+      show_live_demo: true,
+      consult: false,
+    },
     widgets: [],
     dashboards: [],
     autonomous_reply_defaults: {
@@ -667,9 +684,7 @@ export function defaultStudioConfig(profile: string): StudioConfig {
  */
 export type UnifiedWidgetPublic = Omit<UnifiedWidgetConfig, 'video_persona_id'>
 
-export function publicUnifiedWidget(
-  config: StudioConfig,
-): UnifiedWidgetPublic {
+export function publicUnifiedWidget(config: StudioConfig): UnifiedWidgetPublic {
   const { video_persona_id: _omit, ...rest } = config.unified_widget
   return rest
 }
