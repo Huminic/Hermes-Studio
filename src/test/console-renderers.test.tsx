@@ -13,6 +13,7 @@ import { defaultStudioConfig } from '@/lib/studio-config'
 // assistant-pane (right-pane slot).
 const EXPECTED_KEYS = [
   'customer-console.chat',
+  'customer-console.infostore',
   'customer-console.knowledge',
   'customer-console.tools',
   'customer-console.tools-widget',
