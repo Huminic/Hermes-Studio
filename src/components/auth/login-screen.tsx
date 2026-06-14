@@ -78,104 +78,107 @@ export function LoginScreen() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-800 to-slate-950 px-4">
-      <div className="w-full max-w-md">
-        <div className="rounded-2xl bg-white px-8 py-10 shadow-2xl shadow-black/40 ring-1 ring-black/10">
-          {/* Logo */}
-          <div className="mb-8 flex justify-center">
-            <div className="flex items-center gap-2.5">
-              <svg
-                width="32"
-                height="32"
-                viewBox="0 0 100 100"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="text-blue-600"
-              >
-                <path
-                  d="M50 10 L90 30 L90 70 L50 90 L10 70 L10 30 Z"
-                  fill="currentColor"
-                  opacity="0.18"
-                />
-                <path
-                  d="M50 25 L75 38 L75 62 L50 75 L25 62 L25 38 Z"
-                  fill="currentColor"
-                  opacity="0.4"
-                />
-                <circle cx="50" cy="50" r="15" fill="currentColor" />
-              </svg>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-                Huminic Studio
-              </h1>
+    <div className="flex min-h-screen bg-slate-950 font-sans text-slate-900 md:bg-slate-50">
+      <section className="flex w-full flex-col md:min-h-screen md:flex-row">
+        <div className="flex min-h-64 flex-col justify-between bg-[#101826] px-6 py-7 text-white md:w-[46%] md:px-10 md:py-10 lg:px-14">
+          <div className="flex items-center gap-3">
+            <div
+              aria-hidden
+              className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-3xl font-semibold leading-none text-white ring-1 ring-white/15"
+              style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}
+            >
+              h
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-white">Huminic</div>
+              <div className="text-xs text-slate-400">Global Studio</div>
             </div>
           </div>
 
-          {/* Title */}
-          <h2 className="mb-2 text-center text-lg font-semibold text-slate-900">
-            {profileAuthMode === true ? 'Sign in' : 'Enter Password'}
-          </h2>
-          <p className="mb-6 text-center text-sm text-slate-500">
-            {profileAuthMode === true
-              ? 'Sign in with your profile credentials'
-              : 'This workspace is password-protected'}
-          </p>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {profileAuthMode === true && (
-              <div>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Username"
-                  autoComplete="username"
-                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
-                  disabled={loading}
-                  autoFocus
-                />
-              </div>
-            )}
-            <div>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                autoComplete="current-password"
-                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
-                disabled={loading}
-                autoFocus={profileAuthMode !== true}
-              />
+          <div className="mt-12 max-w-md md:mt-0">
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-200">
+              Operator access
             </div>
+            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white md:text-5xl">
+              Huminic Studio
+            </h1>
+            <p className="mt-4 text-base leading-7 text-slate-300">
+              Manage profiles, agents, workflows, launch operations, and
+              Workspace configuration from one secure Studio.
+            </p>
+          </div>
 
-            {error && (
-              <div className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-700 ring-1 ring-red-200">
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={
-                loading ||
-                !password ||
-                (profileAuthMode === true && !username) ||
-                profileAuthMode === null
-              }
-              className="w-full rounded-lg bg-blue-600 px-4 py-2.5 font-medium text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:opacity-100"
-            >
-              {loading ? 'Authenticating...' : 'Continue'}
-            </button>
-          </form>
+          <div className="mt-10 text-xs text-slate-500">
+            Powered by Huminic
+          </div>
         </div>
 
-        {/* Footer — WF-001: neutral, Huminic-owned, unlinked (no third-party
-            repo link on the public pre-auth login surface). */}
-        <p className="mt-6 text-center text-xs text-slate-400">
-          Powered by Huminic
-        </p>
-      </div>
+        <div className="flex flex-1 items-center justify-center bg-white px-6 py-10 md:px-10">
+          <div className="w-full max-w-md">
+            <div className="text-sm font-semibold text-blue-600">
+              Huminic Studio
+            </div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+              Welcome back
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              {profileAuthMode === true
+                ? 'Sign in with your Studio profile credentials.'
+                : 'Enter your Studio password to continue.'}
+            </p>
+
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+              {profileAuthMode === true && (
+                <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
+                  <span>Username</span>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="you@example.com"
+                    autoComplete="username"
+                    className="h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15"
+                    disabled={loading}
+                    autoFocus
+                  />
+                </label>
+              )}
+              <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
+                <span>Password</span>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  className="h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15"
+                  disabled={loading}
+                  autoFocus={profileAuthMode !== true}
+                />
+              </label>
+
+              {error && (
+                <div className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-700 ring-1 ring-red-200">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={
+                  loading ||
+                  !password ||
+                  (profileAuthMode === true && !username) ||
+                  profileAuthMode === null
+                }
+                className="h-12 w-full rounded-lg bg-blue-600 px-4 text-base font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/25 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:opacity-100"
+              >
+                {loading ? 'Authenticating...' : 'Sign in'}
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

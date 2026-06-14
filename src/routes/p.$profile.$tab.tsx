@@ -334,70 +334,111 @@ function CustomerLogin({
     },
   })
 
-  const PRIMARY = '#3b82f6'
+  const PRIMARY = '#2563eb'
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-white p-4 font-sans text-slate-900">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          setError(null)
-          loginMutation.mutate()
-        }}
-        className="flex w-full max-w-sm flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 p-6 shadow-sm"
-      >
-        <div className="flex items-baseline gap-3">
-          <h1 className="text-lg font-semibold text-slate-900">
-            {config.branding.persona_name}
-          </h1>
-          <span className="rounded bg-slate-200 px-2 py-0.5 text-[10px] uppercase tracking-wide text-slate-600">
-            {profile}
-          </span>
-        </div>
-        <div className="text-xs text-slate-500">
-          Customer admin sign-in for this storefront.
-        </div>
-        <label className="flex flex-col gap-1 text-xs">
-          <span className="text-slate-500">Username</span>
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoFocus
-            className="rounded border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            required
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-xs">
-          <span className="text-slate-500">Password</span>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="rounded border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            required
-          />
-        </label>
-        {error && (
-          <div className="rounded border border-red-200 bg-red-50 p-2 text-xs text-red-600">
-            {error}
+    <div className="flex min-h-dvh bg-slate-950 font-sans text-slate-900 md:bg-slate-50">
+      <section className="flex w-full flex-col md:min-h-dvh md:flex-row">
+        <div className="flex min-h-64 flex-col justify-between bg-[#101826] px-6 py-7 text-white md:w-[46%] md:px-10 md:py-10 lg:px-14">
+          <div className="flex items-center gap-3">
+            <div
+              aria-hidden
+              className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-3xl font-semibold leading-none text-white ring-1 ring-white/15"
+              style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}
+            >
+              h
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-white">
+                Huminic
+              </div>
+              <div className="text-xs text-slate-400">Store Workspace</div>
+            </div>
           </div>
-        )}
-        <button
-          type="submit"
-          disabled={loginMutation.isPending}
-          className="mt-1 rounded px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
-          style={{ background: PRIMARY }}
-        >
-          {loginMutation.isPending ? 'Signing in…' : 'Sign in'}
-        </button>
-        <Link
-          to="/p/$profile"
-          params={{ profile }}
-          className="text-center text-xs text-slate-400 hover:text-slate-600"
-        >
-          ← back to landing
-        </Link>
-      </form>
+
+          <div className="mt-12 max-w-md md:mt-0">
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-200">
+              Workspace sign-in
+            </div>
+            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white md:text-5xl">
+              {config.branding.persona_name}
+            </h1>
+            <p className="mt-4 text-base leading-7 text-slate-300">
+              Manage agents, InfoStore, StoreFront, Teambox, Campaigns,
+              Notifications, and performance for this Workspace.
+            </p>
+          </div>
+
+          <div className="mt-10 text-xs text-slate-500">
+            Powered by Huminic
+          </div>
+        </div>
+
+        <div className="flex flex-1 items-center justify-center bg-white px-6 py-10 md:px-10">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              setError(null)
+              loginMutation.mutate()
+            }}
+            className="flex w-full max-w-md flex-col gap-5"
+          >
+            <div>
+              <div className="text-sm font-semibold text-blue-600">
+                {config.branding.persona_name} Workspace
+              </div>
+              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+                Welcome back
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Sign in with your Workspace credentials.
+              </p>
+            </div>
+
+            <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
+              <span>Username</span>
+              <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+                autoFocus
+                className="h-12 rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15"
+                required
+              />
+            </label>
+            <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
+              <span>Password</span>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                className="h-12 rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15"
+                required
+              />
+            </label>
+            {error && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {error}
+              </div>
+            )}
+            <button
+              type="submit"
+              disabled={loginMutation.isPending}
+              className="mt-1 h-12 rounded-lg px-4 text-base font-semibold text-white transition hover:brightness-95 focus:outline-none focus:ring-4 focus:ring-blue-500/25 disabled:cursor-not-allowed disabled:opacity-50"
+              style={{ background: PRIMARY }}
+            >
+              {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
+            </button>
+            <Link
+              to="/stores"
+              className="text-center text-sm font-medium text-slate-500 transition hover:text-slate-800"
+            >
+              Back to Store Selection
+            </Link>
+          </form>
+        </div>
+      </section>
     </div>
   )
 }
