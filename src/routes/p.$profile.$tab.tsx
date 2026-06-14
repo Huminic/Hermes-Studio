@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
@@ -304,6 +304,10 @@ function CustomerLogin({
   const [error, setError] = useState<string | null>(null)
   const queryClient = useQueryClient()
   const router = useRouter()
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') window.__dismissSplash?.()
+  }, [])
 
   const loginMutation = useMutation({
     mutationFn: () => postLogin(username, password),
