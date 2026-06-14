@@ -8,9 +8,9 @@ import {
 } from '@/lib/console-renderers'
 import { defaultStudioConfig } from '@/lib/studio-config'
 
-// 7-page IA. 10 renderer keys total: 7 page renderers (incl. notifications) +
+// 7-page IA. 12 renderer keys total: 8 page renderers (incl. InfoStore and notifications) +
 // tools-widget sub-page + widget-public (public unauthenticated /w/$slug) +
-// assistant-pane (right-pane slot).
+// assistant-pane (right-pane slot) + the legacy knowledge/data route shims.
 const EXPECTED_KEYS = [
   'customer-console.chat',
   'customer-console.infostore',
@@ -92,13 +92,15 @@ describe('console-renderers registry', () => {
     expect(container.textContent).not.toContain('cedar-ridge')
   })
 
-  it('tools-widget renderer shows empty state when no widgets configured', () => {
+  it('tools-widget renderer surfaces the unified widget launch surface', () => {
     const config = defaultStudioConfig('huminic')
     const Renderer = consoleRenderers['customer-console.tools-widget']
     const { container } = render(
       <Renderer profile="huminic" config={config} params={{}} />,
     )
-    expect(container.textContent).toContain('No widgets are set up yet')
+    expect(container.textContent).toContain('Unified Widget')
+    expect(container.textContent).toContain('All-in-one launcher')
+    expect(container.textContent).toContain('Web Chat')
   })
 
   it('data renderer mounts the native reports view (fetches /api/customer/reports)', () => {
@@ -162,7 +164,7 @@ describe('console-renderers registry', () => {
       const { container, findByText } = render(
         <Renderer profile="huminic" config={config} params={{}} />,
       )
-      await findByText('Dashboard')
+      await findByText('Data dashboard')
       const txt = container.textContent ?? ''
       // Customer-language headline metrics:
       expect(txt).toContain('Calls received')
