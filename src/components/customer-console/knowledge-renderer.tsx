@@ -227,6 +227,8 @@ export function CustomerKnowledgeRenderer(props: {
       } else {
         setFeedback({ kind: 'ok', message: 'Saved.' })
       }
+      // Refresh tree after successful save (new entries will now appear)
+      void loadTree()
     } catch {
       setFeedback({
         kind: 'err',
@@ -235,7 +237,37 @@ export function CustomerKnowledgeRenderer(props: {
     } finally {
       setSaveBusy(false)
     }
-  }, [prefix, bodyDraft, props.profile, selected])
+  }, [prefix, bodyDraft, props.profile, selected, loadTree])
+
+  const newEntry = useCallback(() => {
+    const timestamp = Date.now()
+    const safePath = `drafts/new-entry-${timestamp}.md`
+    const template = `---
+title: New Entry
+type: guide
+status: draft
+---
+
+# New Entry
+
+Add your content here. Update the title, type, and status above to help others find this page.
+
+**Available types**: guide, policy, procedure, reference, faq
+**Available statuses**: draft, active, archived
+`
+    // Create a synthetic node for the new draft
+    const draftNode: Node = {
+      name: `new-entry-${timestamp}.md`,
+      path: safePath,
+      type: 'file',
+    }
+    setSelected(draftNode)
+    const split = splitFrontmatterPrefix(template)
+    setContent(template)
+    setPrefix(split.prefix)
+    setBodyDraft(split.body)
+    setFeedback(null)
+  }, [])
 
   const pageTitle = useMemo(
     () => (selected ? derivePageTitle(selected.name, content) : ''),
@@ -252,17 +284,27 @@ export function CustomerKnowledgeRenderer(props: {
   return (
     <div className="grid h-full max-h-[calc(100dvh-220px)] gap-4 text-slate-900 lg:grid-cols-[300px_1fr]">
       <aside className="overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-3">
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Company Wiki
-          </h3>
+        <div className="mb-3 flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Company Wiki
+            </h3>
+            <button
+              type="button"
+              onClick={() => void loadTree()}
+              aria-label="Refresh"
+              className="rounded p-1 text-slate-400 hover:bg-white hover:text-slate-700"
+            >
+              ↻
+            </button>
+          </div>
           <button
             type="button"
-            onClick={() => void loadTree()}
-            aria-label="Refresh"
-            className="rounded p-1 text-slate-400 hover:bg-white hover:text-slate-700"
+            onClick={newEntry}
+            className="rounded-md px-3 py-1.5 text-xs font-semibold text-white transition hover:brightness-95"
+            style={{ background: PRIMARY }}
           >
-            ↻
+            + New Entry
           </button>
         </div>
         {treeError ? (
