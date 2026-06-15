@@ -183,7 +183,7 @@ describe('GET /widget/dealer/<slug>.js (self-hosted embed bundle)', () => {
   it('serves a config-injected bundle without leaking the video persona id', async () => {
     writeStudio(
       BASE_YAML +
-        '\nunified_widget:\n  enabled: true\n  video_persona_id: p9eb007721f4\n  video_agent_name: Caroline\n',
+        '\nunified_widget:\n  enabled: true\n  accent: "#0d9488"\n  video_persona_id: p9eb007721f4\n  video_agent_name: Caroline\n',
     )
     const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
     const handler = Route.options.server.handlers.GET
@@ -197,6 +197,9 @@ describe('GET /widget/dealer/<slug>.js (self-hosted embed bundle)', () => {
     expect(body).toContain('serra-honda')
     expect(body).toContain('Caroline')
     expect(body).toContain('https://studio.huminic.app')
+    // Public widget chrome stays neutral even when a profile has a teal accent.
+    expect(body).toContain('"accent":"#4a5568"')
+    expect(body).not.toContain('"accent":"#0d9488"')
     // The Tavus persona id is a server-side secret — must NOT be in the bundle.
     expect(body).not.toContain('p9eb007721f4')
     // LC-MINOR-002: icon-only controls expose accessible names (parity w/ React).

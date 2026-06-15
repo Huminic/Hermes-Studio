@@ -19,6 +19,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { readStudioConfig } from '../../../server/studio-config'
 
+const PUBLIC_WIDGET_CHROME = '#4a5568'
+
 function noop(reason: string): Response {
   return new Response(`/* huminic widget: ${reason} */\n`, {
     headers: {
@@ -64,7 +66,9 @@ export const Route = createFileRoute('/widget/dealer/$slug.js')({
           profile: slug,
           origin,
           name: config.branding.persona_name,
-          accent: uw.accent ?? '#0d9488',
+          // Dealer websites vary widely; keep the embed chrome neutral instead
+          // of inheriting turquoise or another brand-specific accent.
+          accent: PUBLIC_WIDGET_CHROME,
           subtitle: uw.subtitle ?? 'Choose how to connect',
           channels: {
             chat: uw.channels?.chat !== false,
