@@ -6,7 +6,10 @@ interface GatewayStatus {
   hermesUrl: string
 }
 
-export function useFeatureAvailable(feature: EnhancedFeature): boolean {
+export function useFeatureAvailable(
+  feature: EnhancedFeature,
+  enabled = true,
+): boolean {
   const { data } = useQuery({
     queryKey: ['gateway-status'],
     queryFn: async () => {
@@ -14,6 +17,7 @@ export function useFeatureAvailable(feature: EnhancedFeature): boolean {
       if (!res.ok) return null
       return (await res.json()) as GatewayStatus
     },
+    enabled,
     staleTime: 30_000,
     refetchInterval: 60_000,
   })
