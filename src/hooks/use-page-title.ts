@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 
-const BASE_TITLE = 'Hermes'
+const BASE_TITLE = 'Studio'
 
 /**
  * Sets document.title for the current page.
- * Usage: usePageTitle('Sessions') → "Sessions — Hermes"
+ * Usage: usePageTitle('Sessions') -> "Sessions — Studio"
  */
 export function usePageTitle(page: string) {
   useEffect(() => {

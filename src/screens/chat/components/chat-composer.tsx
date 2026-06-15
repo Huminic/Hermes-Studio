@@ -1440,7 +1440,7 @@ function ChatComposerComponent({
   const hasDraft = value.trim().length > 0 || attachments.length > 0
   const promptPlaceholder = isMobileViewport
     ? 'Message...'
-    : 'Ask anything... (↵ to send · ⇧↵ new line · ⌘⇧M switch model)'
+    : 'Ask anything...'
   const slashCommandQuery = useMemo(() => readSlashCommandQuery(value), [value])
   const isSlashMenuOpen =
     slashCommandQuery !== null && !disabled && !isSlashMenuDismissed
@@ -1810,7 +1810,7 @@ function ChatComposerComponent({
         disabled={disabled}
         maxHeight={isMobileViewport ? 120 : 240}
         className={cn(
-          'relative z-50 transition-all duration-300',
+          'chat-composer-rainbow relative z-50 transition-all duration-300',
           // On mobile: remove PromptInput's built-in rounded/bg/padding — outer wrapper owns the container
           isMobileViewport &&
             'py-0 gap-0 !rounded-none !bg-transparent shadow-none outline-none',
@@ -2147,7 +2147,7 @@ function ChatComposerComponent({
                               />
                             </span>
                             <span className="text-sm font-medium text-neutral-800 dark:text-neutral-100">
-                              New Session
+                              New chat
                             </span>
                           </button>
                         ) : null}

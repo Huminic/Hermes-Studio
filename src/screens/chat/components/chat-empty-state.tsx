@@ -11,9 +11,9 @@ type SuggestionChip = {
 
 const SUGGESTIONS: Array<SuggestionChip> = [
   {
-    label: 'Analyze workspace',
+    label: 'Plan next step',
     prompt:
-      'Analyze this workspace structure and give me 3 engineering risks. Use tools and keep it concise.',
+      'Review the current goal and suggest the next three practical steps. Keep it concise.',
     icon: CodeIcon,
   },
   {
@@ -66,13 +66,13 @@ export function ChatEmptyState({
           className="text-xl font-semibold tracking-tight"
           style={{ color: 'var(--theme-text)' }}
         >
-          Huminic Studio
+          Studio Chat
         </h2>
 
         {!compact && (
           <>
             <p className="mt-2 text-sm" style={{ color: 'var(--theme-muted)' }}>
-              Agent chat · live tools · memory · full observability
+              Agent chat, tools, memory, and workspace context
             </p>
           </>
         )}

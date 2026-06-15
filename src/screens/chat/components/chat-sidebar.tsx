@@ -57,6 +57,7 @@ import {
   selectChatProfileDisplayName,
   useChatSettingsStore,
 } from '@/hooks/use-chat-settings'
+import { useActiveProfile } from '@/hooks/use-active-profile'
 import { StatusDot } from '@/components/status-indicator'
 import { BrandMark } from '@/components/brand-mark'
 import {
@@ -67,6 +68,16 @@ import {
 } from '@/components/ui/menu'
 
 type WorkspaceStats = Record<string, unknown>
+type SidebarSection = 'chat' | 'workspace' | 'tools' | 'knowledge' | 'system'
+
+function formatProfileLabel(profileName: string): string {
+  if (!profileName || profileName === 'default') return 'Studio'
+  return profileName
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
 
 function ThemeToggleMini() {
   return (
@@ -141,7 +152,7 @@ function NavItem({
     'w-full h-auto min-h-11 gap-2.5 py-2 md:min-h-0',
     isCollapsed ? 'justify-center px-0' : 'justify-start px-3',
     item.active
-      ? 'bg-accent-500/10 text-accent-500 hover:bg-accent-50 dark:hover:bg-accent-900/300/15'
+      ? 'bg-[var(--theme-panel)] text-fuchsia-700 hover:bg-[var(--theme-hover)] dark:text-fuchsia-300 dark:hover:bg-primary-800'
       : 'text-primary-900 hover:bg-primary-200 dark:hover:bg-primary-800',
   )
 
@@ -276,32 +287,6 @@ function NavItem({
   )
 }
 
-// ── Last-visited route tracking ─────────────────────────────────────────
-
-const LAST_ROUTE_KEY = 'hermes-sidebar-last-route'
-
-function getLastRoute(section: string): string | null {
-  try {
-    const stored = localStorage.getItem(LAST_ROUTE_KEY)
-    if (!stored) return null
-    const map = JSON.parse(stored) as Record<string, string>
-    return map[section] || null
-  } catch {
-    return null
-  }
-}
-
-function setLastRoute(section: string, route: string) {
-  try {
-    const stored = localStorage.getItem(LAST_ROUTE_KEY)
-    const map = stored ? (JSON.parse(stored) as Record<string, string>) : {}
-    map[section] = route
-    localStorage.setItem(LAST_ROUTE_KEY, JSON.stringify(map))
-  } catch {
-    // ignore
-  }
-}
-
 // ── Section header ──────────────────────────────────────────────────────
 
 function SectionLabel({
@@ -334,7 +319,7 @@ function SectionLabel({
       <motion.div
         layout
         transition={{ layout: transition }}
-        className="flex items-center gap-1.5 px-3 pt-3 pb-1 w-full"
+        className="mt-2 flex w-full items-center gap-1.5 rounded-lg border border-[var(--theme-border)] bg-[var(--theme-panel)] px-3 py-2"
       >
         {navigateTo ? (
           <Link
@@ -432,35 +417,6 @@ function CollapsibleSection({
   )
 }
 
-// ── Persist helper ──────────────────────────────────────────────────────
-
-function usePersistedBool(key: string, defaultValue: boolean) {
-  const [value, setValue] = useState(() => {
-    try {
-      const stored = localStorage.getItem(key)
-      if (stored === 'true') return true
-      if (stored === 'false') return false
-      return defaultValue
-    } catch {
-      return defaultValue
-    }
-  })
-
-  function toggle() {
-    setValue((prev) => {
-      const next = !prev
-      try {
-        localStorage.setItem(key, String(next))
-      } catch {
-        // ignore
-      }
-      return next
-    })
-  }
-
-  return [value, toggle] as const
-}
-
 // ── Main component ──────────────────────────────────────────────────────
 
 function ChatSidebarComponent({
@@ -480,6 +436,11 @@ function ChatSidebarComponent({
   const profileDisplayName = useChatSettingsStore(selectChatProfileDisplayName)
   const profileAvatarDataUrl = useChatSettingsStore(
     selectChatProfileAvatarDataUrl,
+  )
+  const activeProfile = useActiveProfile()
+  const sidebarProfileLabel = useMemo(
+    () => formatProfileLabel(activeProfile),
+    [activeProfile],
   )
   const { deleteSession } = useDeleteSession()
   const { renameSession } = useRenameSession()
@@ -521,8 +482,6 @@ function ChatSidebarComponent({
   // Route active states
   const isChatActive =
     pathname === '/' || pathname === '/new' || pathname.startsWith('/chat')
-  const isNewSessionActive =
-    pathname === '/new' || pathname.startsWith('/chat/new')
   const _isSettingsActive = pathname === '/settings'
   const isSkillsActive = pathname === '/skills'
   const isProfilesActive = pathname === '/profiles'
@@ -547,38 +506,17 @@ function ChatSidebarComponent({
   const isMcpTokensActive = pathname === '/mcp-tokens'
   const isHelpActive = pathname === '/help'
   const isDocsActive = pathname === '/docs'
-  const mainRoutes = ['/chat', '/new', '/files', '/terminal', '/artifacts', '/widgets']
-  const knowledgeRoutes = ['/memory', '/skills']
-  const systemRoutes = ['/settings', '/logs']
-
-  useEffect(() => {
-    if (mainRoutes.includes(pathname)) setLastRoute('main', pathname)
-    if (knowledgeRoutes.includes(pathname)) setLastRoute('knowledge', pathname)
-    if (systemRoutes.includes(pathname)) setLastRoute('system', pathname)
-  }, [pathname])
-
-  const mainNav = getLastRoute('main') || '/chat'
-  const knowledgeNav = getLastRoute('knowledge') || '/memory'
-  const _systemNav = getLastRoute('system') || '/settings'
-
   const transition = {
     duration: 0.15,
     ease: isCollapsed ? 'easeIn' : 'easeOut',
   } as const
 
-  // Collapsible section states
-  const [mainExpanded, toggleMain] = usePersistedBool(
-    'hermes-sidebar-main-expanded',
-    true,
+  const [activeSection, setActiveSection] = useState<SidebarSection | null>(
+    null,
   )
-  const [knowledgeExpanded, toggleKnowledge] = usePersistedBool(
-    'hermes-sidebar-knowledge-expanded',
-    true,
-  )
-  const [_systemExpanded, _toggleSystem] = usePersistedBool(
-    'hermes-sidebar-system-expanded',
-    false,
-  )
+  const toggleSection = (section: SidebarSection) => {
+    setActiveSection((current) => (current === section ? null : section))
+  }
 
   const [renameDialogOpen, setRenameDialogOpen] = useState(false)
   const [renameSessionKey, setRenameSessionKey] = useState<string | null>(null)
@@ -658,7 +596,6 @@ function ChatSidebarComponent({
   function handleSidebarToggle() {
     if (isHoverPreviewExpanded) {
       setIsHoverExpanded(false)
-      return
     }
     onToggleCollapse()
   }
@@ -737,25 +674,9 @@ function ChatSidebarComponent({
 
 // ── Nav definitions ─────────────────────────────────────────────────
 
-  // Search button definition (placed above Studio section)
-  const searchItem: NavItemDef = {
-    kind: 'button',
-    icon: Search01Icon,
-    label: 'Search',
-    active: isSearchModalOpen,
-    onClick: openSearchModal,
-  }
-
   const isDashboardActive = pathname === '/dashboard'
 
-  const mainItems: Array<NavItemDef> = [
-    {
-      kind: 'link',
-      to: '/dashboard',
-      icon: DashboardSquare01Icon,
-      label: 'Dashboard',
-      active: isDashboardActive,
-    },
+  const chatItems: Array<NavItemDef> = [
     {
       kind: 'link',
       to: '/chat',
@@ -764,6 +685,54 @@ function ChatSidebarComponent({
       active: isChatActive,
       badge: pendingApprovalCount > 0 ? pendingApprovalCount : undefined,
     },
+    {
+      kind: 'link',
+      to: '/dashboard',
+      icon: DashboardSquare01Icon,
+      label: 'Dashboard',
+      active: isDashboardActive,
+    },
+  ]
+
+  const workspaceItems: Array<NavItemDef> = [
+    {
+      kind: 'link',
+      to: '/profiles',
+      icon: UserGroupIcon,
+      label: 'Profiles',
+      active: isProfilesActive,
+    },
+    {
+      kind: 'link',
+      to: '/agents',
+      icon: AiUserIcon,
+      label: 'Agents',
+      active: isAgentsActive,
+    },
+    {
+      kind: 'link',
+      to: '/engagements',
+      icon: TimelineIcon,
+      label: 'Engagements',
+      active: isEngagementsActive,
+    },
+    {
+      kind: 'link',
+      to: '/widgets',
+      icon: Chat01Icon,
+      label: 'StoreFront',
+      active: isWidgetsActive,
+    },
+    {
+      kind: 'link',
+      to: '/analytics',
+      icon: Analytics01Icon,
+      label: 'Analytics',
+      active: isAnalyticsActive,
+    },
+  ]
+
+  const toolItems: Array<NavItemDef> = [
     {
       kind: 'link',
       to: '/files',
@@ -815,31 +784,28 @@ function ChatSidebarComponent({
     },
     {
       kind: 'link',
-      to: '/agents',
-      icon: AiUserIcon,
-      label: 'Agents',
-      active: isAgentsActive,
-    },
-    {
-      kind: 'link',
-      to: '/engagements',
-      icon: TimelineIcon,
-      label: 'Engagements',
-      active: isEngagementsActive,
-    },
-    {
-      kind: 'link',
       to: '/artifacts',
       icon: File01Icon,
       label: 'Artifacts',
       active: isArtifactsActive,
     },
+  ]
+
+  const knowledgeItems: Array<NavItemDef> = [
     {
       kind: 'link',
-      to: '/widgets',
-      icon: Chat01Icon,
-      label: 'StoreFront',
-      active: isWidgetsActive,
+      to: '/memory',
+      icon: BrainIcon,
+      label: 'Memory',
+      active: isMemoryActive,
+    },
+    {
+      kind: 'link',
+      to: '/skills',
+      icon: PuzzleIcon,
+      label: 'Skills',
+      active: isSkillsActive,
+      dataTour: 'skills',
     },
     {
       kind: 'link',
@@ -848,13 +814,9 @@ function ChatSidebarComponent({
       label: 'Patterns',
       active: isPatternsActive,
     },
-    {
-      kind: 'link',
-      to: '/analytics',
-      icon: Analytics01Icon,
-      label: 'Analytics',
-      active: isAnalyticsActive,
-    },
+  ]
+
+  const systemItems: Array<NavItemDef> = [
     {
       kind: 'link',
       to: '/session-history',
@@ -890,34 +852,6 @@ function ChatSidebarComponent({
       label: 'Logs',
       active: isLogsActive,
     },
-  ]
-
-  const knowledgeItems: Array<NavItemDef> = [
-    {
-      kind: 'link',
-      to: '/memory',
-      icon: BrainIcon,
-      label: 'Memory',
-      active: isMemoryActive,
-    },
-    {
-      kind: 'link',
-      to: '/skills',
-      icon: PuzzleIcon,
-      label: 'Skills',
-      active: isSkillsActive,
-      dataTour: 'skills',
-    },
-    {
-      kind: 'link',
-      to: '/profiles',
-      icon: UserGroupIcon,
-      label: 'Profiles',
-      active: isProfilesActive,
-    },
-  ]
-
-  const systemItems: Array<NavItemDef> = [
     {
       kind: 'link',
       to: '/help',
@@ -969,7 +903,10 @@ function ChatSidebarComponent({
       <motion.div
         layout
         transition={{ layout: transition }}
-        className="relative flex h-12 items-center px-2"
+        className={cn(
+          'relative flex flex-col px-2 pb-2 pt-2',
+          isVisuallyCollapsed ? 'items-center gap-1' : 'gap-1.5',
+        )}
       >
         <AnimatePresence initial={false}>
           {!isVisuallyCollapsed ? (
@@ -978,6 +915,7 @@ function ChatSidebarComponent({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={transition}
+              className="w-full pr-9"
             >
               <Link
                 to="/chat"
@@ -991,12 +929,90 @@ function ChatSidebarComponent({
                   className="text-sm font-semibold tracking-tight"
                   style={{ color: 'var(--theme-text)' }}
                 >
-                  Huminic Studio
+                  {sidebarProfileLabel}
                 </span>
               </Link>
+              <div className="mt-1 flex items-center gap-1 pl-1.5">
+                <Button
+                  type="button"
+                  size="icon-sm"
+                  variant="ghost"
+                  aria-label="Search"
+                  onClick={openSearchModal}
+                  className={cn(
+                    'h-8 w-8 rounded-lg text-primary-900 hover:bg-primary-200 dark:hover:bg-primary-800',
+                    isSearchModalOpen &&
+                      'bg-[var(--theme-panel)] text-fuchsia-700 dark:text-fuchsia-300',
+                  )}
+                >
+                  <HugeiconsIcon
+                    icon={Search01Icon}
+                    size={18}
+                    strokeWidth={1.5}
+                  />
+                </Button>
+                <Link
+                  to="/chat/$sessionKey"
+                  params={{ sessionKey: 'new' }}
+                  onClick={() => {
+                    onSelectSession?.()
+                  }}
+                  className={cn(
+                    buttonVariants({ variant: 'ghost', size: 'sm' }),
+                    'h-8 w-8 rounded-lg p-0 text-primary-900 hover:bg-primary-200 dark:hover:bg-primary-800',
+                  )}
+                  aria-label="New chat"
+                  data-tour="new-session"
+                >
+                  <HugeiconsIcon
+                    icon={PencilEdit02Icon}
+                    size={18}
+                    strokeWidth={1.5}
+                    className="size-4 shrink-0"
+                  />
+                </Link>
+              </div>
             </motion.div>
           ) : null}
         </AnimatePresence>
+        {isVisuallyCollapsed ? (
+          <>
+            <Button
+              type="button"
+              size="icon-sm"
+              variant="ghost"
+              aria-label="Search"
+              onClick={openSearchModal}
+              className="h-8 w-8 rounded-lg text-primary-900 hover:bg-primary-200 dark:hover:bg-primary-800"
+            >
+              <HugeiconsIcon
+                icon={Search01Icon}
+                size={18}
+                strokeWidth={1.5}
+              />
+            </Button>
+            <Link
+              to="/chat/$sessionKey"
+              params={{ sessionKey: 'new' }}
+              onClick={() => {
+                onSelectSession?.()
+              }}
+              className={cn(
+                buttonVariants({ variant: 'ghost', size: 'sm' }),
+                'h-8 w-8 rounded-lg p-0 text-primary-900 hover:bg-primary-200 dark:hover:bg-primary-800',
+              )}
+              aria-label="New chat"
+              data-tour="new-session"
+            >
+              <HugeiconsIcon
+                icon={PencilEdit02Icon}
+                size={18}
+                strokeWidth={1.5}
+                className="size-4 shrink-0"
+              />
+            </Link>
+          </>
+        ) : null}
         <TooltipProvider>
           <TooltipRoot>
             <TooltipTrigger
@@ -1034,66 +1050,69 @@ function ChatSidebarComponent({
         </TooltipProvider>
       </motion.div>
 
-      {/* ── Search (ChatGPT-style, above sections) ─────────────────── */}
-      <div className="px-2 pb-1">
-        <motion.div
-          layout
-          transition={{ layout: transition }}
-          className="w-full"
-        >
-          <NavItem
-            item={searchItem}
-            isCollapsed={isVisuallyCollapsed}
-            transition={transition}
-            onSelectSession={onSelectSession}
-          />
-        </motion.div>
-      </div>
-
-      {/* ── New Session button ──────────────────────────────────────── */}
-      {!isVisuallyCollapsed && (
-        <div className="px-2 pb-1">
-          <Link
-            to="/chat/$sessionKey"
-            params={{ sessionKey: 'new' }}
-            onClick={() => {
-              onSelectSession?.()
-            }}
-            className={cn(
-              buttonVariants({ variant: 'ghost', size: 'sm' }),
-              'w-full justify-start gap-2.5 px-3 py-2 text-primary-900 hover:bg-primary-200 dark:hover:bg-primary-800',
-              isNewSessionActive &&
-                'bg-accent-500/10 text-accent-500 hover:bg-accent-50 dark:hover:bg-accent-900/300/15',
-            )}
-            data-tour="new-session"
-          >
-            <HugeiconsIcon
-              icon={PencilEdit02Icon}
-              size={20}
-              strokeWidth={1.5}
-              className="size-5 shrink-0"
-            />
-            <span>New Session</span>
-          </Link>
-        </div>
-      )}
-
       {/* ── Scrollable body: nav + sessions ─────────────────────────── */}
       <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin flex flex-col">
         {/* Navigation sections */}
         <div className={cn('shrink-0 space-y-0.5 px-2', isMobile && 'order-2')}>
           <SectionLabel
-            label="Main"
+            label="Chat"
             isCollapsed={isVisuallyCollapsed}
             transition={transition}
             collapsible
-            expanded={mainExpanded}
-            onToggle={toggleMain}
-            navigateTo={mainNav}
+            expanded={activeSection === 'chat'}
+            onToggle={() => toggleSection('chat')}
           />
           <CollapsibleSection
-            expanded={mainExpanded || isCollapsed}
-            items={mainItems}
+            expanded={isVisuallyCollapsed || activeSection === 'chat'}
+            items={chatItems}
+            isCollapsed={isVisuallyCollapsed}
+            transition={transition}
+            onSelectSession={onSelectSession}
+          />
+          {!isVisuallyCollapsed && activeSection === 'chat' ? (
+            <div className="mt-1 rounded-lg border border-[var(--theme-border)] bg-[var(--theme-panel)]/40 py-1">
+              <SidebarSessions
+                sessions={sessions}
+                activeFriendlyId={activeFriendlyId}
+                defaultOpen={false}
+                onSelect={onSelectSession}
+                onRename={handleOpenRename}
+                onDelete={handleOpenDelete}
+                loading={sessionsLoading}
+                fetching={sessionsFetching}
+                error={sessionsError}
+                onRetry={onRetrySessions}
+              />
+            </div>
+          ) : null}
+
+          <SectionLabel
+            label="Workspace"
+            isCollapsed={isVisuallyCollapsed}
+            transition={transition}
+            collapsible
+            expanded={activeSection === 'workspace'}
+            onToggle={() => toggleSection('workspace')}
+          />
+          <CollapsibleSection
+            expanded={isVisuallyCollapsed || activeSection === 'workspace'}
+            items={workspaceItems}
+            isCollapsed={isVisuallyCollapsed}
+            transition={transition}
+            onSelectSession={onSelectSession}
+          />
+
+          <SectionLabel
+            label="Tools"
+            isCollapsed={isVisuallyCollapsed}
+            transition={transition}
+            collapsible
+            expanded={activeSection === 'tools'}
+            onToggle={() => toggleSection('tools')}
+          />
+          <CollapsibleSection
+            expanded={isVisuallyCollapsed || activeSection === 'tools'}
+            items={toolItems}
             isCollapsed={isVisuallyCollapsed}
             transition={transition}
             onSelectSession={onSelectSession}
@@ -1104,21 +1123,27 @@ function ChatSidebarComponent({
             isCollapsed={isVisuallyCollapsed}
             transition={transition}
             collapsible
-            expanded={knowledgeExpanded}
-            onToggle={toggleKnowledge}
-            navigateTo={knowledgeNav}
+            expanded={activeSection === 'knowledge'}
+            onToggle={() => toggleSection('knowledge')}
           />
           <CollapsibleSection
-            expanded={knowledgeExpanded || isCollapsed}
+            expanded={isVisuallyCollapsed || activeSection === 'knowledge'}
             items={knowledgeItems}
             isCollapsed={isVisuallyCollapsed}
             transition={transition}
             onSelectSession={onSelectSession}
           />
 
-          {/* System */}
+          <SectionLabel
+            label="System"
+            isCollapsed={isVisuallyCollapsed}
+            transition={transition}
+            collapsible
+            expanded={activeSection === 'system'}
+            onToggle={() => toggleSection('system')}
+          />
           <CollapsibleSection
-            expanded={true}
+            expanded={isVisuallyCollapsed || activeSection === 'system'}
             items={systemItems}
             isCollapsed={isVisuallyCollapsed}
             transition={transition}
@@ -1126,35 +1151,6 @@ function ChatSidebarComponent({
           />
         </div>
 
-        {/* Sessions list */}
-        <div className={cn('shrink-0 mt-1', isMobile && 'order-1')}>
-          <AnimatePresence initial={false}>
-            {!isVisuallyCollapsed && (
-              <motion.div
-                key="content"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={transition}
-                className="flex flex-col w-full min-h-0 h-full"
-              >
-                <div className="flex-1 min-h-0">
-                  <SidebarSessions
-                    sessions={sessions}
-                    activeFriendlyId={activeFriendlyId}
-                    onSelect={onSelectSession}
-                    onRename={handleOpenRename}
-                    onDelete={handleOpenDelete}
-                    loading={sessionsLoading}
-                    fetching={sessionsFetching}
-                    error={sessionsError}
-                    onRetry={onRetrySessions}
-                  />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
       </div>
       {/* end scrollable body */}
 

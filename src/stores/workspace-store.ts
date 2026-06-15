@@ -33,7 +33,7 @@ type WorkspaceState = {
 export const useWorkspaceStore = create<WorkspaceState>()(
   persist(
     (set) => ({
-      sidebarCollapsed: false,
+      sidebarCollapsed: true,
       fileExplorerCollapsed: true,
       chatFocusMode: false,
       activeSubPage: null,
@@ -64,8 +64,8 @@ export const useWorkspaceStore = create<WorkspaceState>()(
     {
       name: 'hermes-workspace-v1',
       partialize: (state) => ({
-        // sidebarCollapsed intentionally NOT persisted — sidebar always opens fresh.
-        // Persisting collapsed=true led to users getting stuck with no way back.
+        // sidebarCollapsed intentionally NOT persisted. Studio starts compact
+        // on each visit, and users can pin it open from the sidebar toggle.
         fileExplorerCollapsed: state.fileExplorerCollapsed,
         chatPanelOpen: state.chatPanelOpen,
         chatPanelSessionKey: state.chatPanelSessionKey,

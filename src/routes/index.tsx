@@ -5,8 +5,8 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
  * entrypoint correction, 2026-06-09): the root opens Global Studio
  * login/dashboard behavior, NOT the store chooser.
  *
- * - Unauthenticated → /dashboard renders the Studio login (it's a protected path).
- * - Studio admin (is_admin) → the Studio dashboard.
+ * - Unauthenticated → /chat renders the Studio login (it's a protected path).
+ * - Studio admin (is_admin) → Studio chat.
  * - A Workspace (customer-admin) session → WorkspaceShell routes it on to its own
  *   /p/<profile>/chat (LC-BLOCKER-006). The boundary is unchanged.
  *
@@ -15,6 +15,6 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
  */
 export const Route = createFileRoute('/')({
   beforeLoad: () => {
-    throw redirect({ to: '/dashboard' })
+    throw redirect({ to: '/chat' })
   },
 })

@@ -687,7 +687,7 @@ export function DashboardScreen() {
       <div className="flex flex-col items-center gap-3 py-3">
         <BrandMark className="size-12 text-3xl md:size-14 md:text-4xl" />
         <h1 className="text-sm font-semibold text-ink tracking-wide">
-          Huminic Studio
+          Studio Dashboard
         </h1>
         <div className="mt-1 grid w-full max-w-2xl grid-cols-2 gap-2 sm:grid-cols-4">
           <QuickAction
