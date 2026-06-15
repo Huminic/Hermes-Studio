@@ -343,7 +343,7 @@ function CustomerLogin({
   return (
     <div className="flex min-h-dvh bg-slate-950 font-sans text-slate-900 md:bg-slate-50">
       <section className="flex w-full flex-col md:min-h-dvh md:flex-row">
-        <div className="flex min-h-64 flex-col justify-between bg-[#101826] px-6 py-7 text-white md:w-[46%] md:px-10 md:py-10 lg:px-14">
+        <div className="flex min-h-64 flex-col justify-between bg-[#2f3b4d] px-6 py-7 text-white md:w-[46%] md:px-10 md:py-10 lg:px-14">
           <div className="flex items-center gap-3">
             <div
               aria-hidden
@@ -352,17 +352,11 @@ function CustomerLogin({
             >
               h
             </div>
-            <div>
-              <div className="text-sm font-semibold text-white">
-                Huminic
-              </div>
-              <div className="text-xs text-slate-400">Store Workspace</div>
-            </div>
           </div>
 
           <div className="mt-12 max-w-md md:mt-0">
-            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-200">
-              Workspace sign-in
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">
+              Workspace
             </div>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white md:text-5xl">
               {config.branding.persona_name}
@@ -388,11 +382,8 @@ function CustomerLogin({
             className="flex w-full max-w-md flex-col gap-5"
           >
             <div>
-              <div className="text-sm font-semibold text-blue-600">
-                {config.branding.persona_name} Workspace
-              </div>
-              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
-                Welcome back
+              <h2 className="text-3xl font-semibold tracking-tight text-slate-950">
+                Sign in
               </h2>
               <p className="mt-2 text-sm leading-6 text-slate-600">
                 Sign in with your Workspace credentials.

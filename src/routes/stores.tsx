@@ -36,24 +36,43 @@ const ADMIN_CONTACT = '412.654.6500'
 
 function StorePickerLanding() {
   return (
-    <div className="flex min-h-dvh flex-col bg-slate-50 font-sans text-slate-900">
-      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-5">
-        <div className="flex items-baseline gap-3">
-          <h1 className="text-xl font-semibold tracking-tight text-slate-900">
-            Huminic
-          </h1>
-          <span className="text-xs uppercase tracking-wide text-slate-400">
-            Store sign-in
-          </span>
+    <div className="flex min-h-dvh bg-slate-950 font-sans text-slate-900 md:bg-slate-50">
+      <section className="flex w-full flex-col md:min-h-dvh md:flex-row">
+        <div className="flex min-h-64 flex-col justify-between bg-[#2f3b4d] px-6 py-7 text-white md:w-[46%] md:px-10 md:py-10 lg:px-14">
+          <div className="flex items-center gap-3">
+            <div
+              aria-hidden
+              className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-3xl font-semibold leading-none text-white ring-1 ring-white/15"
+              style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}
+            >
+              h
+            </div>
+          </div>
+
+          <div className="mt-12 max-w-md md:mt-0">
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">
+              Workspace access
+            </div>
+            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white md:text-5xl">
+              Choose your store
+            </h1>
+            <p className="mt-4 text-base leading-7 text-slate-300">
+              Each store has its own dedicated Workspace. Select your store to sign in and access agents, inbox, widgets, dashboards, and campaigns.
+            </p>
+          </div>
+
+          <div className="mt-10 text-xs text-slate-500">
+            Powered by Huminic
+          </div>
         </div>
-      </header>
 
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-6 py-10">
-        <h2 className="text-center text-3xl font-semibold tracking-tight text-slate-900">
-          Choose your store to sign in
-        </h2>
+        <div className="flex flex-1 items-center justify-center bg-white px-6 py-10 md:px-10">
+          <div className="w-full max-w-2xl">
+            <h2 className="text-3xl font-semibold tracking-tight text-slate-950 mb-6">
+              Sign in
+            </h2>
 
-        <div className="grid flex-1 grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        <div className="grid flex-1 grid-cols-1 items-start gap-6">
           <section className="space-y-3 text-sm leading-relaxed text-slate-600">
             <p>
               Welcome to your upgraded platform. Each store now has its own
@@ -82,8 +101,8 @@ function StorePickerLanding() {
             {STORES.map((store) => (
             <li key={store.profile}>
               <Link
-                to="/p/$profile"
-                params={{ profile: store.profile }}
+                to="/p/$profile/$tab"
+                params={{ profile: store.profile, tab: 'chat' }}
                 className="group flex h-full flex-col justify-between overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div
@@ -118,14 +137,9 @@ function StorePickerLanding() {
           ))}
           </ul>
         </div>
-      </main>
-
-      <footer className="flex items-center justify-between border-t border-slate-200 bg-white px-6 py-4 text-[11px] text-slate-400">
-        <span>Powered by Huminic</span>
-        <span>
-          Need access? Call or text {ADMIN_CONTACT}
-        </span>
-      </footer>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

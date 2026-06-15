@@ -103,18 +103,7 @@ function StorefrontLandingRoute() {
           <h1 className="truncate text-2xl font-semibold text-slate-900">
             {config.branding.persona_name}
           </h1>
-          <span className="shrink-0 rounded bg-slate-100 px-2 py-0.5 text-xs uppercase tracking-wide text-slate-500">
-            {profile}
-          </span>
         </div>
-        <Link
-          to="/p/$profile/$tab"
-          params={{ profile, tab: 'chat' }}
-          className="shrink-0 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium text-white"
-          style={{ background: PRIMARY }}
-        >
-          {matchesProfile ? 'Enter →' : 'Log in'}
-        </Link>
       </header>
 
       <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-6 pb-28 pt-10">
@@ -123,67 +112,12 @@ function StorefrontLandingRoute() {
             Welcome to {config.branding.persona_name}
           </h2>
           <p className="max-w-prose text-sm leading-relaxed text-slate-600">
-            This is your store Workspace — the staff side of Huminic. Sign in to
-            manage your agents, conversations, InfoStore, StoreFront,
-            dashboards, and campaigns.
+            We're here to help. Use the chat widget in the corner to connect with us — whether you need answers, want to schedule service, or have questions about your vehicle.
           </p>
-          <Link
-            to="/p/$profile/$tab"
-            params={{ profile, tab: 'chat' }}
-            className="rounded-lg px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-transform hover:scale-[1.02]"
-            style={{ background: PRIMARY }}
-          >
-            {matchesProfile
-              ? 'Enter your Workspace →'
-              : 'Log in to your Workspace'}
-          </Link>
           <p className="text-xs text-slate-400">
-            See the chat bubble in the corner? That's your live Storefront — the
-            same widget your customers use to reach you.
+            Click the chat bubble in the corner to start a conversation.
           </p>
         </section>
-
-        <section className="flex flex-col gap-3">
-          <div className="text-xs font-medium uppercase tracking-wide text-slate-400">
-            What's inside your Workspace
-          </div>
-          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {TABS.map((tab) => {
-              const enabled = config.menu[tab.menuKey] ?? true
-              return (
-                <li
-                  key={tab.id}
-                  className={
-                    'rounded-lg border p-4 transition-colors ' +
-                    (enabled
-                      ? 'border-slate-200 bg-slate-50 hover:border-slate-300'
-                      : 'border-slate-100 bg-slate-50 opacity-50')
-                  }
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm font-semibold text-slate-900">
-                      {tab.label}
-                    </div>
-                    {!enabled && (
-                      <div className="text-[10px] uppercase text-slate-400">
-                        disabled
-                      </div>
-                    )}
-                  </div>
-                  <div className="mt-1 text-xs text-slate-500">
-                    {tabBlurb(tab.id)}
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        </section>
-
-        {configQuery.data?.source === 'default' && (
-          <div className="text-[10px] text-slate-400">
-            Showing default branding for this store.
-          </div>
-        )}
       </main>
 
       <footer className="border-t border-slate-200 p-4 pr-24 text-[10px] text-slate-400">
