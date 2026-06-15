@@ -1,19 +1,32 @@
 /**
  * customer-console.performance — the per-store Performance Dashboard.
  *
- * Light-themed, customer-grade dashboard over /api/customer/performance.
- * Surfaces lead (thread) and message volume across channels with three views:
- *   - Aggregate: headline totals (leads + messages)
- *   - By channel: per-channel breakdown (voice/video/chat/sms/form/callback/email)
- *   - By type: sales vs service split
- * A time-window selector switches between 7 / 30 days and all-time.
+ * Combines read-only performance metrics with a custom dashboard builder.
+ * Fetches data from /api/customer/performance and /api/customer/reports,
+ * loads/saves custom dashboard cards through /api/customer/dashboards,
+ * and provides print-to-PDF export functionality.
  *
- * Read-only reporting over existing messaging-hub data. Mirrors the Data page
- * (data-renderer.tsx) for fetch + layout style; no new design system.
+ * WF-017: Gunmetal workspace theme, stacked layout, real dashboard builder,
+ * PDF export via browser print.
  */
 
 import { useCallback, useEffect, useState } from 'react'
 import type { StudioConfig } from '../../lib/studio-config'
+
+// WF-017: workspace gunmetal theme
+const PRIMARY = '#2f3b4d'
+const DASHBOARD_SOURCES = [
+  'calls',
+  'video',
+  'sms',
+  'email',
+  'chat',
+  'leads',
+  'service',
+  'sales',
+  'campaigns',
+  'followups',
+] as const
 
 type Grouped = {
   total: number
@@ -30,6 +43,61 @@ type PerformanceResponse = {
   window_days: number | null
   generated_at: number
   performance?: Performance
+  error?: string
+}
+
+type MessageStats = {
+  total: number
+  inbound: number
+  outbound: number
+  by_channel: Record<string, { inbound: number; outbound: number }>
+}
+type ThreadStats = {
+  total: number
+  open: number
+  closed: number
+  by_domain: Record<string, number>
+}
+type CampaignStats = {
+  campaigns: number
+  by_status: Record<string, number>
+  deliveries_sent: number
+  deliveries_failed: number
+}
+type FollowupStats = {
+  immediate_triggers: number
+  checkin_triggers: number
+  last_fire: number | null
+  sends: { total: number; outbound: number; by_channel: Record<string, number> }
+}
+type LeadFunnel =
+  | { available: true; source: 'vin-live'; total: number; by_status: Record<string, number> }
+  | { available: false; source: 'vin-live' | 'none'; reason: string }
+
+type Reports = {
+  profile: string
+  generated_at: number
+  comms: {
+    window_days: number
+    messages: MessageStats
+    threads: ThreadStats
+    calls_in: number
+    texts_out: number
+  }
+  followups: FollowupStats
+  campaigns: CampaignStats
+  lead_funnel: LeadFunnel
+}
+
+type DashboardCard = {
+  title: string
+  source: string
+}
+
+type DashboardsResponse = {
+  ok: boolean
+  dashboards?: Array<DashboardCard>
+  sources?: ReadonlyArray<string>
   error?: string
 }
 
@@ -50,12 +118,16 @@ const VIEWS: Array<{ id: View; label: string }> = [
 
 const CHANNEL_LABELS: Record<string, string> = {
   voice: 'Calls',
+  vapi: 'Calls',
+  phone: 'Calls',
+  tavus: 'Video',
   video: 'Video',
   chat: 'Chat',
   sms: 'Text (SMS)',
   form: 'Forms',
   callback: 'Callbacks',
   email: 'Email',
+  'email-adf': 'Email',
 }
 
 const DOMAIN_LABELS: Record<string, string> = {
@@ -63,33 +135,79 @@ const DOMAIN_LABELS: Record<string, string> = {
   service: 'Service',
 }
 
-const PRIMARY = '#3b82f6'
+const SOURCE_LABELS: Record<string, string> = {
+  calls: 'Calls',
+  video: 'Video',
+  sms: 'Texts',
+  email: 'Emails',
+  chat: 'Web chats',
+  leads: 'Leads',
+  service: 'Service threads',
+  sales: 'Sales threads',
+  campaigns: 'Campaigns',
+  followups: 'Follow-ups',
+}
 
 export function CustomerPerformanceRenderer(props: {
   profile: string
   config: StudioConfig
 }) {
   const [perf, setPerf] = useState<Performance | null>(null)
+  const [reports, setReports] = useState<Reports | null>(null)
+  const [dashboards, setDashboards] = useState<Array<DashboardCard>>([])
+  const [availableSources, setAvailableSources] = useState<ReadonlyArray<string>>(
+    DASHBOARD_SOURCES,
+  )
   const [failed, setFailed] = useState(false)
   const [loading, setLoading] = useState(true)
   const [view, setView] = useState<View>('aggregate')
   const [windowSel, setWindowSel] = useState<Window>('30')
+  const [showAddCard, setShowAddCard] = useState(false)
+  const [cardTitle, setCardTitle] = useState('')
+  const [cardSource, setCardSource] = useState('')
+  const [saveBusy, setSaveBusy] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
     setFailed(false)
     try {
       const wq = windowSel === 'all' ? '' : `&window_days=${windowSel}`
-      const res = await fetch(
+      const perfRes = await fetch(
         `/api/customer/performance?profile=${encodeURIComponent(props.profile)}${wq}`,
         { credentials: 'include' },
       )
-      const j = (await res.json().catch(() => ({}))) as PerformanceResponse
-      if (!res.ok || !j.ok || !j.performance) {
+      const perfJ = (await perfRes.json().catch(() => ({}))) as PerformanceResponse
+      if (!perfRes.ok || !perfJ.ok || !perfJ.performance) {
         setFailed(true)
         return
       }
-      setPerf(j.performance)
+      setPerf(perfJ.performance)
+
+      const [reportsResult, dashboardsResult] = await Promise.allSettled([
+        fetch(`/api/customer/reports?profile=${encodeURIComponent(props.profile)}`, {
+          credentials: 'include',
+        }),
+        fetch(`/api/customer/dashboards?profile=${encodeURIComponent(props.profile)}`, {
+          credentials: 'include',
+        }),
+      ])
+      if (reportsResult.status === 'fulfilled') {
+        const reportsJ = (await reportsResult.value.json().catch(() => ({}))) as {
+          ok: boolean
+          reports?: Reports
+        }
+        if (reportsResult.value.ok && reportsJ.ok && reportsJ.reports) {
+          setReports(reportsJ.reports)
+        }
+      }
+      if (dashboardsResult.status === 'fulfilled') {
+        const dashJ = (await dashboardsResult.value.json().catch(() => ({}))) as DashboardsResponse
+        if (dashboardsResult.value.ok && dashJ.ok) {
+          setDashboards(dashJ.dashboards ?? [])
+          setAvailableSources(dashJ.sources ?? DASHBOARD_SOURCES)
+        }
+      }
     } catch {
       setFailed(true)
     } finally {
@@ -101,6 +219,60 @@ export function CustomerPerformanceRenderer(props: {
     void load()
   }, [load])
 
+  useEffect(() => {
+    if (availableSources.length > 0 && !cardSource) {
+      setCardSource(availableSources[0] ?? '')
+    }
+  }, [availableSources, cardSource])
+
+  const addCard = useCallback(async () => {
+    const title = cardTitle.trim()
+    if (!title || !cardSource) return
+    setSaveBusy(true)
+    setSaveError(null)
+    try {
+      const res = await fetch('/api/customer/dashboards', {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profile: props.profile,
+          dashboards: [...dashboards, { title, source: cardSource }],
+        }),
+      })
+      const j = (await res.json().catch(() => ({}))) as DashboardsResponse
+      if (!res.ok || !j.ok) {
+        setSaveError(j.error ?? 'Could not save dashboard card.')
+        return
+      }
+      setDashboards(j.dashboards ?? [])
+      setCardTitle('')
+      setShowAddCard(false)
+    } catch {
+      setSaveError('Could not save dashboard card.')
+    } finally {
+      setSaveBusy(false)
+    }
+  }, [cardTitle, cardSource, dashboards, props.profile])
+
+  const exportPDF = useCallback(() => {
+    if (!perf || !reports) return
+    const win = window.open('', '_blank')
+    if (!win) return
+    const windowLabel = WINDOWS.find((w) => w.id === windowSel)?.label ?? 'All time'
+    win.document.write(buildPrintDocument(
+      props.profile,
+      windowLabel,
+      perf,
+      reports,
+      dashboards,
+    ))
+    win.document.close()
+    setTimeout(() => {
+      win.print()
+    }, 250)
+  }, [perf, reports, dashboards, windowSel, props.profile])
+
   if (loading && !perf) {
     return (
       <div className="p-4 text-sm text-slate-500">Loading your dashboard…</div>
@@ -109,11 +281,12 @@ export function CustomerPerformanceRenderer(props: {
   if (failed && !perf) {
     return (
       <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-        We couldn’t load your dashboard just now.
+        We couldn't load your dashboard just now.
         <button
           type="button"
           onClick={() => void load()}
-          className="ml-3 font-medium text-blue-600 underline hover:text-blue-700"
+          className="ml-3 font-medium hover:underline"
+          style={{ color: PRIMARY }}
         >
           Try again
         </button>
@@ -121,6 +294,15 @@ export function CustomerPerformanceRenderer(props: {
     )
   }
   if (!perf) return null
+
+  const starterCards: Array<DashboardCard> = [
+    { title: 'Total calls', source: 'calls' },
+    { title: 'Texts sent', source: 'sms' },
+    { title: 'Total leads', source: 'leads' },
+    { title: 'Campaigns', source: 'campaigns' },
+  ]
+  const cardsToRender = dashboards.length > 0 ? dashboards : starterCards
+  const isCustom = dashboards.length > 0
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-5">
@@ -153,6 +335,15 @@ export function CustomerPerformanceRenderer(props: {
           >
             Refresh
           </button>
+          <button
+            type="button"
+            onClick={exportPDF}
+            disabled={!perf || !reports}
+            className="rounded-md px-3 py-1.5 text-xs font-medium text-white transition hover:brightness-95 disabled:opacity-50"
+            style={{ background: PRIMARY }}
+          >
+            Export PDF
+          </button>
         </div>
       </div>
 
@@ -176,7 +367,7 @@ export function CustomerPerformanceRenderer(props: {
         ))}
       </div>
 
-      {/* Aggregate headline (always visible) */}
+      {/* Aggregate headline */}
       <div className="grid grid-cols-2 gap-3">
         <Tile label="Total leads" value={perf.threads.total} empty="No leads yet" />
         <Tile
@@ -185,6 +376,78 @@ export function CustomerPerformanceRenderer(props: {
           empty="No messages yet"
         />
       </div>
+
+      {/* Custom dashboard cards */}
+      {reports && (
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-semibold text-slate-900">
+              {isCustom ? 'Custom dashboard' : 'Dashboard (sample cards)'}
+            </h3>
+            <button
+              type="button"
+              onClick={() => setShowAddCard(!showAddCard)}
+              className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+            >
+              {showAddCard ? 'Cancel' : '+ Add card'}
+            </button>
+          </div>
+          {!isCustom && (
+            <p className="text-xs text-slate-500">
+              These sample cards show your data. Use <strong>+ Add card</strong> to
+              create your own custom dashboard.
+            </p>
+          )}
+          {showAddCard && (
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="mb-3 text-sm font-medium text-slate-900">Add dashboard card</div>
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <input
+                    type="text"
+                    value={cardTitle}
+                    onChange={(e) => setCardTitle(e.target.value)}
+                    placeholder="Card title"
+                    className="flex-1 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-900 focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300"
+                  />
+                  <select
+                    value={cardSource}
+                    onChange={(e) => setCardSource(e.target.value)}
+                    className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700"
+                  >
+                    {availableSources.map((s) => (
+                      <option key={s} value={s}>
+                        {SOURCE_LABELS[s] ?? s}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => void addCard()}
+                    disabled={saveBusy || !cardTitle.trim()}
+                    className="rounded-md px-4 py-1.5 text-sm font-medium text-white transition hover:brightness-95 disabled:opacity-50"
+                    style={{ background: PRIMARY }}
+                  >
+                    {saveBusy ? 'Saving…' : 'Add'}
+                  </button>
+                </div>
+                {saveError && (
+                  <div className="text-xs text-red-600">{saveError}</div>
+                )}
+              </div>
+            </div>
+          )}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {cardsToRender.map((card, i) => (
+              <DashboardTile
+                key={i}
+                title={card.title}
+                value={resolveCardValue(reports, card.source)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {view === 'channel' && (
         <BreakdownCard
@@ -209,10 +472,156 @@ export function CustomerPerformanceRenderer(props: {
   )
 }
 
-/**
- * Table breakdown of leads + messages by a grouping key (channel or domain).
- * Rows are the union of keys present on either metric, sorted by total volume.
- */
+function resolveCardValue(reports: Reports, source: string): number {
+  const chTotal = (ch: string) => {
+    const c = reports.comms.messages.by_channel[ch]
+    return c ? c.inbound + c.outbound : 0
+  }
+  switch (source) {
+    case 'calls':
+      return reports.comms.calls_in || chTotal('voice') || chTotal('vapi') || chTotal('phone')
+    case 'video':
+      return chTotal('video') + chTotal('tavus')
+    case 'sms':
+      return reports.comms.texts_out || chTotal('sms')
+    case 'email':
+      return chTotal('email') + chTotal('email-adf')
+    case 'chat':
+      return chTotal('chat')
+    case 'leads':
+      return reports.lead_funnel.available
+        ? reports.lead_funnel.total
+        : reports.comms.threads.total
+    case 'service':
+      return reports.comms.threads.by_domain['service'] ?? 0
+    case 'sales':
+      return reports.comms.threads.by_domain['sales'] ?? 0
+    case 'campaigns':
+      return reports.campaigns.campaigns
+    case 'followups':
+      return reports.followups.immediate_triggers + reports.followups.checkin_triggers
+    default:
+      return 0
+  }
+}
+
+function buildPrintDocument(
+  profile: string,
+  windowLabel: string,
+  perf: Performance,
+  reports: Reports,
+  dashboards: Array<DashboardCard>,
+): string {
+  const cardsToRender = dashboards.length > 0 ? dashboards : [
+    { title: 'Total calls', source: 'calls' },
+    { title: 'Texts sent', source: 'sms' },
+    { title: 'Total leads', source: 'leads' },
+    { title: 'Campaigns', source: 'campaigns' },
+  ]
+  const channelRows = Object.entries(perf.threads.by_channel).map(([ch, lv]) => {
+    const mv = perf.messages.by_channel[ch] ?? 0
+    const label = escapeHtml(CHANNEL_LABELS[ch] ?? ch)
+    return `<tr><td>${label}</td><td>${lv.toLocaleString()}</td><td>${mv.toLocaleString()}</td></tr>`
+  }).join('')
+  const domainRows = Object.entries(perf.threads.by_domain).map(([d, lv]) => {
+    const mv = perf.messages.by_domain[d] ?? 0
+    const label = escapeHtml(DOMAIN_LABELS[d] ?? d)
+    return `<tr><td>${label}</td><td>${lv.toLocaleString()}</td><td>${mv.toLocaleString()}</td></tr>`
+  }).join('')
+  const safeProfile = escapeHtml(profile)
+  const safeWindowLabel = escapeHtml(windowLabel)
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Performance Dashboard - ${safeProfile}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 40px;
+      color: #0f172a;
+    }
+    h1 { font-size: 24px; margin-bottom: 8px; }
+    h2 { font-size: 18px; margin: 24px 0 12px; }
+    .meta { color: #64748b; font-size: 14px; margin-bottom: 24px; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 16px 0; }
+    .card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      background: #fff;
+    }
+    .card-value { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+    .card-label { font-size: 12px; color: #64748b; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #e2e8f0; }
+    th { font-weight: 600; color: #64748b; font-size: 14px; }
+    td { font-size: 14px; }
+    .section { margin: 24px 0; page-break-inside: avoid; }
+    @media print {
+      body { padding: 20px; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Performance Dashboard</h1>
+  <div class="meta">${safeProfile} • ${safeWindowLabel} • Generated ${new Date().toLocaleDateString()}</div>
+
+  <div class="section">
+    <h2>Summary</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="card-value">${perf.threads.total.toLocaleString()}</div>
+        <div class="card-label">Total leads</div>
+      </div>
+      <div class="card">
+        <div class="card-value">${perf.messages.total.toLocaleString()}</div>
+        <div class="card-label">Total messages</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>${dashboards.length > 0 ? 'Custom Dashboard' : 'Dashboard'}</h2>
+    <div class="grid">
+      ${cardsToRender.map(c => `<div class="card">
+        <div class="card-value">${resolveCardValue(reports, c.source).toLocaleString()}</div>
+        <div class="card-label">${escapeHtml(c.title)}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>By Channel</h2>
+    <table>
+      <thead><tr><th>Channel</th><th>Leads</th><th>Messages</th></tr></thead>
+      <tbody>${channelRows || '<tr><td colspan="3">No data</td></tr>'}</tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>By Type</h2>
+    <table>
+      <thead><tr><th>Type</th><th>Leads</th><th>Messages</th></tr></thead>
+      <tbody>${domainRows || '<tr><td colspan="3">No data</td></tr>'}</tbody>
+    </table>
+  </div>
+</body>
+</html>`
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 function BreakdownCard({
   title,
   labels,
@@ -283,7 +692,6 @@ function Card({
   )
 }
 
-/** Headline metric tile. Shows a friendly empty label when zero. */
 function Tile({
   label,
   value,
@@ -303,6 +711,17 @@ function Tile({
         <div className="text-sm font-medium text-slate-400">{empty}</div>
       )}
       <div className="mt-1 text-xs text-slate-500">{label}</div>
+    </div>
+  )
+}
+
+function DashboardTile({ title, value }: { title: string; value: number }) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="text-2xl font-semibold text-slate-900">
+        {value.toLocaleString()}
+      </div>
+      <div className="mt-1 text-xs text-slate-500">{title}</div>
     </div>
   )
 }

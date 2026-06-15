@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi } from 'vitest'
-import { render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
 import {
   consoleRenderers,
   getRenderer,
@@ -112,6 +112,97 @@ describe('console-renderers registry', () => {
       <Renderer profile="huminic" config={config} params={{}} />,
     )
     expect(container.textContent).toContain('Loading your dashboard')
+  })
+
+  it('performance renderer surfaces dashboard builder and PDF export controls', async () => {
+    const performance = {
+      generated_at: Date.now(),
+      threads: {
+        total: 8,
+        by_channel: { sms: 3, chat: 5 },
+        by_domain: { sales: 5, service: 3 },
+      },
+      messages: {
+        total: 12,
+        by_channel: { sms: 7, chat: 5 },
+        by_domain: { sales: 7, service: 5 },
+      },
+    }
+    const reports = {
+      profile: 'huminic',
+      generated_at: Date.now(),
+      comms: {
+        window_days: 30,
+        messages: {
+          total: 12,
+          inbound: 7,
+          outbound: 5,
+          by_channel: {
+            sms: { inbound: 2, outbound: 5 },
+            chat: { inbound: 5, outbound: 0 },
+          },
+        },
+        threads: { total: 8, open: 6, closed: 2, by_domain: { sales: 5, service: 3 } },
+        calls_in: 4,
+        texts_out: 5,
+      },
+      followups: {
+        immediate_triggers: 2,
+        checkin_triggers: 1,
+        last_fire: Date.now(),
+        sends: { total: 3, outbound: 3, by_channel: { sms: 3 } },
+      },
+      campaigns: {
+        campaigns: 2,
+        by_status: { draft: 1, active: 1 },
+        deliveries_sent: 11,
+        deliveries_failed: 0,
+      },
+      lead_funnel: {
+        available: true,
+        source: 'vin-live',
+        total: 9,
+        by_status: { hot: 4, warm: 5 },
+      },
+    }
+    const fetchMock = vi.fn(async (url: string | URL | Request) => {
+      const u = String(url)
+      if (u.includes('/api/customer/performance')) {
+        return new Response(JSON.stringify({ ok: true, performance }), { status: 200 })
+      }
+      if (u.includes('/api/customer/reports')) {
+        return new Response(JSON.stringify({ ok: true, reports }), { status: 200 })
+      }
+      if (u.includes('/api/customer/dashboards')) {
+        return new Response(
+          JSON.stringify({
+            ok: true,
+            dashboards: [],
+            sources: ['calls', 'sms', 'leads', 'campaigns'],
+          }),
+          { status: 200 },
+        )
+      }
+      return new Response(JSON.stringify({ ok: true }), { status: 200 })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    try {
+      const config = defaultStudioConfig('huminic')
+      const Renderer = consoleRenderers['customer-console.performance']
+      const { container, findByText, getAllByText } = render(
+        <Renderer profile="huminic" config={config} params={{}} />,
+      )
+      await findByText('Performance Dashboard')
+      const txt = container.textContent ?? ''
+      expect(txt).toContain('Export PDF')
+      expect(txt).toContain('+ Add card')
+      expect(txt).toContain('Dashboard (sample cards)')
+      fireEvent.click(getAllByText('+ Add card')[0])
+      expect(container.textContent).toContain('Add dashboard card')
+      expect(container.textContent).toContain('Calls')
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 
   it('data renderer surfaces the Data Store (database snapshots, not dashboard metrics)', async () => {
