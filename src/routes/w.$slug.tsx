@@ -43,7 +43,12 @@ function renderWidgetHtml(widget: {
   body: string
 }): string {
   const fm = widget.frontmatter
-  const title = String(fm.title ?? widget.slug)
+  // WF-013: never show internal/debug text or a raw store-slug label on the
+  // public widget surface. `pageTitle` is for the browser <title> only; the
+  // visible header title renders ONLY when an explicit human title is set.
+  const pageTitle = String(fm.title ?? widget.slug)
+  const title =
+    typeof fm.title === 'string' && fm.title.trim() ? fm.title.trim() : ''
   const greeting = String(fm.greeting ?? '')
   const mode = String(fm.mode ?? 'chat')
   const agent = String(fm.agent ?? '')
@@ -64,7 +69,7 @@ function renderWidgetHtml(widget: {
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>${escapeHtml(title)}</title>
+<title>${escapeHtml(pageTitle)}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   :root { --accent: ${escapeHtml(accent)}; --primary: ${escapeHtml(primary)}; }
@@ -85,7 +90,7 @@ function renderWidgetHtml(widget: {
   .composer { display: flex; flex-wrap: nowrap; gap: 8px; border-top: 1px solid #ececec; padding: 14px 0 0; }
   .composer input { flex: 1 1 auto; min-width: 0; width: 100%; border: 1px solid #d8d8d8; border-radius: 8px; padding: 10px 12px; font-size: 0.95rem; outline: none; }
   .composer input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
-  .composer button { flex: 0 0 auto; background: var(--accent); color: white; border: 0; border-radius: 8px; padding: 0 18px; font-weight: 600; cursor: pointer; }
+  .composer button { flex: 0 0 auto; background: #4a5568; color: white; border: 0; border-radius: 8px; padding: 0 18px; font-weight: 600; cursor: pointer; }
   .composer button:disabled { opacity: .55; cursor: not-allowed; }
   .meta { padding: 12px 22px; border-top: 1px solid #ececec; font-size: 0.72rem; color: #888; display: flex; justify-content: space-between; }
   .stub { padding: 22px; text-align: center; color: #777; font-size: 0.95rem; }
@@ -97,7 +102,7 @@ function renderWidgetHtml(widget: {
   .leadform input, .leadform textarea { border: 1px solid #d8d8d8; border-radius: 8px; padding: 10px 12px; font-size: 0.95rem; font-family: inherit; outline: none; width: 100%; }
   .leadform textarea { resize: vertical; min-height: 84px; }
   .leadform input:focus, .leadform textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
-  .leadform button { background: var(--accent); color: white; border: 0; border-radius: 8px; padding: 12px 18px; font-weight: 600; font-size: 0.95rem; cursor: pointer; width: 100%; }
+  .leadform button { background: #4a5568; color: white; border: 0; border-radius: 8px; padding: 12px 18px; font-weight: 600; font-size: 0.95rem; cursor: pointer; width: 100%; }
   .leadform button:disabled { opacity: .55; cursor: not-allowed; }
   .leadform .formerr { background: #fde8e8; color: #b21212; border-radius: 8px; padding: 10px 12px; font-size: 0.85rem; margin-bottom: 12px; display: none; }
   .leadform .ok { text-align: center; padding: 26px 8px; }
@@ -109,13 +114,11 @@ function renderWidgetHtml(widget: {
 <div class="frame">
   <div class="card" data-profile="${escapeHtml(widget.profile)}" data-slug="${escapeHtml(widget.slug)}" data-mode="${escapeHtml(mode)}" data-agent="${escapeHtml(agent)}">
     <div class="header">
-      <div class="mode">${escapeHtml(mode)} widget</div>
-      <h1>${escapeHtml(title)}</h1>
+      ${title ? `<h1>${escapeHtml(title)}</h1>` : ''}
     </div>
     ${body}
     <div class="meta">
       <span>Powered by Huminic</span>
-      ${brandName ? `<span>${escapeHtml(brandName)}</span>` : ''}
     </div>
   </div>
 </div>
