@@ -1078,21 +1078,21 @@ code {
    All rules below only apply when [data-theme='hermes-os'] is active.
    ─────────────────────────────────────────────────────────────────────── */
 
-/* Sidebar: glassmorphism + luminous left border on active items */
+/* Sidebar: glassmorphism without legacy active-item caps */
 [data-theme='hermes-os'] aside {
   border-right-color: rgba(56, 189, 248, 0.1) !important;
 }
 
-/* Active nav item: electric blue accent bar */
+/* Active nav item: final Studio fuchsia accent, no left cap */
 [data-theme='hermes-os'] .bg-accent-500\/10 {
-  background: rgba(56, 189, 248, 0.07) !important;
-  border-left: 2px solid rgba(56, 189, 248, 0.7);
-  color: #38bdf8 !important;
+  background: color-mix(in srgb, #a21caf 14%, transparent) !important;
+  border-left: 0 !important;
+  color: #c026d3 !important;
 }
 
 /* Nav icon color for active items */
 [data-theme='hermes-os'] .bg-accent-500\/10 svg {
-  color: #38bdf8 !important;
+  color: #c026d3 !important;
   opacity: 1;
 }
 
