@@ -9,10 +9,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { StudioConfig } from '../../lib/studio-config'
 
-// Platform accents (Nexxus look). Functional UI is blue; active selection is
-// purple. We intentionally do NOT use the per-store brand color for buttons.
-const PRIMARY = '#3b82f6'
-const ACTIVE = '#8b5cf6'
+// WF-014: gunmetal blue for send button and active selection
+const PRIMARY = '#2f3b4d'
+const ACTIVE = '#2f3b4d'
 
 type CustomerAgent = {
   id: string
@@ -96,7 +95,13 @@ export function CustomerChatRenderer(props: {
           j.default_agent && chatAgents.some((a) => a.id === j.default_agent)
             ? j.default_agent
             : (chatAgents[0]?.id ?? null)
-        setRoster({ ...j, agents: chatAgents, default_agent: defaultAgent })
+        // WF-014: sort Nancy Gaston first if she's the default
+        const sortedAgents = [...chatAgents].sort((a, b) => {
+          if (a.id === defaultAgent) return -1
+          if (b.id === defaultAgent) return 1
+          return 0
+        })
+        setRoster({ ...j, agents: sortedAgents, default_agent: defaultAgent })
         if (defaultAgent) {
           setAgentId(defaultAgent)
         }
@@ -243,12 +248,20 @@ export function CustomerChatRenderer(props: {
 
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-3"
+        className="flex-1 overflow-y-auto rounded-lg border border-slate-200 bg-white p-3"
       >
         {turns.length === 0 ? (
-          <div className="text-xs text-slate-400">
-            Say hi to {activeAgent?.name ?? 'your agent'} to start the
-            conversation.
+          <div className="flex h-full items-center justify-center">
+            <div className="max-w-md text-center">
+              <div className="text-sm font-medium text-slate-700 mb-3">
+                {activeAgent?.name ? `Ask ${activeAgent.name} anything` : 'Start a conversation'}
+              </div>
+              <div className="text-xs text-slate-500 space-y-1">
+                <div>• What are your hours?</div>
+                <div>• Do you have [vehicle model] in stock?</div>
+                <div>• How do I schedule service?</div>
+              </div>
+            </div>
           </div>
         ) : (
           <ul className="flex flex-col gap-3">
@@ -281,7 +294,7 @@ export function CustomerChatRenderer(props: {
       )}
 
       <form
-        className="flex items-end gap-2"
+        className="flex items-center rounded-lg border border-slate-300 bg-white px-3 py-2"
         onSubmit={(e) => {
           e.preventDefault()
           void send()
@@ -296,15 +309,15 @@ export function CustomerChatRenderer(props: {
               void send()
             }
           }}
-          placeholder={`Message ${activeAgent?.name ?? 'your agent'}…`}
-          rows={2}
+          placeholder={activeAgent?.name ? `Ask ${activeAgent.name} anything...` : 'Type your message...'}
+          rows={1}
           disabled={busy || !agentId}
-          className="flex-1 resize-none rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+          className="flex-1 resize-none border-0 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
         />
         <button
           type="submit"
           disabled={busy || !agentId || !draft.trim()}
-          className="rounded-lg px-4 py-2 text-sm font-medium text-white transition-opacity disabled:opacity-50"
+          className="ml-2 rounded-lg px-4 py-1.5 text-sm font-medium text-white transition-opacity disabled:opacity-50"
           style={{ background: PRIMARY }}
         >
           {busy ? '…' : 'Send'}

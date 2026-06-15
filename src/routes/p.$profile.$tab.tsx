@@ -170,7 +170,6 @@ function StorefrontTabRoute() {
   }
 
   const Renderer = getRenderer(rendererKey)
-  const AssistantRenderer = getRenderer('customer-console.assistant-pane')
   if (!Renderer) {
     return (
       <div className="m-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
@@ -179,29 +178,31 @@ function StorefrontTabRoute() {
     )
   }
 
-  // Nexxus brand/active-nav accent (purple-500). Primary blue is #3b82f6.
-  const NAV_ACCENT = '#8b5cf6'
+  // WF-014: gunmetal blue nav accent
+  const NAV_ACCENT = '#2f3b4d'
   const activeTab = normalizeActiveTab(tab)
 
-  // Nexxus-style icon sidebar items. Each label sits below its line icon.
-  // `id` is the internal route param (unchanged); `label` is display text.
+  // WF-014: nav order — Agents, Dashboard, Teambox, Campaigns, StoreFront, InfoStore, Notifications
   const tabsList: Array<{
     id: string
     label: string
     icon: IconSvgElement
   }> = [
     { id: 'chat', label: 'Agents', icon: Robot01Icon },
-    { id: 'infostore', label: 'InfoStore', icon: Database01Icon },
-    { id: 'tools', label: 'StoreFront', icon: GridIcon },
     { id: 'dashboard', label: 'Dashboard', icon: Chart01Icon },
     { id: 'comms', label: 'Teambox', icon: InboxIcon },
     { id: 'campaigns', label: 'Campaigns', icon: Megaphone01Icon },
+    { id: 'tools', label: 'StoreFront', icon: GridIcon },
+    { id: 'infostore', label: 'InfoStore', icon: Database01Icon },
     { id: 'notifications', label: 'Notifications', icon: Notification03Icon },
   ]
 
   return (
     <div className="flex min-h-dvh bg-white font-sans text-slate-900">
       <aside className="flex w-[72px] shrink-0 flex-col items-center gap-1 border-r border-slate-200 bg-slate-50 py-3">
+        <div className="mb-3 text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+          Menu
+        </div>
         {tabsList.map((item) => {
           const enabled = isMenuEnabled(config, item.id)
           const active = item.id === activeTab
@@ -259,13 +260,13 @@ function StorefrontTabRoute() {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4">
+        <header className="flex h-14 items-center justify-between border-b border-slate-200 bg-[#2f3b4d] px-4">
           <div className="flex min-w-0 items-baseline gap-2">
-            <span className="truncate text-sm font-semibold text-slate-900">
+            <span className="truncate text-sm font-semibold text-white">
               {config.branding.persona_name}
             </span>
-            <span className="text-slate-300">|</span>
-            <span className="text-sm text-slate-500">Workspace</span>
+            <span className="text-slate-400">|</span>
+            <span className="text-sm text-slate-300">Workspace</span>
           </div>
         </header>
 
@@ -273,15 +274,6 @@ function StorefrontTabRoute() {
           <main className="flex-1 overflow-y-auto px-4 py-4">
             <Renderer profile={profile} config={config} params={{ tab }} />
           </main>
-          {AssistantRenderer && (
-            <aside className="hidden w-72 shrink-0 border-l border-slate-200 bg-slate-50 p-3 lg:block">
-              <AssistantRenderer
-                profile={profile}
-                config={config}
-                params={{}}
-              />
-            </aside>
-          )}
         </div>
 
         <footer className="border-t border-slate-200 bg-slate-50 px-4 py-2 text-[10px] text-slate-500">
