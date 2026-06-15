@@ -241,11 +241,23 @@ export function WorkspaceShell() {
   const hideChatSidebar = isOnChatRoute && chatFocusMode
   const showDesktopSidebarBackdrop =
     !isMobile && !isOnChatRoute && !sidebarCollapsed
+  const isPublicUnauthenticatedSurface =
+    pathname === '/stores' ||
+    pathname === '/reskin-preview' ||
+    pathname.startsWith('/p/')
+  const isScopedPartner = Boolean(
+    authStatus?.scope_profiles && authStatus.scope_profiles.length > 0,
+  )
+  const sessionsQueryEnabled =
+    authStatus?.authenticated === true &&
+    (authStatus.is_admin !== false || isScopedPartner) &&
+    !isPublicUnauthenticatedSurface
 
   // Sessions query — shared across sidebar and chat
   const sessionsQuery = useQuery({
     queryKey: chatQueryKeys.sessions,
     queryFn: fetchSessions,
+    enabled: sessionsQueryEnabled,
     refetchInterval: 15_000,
     staleTime: 10_000,
   })
@@ -352,9 +364,7 @@ export function WorkspaceShell() {
   // correction); only is_admin reaches it, Workspace sessions are routed to
   // their own /p/<profile>/chat.
   if (
-    pathname === '/stores' ||
-    pathname === '/reskin-preview' || // non-prod nav reskin prototype (slice F)
-    pathname.startsWith('/p/')
+    isPublicUnauthenticatedSurface
   ) {
     return (
       <div className="theme-bg theme-text min-h-dvh">
@@ -397,8 +407,6 @@ export function WorkspaceShell() {
   // their own /p/<profile>/* console. Scoped partner admins are allowed.
   // is_admin === false is strict, so admins and pre-resolve (undefined) render
   // the chrome normally.
-  const isScopedPartner =
-    authStatus?.scope_profiles && authStatus.scope_profiles.length > 0
   if (
     authStatus?.authenticated &&
     authStatus.is_admin === false &&

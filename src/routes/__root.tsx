@@ -352,87 +352,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           dangerouslySetInnerHTML={{
             __html: `
           (function(){
-            if (document.getElementById('splash-screen')) return;
-            var bg = '#0A0E1A', txt = '#E6EAF2', muted = '#9AA5BD', accent = '#6366F1';
-            try {
-              var theme = localStorage.getItem('${THEME_STORAGE_KEY}') || '${DEFAULT_THEME}';
-              if (theme === 'hermes-classic') {
-                bg = '#0d0f12';
-                txt = '#eceff4';
-                muted = '#7f8a96';
-                accent = '#b98a44';
-              } else if (theme === 'hermes-official-light') {
-                bg = '#F6F8FC';
-                txt = '#111827';
-                muted = '#4B5563';
-                accent = '#4F46E5';
-              } else if (theme === 'hermes-classic-light') {
-                bg = '#F5F2ED';
-                txt = '#1a1f26';
-                muted = '#6F675E';
-                accent = '#b98a44';
-              } else if (theme === 'hermes-slate') {
-                bg = '#0d1117';
-                txt = '#c9d1d9';
-                muted = '#8b949e';
-                accent = '#7eb8f6';
-              } else if (theme === 'hermes-slate-light') {
-                bg = '#F6F8FA';
-                txt = '#24292f';
-                muted = '#57606A';
-                accent = '#3b82f6';
-              } else if (theme === 'hermes-mono') {
-                bg = '#111111';
-                txt = '#e6edf3';
-                muted = '#888888';
-                accent = '#aaaaaa';
-              } else if (theme === 'hermes-mono-light') {
-                bg = '#FAFAFA';
-                txt = '#1a1a1a';
-                muted = '#666666';
-                accent = '#666666';
-              }
-            } catch(e){}
-
-            var isDark = !['hermes-official-light','hermes-classic-light','hermes-slate-light','hermes-mono-light'].includes(theme);
-            var quips = ["Consulting the oracle...","Loading ancient knowledge...","Warming up the messenger...","Calibrating tool chain...","Summoning Hermes...","Preparing the workspace...","Bridging realms...","Initializing agent runtime..."];
-            var quip = quips[Math.floor(Math.random() * quips.length)];
-
-            var d = document.createElement('div');
-            d.id = 'splash-screen';
-            d.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:'+bg+';transition:opacity 0.5s ease;';
-            d.innerHTML = '<div aria-label="Huminic" style="width:80px;height:80px;margin-bottom:20px;border-radius:16px;border:1px solid rgba(255,255,255,0.16);display:flex;align-items:center;justify-content:center;font:700 54px/1 Arial,Helvetica,sans-serif;color:'+txt+';background:rgba(255,255,255,0.04);filter:drop-shadow(0 8px 32px color-mix(in srgb,'+accent+' 45%, transparent))">h</div>'
-              + '<div style="font:700 34px/1.1 Arial,Helvetica,sans-serif;letter-spacing:-0.04em;color:'+txt+';margin-bottom:8px">Huminic</div>'
-              + '<div style="font:400 14px/1 system-ui,-apple-system,sans-serif;letter-spacing:0.04em;color:'+muted+'">Studio</div>'
-              + '<div style="margin-top:28px;width:140px;height:3px;background:'+(isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)')+';border-radius:3px;overflow:hidden;position:relative"><div id=splash-bar style="width:0%;height:100%;background:'+accent+';border-radius:3px;transition:width 0.4s ease"></div></div>';
-            document.body.prepend(d);
-
-            var bar = document.getElementById('splash-bar');
-            if (bar) {
-              setTimeout(function(){ bar.style.width='15%' }, 300);
-              setTimeout(function(){ bar.style.width='40%' }, 800);
-              setTimeout(function(){ bar.style.width='65%' }, 1500);
-              setTimeout(function(){ bar.style.width='85%' }, 2500);
-              setTimeout(function(){ bar.style.width='92%' }, 3200);
-            }
-
-            window.__dismissSplash = function() {
-              var el = document.getElementById('splash-screen');
-              if (!el) return;
-              if (bar) bar.style.width = '100%';
-              setTimeout(function(){
-                el.style.opacity = '0';
-                setTimeout(function(){ el.remove(); }, 500);
-              }, 300);
-            };
-            // Fallback: always dismiss after 5s
-            setTimeout(function(){ window.__dismissSplash && window.__dismissSplash(); }, 5000);
-            // Fast dismiss: returning users skip quickly
-            try {
-              if (localStorage.getItem('hermes-hermes-url') || localStorage.getItem('hermes-url')) {
-                setTimeout(function(){ window.__dismissSplash && window.__dismissSplash(); }, 600);
-              }
-            } catch(e) {}
+            // Do not mutate <body> before React hydrates. The previous boot
+            // splash inserted a sibling ahead of the app root and triggered
+            // React hydration error #418 on the login shell.
+            window.__dismissSplash = window.__dismissSplash || function(){};
           })()
         `,
           }}
