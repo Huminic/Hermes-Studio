@@ -1,11 +1,11 @@
 /**
- * AgentStatusStrip — top telemetry bar for the hermes-os theme.
+ * AgentStatusStrip — compact Studio status bar.
  *
- * Shows: brand mark | session context | active model | latency | connection status
+ * Shows: active profile | connection status
  * Visible only when [data-theme='hermes-os'] is active (controlled via CSS).
  */
 import { useQuery } from '@tanstack/react-query'
-import { useRouterState } from '@tanstack/react-router'
+import { useActiveProfile } from '@/hooks/use-active-profile'
 
 type ConnectionStatus = {
   status: 'connected' | 'enhanced' | 'partial' | 'disconnected'
@@ -42,14 +42,17 @@ function StatusPip({ status }: { status: ConnectionStatus['status'] | undefined 
   )
 }
 
-function truncateModel(model: string): string {
-  if (!model) return '—'
-  // Strip common prefixes for display
-  return model.replace(/^(accounts\/|fireworks\/|openai\/|anthropic\/|meta-llama\/)/i, '')
+function formatProfileLabel(profile: string): string {
+  const clean = profile && profile !== 'default' ? profile : 'studio'
+  return clean
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
 }
 
 export function AgentStatusStrip() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const activeProfile = useActiveProfile()
 
   const { data, isLoading } = useQuery({
     queryKey: ['hermes', 'connection-status'],
@@ -59,15 +62,6 @@ export function AgentStatusStrip() {
     staleTime: 15_000,
   })
 
-  // Derive session label from route
-  const sessionLabel = (() => {
-    const m = pathname.match(/^\/chat\/(.+)$/)
-    if (m) return m[1].slice(0, 12)
-    if (pathname === '/new') return 'new'
-    return null
-  })()
-
-  const model = truncateModel(data?.activeModel ?? '')
   const statusLabel =
     isLoading ? 'PROBING' :
     data?.status === 'enhanced' ? 'ENHANCED' :
@@ -77,41 +71,16 @@ export function AgentStatusStrip() {
 
   return (
     <div className="agent-status-strip" aria-hidden="true">
-      {/* Brand */}
       <span
         className="flex items-center gap-1.5 shrink-0 select-none"
         style={{ color: '#38bdf8', fontWeight: 600, letterSpacing: '0.12em' }}
       >
         <span style={{ fontSize: 13, lineHeight: 1 }}>◈</span>
-        <span style={{ fontSize: 9.5 }}>HERMES OS</span>
+        <span style={{ fontSize: 9.5 }}>{formatProfileLabel(activeProfile)}</span>
       </span>
 
-      {/* Separator */}
-      <span style={{ color: '#18263c', fontSize: 16, lineHeight: 1, userSelect: 'none' }}>│</span>
-
-      {/* Session */}
-      {sessionLabel ? (
-        <span style={{ color: 'rgba(103,232,249,0.55)', fontSize: 9 }}>
-          SESSION <span style={{ color: 'rgba(103,232,249,0.85)' }}>{sessionLabel}</span>
-        </span>
-      ) : (
-        <span style={{ color: 'rgba(103,232,249,0.3)', fontSize: 9 }}>NO ACTIVE SESSION</span>
-      )}
-
-      {/* Grow */}
       <span className="flex-1" />
 
-      {/* Model */}
-      {model !== '—' && (
-        <span style={{ color: 'rgba(129,140,248,0.8)', fontSize: 9, maxWidth: 180 }} className="truncate">
-          {model}
-        </span>
-      )}
-
-      {/* Separator */}
-      <span style={{ color: '#18263c', fontSize: 16, lineHeight: 1, userSelect: 'none' }}>│</span>
-
-      {/* Status */}
       <span className="flex items-center gap-1.5">
         <StatusPip status={data?.status} />
         <span style={{ color: data?.status === 'connected' || data?.status === 'enhanced' ? 'rgba(34,211,238,0.75)' : 'rgba(251,191,36,0.75)', fontSize: 9 }}>
