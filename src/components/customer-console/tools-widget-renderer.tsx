@@ -16,6 +16,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { StudioConfig } from '../../lib/studio-config'
 
+// WF-016: workspace gunmetal theme
+const PRIMARY = '#2f3b4d'
+
 type WidgetMode = 'chat' | 'voice' | 'video' | 'form'
 
 type WidgetRow = {
@@ -188,14 +191,19 @@ export function CustomerToolsWidgetRenderer(props: {
           className={
             'rounded-lg border px-3 py-2 text-left transition ' +
             (isUnifiedActive
-              ? 'border-[#8b5cf6] bg-[#8b5cf6]/10'
+              ? 'font-semibold'
               : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50')
           }
+          style={
+            isUnifiedActive
+              ? { borderColor: PRIMARY, background: `${PRIMARY}14` }
+              : undefined
+          }
         >
-          <div className="text-sm font-semibold text-slate-900">
+          <div className="text-base font-semibold text-slate-900">
             Unified Widget
           </div>
-          <div className="text-xs text-slate-500">All-in-one launcher</div>
+          <div className="text-sm text-slate-500">All-in-one launcher</div>
         </button>
         {widgets.map((w) => {
           const isActive = w.slug === activeSlug
@@ -212,14 +220,19 @@ export function CustomerToolsWidgetRenderer(props: {
               className={
                 'rounded-lg border px-3 py-2 text-left transition ' +
                 (isActive
-                  ? 'border-[#8b5cf6] bg-[#8b5cf6]/10'
+                  ? 'font-semibold'
                   : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50')
               }
+              style={
+                isActive
+                  ? { borderColor: PRIMARY, background: `${PRIMARY}14` }
+                  : undefined
+              }
             >
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-base font-semibold text-slate-900">
                 {widgetTitle(w)}
               </div>
-              <div className="text-xs text-slate-500">{MODE_LABEL[w.mode]}</div>
+              <div className="text-sm text-slate-500">{MODE_LABEL[w.mode]}</div>
             </button>
           )
         })}
@@ -247,125 +260,82 @@ export function CustomerToolsWidgetRenderer(props: {
       )}
 
       {!isUnifiedActive && active && (
-        <div className="grid gap-4 lg:grid-cols-[1fr_400px]">
-          <section className="flex flex-col gap-4">
-            <div className="rounded-lg border border-slate-200 bg-white p-4">
-              <div className="flex items-center gap-2">
-                <h3 className="text-base font-semibold text-slate-900">
-                  {widgetTitle(active)}
-                </h3>
-                <ModeBadge mode={active.mode} />
-              </div>
-              <p className="mt-1 text-sm text-slate-600">
-                {MODE_BLURB[active.mode]}
-              </p>
-              {active.body && active.body.trim() && (
-                <p className="mt-2 whitespace-pre-wrap text-sm text-slate-500">
-                  {stripHeading(active.body).trim()}
-                </p>
-              )}
+        <div className="flex flex-col gap-4">
+          <div className="rounded-lg border border-slate-200 bg-white p-4">
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-slate-900">
+                {widgetTitle(active)}
+              </h3>
+              <ModeBadge mode={active.mode} />
             </div>
-
-            {settings.show_embed_snippet && (
-              <div className="rounded-lg border border-slate-200 bg-white p-4">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-medium text-slate-900">
-                    Add to your website
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      void navigator.clipboard?.writeText(active.embed_snippet)
-                      setCopied(true)
-                      window.setTimeout(() => setCopied(false), 2000)
-                    }}
-                    className="rounded-md bg-[#3b82f6] px-3 py-1 text-xs font-medium text-white hover:bg-[#2563eb]"
-                  >
-                    {copied ? 'Copied' : 'Copy code'}
-                  </button>
-                </div>
-                <p className="mb-2 text-xs text-slate-500">
-                  Paste this one line into your website where you want the widget
-                  to appear.
-                </p>
-                <pre className="overflow-x-auto rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800">
-                  {active.embed_snippet}
-                </pre>
-              </div>
+            <p className="mt-1 text-sm text-slate-600">
+              {MODE_BLURB[active.mode]}
+            </p>
+            {active.body && active.body.trim() && (
+              <p className="mt-2 whitespace-pre-wrap text-sm text-slate-500">
+                {stripHeading(active.body).trim()}
+              </p>
             )}
+          </div>
 
-            {settings.show_live_demo && (
-              <div className="rounded-lg border border-slate-200 bg-white p-4">
-                <div className="mb-1 flex items-center justify-between">
-                  <span className="text-sm font-medium text-slate-900">
-                    Live demo
-                  </span>
-                  {LIVE_MODES.has(active.mode) && (
-                    <a
-                      href={active.preview_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-xs font-medium text-[#3b82f6] hover:underline"
-                    >
-                      Open in new tab
-                    </a>
-                  )}
-                </div>
-                <p className="text-xs text-slate-500">
-                  {LIVE_MODES.has(active.mode)
-                    ? 'This is exactly what your visitors will see.'
-                    : `${MODE_LABEL[active.mode]} widgets are coming soon. You can add the code now — it will go live automatically once this widget type is ready.`}
-                </p>
+          {settings.show_embed_snippet && (
+            <div className="rounded-lg border border-slate-200 bg-white p-4">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-base font-semibold text-slate-900">
+                  Add to your website
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    void navigator.clipboard?.writeText(active.embed_snippet)
+                    setCopied(true)
+                    window.setTimeout(() => setCopied(false), 2000)
+                  }}
+                  className="rounded-md px-3 py-1 text-xs font-medium text-white transition hover:brightness-95"
+                  style={{ background: PRIMARY }}
+                >
+                  {copied ? 'Copied' : 'Copy code'}
+                </button>
               </div>
-            )}
-
-            <details className="rounded-lg border border-slate-200 bg-white">
-              <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-slate-700">
-                Customize wording (advanced)
-              </summary>
-              <div className="border-t border-slate-200 p-4">
-                <p className="mb-2 text-xs text-slate-500">
-                  Edit the greeting and description shown in this widget. Changes
-                  are reviewed before they go live.
-                </p>
-                <textarea
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  rows={12}
-                  className="w-full resize-y rounded-md border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-xs text-slate-800 focus:border-[#3b82f6] focus:outline-none"
-                  spellCheck={false}
-                />
-                <div className="mt-2 flex items-center justify-end">
-                  <button
-                    type="button"
-                    onClick={() => void save()}
-                    disabled={busy}
-                    className="rounded-md bg-[#3b82f6] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#2563eb] disabled:opacity-50"
-                  >
-                    {busy ? 'Saving…' : 'Save changes'}
-                  </button>
-                </div>
-                {feedback && (
-                  <div
-                    className={
-                      'mt-3 rounded-md border p-2 text-xs ' +
-                      (feedback.kind === 'ok'
-                        ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                        : feedback.kind === 'warn'
-                          ? 'border-amber-200 bg-amber-50 text-amber-700'
-                          : 'border-red-200 bg-red-50 text-red-700')
-                    }
-                  >
-                    {feedback.message}
-                  </div>
-                )}
-              </div>
-            </details>
-          </section>
+              <p className="mb-2 text-xs text-slate-500">
+                Paste this one line into your website where you want the widget
+                to appear.
+              </p>
+              <pre className="overflow-x-auto rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800">
+                {active.embed_snippet}
+              </pre>
+            </div>
+          )}
 
           {settings.show_live_demo && (
-            <aside className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-              <div className="mb-2 text-sm font-medium text-slate-900">
+            <div className="rounded-lg border border-slate-200 bg-white p-4">
+              <div className="mb-1 flex items-center justify-between">
+                <span className="text-base font-semibold text-slate-900">
+                  Live demo
+                </span>
+                {LIVE_MODES.has(active.mode) && (
+                  <a
+                    href={active.preview_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs font-medium hover:underline"
+                    style={{ color: PRIMARY }}
+                  >
+                    Open in new tab
+                  </a>
+                )}
+              </div>
+              <p className="text-xs text-slate-500">
+                {LIVE_MODES.has(active.mode)
+                  ? 'This is exactly what your visitors will see.'
+                  : `${MODE_LABEL[active.mode]} widgets are coming soon. You can add the code now — it will go live automatically once this widget type is ready.`}
+              </p>
+            </div>
+          )}
+
+          {settings.show_live_demo && (
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="mb-3 text-base font-semibold text-slate-900">
                 Preview
               </div>
               {LIVE_MODES.has(active.mode) && active.status === 'ready' ? (
@@ -389,8 +359,52 @@ export function CustomerToolsWidgetRenderer(props: {
                   </p>
                 </div>
               )}
-            </aside>
+            </div>
           )}
+
+          <details className="rounded-lg border border-slate-200 bg-white">
+            <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-slate-700">
+              Customize wording (advanced)
+            </summary>
+            <div className="border-t border-slate-200 p-4">
+              <p className="mb-2 text-xs text-slate-500">
+                Edit the greeting and description shown in this widget. Changes
+                are reviewed before they go live.
+              </p>
+              <textarea
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                rows={12}
+                className="w-full resize-y rounded-md border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-xs text-slate-800 focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300"
+                spellCheck={false}
+              />
+              <div className="mt-2 flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => void save()}
+                  disabled={busy}
+                  className="rounded-md px-4 py-1.5 text-sm font-medium text-white transition hover:brightness-95 disabled:opacity-50"
+                  style={{ background: PRIMARY }}
+                >
+                  {busy ? 'Saving…' : 'Save changes'}
+                </button>
+              </div>
+              {feedback && (
+                <div
+                  className={
+                    'mt-3 rounded-md border p-2 text-xs ' +
+                    (feedback.kind === 'ok'
+                      ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                      : feedback.kind === 'warn'
+                        ? 'border-amber-200 bg-amber-50 text-amber-700'
+                        : 'border-red-200 bg-red-50 text-red-700')
+                  }
+                >
+                  {feedback.message}
+                </div>
+              )}
+            </div>
+          </details>
         </div>
       )}
     </div>
@@ -408,84 +422,87 @@ function UnifiedWidgetPanel(props: {
   const publicPreviewUrl = `${origin}/p/${encodeURIComponent(props.profile)}`
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_400px]">
-      <section className="flex flex-col gap-4">
-        <div className="rounded-lg border border-slate-200 bg-white p-4">
-          <div className="flex items-center gap-2">
-            <h3 className="text-base font-semibold text-slate-900">
-              Unified Widget
-            </h3>
-            <span className="rounded-full bg-[#3b82f6]/10 px-2 py-0.5 text-[10px] font-medium text-[#2563eb]">
-              Live
-            </span>
-          </div>
-          <p className="mt-1 text-sm text-slate-600">
-            One launcher lets visitors choose Web Chat, Instant Call Back,
-            Contact Form, or Two-Way Video from the same website button.
-          </p>
+    <div className="flex flex-col gap-4">
+      <div className="rounded-lg border border-slate-200 bg-white p-4">
+        <div className="flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-slate-900">
+            Unified Widget
+          </h3>
+          <span
+            className="rounded-full px-2 py-0.5 text-[10px] font-medium text-white"
+            style={{ background: PRIMARY }}
+          >
+            Live
+          </span>
         </div>
+        <p className="mt-1 text-sm text-slate-600">
+          One launcher lets visitors choose Web Chat, Instant Call Back,
+          Contact Form, or Two-Way Video from the same website button.
+        </p>
+      </div>
 
-        {props.settings.show_embed_snippet && (
-          <div className="rounded-lg border border-slate-200 bg-white p-4">
-            <div className="mb-2 flex items-center justify-between">
-              <span className="text-sm font-medium text-slate-900">
-                Add to your website
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  void navigator.clipboard?.writeText(embedSnippet)
-                  props.setCopied(true)
-                  window.setTimeout(() => props.setCopied(false), 2000)
-                }}
-                className="rounded-md bg-[#3b82f6] px-3 py-1 text-xs font-medium text-white hover:bg-[#2563eb]"
-              >
-                {props.copied ? 'Copied' : 'Copy code'}
-              </button>
-            </div>
-            <p className="mb-2 text-xs text-slate-500">
-              Paste this one line into your website where you want the launcher
-              to appear.
-            </p>
-            <pre className="overflow-x-auto rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800">
-              {embedSnippet}
-            </pre>
+      {props.settings.show_embed_snippet && (
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-base font-semibold text-slate-900">
+              Add to your website
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                void navigator.clipboard?.writeText(embedSnippet)
+                props.setCopied(true)
+                window.setTimeout(() => props.setCopied(false), 2000)
+              }}
+              className="rounded-md px-3 py-1 text-xs font-medium text-white transition hover:brightness-95"
+              style={{ background: PRIMARY }}
+            >
+              {props.copied ? 'Copied' : 'Copy code'}
+            </button>
           </div>
-        )}
-
-        {props.settings.show_live_demo && (
-          <div className="rounded-lg border border-slate-200 bg-white p-4">
-            <div className="mb-1 flex items-center justify-between">
-              <span className="text-sm font-medium text-slate-900">
-                Live demo
-              </span>
-              <a
-                href={publicPreviewUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs font-medium text-[#3b82f6] hover:underline"
-              >
-                Open in new tab
-              </a>
-            </div>
-            <p className="text-xs text-slate-500">
-              This uses the same unified launcher your website visitors will
-              see.
-            </p>
-          </div>
-        )}
-      </section>
+          <p className="mb-2 text-xs text-slate-500">
+            Paste this one line into your website where you want the launcher
+            to appear.
+          </p>
+          <pre className="overflow-x-auto rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800">
+            {embedSnippet}
+          </pre>
+        </div>
+      )}
 
       {props.settings.show_live_demo && (
-        <aside className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-          <div className="mb-2 text-sm font-medium text-slate-900">Preview</div>
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
+          <div className="mb-1 flex items-center justify-between">
+            <span className="text-base font-semibold text-slate-900">
+              Live demo
+            </span>
+            <a
+              href={publicPreviewUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs font-medium hover:underline"
+              style={{ color: PRIMARY }}
+            >
+              Open in new tab
+            </a>
+          </div>
+          <p className="text-xs text-slate-500">
+            This uses the same unified launcher your website visitors will
+            see.
+          </p>
+        </div>
+      )}
+
+      {props.settings.show_live_demo && (
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <div className="mb-3 text-base font-semibold text-slate-900">Preview</div>
           <iframe
             title="Preview of Unified Widget"
             srcDoc={buildUnifiedPreviewHtml(origin, props.profile)}
             className="h-[480px] w-full rounded-md border border-slate-200 bg-white"
             sandbox="allow-scripts allow-forms"
           />
-        </aside>
+        </div>
       )}
     </div>
   )
@@ -498,9 +515,10 @@ function ModeBadge({ mode }: { mode: WidgetMode }) {
       className={
         'rounded-full px-2 py-0.5 text-[10px] font-medium ' +
         (live
-          ? 'bg-[#3b82f6]/10 text-[#2563eb]'
+          ? 'text-white'
           : 'bg-slate-100 text-slate-500')
       }
+      style={live ? { background: PRIMARY } : undefined}
     >
       {live ? 'Live' : 'Coming soon'}
     </span>
