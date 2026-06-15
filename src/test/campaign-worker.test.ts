@@ -171,4 +171,43 @@ describe('tickCampaigns', () => {
     expect(results).toHaveLength(0)
     expect(listCampaignDeliveries('huminic', campaign.id)).toHaveLength(0)
   })
+
+  it('can force-send one draft campaign by id', async () => {
+    const {
+      upsertContact,
+      createAudience,
+      createCampaign,
+      listCampaignDeliveries,
+    } = await import('@/server/messaging-hub-store')
+    const { tickCampaigns } = await import('@/server/campaign-worker')
+    upsertContact({
+      profile: 'huminic',
+      display_name: 'Sample',
+      identifiers: { sms: '+15555550199' },
+    })
+    const audience = createAudience({
+      profile: 'huminic',
+      name: 'sms-draft',
+      query: { channel: 'sms' },
+    })
+    const draft = createCampaign({
+      profile: 'huminic',
+      audience_id: audience.id,
+      channel: 'sms',
+      message_template: 'Hi',
+      schedule: null,
+    })
+    const untouched = await tickCampaigns({ profile: 'huminic' })
+    expect(untouched).toHaveLength(0)
+    expect(listCampaignDeliveries('huminic', draft.id)).toHaveLength(0)
+
+    const results = await tickCampaigns({
+      profile: 'huminic',
+      campaign_id: draft.id,
+      force: true,
+    })
+    expect(results).toHaveLength(1)
+    expect(results[0].campaign_id).toBe(draft.id)
+    expect(listCampaignDeliveries('huminic', draft.id).length).toBeGreaterThan(0)
+  })
 })

@@ -3,7 +3,7 @@
  *
  * AC.8.4 — Customer-admin scheduled-send tick. Cron-style job calls
  * this every N minutes to dispatch due campaigns.
- * Body: { profile }
+ * Body: { profile, campaign_id?, force? }
  */
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
@@ -25,6 +25,9 @@ export const Route = createFileRoute('/api/customer/campaigns/tick')({
           unknown
         >
         const profile = typeof body.profile === 'string' ? body.profile : ''
+        const campaignId =
+          typeof body.campaign_id === 'string' ? body.campaign_id : undefined
+        const force = body.force === true
         if (!profile) {
           return json({ ok: false, error: 'profile required' }, { status: 400 })
         }
@@ -32,7 +35,11 @@ export const Route = createFileRoute('/api/customer/campaigns/tick')({
         if (!isAuthorizedForProfile(session, profile)) {
           return json({ ok: false, error: 'Forbidden' }, { status: 403 })
         }
-        const results = await tickCampaigns({ profile })
+        const results = await tickCampaigns({
+          profile,
+          campaign_id: campaignId,
+          force,
+        })
         return json({ ok: true, results })
       },
     },

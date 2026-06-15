@@ -5,7 +5,7 @@
  *   - friendly channel picker (Text / Email / Call / Video) + labeled filters
  *     that build the underlying audience query behind the scenes,
  *   - "Upload a list (.csv)" to import contacts and target them directly,
- *   - "Send now" (no jargon) to dispatch a ready campaign,
+ *   - card-level "Send now" (no jargon) to dispatch a draft/ready campaign,
  *   - a results view per campaign (audience size, delivered, failed, status).
  * The customer never sees or types raw JSON.
  */
@@ -13,8 +13,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { StudioConfig } from '../../lib/studio-config'
 
-const PRIMARY = '#3b82f6'
-const ACTIVE = '#8b5cf6'
+const PRIMARY = '#2f3b4d'
+const ACTIVE = PRIMARY
 
 type Campaign = {
   id: string
@@ -69,6 +69,8 @@ type CampaignResults = {
   delivered: number
   failed: number
 }
+
+type View = 'list' | 'build' | 'triggers'
 
 /** Customer-facing channel options → underlying channel + template channel. */
 const CHANNELS: Array<{
@@ -145,7 +147,8 @@ export function CustomerCampaignsRenderer(props: {
   const [campaigns, setCampaigns] = useState<Array<Campaign>>([])
   const [templates, setTemplates] = useState<Array<CampaignTemplate>>([])
   const [audiences, setAudiences] = useState<Array<Audience>>([])
-  const [view, setView] = useState<'list' | 'build' | 'follow-up'>('list')
+  const [view, setView] = useState<View>('list')
+  const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null)
 
   // Follow-up flow state.
   const [flowEnabled, setFlowEnabled] = useState(false)
@@ -159,7 +162,10 @@ export function CustomerCampaignsRenderer(props: {
   const [channel, setChannel] = useState<string>('sms')
   const [pickedTemplate, setPickedTemplate] = useState<string>('')
   const [audienceName, setAudienceName] = useState('My customer list')
-  const [audienceMode, setAudienceMode] = useState<'filter' | 'upload'>('filter')
+  const [audienceMode, setAudienceMode] = useState<
+    'existing' | 'filter' | 'upload'
+  >('filter')
+  const [existingAudienceId, setExistingAudienceId] = useState('')
   const [filterBeforeAfter, setFilterBeforeAfter] = useState<
     '' | 'before' | 'after'
   >('')
@@ -177,6 +183,7 @@ export function CustomerCampaignsRenderer(props: {
 
   // Results view.
   const [openResults, setOpenResults] = useState<string | null>(null)
+  const [openPreview, setOpenPreview] = useState<string | null>(null)
   const [results, setResults] = useState<Record<string, CampaignResults>>({})
   const [sendNote, setSendNote] = useState<string | null>(null)
 
@@ -213,6 +220,48 @@ export function CustomerCampaignsRenderer(props: {
   useEffect(() => {
     void load()
   }, [load])
+
+  useEffect(() => {
+    if (!existingAudienceId && audiences.length > 0) {
+      setExistingAudienceId(audiences[0].id)
+    }
+  }, [audiences, existingAudienceId])
+
+  const startNewCampaign = useCallback(() => {
+    setEditingCampaign(null)
+    setView('build')
+    setAudienceMode('filter')
+    setPreview(null)
+    setUploadNote(null)
+    setUploadedAudience(null)
+    setFeedback(null)
+  }, [])
+
+  const startUploadList = useCallback(() => {
+    setEditingCampaign(null)
+    setView('build')
+    setAudienceMode('upload')
+    setPreview(null)
+    setUploadNote(null)
+    setUploadedAudience(null)
+    setFeedback(null)
+  }, [])
+
+  const startEditCampaign = useCallback(
+    (campaign: Campaign) => {
+      setEditingCampaign(campaign)
+      setView('build')
+      setChannel(campaign.channel)
+      setPickedTemplate(campaign.template ?? '')
+      setAudienceMode('existing')
+      setExistingAudienceId(campaign.audience_id)
+      setPreview(null)
+      setUploadNote(null)
+      setUploadedAudience(null)
+      setFeedback(null)
+    },
+    [],
+  )
 
   const loadFlow = useCallback(async () => {
     try {
@@ -403,7 +452,13 @@ export function CustomerCampaignsRenderer(props: {
       // Resolve the audience id — either the uploaded list or a freshly-saved
       // filter audience.
       let audienceId: string
-      if (audienceMode === 'upload') {
+      if (audienceMode === 'existing') {
+        if (!existingAudienceId) {
+          setFeedback('Please choose a saved list.')
+          return
+        }
+        audienceId = existingAudienceId
+      } else if (audienceMode === 'upload') {
         if (!uploadedAudience) {
           setFeedback('Please upload a .csv list first.')
           return
@@ -432,15 +487,16 @@ export function CustomerCampaignsRenderer(props: {
       }
 
       const campRes = await fetch('/api/customer/campaigns', {
-        method: 'POST',
+        method: editingCampaign ? 'PUT' : 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           profile: props.profile,
+          campaign_id: editingCampaign?.id,
           audience_id: audienceId,
           channel,
           message_template: tpl.message_template,
-          schedule: Date.now() + 60_000,
+          schedule: null,
           template: tpl.id,
         }),
       })
@@ -452,6 +508,7 @@ export function CustomerCampaignsRenderer(props: {
         return
       }
       setView('list')
+      setEditingCampaign(null)
       setPreview(null)
       setUploadedAudience(null)
       setUploadNote(null)
@@ -464,6 +521,8 @@ export function CustomerCampaignsRenderer(props: {
     audienceName,
     buildQuery,
     channel,
+    editingCampaign,
+    existingAudienceId,
     load,
     pickedTemplate,
     props.profile,
@@ -471,7 +530,7 @@ export function CustomerCampaignsRenderer(props: {
     uploadedAudience,
   ])
 
-  const sendNow = useCallback(async () => {
+  const sendNow = useCallback(async (campaignId: string) => {
     setBusy(true)
     setSendNote(null)
     try {
@@ -479,7 +538,11 @@ export function CustomerCampaignsRenderer(props: {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profile: props.profile }),
+        body: JSON.stringify({
+          profile: props.profile,
+          campaign_id: campaignId,
+          force: true,
+        }),
       })
       const j = (await res.json().catch(() => ({}))) as {
         ok: boolean
@@ -492,10 +555,10 @@ export function CustomerCampaignsRenderer(props: {
           0,
         )
         if (sent === 0 && failed === 0) {
-          setSendNote('Nothing was due to send right now.')
+          setSendNote('That campaign did not have any deliverable contacts.')
         } else {
           setSendNote(
-            `Sent ${sent} message${sent === 1 ? '' : 's'}` +
+            `Campaign sent ${sent} message${sent === 1 ? '' : 's'}` +
               (failed ? `, ${failed} could not be delivered.` : '.'),
           )
         }
@@ -544,12 +607,17 @@ export function CustomerCampaignsRenderer(props: {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setView('list')}
+            onClick={() => {
+              setEditingCampaign(null)
+              setView('list')
+            }}
             className="text-xs text-slate-500 hover:text-slate-900"
           >
             ← Back
           </button>
-          <h3 className="text-sm font-semibold">New campaign</h3>
+          <h3 className="text-sm font-semibold">
+            {editingCampaign ? 'Edit campaign' : 'New campaign'}
+          </h3>
         </div>
 
         {/* Channel */}
@@ -624,8 +692,11 @@ export function CustomerCampaignsRenderer(props: {
           <div className="mt-2 flex gap-2">
             {(
               [
+                ...(audiences.length > 0
+                  ? ([['existing', 'Saved list']] as const)
+                  : []),
                 ['filter', 'My existing contacts'],
-                ['upload', 'Upload a list (.csv)'],
+                ['upload', 'Upload list'],
               ] as const
             ).map(([mode, label]) => {
               const active = audienceMode === mode
@@ -647,6 +718,28 @@ export function CustomerCampaignsRenderer(props: {
               )
             })}
           </div>
+
+          {audienceMode === 'existing' && (
+            <div className="mt-3 flex flex-col gap-2">
+              <label className="block text-xs">
+                <span className="text-slate-500">Saved list</span>
+                <select
+                  value={existingAudienceId}
+                  onChange={(e) => setExistingAudienceId(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900"
+                >
+                  {audiences.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className="text-[11px] text-slate-500">
+                Use one of your saved audience lists for this campaign.
+              </div>
+            </div>
+          )}
 
           {audienceMode === 'filter' && (
             <div className="mt-3 flex flex-col gap-2">
@@ -737,7 +830,7 @@ export function CustomerCampaignsRenderer(props: {
                   disabled={busy}
                   className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40"
                 >
-                  Choose a .csv file
+                  Upload CSV
                 </button>
               </div>
               {uploadNote && (
@@ -763,19 +856,19 @@ export function CustomerCampaignsRenderer(props: {
             className="rounded-md px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-40"
             style={{ background: PRIMARY }}
           >
-            Save campaign
+            {editingCampaign ? 'Save draft' : 'Save as draft'}
           </button>
         </div>
         <p className="text-[11px] text-slate-400">
-          Saved campaigns are queued to send. Use “Send now” on the campaigns
-          list to deliver them immediately.
+          Draft campaigns appear on the Campaigns list. Preview, edit, or send
+          them from their card.
         </p>
       </div>
     )
   }
 
-  // ── Follow-up view ────────────────────────────────────────────────────────
-  if (view === 'follow-up') {
+  // ── Triggers view ─────────────────────────────────────────────────────────
+  if (view === 'triggers') {
     return (
       <div className="flex flex-col gap-3 text-slate-900">
         <div className="flex items-center gap-2">
@@ -786,17 +879,18 @@ export function CustomerCampaignsRenderer(props: {
           >
             ← Back
           </button>
-          <h3 className="text-sm font-semibold">Follow-up for new leads</h3>
+          <h3 className="text-sm font-semibold">Triggers</h3>
         </div>
 
         <p className="text-[11px] text-slate-500">
-          When a new lead comes in, reach out automatically. If they don’t reply,
-          try the next way to reach them. The moment they reply, follow-up stops.
+          When a new lead comes in, trigger an automatic first response. If they
+          don’t reply, try the next way to reach them. The moment they reply,
+          the trigger sequence stops.
         </p>
 
         {!accountEnabled && (
           <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
-            Lead follow-up isn’t switched on for your account yet. Save your plan
+            Lead triggers aren’t switched on for your account yet. Save your plan
             here, then ask your Huminic rep to turn it on.
           </div>
         )}
@@ -807,7 +901,7 @@ export function CustomerCampaignsRenderer(props: {
             checked={flowEnabled}
             onChange={(e) => setFlowEnabled(e.target.checked)}
           />
-          <span className="font-medium">Turn on follow-up for new leads</span>
+          <span className="font-medium">Turn on triggers for new leads</span>
         </label>
 
         <section className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white p-3">
@@ -872,7 +966,7 @@ export function CustomerCampaignsRenderer(props: {
           </div>
 
           <div className="text-[11px] text-slate-400">
-            ✓ Follow-up always stops as soon as the customer replies.
+            Triggers always stop as soon as the customer replies.
           </div>
         </section>
 
@@ -910,34 +1004,7 @@ export function CustomerCampaignsRenderer(props: {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => {
-              setFlowNote(null)
-              setView('follow-up')
-              void loadFlow()
-            }}
-            className="rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
-            title="Set up automatic follow-up for new leads."
-          >
-            Follow-up
-          </button>
-          <button
-            type="button"
-            onClick={() => void sendNow()}
-            disabled={busy}
-            className="rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40"
-            title="Sends ready campaigns to their audience immediately."
-          >
-            Send now
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setView('build')
-              setPreview(null)
-              setUploadNote(null)
-              setUploadedAudience(null)
-              setFeedback(null)
-            }}
+            onClick={startNewCampaign}
             className="rounded-md px-3 py-1.5 text-xs font-semibold text-white"
             style={{ background: PRIMARY }}
           >
@@ -945,24 +1012,56 @@ export function CustomerCampaignsRenderer(props: {
           </button>
         </div>
       </div>
-      <p className="-mt-1 text-[11px] text-slate-400">
-        “Send now” sends any ready campaign to its audience immediately.
-      </p>
       {sendNote && (
         <div className="rounded-md border border-slate-200 bg-slate-50 p-2 text-xs text-slate-700">
           {sendNote}
         </div>
       )}
 
+      {/* Triggers */}
+      <div className="rounded-lg border border-slate-200 bg-white p-3">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <div className="text-xs font-semibold text-slate-600">
+              Triggers
+            </div>
+            <div className="mt-1 text-xs text-slate-500">
+              Automatic new-lead response sequences that stop when the customer
+              replies.
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setFlowNote(null)
+              setView('triggers')
+              void loadFlow()
+            }}
+            className="rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+          >
+            Manage triggers
+          </button>
+        </div>
+      </div>
+
       {/* Audiences */}
       <div className="rounded-lg border border-slate-200 bg-white p-3">
-        <div className="text-xs font-semibold text-slate-600">
-          Saved audience lists
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="text-xs font-semibold text-slate-600">
+            Saved audience lists
+          </div>
+          <button
+            type="button"
+            onClick={startUploadList}
+            className="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+          >
+            Upload list
+          </button>
         </div>
         {audiences.length === 0 ? (
           <div className="mt-1 text-xs text-slate-500">
-            No saved lists yet. Use New campaign, then upload a CSV or save a
-            filtered audience.
+            No saved lists yet. Upload a CSV or save a filtered audience while
+            building a campaign.
           </div>
         ) : (
           <ul className="mt-1 divide-y divide-slate-100 text-xs">
@@ -988,15 +1087,21 @@ export function CustomerCampaignsRenderer(props: {
             {campaigns.map((c) => {
               const r = results[c.id]
               const open = openResults === c.id
+              const previewOpen = openPreview === c.id
+              const canRevise = c.status === 'draft' || c.status === 'scheduled'
+              const audience = audiences.find((a) => a.id === c.audience_id)
               return (
                 <li key={c.id} className="py-2">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-semibold text-slate-800">
-                      {c.template ?? 'Campaign'}
-                    </span>
-                    <span className="text-slate-500">
-                      {channelLabel(c.channel)}
-                    </span>
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div>
+                      <div className="font-semibold text-slate-800">
+                        {c.template ?? 'Campaign'}
+                      </div>
+                      <div className="mt-0.5 text-[11px] text-slate-500">
+                        {channelLabel(c.channel)}
+                        {audience ? ` · ${audience.name}` : ''}
+                      </div>
+                    </div>
                     <span
                       className={
                         'rounded-full px-2 py-0.5 text-[10px] font-semibold ' +
@@ -1011,6 +1116,38 @@ export function CustomerCampaignsRenderer(props: {
                     >
                       {statusLabel(c.status)}
                     </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setOpenPreview(previewOpen ? null : c.id)
+                        }
+                        className="text-[11px] font-medium"
+                        style={{ color: PRIMARY }}
+                      >
+                        {previewOpen ? 'Hide preview' : 'Preview'}
+                      </button>
+                      {canRevise && (
+                        <button
+                          type="button"
+                          onClick={() => startEditCampaign(c)}
+                          className="text-[11px] font-medium"
+                          style={{ color: PRIMARY }}
+                        >
+                          Edit
+                        </button>
+                      )}
+                      {canRevise && (
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => void sendNow(c.id)}
+                          className="rounded-md px-2 py-1 text-[11px] font-semibold text-white disabled:opacity-40"
+                          style={{ background: PRIMARY }}
+                        >
+                          Send now
+                        </button>
+                      )}
                     <button
                       type="button"
                       onClick={() => void toggleResults(c.id)}
@@ -1019,7 +1156,21 @@ export function CustomerCampaignsRenderer(props: {
                     >
                       {open ? 'Hide results' : 'View results'}
                     </button>
+                    </div>
                   </div>
+                  {previewOpen && (
+                    <div className="mt-2 rounded-md border border-slate-200 bg-slate-50 p-2">
+                      <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                        Campaign preview
+                      </div>
+                      <div className="mt-1 whitespace-pre-wrap text-xs text-slate-700">
+                        {c.message_template}
+                      </div>
+                      <div className="mt-1 text-[11px] text-slate-500">
+                        Audience: {audience ? audience.name : c.audience_id}
+                      </div>
+                    </div>
+                  )}
                   {open && (
                     <div className="mt-2 grid grid-cols-3 gap-2 rounded-md border border-slate-200 bg-slate-50 p-2 text-center">
                       <div>

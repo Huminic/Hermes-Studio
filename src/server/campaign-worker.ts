@@ -141,14 +141,22 @@ function renderTemplate(
 export async function tickCampaigns(input: {
   profile: string
   now?: number
+  campaign_id?: string
+  force?: boolean
 }): Promise<Array<CampaignTickResult>> {
   const now = input.now ?? Date.now()
   const out: Array<CampaignTickResult> = []
   for (const c of listCampaigns(input.profile)) {
-    if (c.status === 'complete' || c.status === 'failed' || c.status === 'draft') {
+    if (input.campaign_id && c.id !== input.campaign_id) {
       continue
     }
-    if (c.schedule && c.schedule > now) {
+    if (c.status === 'complete' || c.status === 'failed') {
+      continue
+    }
+    if (c.status === 'draft' && !input.force) {
+      continue
+    }
+    if (c.schedule && c.schedule > now && !input.force) {
       continue
     }
     updateCampaignStatus(input.profile, c.id, 'in_progress')

@@ -400,6 +400,10 @@ describe('console-renderers registry', () => {
     // surfaced as a raw label (campaigns remain service-scoped in code).
     expect(container.textContent).toContain('Campaigns')
     expect(container.textContent).toContain('Reach your customers')
+    expect(container.textContent).toContain('Triggers')
+    expect(container.textContent).toContain('Upload list')
+    expect(container.textContent).not.toContain('Follow-up')
+    expect(container.textContent).not.toContain('“Send now” sends any ready campaign')
   })
 
   it('assistant-pane renderer surfaces persona_name', () => {

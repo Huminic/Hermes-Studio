@@ -1000,6 +1000,51 @@ export function getCampaign(profile: string, id: string): Campaign | null {
   return listCampaigns(profile).find((c) => c.id === id) ?? null
 }
 
+export function updateCampaign(
+  profile: string,
+  id: string,
+  input: {
+    audience_id: string
+    channel: string
+    message_template: string
+    schedule?: number | null
+    template?: string | null
+  },
+): Campaign | null {
+  const existing = getCampaign(profile, id)
+  if (!existing) return null
+  const now = Date.now()
+  const updated: Campaign = {
+    ...existing,
+    audience_id: input.audience_id,
+    channel: input.channel,
+    message_template: input.message_template,
+    schedule: input.schedule ?? null,
+    status: input.schedule ? 'scheduled' : 'draft',
+    template: input.template ?? null,
+    updated_at: now,
+  }
+  const db = getDb(profile)
+  if (db) {
+    db.prepare(
+      `UPDATE campaigns SET audience_id=?, channel=?, message_template=?, schedule=?, status=?, template=?, updated_at=? WHERE id=? AND profile=?`,
+    ).run(
+      updated.audience_id,
+      updated.channel,
+      updated.message_template,
+      updated.schedule,
+      updated.status,
+      updated.template,
+      updated.updated_at,
+      id,
+      profile,
+    )
+  } else {
+    getStore(profile).campaigns.set(id, updated)
+  }
+  return updated
+}
+
 export function updateCampaignStatus(
   profile: string,
   id: string,
