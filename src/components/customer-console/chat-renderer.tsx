@@ -64,6 +64,11 @@ function isGovernanceAgent(a: CustomerAgent): boolean {
   )
 }
 
+/** Extract first name from "First Last" format (e.g., "Nancy Gaston" → "Nancy"). */
+function firstName(fullName: string): string {
+  return fullName.trim().split(/\s+/)[0] || fullName
+}
+
 export function CustomerChatRenderer(props: {
   profile: string
   config: StudioConfig
@@ -254,7 +259,7 @@ export function CustomerChatRenderer(props: {
           <div className="flex h-full items-center justify-center">
             <div className="max-w-md text-center">
               <div className="text-sm font-medium text-slate-700 mb-3">
-                {activeAgent?.name ? `Ask ${activeAgent.name} anything` : 'Start a conversation'}
+                {activeAgent?.name ? `Ask ${firstName(activeAgent.name)} Anything` : 'Start a conversation'}
               </div>
               <div className="text-xs text-slate-500 space-y-1">
                 <div>• What are your hours?</div>
@@ -309,7 +314,7 @@ export function CustomerChatRenderer(props: {
               void send()
             }
           }}
-          placeholder={activeAgent?.name ? `Ask ${activeAgent.name} anything...` : 'Type your message...'}
+          placeholder={activeAgent?.name ? `Ask ${firstName(activeAgent.name)} Anything...` : 'Ask Anything...'}
           rows={1}
           disabled={busy || !agentId}
           className="flex-1 resize-none border-0 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
