@@ -81,15 +81,7 @@ export function LoginScreen() {
     <div className="flex min-h-screen bg-slate-950 font-sans text-slate-900 md:bg-slate-50">
       <section className="flex w-full flex-col md:min-h-screen md:flex-row">
         <div className="flex min-h-64 flex-col justify-between bg-[#2f3b4d] px-6 py-7 text-white md:w-[46%] md:px-10 md:py-10 lg:px-14">
-          <div className="flex items-center gap-3">
-            <div
-              aria-hidden
-              className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-3xl font-semibold leading-none text-white ring-1 ring-white/15"
-              style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}
-            >
-              h
-            </div>
-          </div>
+          <div aria-hidden className="h-11" />
 
           <div className="mt-12 max-w-md md:mt-0">
             <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">
@@ -130,7 +122,7 @@ export function LoginScreen() {
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="you@example.com"
                     autoComplete="username"
-                    className="h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15"
+                    className="h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 placeholder-slate-400 outline-none transition focus:border-slate-700 focus:ring-4 focus:ring-slate-700/15"
                     disabled={loading}
                     autoFocus
                   />
@@ -144,7 +136,7 @@ export function LoginScreen() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
                   autoComplete="current-password"
-                  className="h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15"
+                  className="h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 placeholder-slate-400 outline-none transition focus:border-slate-700 focus:ring-4 focus:ring-slate-700/15"
                   disabled={loading}
                   autoFocus={profileAuthMode !== true}
                 />
@@ -164,7 +156,7 @@ export function LoginScreen() {
                   (profileAuthMode === true && !username) ||
                   profileAuthMode === null
                 }
-                className="h-12 w-full rounded-lg bg-blue-600 px-4 text-base font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/25 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:opacity-100"
+                className="h-12 w-full rounded-lg bg-[#2f3b4d] px-4 text-base font-semibold text-white transition hover:brightness-95 focus:outline-none focus:ring-4 focus:ring-slate-700/25 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:opacity-100"
               >
                 {loading ? 'Authenticating...' : 'Sign in'}
               </button>

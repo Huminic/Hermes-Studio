@@ -330,21 +330,13 @@ function CustomerLogin({
     },
   })
 
-  const PRIMARY = '#2563eb'
+  const PRIMARY = '#2f3b4d'
 
   return (
     <div className="flex min-h-dvh bg-slate-950 font-sans text-slate-900 md:bg-slate-50">
       <section className="flex w-full flex-col md:min-h-dvh md:flex-row">
         <div className="flex min-h-64 flex-col justify-between bg-[#2f3b4d] px-6 py-7 text-white md:w-[46%] md:px-10 md:py-10 lg:px-14">
-          <div className="flex items-center gap-3">
-            <div
-              aria-hidden
-              className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-3xl font-semibold leading-none text-white ring-1 ring-white/15"
-              style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}
-            >
-              h
-            </div>
-          </div>
+          <div aria-hidden className="h-11" />
 
           <div className="mt-12 max-w-md md:mt-0">
             <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">
@@ -389,7 +381,7 @@ function CustomerLogin({
                 onChange={(e) => setUsername(e.target.value)}
                 autoComplete="username"
                 autoFocus
-                className="h-12 rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15"
+                className="h-12 rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 outline-none transition focus:border-slate-700 focus:ring-4 focus:ring-slate-700/15"
                 required
               />
             </label>
@@ -400,7 +392,7 @@ function CustomerLogin({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
-                className="h-12 rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15"
+                className="h-12 rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 outline-none transition focus:border-slate-700 focus:ring-4 focus:ring-slate-700/15"
                 required
               />
             </label>
@@ -412,7 +404,7 @@ function CustomerLogin({
             <button
               type="submit"
               disabled={loginMutation.isPending}
-              className="mt-1 h-12 rounded-lg px-4 text-base font-semibold text-white transition hover:brightness-95 focus:outline-none focus:ring-4 focus:ring-blue-500/25 disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-1 h-12 rounded-lg px-4 text-base font-semibold text-white transition hover:brightness-95 focus:outline-none focus:ring-4 focus:ring-slate-700/25 disabled:cursor-not-allowed disabled:opacity-50"
               style={{ background: PRIMARY }}
             >
               {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
