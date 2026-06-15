@@ -289,10 +289,10 @@ describe('console-renderers registry', () => {
     expect(container.querySelector('[data-role="comms-sort"]')).not.toBeNull()
   })
 
-  it('comms renderer shows the take-over control + customer-info panel + handling badge', async () => {
-    // WS-8: with a selected thread loaded, the renderer must surface the
-    // customer-info panel (req #2), the channel filter (req #4), the
-    // who-is-handling badge and the take-over control (req #5).
+  it('comms renderer shows visible takeover and gates manual replies without the old side panel', async () => {
+    // WS-8: with a selected thread loaded, the renderer must keep the
+    // channel filter, handling badge, and takeover control in the main
+    // conversation. The old customer-info side panel must stay removed.
     const thread = {
       id: 't1',
       profile: 'huminic',
@@ -364,15 +364,12 @@ describe('console-renderers registry', () => {
       const { container, findAllByText } = render(
         <Renderer profile="huminic" config={config} params={{}} />,
       )
-      // Customer-info panel + conversation header populated from the contact
-      // (req #2). The display name now appears in both the panel and the
-      // conversation header, so assert "at least one".
-      const named = await findAllByText('Pat Buyer')
+      const named = await findAllByText(/Pat Buyer/)
       expect(named.length).toBeGreaterThan(0)
       const root = container as HTMLElement
       expect(
         root.querySelector('[data-role="customer-info-panel"]'),
-      ).not.toBeNull()
+      ).toBeNull()
       // Channel filter tabs (req #4 as a filter).
       expect(
         root.querySelector('[data-role="comms-channel-filter"]'),
@@ -385,8 +382,13 @@ describe('console-renderers registry', () => {
       expect(
         root.querySelector('[data-role="delete-conversation"]'),
       ).not.toBeNull()
+      const composer = root.querySelector<HTMLTextAreaElement>(
+        '[data-role="comms-composer"]',
+      )
+      expect(composer?.disabled).toBe(true)
       const txt = root.textContent ?? ''
-      expect(txt).toContain('pat@example.com')
+      expect(txt).not.toContain('pat@example.com')
+      expect(txt).toContain('Take over to reply manually')
       expect(txt).toMatch(/take over/i)
     } finally {
       vi.unstubAllGlobals()

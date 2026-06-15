@@ -54,18 +54,6 @@ function roleLabel(a: CustomerAgent): string | null {
   return s
 }
 
-function isGovernanceAgent(a: CustomerAgent): boolean {
-  const text = `${a.id} ${a.name} ${a.summary} ${a.scope ?? ''}`.toLowerCase()
-  return (
-    text.includes('semantic guardian') ||
-    text.includes('knowledge semantic guardian') ||
-    text.includes('data semantic guardian') ||
-    text.includes('data-governor') ||
-    text.includes('knowledge-governor') ||
-    text.includes('guardian')
-  )
-}
-
 /** Extract first name from "First Last" format (e.g., "Nancy Gaston" → "Nancy"). */
 function firstName(fullName: string): string {
   return fullName.trim().split(/\s+/)[0] || fullName
@@ -97,13 +85,12 @@ export function CustomerChatRenderer(props: {
           setRosterError(j.error ?? `HTTP ${res.status}`)
           return
         }
-        const chatAgents = j.agents.filter((a) => !isGovernanceAgent(a))
         const defaultAgent =
-          j.default_agent && chatAgents.some((a) => a.id === j.default_agent)
+          j.default_agent && j.agents.some((a) => a.id === j.default_agent)
             ? j.default_agent
-            : (chatAgents[0]?.id ?? null)
+            : (j.agents[0]?.id ?? null)
         // WF-014: sort Nancy Gaston first if she's the default
-        const sortedAgents = [...chatAgents].sort((a, b) => {
+        const sortedAgents = [...j.agents].sort((a, b) => {
           if (a.id === defaultAgent) return -1
           if (b.id === defaultAgent) return 1
           return 0

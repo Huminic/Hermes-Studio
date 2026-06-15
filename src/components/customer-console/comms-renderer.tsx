@@ -151,6 +151,31 @@ function agentLabel(agentId: string): string {
     .join(' ')
 }
 
+function isOpaqueChatHandle(value: string | null | undefined): boolean {
+  return /^chat:[a-f0-9-]{8,}/i.test(String(value ?? '').trim())
+}
+
+function friendlyThreadTitle(thread: Pick<ThreadSummary, 'subject' | 'channel' | 'contact_handle' | 'assigned_agent_id'>): string {
+  const subject = String(thread.subject ?? '').trim()
+  if (isOpaqueChatHandle(thread.contact_handle) || /^chat[:·]/i.test(subject)) {
+    return thread.assigned_agent_id
+      ? `Website chat - ${agentLabel(thread.assigned_agent_id)}`
+      : 'Website chat'
+  }
+  if (/^campaign\s*·/i.test(subject)) return 'Campaign conversation'
+  if (subject) return subject
+  return `${channelLabel(thread.channel)} conversation`
+}
+
+function friendlyContactLabel(
+  thread: Pick<ThreadSummary, 'contact_handle'>,
+  contact?: ContactSummary | null,
+): string {
+  if (contact?.display_name) return contact.display_name
+  if (isOpaqueChatHandle(thread.contact_handle)) return 'Website visitor'
+  return thread.contact_handle
+}
+
 // WF-018: workspace gunmetal theme.
 const PRIMARY = '#2f3b4d'
 const ACTIVE = PRIMARY
@@ -378,7 +403,7 @@ export function CustomerCommsRenderer(props: {
     if (!detail || deleteBusy) return
     if (
       !window.confirm(
-        `Delete this conversation with ${detail.contact_handle}? This removes it from Teambox.`,
+        `Delete ${friendlyThreadTitle(detail)}? This removes it from Teambox.`,
       )
     ) {
       return
@@ -530,7 +555,7 @@ export function CustomerCommsRenderer(props: {
         </div>
       </section>
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)_260px]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)]">
 
       {/* THREAD LIST + filters (channel + agent) */}
       <section
@@ -627,7 +652,7 @@ export function CustomerCommsRenderer(props: {
                     >
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-medium text-slate-800">
-                          {CHANNEL_GLYPH[kind]} {t.contact_handle}
+                          {CHANNEL_GLYPH[kind]} {friendlyThreadTitle(t)}
                         </span>
                         <span className="text-[10px] text-slate-400">
                           {timeShort(t.updated_at)}
@@ -666,14 +691,37 @@ export function CustomerCommsRenderer(props: {
             <header className="flex flex-wrap items-baseline justify-between gap-2 border-b border-slate-200 pb-2">
               <div>
                 <div className="text-sm font-semibold text-slate-900">
-                  {activeContact?.display_name ?? detail.contact_handle}
+                  {friendlyThreadTitle(detail)}
                 </div>
                 <div className="text-xs text-slate-500">
                   {CHANNEL_GLYPH[channelKind(detail.channel)]}{' '}
-                  {channelLabel(detail.channel)} · {segmentTitle}
+                  {channelLabel(detail.channel)} · {segmentTitle} ·{' '}
+                  {friendlyContactLabel(detail, activeContact)}
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                {detail.human_assigned ? (
+                  <button
+                    type="button"
+                    data-role="hand-back"
+                    disabled={assignBusy}
+                    onClick={() => void setTakeOver('hand_back')}
+                    className="rounded-md border border-slate-200 bg-white px-2 py-1 text-[10px] font-semibold uppercase text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                  >
+                    {assignBusy ? 'Working' : 'Hand back'}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    data-role="take-over"
+                    disabled={assignBusy}
+                    onClick={() => void setTakeOver('take_over')}
+                    className="rounded-md px-2 py-1 text-[10px] font-semibold uppercase text-white hover:opacity-90 disabled:opacity-50"
+                    style={{ background: ACTIVE }}
+                  >
+                    {assignBusy ? 'Working' : 'Take over'}
+                  </button>
+                )}
                 {/* Who-is-handling badge (req #6): rep vs AI agent */}
                 <span
                   data-role="handling-badge"
@@ -763,7 +811,7 @@ export function CustomerCommsRenderer(props: {
                           }
                         >
                           {inbound
-                            ? activeContact?.display_name ?? detail.contact_handle
+                            ? friendlyContactLabel(detail, activeContact)
                             : m.role === 'assistant'
                               ? detail.assigned_agent_id
                                 ? agentLabel(detail.assigned_agent_id)
@@ -790,11 +838,22 @@ export function CustomerCommsRenderer(props: {
               }}
               className="flex flex-col gap-2 border-t border-slate-200 pt-2"
             >
-              <div className="flex items-center gap-2 text-xs">
-                <span className="text-slate-500">Reply via</span>
+              <div>
+                <div className="text-sm font-semibold text-slate-900">
+                  {detail.human_assigned ? 'Manual reply' : 'Take over to reply manually'}
+                </div>
+                <p className="text-[11px] leading-relaxed text-slate-500">
+                  {detail.human_assigned
+                    ? 'The AI agent is paused while you handle this conversation.'
+                    : 'Manual replies are available after takeover so the AI agent does not respond at the same time.'}
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="text-slate-500">Send via</span>
                 <select
                   value={composerChannel}
                   onChange={(e) => setComposerChannel(e.target.value)}
+                  disabled={!detail.human_assigned || busy}
                   className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700"
                 >
                   {Array.from(
@@ -811,18 +870,22 @@ export function CustomerCommsRenderer(props: {
                 data-role="comms-composer"
                 onChange={(e) => setDraft(e.target.value)}
                 rows={3}
-                placeholder="Type your reply…"
-                disabled={busy}
+                placeholder={
+                  detail.human_assigned
+                    ? 'Type your reply…'
+                    : 'Take over this conversation before replying manually.'
+                }
+                disabled={busy || !detail.human_assigned}
                 className="resize-none rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:outline-none"
               />
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  disabled={busy || !draft.trim()}
+                  disabled={busy || !detail.human_assigned || !draft.trim()}
                   className="rounded-md px-4 py-1.5 text-sm font-medium text-white disabled:opacity-50"
                   style={{ background: PRIMARY }}
                 >
-                  {busy ? 'Sending…' : 'Send'}
+                  {busy ? 'Sending…' : 'Send manual reply'}
                 </button>
               </div>
             </form>
@@ -836,109 +899,6 @@ export function CustomerCommsRenderer(props: {
         )}
       </section>
 
-      {/* CUSTOMER INFO + HANDOFF (take-over) */}
-      <aside
-        data-role="customer-info-panel"
-        className="flex flex-col gap-3 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-3"
-      >
-        {detail ? (
-          <>
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-              Customer
-            </div>
-            <div className="text-sm font-semibold text-slate-900">
-              {activeContact?.display_name ?? detail.contact_handle}
-            </div>
-            <dl className="flex flex-col gap-1 text-xs">
-              {activeContact?.identifiers.email && (
-                <div className="flex justify-between gap-2">
-                  <dt className="text-slate-400">Email</dt>
-                  <dd className="truncate text-right text-slate-700">
-                    {activeContact.identifiers.email}
-                  </dd>
-                </div>
-              )}
-              {(activeContact?.identifiers.sms ||
-                activeContact?.identifiers.textmagic) && (
-                <div className="flex justify-between gap-2">
-                  <dt className="text-slate-400">Phone</dt>
-                  <dd className="truncate text-right text-slate-700">
-                    {activeContact.identifiers.sms ??
-                      activeContact.identifiers.textmagic}
-                  </dd>
-                </div>
-              )}
-              <div className="flex justify-between gap-2">
-                <dt className="text-slate-400">Contact</dt>
-                <dd className="truncate text-right text-slate-700">
-                  {detail.contact_handle}
-                </dd>
-              </div>
-              <div className="flex justify-between gap-2">
-                <dt className="text-slate-400">Type</dt>
-                <dd className="text-right text-slate-700">{segmentTitle}</dd>
-              </div>
-              <div className="flex justify-between gap-2">
-                <dt className="text-slate-400">Channel</dt>
-                <dd className="text-right text-slate-700">
-                  {channelLabel(detail.channel)}
-                </dd>
-              </div>
-              <div className="flex justify-between gap-2">
-                <dt className="text-slate-400">Status</dt>
-                <dd className="text-right capitalize text-slate-700">
-                  {detail.status}
-                </dd>
-              </div>
-              <div className="flex justify-between gap-2">
-                <dt className="text-slate-400">Handled by</dt>
-                <dd className="text-right font-medium text-slate-800">
-                  {detail.human_assigned
-                    ? 'You'
-                    : detail.assigned_agent_id
-                      ? agentLabel(detail.assigned_agent_id)
-                      : 'AI agent'}
-                </dd>
-              </div>
-            </dl>
-
-            {/* HANDOFF control (req #6) */}
-            <div className="mt-auto flex flex-col gap-2 border-t border-slate-200 pt-3">
-              {detail.human_assigned ? (
-                <button
-                  type="button"
-                  data-role="hand-back"
-                  disabled={assignBusy}
-                  onClick={() => void setTakeOver('hand_back')}
-                  className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-50"
-                >
-                  {assignBusy ? 'Working…' : 'Hand back to AI agent'}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  data-role="take-over"
-                  disabled={assignBusy}
-                  onClick={() => void setTakeOver('take_over')}
-                  className="rounded-md px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90 disabled:opacity-50"
-                  style={{ background: ACTIVE }}
-                >
-                  {assignBusy ? 'Working…' : 'Take over'}
-                </button>
-              )}
-              <p className="text-[10px] leading-snug text-slate-400">
-                {detail.human_assigned
-                  ? 'You are handling this conversation. The AI agent is paused until you hand it back.'
-                  : 'The AI agent may auto-reply. Take over to pause it and reply yourself.'}
-              </p>
-            </div>
-          </>
-        ) : (
-          <div className="m-auto text-center text-xs text-slate-400">
-            Select a conversation to see customer details.
-          </div>
-        )}
-      </aside>
       </div>
     </div>
   )
