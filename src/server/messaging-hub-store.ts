@@ -609,6 +609,50 @@ export function setThreadStatus(
   })
 }
 
+export function deleteThread(profile: string, id: string): boolean {
+  const existing = getThread(profile, id)
+  if (!existing || existing.profile !== profile) return false
+
+  const db = getDb(profile)
+  let deleted = false
+  if (db) {
+    const tx = db.transaction(() => {
+      db.prepare(`UPDATE campaign_deliveries SET thread_id=NULL WHERE thread_id=?`).run(id)
+      db.prepare(`DELETE FROM agent_reply_jobs WHERE thread_id=?`).run(id)
+      db.prepare(`DELETE FROM thread_agent_subscriptions WHERE thread_id=?`).run(id)
+      db.prepare(`DELETE FROM messages WHERE thread_id=?`).run(id)
+      const info = db
+        .prepare(`DELETE FROM threads WHERE id=? AND profile=?`)
+        .run(id, profile)
+      return info.changes > 0
+    })
+    deleted = tx()
+  } else {
+    const store = getStore(profile)
+    deleted = store.threads.delete(id)
+    if (deleted) {
+      for (const key of [...store.subscriptions.keys()]) {
+        if (key.startsWith(`${id}::`)) store.subscriptions.delete(key)
+      }
+      for (const [key, job] of store.replyJobs) {
+        if (job.thread_id === id) store.replyJobs.delete(key)
+      }
+      for (const delivery of store.deliveries.values()) {
+        if (delivery.thread_id === id) delivery.thread_id = null
+      }
+    }
+  }
+
+  if (deleted) {
+    publishMessagingEvent(profile, {
+      type: 'thread_status_changed',
+      thread_id: id,
+      status: 'deleted',
+    })
+  }
+  return deleted
+}
+
 // ─── Messages ──────────────────────────────────────────────────────────────
 
 export function appendMessage(input: {

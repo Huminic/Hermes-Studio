@@ -382,6 +382,9 @@ describe('console-renderers registry', () => {
       expect(badge?.getAttribute('data-handler')).toBe('agent')
       // Take-over control present (req #5).
       expect(root.querySelector('[data-role="take-over"]')).not.toBeNull()
+      expect(
+        root.querySelector('[data-role="delete-conversation"]'),
+      ).not.toBeNull()
       const txt = root.textContent ?? ''
       expect(txt).toContain('pat@example.com')
       expect(txt).toMatch(/take over/i)

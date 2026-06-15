@@ -135,6 +135,94 @@ describe('messaging-hub-store threads', () => {
     expect(events.some((e) => e.type === 'message_appended')).toBe(true)
   })
 
+  it('deletes a thread without deleting campaign delivery history', async () => {
+    const { subscribeMessaging } = await import('@/server/messaging-hub-bus')
+    const events: Array<{ type: string; status?: string }> = []
+    const unsubscribe = subscribeMessaging('huminic', (event) => {
+      events.push({ type: event.type, status: event.status })
+    })
+    const {
+      appendMessage,
+      createAudience,
+      createCampaign,
+      deleteThread,
+      enqueueAgentReplyJob,
+      getOrCreateThread,
+      getThread,
+      listCampaignDeliveries,
+      listQueuedReplyJobs,
+      listSubscriptionsForThread,
+      listThreads,
+      recordCampaignDelivery,
+      subscribeAgentToThread,
+    } = await import('@/server/messaging-hub-store')
+    const audience = createAudience({
+      profile: 'huminic',
+      name: 'Delete test',
+      query: {},
+    })
+    const campaign = createCampaign({
+      profile: 'huminic',
+      audience_id: audience.id,
+      channel: 'sms',
+      message_template: 'Hello',
+    })
+    const thread = getOrCreateThread({
+      profile: 'huminic',
+      domain: 'sales',
+      channel: 'sms',
+      contact_handle: '+15555550100',
+    })
+    const message = appendMessage({
+      thread_id: thread.id,
+      direction: 'inbound',
+      role: 'user',
+      channel: 'sms',
+      content: 'Please remove this thread.',
+      author: '+15555550100',
+    })
+    subscribeAgentToThread({
+      thread_id: thread.id,
+      agent_id: 'caroline',
+      profile: 'huminic',
+      channel: 'sms',
+      mode: 'reply',
+      rules: {},
+      created_at: Date.now(),
+    })
+    enqueueAgentReplyJob({
+      thread_id: thread.id,
+      message_id: message.id,
+      agent_id: 'caroline',
+      channel: 'sms',
+      profile: 'huminic',
+    })
+    recordCampaignDelivery({
+      profile: 'huminic',
+      campaign_id: campaign.id,
+      contact_id: 'contact-1',
+      thread_id: thread.id,
+      status: 'sent',
+    })
+
+    expect(deleteThread('huminic', thread.id)).toBe(true)
+    expect(getThread('huminic', thread.id)).toBeNull()
+    expect(listThreads({ profile: 'huminic' }).map((t) => t.id)).not.toContain(
+      thread.id,
+    )
+    expect(listSubscriptionsForThread('huminic', thread.id)).toHaveLength(0)
+    expect(listQueuedReplyJobs('huminic')).toHaveLength(0)
+    expect(
+      listCampaignDeliveries('huminic', campaign.id)[0].thread_id,
+    ).toBeNull()
+    expect(events).toContainEqual({
+      type: 'thread_status_changed',
+      status: 'deleted',
+    })
+    expect(deleteThread('huminic', thread.id)).toBe(false)
+    unsubscribe()
+  })
+
   it('dedupes contacts across channels by identifier match', async () => {
     const { upsertContact, listContacts } = await import(
       '@/server/messaging-hub-store'

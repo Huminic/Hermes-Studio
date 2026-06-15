@@ -170,6 +170,7 @@ export function CustomerCommsRenderer(props: {
   const [draft, setDraft] = useState('')
   const [busy, setBusy] = useState(false)
   const [assignBusy, setAssignBusy] = useState(false)
+  const [deleteBusy, setDeleteBusy] = useState(false)
   const [composerChannel, setComposerChannel] = useState<string>('chat')
   const [agentTyping, setAgentTyping] = useState<{
     threadId: string
@@ -372,6 +373,36 @@ export function CustomerCommsRenderer(props: {
       setBusy(false)
     }
   }, [composerChannel, detail, draft, loadDetail, props.profile])
+
+  const deleteConversation = useCallback(async () => {
+    if (!detail || deleteBusy) return
+    if (
+      !window.confirm(
+        `Delete this conversation with ${detail.contact_handle}? This removes it from Teambox.`,
+      )
+    ) {
+      return
+    }
+    setDeleteBusy(true)
+    try {
+      const res = await fetch(
+        `/api/messaging/threads/${encodeURIComponent(detail.id)}`,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ profile: props.profile }),
+        },
+      )
+      if (res.ok) {
+        setSelectedId(null)
+        setDetail(null)
+        await loadThreads(segmentRef.current)
+      }
+    } finally {
+      setDeleteBusy(false)
+    }
+  }, [deleteBusy, detail, loadThreads, props.profile])
 
   // Agent options for the by-agent filter (req #3): derived from the assigned
   // agents present on this segment's threads.
@@ -674,6 +705,15 @@ export function CustomerCommsRenderer(props: {
                       ? 'Snoozed'
                       : 'Closed'}
                 </span>
+                <button
+                  type="button"
+                  data-role="delete-conversation"
+                  disabled={deleteBusy}
+                  onClick={() => void deleteConversation()}
+                  className="rounded-md border border-rose-200 bg-white px-2 py-1 text-[10px] font-semibold uppercase text-rose-700 hover:bg-rose-50 disabled:opacity-50"
+                >
+                  {deleteBusy ? 'Deleting' : 'Delete'}
+                </button>
               </div>
             </header>
 
