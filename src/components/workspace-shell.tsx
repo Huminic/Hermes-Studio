@@ -80,6 +80,7 @@ const PROTECTED_PATH_PREFIXES = [
   '/session-history',
   '/logs',
   '/patterns',
+  '/chat',
   '/dashboard',
   '/settings',
 ]
