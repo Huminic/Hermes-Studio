@@ -29,6 +29,7 @@ const KNOWN_LABELS: Record<string, string> = {
 }
 
 const CUSTOM = '__custom__'
+const PRIMARY = '#2f3b4d'
 
 function normalize(r: Record<string, unknown>): Rule {
   return {
@@ -118,10 +119,10 @@ export function CustomerNotificationsRenderer({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 text-slate-900">
       <header className="flex flex-col gap-1">
         <h2 className="text-lg font-semibold">Notifications</h2>
-        <p className="text-xs opacity-60">
+        <p className="text-xs text-slate-500">
           Decide who gets alerted when something happens — a new lead, an inbound
           message, or (as they come online) a Guardian condition or query result.
           Each rule is “when <em>this</em> happens, notify <em>this person</em>.”
@@ -129,16 +130,16 @@ export function CustomerNotificationsRenderer({
       </header>
 
       {leadRecipient && rules.length === 0 && (
-        <div className="rounded-md border border-amber-400/30 bg-amber-400/10 p-3 text-xs">
+        <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
           No rules yet — new leads currently fall back to{' '}
           <span className="font-medium">{leadRecipient}</span>. Add a rule to
           route specific conditions to specific people.
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-lg border border-white/10">
+      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
         <table className="w-full text-left text-xs">
-          <thead className="bg-white/5 opacity-70">
+          <thead className="bg-slate-50 text-slate-500">
             <tr>
               <th className="px-3 py-2 font-medium">When (condition)</th>
               <th className="px-3 py-2 font-medium">Notify (recipient)</th>
@@ -152,10 +153,10 @@ export function CustomerNotificationsRenderer({
             {rules.map((rule, i) => {
               const isCustom = !known.includes(rule.event)
               return (
-                <tr key={i} className="border-t border-white/5">
+                <tr key={i} className="border-t border-slate-100">
                   <td className="px-3 py-2 align-top">
                     <select
-                      className="w-full rounded bg-black/20 px-2 py-1"
+                      className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-900"
                       value={isCustom ? CUSTOM : rule.event}
                       onChange={(e) =>
                         update(i, {
@@ -172,7 +173,7 @@ export function CustomerNotificationsRenderer({
                     </select>
                     {isCustom && (
                       <input
-                        className="mt-1 w-full rounded bg-black/20 px-2 py-1"
+                        className="mt-1 w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-900"
                         placeholder="condition id, e.g. perf_guardian:slow_first_response"
                         value={rule.event}
                         onChange={(e) => update(i, { event: e.target.value })}
@@ -181,7 +182,7 @@ export function CustomerNotificationsRenderer({
                   </td>
                   <td className="px-3 py-2 align-top">
                     <input
-                      className="w-full rounded bg-black/20 px-2 py-1"
+                      className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-900"
                       placeholder={
                         rule.channel === 'sms' ? '+1555…' : 'name@dealer.com'
                       }
@@ -191,7 +192,7 @@ export function CustomerNotificationsRenderer({
                   </td>
                   <td className="px-3 py-2 align-top">
                     <select
-                      className="rounded bg-black/20 px-2 py-1"
+                      className="rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-900"
                       value={rule.channel}
                       onChange={(e) =>
                         update(i, { channel: e.target.value as Channel })
@@ -203,7 +204,7 @@ export function CustomerNotificationsRenderer({
                   </td>
                   <td className="px-3 py-2 align-top">
                     <input
-                      className="w-full rounded bg-black/20 px-2 py-1"
+                      className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-900"
                       placeholder="e.g. Sales Manager"
                       value={rule.label ?? ''}
                       onChange={(e) => update(i, { label: e.target.value })}
@@ -219,7 +220,7 @@ export function CustomerNotificationsRenderer({
                   <td className="px-3 py-2 align-top">
                     <button
                       type="button"
-                      className="opacity-60 hover:text-red-400 hover:opacity-100"
+                      className="text-slate-400 hover:text-rose-600"
                       onClick={() => removeRule(i)}
                     >
                       Remove
@@ -230,7 +231,7 @@ export function CustomerNotificationsRenderer({
             })}
             {rules.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-3 py-6 text-center opacity-50">
+                <td colSpan={6} className="px-3 py-6 text-center text-slate-400">
                   No routing rules. Add one below.
                 </td>
               </tr>
@@ -242,24 +243,26 @@ export function CustomerNotificationsRenderer({
       <div className="flex items-center gap-3">
         <button
           type="button"
-          className="rounded border border-white/15 px-3 py-1.5 text-xs hover:bg-white/5"
+          className="rounded-md px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+          style={{ background: PRIMARY }}
           onClick={addRule}
         >
           + Add rule
         </button>
         <button
           type="button"
-          className="rounded bg-emerald-500/20 px-3 py-1.5 text-xs font-semibold hover:bg-emerald-500/30 disabled:opacity-50"
+          className="rounded-md px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+          style={{ background: PRIMARY }}
           onClick={save}
           disabled={saving}
         >
           {saving ? 'Saving…' : 'Save'}
         </button>
-        {msg && <span className="text-xs text-emerald-400">{msg}</span>}
-        {err && <span className="text-xs text-red-400">{err}</span>}
+        {msg && <span className="text-xs text-emerald-700">{msg}</span>}
+        {err && <span className="text-xs text-rose-700">{err}</span>}
       </div>
 
-      <p className="text-[11px] opacity-40">
+      <p className="text-[11px] text-slate-400">
         SMS notifications are reserved (email is delivered today). Guardian
         conditions become selectable once the Business / Performance Guardians
         are live; until then you can type a custom condition id to pre-stage a

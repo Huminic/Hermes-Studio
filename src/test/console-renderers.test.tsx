@@ -406,6 +406,43 @@ describe('console-renderers registry', () => {
     expect(container.textContent).not.toContain('“Send now” sends any ready campaign')
   })
 
+  it('notifications renderer surfaces matching add/save controls', async () => {
+    const fetchMock = vi.fn(async () => {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          routing: [
+            {
+              event: 'new_lead',
+              to: 'manager@example.com',
+              channel: 'email',
+              label: 'Manager',
+              enabled: true,
+            },
+          ],
+          known_events: ['new_lead', 'inbound_sms'],
+          lead_recipient: null,
+        }),
+        { status: 200 },
+      )
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    try {
+      const config = defaultStudioConfig('huminic')
+      const Renderer = consoleRenderers['customer-console.notifications']
+      const { findByText, getByText } = render(
+        <Renderer profile="huminic" config={config} params={{}} />,
+      )
+      await findByText('Notifications')
+      const add = getByText('+ Add rule')
+      const save = getByText('Save')
+      expect(add.className).toBe(save.className)
+      expect(add.getAttribute('style')).toBe(save.getAttribute('style'))
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
   it('assistant-pane renderer surfaces persona_name', () => {
     const config = defaultStudioConfig('huminic')
     config.branding.persona_name = 'Nexus'
