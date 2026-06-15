@@ -83,37 +83,26 @@ function InfoStoreRenderer(props: ConsoleRendererProps) {
       <section className="flex flex-col gap-3 border-b border-slate-200 pb-4">
         <div className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold text-slate-900">InfoStore</h2>
-          <p className="max-w-3xl text-xs leading-relaxed text-slate-500">
-            One governed place for the store&apos;s knowledge, operating data,
-            and Semantic Guardian observations.
+          <p className="max-w-3xl text-sm leading-relaxed text-slate-600">
+            Your company wiki, database snapshots, and Semantic Guardian
+            observations in one governed place. The Semantic Guardian protects
+            knowledge and data boundaries — it does not appear in your Agents
+            list and cannot be used for customer conversations.
           </p>
         </div>
 
-        <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
-          <InfoStoreStatus
-            label="Semantic Guardian"
-            value="Active"
-            detail="Governs knowledge and data boundaries"
+        <div className="grid gap-3 sm:grid-cols-3">
+          <InfoStoreChoice
+            title="Knowledge Store"
+            detail="Your company wiki — policies, procedures, hours, services, and team knowledge. Edit pages directly or create new ones."
           />
-          <InfoStoreStatus
-            label="Knowledge Guardian"
-            value="Active"
-            detail="Guarded wiki writes"
+          <InfoStoreChoice
+            title="Data Store"
+            detail="Database snapshots and major data categories — contacts, threads, campaigns, and follow-ups."
           />
-          <InfoStoreStatus
-            label="Data Guardian"
-            value="Active"
-            detail="Brain/data write gate"
-          />
-          <InfoStoreStatus
-            label="Hunches"
-            value="Review"
-            detail="Accept, deny, or defer observations"
-          />
-          <InfoStoreStatus
-            label="Version history"
-            value="Fast-follow"
-            detail="Git-backed repos are not enabled yet"
+          <InfoStoreChoice
+            title="Hunches"
+            detail="Semantic Guardian observations about stale knowledge, duplicate facts, or cross-scope concerns. Review and accept or deny suggestions."
           />
         </div>
       </section>
@@ -150,22 +139,17 @@ function InfoStoreRenderer(props: ConsoleRendererProps) {
   )
 }
 
-function InfoStoreStatus({
-  label,
-  value,
+function InfoStoreChoice({
+  title,
   detail,
 }: {
-  label: string
-  value: string
+  title: string
   detail: string
 }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-      <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-        {label}
-      </div>
-      <div className="mt-1 text-sm font-semibold text-slate-900">{value}</div>
-      <div className="mt-1 text-xs leading-snug text-slate-500">{detail}</div>
+    <div className="rounded-lg border border-slate-200 bg-white p-4">
+      <div className="text-sm font-semibold text-slate-900">{title}</div>
+      <div className="mt-2 text-xs leading-relaxed text-slate-600">{detail}</div>
     </div>
   )
 }

@@ -114,7 +114,7 @@ describe('console-renderers registry', () => {
     expect(container.textContent).toContain('Loading your dashboard')
   })
 
-  it('data renderer surfaces the customer metric groups + the build affordance', async () => {
+  it('data renderer surfaces the Data Store (database snapshots, not dashboard metrics)', async () => {
     const reports = {
       profile: 'huminic',
       generated_at: Date.now(),
@@ -164,21 +164,16 @@ describe('console-renderers registry', () => {
       const { container, findByText } = render(
         <Renderer profile="huminic" config={config} params={{}} />,
       )
-      await findByText('Data dashboard')
+      await findByText('Data Store')
       const txt = container.textContent ?? ''
-      // Customer-language headline metrics:
-      expect(txt).toContain('Calls received')
-      expect(txt).toContain('Texts sent')
-      expect(txt).toContain('Leads')
-      // Follow-up performance group:
-      expect(txt).toContain('Follow-up performance')
-      expect(txt).toContain('Immediate')
-      expect(txt).toContain('24h check-in')
-      // Campaigns group:
+      // Major data categories (database stats, not dashboard metrics):
+      expect(txt).toContain('Contacts')
+      expect(txt).toContain('Threads')
       expect(txt).toContain('Campaigns')
-      // Build-your-own builder, friendly (no backend strings):
-      expect(txt).toContain('Build your own dashboard')
-      expect(txt).toMatch(/Add card/i)
+      expect(txt).toContain('Follow-ups')
+      // Explanatory note pointing to Dashboard tab for metrics:
+      expect(txt).toContain('Dashboard')
+      expect(txt).toContain('not live activity')
       // No backend internals leak to the customer:
       expect(txt).not.toMatch(/central-mcp/i)
       expect(txt).not.toMatch(/metabase/i)
