@@ -1,8 +1,8 @@
 /**
  * customer-console.comms — the customer "Teambox" unified inbox (SERRA-UI-8).
  *
- * Four-column layout: segment switcher (Sales | Service) → filtered thread list
- * (by channel + by agent) → thread detail with inbound/outbound direction and a
+ * Top segment switcher (Sales | Service) → filtered/sorted thread list (by
+ * channel + by agent) → thread detail with inbound/outbound direction and a
  * composer → customer-info + take-over (human handoff) panel. SSE subscribed for
  * live updates.
  *
@@ -77,6 +77,7 @@ type AssignResponse = {
 // One canonical "kind" per raw backend channel string. The customer only ever
 // sees the friendly label; raw values (sms/vapi/tavus/email-adf) never render.
 type ChannelKind = 'text' | 'email' | 'call' | 'video' | 'chat' | 'other'
+type SortOrder = 'newest' | 'oldest'
 
 function channelKind(channel: string): ChannelKind {
   switch (channel) {
@@ -150,9 +151,9 @@ function agentLabel(agentId: string): string {
     .join(' ')
 }
 
-// Light-theme palette (storefront): white / slate. Blue primary, purple active.
-const PRIMARY = '#3b82f6'
-const ACTIVE = '#8b5cf6'
+// WF-018: workspace gunmetal theme.
+const PRIMARY = '#2f3b4d'
+const ACTIVE = PRIMARY
 
 export function CustomerCommsRenderer(props: {
   profile: string
@@ -161,6 +162,7 @@ export function CustomerCommsRenderer(props: {
   const [segment, setSegment] = useState<'sales' | 'service'>('sales')
   const [channelFilter, setChannelFilter] = useState<'all' | ChannelKind>('all')
   const [agentFilter, setAgentFilter] = useState<string>('all')
+  const [sortOrder, setSortOrder] = useState<SortOrder>('newest')
   const [threads, setThreads] = useState<Array<ThreadSummary>>([])
   const [contacts, setContacts] = useState<Array<ContactSummary>>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -381,22 +383,31 @@ export function CustomerCommsRenderer(props: {
     return Array.from(ids).sort()
   }, [threads])
 
-  // Apply channel + agent filters on top of the segment-scoped thread list.
+  // Apply channel + agent filters and date sorting on top of the segment-scoped thread list.
   const visibleThreads = useMemo(() => {
-    return threads.filter((t) => {
-      if (channelFilter !== 'all' && channelKind(t.channel) !== channelFilter) {
-        return false
-      }
-      if (agentFilter !== 'all') {
-        if (agentFilter === '__unassigned') {
-          if (t.assigned_agent_id) return false
-        } else if (t.assigned_agent_id !== agentFilter) {
+    return threads
+      .filter((t) => {
+        if (
+          channelFilter !== 'all' &&
+          channelKind(t.channel) !== channelFilter
+        ) {
           return false
         }
-      }
-      return true
-    })
-  }, [threads, channelFilter, agentFilter])
+        if (agentFilter !== 'all') {
+          if (agentFilter === '__unassigned') {
+            if (t.assigned_agent_id) return false
+          } else if (t.assigned_agent_id !== agentFilter) {
+            return false
+          }
+        }
+        return true
+      })
+      .sort((a, b) =>
+        sortOrder === 'newest'
+          ? b.updated_at - a.updated_at
+          : a.updated_at - b.updated_at,
+      )
+  }, [threads, channelFilter, agentFilter, sortOrder])
 
   // Keep selection valid as filters/segment change: select the first visible
   // thread; clear when none match.
@@ -459,9 +470,10 @@ export function CustomerCommsRenderer(props: {
   const segmentTitle = segment === 'sales' ? 'Sales' : 'Service'
 
   return (
-    <div className="grid h-full max-h-[calc(100dvh-220px)] grid-cols-1 gap-3 text-slate-900 lg:grid-cols-[120px_320px_1fr_280px]">
+    <div className="flex h-full max-h-[calc(100dvh-220px)] flex-col gap-3 text-slate-900">
       {/* SEGMENT SWITCHER (Sales | Service) — req #1 isolation entry point */}
-      <aside className="flex flex-col gap-1 rounded-lg border border-slate-200 bg-slate-50 p-2">
+      <section className="rounded-lg border border-slate-200 bg-white p-3">
+        <div className="flex flex-wrap gap-2">
         {(['sales', 'service'] as const).map((s) => {
           const on = segment === s
           return (
@@ -473,10 +485,10 @@ export function CustomerCommsRenderer(props: {
               data-segment={s}
               aria-pressed={on}
               className={
-                'rounded-md px-2 py-1.5 text-left text-sm font-medium capitalize transition-colors ' +
+                'min-w-28 rounded-md border px-4 py-2 text-center text-sm font-semibold capitalize transition-colors ' +
                 (on
-                  ? 'text-white'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900')
+                  ? 'border-transparent text-white shadow-sm'
+                  : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50')
               }
               style={on ? { background: ACTIVE } : undefined}
             >
@@ -484,10 +496,10 @@ export function CustomerCommsRenderer(props: {
             </button>
           )
         })}
-        <div className="mt-2 text-[10px] leading-snug text-slate-400">
-          j / k to move · r to reply
         </div>
-      </aside>
+      </section>
+
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)_260px]">
 
       {/* THREAD LIST + filters (channel + agent) */}
       <section
@@ -520,25 +532,39 @@ export function CustomerCommsRenderer(props: {
           })}
         </div>
 
-        {/* Agent filter (req #3) — derived from this segment's assigned agents */}
+        {/* Agent/date filters (req #3 + WF-018 sort affordance) */}
         <div
-          className="flex shrink-0 items-center gap-2 border-b border-slate-200 px-2 py-1.5"
+          className="grid shrink-0 gap-2 border-b border-slate-200 px-2 py-1.5 sm:grid-cols-[minmax(0,1fr)_auto]"
           data-role="comms-agent-filter"
         >
-          <span className="text-[11px] text-slate-500">Agent</span>
-          <select
-            value={agentFilter}
-            onChange={(e) => setAgentFilter(e.target.value)}
-            className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-[12px] text-slate-700"
-          >
-            <option value="all">All agents</option>
-            {agentOptions.map((a) => (
-              <option key={a} value={a}>
-                {agentLabel(a)}
-              </option>
-            ))}
-            <option value="__unassigned">Unassigned</option>
-          </select>
+          <label className="flex items-center gap-2">
+            <span className="text-[11px] text-slate-500">Agent</span>
+            <select
+              value={agentFilter}
+              onChange={(e) => setAgentFilter(e.target.value)}
+              className="min-w-0 flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-[12px] text-slate-700"
+            >
+              <option value="all">All agents</option>
+              {agentOptions.map((a) => (
+                <option key={a} value={a}>
+                  {agentLabel(a)}
+                </option>
+              ))}
+              <option value="__unassigned">Unassigned</option>
+            </select>
+          </label>
+          <label className="flex items-center gap-2" data-role="comms-sort">
+            <span className="text-[11px] text-slate-500">Sort</span>
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value as SortOrder)}
+              className="rounded-md border border-slate-200 bg-white px-2 py-1 text-[12px] text-slate-700"
+              aria-label="Sort conversations by date"
+            >
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+            </select>
+          </label>
         </div>
 
         <div className="flex-1 overflow-y-auto">
@@ -559,7 +585,7 @@ export function CustomerCommsRenderer(props: {
                       className={
                         'w-full border-b border-slate-100 p-3 text-left text-xs transition-colors ' +
                         (active
-                          ? 'bg-blue-50'
+                          ? 'bg-slate-50'
                           : 'hover:bg-slate-50')
                       }
                       style={
@@ -585,7 +611,7 @@ export function CustomerCommsRenderer(props: {
                           {CHANNEL_LABEL[kind]}
                         </span>
                         {t.assigned_agent_id && (
-                          <span className="rounded-full bg-violet-50 px-1.5 py-0.5 text-[9px] font-medium text-violet-700">
+                          <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[9px] font-medium text-slate-700">
                             {agentLabel(t.assigned_agent_id)}
                           </span>
                         )}
@@ -625,7 +651,7 @@ export function CustomerCommsRenderer(props: {
                     'rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ' +
                     (detail.human_assigned
                       ? 'bg-amber-100 text-amber-800'
-                      : 'bg-blue-100 text-blue-700')
+                      : 'bg-slate-100 text-slate-700')
                   }
                 >
                   {detail.human_assigned
@@ -674,7 +700,7 @@ export function CustomerCommsRenderer(props: {
                         <span
                           className={
                             'mb-0.5 text-[9px] font-semibold uppercase tracking-wide ' +
-                            (inbound ? 'text-slate-400' : 'text-blue-500')
+                            (inbound ? 'text-slate-400' : 'text-slate-500')
                           }
                         >
                           {inbound ? '↙ Received' : 'Sent ↗'}
@@ -684,8 +710,9 @@ export function CustomerCommsRenderer(props: {
                             'max-w-[80%] rounded-2xl px-3 py-2 text-sm ' +
                             (inbound
                               ? 'rounded-tl-sm bg-slate-100 text-slate-800'
-                              : 'rounded-tr-sm bg-blue-500 text-white')
+                              : 'rounded-tr-sm text-white')
                           }
+                          style={!inbound ? { background: PRIMARY } : undefined}
                         >
                           <div className="whitespace-pre-wrap">{m.content}</div>
                         </div>
@@ -746,7 +773,7 @@ export function CustomerCommsRenderer(props: {
                 rows={3}
                 placeholder="Type your reply…"
                 disabled={busy}
-                className="resize-none rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none"
+                className="resize-none rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:outline-none"
               />
               <div className="flex justify-end">
                 <button
@@ -843,7 +870,7 @@ export function CustomerCommsRenderer(props: {
                   data-role="hand-back"
                   disabled={assignBusy}
                   onClick={() => void setTakeOver('hand_back')}
-                  className="rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50"
+                  className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-50"
                 >
                   {assignBusy ? 'Working…' : 'Hand back to AI agent'}
                 </button>
@@ -872,6 +899,7 @@ export function CustomerCommsRenderer(props: {
           </div>
         )}
       </aside>
+      </div>
     </div>
   )
 }

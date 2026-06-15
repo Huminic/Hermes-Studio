@@ -285,6 +285,8 @@ describe('console-renderers registry', () => {
     // matches the lowercase source). Both terms must appear.
     expect(container.textContent).toMatch(/sales/i)
     expect(container.textContent).toMatch(/service/i)
+    expect(container.querySelectorAll('[data-role="segment"]')).toHaveLength(2)
+    expect(container.querySelector('[data-role="comms-sort"]')).not.toBeNull()
   })
 
   it('comms renderer shows the take-over control + customer-info panel + handling badge', async () => {
