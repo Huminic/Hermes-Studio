@@ -54,7 +54,12 @@ describe('/api/customer/dashboards', () => {
         body: JSON.stringify({
           profile: PROFILE,
           dashboards: [
-            { title: 'Calls this week', source: 'calls' },
+            {
+              title: 'Calls this week',
+              source: 'calls',
+              visualization: 'bar',
+              display: 'detail',
+            },
             { title: 'New leads', source: 'leads' },
           ],
         }),
@@ -75,9 +80,22 @@ describe('/api/customer/dashboards', () => {
       ),
     } as never)
     const body = (await res.json()) as {
-      dashboards: Array<{ title: string; source: string }>
+      dashboards: Array<{
+        title: string
+        source: string
+        visualization: string
+        display: string
+      }>
     }
     expect(body.dashboards.map((c) => c.source)).toEqual(['calls', 'leads'])
+    expect(body.dashboards[0]).toMatchObject({
+      visualization: 'bar',
+      display: 'detail',
+    })
+    expect(body.dashboards[1]).toMatchObject({
+      visualization: 'number',
+      display: 'summary',
+    })
   })
 
   it('PUT rejects an unknown source', async () => {

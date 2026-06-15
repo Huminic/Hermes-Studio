@@ -473,6 +473,8 @@ export const DashboardSources = [
 const DashboardCardSchema = z.object({
   title: z.string().min(1),
   source: z.enum(DashboardSources),
+  visualization: z.enum(['number', 'bar', 'table']).optional().default('number'),
+  display: z.enum(['summary', 'detail']).optional().default('summary'),
 })
 
 export type DashboardCard = z.infer<typeof DashboardCardSchema>

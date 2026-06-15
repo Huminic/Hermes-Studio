@@ -92,6 +92,8 @@ type Reports = {
 type DashboardCard = {
   title: string
   source: string
+  visualization?: 'number' | 'bar' | 'table'
+  display?: 'summary' | 'detail'
 }
 
 type DashboardsResponse = {
@@ -101,7 +103,7 @@ type DashboardsResponse = {
   error?: string
 }
 
-type View = 'aggregate' | 'channel' | 'type'
+type View = 'overview' | 'channel' | 'type'
 type Window = '7' | '30' | 'all'
 
 const WINDOWS: Array<{ id: Window; label: string }> = [
@@ -111,7 +113,7 @@ const WINDOWS: Array<{ id: Window; label: string }> = [
 ]
 
 const VIEWS: Array<{ id: View; label: string }> = [
-  { id: 'aggregate', label: 'Aggregate' },
+  { id: 'overview', label: 'Overview' },
   { id: 'channel', label: 'By channel' },
   { id: 'type', label: 'By type' },
 ]
@@ -148,6 +150,32 @@ const SOURCE_LABELS: Record<string, string> = {
   followups: 'Follow-ups',
 }
 
+const SOURCE_GROUPS: Array<{
+  label: string
+  sources: Array<(typeof DASHBOARD_SOURCES)[number]>
+}> = [
+  { label: 'Communications', sources: ['calls', 'sms', 'email', 'chat', 'video'] },
+  { label: 'Customers', sources: ['leads', 'sales', 'service'] },
+  { label: 'Campaigns', sources: ['campaigns', 'followups'] },
+]
+
+const VISUALIZATIONS: Array<{
+  id: NonNullable<DashboardCard['visualization']>
+  label: string
+}> = [
+  { id: 'number', label: 'Number' },
+  { id: 'bar', label: 'Bar' },
+  { id: 'table', label: 'Table' },
+]
+
+const DISPLAYS: Array<{
+  id: NonNullable<DashboardCard['display']>
+  label: string
+}> = [
+  { id: 'summary', label: 'Summary' },
+  { id: 'detail', label: 'Detailed' },
+]
+
 export function CustomerPerformanceRenderer(props: {
   profile: string
   config: StudioConfig
@@ -165,6 +193,11 @@ export function CustomerPerformanceRenderer(props: {
   const [showAddCard, setShowAddCard] = useState(false)
   const [cardTitle, setCardTitle] = useState('')
   const [cardSource, setCardSource] = useState('')
+  const [cardVisualization, setCardVisualization] =
+    useState<NonNullable<DashboardCard['visualization']>>('number')
+  const [cardDisplay, setCardDisplay] =
+    useState<NonNullable<DashboardCard['display']>>('summary')
+  const [expandedCard, setExpandedCard] = useState<number | null>(null)
   const [saveBusy, setSaveBusy] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
@@ -237,7 +270,15 @@ export function CustomerPerformanceRenderer(props: {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           profile: props.profile,
-          dashboards: [...dashboards, { title, source: cardSource }],
+          dashboards: [
+            ...dashboards,
+            {
+              title,
+              source: cardSource,
+              visualization: cardVisualization,
+              display: cardDisplay,
+            },
+          ],
         }),
       })
       const j = (await res.json().catch(() => ({}))) as DashboardsResponse
@@ -248,12 +289,21 @@ export function CustomerPerformanceRenderer(props: {
       setDashboards(j.dashboards ?? [])
       setCardTitle('')
       setShowAddCard(false)
+      setCardVisualization('number')
+      setCardDisplay('summary')
     } catch {
       setSaveError('Could not save dashboard card.')
     } finally {
       setSaveBusy(false)
     }
-  }, [cardTitle, cardSource, dashboards, props.profile])
+  }, [
+    cardDisplay,
+    cardSource,
+    cardTitle,
+    cardVisualization,
+    dashboards,
+    props.profile,
+  ])
 
   const exportPDF = useCallback(() => {
     if (!perf || !reports) return
@@ -296,10 +346,11 @@ export function CustomerPerformanceRenderer(props: {
   if (!perf) return null
 
   const starterCards: Array<DashboardCard> = [
-    { title: 'Total calls', source: 'calls' },
-    { title: 'Texts sent', source: 'sms' },
-    { title: 'Total leads', source: 'leads' },
-    { title: 'Campaigns', source: 'campaigns' },
+    { title: 'Total calls', source: 'calls', visualization: 'bar', display: 'detail' },
+    { title: 'Texts sent', source: 'sms', visualization: 'number', display: 'summary' },
+    { title: 'Total leads', source: 'leads', visualization: 'table', display: 'detail' },
+    { title: 'Campaigns', source: 'campaigns', visualization: 'bar', display: 'detail' },
+    { title: 'Follow-up triggers', source: 'followups', visualization: 'bar', display: 'detail' },
   ]
   const cardsToRender = dashboards.length > 0 ? dashboards : starterCards
   const isCustom = dashboards.length > 0
@@ -312,7 +363,8 @@ export function CustomerPerformanceRenderer(props: {
             Performance Dashboard
           </h2>
           <p className="text-xs text-slate-500">
-            Leads and messages across your channels.
+            Activity from conversations, leads, campaigns, and follow-up
+            triggers.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -394,30 +446,76 @@ export function CustomerPerformanceRenderer(props: {
           </div>
           {!isCustom && (
             <p className="text-xs text-slate-500">
-              These sample cards show your data. Use <strong>+ Add card</strong> to
-              create your own custom dashboard.
+              These sample cards pull from the sources below. Use{' '}
+              <strong>+ Add card</strong> to create a saved dashboard view.
             </p>
           )}
           {showAddCard && (
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <div className="mb-3 text-sm font-medium text-slate-900">Add dashboard card</div>
+              <div className="mb-3 text-sm font-medium text-slate-900">
+                Add dashboard card
+              </div>
               <div className="flex flex-col gap-3">
-                <div className="flex flex-col gap-2 sm:flex-row">
+                <div className="grid gap-2 md:grid-cols-[minmax(0,1fr)_180px_150px_140px_auto]">
                   <input
                     type="text"
                     value={cardTitle}
                     onChange={(e) => setCardTitle(e.target.value)}
                     placeholder="Card title"
-                    className="flex-1 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-900 focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300"
+                    className="min-w-0 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-900 focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300"
                   />
                   <select
                     value={cardSource}
                     onChange={(e) => setCardSource(e.target.value)}
                     className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700"
                   >
-                    {availableSources.map((s) => (
-                      <option key={s} value={s}>
-                        {SOURCE_LABELS[s] ?? s}
+                    {SOURCE_GROUPS.map((group) => {
+                      const groupSources = group.sources.filter((s) =>
+                        availableSources.includes(s),
+                      )
+                      if (groupSources.length === 0) return null
+                      return (
+                        <optgroup key={group.label} label={group.label}>
+                          {groupSources.map((s) => (
+                            <option key={s} value={s}>
+                              {SOURCE_LABELS[s] ?? s}
+                            </option>
+                          ))}
+                        </optgroup>
+                      )
+                    })}
+                  </select>
+                  <select
+                    aria-label="Visualization"
+                    value={cardVisualization}
+                    onChange={(e) =>
+                      setCardVisualization(
+                        e.target.value as NonNullable<
+                          DashboardCard['visualization']
+                        >,
+                      )
+                    }
+                    className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700"
+                  >
+                    {VISUALIZATIONS.map((v) => (
+                      <option key={v.id} value={v.id}>
+                        {v.label}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    aria-label="Display"
+                    value={cardDisplay}
+                    onChange={(e) =>
+                      setCardDisplay(
+                        e.target.value as NonNullable<DashboardCard['display']>,
+                      )
+                    }
+                    className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700"
+                  >
+                    {DISPLAYS.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.label}
                       </option>
                     ))}
                   </select>
@@ -437,12 +535,21 @@ export function CustomerPerformanceRenderer(props: {
               </div>
             </div>
           )}
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {cardsToRender.map((card, i) => (
               <DashboardTile
                 key={i}
+                index={i}
                 title={card.title}
+                source={card.source}
+                visualization={card.visualization ?? 'number'}
+                display={card.display ?? 'summary'}
                 value={resolveCardValue(reports, card.source)}
+                rows={resolveCardRows(reports, card.source)}
+                expanded={expandedCard === i || card.display === 'detail'}
+                onToggle={() =>
+                  setExpandedCard((current) => (current === i ? null : i))
+                }
               />
             ))}
           </div>
@@ -505,6 +612,78 @@ function resolveCardValue(reports: Reports, source: string): number {
   }
 }
 
+function resolveCardRows(
+  reports: Reports,
+  source: string,
+): Array<{ label: string; value: number }> {
+  const channelValue = (channel: string) => {
+    const row = reports.comms.messages.by_channel[channel]
+    return row ? row.inbound + row.outbound : 0
+  }
+  switch (source) {
+    case 'calls':
+      return [
+        { label: 'Inbound calls', value: reports.comms.calls_in },
+        { label: 'Voice messages', value: channelValue('voice') + channelValue('vapi') },
+      ]
+    case 'video':
+      return [
+        { label: 'Video sessions', value: channelValue('video') + channelValue('tavus') },
+      ]
+    case 'sms':
+      return [
+        { label: 'Texts sent', value: reports.comms.texts_out },
+        {
+          label: 'SMS messages',
+          value: channelValue('sms') + channelValue('textmagic'),
+        },
+      ]
+    case 'email':
+      return [
+        { label: 'Email messages', value: channelValue('email') + channelValue('email-adf') },
+      ]
+    case 'chat':
+      return [{ label: 'Web chat messages', value: channelValue('chat') }]
+    case 'leads':
+      if (reports.lead_funnel.available) {
+        return Object.entries(reports.lead_funnel.by_status).map(([label, value]) => ({
+          label: label.replace(/_/g, ' '),
+          value,
+        }))
+      }
+      return [
+        { label: 'Open threads', value: reports.comms.threads.open },
+        { label: 'Closed threads', value: reports.comms.threads.closed },
+      ]
+    case 'service':
+    case 'sales':
+      return [
+        {
+          label: `${SOURCE_LABELS[source]} threads`,
+          value: reports.comms.threads.by_domain[source] ?? 0,
+        },
+      ]
+    case 'campaigns':
+      return [
+        { label: 'Campaigns', value: reports.campaigns.campaigns },
+        { label: 'Delivered', value: reports.campaigns.deliveries_sent },
+        { label: 'Failed', value: reports.campaigns.deliveries_failed },
+        ...Object.entries(reports.campaigns.by_status).map(([label, value]) => ({
+          label: label.replace(/_/g, ' '),
+          value,
+        })),
+      ]
+    case 'followups':
+      return [
+        { label: 'Immediate triggers', value: reports.followups.immediate_triggers },
+        { label: '24h check-in triggers', value: reports.followups.checkin_triggers },
+        { label: 'Outbound follow-ups', value: reports.followups.sends.outbound },
+      ]
+    default:
+      return []
+  }
+}
+
 function buildPrintDocument(
   profile: string,
   windowLabel: string,
@@ -517,6 +696,7 @@ function buildPrintDocument(
     { title: 'Texts sent', source: 'sms' },
     { title: 'Total leads', source: 'leads' },
     { title: 'Campaigns', source: 'campaigns' },
+    { title: 'Follow-up triggers', source: 'followups' },
   ]
   const channelRows = Object.entries(perf.threads.by_channel).map(([ch, lv]) => {
     const mv = perf.messages.by_channel[ch] ?? 0
@@ -715,13 +895,75 @@ function Tile({
   )
 }
 
-function DashboardTile({ title, value }: { title: string; value: number }) {
+function DashboardTile({
+  title,
+  source,
+  visualization,
+  display,
+  value,
+  rows,
+  expanded,
+  onToggle,
+}: {
+  index: number
+  title: string
+  source: string
+  visualization: 'number' | 'bar' | 'table'
+  display: 'summary' | 'detail'
+  value: number
+  rows: Array<{ label: string; value: number }>
+  expanded: boolean
+  onToggle: () => void
+}) {
+  const max = Math.max(value, ...rows.map((row) => row.value), 1)
+  const sourceLabel = SOURCE_LABELS[source] ?? source
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="text-2xl font-semibold text-slate-900">
-        {value.toLocaleString()}
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-2xl font-semibold text-slate-900">
+            {value.toLocaleString()}
+          </div>
+          <div className="mt-1 text-xs text-slate-500">{title}</div>
+          <div className="mt-1 text-[11px] text-slate-400">
+            {sourceLabel} · {display === 'detail' ? 'Detailed' : 'Summary'}
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={onToggle}
+          className="rounded-md border border-slate-200 px-2 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-50"
+        >
+          {expanded ? 'Collapse' : 'Details'}
+        </button>
       </div>
-      <div className="mt-1 text-xs text-slate-500">{title}</div>
+
+      {visualization === 'bar' && (
+        <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
+          <div
+            className="h-full rounded-full"
+            style={{ width: `${Math.max(4, Math.round((value / max) * 100))}%`, background: PRIMARY }}
+          />
+        </div>
+      )}
+
+      {(expanded || visualization === 'table') && rows.length > 0 && (
+        <div className="mt-4 overflow-hidden rounded-md border border-slate-100">
+          {rows.map((row) => (
+            <div
+              key={row.label}
+              className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 border-b border-slate-100 px-3 py-2 text-xs last:border-0"
+            >
+              <span className="truncate capitalize text-slate-500">
+                {row.label}
+              </span>
+              <span className="font-semibold text-slate-800">
+                {row.value.toLocaleString()}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

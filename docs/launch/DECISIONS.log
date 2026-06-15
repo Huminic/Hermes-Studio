@@ -180,3 +180,4 @@ the Coolify auto-deploy trigger), per-fix revertibility, honest production statu
 The agent did NOT push origin/main, did NOT redeploy, did NOT run the two
 production-mutating scripts, did NOT re-dispatch the verifier (operator's
 billing + integrity boundary).
+2026-06-15T22:44:05Z ACK acceptance-criteria sha256=30d39ddb2aeffd3fb8fc80a5cccb040cf28c60d6f6dd5988c93daed1c29af1dd  plan sha256=94bbe7c6226b685c91f9f05ee1a6a4f00c3437a2dea10fd51b41c421b70f6edf  by codex-gpt-5

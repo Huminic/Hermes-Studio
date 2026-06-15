@@ -124,7 +124,12 @@ export function updateNotificationRouting(
   return res.ok ? { ok: true, routing } : res
 }
 
-export type DashboardCardInput = { title: string; source: string }
+export type DashboardCardInput = {
+  title: string
+  source: string
+  visualization?: 'number' | 'bar' | 'table'
+  display?: 'summary' | 'detail'
+}
 
 /**
  * Persist the per-profile custom dashboard cards (data builder) into studio.yaml.

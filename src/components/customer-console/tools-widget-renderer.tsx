@@ -276,6 +276,32 @@ export function CustomerToolsWidgetRenderer(props: {
                 {stripHeading(active.body).trim()}
               </p>
             )}
+            {settings.show_live_demo && (
+              <div className="mt-4 border-t border-slate-200 pt-4">
+                <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+                  Website preview
+                </div>
+                {LIVE_MODES.has(active.mode) && active.status === 'ready' ? (
+                  <iframe
+                    title={`Preview of ${widgetTitle(active)}`}
+                    src={active.preview_url}
+                    className="h-[480px] w-full rounded-md border border-slate-200 bg-white"
+                    sandbox="allow-scripts allow-same-origin allow-forms"
+                  />
+                ) : (
+                  <div className="flex h-[480px] flex-col items-center justify-center rounded-md border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
+                    <div className="text-sm font-medium text-slate-900">
+                      {MODE_LABEL[active.mode]} preview coming soon
+                    </div>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {LIVE_MODES.has(active.mode)
+                        ? 'This widget is being set up. Your Huminic team can help finish it.'
+                        : 'This widget type is being finished. The embed code already works and the demo will appear here once it is live.'}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {settings.show_embed_snippet && (
@@ -330,35 +356,6 @@ export function CustomerToolsWidgetRenderer(props: {
                   ? 'This is exactly what your visitors will see.'
                   : `${MODE_LABEL[active.mode]} widgets are coming soon. You can add the code now — it will go live automatically once this widget type is ready.`}
               </p>
-            </div>
-          )}
-
-          {settings.show_live_demo && (
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <div className="mb-3 text-lg font-semibold text-slate-900">
-                Preview
-              </div>
-              {LIVE_MODES.has(active.mode) && active.status === 'ready' ? (
-                <>
-                  <iframe
-                    title={`Preview of ${widgetTitle(active)}`}
-                    src={active.preview_url}
-                    className="h-[480px] w-full rounded-md border border-slate-200 bg-white"
-                    sandbox="allow-scripts allow-same-origin allow-forms"
-                  />
-                </>
-              ) : (
-                <div className="flex h-[480px] flex-col items-center justify-center rounded-md border border-dashed border-slate-300 bg-white p-6 text-center">
-                  <div className="text-sm font-medium text-slate-900">
-                    {MODE_LABEL[active.mode]} preview coming soon
-                  </div>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {LIVE_MODES.has(active.mode)
-                      ? 'This widget is being set up. Your Huminic team can help finish it.'
-                      : 'This widget type is being finished. The embed code already works and the demo will appear here once it is live.'}
-                  </p>
-                </div>
-              )}
             </div>
           )}
 
@@ -439,6 +436,19 @@ function UnifiedWidgetPanel(props: {
           One launcher lets visitors choose Web Chat, Instant Call Back,
           Contact Form, or Two-Way Video from the same website button.
         </p>
+        {props.settings.show_live_demo && (
+          <div className="mt-4 border-t border-slate-200 pt-4">
+            <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+              Website preview
+            </div>
+            <iframe
+              title="Preview of Unified Widget"
+              srcDoc={buildUnifiedPreviewHtml(origin, props.profile)}
+              className="h-[480px] w-full rounded-md border border-slate-200 bg-white"
+              sandbox="allow-scripts allow-forms"
+            />
+          </div>
+        )}
       </div>
 
       {props.settings.show_embed_snippet && (
@@ -493,17 +503,6 @@ function UnifiedWidgetPanel(props: {
         </div>
       )}
 
-      {props.settings.show_live_demo && (
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-          <div className="mb-3 text-lg font-semibold text-slate-900">Preview</div>
-          <iframe
-            title="Preview of Unified Widget"
-            srcDoc={buildUnifiedPreviewHtml(origin, props.profile)}
-            className="h-[480px] w-full rounded-md border border-slate-200 bg-white"
-            sandbox="allow-scripts allow-forms"
-          />
-        </div>
-      )}
     </div>
   )
 }
