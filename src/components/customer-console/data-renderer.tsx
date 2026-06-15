@@ -9,6 +9,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { StudioConfig } from '../../lib/studio-config'
 
+const PRIMARY = '#2f3b4d'
+
 type MessageStats = {
   total: number
   inbound: number
@@ -106,7 +108,8 @@ export function CustomerDataRenderer(props: {
         <button
           type="button"
           onClick={() => void load()}
-          className="ml-3 font-medium text-blue-600 underline hover:text-blue-700"
+          className="ml-3 font-medium underline hover:brightness-90"
+          style={{ color: PRIMARY }}
         >
           Try again
         </button>

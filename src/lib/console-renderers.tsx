@@ -28,6 +28,8 @@ import { CustomerPerformanceRenderer } from '../components/customer-console/perf
 import { CustomerNotificationsRenderer } from '../components/customer-console/notifications-renderer'
 import { ConsultPanel } from '../components/customer-console/consult-panel'
 
+const CUSTOMER_ACCENT = '#2f3b4d'
+
 export type ConsoleRendererProps = {
   profile: string
   config: StudioConfig
@@ -91,16 +93,16 @@ function InfoStoreRenderer(props: ConsoleRendererProps) {
           </p>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3">
-          <InfoStoreChoice
+        <div className="grid gap-3 text-sm sm:grid-cols-3">
+          <InfoStoreSummaryItem
             title="Knowledge Store"
             detail="Your company wiki — policies, procedures, hours, services, and team knowledge. Edit pages directly or create new ones."
           />
-          <InfoStoreChoice
+          <InfoStoreSummaryItem
             title="Data Store"
             detail="Database snapshots and major data categories — contacts, threads, campaigns, and follow-ups."
           />
-          <InfoStoreChoice
+          <InfoStoreSummaryItem
             title="Hunches"
             detail="Semantic Guardian observations about stale knowledge, duplicate facts, or cross-scope concerns. Review and accept or deny suggestions."
           />
@@ -139,7 +141,7 @@ function InfoStoreRenderer(props: ConsoleRendererProps) {
   )
 }
 
-function InfoStoreChoice({
+function InfoStoreSummaryItem({
   title,
   detail,
 }: {
@@ -147,9 +149,9 @@ function InfoStoreChoice({
   detail: string
 }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4">
-      <div className="text-sm font-semibold text-slate-900">{title}</div>
-      <div className="mt-2 text-xs leading-relaxed text-slate-600">{detail}</div>
+    <div className="border-l-2 border-slate-200 pl-3">
+      <div className="text-base font-semibold text-slate-900">{title}</div>
+      <div className="mt-1 text-sm leading-relaxed text-slate-600">{detail}</div>
     </div>
   )
 }
@@ -357,7 +359,7 @@ function ToolsRenderer(props: ConsoleRendererProps) {
   const [sub, setSub] = useState<SubPage>('widget')
   return (
     <div className="flex flex-col gap-3">
-      <nav className="flex gap-2 text-xs">
+      <nav className="flex gap-2">
         <SubButton active={sub === 'widget'} onClick={() => setSub('widget')}>
           Widget
         </SubButton>
@@ -397,10 +399,15 @@ function SubButton({
     <button
       type="button"
       className={
-        'rounded px-2 py-1 ' +
+        'rounded-md px-3 py-1.5 text-sm transition ' +
         (active
-          ? 'bg-emerald-500/20 font-semibold'
-          : 'opacity-60 hover:opacity-100')
+          ? 'font-semibold'
+          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900')
+      }
+      style={
+        active
+          ? { background: `${CUSTOMER_ACCENT}14`, color: CUSTOMER_ACCENT }
+          : undefined
       }
       onClick={onClick}
     >

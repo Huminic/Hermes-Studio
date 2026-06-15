@@ -200,7 +200,7 @@ export function CustomerToolsWidgetRenderer(props: {
               : undefined
           }
         >
-          <div className="text-base font-semibold text-slate-900">
+          <div className="text-lg font-semibold text-slate-900">
             Unified Widget
           </div>
           <div className="text-sm text-slate-500">All-in-one launcher</div>
@@ -229,7 +229,7 @@ export function CustomerToolsWidgetRenderer(props: {
                   : undefined
               }
             >
-              <div className="text-base font-semibold text-slate-900">
+              <div className="text-lg font-semibold text-slate-900">
                 {widgetTitle(w)}
               </div>
               <div className="text-sm text-slate-500">{MODE_LABEL[w.mode]}</div>
@@ -281,7 +281,7 @@ export function CustomerToolsWidgetRenderer(props: {
           {settings.show_embed_snippet && (
             <div className="rounded-lg border border-slate-200 bg-white p-4">
               <div className="mb-2 flex items-center justify-between">
-                <span className="text-base font-semibold text-slate-900">
+                <span className="text-lg font-semibold text-slate-900">
                   Add to your website
                 </span>
                 <button
@@ -310,7 +310,7 @@ export function CustomerToolsWidgetRenderer(props: {
           {settings.show_live_demo && (
             <div className="rounded-lg border border-slate-200 bg-white p-4">
               <div className="mb-1 flex items-center justify-between">
-                <span className="text-base font-semibold text-slate-900">
+                <span className="text-lg font-semibold text-slate-900">
                   Live demo
                 </span>
                 {LIVE_MODES.has(active.mode) && (
@@ -335,7 +335,7 @@ export function CustomerToolsWidgetRenderer(props: {
 
           {settings.show_live_demo && (
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <div className="mb-3 text-base font-semibold text-slate-900">
+              <div className="mb-3 text-lg font-semibold text-slate-900">
                 Preview
               </div>
               {LIVE_MODES.has(active.mode) && active.status === 'ready' ? (
@@ -444,7 +444,7 @@ function UnifiedWidgetPanel(props: {
       {props.settings.show_embed_snippet && (
         <div className="rounded-lg border border-slate-200 bg-white p-4">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-base font-semibold text-slate-900">
+            <span className="text-lg font-semibold text-slate-900">
               Add to your website
             </span>
             <button
@@ -473,7 +473,7 @@ function UnifiedWidgetPanel(props: {
       {props.settings.show_live_demo && (
         <div className="rounded-lg border border-slate-200 bg-white p-4">
           <div className="mb-1 flex items-center justify-between">
-            <span className="text-base font-semibold text-slate-900">
+            <span className="text-lg font-semibold text-slate-900">
               Live demo
             </span>
             <a
@@ -495,7 +495,7 @@ function UnifiedWidgetPanel(props: {
 
       {props.settings.show_live_demo && (
         <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-          <div className="mb-3 text-base font-semibold text-slate-900">Preview</div>
+          <div className="mb-3 text-lg font-semibold text-slate-900">Preview</div>
           <iframe
             title="Preview of Unified Widget"
             srcDoc={buildUnifiedPreviewHtml(origin, props.profile)}

@@ -7,6 +7,8 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Attachment01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import type { StudioConfig } from '../../lib/studio-config'
 
 // WF-014: gunmetal blue for send button and active selection
@@ -276,9 +278,10 @@ export function CustomerChatRenderer(props: {
                 className={
                   'max-w-[80%] rounded-lg px-3 py-2 text-sm ' +
                   (t.role === 'user'
-                    ? 'ml-auto bg-blue-500 text-white'
+                    ? 'ml-auto text-white'
                     : 'mr-auto border border-slate-200 bg-white text-slate-900')
                 }
+                style={t.role === 'user' ? { background: PRIMARY } : undefined}
               >
                 <div className="whitespace-pre-wrap">{t.content}</div>
               </li>
@@ -305,6 +308,21 @@ export function CustomerChatRenderer(props: {
           void send()
         }}
       >
+        <button
+          type="button"
+          disabled
+          aria-label="Attach file (not enabled yet)"
+          title="Attachments are not enabled yet"
+          className="mr-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400"
+        >
+          <HugeiconsIcon
+            icon={Attachment01Icon}
+            size={18}
+            strokeWidth={1.8}
+            color="currentColor"
+          />
+          <span className="sr-only">Attach file</span>
+        </button>
         <textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
