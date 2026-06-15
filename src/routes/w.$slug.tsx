@@ -43,12 +43,10 @@ function renderWidgetHtml(widget: {
   body: string
 }): string {
   const fm = widget.frontmatter
-  // WF-013: never show internal/debug text or a raw store-slug label on the
-  // public widget surface. `pageTitle` is for the browser <title> only; the
-  // visible header title renders ONLY when an explicit human title is set.
+  // WF-013 / final walkthrough: never show internal/debug text, "Chat Widget",
+  // or a store-title header on the public widget surface. `pageTitle` is for
+  // the browser <title> only.
   const pageTitle = String(fm.title ?? widget.slug)
-  const title =
-    typeof fm.title === 'string' && fm.title.trim() ? fm.title.trim() : ''
   const greeting = String(fm.greeting ?? '')
   const mode = String(fm.mode ?? 'chat')
   const agent = String(fm.agent ?? '')
@@ -77,9 +75,6 @@ function renderWidgetHtml(widget: {
   body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: #f5f5f7; color: var(--primary); min-height: 100vh; }
   .frame { max-width: 560px; margin: 32px auto; padding: 0 16px; }
   .card { background: white; border-radius: 12px; box-shadow: 0 6px 28px rgba(0,0,0,.08); overflow: hidden; }
-  .header { background: var(--primary); color: white; padding: 18px 22px; }
-  .header .mode { font-size: 0.7rem; opacity: .7; text-transform: uppercase; letter-spacing: 0.05em; }
-  .header h1 { margin: 4px 0 0; font-size: 1.1rem; font-weight: 600; }
   .greet { padding: 18px 22px; line-height: 1.5; font-size: 0.95rem; }
   .chat { padding: 0 22px 16px; }
   .messages { display: flex; flex-direction: column; gap: 10px; min-height: 80px; max-height: 50vh; overflow-y: auto; padding: 8px 0 12px; }
@@ -113,9 +108,6 @@ function renderWidgetHtml(widget: {
 <body>
 <div class="frame">
   <div class="card" data-profile="${escapeHtml(widget.profile)}" data-slug="${escapeHtml(widget.slug)}" data-mode="${escapeHtml(mode)}" data-agent="${escapeHtml(agent)}">
-    <div class="header">
-      ${title ? `<h1>${escapeHtml(title)}</h1>` : ''}
-    </div>
     ${body}
     <div class="meta">
       <span>Powered by Huminic</span>

@@ -70,6 +70,11 @@ describe('public /w/$slug form-mode rendering (D-07)', () => {
     // Carries the frontmatter-declared greeting + domain.
     expect(html).toContain('Tell us how we can help.')
     expect(html).toContain('"service"')
+    // Final walkthrough: the browser title may use the configured title, but
+    // the widget card itself must not show a dark title/header band.
+    expect(html).toContain('<title>Contact Serra Honda</title>')
+    expect(html).not.toContain('class="header"')
+    expect(html).not.toContain('<h1>Contact Serra Honda</h1>')
   })
 
   it('honors a custom submit_label + thank_you from frontmatter', async () => {
