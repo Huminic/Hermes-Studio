@@ -9,16 +9,16 @@
  * page title from the first heading or the filename — and shows plain-language
  * empty states.
  *
- * Light theme to match the storefront: white / slate-50 surfaces, slate-200
- * borders, slate-900 text, blue (#3b82f6) primary, purple (#8b5cf6) active.
+ * Workspace gunmetal theme: white / slate-50 surfaces, slate-200 borders,
+ * slate-900 text, gunmetal blue (#2f3b4d) for primary actions and active states.
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { extractFrontmatter, readWikiFields } from '../../lib/frontmatter'
 import type { StudioConfig } from '../../lib/studio-config'
 
-const PRIMARY = '#3b82f6'
-const ACTIVE = '#8b5cf6'
+const PRIMARY = '#2f3b4d'
+const ACTIVE = '#2f3b4d'
 
 type Node = {
   name: string
@@ -371,7 +371,7 @@ Add your content here. Update the title, type, and status above to help others f
             <textarea
               value={bodyDraft}
               onChange={(e) => setBodyDraft(e.target.value)}
-              className="flex-1 resize-none rounded-md border border-slate-200 bg-white px-3 py-2 font-mono text-xs text-slate-900 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-300"
+              className="flex-1 resize-none rounded-md border border-slate-200 bg-white px-3 py-2 font-mono text-xs text-slate-900 focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300"
               spellCheck={false}
             />
 
