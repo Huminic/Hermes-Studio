@@ -160,6 +160,11 @@ function chatModeBody(widget: {
     msgs.appendChild(div);
     msgs.scrollTop = msgs.scrollHeight;
   }
+  function clearPending(timeoutId) {
+    if (timeoutId) window.clearTimeout(timeoutId);
+    typing.style.display = 'none';
+    send.disabled = false;
+  }
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     var text = input.value.trim();
@@ -169,15 +174,23 @@ function chatModeBody(widget: {
     input.value = '';
     send.disabled = true;
     typing.style.display = 'block';
+    var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timeoutId = window.setTimeout(function() {
+      if (controller) controller.abort();
+    }, 30000);
     fetch('/api/public/widget-chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ profile: profile, slug: slug, session_id: sessionId, history: history }),
+      signal: controller ? controller.signal : undefined,
     })
-      .then(function(r) { return r.json().then(function(d) { return { status: r.status, body: d }; }); })
+      .then(function(r) {
+        return r.json()
+          .catch(function() { return { ok: false }; })
+          .then(function(d) { return { status: r.status, body: d }; });
+      })
       .then(function(res) {
-        typing.style.display = 'none';
-        send.disabled = false;
+        clearPending(timeoutId);
         if (res.status !== 200 || !res.body || !res.body.ok) {
           append('agent', 'Sorry, something went wrong. Please try again.', 'error');
           return;
@@ -187,8 +200,7 @@ function chatModeBody(widget: {
         append('agent', reply);
       })
       .catch(function(err) {
-        typing.style.display = 'none';
-        send.disabled = false;
+        clearPending(timeoutId);
         append('agent', 'Sorry, we could not reach the assistant. Please try again.', 'error');
       });
   });

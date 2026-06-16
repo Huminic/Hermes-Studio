@@ -6,7 +6,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 // Mock the dealer-notification send so we assert the WIRING (and the
 // notify-only-on-new-lead rule), not an actual broker send.
 const notifySpy = vi.fn(async () => ({ ok: true, via: 'mock' as const }))
-vi.mock('@/server/lead-notifications', () => ({ notifyNewLead: notifySpy }))
+const notifyActiveSpy = vi.fn(async () => ({ ok: true, via: 'mock' as const }))
+vi.mock('@/server/lead-notifications', () => ({
+  notifyNewLead: notifySpy,
+  notifyActiveConversation: notifyActiveSpy,
+}))
 // SMS webhook fires the autonomous-reply dispatcher; stub it to a no-op.
 vi.mock('@/server/agent-autonomous-reply', () => ({
   maybeAutonomousReply: vi.fn(async () => []),
@@ -41,7 +45,11 @@ function writeProfile(): void {
 }
 
 beforeEach(async () => {
-  notifySpy.mockClear()
+  vi.resetModules()
+  notifySpy.mockReset()
+  notifySpy.mockResolvedValue({ ok: true, via: 'mock' as const })
+  notifyActiveSpy.mockReset()
+  notifyActiveSpy.mockResolvedValue({ ok: true, via: 'mock' as const })
   tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), 'inbound-notify-'))
   vi.spyOn(os, 'homedir').mockReturnValue(tmpHome)
   writeProfile()
@@ -53,6 +61,10 @@ afterEach(() => {
   vi.restoreAllMocks()
   fs.rmSync(tmpHome, { recursive: true, force: true })
 })
+
+function flushMicrotasks(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 0))
+}
 
 describe('inbound SMS → lead lands + dealer notified ONCE (new thread only)', () => {
   async function postSms(text: string) {
@@ -163,7 +175,7 @@ describe('public widget-chat → conversation captured in Teambox + dealer alert
     const handler = Route.options.server.handlers.POST
     const req = new Request('http://localhost/api/public/widget-chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-real-ip': '203.0.113.20' },
       body: JSON.stringify({
         profile: PROFILE,
         slug: SLUG,
@@ -173,8 +185,8 @@ describe('public widget-chat → conversation captured in Teambox + dealer alert
     })
     const res = await handler({ request: req } as never)
     const body = (await res.json()) as { ok: boolean; reply: string }
-    expect(body.ok).toBe(true)
-    expect(body.reply).toBe('Happy to help!')
+    expect(body).toMatchObject({ ok: true, reply: 'Happy to help!' })
+    await flushMicrotasks()
 
     // Conversation landed in the Teambox on a chat thread.
     const { listThreads, getThread } = await import('@/server/messaging-hub-store')
@@ -200,5 +212,54 @@ describe('public widget-chat → conversation captured in Teambox + dealer alert
     const arg = notifySpy.mock.calls[0][0] as { profile: string; channel: string }
     expect(arg.profile).toBe(PROFILE)
     expect(arg.channel).toBe('website chat')
+  })
+
+  it('does not block the visitor reply when lead notification is still pending', async () => {
+    let resolveNotify:
+      | ((value: { ok: true; via: 'mock' }) => void)
+      | undefined
+    notifySpy.mockImplementationOnce(
+      () =>
+        new Promise<{ ok: true; via: 'mock' }>((resolve) => {
+          resolveNotify = resolve
+        }),
+    )
+    const { Route } = await import('@/routes/api/public/widget-chat')
+    const handler = Route.options.server.handlers.POST
+    const req = new Request('http://localhost/api/public/widget-chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-real-ip': '203.0.113.21' },
+      body: JSON.stringify({
+        profile: PROFILE,
+        slug: SLUG,
+        session_id: 'visitor-pending-notify',
+        history: [{ role: 'user', content: 'Can I schedule a test drive?' }],
+      }),
+    })
+    const res = await Promise.race([
+      handler({ request: req } as never),
+      new Promise<Response>((_, reject) =>
+        setTimeout(() => reject(new Error('widget-chat blocked on notify')), 50),
+      ),
+    ])
+    const body = (await res.json()) as { ok: boolean; reply: string }
+    expect(body).toMatchObject({ ok: true, reply: 'Happy to help!' })
+    expect(notifySpy).toHaveBeenCalledTimes(1)
+
+    const { listThreads, getThread } = await import('@/server/messaging-hub-store')
+    const threads = listThreads({ profile: PROFILE, channel: 'chat' })
+    const thread = getThread(PROFILE, threads[0].id)
+    expect(
+      thread?.messages.some((m) => m.content.startsWith('Lead notification')),
+    ).toBe(false)
+
+    resolveNotify?.({ ok: true, via: 'mock' })
+    await flushMicrotasks()
+    const updatedThread = getThread(PROFILE, threads[0].id)
+    expect(
+      updatedThread?.messages.some(
+        (m) => m.role === 'system' && m.content.startsWith('Lead notification'),
+      ),
+    ).toBe(true)
   })
 })

@@ -88,8 +88,8 @@ function InfoStoreRenderer(props: ConsoleRendererProps) {
           <p className="max-w-3xl text-sm leading-relaxed text-slate-600">
             Your company wiki, database snapshots, and Semantic Guardian
             observations in one governed place. The Semantic Guardian protects
-            knowledge and data boundaries — it does not appear in your Agents
-            list and cannot be used for customer conversations.
+            knowledge and data boundaries and is available from Agents for
+            internal questions about canon, lineage, and data confidence.
           </p>
         </div>
 

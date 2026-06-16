@@ -247,16 +247,21 @@ export const Route = createFileRoute('/api/public/widget-chat')({
           // flag, deduped once per thread, EMAIL format with a takeover button.
           // Best-effort; never blocks the visitor's reply.
           if (!ex.created && lastUser && lastUser.role !== 'assistant') {
-            await notifyActiveConversation({
+            void notifyActiveConversation({
               profile: widget.profile,
               threadId: ex.thread.id,
               channel: 'chat',
               who: persona,
               message: String(lastUser.content ?? ''),
+            }).catch((err) => {
+              console.warn(
+                '[widget-chat] active conversation notification failed',
+                err,
+              )
             })
           }
           if (ex.created) {
-            const notified = await notifyNewLead({
+            void notifyNewLead({
               profile: widget.profile,
               channel: 'website chat',
               contact_handle: chatHandle,
@@ -266,23 +271,52 @@ export const Route = createFileRoute('/api/public/widget-chat')({
               // visitor IP — one bot/visitor can't blast the BDC across sessions.
               cooldownKey: `chat:${widget.profile}:${clientKey(request)}`,
             })
-            // Annotate the thread with the delivery outcome (system-role —
-            // never rendered to the customer; diagnostics live in metadata).
-            // Parity with the voice/video webhooks.
-            appendMessage({
-              thread_id: ex.thread.id,
-              direction: 'outbound',
-              role: 'system',
-              channel: 'chat',
-              content: `Lead notification: ${notified.ok ? 'sent' : 'not delivered'}`,
-              author: 'system',
-              metadata: {
-                via: 'lead-notification',
-                delivery: notified.via,
-                external_id: notified.external_id ?? null,
-                reason: notified.reason ?? null,
-              },
-            })
+              .then((notified) => {
+                // Annotate the thread with the delivery outcome (system-role —
+                // never rendered to the customer; diagnostics live in metadata).
+                // Parity with the voice/video webhooks.
+                try {
+                  appendMessage({
+                    thread_id: ex.thread.id,
+                    direction: 'outbound',
+                    role: 'system',
+                    channel: 'chat',
+                    content: `Lead notification: ${notified.ok ? 'sent' : 'not delivered'}`,
+                    author: 'system',
+                    metadata: {
+                      via: 'lead-notification',
+                      delivery: notified.via,
+                      external_id: notified.external_id ?? null,
+                      reason: notified.reason ?? null,
+                    },
+                  })
+                } catch {
+                  // best-effort diagnostics
+                }
+              })
+              .catch((err) => {
+                try {
+                  appendMessage({
+                    thread_id: ex.thread.id,
+                    direction: 'outbound',
+                    role: 'system',
+                    channel: 'chat',
+                    content: 'Lead notification: not delivered',
+                    author: 'system',
+                    metadata: {
+                      via: 'lead-notification',
+                      delivery: 'failed',
+                      external_id: null,
+                      reason:
+                        err instanceof Error
+                          ? err.message
+                          : 'notification failed',
+                    },
+                  })
+                } catch {
+                  // best-effort diagnostics
+                }
+              })
           }
         } catch {
           // best-effort capture/notify — never block the visitor's reply
