@@ -113,6 +113,7 @@ function StorefrontTabRoute() {
   const { profile, tab } = Route.useParams()
   const queryClient = useQueryClient()
   const router = useRouter()
+  const [sessionExpired, setSessionExpired] = useState(false)
 
   const configQuery = useQuery({
     queryKey: ['studio-config', profile],
@@ -128,6 +129,33 @@ function StorefrontTabRoute() {
 
   const config = configQuery.data?.config ?? defaultStudioConfig(profile)
   const session = authQuery.data
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const originalFetch = window.fetch.bind(window)
+    const guardedFetch: typeof window.fetch = async (input, init) => {
+      const response = await originalFetch(input, init)
+      const rawUrl =
+        typeof input === 'string'
+          ? input
+          : input instanceof URL
+            ? input.toString()
+            : input.url
+      const url = new URL(rawUrl, window.location.origin)
+      if (
+        (response.status === 401 || response.status === 403) &&
+        url.pathname.startsWith('/api/customer/')
+      ) {
+        setSessionExpired(true)
+        void queryClient.invalidateQueries({ queryKey: ['auth-session'] })
+      }
+      return response
+    }
+    window.fetch = guardedFetch
+    return () => {
+      if (window.fetch === guardedFetch) window.fetch = originalFetch
+    }
+  }, [queryClient])
 
   const logoutMutation = useMutation({
     mutationFn: postLogout,
@@ -155,8 +183,19 @@ function StorefrontTabRoute() {
     )
   }
 
-  if (!allowed) {
-    return <CustomerLogin profile={profile} config={config} />
+  if (sessionExpired || !allowed) {
+    return (
+      <CustomerLogin
+        profile={profile}
+        config={config}
+        notice={
+          sessionExpired
+            ? 'Your session expired during an update. Please sign in again.'
+            : undefined
+        }
+        onSignedIn={() => setSessionExpired(false)}
+      />
+    )
   }
 
   const rendererKey = TAB_TO_RENDERER[tab]
@@ -287,9 +326,13 @@ function StorefrontTabRoute() {
 function CustomerLogin({
   profile,
   config,
+  notice,
+  onSignedIn,
 }: {
   profile: string
   config: StudioConfig
+  notice?: string
+  onSignedIn?: () => void
 }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -323,6 +366,7 @@ function CustomerLogin({
       await queryClient.invalidateQueries({ queryKey: ['auth-session'] })
       // No navigate needed — the gate now passes and the route renders the
       // tab content on next render.
+      onSignedIn?.()
       router.invalidate()
     },
     onError: () => {
@@ -373,6 +417,12 @@ function CustomerLogin({
                 Sign in with your Workspace credentials.
               </p>
             </div>
+
+            {notice && (
+              <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                {notice}
+              </div>
+            )}
 
             <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
               <span>Username</span>
