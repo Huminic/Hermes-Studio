@@ -252,3 +252,89 @@ Scope note: This resolves the public widget chat hang and the InfoStore copy
 contradiction. It does not certify live campaign SMS send/reply, trigger draft
 objects, or arbitrary BI-style dashboard joins/formulas; those remain separate
 release-readiness checks or accepted fast-follow scope.
+2026-06-16T09:34:00Z DEC final-hard-look-retry-and-studio-agent-card-action
+Decision: Continue release certification under a strict evidence/adjudication
+standard. Do not sign off merely because the UI appears improved; separate
+green checks, stale probe expectations, true gaps, and approval-gated live
+outbound work.
+
+Implementation since prior entry:
+- `src/server/lead-notifications.ts`: added one retry for transient Resend /
+  central-mcp stream failures (`terminated`, aborted, timeout, socket/network,
+  5xx) without retrying validation/tool errors.
+- `src/test/notify-dealer.test.ts`: added regression coverage proving a
+  transient `terminated` send retries once and succeeds.
+- `src/screens/agents/agent-library-screen.tsx`: added a card-level Start Chat
+  action in Studio Agent Library. Each agent card now exposes an accessible
+  "Start chat with <agent>" icon and routes to `/chat/new?agent=<id>` with
+  profile query state when applicable.
+
+Commits / deployments:
+- `0d94b5f52ce77d2edee98b9778448616e7293807` deployed as
+  `ij0ayofy2vx2qasr0vadqeuy`: retry transient dealer notification sends.
+- `79d8e90e237917f06e612d69b1ee476e77e031c8` deployed as
+  `a7fa9d1abf664c40d82e2752`: add Studio agent-card chat action.
+
+Evidence:
+- Notification retry focused tests: PASS, 21 tests across dealer notification
+  and inbound lead notification suites.
+- Build before deploy: PASS. Existing warnings only: invalid route param for
+  `/widget/dealer/$slug.js`, sourcemaps, large chunks.
+- Live containers on `79d8e90e237917f06e612d69b1ee476e77e031c8`; agent
+  container healthy.
+- Studio agent-card probe: PASS. Found 118 "Start chat with ..." card actions;
+  first action routed to `https://studio.huminic.app/chat/new?agent=builtin-roger`.
+- Post-deploy workspace IA probe on `a7fa9d1abf664c40d82e2752`: PASS.
+- Live workspace readiness probe on `a7fa9d1abf664c40d82e2752`: PASS. Semantic
+  Guardian visible on all six workspaces; right-side helper columns absent
+  across tested tabs; takeover/manual reply gate works and hand-back restores
+  the gate.
+- Dashboard/data upload smoke on `a7fa9d1abf664c40d82e2752`: PASS. Dashboard
+  builder, data upload endpoint, and friendly Data Store copy visible.
+- Dashboard PDF export probe on `a7fa9d1abf664c40d82e2752`: PASS.
+- Current URL catalog after deploy: PASS_READONLY for 27 public pages and 6
+  dealer widget scripts.
+- Superuser StoreFront UI probe: PASS for all six stores. Unified Widget,
+  Copy code, dealer snippet, preview/live demo placement, no unavailable copy,
+  no login wall, no horizontal overflow.
+- Dealer widget verification: PASS_READONLY for sales stores; Web Chat,
+  Instant Call Back, Contact Form, and Two-Way Video options visible.
+- Foreign-origin widget embedding check: PASS, 12 rows from a third-party
+  harness origin.
+- Widget layout clipping check: PASS across desktop, tablet, mobile, and
+  narrow.
+- Widget content scan: PASS_WITH_CONTENT_FINDINGS after Ford-only rerun; no
+  old Nexxus brand, provider term, stale copy, or cross-brand leakage found.
+- Scoped partner live retest with Durran account: PASS. Scope limited to the
+  six launch stores; in-scope activation works; out-of-scope activation and
+  store-admin cross-activation are blocked.
+- Read-only continuity probe: PASS across all six stores; API shapes and
+  wrong-store boundaries verified.
+- Ford campaign adjudication: Ford of Columbia has five draft campaigns. The
+  overview intentionally shows summary/actions only; after switching to the
+  Campaigns tab, each draft card exposes Preview, Edit, Send now, and View
+  results. Older outbound-posture probe failure was a stale overview-only
+  expectation, not a live UI defect.
+- Studio final-sprint probe adjudication: the composer/rainbow failure was a
+  timing issue. A direct timed probe showed the `/chat/new` page transitions
+  from "Loading chat..." to a rainbow composer with "Ask anything..." by ~3s.
+  The same probe surfaced a non-blocking `/api/hermes-proxy/api/available-models`
+  404 followed by successful `/api/models` fallback; keep under observation.
+
+Still not certified without explicit approval:
+- No live SMS campaign send/reply/takeover workflow was executed in this
+  overnight pass. Required approval inputs: profile/store, test recipient
+  phone number(s), campaign/list naming, permission to create visible test
+  artifacts, and whether Columbia notification routing should remain live or
+  be temporarily constrained for testing.
+- No post-retry live email notification send was executed after the Resend
+  retry deploy. A real notification proof would send to configured recipients
+  unless routing is explicitly changed/approved.
+- Trigger UI/backend supports one saved lead-flow trigger plan; separate draft
+  trigger objects are not supported today.
+- Dashboard builder is improved and verified for selectable sources,
+  visualization mode, display mode, card persistence/removal, and PDF export;
+  it is not a full BI engine with arbitrary joins/formulas over uploaded
+  reports. Treat that as a product-scope decision, not silently certified.
+- Data uploads endpoint/UI exists; full uploaded report ingestion into
+  federated search and dashboards still needs approved data artifact testing.
