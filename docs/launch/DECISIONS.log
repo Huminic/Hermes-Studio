@@ -338,3 +338,61 @@ Still not certified without explicit approval:
   reports. Treat that as a product-scope decision, not silently certified.
 - Data uploads endpoint/UI exists; full uploaded report ingestion into
   federated search and dashboards still needs approved data artifact testing.
+2026-06-16T10:51:00Z DEC repaired-non-outbound-certification-harness
+Decision: The final-sprint certification harness should reflect the current
+IA instead of failing on stale assumptions. Campaign upload/list controls live
+on the Lists tab, campaign card actions live on the Campaigns tab, and Studio
+chat must be sampled after the loading state transitions to the real composer.
+
+Harness updates (untracked launch-cert scripts; evidence-only):
+- `work/launch-cert/scripts/final_sprint_cert_probe_2026_06_15.cjs` now waits
+  for the Studio rainbow composer and inspects Overview + Campaigns + Lists
+  when validating the Campaigns surface.
+- `work/launch-cert/scripts/outbound_posture_readonly_probe.cjs` now inspects
+  Overview + Campaigns + Lists before judging audience upload and card-level
+  Send now placement.
+- `work/launch-cert/scripts/security_spot_checks.cjs` no longer treats generic
+  login-page feature copy ("Teambox", "Campaigns", etc.) as leaked store data;
+  it checks for actual inbox/customer-data markers instead.
+
+Evidence after harness repair:
+- Broad final-sprint certification probe: PASS across all six workspaces and
+  Studio. Evidence:
+  `outputs/evidence-2026-06-15-final-sprint/final-sprint-cert-probe-2026-06-15.json`.
+  One non-blocking Studio warning remains from the broad model/provider regex;
+  no `Hermes OS`, `No Active Sessions`, or legacy blue cap failure remains.
+- Corrected outbound posture read-only probe: PASS for all six stores plus
+  scoped partner. Evidence:
+  `outputs/evidence-2026-06-13-outbound-posture/outbound-posture-readonly-probe.json`.
+  No campaign send, audience upload, reply, takeover, SMS, notification, or
+  provider change was performed.
+- Existing-record continuity trace: PASS. Representative channels, detail
+  rows, reports, notification shape, lead-flow reachability/explicit
+  unavailability, widgets, campaigns, wrong-profile boundaries, and raw/provider
+  leakage checks passed. Evidence:
+  `outputs/evidence-2026-06-13-existing-record-trace-readonly/existing-record-trace-readonly.json`.
+- Security spot checks: PASS. Bad password and unknown user show the same
+  invalid-credentials posture without raw leakage; wrong-store and unauthenticated
+  direct-tab access show login walls without data exposure. Evidence:
+  `outputs/evidence-2026-06-12-security/security-spot-checks.json`.
+- Public HTTP preflight: PASS, 12 rows and no failures. Evidence:
+  `outputs/evidence-2026-06-12-http-preflight/public-http-preflight.json`.
+- Current launch package integrity: PASS. Evidence:
+  `outputs/evidence-2026-06-12-launch-packet/launch-packet-integrity.json`.
+- Current package candidate safety scan: PASS, zero findings across sanitized
+  external package drafts, URL catalog, Durran screenshot send options, and
+  email drafts. Evidence:
+  `outputs/package-safety/current-candidate-bundle-scan-2026-06-13.json`.
+- Appointments/plugins read-only discovery: DISCOVERY_GAP by design. Customer
+  appointment and plugin/skill management surfaces are not visible as day-one
+  ready features; routes are not found, redirected, gated, or no-marker. No
+  provider terms, raw leakage, or overflow found. This matches the approved
+  fast-follow decision for day-one appointments and Studio plugin/skill
+  management.
+
+Remaining approval-gated release proof remains unchanged:
+- Live SMS campaign send/reply/takeover workflow.
+- Post-retry live email notification proof.
+- Third-party video session creation proof, if required.
+- Uploaded-report ingestion into federated search/dashboard usage with approved
+  test artifact(s).
