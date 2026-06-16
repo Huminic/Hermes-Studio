@@ -467,3 +467,28 @@ Remaining approval-gated release proof remains unchanged:
 - Third-party video session creation proof, if required.
 - Uploaded-report ingestion into federated search/dashboard usage with approved
   test artifact(s).
+2026-06-16T13:17:00Z DEC refreshed-workspace-safe-control-readonly
+Decision: Refresh the safe-control read-only probe on the current live build to
+verify that permitted UI-only controls do not accidentally perform write/send
+actions. This does not exercise write/send/create controls, which remain
+approval-gated.
+
+Additional evidence:
+- Workspace safe-control read-only probe: PASS across all six launch stores
+  with zero failures. StoreFront safe tab/copy/demo-link behavior, dashboard
+  filters, and Teambox filters passed with no unsafe network method observed.
+  Some Data refresh controls were not present and were recorded as N/A, not
+  failures. Evidence:
+  `outputs/evidence-2026-06-13-workspace-safe-control-readonly/workspace-safe-control-readonly-probe.json`.
+
+Side-effect boundary preserved:
+- No Send, Save, Create, Upload, Dispatch, Reply, Takeover, Submit, Add rule,
+  New campaign, logout, video, profile/user creation, prompt/model, or
+  tool/action controls were clicked.
+
+Remaining approval-gated release proof remains unchanged:
+- Live SMS campaign send/reply/takeover workflow.
+- Post-retry live email notification proof.
+- Third-party video session creation proof, if required.
+- Uploaded-report ingestion into federated search/dashboard usage with approved
+  test artifact(s).
