@@ -151,6 +151,33 @@ describe('notifyDealer — email profile (Columbia / default)', () => {
     const args = lastResendArgs(globalThis.fetch as ReturnType<typeof vi.fn>)
     expect(args.to).toBe('legacy@columbiaford.example.com')
   })
+
+  it('retries once when the central-mcp stream terminates transiently', async () => {
+    writeStudioYaml('ford-of-columbia', [
+      'branding:',
+      '  persona_name: Ford of Columbia',
+      'notifications:',
+      '  lead_format: email',
+      '  lead_recipient: leads@columbiaford.example.com',
+    ])
+    const fetchMock = globalThis.fetch as ReturnType<typeof vi.fn>
+    fetchMock
+      .mockRejectedValueOnce(new TypeError('terminated'))
+      .mockResolvedValueOnce(
+        new Response(
+          `event: message\ndata: {"result":{"content":[{"text":"{\\"id\\":\\"resend_after_retry\\"}"}]}}\n\n`,
+          { status: 200, headers: { 'Content-Type': 'text/event-stream' } },
+        ),
+      )
+    const { notifyDealer } = await import('@/server/lead-notifications')
+
+    const result = await notifyDealer({ profile: 'ford-of-columbia', event: LEAD })
+
+    expect(result.ok).toBe(true)
+    expect(result.via).toBe('resend')
+    expect(result.external_id).toBe('resend_after_retry')
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
 })
 
 describe('notifyDealer — unconfigured recipient', () => {

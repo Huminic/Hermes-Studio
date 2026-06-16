@@ -55,6 +55,9 @@ const BRAND_GRADIENT_START = '#667eea'
 const BRAND_GRADIENT_END = '#764ba2'
 /** Target-icon emoji entity (matches the voice-lead headerEmoji). */
 const BRAND_HEADER_EMOJI = '&#127919;'
+/** One retry for transient central-mcp/HTTP stream failures. */
+const RESEND_MAX_ATTEMPTS = 2
+const TRANSIENT_RESEND_RE = /terminated|aborted|timeout|timed out|socket|econnreset|fetch failed|network/i
 
 function readEnvFromProfile(profile: string): Record<string, string> {
   const file = path.join(
@@ -138,82 +141,94 @@ async function sendViaResend(input: {
   text: string
   attachments?: Array<{ filename: string; content: string }>
 }): Promise<LeadNotificationResult> {
-  try {
-    const args: Record<string, unknown> = {
-      to: input.to,
-      from: input.from,
-      subject: input.subject,
-      html: input.html,
-      text: input.text,
-    }
-    if (input.attachments && input.attachments.length > 0) {
-      args.attachments = input.attachments
-    }
-    const res = await fetch(input.central, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // MCP streamable-HTTP transport requires both accept types (see central-mcp.ts).
-        Accept: 'application/json, text/event-stream',
-        Authorization: `Bearer ${input.token}`,
-      },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'tools/call',
-        params: { name: 'resend_send_email', arguments: args },
-      }),
-    })
-    const responseText = await res.text()
-    if (!res.ok) {
+  const args: Record<string, unknown> = {
+    to: input.to,
+    from: input.from,
+    subject: input.subject,
+    html: input.html,
+    text: input.text,
+  }
+  if (input.attachments && input.attachments.length > 0) {
+    args.attachments = input.attachments
+  }
+
+  let lastFailure: LeadNotificationResult | null = null
+  for (let attempt = 1; attempt <= RESEND_MAX_ATTEMPTS; attempt++) {
+    try {
+      const res = await fetch(input.central, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // MCP streamable-HTTP transport requires both accept types (see central-mcp.ts).
+          Accept: 'application/json, text/event-stream',
+          Authorization: `Bearer ${input.token}`,
+        },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: { name: 'resend_send_email', arguments: args },
+        }),
+      })
+      const responseText = await res.text()
+      if (!res.ok) {
+        lastFailure = {
+          ok: false,
+          via: 'failed',
+          reason: `HTTP ${res.status} ${responseText.slice(0, 200)}`,
+        }
+        if (res.status >= 500 && attempt < RESEND_MAX_ATTEMPTS) continue
+        return lastFailure
+      }
+      const dataMatch = responseText.match(/data: ({[\s\S]*?})\n/)
+      let emailId: string | null = null
+      if (dataMatch) {
+        try {
+          const obj = JSON.parse(dataMatch[1]) as {
+            result?: { content?: Array<{ text?: string }>; isError?: boolean }
+          }
+          const inner = obj.result?.content?.[0]?.text
+          if (inner) {
+            const innerObj = JSON.parse(inner) as {
+              id?: string
+              error?: string
+              message?: string
+              code?: string
+            }
+            // The broker returns HTTP 200 even when Resend itself rejects the
+            // call (e.g. an invalid `from`). A success body is `{ id }`; an error
+            // body carries `error`/`code`. Surface the rejection as a real
+            // failure instead of a silent false-positive `ok:true`.
+            if (obj.result?.isError || innerObj.error || innerObj.code) {
+              return {
+                ok: false,
+                via: 'failed',
+                reason: String(
+                  innerObj.error ?? innerObj.message ?? 'resend rejected the send',
+                ).slice(0, 200),
+              }
+            }
+            emailId = innerObj.id ?? null
+          }
+        } catch {
+          // ignore parse — we still report sent
+        }
+      }
+      return { ok: true, via: 'resend', external_id: emailId }
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : 'network error'
+      lastFailure = { ok: false, via: 'failed', reason }
+      if (attempt < RESEND_MAX_ATTEMPTS && TRANSIENT_RESEND_RE.test(reason)) {
+        continue
+      }
       return {
         ok: false,
         via: 'failed',
-        reason: `HTTP ${res.status} ${responseText.slice(0, 200)}`,
+        reason,
       }
-    }
-    const dataMatch = responseText.match(/data: ({[\s\S]*?})\n/)
-    let emailId: string | null = null
-    if (dataMatch) {
-      try {
-        const obj = JSON.parse(dataMatch[1]) as {
-          result?: { content?: Array<{ text?: string }>; isError?: boolean }
-        }
-        const inner = obj.result?.content?.[0]?.text
-        if (inner) {
-          const innerObj = JSON.parse(inner) as {
-            id?: string
-            error?: string
-            message?: string
-            code?: string
-          }
-          // The broker returns HTTP 200 even when Resend itself rejects the
-          // call (e.g. an invalid `from`). A success body is `{ id }`; an error
-          // body carries `error`/`code`. Surface the rejection as a real
-          // failure instead of a silent false-positive `ok:true`.
-          if (obj.result?.isError || innerObj.error || innerObj.code) {
-            return {
-              ok: false,
-              via: 'failed',
-              reason: String(
-                innerObj.error ?? innerObj.message ?? 'resend rejected the send',
-              ).slice(0, 200),
-            }
-          }
-          emailId = innerObj.id ?? null
-        }
-      } catch {
-        // ignore parse — we still report sent
-      }
-    }
-    return { ok: true, via: 'resend', external_id: emailId }
-  } catch (err) {
-    return {
-      ok: false,
-      via: 'failed',
-      reason: err instanceof Error ? err.message : 'network error',
     }
   }
+  return lastFailure ?? { ok: false, via: 'failed', reason: 'network error' }
 }
 
 /**
