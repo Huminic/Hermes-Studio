@@ -396,3 +396,35 @@ Remaining approval-gated release proof remains unchanged:
 - Third-party video session creation proof, if required.
 - Uploaded-report ingestion into federated search/dashboard usage with approved
   test artifact(s).
+2026-06-16T11:05:00Z DEC additional-readonly-parity-and-live-runbook
+Decision: Continue hardening certification with non-outbound parity checks and
+prepare the exact live-proof lane needed for final sign-off. Do not perform
+SMS/email/video/data-write live workflows without explicit approval.
+
+Additional evidence:
+- Messaging threads API comparison for `serra-honda`: PASS. Scoped partner
+  (`durran@cageautomotive.com`) and store admin both authenticated, hit the
+  same `/api/messaging/threads` endpoint, received HTTP 200, and saw matching
+  thread counts. Evidence:
+  `work/launch-cert/evidence/gap-correction/messaging-threads-api-compare-serra-honda.json`.
+- Look/feel terminology read-only probe: PASS across 16 public rows and 6 store
+  rows. No provider terms, hard legacy terms, raw leakage, or horizontal
+  overflow found. The service standalone widget expectation was corrected to
+  validate the current customer-facing Nancy/service/help/Send surface instead
+  of the deliberately removed "chat" title copy. Evidence:
+  `outputs/evidence-2026-06-13-lookfeel-terminology/lookfeel-terminology-readonly-probe.json`.
+- Live certification runbook created locally for the operator with exact
+  approval gates and workflow evidence requirements:
+  `outputs/live-certification-runbook-approval-gates-2026-06-16.md`.
+
+Live certification approval gates documented:
+- Store/profile and approved recipient number(s) for SMS campaign proof.
+- Notification routing choice: current live routing vs temporary Duane-only.
+- Approval to create visible CSV/list/campaign/dashboard/upload artifacts.
+- Approval or skip for third-party video session URL creation.
+- Approved harmless data/report artifact for uploaded-report federation proof.
+
+Scope reminder:
+- Day-one appointments and Studio plugin/skill management remain accepted
+  fast-follow scope. The read-only discovery probe showed no customer-ready
+  visible surfaces and no provider/raw leakage.
