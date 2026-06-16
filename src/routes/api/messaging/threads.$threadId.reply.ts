@@ -20,6 +20,7 @@ import {
   getThread,
 } from '../../../server/messaging-hub-store'
 import { dispatchOutbound } from '../../../server/messaging-adapters'
+import { isHumanAssigned } from '../../../server/thread-takeover'
 
 export const Route = createFileRoute('/api/messaging/threads/$threadId/reply')({
   server: {
@@ -46,6 +47,16 @@ export const Route = createFileRoute('/api/messaging/threads/$threadId/reply')({
         const thread = getThread(profile, params.threadId)
         if (!thread || thread.profile !== profile) {
           return json({ ok: false, error: 'Not found' }, { status: 404 })
+        }
+        if (!isHumanAssigned(profile, thread.id)) {
+          return json(
+            {
+              ok: false,
+              error:
+                'Take over this conversation before sending a manual reply.',
+            },
+            { status: 409 },
+          )
         }
         const channel =
           typeof body.channel === 'string' ? body.channel : thread.channel

@@ -15,7 +15,7 @@ import type { StudioConfig } from '../../lib/studio-config'
 
 // WF-017: workspace gunmetal theme
 const PRIMARY = '#2f3b4d'
-const DASHBOARD_SOURCES = [
+const DASHBOARD_METRIC_SOURCES = [
   'calls',
   'video',
   'sms',
@@ -27,6 +27,10 @@ const DASHBOARD_SOURCES = [
   'campaigns',
   'followups',
 ] as const
+
+const DASHBOARD_SOURCES = [...DASHBOARD_METRIC_SOURCES, 'federated'] as const
+
+type DashboardMetricSource = (typeof DASHBOARD_METRIC_SOURCES)[number]
 
 type Grouped = {
   total: number
@@ -92,6 +96,7 @@ type Reports = {
 type DashboardCard = {
   title: string
   source: string
+  sources?: Array<string>
   visualization?: 'number' | 'bar' | 'table'
   display?: 'summary' | 'detail'
 }
@@ -148,12 +153,14 @@ const SOURCE_LABELS: Record<string, string> = {
   sales: 'Sales threads',
   campaigns: 'Campaigns',
   followups: 'Follow-ups',
+  federated: 'Combined sources',
 }
 
 const SOURCE_GROUPS: Array<{
   label: string
   sources: Array<(typeof DASHBOARD_SOURCES)[number]>
 }> = [
+  { label: 'Combined', sources: ['federated'] },
   { label: 'Communications', sources: ['calls', 'sms', 'email', 'chat', 'video'] },
   { label: 'Customers', sources: ['leads', 'sales', 'service'] },
   { label: 'Campaigns', sources: ['campaigns', 'followups'] },
@@ -188,11 +195,16 @@ export function CustomerPerformanceRenderer(props: {
   )
   const [failed, setFailed] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [view, setView] = useState<View>('aggregate')
+  const [view, setView] = useState<View>('overview')
   const [windowSel, setWindowSel] = useState<Window>('30')
   const [showAddCard, setShowAddCard] = useState(false)
   const [cardTitle, setCardTitle] = useState('')
   const [cardSource, setCardSource] = useState('')
+  const [cardSources, setCardSources] = useState<Array<DashboardMetricSource>>([
+    'calls',
+    'sms',
+    'leads',
+  ])
   const [cardVisualization, setCardVisualization] =
     useState<NonNullable<DashboardCard['visualization']>>('number')
   const [cardDisplay, setCardDisplay] =
@@ -261,6 +273,10 @@ export function CustomerPerformanceRenderer(props: {
   const addCard = useCallback(async () => {
     const title = cardTitle.trim()
     if (!title || !cardSource) return
+    if (cardSource === 'federated' && cardSources.length < 2) {
+      setSaveError('Choose at least two sources for a combined card.')
+      return
+    }
     setSaveBusy(true)
     setSaveError(null)
     try {
@@ -275,6 +291,7 @@ export function CustomerPerformanceRenderer(props: {
             {
               title,
               source: cardSource,
+              sources: cardSource === 'federated' ? cardSources : [],
               visualization: cardVisualization,
               display: cardDisplay,
             },
@@ -299,11 +316,43 @@ export function CustomerPerformanceRenderer(props: {
   }, [
     cardDisplay,
     cardSource,
+    cardSources,
     cardTitle,
     cardVisualization,
     dashboards,
     props.profile,
   ])
+
+  const removeCard = useCallback(
+    async (index: number) => {
+      setSaveBusy(true)
+      setSaveError(null)
+      try {
+        const next = dashboards.filter((_, i) => i !== index)
+        const res = await fetch('/api/customer/dashboards', {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            profile: props.profile,
+            dashboards: next,
+          }),
+        })
+        const j = (await res.json().catch(() => ({}))) as DashboardsResponse
+        if (!res.ok || !j.ok) {
+          setSaveError(j.error ?? 'Could not remove dashboard card.')
+          return
+        }
+        setDashboards(j.dashboards ?? [])
+        setExpandedCard(null)
+      } catch {
+        setSaveError('Could not remove dashboard card.')
+      } finally {
+        setSaveBusy(false)
+      }
+    },
+    [dashboards, props.profile],
+  )
 
   const exportPDF = useCallback(() => {
     if (!perf || !reports) return
@@ -351,6 +400,13 @@ export function CustomerPerformanceRenderer(props: {
     { title: 'Total leads', source: 'leads', visualization: 'table', display: 'detail' },
     { title: 'Campaigns', source: 'campaigns', visualization: 'bar', display: 'detail' },
     { title: 'Follow-up triggers', source: 'followups', visualization: 'bar', display: 'detail' },
+    {
+      title: 'Customer engagement',
+      source: 'federated',
+      sources: ['calls', 'sms', 'chat', 'campaigns'],
+      visualization: 'table',
+      display: 'detail',
+    },
   ]
   const cardsToRender = dashboards.length > 0 ? dashboards : starterCards
   const isCustom = dashboards.length > 0
@@ -532,6 +588,41 @@ export function CustomerPerformanceRenderer(props: {
                 {saveError && (
                   <div className="text-xs text-red-600">{saveError}</div>
                 )}
+                {cardSource === 'federated' && (
+                  <div className="rounded-md border border-slate-200 bg-white p-3">
+                    <div className="mb-2 text-xs font-medium text-slate-600">
+                      Choose sources to combine
+                    </div>
+                    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                      {DASHBOARD_METRIC_SOURCES.map((source) => {
+                        const checked = cardSources.includes(source)
+                        return (
+                          <label
+                            key={source}
+                            className="flex items-center gap-2 rounded-md border border-slate-100 px-2 py-1.5 text-xs text-slate-700"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() =>
+                                setCardSources((prev) =>
+                                  checked
+                                    ? prev.filter((s) => s !== source)
+                                    : [...prev, source],
+                                )
+                              }
+                            />
+                            {SOURCE_LABELS[source] ?? source}
+                          </label>
+                        )
+                      })}
+                    </div>
+                    <p className="mt-2 text-[11px] text-slate-500">
+                      Combined cards summarize several sources in one saved
+                      dashboard card and show each source in the breakdown.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -544,12 +635,13 @@ export function CustomerPerformanceRenderer(props: {
                 source={card.source}
                 visualization={card.visualization ?? 'number'}
                 display={card.display ?? 'summary'}
-                value={resolveCardValue(reports, card.source)}
-                rows={resolveCardRows(reports, card.source)}
+                value={resolveCardValue(reports, card)}
+                rows={resolveCardRows(reports, card)}
                 expanded={expandedCard === i || card.display === 'detail'}
                 onToggle={() =>
                   setExpandedCard((current) => (current === i ? null : i))
                 }
+                onRemove={isCustom ? () => void removeCard(i) : undefined}
               />
             ))}
           </div>
@@ -579,7 +671,14 @@ export function CustomerPerformanceRenderer(props: {
   )
 }
 
-function resolveCardValue(reports: Reports, source: string): number {
+function metricSources(card: DashboardCard): Array<string> {
+  if (card.source !== 'federated') return [card.source]
+  return (card.sources ?? []).filter((source): source is DashboardMetricSource =>
+    (DASHBOARD_METRIC_SOURCES as readonly string[]).includes(source),
+  )
+}
+
+function resolveMetricValue(reports: Reports, source: string): number {
   const chTotal = (ch: string) => {
     const c = reports.comms.messages.by_channel[ch]
     return c ? c.inbound + c.outbound : 0
@@ -612,7 +711,14 @@ function resolveCardValue(reports: Reports, source: string): number {
   }
 }
 
-function resolveCardRows(
+function resolveCardValue(reports: Reports, card: DashboardCard): number {
+  return metricSources(card).reduce(
+    (total, source) => total + resolveMetricValue(reports, source),
+    0,
+  )
+}
+
+function resolveMetricRows(
   reports: Reports,
   source: string,
 ): Array<{ label: string; value: number }> {
@@ -684,6 +790,17 @@ function resolveCardRows(
   }
 }
 
+function resolveCardRows(
+  reports: Reports,
+  card: DashboardCard,
+): Array<{ label: string; value: number }> {
+  if (card.source !== 'federated') return resolveMetricRows(reports, card.source)
+  return metricSources(card).map((source) => ({
+    label: SOURCE_LABELS[source] ?? source,
+    value: resolveMetricValue(reports, source),
+  }))
+}
+
 function buildPrintDocument(
   profile: string,
   windowLabel: string,
@@ -691,12 +808,17 @@ function buildPrintDocument(
   reports: Reports,
   dashboards: Array<DashboardCard>,
 ): string {
-  const cardsToRender = dashboards.length > 0 ? dashboards : [
+  const cardsToRender: Array<DashboardCard> = dashboards.length > 0 ? dashboards : [
     { title: 'Total calls', source: 'calls' },
     { title: 'Texts sent', source: 'sms' },
     { title: 'Total leads', source: 'leads' },
     { title: 'Campaigns', source: 'campaigns' },
     { title: 'Follow-up triggers', source: 'followups' },
+    {
+      title: 'Customer engagement',
+      source: 'federated',
+      sources: ['calls', 'sms', 'chat', 'campaigns'],
+    },
   ]
   const channelRows = Object.entries(perf.threads.by_channel).map(([ch, lv]) => {
     const mv = perf.messages.by_channel[ch] ?? 0
@@ -768,7 +890,7 @@ function buildPrintDocument(
     <h2>${dashboards.length > 0 ? 'Custom Dashboard' : 'Dashboard'}</h2>
     <div class="grid">
       ${cardsToRender.map(c => `<div class="card">
-        <div class="card-value">${resolveCardValue(reports, c.source).toLocaleString()}</div>
+        <div class="card-value">${resolveCardValue(reports, c).toLocaleString()}</div>
         <div class="card-label">${escapeHtml(c.title)}</div>
       </div>`).join('')}
     </div>
@@ -904,6 +1026,7 @@ function DashboardTile({
   rows,
   expanded,
   onToggle,
+  onRemove,
 }: {
   index: number
   title: string
@@ -914,6 +1037,7 @@ function DashboardTile({
   rows: Array<{ label: string; value: number }>
   expanded: boolean
   onToggle: () => void
+  onRemove?: () => void
 }) {
   const max = Math.max(value, ...rows.map((row) => row.value), 1)
   const sourceLabel = SOURCE_LABELS[source] ?? source
@@ -929,22 +1053,62 @@ function DashboardTile({
             {sourceLabel} · {display === 'detail' ? 'Detailed' : 'Summary'}
           </div>
         </div>
-        <button
-          type="button"
-          onClick={onToggle}
-          className="rounded-md border border-slate-200 px-2 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-50"
-        >
-          {expanded ? 'Collapse' : 'Details'}
-        </button>
+        <div className="flex gap-1">
+          <button
+            type="button"
+            onClick={onToggle}
+            className="rounded-md border border-slate-200 px-2 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-50"
+          >
+            {expanded ? 'Collapse' : 'Details'}
+          </button>
+          {onRemove && (
+            <button
+              type="button"
+              onClick={onRemove}
+              className="rounded-md border border-slate-200 px-2 py-1 text-[11px] font-medium text-slate-500 hover:bg-slate-50"
+            >
+              Remove
+            </button>
+          )}
+        </div>
       </div>
 
-      {visualization === 'bar' && (
+      {visualization === 'bar' && rows.length > 0 ? (
+        <div className="mt-4 space-y-2">
+          {rows.map((row) => (
+            <div key={row.label}>
+              <div className="mb-1 flex justify-between text-[11px] text-slate-500">
+                <span className="truncate capitalize">{row.label}</span>
+                <span>{row.value.toLocaleString()}</span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${Math.max(4, Math.round((row.value / max) * 100))}%`,
+                    background: PRIMARY,
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : visualization === 'bar' ? (
         <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
           <div
             className="h-full rounded-full"
-            style={{ width: `${Math.max(4, Math.round((value / max) * 100))}%`, background: PRIMARY }}
+            style={{
+              width: `${Math.max(4, Math.round((value / max) * 100))}%`,
+              background: PRIMARY,
+            }}
           />
         </div>
+      ) : null}
+
+      {source === 'federated' && rows.length > 0 && (
+        <p className="mt-3 text-[11px] text-slate-500">
+          Combined from {rows.map((row) => row.label).join(', ')}.
+        </p>
       )}
 
       {(expanded || visualization === 'table') && rows.length > 0 && (

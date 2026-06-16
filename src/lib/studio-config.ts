@@ -454,10 +454,11 @@ const CommsSchema = z
 /**
  * One custom dashboard card (data builder). `source` selects a metric the
  * /api/customer/reports payload already computes (calls=vapi, video=tavus,
- * sms, email, chat, leads=vin, service, sales, campaigns, followups). The
- * renderer resolves the number; this just stores the user's chosen cards.
+ * sms, email, chat, leads=vin, service, sales, campaigns, followups). A
+ * `federated` card stores a selected set of those sources and the renderer
+ * combines them into one card. This schema stores the user's chosen cards.
  */
-export const DashboardSources = [
+export const DashboardMetricSources = [
   'calls',
   'video',
   'sms',
@@ -470,9 +471,12 @@ export const DashboardSources = [
   'followups',
 ] as const
 
+export const DashboardSources = [...DashboardMetricSources, 'federated'] as const
+
 const DashboardCardSchema = z.object({
   title: z.string().min(1),
   source: z.enum(DashboardSources),
+  sources: z.array(z.enum(DashboardMetricSources)).optional().default([]),
   visualization: z.enum(['number', 'bar', 'table']).optional().default('number'),
   display: z.enum(['summary', 'detail']).optional().default('summary'),
 })

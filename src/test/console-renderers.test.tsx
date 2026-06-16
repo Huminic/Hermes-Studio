@@ -178,7 +178,7 @@ describe('console-renderers registry', () => {
           JSON.stringify({
             ok: true,
             dashboards: [],
-            sources: ['calls', 'sms', 'leads', 'campaigns'],
+            sources: ['calls', 'sms', 'leads', 'campaigns', 'federated'],
           }),
           { status: 200 },
         )
@@ -197,9 +197,11 @@ describe('console-renderers registry', () => {
       expect(txt).toContain('Export PDF')
       expect(txt).toContain('+ Add card')
       expect(txt).toContain('Dashboard (sample cards)')
+      expect(txt).toContain('Customer engagement')
       fireEvent.click(getAllByText('+ Add card')[0])
       expect(container.textContent).toContain('Add dashboard card')
       expect(container.textContent).toContain('Calls')
+      expect(container.textContent).toContain('Combined sources')
     } finally {
       vi.unstubAllGlobals()
     }
@@ -243,11 +245,29 @@ describe('console-renderers registry', () => {
         by_status: { hot: 7 },
       },
     }
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValue(
-        new Response(JSON.stringify({ ok: true, reports }), { status: 200 }),
-      )
+    const fetchMock = vi.fn(async (url: string | URL | Request) => {
+      const u = String(url)
+      if (u.includes('/api/customer/data-uploads')) {
+        return new Response(
+          JSON.stringify({
+            ok: true,
+            uploads: [
+              {
+                id: 'upload-1',
+                ts: Date.now(),
+                filename: 'service-report.csv',
+                classification: 'data',
+                size_bytes: 42,
+                checksum: 'abc',
+                embedded: 0,
+              },
+            ],
+          }),
+          { status: 200 },
+        )
+      }
+      return new Response(JSON.stringify({ ok: true, reports }), { status: 200 })
+    })
     vi.stubGlobal('fetch', fetchMock)
     try {
       const config = defaultStudioConfig('huminic')
@@ -262,6 +282,10 @@ describe('console-renderers registry', () => {
       expect(txt).toContain('Threads')
       expect(txt).toContain('Campaigns')
       expect(txt).toContain('Follow-ups')
+      expect(txt).toContain('Uploaded reports')
+      expect(txt).toContain('Data uploads')
+      expect(txt).toContain('Upload data')
+      expect(txt).toContain('service-report.csv')
       // Explanatory note pointing to Dashboard tab for metrics:
       expect(txt).toContain('Dashboard')
       expect(txt).toContain('not live activity')

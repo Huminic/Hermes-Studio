@@ -6,7 +6,7 @@
  * InfoStore, not the Performance dashboard (which lives in the Dashboard tab).
  */
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { StudioConfig } from '../../lib/studio-config'
 
 const PRIMARY = '#2f3b4d'
@@ -59,13 +59,27 @@ type Reports = {
   lead_funnel: LeadFunnel
 }
 
+type UploadRow = {
+  id: string
+  ts: number
+  filename: string
+  classification: string
+  size_bytes: number
+  checksum: string
+  embedded: number
+}
+
 export function CustomerDataRenderer(props: {
   profile: string
   config: StudioConfig
 }) {
   const [reports, setReports] = useState<Reports | null>(null)
+  const [uploads, setUploads] = useState<Array<UploadRow>>([])
   const [failed, setFailed] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [uploadBusy, setUploadBusy] = useState(false)
+  const [uploadNote, setUploadNote] = useState<string | null>(null)
+  const fileRef = useRef<HTMLInputElement | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -85,6 +99,17 @@ export function CustomerDataRenderer(props: {
         return
       }
       setReports(j.reports)
+      const uploadRes = await fetch(
+        `/api/customer/data-uploads?profile=${encodeURIComponent(props.profile)}`,
+        { credentials: 'include' },
+      )
+      const uploadJ = (await uploadRes.json().catch(() => ({}))) as {
+        ok: boolean
+        uploads?: Array<UploadRow>
+      }
+      if (uploadRes.ok && uploadJ.ok) {
+        setUploads(uploadJ.uploads ?? [])
+      }
     } catch {
       setFailed(true)
     } finally {
@@ -95,6 +120,50 @@ export function CustomerDataRenderer(props: {
   useEffect(() => {
     void load()
   }, [load])
+
+  const uploadFile = useCallback(
+    async (file: File) => {
+      setUploadBusy(true)
+      setUploadNote(null)
+      try {
+        const contentBase64 = arrayBufferToBase64(await file.arrayBuffer())
+        const res = await fetch('/api/customer/data-uploads', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            profile: props.profile,
+            filename: file.name,
+            mime_type: file.type || undefined,
+            content_base64: contentBase64,
+            classification: classifyForUpload(file),
+          }),
+        })
+        const j = (await res.json().catch(() => ({}))) as {
+          ok: boolean
+          error?: string
+          upload?: { filename: string; embedded: boolean }
+          uploads?: Array<UploadRow>
+        }
+        if (!res.ok || !j.ok) {
+          setUploadNote(j.error ?? 'We could not upload that file.')
+          return
+        }
+        setUploads(j.uploads ?? [])
+        setUploadNote(
+          `${j.upload?.filename ?? file.name} uploaded${
+            j.upload?.embedded ? ' and indexed for search.' : '.'
+          }`,
+        )
+      } catch {
+        setUploadNote('We could not upload that file.')
+      } finally {
+        setUploadBusy(false)
+        if (fileRef.current) fileRef.current.value = ''
+      }
+    },
+    [props.profile],
+  )
 
   if (loading && !reports) {
     return (
@@ -119,6 +188,7 @@ export function CustomerDataRenderer(props: {
   if (!reports) return null
 
   const { comms, followups, campaigns } = reports
+  const embeddedUploads = uploads.filter((u) => u.embedded).length
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-5">
@@ -160,7 +230,84 @@ export function CustomerDataRenderer(props: {
           detail={`${followups.immediate_triggers + followups.checkin_triggers} triggers set up.`}
           note="Automated follow-up rules that send texts after a conversation starts or when a lead comes in."
         />
+        <DataCategory
+          title="Uploaded reports"
+          detail={`${uploads.length} file${uploads.length === 1 ? '' : 's'} in the Data Store.`}
+          note={`${embeddedUploads} indexed for search from text-readable content.`}
+        />
       </div>
+
+      <section className="rounded-lg border border-slate-200 bg-white p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-semibold text-slate-900">
+              Data uploads
+            </h3>
+            <p className="mt-1 text-xs leading-relaxed text-slate-500">
+              Upload reports, exports, and reference files into the Data Store.
+              Text-readable files are indexed for search when possible.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              ref={fileRef}
+              type="file"
+              className="hidden"
+              accept=".csv,.tsv,.txt,.md,.json,.xml,.yaml,.yml,.pdf,.xls,.xlsx"
+              onChange={(e) => {
+                const file = e.currentTarget.files?.[0]
+                if (file) void uploadFile(file)
+              }}
+            />
+            <button
+              type="button"
+              disabled={uploadBusy}
+              onClick={() => fileRef.current?.click()}
+              className="rounded-md px-3 py-1.5 text-xs font-semibold text-white transition hover:brightness-95 disabled:opacity-50"
+              style={{ background: PRIMARY }}
+            >
+              {uploadBusy ? 'Uploading…' : 'Upload data'}
+            </button>
+          </div>
+        </div>
+        {uploadNote && (
+          <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+            {uploadNote}
+          </div>
+        )}
+        <div className="mt-4 overflow-hidden rounded-md border border-slate-100">
+          {uploads.length === 0 ? (
+            <div className="px-3 py-3 text-xs text-slate-500">
+              No uploaded reports yet.
+            </div>
+          ) : (
+            uploads.slice(0, 8).map((upload) => (
+              <div
+                key={upload.id}
+                className="grid gap-2 border-b border-slate-100 px-3 py-2 text-xs last:border-0 sm:grid-cols-[minmax(0,1fr)_120px_100px_130px]"
+              >
+                <div className="min-w-0">
+                  <div className="truncate font-medium text-slate-800">
+                    {upload.filename}
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    {new Date(upload.ts).toLocaleString()}
+                  </div>
+                </div>
+                <div className="capitalize text-slate-600">
+                  {upload.classification}
+                </div>
+                <div className="text-slate-500">
+                  {formatBytes(upload.size_bytes)}
+                </div>
+                <div className="text-slate-500">
+                  {upload.embedded ? 'Search indexed' : 'Stored'}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
 
       <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs leading-relaxed text-slate-600">
         <p>
@@ -171,6 +318,29 @@ export function CustomerDataRenderer(props: {
       </div>
     </div>
   )
+}
+
+function classifyForUpload(file: File): 'document' | 'data' | undefined {
+  const name = file.name.toLowerCase()
+  if (/\.(csv|tsv|json|xml|ya?ml|xls|xlsx)$/.test(name)) return 'data'
+  if (file.type.startsWith('text/') || /\.(txt|md)$/.test(name)) return 'document'
+  return undefined
+}
+
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer)
+  let binary = ''
+  const chunkSize = 0x8000
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize))
+  }
+  return btoa(binary)
+}
+
+function formatBytes(size: number): string {
+  if (size < 1024) return `${size} B`
+  if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`
+  return `${(size / 1024 / 1024).toFixed(1)} MB`
 }
 
 function DataCategory({

@@ -181,3 +181,23 @@ The agent did NOT push origin/main, did NOT redeploy, did NOT run the two
 production-mutating scripts, did NOT re-dispatch the verifier (operator's
 billing + integrity boundary).
 2026-06-15T22:44:05Z ACK acceptance-criteria sha256=30d39ddb2aeffd3fb8fc80a5cccb040cf28c60d6f6dd5988c93daed1c29af1dd  plan sha256=94bbe7c6226b685c91f9f05ee1a6a4f00c3437a2dea10fd51b41c421b70f6edf  by codex-gpt-5
+
+### 2026-06-16T01:22:00Z DEC workspace-dashboard-data-teambox-hardening
+
+Walkthrough batch follow-up applied on branch `feat/nexxus-comms-engine`.
+
+Implemented:
+- Dashboard builder now supports a saved "Combined sources" card (`source: federated`) with selected component sources, detail/table/bar rendering, card removal, PDF export support, and corrected default view state from `aggregate` to `overview`.
+- Data Store now exposes customer-scoped uploads through `/api/customer/data-uploads`, backed by the governed Brain upload surface. Workspace users can upload/list reports and see whether text-readable files were indexed for search.
+- Teambox manual replies are now server-gated by human takeover. The UI already disabled replies before takeover; the API now also returns 409 until the thread is taken over.
+
+Evidence before commit/deploy:
+- `npm exec vitest run src/test/dashboards-api.test.ts src/test/console-renderers.test.tsx src/test/customer-data-uploads-api.test.ts src/test/tranche-d.test.ts src/test/threads-reply-takeover-api.test.ts src/test/thread-takeover.test.ts src/test/threads-assign-api.test.ts`
+  - 7 files passed, 45 tests passed.
+  - Existing non-failing warnings: React test `act(...)` warnings and notification test fixtures with no lead recipient.
+- `npm run build`
+  - Passed.
+  - Existing non-failing warnings: invalid route param warning for `/widget/dealer/$slug.js`, sourcemap notices, and large chunk warnings.
+
+Scope note:
+- This improves launch usability but does not by itself complete final certification. Full live service-campaign send/reply, Semantic Guardian/contextual agent eVals, webhook/notification end-to-end checks, and final browser/mobile release decision evidence remain required before a no-loose-ends launch claim.

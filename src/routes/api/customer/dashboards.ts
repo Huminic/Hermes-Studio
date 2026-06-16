@@ -14,7 +14,10 @@ import {
   resolveSession,
 } from '../../../server/customer-auth'
 import { readStudioConfig, updateDashboards } from '../../../server/studio-config'
-import { DashboardSources } from '../../../lib/studio-config'
+import {
+  DashboardMetricSources,
+  DashboardSources,
+} from '../../../lib/studio-config'
 
 function normalizeCards(
   raw: unknown,
@@ -24,6 +27,7 @@ function normalizeCards(
       cards: Array<{
         title: string
         source: string
+        sources: Array<string>
         visualization: 'number' | 'bar' | 'table'
         display: 'summary' | 'detail'
       }>
@@ -31,11 +35,13 @@ function normalizeCards(
   | { ok: false; error: string } {
   if (!Array.isArray(raw)) return { ok: false, error: 'dashboards must be an array' }
   const allowed = new Set<string>(DashboardSources)
+  const allowedMetrics = new Set<string>(DashboardMetricSources)
   const visualizations = new Set(['number', 'bar', 'table'])
   const displays = new Set(['summary', 'detail'])
   const cards: Array<{
     title: string
     source: string
+    sources: Array<string>
     visualization: 'number' | 'bar' | 'table'
     display: 'summary' | 'detail'
   }> = []
@@ -43,6 +49,12 @@ function normalizeCards(
     const c = raw[i] as Record<string, unknown>
     const title = typeof c?.title === 'string' ? c.title.trim() : ''
     const source = typeof c?.source === 'string' ? c.source.trim() : ''
+    const sources = Array.isArray(c?.sources)
+      ? c.sources
+          .filter((s): s is string => typeof s === 'string')
+          .map((s) => s.trim())
+          .filter((s, index, all) => allowedMetrics.has(s) && all.indexOf(s) === index)
+      : []
     const visualization =
       typeof c?.visualization === 'string' && visualizations.has(c.visualization)
         ? (c.visualization as 'number' | 'bar' | 'table')
@@ -55,7 +67,13 @@ function normalizeCards(
     if (!allowed.has(source)) {
       return { ok: false, error: `card ${i + 1}: unknown source "${source}"` }
     }
-    cards.push({ title, source, visualization, display })
+    if (source === 'federated' && sources.length < 2) {
+      return {
+        ok: false,
+        error: `card ${i + 1}: choose at least two sources for a combined card`,
+      }
+    }
+    cards.push({ title, source, sources, visualization, display })
   }
   return { ok: true, cards }
 }

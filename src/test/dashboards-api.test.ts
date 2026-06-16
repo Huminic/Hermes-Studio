@@ -43,6 +43,7 @@ describe('/api/customer/dashboards', () => {
     expect(body.dashboards).toEqual([])
     expect(body.sources).toContain('calls')
     expect(body.sources).toContain('leads')
+    expect(body.sources).toContain('federated')
   })
 
   it('PUT persists cards to studio.yaml (other keys intact) and GET reads back', async () => {
@@ -61,6 +62,13 @@ describe('/api/customer/dashboards', () => {
               display: 'detail',
             },
             { title: 'New leads', source: 'leads' },
+            {
+              title: 'Customer engagement',
+              source: 'federated',
+              sources: ['calls', 'sms', 'chat'],
+              visualization: 'table',
+              display: 'detail',
+            },
           ],
         }),
       }),
@@ -87,7 +95,11 @@ describe('/api/customer/dashboards', () => {
         display: string
       }>
     }
-    expect(body.dashboards.map((c) => c.source)).toEqual(['calls', 'leads'])
+    expect(body.dashboards.map((c) => c.source)).toEqual([
+      'calls',
+      'leads',
+      'federated',
+    ])
     expect(body.dashboards[0]).toMatchObject({
       visualization: 'bar',
       display: 'detail',
@@ -95,6 +107,11 @@ describe('/api/customer/dashboards', () => {
     expect(body.dashboards[1]).toMatchObject({
       visualization: 'number',
       display: 'summary',
+    })
+    expect(body.dashboards[2]).toMatchObject({
+      sources: ['calls', 'sms', 'chat'],
+      visualization: 'table',
+      display: 'detail',
     })
   })
 
@@ -107,6 +124,27 @@ describe('/api/customer/dashboards', () => {
         body: JSON.stringify({
           profile: PROFILE,
           dashboards: [{ title: 'Bad', source: 'crypto_prices' }],
+        }),
+      }),
+    } as never)
+    expect(put.status).toBe(400)
+  })
+
+  it('PUT rejects a combined card with fewer than two sources', async () => {
+    const h = await handlers()
+    const put = await h.PUT({
+      request: new Request('http://localhost/api/customer/dashboards', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profile: PROFILE,
+          dashboards: [
+            {
+              title: 'Too thin',
+              source: 'federated',
+              sources: ['calls'],
+            },
+          ],
         }),
       }),
     } as never)

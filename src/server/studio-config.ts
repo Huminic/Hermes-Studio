@@ -127,6 +127,7 @@ export function updateNotificationRouting(
 export type DashboardCardInput = {
   title: string
   source: string
+  sources?: Array<string>
   visualization?: 'number' | 'bar' | 'table'
   display?: 'summary' | 'detail'
 }

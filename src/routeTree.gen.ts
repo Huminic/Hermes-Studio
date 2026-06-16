@@ -147,6 +147,7 @@ import { Route as ApiCustomerNotificationsRouteImport } from './routes/api/custo
 import { Route as ApiCustomerLeadFlowRouteImport } from './routes/api/customer/lead-flow'
 import { Route as ApiCustomerHunchesRouteImport } from './routes/api/customer/hunches'
 import { Route as ApiCustomerEngagementStateRouteImport } from './routes/api/customer/engagement-state'
+import { Route as ApiCustomerDataUploadsRouteImport } from './routes/api/customer/data-uploads'
 import { Route as ApiCustomerDashboardsRouteImport } from './routes/api/customer/dashboards'
 import { Route as ApiCustomerChatRouteImport } from './routes/api/customer/chat'
 import { Route as ApiCustomerAgentsRouteImport } from './routes/api/customer/agents'
@@ -890,6 +891,11 @@ const ApiCustomerEngagementStateRoute =
     path: '/api/customer/engagement-state',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiCustomerDataUploadsRoute = ApiCustomerDataUploadsRouteImport.update({
+  id: '/api/customer/data-uploads',
+  path: '/api/customer/data-uploads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCustomerDashboardsRoute = ApiCustomerDashboardsRouteImport.update({
   id: '/api/customer/dashboards',
   path: '/api/customer/dashboards',
@@ -1251,6 +1257,7 @@ export interface FileRoutesByFullPath {
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/dashboards': typeof ApiCustomerDashboardsRoute
+  '/api/customer/data-uploads': typeof ApiCustomerDataUploadsRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
   '/api/customer/hunches': typeof ApiCustomerHunchesRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
@@ -1439,6 +1446,7 @@ export interface FileRoutesByTo {
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/dashboards': typeof ApiCustomerDashboardsRoute
+  '/api/customer/data-uploads': typeof ApiCustomerDataUploadsRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
   '/api/customer/hunches': typeof ApiCustomerHunchesRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
@@ -1629,6 +1637,7 @@ export interface FileRoutesById {
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/dashboards': typeof ApiCustomerDashboardsRoute
+  '/api/customer/data-uploads': typeof ApiCustomerDataUploadsRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
   '/api/customer/hunches': typeof ApiCustomerHunchesRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
@@ -1820,6 +1829,7 @@ export interface FileRouteTypes {
     | '/api/customer/agents'
     | '/api/customer/chat'
     | '/api/customer/dashboards'
+    | '/api/customer/data-uploads'
     | '/api/customer/engagement-state'
     | '/api/customer/hunches'
     | '/api/customer/lead-flow'
@@ -2008,6 +2018,7 @@ export interface FileRouteTypes {
     | '/api/customer/agents'
     | '/api/customer/chat'
     | '/api/customer/dashboards'
+    | '/api/customer/data-uploads'
     | '/api/customer/engagement-state'
     | '/api/customer/hunches'
     | '/api/customer/lead-flow'
@@ -2197,6 +2208,7 @@ export interface FileRouteTypes {
     | '/api/customer/agents'
     | '/api/customer/chat'
     | '/api/customer/dashboards'
+    | '/api/customer/data-uploads'
     | '/api/customer/engagement-state'
     | '/api/customer/hunches'
     | '/api/customer/lead-flow'
@@ -2380,6 +2392,7 @@ export interface RootRouteChildren {
   ApiCustomerAgentsRoute: typeof ApiCustomerAgentsRoute
   ApiCustomerChatRoute: typeof ApiCustomerChatRoute
   ApiCustomerDashboardsRoute: typeof ApiCustomerDashboardsRoute
+  ApiCustomerDataUploadsRoute: typeof ApiCustomerDataUploadsRoute
   ApiCustomerEngagementStateRoute: typeof ApiCustomerEngagementStateRoute
   ApiCustomerHunchesRoute: typeof ApiCustomerHunchesRoute
   ApiCustomerLeadFlowRoute: typeof ApiCustomerLeadFlowRoute
@@ -3415,6 +3428,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerEngagementStateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/data-uploads': {
+      id: '/api/customer/data-uploads'
+      path: '/api/customer/data-uploads'
+      fullPath: '/api/customer/data-uploads'
+      preLoaderRoute: typeof ApiCustomerDataUploadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/customer/dashboards': {
       id: '/api/customer/dashboards'
       path: '/api/customer/dashboards'
@@ -4101,6 +4121,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCustomerAgentsRoute: ApiCustomerAgentsRoute,
   ApiCustomerChatRoute: ApiCustomerChatRoute,
   ApiCustomerDashboardsRoute: ApiCustomerDashboardsRoute,
+  ApiCustomerDataUploadsRoute: ApiCustomerDataUploadsRoute,
   ApiCustomerEngagementStateRoute: ApiCustomerEngagementStateRoute,
   ApiCustomerHunchesRoute: ApiCustomerHunchesRoute,
   ApiCustomerLeadFlowRoute: ApiCustomerLeadFlowRoute,
