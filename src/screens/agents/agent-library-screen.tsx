@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { HugeiconsIcon } from '@hugeicons/react'
 import {
   Add01Icon,
+  Chat01Icon,
   Delete01Icon,
   Edit01Icon,
   Search01Icon,
@@ -32,11 +34,13 @@ function AgentCard({
   onEdit,
   onDelete,
   onDuplicate,
+  onStartChat,
 }: {
   agent: AgentDefinition
   onEdit: (agent: AgentDefinition) => void
   onDelete: (agent: AgentDefinition) => void
   onDuplicate: (agent: AgentDefinition) => void
+  onStartChat: (agent: AgentDefinition) => void
 }) {
   const [expanded, setExpanded] = useState(false)
 
@@ -106,6 +110,14 @@ function AgentCard({
         {/* Actions */}
         <div className="flex shrink-0 flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
+            onClick={() => onStartChat(agent)}
+            className="rounded p-1.5 text-[var(--theme-muted)] hover:bg-[var(--theme-bg)] hover:text-[var(--theme-text)] transition-colors"
+            title={`Start chat with ${agent.name}`}
+            aria-label={`Start chat with ${agent.name}`}
+          >
+            <HugeiconsIcon icon={Chat01Icon} size={14} />
+          </button>
+          <button
             onClick={() => onDuplicate(agent)}
             className="rounded p-1.5 text-[var(--theme-muted)] hover:bg-[var(--theme-bg)] hover:text-[var(--theme-text)] transition-colors"
             title="Duplicate"
@@ -149,6 +161,7 @@ function agentSource(a: AgentDefinition): 'builtin' | 'profile' | 'custom' {
 
 export function AgentLibraryScreen() {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
   const [editorOpen, setEditorOpen] = useState(false)
@@ -211,6 +224,16 @@ export function AgentLibraryScreen() {
       systemPrompt: agent.systemPrompt,
       model: agent.model ?? undefined,
       tags: agent.tags,
+    })
+  }
+
+  function handleStartChat(agent: AgentDefinition) {
+    const search: Record<string, string> = { agent: agent.id }
+    if (agent.profile) search.profile = agent.profile
+    void navigate({
+      to: '/chat/$sessionKey',
+      params: { sessionKey: 'new' },
+      search,
     })
   }
 
@@ -331,6 +354,7 @@ export function AgentLibraryScreen() {
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 onDuplicate={handleDuplicate}
+                onStartChat={handleStartChat}
               />
             ))}
           </div>
