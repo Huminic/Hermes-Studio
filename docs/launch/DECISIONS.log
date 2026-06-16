@@ -201,3 +201,54 @@ Evidence before commit/deploy:
 
 Scope note:
 - This improves launch usability but does not by itself complete final certification. Full live service-campaign send/reply, Semantic Guardian/contextual agent eVals, webhook/notification end-to-end checks, and final browser/mobile release decision evidence remain required before a no-loose-ends launch claim.
+2026-06-16T04:22:00Z DEC public-widget-chat-notification-nonblocking
+Decision: Public widget chat lead notifications must be non-blocking. A slow
+or failed dealer notification may write a Teambox diagnostic later, but it
+must not strand visitors on "Assistant is typing..." or keep the Send button
+disabled.
+Context: Final agent evals found Hyundai of Columbia and Ford of Columbia
+public sales chat routes hanging on first message while Serra Honda, Serra
+Nissan, Tony Serra Ford, and Serra Service passed. Root cause was the
+best-effort notification path being awaited before the assistant reply.
+Implementation:
+- `src/routes/api/public/widget-chat.ts`: fire `notifyNewLead` and
+  `notifyActiveConversation` in the background; append sent/not-delivered
+  diagnostics to Teambox when the notification promise settles.
+- `src/routes/w.$slug.tsx`: add a 30s browser-side AbortController cleanup so
+  the public widget cannot leave the composer disabled after an upstream hang.
+- `src/lib/console-renderers.tsx`: corrected InfoStore copy to say Semantic
+  Guardian is available from Agents for internal canon/lineage/data-confidence
+  questions.
+- `src/test/inbound-lead-notify.test.ts`: added regression coverage proving
+  widget chat responds even while lead notification is still pending.
+Commit: 13d01d1ab7271d7126be726929d8855a55229afc
+Deployment: bw9o7fx0vo9xc1f1oj5dgg8v
+Evidence:
+- Focused tests: PASS, 28 tests across inbound lead notify, public widget
+  vendor leak guard, public widget grounding, and console renderers.
+- Build: PASS. Existing warnings only: route param naming, sourcemaps, large
+  chunks.
+- Live first-message smoke:
+  - Hyundai of Columbia public sales widget returned 200/ok in 8398ms; Teambox
+    recorded inbound, assistant reply, and Lead notification: sent.
+  - Ford of Columbia public sales widget returned 200/ok in 7930ms; Teambox
+    recorded inbound, assistant reply, and Lead notification: not delivered.
+    Notification delivery failure did not block the visitor response.
+- Full six-store public agent eval battery: PASS for Serra Honda, Serra
+  Nissan, Tony Serra Ford, Hyundai of Columbia, Ford of Columbia, and Serra
+  Service; evidence at
+  `work/launch-cert/evidence/platform6/p6-agent-eval-summary.json`.
+- Post-deploy workspace IA probe: PASS; evidence at
+  `outputs/evidence-2026-06-15-post-deploy-workspace-ia/post-deploy-workspace-ia-probe.json`.
+- Dashboard/data upload smoke: PASS on rerun; evidence at
+  `outputs/evidence-2026-06-16-dashboard-data-upload-smoke/live-dashboard-data-upload-smoke.json`.
+- Dashboard PDF export probe: PASS; evidence at
+  `outputs/evidence-2026-06-15-dashboard-pdf-export/dashboard-pdf-export-ford-of-columbia.json`.
+- Workspace readiness probe: PASS; Semantic Guardian visible on all six
+  accounts, right-side helper columns absent across workspace tabs, and
+  takeover enables manual reply then disables it again on hand-back; evidence
+  at `outputs/evidence-2026-06-15-workspace-readiness-probe/live-workspace-readiness-probe.json`.
+Scope note: This resolves the public widget chat hang and the InfoStore copy
+contradiction. It does not certify live campaign SMS send/reply, trigger draft
+objects, or arbitrary BI-style dashboard joins/formulas; those remain separate
+release-readiness checks or accepted fast-follow scope.
