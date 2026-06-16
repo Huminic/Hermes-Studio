@@ -428,3 +428,42 @@ Scope reminder:
 - Day-one appointments and Studio plugin/skill management remain accepted
   fast-follow scope. The read-only discovery probe showed no customer-ready
   visible surfaces and no provider/raw leakage.
+2026-06-16T12:55:00Z DEC refreshed-studio-and-workspace-readonly-polish
+Decision: Treat the latest read-only Studio/workspace polish checks as
+additional non-outbound evidence for the current live deployment. These checks
+do not replace the approval-gated live SMS/email/video/data-write workflows.
+
+Harness updates (local launch-cert evidence scripts):
+- `work/launch-cert/scripts/super_admin_menu_readonly_probe.cjs` now accepts a
+  `STUDIO_ADMIN_PASSWORD_FILE` and parses profile names from the current
+  `/api/profiles/list` response shape.
+- `work/launch-cert/scripts/workspace_polish_ui_readonly_check.cjs` now checks
+  the current InfoStore/Data Store surface and Campaigns list wording instead
+  of stale "Data dashboard" / older list-copy expectations.
+
+Additional evidence:
+- Workspace polish UI read-only probe: PASS across all six launch workspaces,
+  desktop and mobile, with 96 route checks. It verified the workspace header
+  pattern, StoreFront naming, Unified Widget/embed path, current Campaigns list
+  language, InfoStore/Data Store categories, no horizontal overflow, and no
+  provider/raw/page-error leakage. Evidence:
+  `outputs/evidence-2026-06-13-workspace-polish-ui-readonly/workspace-polish-ui-readonly-check.json`.
+- Super-admin Studio menu/route inventory: PASS. Authentication succeeded as
+  super-admin; `/api/profiles/list` returned 25 profiles and all six launch
+  profiles were visible; 27 routes were checked with no hard safety failures,
+  no navigation errors, no raw-access pattern routes, and no overflow. Evidence:
+  `outputs/evidence-2026-06-13-super-admin-readonly/super-admin-menu-readonly-probe.json`.
+
+Non-blocking notes preserved:
+- The Studio route inventory still records admin-only provider/legacy-term
+  notes on Agents/Engagements/Artifacts/Plugins, body-error placeholder copy on
+  Widget/Sessions/Logs/Documentation route probes, and login/help copy on Help.
+  These are not customer workspace/public blockers, but should remain visible
+  as Studio polish/adjudication notes.
+
+Remaining approval-gated release proof remains unchanged:
+- Live SMS campaign send/reply/takeover workflow.
+- Post-retry live email notification proof.
+- Third-party video session creation proof, if required.
+- Uploaded-report ingestion into federated search/dashboard usage with approved
+  test artifact(s).
