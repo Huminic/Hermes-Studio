@@ -9,6 +9,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 let tmpHome: string
 let restoreFetch: () => void
+let providerRequests: Array<{
+  messages?: Array<{ role: string; content: string }>
+}>
 
 beforeEach(async () => {
   tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), 'cchat-test-'))
@@ -27,18 +30,28 @@ beforeEach(async () => {
   )
   // Patch fetch to return a predictable assistant reply.
   const realFetch = globalThis.fetch
-  globalThis.fetch = vi.fn(async (url: string | URL | Request) => {
-    const u = String(url)
-    if (u.includes('/v1/chat/completions')) {
-      return new Response(
-        JSON.stringify({
-          choices: [{ message: { content: 'reply-from-mock' } }],
-        }),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      )
-    }
-    return realFetch(url as RequestInfo)
-  }) as typeof fetch
+  providerRequests = []
+  globalThis.fetch = vi.fn(
+    async (url: string | URL | Request, init?: RequestInit) => {
+      const u = String(url)
+      if (u.includes('/v1/chat/completions')) {
+        if (typeof init?.body === 'string') {
+          providerRequests.push(
+            JSON.parse(init.body) as {
+              messages?: Array<{ role: string; content: string }>
+            },
+          )
+        }
+        return new Response(
+          JSON.stringify({
+            choices: [{ message: { content: 'reply-from-mock' } }],
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } },
+        )
+      }
+      return realFetch(url as RequestInfo)
+    },
+  ) as typeof fetch
   restoreFetch = () => {
     globalThis.fetch = realFetch
   }
@@ -139,6 +152,12 @@ describe('/api/customer/chat', () => {
     expect(thread?.messages[1].direction).toBe('outbound')
     expect(thread?.domain).toBe('chat')
     expect(thread?.channel).toBe('chat')
+    const lastProviderRequest = providerRequests.at(-1)
+    expect(
+      lastProviderRequest?.messages?.some(
+        (m) => m.role === 'user' && m.content === 'hello',
+      ),
+    ).toBe(true)
   })
 
   it('returns 404 for an unknown agent', async () => {

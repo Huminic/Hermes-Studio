@@ -37,6 +37,7 @@ import { requireJsonContentType } from '../../../server/rate-limit'
 import { VENDOR_GUARDRAIL, scrubVendorTerms } from '../../../server/dealer-safe'
 import {
   appendMessage,
+  getThread,
   getOrCreateThread,
 } from '../../../server/messaging-hub-store'
 import { recallCompanyWikiTop, type RecallHit } from '../../../server/knowledge-mcp-handlers'
@@ -183,8 +184,10 @@ export const Route = createFileRoute('/api/customer/chat')({
           author: session?.username ?? 'customer-admin',
         })
 
-        // Build provider request: load last 20 turns from the thread.
-        const history = thread.messages.slice(-20).map((m) => ({
+        // Build provider request from the updated thread so the model answers
+        // the message that was just appended, not the previous turn.
+        const updatedThread = getThread(profile, thread.id) ?? thread
+        const history = updatedThread.messages.slice(-20).map((m) => ({
           role:
             m.role === 'assistant'
               ? 'assistant'
@@ -193,8 +196,6 @@ export const Route = createFileRoute('/api/customer/chat')({
                 : 'user',
           content: m.content,
         }))
-        // ensure latest user message present (appendMessage already added it,
-        // but reload defensively)
         const messages = [
           {
             role: 'system',
