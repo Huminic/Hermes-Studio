@@ -492,3 +492,25 @@ Remaining approval-gated release proof remains unchanged:
 - Third-party video session creation proof, if required.
 - Uploaded-report ingestion into federated search/dashboard usage with approved
   test artifact(s).
+2026-06-16T13:56:00Z DEC refreshed-teambox-label-readonly
+Decision: Refresh a targeted Teambox label/content probe to adjudicate the
+older walkthrough concern that raw `chat:<uuid>` labels were visible in
+Teambox. This was read-only and performed no clicks, replies, takeovers,
+deletes, sends, saves, uploads, or campaign actions.
+
+Additional evidence:
+- Teambox label read-only probe: PASS across all six launch stores. Current
+  visible Teambox rows showed zero raw `chat:<uuid>`-style labels, no
+  provider/raw leakage, and no horizontal overflow. Evidence:
+  `outputs/evidence-2026-06-16-teambox-labels-readonly/teambox-label-readonly-probe.json`.
+
+Adjudication:
+- The Durran walkthrough raw-thread-label concern is superseded for current
+  visible rows. Re-run after any Teambox renderer/backend change.
+
+Remaining approval-gated release proof remains unchanged:
+- Live SMS campaign send/reply/takeover workflow.
+- Post-retry live email notification proof.
+- Third-party video session creation proof, if required.
+- Uploaded-report ingestion into federated search/dashboard usage with approved
+  test artifact(s).
