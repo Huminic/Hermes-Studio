@@ -19,6 +19,7 @@
 import { readStudioConfig } from './studio-config'
 import { checkAndRecord } from './comms-rate-limiter'
 import { isBlacklisted } from './comms-blacklist'
+import { allowedByPrelaunchLock } from './prelaunch-lock'
 import { callCentralMcpTool } from './central-mcp'
 import { resolveVinOrgId } from './vin-client'
 import type { StudioConfig } from '../lib/studio-config'
@@ -148,6 +149,18 @@ export async function checkCommGate(input: CommGateInput): Promise<CommGateResul
       ok: false,
       rule: 'outbound-disabled-global',
       reason: 'OUTBOUND_LIVE_ENABLED is not "true" — global outbound kill switch is engaged',
+    }
+  }
+
+  // 1b. Pre-launch SAFE-TEST allowlist (phone channels). Even with the global
+  // switch flipped ON for a controlled live test, a real sms/voice send may
+  // only reach numbers in PRELAUNCH_TEST_RECIPIENTS while PRELAUNCH_SMS_LOCK is
+  // engaged — so a test can never become a broadcast. No-op when the lock is off.
+  if (REGULATED.has(input.channel) && !allowedByPrelaunchLock(input.to)) {
+    return {
+      ok: false,
+      rule: 'prelaunch-locked',
+      reason: `recipient ${input.to} is not in the PRELAUNCH_TEST_RECIPIENTS allowlist (PRELAUNCH_SMS_LOCK engaged)`,
     }
   }
 

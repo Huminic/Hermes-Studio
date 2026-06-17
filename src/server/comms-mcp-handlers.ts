@@ -20,6 +20,8 @@ import { dsgGate } from './dsg-gate'
 import { recordAudit } from './metadata-substrate'
 import { insertEvent } from './brain-record-families'
 import { checkAndRecord } from './comms-rate-limiter'
+import { allowedByPrelaunchLock } from './prelaunch-lock'
+import { isBlacklisted } from './comms-blacklist'
 import { sendNotification } from './notifications'
 import { publishMessagingEvent } from './messaging-hub-bus'
 
@@ -126,7 +128,52 @@ async function gate(
   actor: string,
   payloadHint: Record<string, unknown>,
 ): Promise<{ ok: boolean; gate_event_id: string; rule?: string; reason?: string }> {
-  // Rate cap first.
+  // GLOBAL kill switch — this MCP tool surface must NOT be a way around the
+  // fail-closed default that CommGate enforces on the dispatchOutbound path.
+  if (process.env.OUTBOUND_LIVE_ENABLED !== 'true') {
+    recordAudit(profile, {
+      ts: now(),
+      surface: 'brain',
+      actor,
+      action: 'tool_call',
+      target_type: 'comms',
+      reason: 'OUTBOUND_LIVE_ENABLED is not "true" — global outbound kill switch is engaged',
+      outcome: 'denied',
+      rule: 'outbound-disabled-global',
+    })
+    return {
+      ok: false,
+      gate_event_id: 'kill-switch',
+      rule: 'outbound-disabled-global',
+      reason: 'OUTBOUND_LIVE_ENABLED is not "true" — global outbound kill switch is engaged',
+    }
+  }
+
+  // Pre-launch allowlist + opt-out blacklist for phone channels — same guards
+  // CommGate applies, so a controlled live test cannot escape this path either.
+  if (channel === 'sms' || channel === 'voice') {
+    const recipients = (payloadHint.recipients as Array<string> | undefined) ?? []
+    for (const to of recipients) {
+      if (!allowedByPrelaunchLock(to)) {
+        return {
+          ok: false,
+          gate_event_id: 'prelaunch-lock',
+          rule: 'prelaunch-locked',
+          reason: `recipient ${to} is not in the PRELAUNCH_TEST_RECIPIENTS allowlist (PRELAUNCH_SMS_LOCK engaged)`,
+        }
+      }
+      if (isBlacklisted(profile, to)) {
+        return {
+          ok: false,
+          gate_event_id: 'blacklist',
+          rule: 'blacklisted',
+          reason: `recipient ${to} is opted out (blacklist)`,
+        }
+      }
+    }
+  }
+
+  // Rate cap.
   const rate = checkAndRecord({ profile, channel })
   if (!rate.ok) {
     recordAudit(profile, {

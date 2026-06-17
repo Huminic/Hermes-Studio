@@ -11,9 +11,12 @@ vi.mock('@/server/lead-notifications', () => ({
   notifyNewLead: notifySpy,
   notifyActiveConversation: notifyActiveSpy,
 }))
-// SMS webhook fires the autonomous-reply dispatcher; stub it to a no-op.
+// SMS webhook fires the autonomous-reply dispatcher; spy so we can assert it is
+// SUPPRESSED on a STOP opt-out.
+const autoReplySpy = vi.fn(async () => [])
 vi.mock('@/server/agent-autonomous-reply', () => ({
-  maybeAutonomousReply: vi.fn(async () => []),
+  ensureAutonomousSubscription: vi.fn(() => {}),
+  maybeAutonomousReply: (...a: Array<unknown>) => autoReplySpy(...a),
 }))
 
 let tmpHome: string
@@ -50,6 +53,8 @@ beforeEach(async () => {
   notifySpy.mockResolvedValue({ ok: true, via: 'mock' as const })
   notifyActiveSpy.mockReset()
   notifyActiveSpy.mockResolvedValue({ ok: true, via: 'mock' as const })
+  autoReplySpy.mockReset()
+  autoReplySpy.mockResolvedValue([])
   tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), 'inbound-notify-'))
   vi.spyOn(os, 'homedir').mockReturnValue(tmpHome)
   writeProfile()
@@ -80,8 +85,32 @@ describe('inbound SMS → lead lands + dealer notified ONCE (new thread only)', 
       thread_id: string
       new_lead: boolean
       notified: boolean
+      opt_out?: boolean
+      opt_in?: boolean
     }
   }
+
+  it('treats inbound STOP as opt-out: blacklists the number and suppresses the AI reply', async () => {
+    // Open a conversation first so the STOP arrives on an existing thread.
+    await postSms('Is the Accord still available?')
+    autoReplySpy.mockClear()
+
+    const stop = await postSms('STOP')
+    expect(stop.ok).toBe(true)
+    expect(stop.opt_out).toBe(true)
+    // The AI must NOT reply after an opt-out.
+    expect(autoReplySpy).not.toHaveBeenCalled()
+
+    // The number is now on the per-profile outbound blacklist.
+    const { isBlacklisted } = await import('@/server/comms-blacklist')
+    expect(isBlacklisted(PROFILE, '+15555550123')).toBe(true)
+
+    // A later START clears the opt-out.
+    const start = await postSms('START')
+    expect(start.opt_in).toBe(true)
+    const { isBlacklisted: isBlacklisted2 } = await import('@/server/comms-blacklist')
+    expect(isBlacklisted2(PROFILE, '+15555550123')).toBe(false)
+  })
 
   it('notifies on the first SMS and NOT on a follow-up from the same number', async () => {
     const first = await postSms('Is the Accord still available?')

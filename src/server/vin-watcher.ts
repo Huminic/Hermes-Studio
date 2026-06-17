@@ -35,6 +35,7 @@ import { resolveVinOrgId, resolveLeadNames, type ResolvedLead } from './vin-clie
 import { callCentralMcpTool, type CentralMcpResult } from './central-mcp'
 import { readStudioConfig } from './studio-config'
 import { withinBusinessHours } from './comms-gate'
+import { allowedByPrelaunchLock } from './prelaunch-lock'
 import { dispatchOutbound, type AdapterResult } from './messaging-adapters'
 import {
   listThreads,
@@ -238,21 +239,11 @@ export function renderCheckin(firstName: string, dealer: string, vehicle: string
   return `Hi ${firstName}, this is ${dealer}. We wanted to check in — are you being taken care of? Is there anything we can help with${veh}?`
 }
 
-/**
- * Pre-launch SAFE-TEST allowlist. When PRELAUNCH_SMS_LOCK === 'true', ONLY phones
- * present in PRELAUNCH_TEST_RECIPIENTS (comma-separated E.164) may be texted — a
- * live sweep then reaches the operator's number alone. Absent lock = no extra
- * restriction here (CommGate's global kill switch still applies). This is the
- * watcher-side allowlist the spec asks for; CommGate does not implement one.
- */
-export function allowedByPrelaunchLock(phone: string): boolean {
-  if (process.env.PRELAUNCH_SMS_LOCK !== 'true') return true
-  const list = (process.env.PRELAUNCH_TEST_RECIPIENTS ?? '')
-    .split(',')
-    .map((s) => normalizePhone(s))
-    .filter((s): s is string => !!s)
-  return list.includes(normalizePhone(phone) ?? phone)
-}
+// The pre-launch SAFE-TEST allowlist now lives in ./prelaunch-lock so EVERY
+// outbound choke point (CommGate, the comms MCP handlers, lead-flow) enforces
+// the same guard — not just this watcher. Re-exported here for existing
+// importers (lead-flow, tests).
+export { allowedByPrelaunchLock }
 
 /** Note for the queued record: next 07:00 in the profile timezone. */
 function nextSevenAmNote(tz: string): string {

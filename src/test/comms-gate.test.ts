@@ -57,6 +57,39 @@ describe('checkCommGate — fail-closed layers', () => {
     expect(r).toMatchObject({ ok: false, rule: 'outbound-disabled-global' })
   })
 
+  it('blocks a non-allowlisted recipient when the pre-launch lock is engaged', async () => {
+    vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
+    vi.stubEnv('PRELAUNCH_SMS_LOCK', 'true')
+    vi.stubEnv('PRELAUNCH_TEST_RECIPIENTS', '+14126546500')
+    const r = await checkCommGate({ ...base, options: { config: cfg(), nowMs: HOUR_13_UTC } })
+    expect(r).toMatchObject({ ok: false, rule: 'prelaunch-locked' })
+  })
+
+  it('allows an allowlisted recipient under the pre-launch lock (formatting-tolerant)', async () => {
+    vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
+    vi.stubEnv('PRELAUNCH_SMS_LOCK', 'true')
+    vi.stubEnv('PRELAUNCH_TEST_RECIPIENTS', '+1 (412) 654-6500')
+    const r = await checkCommGate({
+      ...base,
+      to: '+14126546500',
+      options: { config: cfg(), nowMs: HOUR_13_UTC },
+    })
+    expect(r.ok).toBe(true)
+  })
+
+  it('does not apply the phone allowlist to email (non-regulated) channel', async () => {
+    vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
+    vi.stubEnv('PRELAUNCH_SMS_LOCK', 'true')
+    vi.stubEnv('PRELAUNCH_TEST_RECIPIENTS', '+14126546500')
+    const r = await checkCommGate({
+      profile: 't',
+      channel: 'email',
+      to: 'someone@dealer.example',
+      options: { config: cfg(), nowMs: HOUR_13_UTC },
+    })
+    expect(r.ok).toBe(true)
+  })
+
   it('blocks when the profile outbound switch is off', async () => {
     vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
     const r = await checkCommGate({

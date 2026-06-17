@@ -33,7 +33,15 @@ import {
   notifyNewLead,
   notifyActiveConversation,
 } from '../../../server/lead-notifications'
+import {
+  addToBlacklist,
+  removeFromBlacklist,
+} from '../../../server/comms-blacklist'
 import { readStudioConfig } from '../../../server/studio-config'
+
+/** TCPA opt-out / opt-in keywords (carrier-standard). Matched on the first word. */
+const STOP_RE = /^\s*(stop|stopall|unsubscribe|cancel|end|quit|optout|opt-out)\b/i
+const START_RE = /^\s*(start|unstop|yes|subscribe)\b/i
 
 function readSecret(profile: string): string | null {
   try {
@@ -109,6 +117,17 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
           display_name: null,
           identifiers: { sms: sender },
         })
+        // TCPA opt-out / opt-in. A STOP adds the sender to the per-profile
+        // blacklist so CommGate refuses all future outbound to them; a START
+        // clears it. We still record the inbound message (audit) but suppress
+        // any autonomous reply on a STOP so the AI never texts back after opt-out.
+        const isStop = STOP_RE.test(text)
+        const isStart = START_RE.test(text)
+        if (isStop) {
+          addToBlacklist(profile, sender, 'STOP (inbound SMS)')
+        } else if (isStart) {
+          removeFromBlacklist(profile, sender)
+        }
         // Domain (sales vs service) decides which Teambox segment the thread
         // lands in. Priority: explicit `?domain=` override → the profile's
         // configured `sms.inbound_domain` → 'service' (legacy default). A sales
@@ -200,14 +219,16 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
           // non-fatal
         }
         let autonomous: Array<unknown> = []
-        try {
-          autonomous = await maybeAutonomousReply({
-            profile,
-            threadId: thread.id,
-            inboundMessageId: inbound.id,
-          })
-        } catch {
-          // non-fatal
+        if (!isStop) {
+          try {
+            autonomous = await maybeAutonomousReply({
+              profile,
+              threadId: thread.id,
+              inboundMessageId: inbound.id,
+            })
+          } catch {
+            // non-fatal
+          }
         }
         return json({
           ok: true,
@@ -216,6 +237,8 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
           new_lead: created,
           notified: notified.ok,
           notify_via: notified.via,
+          opt_out: isStop,
+          opt_in: isStart,
           autonomous_replies: autonomous,
         })
       },
