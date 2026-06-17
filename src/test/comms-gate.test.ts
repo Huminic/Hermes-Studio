@@ -90,6 +90,78 @@ describe('checkCommGate — fail-closed layers', () => {
     expect(r.ok).toBe(true)
   })
 
+  // ── SMS consent gate (VinSolutions SmsPreferences + CustomerConsent) ──
+  const smsContact = (status: string, consent: unknown) => ({
+    ok: true,
+    data: [
+      {
+        ContactId: 55,
+        ContactInformation: { DoNotCall: false },
+        CustomerConsent: consent,
+        SmsPreferences: [{ PhoneNumber: '+12025550123', PhoneType: 'Cell', SubscriberStatus: status }],
+      },
+    ],
+  })
+
+  it('SMS consent: blocks when enabled but no contactId (phone-only recipient)', async () => {
+    vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
+    const r = await checkCommGate({
+      ...base,
+      options: {
+        config: cfg({ sms_consent_check: true, sms_opt_in_statuses: ['Active'] }, ['vinsolutions:read']),
+        nowMs: HOUR_13_UTC,
+      },
+    })
+    expect(r).toMatchObject({ ok: false, rule: 'sms-consent-no-contact' })
+    expect(vinMock).not.toHaveBeenCalled()
+  })
+
+  it('SMS consent: blocks "Pending" + null consent with empty opt-in list (fail-closed)', async () => {
+    vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
+    vinMock.mockResolvedValue(smsContact('Pending', null))
+    const r = await checkCommGate({
+      ...base,
+      contactId: 55,
+      options: { config: cfg({ sms_consent_check: true }, ['vinsolutions:read']), nowMs: HOUR_13_UTC },
+    })
+    expect(r).toMatchObject({ ok: false, rule: 'sms-consent' })
+  })
+
+  it('SMS consent: allows an opted-in + consented contact when the status is configured', async () => {
+    vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
+    vinMock.mockResolvedValue(smsContact('Active', { ExpressConsent: { HasGivenConsent: true } }))
+    const r = await checkCommGate({
+      ...base,
+      contactId: 55,
+      options: {
+        config: cfg(
+          { sms_consent_check: true, sms_opt_in_statuses: ['Active'], sms_consent_mode: 'either' },
+          ['vinsolutions:read'],
+        ),
+        nowMs: HOUR_13_UTC,
+      },
+    })
+    expect(r.ok).toBe(true)
+    expect(vinMock).toHaveBeenCalledWith('vin_get_contact', expect.objectContaining({ contactId: 55 }), expect.anything())
+  })
+
+  it('SMS consent: fails CLOSED on a VIN lookup error (does NOT honor fail-open)', async () => {
+    vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
+    vinMock.mockResolvedValue({ ok: false, error: 'timeout' })
+    const r = await checkCommGate({
+      ...base,
+      contactId: 55,
+      options: {
+        config: cfg(
+          { sms_consent_check: true, sms_opt_in_statuses: ['Active'], vin_check_fail_open: true },
+          ['vinsolutions:read'],
+        ),
+        nowMs: HOUR_13_UTC,
+      },
+    })
+    expect(r).toMatchObject({ ok: false, rule: 'sms-consent' })
+  })
+
   it('blocks when the profile outbound switch is off', async () => {
     vi.stubEnv('OUTBOUND_LIVE_ENABLED', 'true')
     const r = await checkCommGate({

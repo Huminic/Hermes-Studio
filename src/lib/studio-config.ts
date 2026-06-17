@@ -437,6 +437,28 @@ const CommsSchema = z
      * check (the local blacklist still applies regardless).
      */
     vin_check_fail_open: z.boolean().optional().default(false),
+    /**
+     * SMS CONSENT GATE (VinSolutions). When true, every proactive SMS is
+     * scrubbed at send time against the recipient's VinSolutions contact
+     * (SmsPreferences SubscriberStatus + CustomerConsent), on top of the
+     * blacklist + business hours. Requires a contactId on the recipient
+     * (VIN-sourced); a send with no contactId is BLOCKED. ALWAYS fail-closed —
+     * vin_check_fail_open does NOT apply to this check.
+     */
+    sms_consent_check: z.boolean().optional().default(false),
+    /**
+     * SubscriberStatus value(s) that count as opted-in. EMPTY (default) =>
+     * blocks EVERYONE — the affirmative value MUST be confirmed against
+     * VinSolutions before enabling (only "Pending" = do-not-send observed live).
+     */
+    sms_opt_in_statuses: z.array(z.string()).optional().default([]),
+    /** Which CustomerConsent qualifies for SMS texting. */
+    sms_consent_mode: z
+      .enum(['express', 'implied', 'either', 'none'])
+      .optional()
+      .default('either'),
+    /** Also block SMS when ContactInformation.DoNotMail is true (policy). */
+    sms_block_on_do_not_mail: z.boolean().optional().default(false),
     /** Per-channel rate caps (consumed by comms-rate-limiter). */
     rate_caps: z
       .record(

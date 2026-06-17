@@ -22,6 +22,7 @@ import { isBlacklisted } from './comms-blacklist'
 import { allowedByPrelaunchLock } from './prelaunch-lock'
 import { callCentralMcpTool } from './central-mcp'
 import { resolveVinOrgId } from './vin-client'
+import { fetchSmsConsent } from './vin-sms-consent'
 import type { StudioConfig } from '../lib/studio-config'
 
 export type GateChannel = 'sms' | 'voice' | 'video' | 'email'
@@ -33,6 +34,8 @@ export type CommGateInput = {
   channel: GateChannel
   /** Recipient handle (E.164 phone / email). */
   to: string
+  /** VinSolutions contactId for the recipient (required for the SMS consent gate). */
+  contactId?: string | number | null
   options?: {
     profileRoot?: string
     bypassBusinessHours?: boolean
@@ -193,8 +196,51 @@ export async function checkCommGate(input: CommGateInput): Promise<CommGateResul
     return { ok: false, rule: 'blacklisted', reason: `recipient ${input.to} is opted out (blacklist)` }
   }
 
-  // 6. Live VIN lead-status check (sms + voice), when scoped + enabled.
-  if (REGULATED.has(input.channel) && comms.vin_check && hasVinScope(config)) {
+  // 5b. SMS CONSENT GATE (VinSolutions SmsPreferences + CustomerConsent). When
+  // enabled this IS the SMS DNC check — it supersedes the voice-oriented lead
+  // check below for sms. ALWAYS fail-closed: vin_check_fail_open does NOT apply.
+  // Requires a contactId (VIN-sourced recipient); a phone-only send is blocked.
+  if (input.channel === 'sms' && comms.sms_consent_check === true) {
+    const org = resolveVinOrgId(input.profile, config)
+    if (!org.ok) {
+      return {
+        ok: false,
+        rule: 'sms-consent-unconfigured',
+        reason: 'SMS consent gate is on but the VinSolutions org id is not configured for this store',
+      }
+    }
+    if (input.contactId == null || String(input.contactId).trim() === '') {
+      return {
+        ok: false,
+        rule: 'sms-consent-no-contact',
+        reason: `no VinSolutions contactId for ${input.to} — cannot verify SMS consent (phone-only recipient)`,
+      }
+    }
+    const decision = await fetchSmsConsent({
+      orgId: org.orgId,
+      contactId: input.contactId,
+      phone: input.to,
+      policy: {
+        optInStatuses: comms.sms_opt_in_statuses ?? [],
+        consentMode: comms.sms_consent_mode ?? 'either',
+        blockOnDoNotMail: comms.sms_block_on_do_not_mail ?? false,
+      },
+    })
+    // Auditable per-recipient decision (contactId/phone/status/consent/decision).
+    console.info(`[sms-consent] ${input.profile} ${JSON.stringify(decision.audit)}`)
+    if (!decision.allow) {
+      return { ok: false, rule: 'sms-consent', reason: decision.reason }
+    }
+  }
+
+  // 6. Live VIN lead-status check (voice; and sms only when the SMS consent gate
+  // above is NOT enabled), when scoped + enabled.
+  if (
+    REGULATED.has(input.channel) &&
+    comms.vin_check &&
+    hasVinScope(config) &&
+    !(input.channel === 'sms' && comms.sms_consent_check === true)
+  ) {
     const vin = await vinDnc(input.profile, input.to, config)
     if (vin.optedOut) {
       return { ok: false, rule: 'vin-dnc', reason: `VinSolutions marks ${input.to} do-not-contact` }

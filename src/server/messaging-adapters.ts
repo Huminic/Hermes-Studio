@@ -444,6 +444,8 @@ export async function dispatchOutbound(input: {
   channel: string
   thread: Thread
   content: string
+  /** VinSolutions contactId for the recipient — enables the SMS consent gate. */
+  contactId?: string | number | null
   options?: { bypassBusinessHours?: boolean }
 }): Promise<AdapterResult> {
   // CommGate runs fail-closed before any real send (chat is a local record).
@@ -453,6 +455,7 @@ export async function dispatchOutbound(input: {
       profile: input.profile,
       channel: gateChannel,
       to: input.thread.contact_handle,
+      contactId: input.contactId,
       options: { bypassBusinessHours: input.options?.bypassBusinessHours },
     })
     if (!gate.ok) {

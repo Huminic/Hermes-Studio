@@ -485,6 +485,7 @@ async function evaluateLead(ctx: {
         kind: 'checkin',
         phone,
         firstName,
+        contactId: lead.contactId,
         content: renderCheckin(firstName, dealer, vehicle),
       })
     }
@@ -632,6 +633,7 @@ async function evaluateLead(ctx: {
     kind: 'immediate',
     phone,
     firstName,
+    contactId: lead.contactId,
     content: renderImmediate(firstName, dealer, vehicle),
   })
 }
@@ -646,8 +648,10 @@ async function send(ctx: {
   now: number
   triggerStore: TriggerStore
   dispatch: typeof dispatchOutbound
+  /** VinSolutions contactId for the SMS consent gate (VIN-sourced lead). */
+  contactId?: string | number | null
 }): Promise<WatcherOutcome> {
-  const { profile, phone, firstName, kind, content, now, triggerStore, dispatch } = ctx
+  const { profile, phone, firstName, kind, content, now, triggerStore, dispatch, contactId } = ctx
   const base = { phone, first_name: firstName, kind }
 
   // SAFE TEST: pre-launch allowlist — never broadcast.
@@ -666,7 +670,7 @@ async function send(ctx: {
   })
   let res: AdapterResult
   try {
-    res = await dispatch({ profile, channel: 'sms', thread, content })
+    res = await dispatch({ profile, channel: 'sms', thread, content, contactId })
   } catch (err) {
     res = { status: 'failed', via: 'sms', error: err instanceof Error ? err.message : 'dispatch error' }
   }
