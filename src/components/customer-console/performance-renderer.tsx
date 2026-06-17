@@ -11,10 +11,31 @@
  */
 
 import { useCallback, useEffect, useState } from 'react'
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import type { StudioConfig } from '../../lib/studio-config'
 
 // WF-017: workspace gunmetal theme
 const PRIMARY = '#2f3b4d'
+// Channel-aware palette so a multi-row breakdown reads at a glance.
+const CHART_PALETTE = [
+  '#2f3b4d',
+  '#3f7cac',
+  '#5a9367',
+  '#b5651d',
+  '#7b5ea7',
+  '#c14953',
+  '#2a9d8f',
+  '#e09f3e',
+]
 const DASHBOARD_METRIC_SOURCES = [
   'calls',
   'video',
@@ -1039,7 +1060,6 @@ function DashboardTile({
   onToggle: () => void
   onRemove?: () => void
 }) {
-  const max = Math.max(value, ...rows.map((row) => row.value), 1)
   const sourceLabel = SOURCE_LABELS[source] ?? source
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -1073,35 +1093,44 @@ function DashboardTile({
         </div>
       </div>
 
-      {visualization === 'bar' && rows.length > 0 ? (
-        <div className="mt-4 space-y-2">
-          {rows.map((row) => (
-            <div key={row.label}>
-              <div className="mb-1 flex justify-between text-[11px] text-slate-500">
-                <span className="truncate capitalize">{row.label}</span>
-                <span>{row.value.toLocaleString()}</span>
-              </div>
-              <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                <div
-                  className="h-full rounded-full"
-                  style={{
-                    width: `${Math.max(4, Math.round((row.value / max) * 100))}%`,
-                    background: PRIMARY,
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : visualization === 'bar' ? (
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
-          <div
-            className="h-full rounded-full"
-            style={{
-              width: `${Math.max(4, Math.round((value / max) * 100))}%`,
-              background: PRIMARY,
-            }}
-          />
+      {visualization === 'bar' ? (
+        <div
+          className="mt-4"
+          style={{ width: '100%', height: Math.max(140, (rows.length || 1) * 40) }}
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={
+                rows.length > 0
+                  ? rows.map((r) => ({ ...r, label: SOURCE_LABELS[r.label] ?? r.label }))
+                  : [{ label: sourceLabel, value }]
+              }
+              layout="vertical"
+              margin={{ top: 4, right: 18, bottom: 4, left: 6 }}
+            >
+              <CartesianGrid horizontal={false} stroke="#eef2f6" />
+              <XAxis
+                type="number"
+                allowDecimals={false}
+                tick={{ fontSize: 11, fill: '#64748b' }}
+              />
+              <YAxis
+                type="category"
+                dataKey="label"
+                width={96}
+                tick={{ fontSize: 11, fill: '#64748b' }}
+              />
+              <Tooltip
+                cursor={{ fill: '#f1f5f9' }}
+                formatter={(v: number) => v.toLocaleString()}
+              />
+              <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                {(rows.length > 0 ? rows : [{ label: sourceLabel, value }]).map((row, i) => (
+                  <Cell key={row.label} fill={CHART_PALETTE[i % CHART_PALETTE.length]} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       ) : null}
 
