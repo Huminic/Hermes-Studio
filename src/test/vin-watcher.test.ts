@@ -89,6 +89,8 @@ function callStub(opts: {
     {
       contact: '/contacts/id/77',
       leadId: 'L77',
+      // Third-party marketplace source — Trigger 1's intended audience.
+      leadSource: 'Cars.com',
       vehicleOfInterest: '2026 Honda Civic',
       createdUtc: new Date(NOW - 10 * 60_000).toISOString(),
       syncedUtc: new Date(NOW - 5 * 60_000).toISOString(),
@@ -213,6 +215,7 @@ describe('tickVinWatcher — immediate trigger', () => {
     const leads = [
       {
         contact: '/contacts/id/77',
+        leadSource: 'AutoTrader',
         createdUtc: new Date(midnightEt - 10 * 60_000).toISOString(),
         syncedUtc: new Date(midnightEt - 5 * 60_000).toISOString(),
       },
@@ -312,6 +315,122 @@ describe('tickVinWatcher — 24h check-in trigger', () => {
     })
     expect(dispatch).not.toHaveBeenCalled()
     expect(res.sent).toBe(0)
+  })
+})
+
+describe('tickVinWatcher — Trigger 1 third-party gate (workstream G)', () => {
+  it('SKIPS a first-party (our own widget/site) lead when third_party_only is on', async () => {
+    const { tickVinWatcher } = await import('@/server/vin-watcher')
+    const leads = [
+      {
+        contact: '/contacts/id/77',
+        leadSource: 'Dealer Website',
+        createdUtc: new Date(NOW - 10 * 60_000).toISOString(),
+        syncedUtc: new Date(NOW - 5 * 60_000).toISOString(),
+      },
+    ]
+    const dispatch = dispatchMock()
+    const res = await tickVinWatcher({
+      profile: 'serra',
+      now: NOW,
+      config: watcherConfig(),
+      deps: { call: callStub({ leads }), dispatch, triggerStore: memTriggerStore(), knownPhones: () => new Set() },
+    })
+    expect(dispatch).not.toHaveBeenCalled()
+    expect(res.sent).toBe(0)
+    expect(res.outcomes[0].reason).toMatch(/third-party-only.*first_party/)
+  })
+
+  it('SKIPS a lead with no source (unknown) — fail-closed', async () => {
+    const { tickVinWatcher } = await import('@/server/vin-watcher')
+    const leads = [
+      {
+        contact: '/contacts/id/77',
+        createdUtc: new Date(NOW - 10 * 60_000).toISOString(),
+        syncedUtc: new Date(NOW - 5 * 60_000).toISOString(),
+      },
+    ]
+    const dispatch = dispatchMock()
+    const res = await tickVinWatcher({
+      profile: 'serra',
+      now: NOW,
+      config: watcherConfig(),
+      deps: { call: callStub({ leads }), dispatch, triggerStore: memTriggerStore(), knownPhones: () => new Set() },
+    })
+    expect(dispatch).not.toHaveBeenCalled()
+    expect(res.outcomes[0].reason).toMatch(/third-party-only.*unknown/)
+  })
+
+  it('FIRES for any lead when third_party_only is turned off', async () => {
+    const { tickVinWatcher } = await import('@/server/vin-watcher')
+    const leads = [
+      {
+        contact: '/contacts/id/77',
+        leadSource: 'Dealer Website',
+        createdUtc: new Date(NOW - 10 * 60_000).toISOString(),
+        syncedUtc: new Date(NOW - 5 * 60_000).toISOString(),
+      },
+    ]
+    const cfg = watcherConfig()
+    // Override the sms_triggers gate off for this profile.
+    ;(cfg as { sms_triggers?: unknown }).sms_triggers = {
+      domain: 'sales',
+      trigger1: { enabled: true, third_party_only: false, template_sales: '', template_service: '' },
+      trigger2: { enabled: false, window_min: 1440, template_sales: '', template_service: '' },
+    }
+    const dispatch = dispatchMock()
+    const res = await tickVinWatcher({
+      profile: 'serra',
+      now: NOW,
+      config: cfg,
+      deps: { call: callStub({ leads }), dispatch, triggerStore: memTriggerStore(), knownPhones: () => new Set() },
+    })
+    expect(dispatch).toHaveBeenCalledTimes(1)
+    expect(res.sent).toBe(1)
+  })
+})
+
+describe('tickVinWatcher — stop-on-reply (workstream G)', () => {
+  it('SKIPS the 24h check-in when the customer already replied after first contact', async () => {
+    const { tickVinWatcher } = await import('@/server/vin-watcher')
+    const hub = await import('@/server/messaging-hub-store')
+    const phone = '+14155550100'
+    const immediateAt = NOW - 1440 * 60_000 // check-in is due
+    // Seed an inbound reply AFTER the first contact → conversation is active.
+    const thread = hub.getOrCreateThread({
+      profile: 'serra',
+      domain: 'sales',
+      channel: 'sms',
+      contact_handle: phone,
+      subject: 'lead follow-up',
+    })
+    // appendMessage stamps the current time, which is after immediateAt — so
+    // this inbound counts as a reply received after the first contact.
+    hub.appendMessage({
+      thread_id: thread.id,
+      direction: 'inbound',
+      role: 'user',
+      channel: 'sms',
+      content: 'Yes, tomorrow at 5 works',
+      author: phone,
+    })
+    const leads = [{ contact: '/contacts/id/77', vehicleOfInterest: '2026 Honda Civic' }]
+    const dispatch = dispatchMock()
+    const res = await tickVinWatcher({
+      profile: 'serra',
+      now: NOW,
+      config: watcherConfig(),
+      deps: {
+        call: callStub({ leads }),
+        dispatch,
+        triggerStore: memTriggerStore([[phone, 'immediate', immediateAt]]),
+        knownPhones: () => new Set([phone]),
+      },
+    })
+    expect(dispatch).not.toHaveBeenCalled()
+    expect(res.sent).toBe(0)
+    expect(res.outcomes[0].kind).toBe('checkin')
+    expect(res.outcomes[0].reason).toMatch(/stop-on-reply/)
   })
 })
 

@@ -42,7 +42,9 @@ import {
   getOrCreateThread,
   appendMessage,
   getLeadFlow,
+  hasInboundSince,
 } from './messaging-hub-store'
+import type { LeadSource } from './sms-triggers'
 import { enrollLead } from './lead-flow'
 import { openBrain } from './brain-store'
 import type { StudioConfig } from '../lib/studio-config'
@@ -194,6 +196,48 @@ function leadEmail(lead: ResolvedLead): string | null {
     (lead.emailAddress as unknown)
   if (typeof e === 'string' && e.trim() && e.includes('@')) return e.trim()
   return null
+}
+
+/** Raw lead-source string out of a VIN row (several shapes seen on VIN). */
+function leadSourceRaw(lead: ResolvedLead): string | null {
+  const s =
+    (lead.leadSource as unknown) ??
+    (lead.source as unknown) ??
+    (lead.leadProvider as unknown) ??
+    (lead.provider as unknown) ??
+    (lead.leadType as unknown) ??
+    (lead.LeadSource as unknown) ??
+    (lead.Source as unknown)
+  if (typeof s === 'string' && s.trim()) return s.trim()
+  return null
+}
+
+// Sources that mark a lead as OUR OWN (first-party): leads created through the
+// dealer site / our widget / a walk-in / phone — Trigger 1 SKIPS these.
+const FIRST_PARTY_SOURCE_RE =
+  /website|web ?form|web ?lead|dealer ?site|dealer ?website|dealer\.com|our ?site|walk[- ]?in|showroom|phone|inbound call|live ?chat|chat widget|\bwidget\b|huminic|nexxus/i
+// Recognised third-party marketplaces / aggregators — Trigger 1 is FOR these.
+const THIRD_PARTY_SOURCE_RE =
+  /cars\.com|autotrader|auto trader|cargurus|car ?gurus|kbb|kelley|truecar|true car|edmunds|carfax|carsdirect|dealerrater|capital ?one|true ?car|oem|manufacturer|marketplace|aggregator|third[- ]?party|facebook|fb |google|carscom|carscomlead/i
+
+/**
+ * Classify a VIN lead row's source for the Trigger-1 third-party gate (workstream
+ * G). Our own first-party leads arrive through the messaging hub (widget/chat/
+ * form), NOT through the VIN feed, so a VIN row with a named non-ours source is
+ * treated as third-party; an explicitly first-party-looking source is excluded;
+ * a row with NO source field stays 'unknown' (fail-closed — Trigger 1 will not
+ * fire on it when third_party_only is set).
+ *
+ * NOTE: the exact authoritative VIN source field is a Duane confirmation item —
+ * this heuristic is the launch default and is surfaced for review.
+ */
+function classifyLeadSource(lead: ResolvedLead): LeadSource {
+  const raw = leadSourceRaw(lead)
+  if (!raw) return 'unknown'
+  if (FIRST_PARTY_SOURCE_RE.test(raw)) return 'first_party'
+  if (THIRD_PARTY_SOURCE_RE.test(raw)) return 'third_party'
+  // A named external source that isn't obviously ours → third-party.
+  return 'third_party'
 }
 
 function leadVehicle(lead: ResolvedLead): string | null {
@@ -413,6 +457,17 @@ async function evaluateLead(ctx: {
     const dedupOk =
       lastCheckin == null || now - lastCheckin >= w.checkin_dedup_hours * 60 * 60_000
     if (sinceMin >= targetLo && sinceMin <= targetHi && dedupOk) {
+      // STOP-ON-REPLY (workstream G): if the customer already replied after our
+      // first text, the conversation is live — the AI reply / human takeover
+      // owns it now. Do NOT layer the scheduled 24h check-in on top.
+      if (hasInboundSince(ctx.profile, [phone], immediateAt)) {
+        return {
+          kind: 'checkin',
+          action: 'skipped',
+          reason: 'customer replied after first contact — stop-on-reply (conversation is active)',
+          ...base,
+        }
+      }
       if (!inHours) {
         // Check-in is business-hours only — wait, do not queue.
         return {
@@ -450,6 +505,23 @@ async function evaluateLead(ctx: {
       action: 'skipped',
       reason: 'lead already has a hub thread (already contacted)',
       ...base,
+    }
+  }
+  // Trigger 1 is THIRD-PARTY only (workstream G): the immediate text is for
+  // marketplace/aggregator leads, not our own widget/system leads. Gated by
+  // sms_triggers.trigger1.third_party_only (DEFAULT on). Fail-closed: a lead we
+  // cannot classify as third-party is skipped, so we never cold-text a
+  // first-party lead we are already engaging through our own surfaces.
+  const thirdPartyOnly = config.sms_triggers?.trigger1?.third_party_only ?? true
+  if (thirdPartyOnly) {
+    const source = classifyLeadSource(lead)
+    if (source !== 'third_party') {
+      return {
+        kind: 'immediate',
+        action: 'skipped',
+        reason: `trigger1 third-party-only: lead source is ${source}`,
+        ...base,
+      }
     }
   }
   // Immediate dedup window.
