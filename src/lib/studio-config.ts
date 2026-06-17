@@ -329,6 +329,7 @@ export const NotificationEvents = [
   'new_lead', // generic / email lead (default catch-all)
   'inbound_sms',
   'inbound_call',
+  'inbound_video',
   'inbound_chat',
   'website_form',
   'all',

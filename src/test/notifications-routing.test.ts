@@ -13,6 +13,8 @@ describe('eventForChannel mapping', () => {
     expect(eventForChannel('website chat')).toBe('inbound_chat')
     expect(eventForChannel('voice')).toBe('inbound_call')
     expect(eventForChannel('Vapi lead')).toBe('inbound_call')
+    expect(eventForChannel('video')).toBe('inbound_video')
+    expect(eventForChannel('Tavus video')).toBe('inbound_video')
     expect(eventForChannel('website form')).toBe('website_form')
     expect(eventForChannel('email-adf')).toBe('new_lead')
     expect(eventForChannel('whatever')).toBe('new_lead')
@@ -42,6 +44,19 @@ describe('resolveNotificationEmails (routing matrix)', () => {
 
     const generic = resolveNotificationEmails(config, 'new_lead')
     expect(generic.emails).toEqual(['manager@x.com']) // only the 'all' rule
+  })
+
+  it('routes a video lead via an inbound_video rule (parity with sms/voice)', () => {
+    const cfg = {
+      notifications: {
+        routing: [
+          { event: 'inbound_video', to: 'video-leads@x.com', channel: 'email', enabled: true },
+          { event: 'all', to: 'manager@x.com', channel: 'email', enabled: true },
+        ],
+      },
+    }
+    const video = resolveNotificationEmails(cfg, eventForChannel('video'))
+    expect(video.emails.sort()).toEqual(['manager@x.com', 'video-leads@x.com'])
   })
 
   it('returns no emails when nothing matches (caller falls back to lead_recipient)', () => {
@@ -116,6 +131,8 @@ describe('/api/customer/notifications round-trip', () => {
       'manager@serra.example',
     ])
     expect(body.known_events).toContain('inbound_call')
+    // inbound_video is now selectable in the UI (video routing parity).
+    expect(body.known_events).toContain('inbound_video')
 
     // And the saved routing is what the dispatcher would resolve.
     const { readStudioConfig } = await import('@/server/studio-config')
