@@ -236,8 +236,11 @@ function classifyLeadSource(lead: ResolvedLead): LeadSource {
   if (!raw) return 'unknown'
   if (FIRST_PARTY_SOURCE_RE.test(raw)) return 'first_party'
   if (THIRD_PARTY_SOURCE_RE.test(raw)) return 'third_party'
-  // A named external source that isn't obviously ours → third-party.
-  return 'third_party'
+  // Unrecognised source → fail-closed 'unknown' (Trigger 1 will NOT cold-text
+  // it). This avoids accidentally texting a mislabeled first-party lead. The
+  // authoritative VIN source taxonomy is a Duane-confirmation item — expand
+  // THIRD_PARTY_SOURCE_RE as real third-party source labels are confirmed.
+  return 'unknown'
 }
 
 function leadVehicle(lead: ResolvedLead): string | null {

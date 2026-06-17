@@ -361,6 +361,27 @@ describe('tickVinWatcher — Trigger 1 third-party gate (workstream G)', () => {
     expect(res.outcomes[0].reason).toMatch(/third-party-only.*unknown/)
   })
 
+  it('SKIPS an unrecognized named source (fail-closed, not auto-third-party)', async () => {
+    const { tickVinWatcher } = await import('@/server/vin-watcher')
+    const leads = [
+      {
+        contact: '/contacts/id/77',
+        leadSource: 'Some Random Provider XYZ',
+        createdUtc: new Date(NOW - 10 * 60_000).toISOString(),
+        syncedUtc: new Date(NOW - 5 * 60_000).toISOString(),
+      },
+    ]
+    const dispatch = dispatchMock()
+    const res = await tickVinWatcher({
+      profile: 'serra',
+      now: NOW,
+      config: watcherConfig(),
+      deps: { call: callStub({ leads }), dispatch, triggerStore: memTriggerStore(), knownPhones: () => new Set() },
+    })
+    expect(dispatch).not.toHaveBeenCalled()
+    expect(res.outcomes[0].reason).toMatch(/third-party-only.*unknown/)
+  })
+
   it('FIRES for any lead when third_party_only is turned off', async () => {
     const { tickVinWatcher } = await import('@/server/vin-watcher')
     const leads = [

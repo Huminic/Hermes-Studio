@@ -19,9 +19,17 @@ function ensureTable(profile: string, profileRoot?: string) {
   return h
 }
 
-/** Normalise a handle for comparison (strip spaces; keep digits/+ for phones). */
+/**
+ * Normalise a handle for comparison. Phone-shaped handles canonicalize to "+"
+ * and digits so a STOP from "+1 (415) 555-0100" reliably blocks a later send to
+ * "+14155550100"; email/other handles lowercase. addToBlacklist and
+ * isBlacklisted both use this, so an inbound opt-out and an outbound recipient
+ * compare equal even when the carrier posts a different phone format.
+ */
 function norm(handle: string): string {
-  return handle.trim().toLowerCase()
+  const t = handle.trim()
+  if (/^\+?[\d()\-.\s]+$/.test(t)) return t.replace(/[^\d+]/g, '')
+  return t.toLowerCase()
 }
 
 export function addToBlacklist(
