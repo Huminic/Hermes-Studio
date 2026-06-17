@@ -142,6 +142,53 @@ describe('tickCampaigns', () => {
     expect(results[0].unresolved_vars).not.toContain('first_name')
   })
 
+  it('skips a contact whose thread a human has taken over (no send, can resume later)', async () => {
+    const {
+      upsertContact,
+      createAudience,
+      createCampaign,
+      listCampaignDeliveries,
+      getOrCreateThread,
+    } = await import('@/server/messaging-hub-store')
+    const { assignThreadToHuman } = await import('@/server/thread-takeover')
+    const { tickCampaigns } = await import('@/server/campaign-worker')
+    upsertContact({
+      profile: 'huminic',
+      display_name: 'Taken Over',
+      identifiers: { sms: '+15555550150' },
+    })
+    const audience = createAudience({
+      profile: 'huminic',
+      name: 'sms-takeover',
+      query: { channel: 'sms' },
+    })
+    const campaign = createCampaign({
+      profile: 'huminic',
+      audience_id: audience.id,
+      channel: 'sms',
+      message_template: 'Hi {{first_name}}!',
+      schedule: Date.now() - 1000,
+    })
+    // A rep has already claimed this contact's thread (matches how the worker
+    // creates it: same handle + channel + domain 'service').
+    const thread = getOrCreateThread({
+      profile: 'huminic',
+      domain: 'service',
+      channel: 'sms',
+      contact_handle: '+15555550150',
+      subject: 'taken over',
+    })
+    assignThreadToHuman('huminic', thread.id, 'rep@huminic.example')
+
+    const results = await tickCampaigns({ profile: 'huminic' })
+    expect(results).toHaveLength(1)
+    expect(results[0].sent).toBe(0)
+    expect(results[0].skipped).toBeGreaterThan(0)
+    // No delivery recorded for the taken-over contact → not marked done, so a
+    // future tick can still reach them once the rep hands the thread back.
+    expect(listCampaignDeliveries('huminic', campaign.id)).toHaveLength(0)
+  })
+
   it('skips not-yet-due campaigns', async () => {
     const {
       upsertContact,

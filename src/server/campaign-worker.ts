@@ -22,6 +22,7 @@ import {
   type Contact,
 } from './messaging-hub-store'
 import { dispatchOutbound } from './messaging-adapters'
+import { isHumanAssigned } from './thread-takeover'
 import { resolveAudience } from './audience-resolver'
 import { readStudioConfig } from './studio-config'
 
@@ -220,6 +221,15 @@ export async function tickCampaigns(input: {
         contact_handle: handle,
         subject: `campaign · ${c.id.slice(0, 6)}`,
       })
+      // Human takeover halts the campaign for THIS contact: if a rep has claimed
+      // the thread (e.g. the contact replied and a human picked it up), the
+      // person owns the conversation — do not layer a queued campaign send on
+      // top. No delivery is recorded (so it is NOT marked done): if the rep later
+      // hands the thread back to the AI, a future tick can still reach them.
+      if (isHumanAssigned(input.profile, thread.id)) {
+        skipped++
+        continue
+      }
       const adapterResult = await dispatchOutbound({
         profile: input.profile,
         channel: c.channel,
