@@ -309,9 +309,11 @@ vin:
       },
     )
     // Query, then one vin_get_contact per lead, all carrying the org UUID.
+    // contactId is sent as a NUMBER (the broker's vin_get_contact schema rejects
+    // a string — "Expected number, received string").
     expect(callCentralMcpTool).toHaveBeenCalledWith(
       'vin_get_contact',
-      expect.objectContaining({ orgId: 'org-uuid-fixture', contactId: '55' }),
+      expect.objectContaining({ orgId: 'org-uuid-fixture', contactId: 55 }),
       expect.anything(),
     )
     expect(res.ok).toBe(true)

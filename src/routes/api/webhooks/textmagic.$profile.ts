@@ -95,9 +95,21 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
             string
           >
         } else {
-          const text = await request.text()
-          const params = new URLSearchParams(text)
-          for (const [k, v] of params) body[k] = v
+          // TextMagic posts multipart/form-data (callback format "m") for BOTH
+          // inbound SMS and delivery receipts; some setups use urlencoded.
+          // request.formData() parses both — URLSearchParams alone does NOT
+          // handle multipart, so inbound would silently fail to parse.
+          try {
+            const fd = await request.formData()
+            for (const [k, v] of fd) body[k] = typeof v === 'string' ? v : ''
+          } catch {
+            try {
+              const text = await request.text()
+              for (const [k, v] of new URLSearchParams(text)) body[k] = v
+            } catch {
+              // leave body empty — handled as a non-inbound callback below (200)
+            }
+          }
         }
         const sender = body.sender ?? body.from ?? ''
         const receiver = body.receiver ?? body.to ?? ''
@@ -106,11 +118,21 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
         // older aliases as fallbacks for other payload shapes.
         const messageId =
           body.id ?? body.messageId ?? body.message_id ?? null
+        // TextMagic's outUrl points at this SAME path, so we also receive
+        // DELIVERY RECEIPTS and other non-inbound callbacks — those have no
+        // inbound sender/text. We must ALWAYS reply 200: a non-200 makes
+        // TextMagic mark the callback invalid and stop delivering. Only a
+        // payload carrying BOTH a sender and text is a real inbound message.
         if (!sender || !text) {
-          return json(
-            { ok: false, error: 'sender and text required' },
-            { status: 400 },
-          )
+          const status =
+            body.status ?? body.messageStatus ?? body.deliveryStatus ?? null
+          return json({
+            ok: true,
+            ignored: true,
+            kind: status ? 'delivery_receipt' : 'non_message',
+            status,
+            message_id: messageId,
+          })
         }
         upsertContact({
           profile,

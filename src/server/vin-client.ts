@@ -212,7 +212,10 @@ export async function resolveLeadNames(
 
   const resolvedById = new Map<string, FlatContact>()
   for (const contactId of order) {
-    const r = await call('vin_get_contact', { orgId: opts.orgId, contactId }, {
+    // The broker's vin_get_contact schema requires contactId as a NUMBER; a
+    // string is rejected ("Expected number, received string"). contactId is
+    // parsed from the lead href as a digit string, so coerce it here.
+    const r = await call('vin_get_contact', { orgId: opts.orgId, contactId: Number(contactId) }, {
       timeoutMs: opts.timeoutMs,
     })
     if (r.ok) resolvedById.set(contactId, flattenContact(r.data))
