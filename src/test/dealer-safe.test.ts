@@ -82,6 +82,28 @@ describe('scrubThreadDetail', () => {
     expect('metadata' in out.messages[0]).toBe(false)
     expect(JSON.stringify(out)).not.toMatch(VENDOR)
   })
+
+  it('classifies a dealer-safe sender from metadata before dropping it', () => {
+    const out = scrubThreadDetail({
+      id: 't1',
+      subject: 's',
+      contact_handle: 'c',
+      messages: [
+        { id: 'm1', direction: 'inbound', content: 'hi', author: '+1555', metadata: { via: 'textmagic-webhook' } },
+        { id: 'm2', direction: 'outbound', content: 'ai', author: 'caroline', metadata: { via: 'hermes' } },
+        { id: 'm3', direction: 'outbound', content: 'blast', author: 'campaign', metadata: { via: 'sms-textmagic-shared' } },
+        { id: 'm4', direction: 'outbound', content: 'rep', author: 'customer-admin', metadata: { via: 'textmagic' } },
+      ],
+    })
+    expect(out.messages.map((m) => (m as { sender?: string }).sender)).toEqual([
+      'contact',
+      'ai',
+      'campaign',
+      'human',
+    ])
+    // raw metadata still dropped for every message
+    expect(out.messages.every((m) => !('metadata' in m))).toBe(true)
+  })
 })
 
 describe('scrubContact', () => {

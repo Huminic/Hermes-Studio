@@ -51,7 +51,10 @@ type ThreadMessage = {
   content: string
   author: string
   created_at: number
-  metadata: Record<string, unknown>
+  // Dealer-safe sender classification computed server-side (raw metadata is
+  // dropped before it reaches the client). 'human' = a rep's manual reply.
+  sender?: 'contact' | 'ai' | 'human' | 'campaign'
+  metadata?: Record<string, unknown>
 }
 
 type ThreadDetail = ThreadSummary & {
@@ -221,20 +224,18 @@ function statusLabel(status: ThreadSummary['status']): string {
   return status === 'open' ? 'Open' : status === 'snoozed' ? 'Snoozed' : 'Closed'
 }
 
-// Who sent an outbound message. The signal is the recorded source, not just the
-// thread's assigned agent (which can be null even on AI-sent threads):
-//  - via 'hermes' → an AI agent reply (name it from the author/agent).
-//  - author 'campaign' → an automated campaign send.
-//  - anything else outbound → a human rep's manual reply → "You".
-// This guarantees an AI/automated message is never mis-attributed to the rep,
-// and a rep's manual reply is never mis-attributed to the AI agent.
+// Who sent an outbound message. Keyed off the dealer-safe `sender` enum the
+// server computes (the thread's assigned agent can be null even on AI threads,
+// so author alone is not enough). This guarantees an AI/automated message is
+// never mis-attributed to the rep, and a rep's reply never to the AI agent.
 function outboundSender(m: ThreadMessage, agentId: string | null): string {
-  const via = typeof m.metadata?.via === 'string' ? m.metadata.via : ''
-  if (via === 'hermes') {
+  if (m.sender === 'human') return 'You'
+  if (m.sender === 'campaign') return 'Automated'
+  if (m.sender === 'ai') {
     if (m.author && m.author !== 'customer-admin') return agentLabel(m.author)
     return agentId ? agentLabel(agentId) : 'AI agent'
   }
-  if (m.author === 'campaign') return 'Automated'
+  // Fallback for any message lacking the sender enum: attribute by author.
   if (agentId && (m.author === agentId || m.author === agentLabel(agentId))) {
     return agentLabel(agentId)
   }

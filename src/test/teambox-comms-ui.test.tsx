@@ -161,9 +161,9 @@ describe('Teambox — message attribution', () => {
             ...t,
             human_assigned: false,
             messages: [
-              { id: 'm1', direction: 'outbound', role: 'assistant', channel: 'sms', content: 'AI handled this', author: 'caroline', created_at: 1, metadata: { via: 'hermes' } },
-              { id: 'm2', direction: 'outbound', role: 'assistant', channel: 'sms', content: 'Campaign blast', author: 'campaign', created_at: 2, metadata: { via: 'sms-textmagic-shared' } },
-              { id: 'm3', direction: 'outbound', role: 'assistant', channel: 'sms', content: 'Rep handled this', author: 'customer-admin', created_at: 3, metadata: { via: 'textmagic' } },
+              { id: 'm1', direction: 'outbound', role: 'assistant', channel: 'sms', content: 'AI handled this', author: 'caroline', created_at: 1, sender: 'ai' },
+              { id: 'm2', direction: 'outbound', role: 'assistant', channel: 'sms', content: 'Campaign blast', author: 'campaign', created_at: 2, sender: 'campaign' },
+              { id: 'm3', direction: 'outbound', role: 'assistant', channel: 'sms', content: 'Rep handled this', author: 'customer-admin', created_at: 3, sender: 'human' },
             ],
           },
         })
@@ -207,7 +207,7 @@ describe('Teambox — message attribution', () => {
                 content: 'AI handled this',
                 author: 'Caroline',
                 created_at: 1,
-                metadata: { via: 'hermes' },
+                sender: 'ai',
               },
               {
                 id: 'm2',
@@ -217,7 +217,7 @@ describe('Teambox — message attribution', () => {
                 content: 'Rep handled this',
                 author: 'customer-admin',
                 created_at: 2,
-                metadata: { via: 'sms' },
+                sender: 'human',
               },
             ],
           },

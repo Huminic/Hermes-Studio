@@ -148,10 +148,30 @@ type ThreadDetailLike = {
 }
 
 /**
+ * Classify who sent a message into a dealer-safe enum, derived from the internal
+ * `metadata.via` + author BEFORE metadata is dropped. The renderer needs to
+ * distinguish an AI-agent reply from a human rep's manual reply for attribution,
+ * but `assigned_agent_id` can be null even on AI threads — so the authoritative
+ * signal lives in metadata and must be computed here, server-side.
+ *   inbound → 'contact' · via 'hermes' → 'ai' · author 'campaign' → 'campaign' ·
+ *   otherwise an outbound is a human rep's manual reply → 'human'.
+ */
+function classifySender(m: MessageLike): 'contact' | 'ai' | 'human' | 'campaign' {
+  const direction = String((m as Record<string, unknown>).direction ?? '')
+  if (direction === 'inbound') return 'contact'
+  const via =
+    typeof m.metadata?.via === 'string' ? (m.metadata.via as string) : ''
+  if (via === 'hermes') return 'ai'
+  if (m.author === 'campaign') return 'campaign'
+  return 'human'
+}
+
+/**
  * Scrub a full thread (detail view). Visible fields are sanitised; message
- * `metadata` is DROPPED entirely — it is internal-only (the renderer never reads
- * it) and carries provider-named keys (`vapi_call_id`, `tavus_conversation_id`)
- * that would otherwise sit in the network response.
+ * `metadata` is DROPPED entirely — it is internal-only and carries provider-named
+ * keys (`vapi_call_id`, `tavus_conversation_id`) that would otherwise sit in the
+ * network response. A safe `sender` enum (computed from metadata before the drop)
+ * is added so the renderer can attribute messages without seeing internals.
  */
 export function scrubThreadDetail<T extends ThreadDetailLike>(thread: T): T {
   return {
@@ -164,6 +184,7 @@ export function scrubThreadDetail<T extends ThreadDetailLike>(thread: T): T {
         ...rest,
         content: scrubVendorTerms(m.content),
         author: scrubVendorTerms(m.author),
+        sender: classifySender(m),
       }
     }),
   }
