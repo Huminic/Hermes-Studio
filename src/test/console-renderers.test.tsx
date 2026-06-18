@@ -515,9 +515,10 @@ describe('console-renderers registry', () => {
     // surfaced as a raw label (campaigns remain service-scoped in code).
     expect(container.textContent).toContain('Campaigns')
     expect(container.textContent).toContain('Reach your customers')
-    expect(container.textContent).toContain('Triggers')
+    // New IA: Automations tab replaces the old Triggers tab entirely.
+    expect(container.textContent).toContain('Automations')
+    expect(container.textContent).not.toContain('Triggers')
     expect(container.textContent).toContain('Upload list')
-    expect(container.textContent).not.toContain('Follow-up')
     expect(container.textContent).not.toContain('“Send now” sends any ready campaign')
   })
 

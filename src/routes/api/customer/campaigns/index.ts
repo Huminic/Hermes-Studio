@@ -14,6 +14,7 @@ import {
   createCampaign,
   listCampaigns,
   updateCampaign,
+  deleteCampaign,
 } from '../../../../server/messaging-hub-store'
 import { listCampaignTemplates } from '../../../../server/campaign-templates'
 
@@ -128,6 +129,35 @@ export const Route = createFileRoute('/api/customer/campaigns/')({
           )
         }
         return json({ ok: true, campaign })
+      },
+      DELETE: async ({ request }) => {
+        const csrfCheck = requireJsonContentType(request)
+        if (csrfCheck) return csrfCheck
+        const body = (await request.json().catch(() => ({}))) as Record<
+          string,
+          unknown
+        >
+        const profile = typeof body.profile === 'string' ? body.profile : ''
+        const campaignId =
+          typeof body.campaign_id === 'string' ? body.campaign_id : ''
+        if (!profile || !campaignId) {
+          return json(
+            { ok: false, error: 'profile and campaign_id required' },
+            { status: 400 },
+          )
+        }
+        const session = resolveSession(request)
+        if (!isAuthorizedForProfile(session, profile)) {
+          return json({ ok: false, error: 'Forbidden' }, { status: 403 })
+        }
+        const removed = deleteCampaign(profile, campaignId)
+        if (!removed) {
+          return json(
+            { ok: false, error: 'Campaign not found' },
+            { status: 404 },
+          )
+        }
+        return json({ ok: true })
       },
     },
   },

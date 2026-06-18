@@ -233,7 +233,7 @@ function StorefrontTabRoute() {
     { id: 'agents', label: 'Agents', icon: Robot01Icon },
     { id: 'dashboard', label: 'Dashboard', icon: Chart01Icon },
     { id: 'comms', label: 'Teambox', icon: InboxIcon },
-    { id: 'campaigns', label: 'Campaigns', icon: Megaphone01Icon },
+    { id: 'campaigns', label: 'Marketing', icon: Megaphone01Icon },
     { id: 'tools', label: 'StoreFront', icon: GridIcon },
     { id: 'infostore', label: 'InfoStore', icon: Database01Icon },
     { id: 'notifications', label: 'Notifications', icon: Notification03Icon },
@@ -393,7 +393,7 @@ function CustomerLogin({
               {config.branding.persona_name}
             </h1>
             <p className="mt-4 text-base leading-7 text-slate-300">
-              Manage agents, InfoStore, StoreFront, Teambox, Campaigns,
+              Manage agents, InfoStore, StoreFront, Teambox, Marketing,
               Notifications, and performance for this Workspace.
             </p>
           </div>

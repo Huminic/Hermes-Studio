@@ -43,9 +43,12 @@ import {
   appendMessage,
   getLeadFlow,
   hasInboundSince,
+  listAutomations,
 } from './messaging-hub-store'
 import type { LeadSource } from './sms-triggers'
 import { enrollLead } from './lead-flow'
+import { processNewLead } from './automations'
+import { renderImmediate, renderCheckin } from './lead-templates'
 import { openBrain } from './brain-store'
 import type { StudioConfig } from '../lib/studio-config'
 
@@ -274,17 +277,11 @@ function leadEpoch(lead: ResolvedLead, ...keys: Array<string>): number | null {
   return null
 }
 
-/** Render the IMMEDIATE template. */
-export function renderImmediate(firstName: string, dealer: string, vehicle: string | null): string {
-  const veh = vehicle ? ` regarding your ${vehicle}` : ''
-  return `Hi ${firstName}, this is ${dealer}. Thanks for your interest${veh}. Is there a day or time that works for you to swing by? Happy to help line that up.`
-}
-
-/** Render the 24h CHECK-IN template. */
-export function renderCheckin(firstName: string, dealer: string, vehicle: string | null): string {
-  const veh = vehicle ? ` regarding your ${vehicle}` : ''
-  return `Hi ${firstName}, this is ${dealer}. We wanted to check in — are you being taken care of? Is there anything we can help with${veh}?`
-}
+// IMMEDIATE first-touch + 24h CHECK-IN templates moved to ./lead-templates so
+// vin-watcher, lead-flow, and marketing automations share one voice without a
+// module cycle. Imported at the top; re-exported here for existing importers
+// (lead-flow, tests) that historically pulled them from this module.
+export { renderImmediate, renderCheckin }
 
 // The pre-launch SAFE-TEST allowlist now lives in ./prelaunch-lock so EVERY
 // outbound choke point (CommGate, the comms MCP handlers, lead-flow) enforces
@@ -586,6 +583,53 @@ async function evaluateLead(ctx: {
       kind: 'immediate',
       action: 'queued',
       reason: nextSevenAmNote(bh.tz),
+      ...base,
+    }
+  }
+
+  // Marketing automations (new front-door): an ACTIVE `new_lead` automation owns
+  // the first touch — channel + agent come from the automation — and any active
+  // `lead_followup` automations enroll here too (processNewLead handles both).
+  // When the customer has NO active new_lead automation, fall through to the
+  // legacy flow / hardcoded immediate so existing behaviour is unchanged.
+  const activeNewLead = listAutomations(ctx.profile).filter(
+    (a) => a.status === 'active' && a.trigger === 'new_lead',
+  )
+  if (activeNewLead.length > 0) {
+    const handles: Record<string, string> = { sms: phone, voice: phone }
+    const email = leadEmail(lead)
+    if (email) handles.email = email
+    const outs = await processNewLead({
+      profile: ctx.profile,
+      lead: {
+        contact_handle: phone,
+        handles,
+        first_name: firstName,
+        vehicle,
+        source: leadSourceRaw(lead),
+      },
+      now,
+      config,
+      deps: { dispatch: ctx.dispatch },
+    })
+    // Record the immediate so the hardcoded 24h check-in branch stays dormant —
+    // the automation owns the cadence now.
+    triggerStore.record(phone, 'immediate', now)
+    const sentOne = outs.find((o) => o.action === 'sent')
+    const action: WatcherOutcome['action'] = sentOne
+      ? 'sent'
+      : outs.some((o) => o.action === 'blocked')
+        ? 'blocked'
+        : outs.some((o) => o.action === 'failed')
+          ? 'failed'
+          : 'skipped'
+    return {
+      kind: 'immediate',
+      action,
+      reason: `handled by marketing automation(s): ${outs
+        .map((o) => `${o.name} ${o.action}`)
+        .join('; ')}`,
+      thread_id: sentOne?.thread_id ?? null,
       ...base,
     }
   }

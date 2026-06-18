@@ -271,6 +271,39 @@ CREATE TABLE IF NOT EXISTS lead_notify_log (
   last_notified  INTEGER NOT NULL,
   PRIMARY KEY (profile, notify_key)
 );
+
+CREATE TABLE IF NOT EXISTS marketing_automations (
+  id                TEXT PRIMARY KEY,
+  profile           TEXT NOT NULL,
+  name              TEXT NOT NULL,
+  trigger           TEXT NOT NULL,
+  channel           TEXT NOT NULL,
+  agent_id          TEXT NOT NULL,
+  wait_hours        INTEGER NOT NULL DEFAULT 0,
+  status            TEXT NOT NULL DEFAULT 'draft',
+  config            TEXT,
+  last_triggered_at INTEGER,
+  created_at        INTEGER NOT NULL,
+  updated_at        INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS marketing_automations_profile ON marketing_automations(profile, status);
+
+CREATE TABLE IF NOT EXISTS automation_runs (
+  id                TEXT PRIMARY KEY,
+  profile           TEXT NOT NULL,
+  automation_id     TEXT NOT NULL,
+  contact_handle    TEXT NOT NULL,
+  handles           TEXT NOT NULL,
+  first_name        TEXT,
+  vehicle           TEXT,
+  dealer            TEXT,
+  due_at            INTEGER NOT NULL,
+  enrolled_at       INTEGER NOT NULL,
+  status            TEXT NOT NULL DEFAULT 'pending',
+  created_at        INTEGER NOT NULL,
+  updated_at        INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS automation_runs_due ON automation_runs(profile, status, due_at);
 `
 
 // ─── In-memory fallback ─────────────────────────────────────────────────────
@@ -298,6 +331,8 @@ type InMemoryStore = {
   leadFlow: LeadFlowRow | null
   enrollments: Map<string, FlowEnrollment>
   notifyLog: Map<string, number> // notify_key -> last_notified ms
+  automations: Map<string, MarketingAutomation>
+  automationRuns: Map<string, AutomationRun>
 }
 
 function getStore(profile: string): InMemoryStore {
@@ -315,6 +350,8 @@ function getStore(profile: string): InMemoryStore {
       leadFlow: null,
       enrollments: new Map(),
       notifyLog: new Map(),
+      automations: new Map(),
+      automationRuns: new Map(),
     }
     _inMemory.set(profile, s)
   }
@@ -983,6 +1020,18 @@ export function getAudience(
   return listAudiences(profile).find((a) => a.id === id) ?? null
 }
 
+/** Delete a saved audience/list. Returns true when a row was removed. */
+export function deleteAudience(profile: string, id: string): boolean {
+  const db = getDb(profile)
+  if (db) {
+    const res = db
+      .prepare(`DELETE FROM audiences WHERE id=? AND profile=?`)
+      .run(id, profile)
+    return res.changes > 0
+  }
+  return getStore(profile).audiences.delete(id)
+}
+
 export type Campaign = {
   id: string
   profile: string
@@ -1099,6 +1148,27 @@ export function updateCampaign(
     getStore(profile).campaigns.set(id, updated)
   }
   return updated
+}
+
+/**
+ * Delete a campaign and its delivery rows. Returns true when removed. Sent
+ * campaigns (status complete) are still deletable — the renderer surfaces this
+ * as "Archive" for sent campaigns and "Delete" for drafts; both remove the row.
+ */
+export function deleteCampaign(profile: string, id: string): boolean {
+  const db = getDb(profile)
+  if (db) {
+    db.prepare(`DELETE FROM campaign_deliveries WHERE campaign_id=?`).run(id)
+    const res = db
+      .prepare(`DELETE FROM campaigns WHERE id=? AND profile=?`)
+      .run(id, profile)
+    return res.changes > 0
+  }
+  const store = getStore(profile)
+  for (const [k, d] of store.deliveries) {
+    if (d.campaign_id === id) store.deliveries.delete(k)
+  }
+  return store.campaigns.delete(id)
 }
 
 export function updateCampaignStatus(
@@ -1839,6 +1909,357 @@ export function updateFlowEnrollment(
     const e = getStore(profile).enrollments.get(id)
     if (e) {
       Object.assign(e, patch, { updated_at: now })
+    }
+  }
+}
+
+// ─── Marketing automations (multi-object builder) ───────────────────────────
+//
+// The customer-facing automation objects backing the Marketing → Automations
+// tab. Each row is a draft/active/paused rule that the automations engine
+// (server/automations.ts) maps onto the EXISTING gated send path — it does not
+// introduce a new send mechanism. `automation_runs` is the follow-up schedule
+// (one pending row per enrolled lead) the engine ticks, mirroring the
+// flow_enrollments pattern but scoped to a single automation.
+
+export type AutomationTrigger = 'new_lead' | 'lead_followup'
+export type AutomationStatus = 'draft' | 'active' | 'paused'
+
+export type MarketingAutomation = {
+  id: string
+  profile: string
+  name: string
+  trigger: AutomationTrigger
+  channel: string
+  agent_id: string
+  wait_hours: number
+  status: AutomationStatus
+  config: Record<string, unknown>
+  last_triggered_at: number | null
+  created_at: number
+  updated_at: number
+}
+
+export type AutomationRunStatus = 'pending' | 'sent' | 'replied' | 'skipped' | 'failed'
+
+export type AutomationRun = {
+  id: string
+  profile: string
+  automation_id: string
+  contact_handle: string
+  handles: Record<string, string>
+  first_name: string | null
+  vehicle: string | null
+  dealer: string | null
+  due_at: number
+  enrolled_at: number
+  status: AutomationRunStatus
+  created_at: number
+  updated_at: number
+}
+
+function rowToAutomation(r: {
+  id: string
+  profile: string
+  name: string
+  trigger: string
+  channel: string
+  agent_id: string
+  wait_hours: number
+  status: string
+  config: string | null
+  last_triggered_at: number | null
+  created_at: number
+  updated_at: number
+}): MarketingAutomation {
+  return {
+    id: r.id,
+    profile: r.profile,
+    name: r.name,
+    trigger: r.trigger as AutomationTrigger,
+    channel: r.channel,
+    agent_id: r.agent_id,
+    wait_hours: r.wait_hours,
+    status: r.status as AutomationStatus,
+    config: r.config ? safeJson(r.config) : {},
+    last_triggered_at: r.last_triggered_at ?? null,
+    created_at: r.created_at,
+    updated_at: r.updated_at,
+  }
+}
+
+export function listAutomations(profile: string): Array<MarketingAutomation> {
+  const db = getDb(profile)
+  if (db) {
+    const rows = db
+      .prepare(
+        `SELECT * FROM marketing_automations WHERE profile=? ORDER BY created_at ASC`,
+      )
+      .all(profile) as Array<Parameters<typeof rowToAutomation>[0]>
+    return rows.map(rowToAutomation)
+  }
+  return [...getStore(profile).automations.values()]
+    .filter((a) => a.profile === profile)
+    .sort((a, b) => a.created_at - b.created_at)
+}
+
+export function getAutomation(
+  profile: string,
+  id: string,
+): MarketingAutomation | null {
+  return listAutomations(profile).find((a) => a.id === id) ?? null
+}
+
+export function createAutomation(input: {
+  profile: string
+  name: string
+  trigger: AutomationTrigger
+  channel: string
+  agent_id: string
+  wait_hours?: number
+  status?: AutomationStatus
+  config?: Record<string, unknown>
+}): MarketingAutomation {
+  const now = Date.now()
+  const a: MarketingAutomation = {
+    id: randomUUID(),
+    profile: input.profile,
+    name: input.name,
+    trigger: input.trigger,
+    channel: input.channel,
+    agent_id: input.agent_id,
+    wait_hours: input.wait_hours ?? 0,
+    status: input.status ?? 'draft',
+    config: input.config ?? {},
+    last_triggered_at: null,
+    created_at: now,
+    updated_at: now,
+  }
+  const db = getDb(input.profile)
+  if (db) {
+    db.prepare(
+      `INSERT INTO marketing_automations(id,profile,name,trigger,channel,agent_id,wait_hours,status,config,last_triggered_at,created_at,updated_at)
+       VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
+    ).run(
+      a.id,
+      a.profile,
+      a.name,
+      a.trigger,
+      a.channel,
+      a.agent_id,
+      a.wait_hours,
+      a.status,
+      JSON.stringify(a.config),
+      a.last_triggered_at,
+      a.created_at,
+      a.updated_at,
+    )
+  } else {
+    getStore(input.profile).automations.set(a.id, a)
+  }
+  return a
+}
+
+export function updateAutomation(
+  profile: string,
+  id: string,
+  patch: Partial<
+    Pick<
+      MarketingAutomation,
+      'name' | 'trigger' | 'channel' | 'agent_id' | 'wait_hours' | 'status' | 'config' | 'last_triggered_at'
+    >
+  >,
+): MarketingAutomation | null {
+  const existing = getAutomation(profile, id)
+  if (!existing) return null
+  const updated: MarketingAutomation = {
+    ...existing,
+    ...patch,
+    config: patch.config ?? existing.config,
+    updated_at: Date.now(),
+  }
+  const db = getDb(profile)
+  if (db) {
+    db.prepare(
+      `UPDATE marketing_automations SET name=?, trigger=?, channel=?, agent_id=?, wait_hours=?, status=?, config=?, last_triggered_at=?, updated_at=?
+       WHERE id=? AND profile=?`,
+    ).run(
+      updated.name,
+      updated.trigger,
+      updated.channel,
+      updated.agent_id,
+      updated.wait_hours,
+      updated.status,
+      JSON.stringify(updated.config),
+      updated.last_triggered_at,
+      updated.updated_at,
+      id,
+      profile,
+    )
+  } else {
+    getStore(profile).automations.set(id, updated)
+  }
+  return updated
+}
+
+export function deleteAutomation(profile: string, id: string): boolean {
+  const db = getDb(profile)
+  if (db) {
+    db.prepare(`DELETE FROM automation_runs WHERE automation_id=?`).run(id)
+    const res = db
+      .prepare(`DELETE FROM marketing_automations WHERE id=? AND profile=?`)
+      .run(id, profile)
+    return res.changes > 0
+  }
+  const store = getStore(profile)
+  for (const [k, r] of store.automationRuns) {
+    if (r.automation_id === id) store.automationRuns.delete(k)
+  }
+  return store.automations.delete(id)
+}
+
+// ── Automation run schedule (follow-up cadence) ──
+
+function rowToRun(r: {
+  id: string
+  profile: string
+  automation_id: string
+  contact_handle: string
+  handles: string
+  first_name: string | null
+  vehicle: string | null
+  dealer: string | null
+  due_at: number
+  enrolled_at: number
+  status: string
+  created_at: number
+  updated_at: number
+}): AutomationRun {
+  return {
+    id: r.id,
+    profile: r.profile,
+    automation_id: r.automation_id,
+    contact_handle: r.contact_handle,
+    handles: (safeJson(`{"v":${r.handles}}`).v as Record<string, string>) ?? {},
+    first_name: r.first_name ?? null,
+    vehicle: r.vehicle ?? null,
+    dealer: r.dealer ?? null,
+    due_at: r.due_at,
+    enrolled_at: r.enrolled_at,
+    status: r.status as AutomationRunStatus,
+    created_at: r.created_at,
+    updated_at: r.updated_at,
+  }
+}
+
+/** Has this automation already enrolled this contact (dedup, any status)? */
+export function hasAutomationRun(
+  profile: string,
+  automationId: string,
+  contactHandle: string,
+): boolean {
+  const db = getDb(profile)
+  if (db) {
+    return !!db
+      .prepare(
+        `SELECT 1 FROM automation_runs WHERE profile=? AND automation_id=? AND contact_handle=? LIMIT 1`,
+      )
+      .get(profile, automationId, contactHandle)
+  }
+  return [...getStore(profile).automationRuns.values()].some(
+    (r) =>
+      r.profile === profile &&
+      r.automation_id === automationId &&
+      r.contact_handle === contactHandle,
+  )
+}
+
+export function createAutomationRun(input: {
+  profile: string
+  automation_id: string
+  contact_handle: string
+  handles: Record<string, string>
+  first_name?: string | null
+  vehicle?: string | null
+  dealer?: string | null
+  due_at: number
+}): AutomationRun {
+  const now = Date.now()
+  const run: AutomationRun = {
+    id: randomUUID(),
+    profile: input.profile,
+    automation_id: input.automation_id,
+    contact_handle: input.contact_handle,
+    handles: input.handles,
+    first_name: input.first_name ?? null,
+    vehicle: input.vehicle ?? null,
+    dealer: input.dealer ?? null,
+    due_at: input.due_at,
+    enrolled_at: now,
+    status: 'pending',
+    created_at: now,
+    updated_at: now,
+  }
+  const db = getDb(input.profile)
+  if (db) {
+    db.prepare(
+      `INSERT INTO automation_runs(id,profile,automation_id,contact_handle,handles,first_name,vehicle,dealer,due_at,enrolled_at,status,created_at,updated_at)
+       VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    ).run(
+      run.id,
+      run.profile,
+      run.automation_id,
+      run.contact_handle,
+      JSON.stringify(run.handles),
+      run.first_name,
+      run.vehicle,
+      run.dealer,
+      run.due_at,
+      run.enrolled_at,
+      run.status,
+      run.created_at,
+      run.updated_at,
+    )
+  } else {
+    getStore(input.profile).automationRuns.set(run.id, run)
+  }
+  return run
+}
+
+export function listDueAutomationRuns(
+  profile: string,
+  now: number,
+): Array<AutomationRun> {
+  const db = getDb(profile)
+  if (db) {
+    const rows = db
+      .prepare(
+        `SELECT * FROM automation_runs WHERE profile=? AND status='pending' AND due_at<=? ORDER BY due_at ASC`,
+      )
+      .all(profile, now) as Array<Parameters<typeof rowToRun>[0]>
+    return rows.map(rowToRun)
+  }
+  return [...getStore(profile).automationRuns.values()]
+    .filter((r) => r.profile === profile && r.status === 'pending' && r.due_at <= now)
+    .sort((a, b) => a.due_at - b.due_at)
+}
+
+export function updateAutomationRunStatus(
+  profile: string,
+  id: string,
+  status: AutomationRunStatus,
+): void {
+  const now = Date.now()
+  const db = getDb(profile)
+  if (db) {
+    db.prepare(
+      `UPDATE automation_runs SET status=?, updated_at=? WHERE id=? AND profile=?`,
+    ).run(status, now, id, profile)
+  } else {
+    const r = getStore(profile).automationRuns.get(id)
+    if (r) {
+      r.status = status
+      r.updated_at = now
     }
   }
 }

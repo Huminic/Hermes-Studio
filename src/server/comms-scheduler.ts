@@ -17,6 +17,7 @@ import { publishMessagingEvent } from './messaging-hub-bus'
 import { tickCampaigns } from './campaign-worker'
 import { tickVinWatcher } from './vin-watcher'
 import { tickFlows } from './lead-flow'
+import { tickAutomations } from './automations'
 import { openBrain } from './brain-store'
 
 export const ESCALATE_AFTER_MS = 30 * 60_000
@@ -34,6 +35,10 @@ export type DueWorkSummary = {
   flowSent: number
   /** Flow enrollments stopped because the lead replied. */
   flowStopped: number
+  /** Marketing-automation follow-up sends advanced this pass. */
+  automationSent: number
+  /** Marketing-automation follow-ups stopped because the lead replied. */
+  automationStopped: number
   errors: Array<{ profile: string; error: string }>
 }
 
@@ -121,6 +126,8 @@ export async function runDueWork(
     watcherQueued: 0,
     flowSent: 0,
     flowStopped: 0,
+    automationSent: 0,
+    automationStopped: 0,
     errors: [],
   }
   for (const profile of profiles) {
@@ -156,6 +163,15 @@ export async function runDueWork(
       summary.flowStopped += f.stopped
     } catch (err) {
       summary.errors.push({ profile, error: `lead-flow: ${(err as Error).message}` })
+    }
+    // Marketing-automation follow-up sends (opt-in per profile; a profile with no
+    // active follow-up automations / due runs returns a clean zero, not an error).
+    try {
+      const a = await tickAutomations({ profile, now })
+      summary.automationSent += a.sent
+      summary.automationStopped += a.stopped
+    } catch (err) {
+      summary.errors.push({ profile, error: `automations: ${(err as Error).message}` })
     }
   }
   return summary

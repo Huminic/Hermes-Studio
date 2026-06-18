@@ -24,6 +24,7 @@ import {
   upsertContact,
 } from '../../../../server/messaging-hub-store'
 import { parseContactCsv } from '../../../../server/contact-csv'
+import { isBlacklisted } from '../../../../server/comms-blacklist'
 
 export const Route = createFileRoute('/api/customer/audiences/upload')({
   server: {
@@ -69,8 +70,21 @@ export const Route = createFileRoute('/api/customer/audiences/upload')({
           )
         }
 
+        // DNC enforcement BEFORE the list is usable: any imported row whose
+        // phone/email is on the per-profile opt-out (STOP/DNC) list is dropped
+        // here, so it can never be targeted by a campaign built on this list.
+        // (CommGate enforces the same at send time — this is the earlier,
+        // visible guard the spec requires for uploaded/imported lists.)
         const contactIds: Array<string> = []
+        let dncBlocked = 0
         for (const c of parsed.contacts) {
+          const handles = Object.values(c.identifiers).filter(
+            (h): h is string => typeof h === 'string' && h.length > 0,
+          )
+          if (handles.some((h) => isBlacklisted(profile, h))) {
+            dncBlocked++
+            continue
+          }
           const contact = upsertContact({
             profile,
             display_name: c.display_name,
@@ -94,6 +108,7 @@ export const Route = createFileRoute('/api/customer/audiences/upload')({
           audience,
           imported: uniqueIds.length,
           skipped: parsed.skipped,
+          dnc_blocked: dncBlocked,
         })
       },
     },

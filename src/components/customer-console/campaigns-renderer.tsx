@@ -1,13 +1,17 @@
 /**
- * customer-console.campaigns — customer-grade Campaigns page (SERRA-UI-9).
+ * customer-console.campaigns — the Marketing workspace (side-menu "Marketing",
+ * in-page tab set "Campaigns / Automations / Lists" under an Overview).
  *
- * Light-theme, plain-language surface for reaching customers:
- *   - friendly channel picker (Text / Email / Call / Video) + labeled filters
- *     that build the underlying audience query behind the scenes,
- *   - "Upload a list (.csv)" to import contacts and target them directly,
- *   - card-level "Send now" (no jargon) to dispatch a draft/ready campaign,
- *   - a results view per campaign (audience size, delivered, failed, status).
- * The customer never sees or types raw JSON.
+ *   - Overview: real live counts (active campaigns, active automations, lists).
+ *   - Campaigns: full CRUD (create/edit/delete) with draft + send.
+ *   - Automations: a real multi-object builder (trigger + channel + team agent +
+ *     draft/active/paused) backed by /api/customer/automations. Outbound rides
+ *     the store communications agent (Caroline sales / Nancy service) through the
+ *     same gated send path; draft/paused never fire.
+ *   - Lists: full CRUD, a downloadable sample CSV, DNC-on-import, and CRM-query
+ *     list generation.
+ *
+ * The customer never sees or types raw JSON or vendor names.
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -44,6 +48,22 @@ type CampaignTemplate = {
   domain: 'service'
 }
 
+type AutomationTrigger = 'new_lead' | 'lead_followup'
+type AutomationStatus = 'draft' | 'active' | 'paused'
+type Automation = {
+  id: string
+  name: string
+  trigger: AutomationTrigger
+  channel: string
+  agent_id: string
+  wait_hours: number
+  status: AutomationStatus
+  last_triggered_at: number | null
+  created_at: number
+  updated_at: number
+}
+type AutomationAgent = { id: string; label: string; team: string }
+
 type ListCampaignsResponse = {
   ok: boolean
   campaigns: Array<Campaign>
@@ -71,12 +91,12 @@ type CampaignResults = {
 }
 
 type View = 'list' | 'build'
-type MainTab = 'overview' | 'campaigns' | 'triggers' | 'lists'
+type MainTab = 'overview' | 'campaigns' | 'automations' | 'lists'
 
 const MAIN_TABS: Array<{ value: MainTab; label: string }> = [
   { value: 'overview', label: 'Overview' },
   { value: 'campaigns', label: 'Campaigns' },
-  { value: 'triggers', label: 'Triggers' },
+  { value: 'automations', label: 'Automations' },
   { value: 'lists', label: 'Lists' },
 ]
 
@@ -84,7 +104,6 @@ const MAIN_TABS: Array<{ value: MainTab; label: string }> = [
 const CHANNELS: Array<{
   value: string
   label: string
-  /** Which template `channel` to show for this option (null = any). */
   templateChannel: 'email' | 'sms' | null
 }> = [
   { value: 'sms', label: 'Text message', templateChannel: 'sms' },
@@ -97,15 +116,31 @@ function channelLabel(value: string): string {
   return CHANNELS.find((c) => c.value === value)?.label ?? value
 }
 
-/** Channels a follow-up flow step may use (Text / Email / Call). */
-const FLOW_CHANNELS: Array<{ value: string; label: string }> = [
+/** Channels an automation step may use (Text / Email / Call). */
+const AUTOMATION_CHANNELS: Array<{ value: string; label: string }> = [
   { value: 'sms', label: 'Text message' },
   { value: 'email', label: 'Email' },
   { value: 'voice', label: 'Phone call' },
 ]
-const MAX_FLOW_STEPS = 3
 
-type FlowStep = { channel: string; wait_hours: number }
+const TRIGGERS: Array<{ value: AutomationTrigger; label: string; hint: string }> = [
+  {
+    value: 'new_lead',
+    label: 'New lead',
+    hint: 'Reach out the moment a new lead is created outside the workspace.',
+  },
+  {
+    value: 'lead_followup',
+    label: 'Follow-up',
+    hint: 'Wait, then follow up — unless the customer has already replied.',
+  },
+]
+
+const WAIT_PRESETS = [1, 4, 24, 48]
+
+function triggerLabel(t: AutomationTrigger): string {
+  return TRIGGERS.find((x) => x.value === t)?.label ?? t
+}
 
 function statusLabel(status: string): string {
   switch (status) {
@@ -123,6 +158,12 @@ function statusLabel(status: string): string {
   }
 }
 
+const SAMPLE_CSV = `name,phone,email
+Jordan Avery,+14155550100,jordan.avery@example.com
+Riley Chen,+14155550101,riley.chen@example.com
+Sam Diaz,,sam.diaz@example.com
+`
+
 function describeAudience(a: Audience): string {
   const q = a.query as {
     contact_ids?: Array<string>
@@ -131,7 +172,7 @@ function describeAudience(a: Audience): string {
     last_contacted_after?: number
   }
   if (Array.isArray(q.contact_ids)) {
-    return `${q.contact_ids.length} uploaded contact${q.contact_ids.length === 1 ? '' : 's'}`
+    return `${q.contact_ids.length} contact${q.contact_ids.length === 1 ? '' : 's'}`
   }
   const parts: Array<string> = []
   if (q.channel) parts.push(channelLabel(q.channel))
@@ -148,6 +189,39 @@ function describeAudience(a: Audience): string {
   return parts.length ? parts.join(' · ') : 'Everyone'
 }
 
+/** Small pill button-group — the modern selector used throughout (no <select>). */
+function PillGroup<T extends string | number>(props: {
+  value: T
+  options: Array<{ value: T; label: string }>
+  onChange: (v: T) => void
+  ariaLabel?: string
+}) {
+  return (
+    <div role="group" aria-label={props.ariaLabel} className="flex flex-wrap gap-1.5">
+      {props.options.map((o) => {
+        const active = o.value === props.value
+        return (
+          <button
+            key={String(o.value)}
+            type="button"
+            aria-pressed={active}
+            onClick={() => props.onChange(o.value)}
+            className={
+              'rounded-md border px-2.5 py-1.5 text-xs font-medium transition ' +
+              (active
+                ? 'text-white'
+                : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50')
+            }
+            style={active ? { background: ACTIVE, borderColor: ACTIVE } : undefined}
+          >
+            {o.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 export function CustomerCampaignsRenderer(props: {
   profile: string
   config: StudioConfig
@@ -159,15 +233,23 @@ export function CustomerCampaignsRenderer(props: {
   const [mainTab, setMainTab] = useState<MainTab>('overview')
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null)
 
-  // Follow-up flow state.
-  const [flowEnabled, setFlowEnabled] = useState(false)
-  const [flowSteps, setFlowSteps] = useState<Array<FlowStep>>([
-    { channel: 'sms', wait_hours: 0 },
-  ])
-  const [accountEnabled, setAccountEnabled] = useState(true)
-  const [flowNote, setFlowNote] = useState<string | null>(null)
+  // Automations state.
+  const [automations, setAutomations] = useState<Array<Automation>>([])
+  const [automationAgents, setAutomationAgents] = useState<Array<AutomationAgent>>(
+    [],
+  )
+  const [editingAutomation, setEditingAutomation] = useState<Automation | null>(
+    null,
+  )
+  const [showAutomationBuilder, setShowAutomationBuilder] = useState(false)
+  const [aName, setAName] = useState('')
+  const [aTrigger, setATrigger] = useState<AutomationTrigger>('new_lead')
+  const [aChannel, setAChannel] = useState('sms')
+  const [aTeam, setATeam] = useState('sales')
+  const [aWait, setAWait] = useState(24)
+  const [automationNote, setAutomationNote] = useState<string | null>(null)
 
-  // Build form state.
+  // Build form state (campaign).
   const [channel, setChannel] = useState<string>('sms')
   const [pickedTemplate, setPickedTemplate] = useState<string>('')
   const [audienceName, setAudienceName] = useState('My customer list')
@@ -188,9 +270,7 @@ export function CustomerCampaignsRenderer(props: {
   const [showListBuilder, setShowListBuilder] = useState(false)
   const [listNote, setListNote] = useState<string | null>(null)
 
-  const [preview, setPreview] = useState<PreviewResponse['preview'] | null>(
-    null,
-  )
+  const [preview, setPreview] = useState<PreviewResponse['preview'] | null>(null)
   const [feedback, setFeedback] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
@@ -230,9 +310,30 @@ export function CustomerCampaignsRenderer(props: {
     }
   }, [props.profile])
 
+  const loadAutomations = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `/api/customer/automations?profile=${encodeURIComponent(props.profile)}`,
+        { credentials: 'include' },
+      )
+      const j = (await res.json().catch(() => ({}))) as {
+        ok: boolean
+        automations?: Array<Automation>
+        agents?: Array<AutomationAgent>
+      }
+      if (res.ok && j.ok) {
+        setAutomations(j.automations ?? [])
+        setAutomationAgents(j.agents ?? [])
+      }
+    } catch {
+      // empty state renders
+    }
+  }, [props.profile])
+
   useEffect(() => {
     void load()
-  }, [load])
+    void loadAutomations()
+  }, [load, loadAutomations])
 
   useEffect(() => {
     if (!existingAudienceId && audiences.length > 0) {
@@ -291,106 +392,136 @@ export function CustomerCampaignsRenderer(props: {
     setFeedback(null)
   }, [])
 
-  const loadFlow = useCallback(async () => {
-    try {
-      const res = await fetch(
-        `/api/customer/lead-flow?profile=${encodeURIComponent(props.profile)}`,
-        { credentials: 'include' },
-      )
-      const j = (await res.json().catch(() => ({}))) as {
-        ok: boolean
-        flow?: { enabled: boolean; steps: Array<FlowStep> }
-        account_enabled?: boolean
-      }
-      if (res.ok && j.ok && j.flow) {
-        setFlowEnabled(!!j.flow.enabled)
-        setFlowSteps(
-          j.flow.steps.length
-            ? j.flow.steps
-            : [{ channel: 'sms', wait_hours: 0 }],
+  // ── Automations actions ────────────────────────────────────────────────────
+  const resetAutomationForm = useCallback(
+    (a?: Automation) => {
+      const fallbackTeam = automationAgents[0]?.team ?? 'sales'
+      if (a) {
+        setEditingAutomation(a)
+        setAName(a.name)
+        setATrigger(a.trigger)
+        setAChannel(a.channel)
+        setATeam(
+          automationAgents.find((ag) => ag.id === a.agent_id)?.team ??
+            fallbackTeam,
         )
-        setAccountEnabled(!!j.account_enabled)
+        setAWait(a.wait_hours || 24)
+      } else {
+        setEditingAutomation(null)
+        setAName('')
+        setATrigger('new_lead')
+        setAChannel('sms')
+        setATeam(fallbackTeam)
+        setAWait(24)
       }
-    } catch {
-      // empty form renders
-    }
-  }, [props.profile])
-
-  useEffect(() => {
-    void loadFlow()
-  }, [loadFlow])
-
-  const selectMainTab = useCallback(
-    (tab: MainTab) => {
-      setMainTab(tab)
-      if (tab === 'triggers') {
-        setFlowNote(null)
-        void loadFlow()
-      }
+      setShowAutomationBuilder(true)
+      setAutomationNote(null)
     },
-    [loadFlow],
+    [automationAgents],
   )
 
-  const saveFlow = useCallback(async () => {
+  const saveAutomation = useCallback(async () => {
+    const name = aName.trim()
+    if (!name) {
+      setAutomationNote('Please name this automation.')
+      return
+    }
+    const agent = automationAgents.find((ag) => ag.team === aTeam)
+    const agentId = agent?.id ?? automationAgents[0]?.id ?? 'caroline'
     setBusy(true)
-    setFlowNote(null)
+    setAutomationNote(null)
     try {
-      const res = await fetch('/api/customer/lead-flow', {
-        method: 'PUT',
+      const payload = {
+        profile: props.profile,
+        id: editingAutomation?.id,
+        name,
+        trigger: aTrigger,
+        channel: aChannel,
+        agent_id: agentId,
+        wait_hours: aTrigger === 'lead_followup' ? aWait : 0,
+      }
+      const res = await fetch('/api/customer/automations', {
+        method: editingAutomation ? 'PUT' : 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          profile: props.profile,
-          enabled: flowEnabled,
-          steps: flowSteps,
-        }),
+        body: JSON.stringify(payload),
       })
       const j = (await res.json().catch(() => ({}))) as {
         ok: boolean
         error?: string
       }
-      setFlowNote(
-        res.ok && j.ok
-          ? 'Saved. New leads will follow this plan.'
-          : (j.error ?? 'We could not save that. Please try again.'),
-      )
+      if (res.ok && j.ok) {
+        setShowAutomationBuilder(false)
+        setEditingAutomation(null)
+        await loadAutomations()
+      } else {
+        setAutomationNote(j.error ?? 'We could not save that automation.')
+      }
     } finally {
       setBusy(false)
     }
-  }, [flowEnabled, flowSteps, props.profile])
+  }, [
+    aName,
+    aTrigger,
+    aChannel,
+    aTeam,
+    aWait,
+    automationAgents,
+    editingAutomation,
+    loadAutomations,
+    props.profile,
+  ])
 
-  const startNewFlowPlan = useCallback(() => {
-    setFlowEnabled(true)
-    setFlowSteps([{ channel: 'sms', wait_hours: 0 }])
-    setFlowNote(
-      'Started a new unsaved lead-flow plan. Save to replace the current plan.',
-    )
-  }, [])
+  const setAutomationStatus = useCallback(
+    async (a: Automation, status: AutomationStatus) => {
+      setBusy(true)
+      setAutomationNote(null)
+      try {
+        const res = await fetch('/api/customer/automations', {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ profile: props.profile, id: a.id, status }),
+        })
+        const j = (await res.json().catch(() => ({}))) as { ok: boolean }
+        if (res.ok && j.ok) await loadAutomations()
+      } finally {
+        setBusy(false)
+      }
+    },
+    [loadAutomations, props.profile],
+  )
 
-  const setStepChannel = (i: number, channel: string) =>
-    setFlowSteps((prev) =>
-      prev.map((s, idx) => (idx === i ? { ...s, channel } : s)),
-    )
-  const setStepWait = (i: number, wait_hours: number) =>
-    setFlowSteps((prev) =>
-      prev.map((s, idx) => (idx === i ? { ...s, wait_hours } : s)),
-    )
-  const addStep = () =>
-    setFlowSteps((prev) =>
-      prev.length >= MAX_FLOW_STEPS
-        ? prev
-        : [...prev, { channel: 'email', wait_hours: 4 }],
-    )
-  const removeStep = () =>
-    setFlowSteps((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev))
+  const deleteAutomation = useCallback(
+    async (a: Automation) => {
+      setBusy(true)
+      setAutomationNote(null)
+      try {
+        const res = await fetch('/api/customer/automations', {
+          method: 'DELETE',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ profile: props.profile, id: a.id }),
+        })
+        const j = (await res.json().catch(() => ({}))) as { ok: boolean }
+        if (res.ok && j.ok) {
+          if (editingAutomation?.id === a.id) {
+            setShowAutomationBuilder(false)
+            setEditingAutomation(null)
+          }
+          await loadAutomations()
+        }
+      } finally {
+        setBusy(false)
+      }
+    },
+    [editingAutomation, loadAutomations, props.profile],
+  )
 
-  // Templates relevant to the chosen channel (sms/email have templates; call
-  // and video reuse the text/email scripts as the spoken/sent message).
+  // Templates relevant to the chosen channel.
   const channelDef = CHANNELS.find((c) => c.value === channel) ?? CHANNELS[0]
   const visibleTemplates = templates.filter((t) =>
-    channelDef.templateChannel
-      ? t.channel === channelDef.templateChannel
-      : true,
+    channelDef.templateChannel ? t.channel === channelDef.templateChannel : true,
   )
 
   useEffect(() => {
@@ -403,7 +534,6 @@ export function CustomerCampaignsRenderer(props: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channel, templates])
 
-  /** Build the underlying audience query from the friendly form controls. */
   const buildQuery = useCallback((): Record<string, unknown> => {
     const q: Record<string, unknown> = {}
     if (channel) q.channel = channel
@@ -472,6 +602,82 @@ export function CustomerCampaignsRenderer(props: {
     }
   }, [audienceName, buildQuery, load, props.profile])
 
+  const buildCrmList = useCallback(async () => {
+    setBusy(true)
+    setListNote(null)
+    try {
+      const res = await fetch('/api/customer/audiences', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profile: props.profile,
+          action: 'crm_query',
+          name: audienceName.trim() || undefined,
+        }),
+      })
+      const j = (await res.json().catch(() => ({}))) as {
+        ok: boolean
+        imported?: number
+        dnc_blocked?: number
+        limits?: string
+        error?: string
+      }
+      if (res.ok && j.ok) {
+        const dnc = j.dnc_blocked
+          ? ` ${j.dnc_blocked} opted-out contact${j.dnc_blocked === 1 ? '' : 's'} removed (Do Not Contact).`
+          : ''
+        setListNote(
+          `Imported ${j.imported ?? 0} CRM lead${(j.imported ?? 0) === 1 ? '' : 's'}.${dnc}` +
+            (j.limits ? ` ${j.limits}` : ''),
+        )
+        setShowListBuilder(false)
+        await load()
+      } else {
+        setListNote(
+          j.error ?? 'CRM list generation is not available for this store yet.',
+        )
+      }
+    } finally {
+      setBusy(false)
+    }
+  }, [audienceName, load, props.profile])
+
+  const deleteList = useCallback(
+    async (id: string) => {
+      setBusy(true)
+      setListNote(null)
+      try {
+        const res = await fetch('/api/customer/audiences', {
+          method: 'DELETE',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ profile: props.profile, id }),
+        })
+        const j = (await res.json().catch(() => ({}))) as { ok: boolean }
+        if (res.ok && j.ok) {
+          setListNote('List removed.')
+          await load()
+        }
+      } finally {
+        setBusy(false)
+      }
+    },
+    [load, props.profile],
+  )
+
+  const downloadSampleCsv = useCallback(() => {
+    const blob = new Blob([SAMPLE_CSV], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'sample-contact-list.csv'
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }, [])
+
   const onUploadFile = useCallback(
     async (file: File) => {
       setBusy(true)
@@ -496,17 +702,18 @@ export function CustomerCampaignsRenderer(props: {
           error?: string
           audience?: { id: string; name: string }
           imported?: number
+          dnc_blocked?: number
           skipped?: Array<{ row: number; reason: string }>
         }
         if (!res.ok || !j.ok || !j.audience) {
           setUploadNote(
-            j.error ??
-              'We could not read that file. Please upload a .csv list.',
+            j.error ?? 'We could not read that file. Please upload a .csv list.',
           )
           return
         }
         const imported = j.imported ?? 0
         const skipped = j.skipped ?? []
+        const dnc = j.dnc_blocked ?? 0
         setUploadedAudience({
           id: j.audience.id,
           name: j.audience.name,
@@ -514,12 +721,13 @@ export function CustomerCampaignsRenderer(props: {
         })
         setAudienceName(j.audience.name)
         const skippedReasons = skipped.length
-          ? ` ${skipped.length} row${skipped.length === 1 ? '' : 's'} skipped — ${
-              skipped[0].reason
-            }.`
+          ? ` ${skipped.length} row${skipped.length === 1 ? '' : 's'} skipped — ${skipped[0].reason}.`
+          : ''
+        const dncReason = dnc
+          ? ` ${dnc} opted-out contact${dnc === 1 ? '' : 's'} removed (Do Not Contact).`
           : ''
         setUploadNote(
-          `Imported ${imported} contact${imported === 1 ? '' : 's'}.${skippedReasons}`,
+          `Imported ${imported} contact${imported === 1 ? '' : 's'}.${skippedReasons}${dncReason}`,
         )
         await load()
       } catch {
@@ -540,9 +748,6 @@ export function CustomerCampaignsRenderer(props: {
         setFeedback('Please choose a message to send.')
         return
       }
-
-      // Resolve the audience id — either the uploaded list or a freshly-saved
-      // filter audience.
       let audienceId: string
       if (audienceMode === 'existing') {
         if (!existingAudienceId) {
@@ -592,9 +797,7 @@ export function CustomerCampaignsRenderer(props: {
           template: tpl.id,
         }),
       })
-      const campJ = (await campRes.json().catch(() => ({}))) as {
-        ok: boolean
-      }
+      const campJ = (await campRes.json().catch(() => ({}))) as { ok: boolean }
       if (!campRes.ok || !campJ.ok) {
         setFeedback('We could not save that campaign. Please try again.')
         return
@@ -667,6 +870,29 @@ export function CustomerCampaignsRenderer(props: {
     [load, props.profile],
   )
 
+  const deleteCampaign = useCallback(
+    async (campaignId: string) => {
+      setBusy(true)
+      setSendNote(null)
+      try {
+        const res = await fetch('/api/customer/campaigns', {
+          method: 'DELETE',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            profile: props.profile,
+            campaign_id: campaignId,
+          }),
+        })
+        const j = (await res.json().catch(() => ({}))) as { ok: boolean }
+        if (res.ok && j.ok) await load()
+      } finally {
+        setBusy(false)
+      }
+    },
+    [load, props.profile],
+  )
+
   const toggleResults = useCallback(
     async (campaignId: string) => {
       if (openResults === campaignId) {
@@ -697,16 +923,13 @@ export function CustomerCampaignsRenderer(props: {
 
   const draftCampaigns = campaigns.filter((c) => c.status === 'draft').length
   const sentCampaigns = campaigns.filter((c) => c.status === 'complete').length
-  const triggerStepSummary = flowSteps
-    .map((step, i) =>
-      i === 0
-        ? `${channelLabel(step.channel)} immediately`
-        : `${channelLabel(step.channel)} after ${step.wait_hours}h`,
-    )
-    .join(' then ')
-  const triggerStatus = flowEnabled ? 'Enabled' : 'Disabled'
+  const activeCampaigns = campaigns.filter(
+    (c) => c.status === 'scheduled' || c.status === 'in_progress',
+  ).length
+  const activeAutomations = automations.filter((a) => a.status === 'active').length
+  const draftAutomations = automations.filter((a) => a.status === 'draft').length
 
-  // ── Build view ────────────────────────────────────────────────────────────
+  // ── Campaign build view ─────────────────────────────────────────────────────
   if (view === 'build') {
     const selectedTemplate = templates.find((t) => t.id === pickedTemplate)
     return (
@@ -727,25 +950,20 @@ export function CustomerCampaignsRenderer(props: {
           </h3>
         </div>
 
-        {/* Channel */}
         <section className="rounded-lg border border-slate-200 bg-white p-3">
-          <label className="block text-xs font-medium text-slate-600">
+          <div className="text-xs font-medium text-slate-600">
             How do you want to reach people?
-          </label>
-          <select
-            value={channel}
-            onChange={(e) => setChannel(e.target.value)}
-            className="mt-1 w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900"
-          >
-            {CHANNELS.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </select>
+          </div>
+          <div className="mt-2">
+            <PillGroup
+              ariaLabel="Channel"
+              value={channel}
+              onChange={setChannel}
+              options={CHANNELS.map((c) => ({ value: c.value, label: c.label }))}
+            />
+          </div>
         </section>
 
-        {/* Message */}
         <section className="rounded-lg border border-slate-200 bg-white p-3">
           <div className="text-xs font-medium text-slate-600">
             Choose a message
@@ -770,9 +988,7 @@ export function CustomerCampaignsRenderer(props: {
                         : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50')
                     }
                     style={
-                      active
-                        ? { background: ACTIVE, borderColor: ACTIVE }
-                        : undefined
+                      active ? { background: ACTIVE, borderColor: ACTIVE } : undefined
                     }
                   >
                     <div className="font-semibold">{t.name}</div>
@@ -796,64 +1012,34 @@ export function CustomerCampaignsRenderer(props: {
           )}
         </section>
 
-        {/* Audience */}
         <section className="rounded-lg border border-slate-200 bg-white p-3">
           <div className="text-xs font-medium text-slate-600">
             Who should receive it?
           </div>
-          <div className="mt-2 flex gap-2">
-            {(
-              [
+          <div className="mt-2">
+            <PillGroup
+              ariaLabel="Audience source"
+              value={audienceMode}
+              onChange={(m) => setAudienceMode(m)}
+              options={[
                 ...(audiences.length > 0
-                  ? ([['existing', 'Saved list']] as const)
+                  ? [{ value: 'existing' as const, label: 'Saved list' }]
                   : []),
-                ['filter', 'My existing contacts'],
-                ['upload', 'Upload list'],
-              ] as const
-            ).map(([mode, label]) => {
-              const active = audienceMode === mode
-              return (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => setAudienceMode(mode)}
-                  className={
-                    'rounded-md border px-2.5 py-1 text-xs ' +
-                    (active
-                      ? 'text-white'
-                      : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50')
-                  }
-                  style={
-                    active
-                      ? { background: PRIMARY, borderColor: PRIMARY }
-                      : undefined
-                  }
-                >
-                  {label}
-                </button>
-              )
-            })}
+                { value: 'filter' as const, label: 'My existing contacts' },
+                { value: 'upload' as const, label: 'Upload list' },
+              ]}
+            />
           </div>
 
           {audienceMode === 'existing' && (
             <div className="mt-3 flex flex-col gap-2">
-              <label className="block text-xs">
-                <span className="text-slate-500">Saved list</span>
-                <select
-                  value={existingAudienceId}
-                  onChange={(e) => setExistingAudienceId(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900"
-                >
-                  {audiences.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <div className="text-[11px] text-slate-500">
-                Use one of your saved audience lists for this campaign.
-              </div>
+              <span className="text-xs text-slate-500">Saved list</span>
+              <PillGroup
+                ariaLabel="Saved list"
+                value={existingAudienceId}
+                onChange={setExistingAudienceId}
+                options={audiences.map((a) => ({ value: a.id, label: a.name }))}
+              />
             </div>
           )}
 
@@ -868,22 +1054,21 @@ export function CustomerCampaignsRenderer(props: {
                 />
               </label>
               <div className="flex flex-wrap items-end gap-2">
-                <label className="block text-xs">
+                <div className="text-xs">
                   <span className="text-slate-500">Last contacted</span>
-                  <select
-                    value={filterBeforeAfter}
-                    onChange={(e) =>
-                      setFilterBeforeAfter(
-                        e.target.value as '' | 'before' | 'after',
-                      )
-                    }
-                    className="mt-1 rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900"
-                  >
-                    <option value="">No date filter</option>
-                    <option value="before">Before…</option>
-                    <option value="after">After…</option>
-                  </select>
-                </label>
+                  <div className="mt-1">
+                    <PillGroup
+                      ariaLabel="Last contacted filter"
+                      value={filterBeforeAfter}
+                      onChange={(v) => setFilterBeforeAfter(v)}
+                      options={[
+                        { value: '' as const, label: 'No date filter' },
+                        { value: 'before' as const, label: 'Before…' },
+                        { value: 'after' as const, label: 'After…' },
+                      ]}
+                    />
+                  </div>
+                </div>
                 {filterBeforeAfter && (
                   <input
                     type="date"
@@ -926,10 +1111,10 @@ export function CustomerCampaignsRenderer(props: {
             <div className="mt-3 flex flex-col gap-2">
               <p className="text-[11px] text-slate-500">
                 Upload a spreadsheet saved as .csv with columns for name, phone,
-                and email. We will only message people who have a phone or
-                email.
+                and email. We will only message people who have a phone or email,
+                and opted-out contacts are removed automatically.
               </p>
-              <div>
+              <div className="flex items-center gap-2">
                 <input
                   ref={fileRef}
                   type="file"
@@ -948,6 +1133,14 @@ export function CustomerCampaignsRenderer(props: {
                   className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40"
                 >
                   Upload CSV
+                </button>
+                <button
+                  type="button"
+                  onClick={downloadSampleCsv}
+                  className="inline-flex items-center gap-1 text-xs font-medium"
+                  style={{ color: PRIMARY }}
+                >
+                  <DownloadIcon /> Sample CSV
                 </button>
               </div>
               {uploadNote && (
@@ -977,14 +1170,14 @@ export function CustomerCampaignsRenderer(props: {
           </button>
         </div>
         <p className="text-[11px] text-slate-400">
-          Draft campaigns appear on the Campaigns list. Preview, edit, or send
-          them from their card.
+          Draft campaigns appear on the Campaigns list. Preview, edit, send, or
+          delete them from their card.
         </p>
       </div>
     )
   }
 
-  // ── Tabbed overview/list view ───────────────────────────────────────────
+  // ── Tabbed view ─────────────────────────────────────────────────────────────
   return (
     <div className="flex flex-col gap-3 text-slate-900">
       <input
@@ -1001,28 +1194,18 @@ export function CustomerCampaignsRenderer(props: {
 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold">Campaigns</h3>
+          <h3 className="text-sm font-semibold">Marketing</h3>
           <div className="text-[11px] text-slate-500">
-            Reach your customers, manage lead-flow triggers, and keep saved
-            lists ready.
+            Reach your customers, automate lead follow-up, and keep saved lists
+            ready.
           </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={startNewCampaign}
-            className="rounded-md px-3 py-1.5 text-xs font-semibold text-white"
-            style={{ background: PRIMARY }}
-          >
-            New campaign
-          </button>
         </div>
       </div>
 
       <div className="-mx-1 overflow-x-auto px-1">
         <div
           role="tablist"
-          aria-label="Campaigns sections"
+          aria-label="Marketing sections"
           className="flex min-w-max gap-1 rounded-lg border border-slate-200 bg-white p-1"
         >
           {MAIN_TABS.map((tab) => {
@@ -1033,7 +1216,7 @@ export function CustomerCampaignsRenderer(props: {
                 type="button"
                 role="tab"
                 aria-selected={active}
-                onClick={() => selectMainTab(tab.value)}
+                onClick={() => setMainTab(tab.value)}
                 className={
                   'rounded-md px-3 py-1.5 text-xs font-semibold transition ' +
                   (active
@@ -1059,10 +1242,10 @@ export function CustomerCampaignsRenderer(props: {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <section className="rounded-lg border border-slate-200 bg-white p-3">
             <div className="text-xs font-semibold text-slate-600">
-              Campaigns ready
+              Active Campaigns
             </div>
             <div className="mt-2 text-3xl font-semibold text-slate-900">
-              {campaigns.length}
+              {activeCampaigns}
             </div>
             <div className="mt-1 text-[11px] text-slate-500">
               {draftCampaigns} draft{draftCampaigns === 1 ? '' : 's'} ·{' '}
@@ -1079,7 +1262,7 @@ export function CustomerCampaignsRenderer(props: {
               </button>
               <button
                 type="button"
-                onClick={() => selectMainTab('campaigns')}
+                onClick={() => setMainTab('campaigns')}
                 className="rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
               >
                 Manage campaigns
@@ -1089,33 +1272,32 @@ export function CustomerCampaignsRenderer(props: {
 
           <section className="rounded-lg border border-slate-200 bg-white p-3">
             <div className="text-xs font-semibold text-slate-600">
-              Lead-flow trigger plan
+              Active Automations
             </div>
             <div className="mt-2 text-3xl font-semibold text-slate-900">
-              {triggerStatus}
+              {activeAutomations}
             </div>
             <div className="mt-1 text-[11px] text-slate-500">
-              {flowSteps.length} step{flowSteps.length === 1 ? '' : 's'} ·{' '}
-              {triggerStepSummary}
+              {automations.length} total · {draftAutomations} draft
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={() => {
-                  setMainTab('triggers')
-                  startNewFlowPlan()
+                  setMainTab('automations')
+                  resetAutomationForm()
                 }}
                 className="rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
               >
-                New plan
+                New automation
               </button>
               <button
                 type="button"
-                onClick={() => selectMainTab('triggers')}
+                onClick={() => setMainTab('automations')}
                 className="rounded-md px-2.5 py-1.5 text-xs font-semibold text-white"
                 style={{ background: PRIMARY }}
               >
-                Manage triggers
+                Manage automations
               </button>
             </div>
           </section>
@@ -1128,7 +1310,7 @@ export function CustomerCampaignsRenderer(props: {
               {audiences.length}
             </div>
             <div className="mt-1 text-[11px] text-slate-500">
-              Upload CSV audiences or save filtered contact lists.
+              Upload CSV audiences or build lists from your CRM.
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
               <button
@@ -1250,6 +1432,14 @@ export function CustomerCampaignsRenderer(props: {
                         >
                           {open ? 'Hide results' : 'View results'}
                         </button>
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => void deleteCampaign(c.id)}
+                          className="text-[11px] font-medium text-slate-400 hover:text-rose-600 disabled:opacity-40"
+                        >
+                          {c.status === 'complete' ? 'Archive' : 'Delete'}
+                        </button>
                       </div>
                     </div>
                     {previewOpen && (
@@ -1301,133 +1491,226 @@ export function CustomerCampaignsRenderer(props: {
         </section>
       )}
 
-      {mainTab === 'triggers' && (
+      {mainTab === 'automations' && (
         <section className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-3">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
               <div className="text-xs font-semibold text-slate-600">
-                Current lead-flow trigger plan
+                Automations
               </div>
               <p className="mt-1 text-xs text-slate-500">
-                When a new lead comes in, trigger an automatic first response.
-                If they do not reply, try the next way to reach them. The moment
-                they reply, the sequence stops.
+                Set up automatic outreach. Each automation sends through your
+                store agent and stops the moment a customer replies. Draft and
+                paused automations never send.
               </p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={startNewFlowPlan}
-                className="rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
-              >
-                New plan
-              </button>
-              <button
-                type="button"
-                onClick={() => void saveFlow()}
-                disabled={busy}
-                className="rounded-md px-2.5 py-1.5 text-xs font-semibold text-white disabled:opacity-40"
-                style={{ background: PRIMARY }}
-              >
-                Save plan
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => resetAutomationForm()}
+              className="rounded-md px-3 py-1.5 text-xs font-semibold text-white"
+              style={{ background: PRIMARY }}
+            >
+              New automation
+            </button>
           </div>
 
-          <div className="rounded-md border border-slate-200 bg-slate-50 p-2 text-[11px] text-slate-600">
-            Backend support today: one saved lead-flow trigger plan. You can
-            enable or disable it and save changes; separate draft trigger
-            objects are not available yet.
-          </div>
+          {showAutomationBuilder && (
+            <div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-slate-50 p-3">
+              <div className="text-xs font-semibold text-slate-600">
+                {editingAutomation ? 'Edit automation' : 'New automation'}
+              </div>
+              <label className="block text-xs">
+                <span className="text-slate-500">Name</span>
+                <input
+                  value={aName}
+                  onChange={(e) => setAName(e.target.value)}
+                  placeholder="e.g. Instant SMS for new leads"
+                  className="mt-1 w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900"
+                />
+              </label>
 
-          {!accountEnabled && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
-              Lead triggers are not switched on for your account yet. Save your
-              plan here, then ask your Huminic rep to turn it on.
+              <div className="text-xs">
+                <span className="text-slate-500">When this happens</span>
+                <div className="mt-1">
+                  <PillGroup
+                    ariaLabel="Trigger"
+                    value={aTrigger}
+                    onChange={(v) => setATrigger(v)}
+                    options={TRIGGERS.map((t) => ({
+                      value: t.value,
+                      label: t.label,
+                    }))}
+                  />
+                </div>
+                <div className="mt-1 text-[11px] text-slate-400">
+                  {TRIGGERS.find((t) => t.value === aTrigger)?.hint}
+                </div>
+              </div>
+
+              {aTrigger === 'lead_followup' && (
+                <div className="text-xs">
+                  <span className="text-slate-500">Wait before sending</span>
+                  <div className="mt-1">
+                    <PillGroup
+                      ariaLabel="Wait time"
+                      value={aWait}
+                      onChange={(v) => setAWait(v)}
+                      options={WAIT_PRESETS.map((h) => ({
+                        value: h,
+                        label: `${h}h`,
+                      }))}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="text-xs">
+                <span className="text-slate-500">Send by</span>
+                <div className="mt-1">
+                  <PillGroup
+                    ariaLabel="Channel"
+                    value={aChannel}
+                    onChange={(v) => setAChannel(v)}
+                    options={AUTOMATION_CHANNELS}
+                  />
+                </div>
+              </div>
+
+              {automationAgents.length > 0 && (
+                <div className="text-xs">
+                  <span className="text-slate-500">From your team</span>
+                  <div className="mt-1">
+                    <PillGroup
+                      ariaLabel="Team"
+                      value={aTeam}
+                      onChange={(v) => setATeam(v)}
+                      options={automationAgents.map((ag) => ({
+                        value: ag.team,
+                        label: ag.label,
+                      }))}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {automationNote && (
+                <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800">
+                  {automationNote}
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAutomationBuilder(false)
+                    setEditingAutomation(null)
+                  }}
+                  className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void saveAutomation()}
+                  disabled={busy}
+                  className="rounded-md px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-40"
+                  style={{ background: PRIMARY }}
+                >
+                  {editingAutomation ? 'Save automation' : 'Save as draft'}
+                </button>
+              </div>
             </div>
           )}
 
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={flowEnabled}
-              onChange={(e) => setFlowEnabled(e.target.checked)}
-            />
-            <span className="font-medium">Turn on triggers for new leads</span>
-          </label>
-
-          <div className="flex flex-col gap-2">
-            {flowSteps.map((step, i) => (
-              <div
-                key={i}
-                className="flex flex-wrap items-center gap-2 rounded-md border border-slate-100 bg-slate-50 p-2"
-              >
-                <span className="text-[11px] font-semibold text-slate-500">
-                  Step {i + 1}
-                </span>
-                {i === 0 ? (
-                  <span className="text-xs text-slate-600">
-                    send immediately by
-                  </span>
-                ) : (
-                  <span className="text-xs text-slate-600">
-                    if no reply after
-                    <input
-                      type="number"
-                      min={1}
-                      value={step.wait_hours}
-                      onChange={(e) =>
-                        setStepWait(i, Math.max(1, Number(e.target.value) || 1))
-                      }
-                      className="mx-1 w-14 rounded-md border border-slate-200 bg-white px-1.5 py-1 text-sm text-slate-900"
-                    />
-                    hours, send
-                  </span>
-                )}
-                <select
-                  value={step.channel}
-                  onChange={(e) => setStepChannel(i, e.target.value)}
-                  className="rounded-md border border-slate-200 bg-white px-2 py-1 text-sm text-slate-900"
-                >
-                  {FLOW_CHANNELS.map((c) => (
-                    <option key={c.value} value={c.value}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            {flowSteps.length < MAX_FLOW_STEPS && (
-              <button
-                type="button"
-                onClick={addStep}
-                className="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-700 hover:bg-slate-50"
-              >
-                + Add a step
-              </button>
-            )}
-            {flowSteps.length > 1 && (
-              <button
-                type="button"
-                onClick={removeStep}
-                className="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-500 hover:bg-slate-50"
-              >
-                Remove last step
-              </button>
-            )}
-          </div>
-
-          <div className="text-[11px] text-slate-400">
-            Triggers always stop as soon as the customer replies.
-          </div>
-
-          {flowNote && (
-            <div className="rounded-md border border-slate-200 bg-slate-50 p-2 text-xs text-slate-700">
-              {flowNote}
+          {automations.length === 0 ? (
+            <div className="text-xs text-slate-500">
+              No automations yet. Create one to follow up with leads
+              automatically.
             </div>
+          ) : (
+            <ul className="divide-y divide-slate-100 text-xs">
+              {automations.map((a) => {
+                const team = automationAgents.find((ag) => ag.id === a.agent_id)
+                return (
+                  <li
+                    key={a.id}
+                    className="flex flex-wrap items-start justify-between gap-2 py-2"
+                  >
+                    <div>
+                      <div className="font-semibold text-slate-800">
+                        {a.name}
+                      </div>
+                      <div className="mt-0.5 text-[11px] text-slate-500">
+                        {triggerLabel(a.trigger)}
+                        {a.trigger === 'lead_followup'
+                          ? ` after ${a.wait_hours}h`
+                          : ''}{' '}
+                        · {channelLabel(a.channel)}
+                        {team ? ` · ${team.label}` : ''}
+                        {a.last_triggered_at
+                          ? ` · last sent ${new Date(a.last_triggered_at).toLocaleDateString()}`
+                          : ''}
+                      </div>
+                    </div>
+                    <span
+                      className={
+                        'rounded-full px-2 py-0.5 text-[10px] font-semibold ' +
+                        (a.status === 'active'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : a.status === 'paused'
+                            ? 'bg-amber-100 text-amber-700'
+                            : 'bg-slate-100 text-slate-600')
+                      }
+                    >
+                      {a.status === 'active'
+                        ? 'Active'
+                        : a.status === 'paused'
+                          ? 'Paused'
+                          : 'Draft'}
+                    </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => resetAutomationForm(a)}
+                        className="text-[11px] font-medium"
+                        style={{ color: PRIMARY }}
+                      >
+                        Edit
+                      </button>
+                      {a.status === 'active' ? (
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => void setAutomationStatus(a, 'paused')}
+                          className="text-[11px] font-medium text-amber-700 disabled:opacity-40"
+                        >
+                          Pause
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => void setAutomationStatus(a, 'active')}
+                          className="rounded-md px-2 py-1 text-[11px] font-semibold text-white disabled:opacity-40"
+                          style={{ background: PRIMARY }}
+                        >
+                          Activate
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => void deleteAutomation(a)}
+                        className="text-[11px] font-medium text-slate-400 hover:text-rose-600 disabled:opacity-40"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
           )}
         </section>
       )}
@@ -1440,10 +1723,18 @@ export function CustomerCampaignsRenderer(props: {
                 Saved audience lists
               </div>
               <div className="mt-1 text-xs text-slate-500">
-                Upload CSV audiences or save reusable filtered contact lists.
+                Upload a CSV, build a list from your CRM, or save a filtered
+                contact list. Opted-out contacts are removed automatically.
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={downloadSampleCsv}
+                className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+              >
+                <DownloadIcon /> Sample CSV
+              </button>
               <button
                 type="button"
                 onClick={startUploadList}
@@ -1474,52 +1765,51 @@ export function CustomerCampaignsRenderer(props: {
                 New saved list
               </div>
               <label className="block text-xs">
-                <span className="text-slate-500">Audience name</span>
+                <span className="text-slate-500">List name</span>
                 <input
                   value={audienceName}
                   onChange={(e) => setAudienceName(e.target.value)}
                   className="mt-1 w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900"
                 />
               </label>
-              <div className="flex flex-wrap items-end gap-2">
-                <label className="block text-xs">
-                  <span className="text-slate-500">Preferred channel</span>
-                  <select
+              <div className="text-xs">
+                <span className="text-slate-500">Preferred channel</span>
+                <div className="mt-1">
+                  <PillGroup
+                    ariaLabel="Preferred channel"
                     value={channel}
-                    onChange={(e) => setChannel(e.target.value)}
-                    className="mt-1 rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900"
-                  >
-                    {CHANNELS.map((c) => (
-                      <option key={c.value} value={c.value}>
-                        {c.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="block text-xs">
-                  <span className="text-slate-500">Last contacted</span>
-                  <select
-                    value={filterBeforeAfter}
-                    onChange={(e) =>
-                      setFilterBeforeAfter(
-                        e.target.value as '' | 'before' | 'after',
-                      )
-                    }
-                    className="mt-1 rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900"
-                  >
-                    <option value="">No date filter</option>
-                    <option value="before">Before...</option>
-                    <option value="after">After...</option>
-                  </select>
-                </label>
-                {filterBeforeAfter && (
-                  <input
-                    type="date"
-                    value={filterDate}
-                    onChange={(e) => setFilterDate(e.target.value)}
-                    className="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900"
+                    onChange={setChannel}
+                    options={CHANNELS.map((c) => ({
+                      value: c.value,
+                      label: c.label,
+                    }))}
                   />
-                )}
+                </div>
+              </div>
+              <div className="text-xs">
+                <span className="text-slate-500">Last contacted</span>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <PillGroup
+                    ariaLabel="Last contacted filter"
+                    value={filterBeforeAfter}
+                    onChange={(v) => setFilterBeforeAfter(v)}
+                    options={[
+                      { value: '' as const, label: 'No date filter' },
+                      { value: 'before' as const, label: 'Before…' },
+                      { value: 'after' as const, label: 'After…' },
+                    ]}
+                  />
+                  {filterBeforeAfter && (
+                    <input
+                      type="date"
+                      value={filterDate}
+                      onChange={(e) => setFilterDate(e.target.value)}
+                      className="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900"
+                    />
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={() => void runPreview()}
@@ -1537,6 +1827,14 @@ export function CustomerCampaignsRenderer(props: {
                 >
                   Save list
                 </button>
+                <button
+                  type="button"
+                  onClick={() => void buildCrmList()}
+                  disabled={busy}
+                  className="rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40"
+                >
+                  Build from CRM
+                </button>
               </div>
               {preview && (
                 <div className="text-xs text-slate-600">
@@ -1552,17 +1850,28 @@ export function CustomerCampaignsRenderer(props: {
 
           {audiences.length === 0 ? (
             <div className="mt-3 text-xs text-slate-500">
-              No saved lists yet. Upload a CSV or create a filtered list.
+              No saved lists yet. Upload a CSV, build from your CRM, or create a
+              filtered list.
             </div>
           ) : (
             <ul className="mt-2 divide-y divide-slate-100 text-xs">
               {audiences.map((a) => (
                 <li
                   key={a.id}
-                  className="flex flex-wrap justify-between gap-2 py-1.5"
+                  className="flex flex-wrap items-center justify-between gap-2 py-1.5"
                 >
                   <span className="font-medium text-slate-800">{a.name}</span>
-                  <span className="text-slate-400">{describeAudience(a)}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-slate-400">{describeAudience(a)}</span>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => void deleteList(a.id)}
+                      className="text-[11px] font-medium text-slate-400 hover:text-rose-600 disabled:opacity-40"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -1570,5 +1879,25 @@ export function CustomerCampaignsRenderer(props: {
         </section>
       )}
     </div>
+  )
+}
+
+function DownloadIcon() {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
   )
 }

@@ -55,7 +55,7 @@ const TABS: Array<{
   { id: 'tools', label: 'StoreFront', menuKey: 'tools' },
   { id: 'dashboard', label: 'Dashboard', menuKey: 'dashboard' },
   { id: 'comms', label: 'Teambox', menuKey: 'comms' },
-  { id: 'campaigns', label: 'Campaigns', menuKey: 'campaigns' },
+  { id: 'campaigns', label: 'Marketing', menuKey: 'campaigns' },
   { id: 'notifications', label: 'Notifications', menuKey: 'notifications' },
 ]
 

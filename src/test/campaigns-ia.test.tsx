@@ -38,6 +38,38 @@ const templates = [
   },
 ]
 
+const automations = [
+  {
+    id: 'auto-1',
+    name: 'Instant SMS for new leads',
+    trigger: 'new_lead' as const,
+    channel: 'sms',
+    agent_id: 'caroline',
+    wait_hours: 0,
+    status: 'draft' as const,
+    last_triggered_at: null,
+    created_at: 1,
+    updated_at: 1,
+  },
+  {
+    id: 'auto-2',
+    name: '24-hour follow-up for all leads',
+    trigger: 'lead_followup' as const,
+    channel: 'sms',
+    agent_id: 'caroline',
+    wait_hours: 24,
+    status: 'draft' as const,
+    last_triggered_at: null,
+    created_at: 2,
+    updated_at: 2,
+  },
+]
+
+const agents = [
+  { id: 'caroline', label: 'Sales', team: 'sales' },
+  { id: 'nancy-gaston', label: 'Service', team: 'service' },
+]
+
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status })
 }
@@ -51,29 +83,16 @@ function setupFetch() {
       if (u.includes('/api/customer/campaigns?')) {
         return json({ ok: true, campaigns, templates })
       }
-
       if (u.includes('/api/customer/audiences?')) {
         return json({ ok: true, audiences })
       }
-
-      if (u.includes('/api/customer/lead-flow') && method === 'PUT') {
-        return json({ ok: true })
+      if (u.includes('/api/customer/automations') && method === 'GET') {
+        return json({ ok: true, automations, agents })
       }
-
-      if (u.includes('/api/customer/lead-flow')) {
-        return json({
-          ok: true,
-          account_enabled: true,
-          flow: {
-            enabled: true,
-            steps: [
-              { channel: 'sms', wait_hours: 0 },
-              { channel: 'email', wait_hours: 24 },
-            ],
-          },
-        })
+      if (u.includes('/api/customer/automations')) {
+        // POST/PUT/DELETE
+        return json({ ok: true, automation: automations[0] })
       }
-
       if (u.includes('/api/customer/audiences') && method === 'POST') {
         const body =
           typeof init?.body === 'string'
@@ -100,7 +119,6 @@ function setupFetch() {
           },
         })
       }
-
       if (u.includes('/api/customer/campaigns/results')) {
         return json({
           ok: true,
@@ -114,7 +132,6 @@ function setupFetch() {
           },
         })
       }
-
       return json({ ok: true })
     },
   )
@@ -142,35 +159,79 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('CustomerCampaignsRenderer IA polish', () => {
-  it('renders top-level IA tabs and overview cards for campaigns, triggers, and lists', async () => {
+describe('Marketing IA', () => {
+  it('renders exactly Overview/Campaigns/Automations/Lists tabs, no Triggers', async () => {
+    setupFetch()
+    renderCampaignsPage()
+
+    for (const name of ['Overview', 'Campaigns', 'Automations', 'Lists']) {
+      expect(screen.getByRole('tab', { name })).toBeTruthy()
+    }
+    expect(screen.queryByRole('tab', { name: 'Triggers' })).toBeNull()
+  })
+
+  it('shows renamed overview cards reflecting real state, no global New campaign button', async () => {
+    setupFetch()
+    renderCampaignsPage()
+
+    expect(await screen.findByText('Active Campaigns')).toBeTruthy()
+    expect(screen.getByText('Active Automations')).toBeTruthy()
+    expect(screen.getByText('Saved audience lists')).toBeTruthy()
+    // Old labels gone.
+    expect(screen.queryByText('Campaigns ready')).toBeNull()
+    expect(screen.queryByText('Lead-flow trigger plan')).toBeNull()
+    // The only "New campaign" buttons live inside the overview/Campaigns tab,
+    // never as an outer/global header action. The header (h3 "Marketing") has
+    // no New campaign sibling button — count comes only from cards.
+    const newCampaignButtons = screen.getAllByRole('button', {
+      name: 'New campaign',
+    })
+    expect(newCampaignButtons.length).toBe(1) // overview card only
+  })
+
+  it('lists seeded automations and opens a real builder (draft, never sends)', async () => {
     const fetchMock = setupFetch()
     renderCampaignsPage()
 
-    for (const name of ['Overview', 'Campaigns', 'Triggers', 'Lists']) {
-      expect(screen.getByRole('tab', { name })).toBeTruthy()
-    }
+    fireEvent.click(screen.getByRole('tab', { name: 'Automations' }))
 
-    expect(await screen.findByText('Campaigns ready')).toBeTruthy()
-    expect(screen.getByText('Lead-flow trigger plan')).toBeTruthy()
-    expect(screen.getByText('Saved audience lists')).toBeTruthy()
-    expect(await screen.findByText('Enabled')).toBeTruthy()
+    expect(await screen.findByText('Instant SMS for new leads')).toBeTruthy()
+    expect(screen.getByText('24-hour follow-up for all leads')).toBeTruthy()
+
+    // Open the builder.
+    fireEvent.click(screen.getAllByRole('button', { name: 'New automation' })[0])
     expect(
-      screen.getByText(/Text message immediately then Email after 24h/),
+      screen.getByPlaceholderText('e.g. Instant SMS for new leads'),
     ).toBeTruthy()
-    expect(
-      screen.getAllByRole('button', { name: 'New campaign' }).length,
-    ).toBeGreaterThan(0)
-    expect(
-      screen.getByRole('button', { name: 'Manage campaigns' }),
-    ).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Manage triggers' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Upload list' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'New list' })).toBeTruthy()
+    expect(screen.getByRole('group', { name: 'Trigger' })).toBeTruthy()
+    expect(screen.getByRole('group', { name: 'Channel' })).toBeTruthy()
+
     expect(calledSendTick(fetchMock)).toBe(false)
   })
 
-  it('keeps campaign card actions under the Campaigns tab without sending', async () => {
+  it('activates an automation via PUT status without sending', async () => {
+    const fetchMock = setupFetch()
+    renderCampaignsPage()
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Automations' }))
+    await screen.findByText('Instant SMS for new leads')
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Activate' })[0])
+
+    await waitFor(() => {
+      expect(
+        fetchMock.mock.calls.some(
+          (call) =>
+            String(call[0]).includes('/api/customer/automations') &&
+            call[1]?.method === 'PUT' &&
+            String(call[1]?.body).includes('"status":"active"'),
+        ),
+      ).toBe(true)
+    })
+    expect(calledSendTick(fetchMock)).toBe(false)
+  })
+
+  it('keeps campaign card actions (incl. Delete) under the Campaigns tab', async () => {
     const fetchMock = setupFetch()
     renderCampaignsPage()
 
@@ -181,52 +242,20 @@ describe('CustomerCampaignsRenderer IA polish', () => {
     expect(screen.getByRole('button', { name: 'Edit' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Send now' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'View results' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Delete' })).toBeTruthy()
     expect(calledSendTick(fetchMock)).toBe(false)
   })
 
-  it('shows honest trigger plan controls and saves the one backend-supported plan', async () => {
-    const fetchMock = setupFetch()
-    renderCampaignsPage()
-
-    fireEvent.click(screen.getByRole('tab', { name: 'Triggers' }))
-
-    expect(
-      await screen.findByText('Current lead-flow trigger plan'),
-    ).toBeTruthy()
-    expect(screen.getByText(/separate draft trigger objects/i)).toBeTruthy()
-
-    fireEvent.click(screen.getByRole('button', { name: 'New plan' }))
-    expect(screen.getByText(/new unsaved lead-flow plan/i)).toBeTruthy()
-
-    fireEvent.click(screen.getByRole('button', { name: 'Save plan' }))
-
-    await waitFor(() => {
-      expect(
-        fetchMock.mock.calls.some(
-          (call) =>
-            String(call[0]).includes('/api/customer/lead-flow') &&
-            call[1]?.method === 'PUT',
-        ),
-      ).toBe(true)
-    })
-    expect(calledSendTick(fetchMock)).toBe(false)
-  })
-
-  it('lists saved audiences and opens the new-list builder from the Lists tab', async () => {
-    const fetchMock = setupFetch()
+  it('Lists tab offers sample CSV download and list delete', async () => {
+    setupFetch()
     renderCampaignsPage()
 
     fireEvent.click(screen.getByRole('tab', { name: 'Lists' }))
 
     expect(await screen.findByText('Recent service customers')).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Upload list' })).toBeTruthy()
-    fireEvent.click(screen.getByRole('button', { name: 'New list' }))
-
-    expect(screen.getByText('New saved list')).toBeTruthy()
-    expect(screen.getByDisplayValue('My customer list')).toBeTruthy()
-
-    fireEvent.click(screen.getByRole('button', { name: 'Save list' }))
-    expect(await screen.findByText('Saved list.')).toBeTruthy()
-    expect(calledSendTick(fetchMock)).toBe(false)
+    expect(
+      screen.getAllByRole('button', { name: /Sample CSV/ }).length,
+    ).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: 'Delete' })).toBeTruthy()
   })
 })
