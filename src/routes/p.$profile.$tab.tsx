@@ -223,7 +223,7 @@ function StorefrontTabRoute() {
   const NAV_ACCENT = '#2f3b4d'
   const activeTab = normalizeActiveTab(tab)
 
-  // nav order — Chat, Agents, Dashboard, Teambox, Campaigns, StoreFront, InfoStore, Notifications
+  // nav order — Dashboard, Chat, Teambox, Marketing, Agents, Storefront, Notifications, InfoStore
   const tabsList: Array<{
     id: string
     label: string

@@ -285,20 +285,26 @@ export function CustomerPerformanceRenderer(props: {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex rounded-lg border border-slate-200 bg-slate-50 p-0.5">
-            {WINDOWS.map((w) => (
-              <button
-                key={w.id}
-                type="button"
-                onClick={() => setWindowDays(w.id)}
-                className={
-                  'rounded-md px-2.5 py-1 text-xs font-medium transition-colors ' +
-                  (windowDays === w.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900')
-                }
-              >
-                {w.label}
-              </button>
-            ))}
+          <div className="flex gap-1 rounded-lg border border-slate-200 bg-white p-1">
+            {WINDOWS.map((w) => {
+              const active = windowDays === w.id
+              return (
+                <button
+                  key={w.id}
+                  type="button"
+                  onClick={() => setWindowDays(w.id)}
+                  className={
+                    'rounded-md px-2.5 py-1 text-xs font-semibold transition ' +
+                    (active
+                      ? 'text-white'
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900')
+                  }
+                  style={active ? { background: PRIMARY } : undefined}
+                >
+                  {w.label}
+                </button>
+              )
+            })}
           </div>
           <button
             type="button"
