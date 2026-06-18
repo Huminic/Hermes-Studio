@@ -141,6 +141,7 @@ import { Route as ApiKnowledgeGraphRouteImport } from './routes/api/knowledge/gr
 import { Route as ApiHermesProxySplatRouteImport } from './routes/api/hermes-proxy/$'
 import { Route as ApiHermesJobsJobIdRouteImport } from './routes/api/hermes-jobs.$jobId'
 import { Route as ApiEventsReplayRouteImport } from './routes/api/events/replay'
+import { Route as ApiCustomerSessionsRouteImport } from './routes/api/customer/sessions'
 import { Route as ApiCustomerReportsRouteImport } from './routes/api/customer/reports'
 import { Route as ApiCustomerPerformanceRouteImport } from './routes/api/customer/performance'
 import { Route as ApiCustomerNotificationsRouteImport } from './routes/api/customer/notifications'
@@ -154,6 +155,8 @@ import { Route as ApiCustomerDashboardAskRouteImport } from './routes/api/custom
 import { Route as ApiCustomerDashboardRouteImport } from './routes/api/customer/dashboard'
 import { Route as ApiCustomerChatRouteImport } from './routes/api/customer/chat'
 import { Route as ApiCustomerAgentsRouteImport } from './routes/api/customer/agents'
+import { Route as ApiCustomerAgentTasksRouteImport } from './routes/api/customer/agent-tasks'
+import { Route as ApiCustomerAgentConfigRouteImport } from './routes/api/customer/agent-config'
 import { Route as ApiCrewsCrewIdRouteImport } from './routes/api/crews/$crewId'
 import { Route as ApiBrainUploadsRouteImport } from './routes/api/brain/uploads'
 import { Route as ApiBrainReadinessRouteImport } from './routes/api/brain/readiness'
@@ -862,6 +865,11 @@ const ApiEventsReplayRoute = ApiEventsReplayRouteImport.update({
   path: '/replay',
   getParentRoute: () => ApiEventsRoute,
 } as any)
+const ApiCustomerSessionsRoute = ApiCustomerSessionsRouteImport.update({
+  id: '/api/customer/sessions',
+  path: '/api/customer/sessions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCustomerReportsRoute = ApiCustomerReportsRouteImport.update({
   id: '/api/customer/reports',
   path: '/api/customer/reports',
@@ -928,6 +936,16 @@ const ApiCustomerChatRoute = ApiCustomerChatRouteImport.update({
 const ApiCustomerAgentsRoute = ApiCustomerAgentsRouteImport.update({
   id: '/api/customer/agents',
   path: '/api/customer/agents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCustomerAgentTasksRoute = ApiCustomerAgentTasksRouteImport.update({
+  id: '/api/customer/agent-tasks',
+  path: '/api/customer/agent-tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCustomerAgentConfigRoute = ApiCustomerAgentConfigRouteImport.update({
+  id: '/api/customer/agent-config',
+  path: '/api/customer/agent-config',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiCrewsCrewIdRoute = ApiCrewsCrewIdRouteImport.update({
@@ -1273,6 +1291,8 @@ export interface FileRoutesByFullPath {
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/brain/uploads': typeof ApiBrainUploadsRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
+  '/api/customer/agent-config': typeof ApiCustomerAgentConfigRoute
+  '/api/customer/agent-tasks': typeof ApiCustomerAgentTasksRoute
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/dashboard': typeof ApiCustomerDashboardRoute
@@ -1286,6 +1306,7 @@ export interface FileRoutesByFullPath {
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
+  '/api/customer/sessions': typeof ApiCustomerSessionsRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
   '/api/hermes-proxy/$': typeof ApiHermesProxySplatRoute
@@ -1465,6 +1486,8 @@ export interface FileRoutesByTo {
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/brain/uploads': typeof ApiBrainUploadsRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
+  '/api/customer/agent-config': typeof ApiCustomerAgentConfigRoute
+  '/api/customer/agent-tasks': typeof ApiCustomerAgentTasksRoute
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/dashboard': typeof ApiCustomerDashboardRoute
@@ -1478,6 +1501,7 @@ export interface FileRoutesByTo {
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
+  '/api/customer/sessions': typeof ApiCustomerSessionsRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
   '/api/hermes-proxy/$': typeof ApiHermesProxySplatRoute
@@ -1659,6 +1683,8 @@ export interface FileRoutesById {
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/brain/uploads': typeof ApiBrainUploadsRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
+  '/api/customer/agent-config': typeof ApiCustomerAgentConfigRoute
+  '/api/customer/agent-tasks': typeof ApiCustomerAgentTasksRoute
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/dashboard': typeof ApiCustomerDashboardRoute
@@ -1672,6 +1698,7 @@ export interface FileRoutesById {
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
+  '/api/customer/sessions': typeof ApiCustomerSessionsRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
   '/api/hermes-proxy/$': typeof ApiHermesProxySplatRoute
@@ -1854,6 +1881,8 @@ export interface FileRouteTypes {
     | '/api/brain/readiness'
     | '/api/brain/uploads'
     | '/api/crews/$crewId'
+    | '/api/customer/agent-config'
+    | '/api/customer/agent-tasks'
     | '/api/customer/agents'
     | '/api/customer/chat'
     | '/api/customer/dashboard'
@@ -1867,6 +1896,7 @@ export interface FileRouteTypes {
     | '/api/customer/notifications'
     | '/api/customer/performance'
     | '/api/customer/reports'
+    | '/api/customer/sessions'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
     | '/api/hermes-proxy/$'
@@ -2046,6 +2076,8 @@ export interface FileRouteTypes {
     | '/api/brain/readiness'
     | '/api/brain/uploads'
     | '/api/crews/$crewId'
+    | '/api/customer/agent-config'
+    | '/api/customer/agent-tasks'
     | '/api/customer/agents'
     | '/api/customer/chat'
     | '/api/customer/dashboard'
@@ -2059,6 +2091,7 @@ export interface FileRouteTypes {
     | '/api/customer/notifications'
     | '/api/customer/performance'
     | '/api/customer/reports'
+    | '/api/customer/sessions'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
     | '/api/hermes-proxy/$'
@@ -2239,6 +2272,8 @@ export interface FileRouteTypes {
     | '/api/brain/readiness'
     | '/api/brain/uploads'
     | '/api/crews/$crewId'
+    | '/api/customer/agent-config'
+    | '/api/customer/agent-tasks'
     | '/api/customer/agents'
     | '/api/customer/chat'
     | '/api/customer/dashboard'
@@ -2252,6 +2287,7 @@ export interface FileRouteTypes {
     | '/api/customer/notifications'
     | '/api/customer/performance'
     | '/api/customer/reports'
+    | '/api/customer/sessions'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
     | '/api/hermes-proxy/$'
@@ -2426,6 +2462,8 @@ export interface RootRouteChildren {
   ApiBrainReadinessRoute: typeof ApiBrainReadinessRoute
   ApiBrainUploadsRoute: typeof ApiBrainUploadsRoute
   ApiCrewsCrewIdRoute: typeof ApiCrewsCrewIdRouteWithChildren
+  ApiCustomerAgentConfigRoute: typeof ApiCustomerAgentConfigRoute
+  ApiCustomerAgentTasksRoute: typeof ApiCustomerAgentTasksRoute
   ApiCustomerAgentsRoute: typeof ApiCustomerAgentsRoute
   ApiCustomerChatRoute: typeof ApiCustomerChatRoute
   ApiCustomerDashboardRoute: typeof ApiCustomerDashboardRoute
@@ -2439,6 +2477,7 @@ export interface RootRouteChildren {
   ApiCustomerNotificationsRoute: typeof ApiCustomerNotificationsRoute
   ApiCustomerPerformanceRoute: typeof ApiCustomerPerformanceRoute
   ApiCustomerReportsRoute: typeof ApiCustomerReportsRoute
+  ApiCustomerSessionsRoute: typeof ApiCustomerSessionsRoute
   ApiHermesProxySplatRoute: typeof ApiHermesProxySplatRoute
   ApiKnowledgeGraphRoute: typeof ApiKnowledgeGraphRoute
   ApiKnowledgeListRoute: typeof ApiKnowledgeListRoute
@@ -3426,6 +3465,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiEventsReplayRouteImport
       parentRoute: typeof ApiEventsRoute
     }
+    '/api/customer/sessions': {
+      id: '/api/customer/sessions'
+      path: '/api/customer/sessions'
+      fullPath: '/api/customer/sessions'
+      preLoaderRoute: typeof ApiCustomerSessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/customer/reports': {
       id: '/api/customer/reports'
       path: '/api/customer/reports'
@@ -3515,6 +3561,20 @@ declare module '@tanstack/react-router' {
       path: '/api/customer/agents'
       fullPath: '/api/customer/agents'
       preLoaderRoute: typeof ApiCustomerAgentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/customer/agent-tasks': {
+      id: '/api/customer/agent-tasks'
+      path: '/api/customer/agent-tasks'
+      fullPath: '/api/customer/agent-tasks'
+      preLoaderRoute: typeof ApiCustomerAgentTasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/customer/agent-config': {
+      id: '/api/customer/agent-config'
+      path: '/api/customer/agent-config'
+      fullPath: '/api/customer/agent-config'
+      preLoaderRoute: typeof ApiCustomerAgentConfigRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/crews/$crewId': {
@@ -4179,6 +4239,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiBrainReadinessRoute: ApiBrainReadinessRoute,
   ApiBrainUploadsRoute: ApiBrainUploadsRoute,
   ApiCrewsCrewIdRoute: ApiCrewsCrewIdRouteWithChildren,
+  ApiCustomerAgentConfigRoute: ApiCustomerAgentConfigRoute,
+  ApiCustomerAgentTasksRoute: ApiCustomerAgentTasksRoute,
   ApiCustomerAgentsRoute: ApiCustomerAgentsRoute,
   ApiCustomerChatRoute: ApiCustomerChatRoute,
   ApiCustomerDashboardRoute: ApiCustomerDashboardRoute,
@@ -4192,6 +4254,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCustomerNotificationsRoute: ApiCustomerNotificationsRoute,
   ApiCustomerPerformanceRoute: ApiCustomerPerformanceRoute,
   ApiCustomerReportsRoute: ApiCustomerReportsRoute,
+  ApiCustomerSessionsRoute: ApiCustomerSessionsRoute,
   ApiHermesProxySplatRoute: ApiHermesProxySplatRoute,
   ApiKnowledgeGraphRoute: ApiKnowledgeGraphRoute,
   ApiKnowledgeListRoute: ApiKnowledgeListRoute,

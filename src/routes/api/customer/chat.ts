@@ -75,6 +75,12 @@ type ChatRequest = {
   agent_id?: string
   session_id?: string
   message?: string
+  /**
+   * Workspace Chat page: when true and no session_id is supplied, start a fresh
+   * thread instead of reusing the most-recent open chat thread. Guarantees
+   * "new chat" / "switch agent" begins a new session bound to this agent.
+   */
+  new_session?: boolean
 }
 
 /** Cap each recalled page so the grounding context can't blow the prompt. */
@@ -173,6 +179,9 @@ export const Route = createFileRoute('/api/customer/chat')({
           contact_handle:
             session?.username ?? `customer-admin-${profile}`,
           assigned_agent_id: agentId,
+          // Fresh thread when the Workspace asks for a new session and no
+          // explicit thread id was supplied (switch-agent / new-chat).
+          force_new: body.new_session === true && !body.session_id,
         })
 
         appendMessage({

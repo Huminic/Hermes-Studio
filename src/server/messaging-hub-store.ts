@@ -331,6 +331,7 @@ export function getOrCreateThread(input: {
   subject?: string
   contact_handle: string
   assigned_agent_id?: string | null
+  force_new?: boolean
 }): Thread {
   return getOrCreateThreadEx(input).thread
 }
@@ -350,6 +351,14 @@ export function getOrCreateThreadEx(input: {
   subject?: string
   contact_handle: string
   assigned_agent_id?: string | null
+  /**
+   * Force a brand-new thread instead of reusing the most-recent open thread for
+   * this contact_handle+channel+domain. The Workspace Chat page uses this so
+   * "new chat" / "switch agent" always starts a fresh session (and a session
+   * stays bound to the agent it was started with), rather than collapsing every
+   * conversation onto one open thread. An explicit existing_thread_id still wins.
+   */
+  force_new?: boolean
 }): { thread: Thread; created: boolean } {
   const now = Date.now()
   const db = getDb(input.profile)
@@ -360,13 +369,16 @@ export function getOrCreateThreadEx(input: {
   }
 
   // Try to reuse the most-recent open thread for this contact_handle+channel
-  // (so multi-turn chats stay on one thread by default).
-  const reuse = findOpenThreadFor(input.profile, {
-    contact_handle: input.contact_handle,
-    channel: input.channel,
-    domain: input.domain,
-  })
-  if (reuse) return { thread: reuse, created: false }
+  // (so multi-turn chats stay on one thread by default). Skipped when the
+  // caller demands a fresh thread.
+  if (!input.force_new) {
+    const reuse = findOpenThreadFor(input.profile, {
+      contact_handle: input.contact_handle,
+      channel: input.channel,
+      domain: input.domain,
+    })
+    if (reuse) return { thread: reuse, created: false }
+  }
 
   const thread: Thread = {
     id: randomUUID(),

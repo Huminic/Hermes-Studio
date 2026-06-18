@@ -251,6 +251,36 @@ export function listUploads(
   }
 }
 
+/**
+ * Remove an uploaded document: deletes the stored file and the Brain row.
+ * Used by the Agents Configuration modal "Uploads" tab remove action.
+ */
+export function deleteUpload(
+  profile: string,
+  id: string,
+  options: { profileRoot?: string } = {},
+): { ok: boolean; reason?: string } {
+  const handle = openBrain(profile, { profileRoot: options.profileRoot })
+  try {
+    const row = handle.get<{ storage_path: string }>(
+      `SELECT storage_path FROM uploads WHERE id = ?`,
+      id,
+    )
+    if (!row) return { ok: false, reason: 'upload not found' }
+    try {
+      if (row.storage_path && fs.existsSync(row.storage_path)) {
+        fs.rmSync(row.storage_path, { force: true })
+      }
+    } catch {
+      // best-effort file removal; still drop the row below
+    }
+    handle.run(`DELETE FROM uploads WHERE id = ?`, id)
+    return { ok: true }
+  } finally {
+    handle.close()
+  }
+}
+
 export function readUpload(
   profile: string,
   id: string,

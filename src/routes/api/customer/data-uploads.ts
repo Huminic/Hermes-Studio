@@ -12,7 +12,11 @@ import {
   isAuthorizedForProfile,
   resolveSession,
 } from '../../../server/customer-auth'
-import { handleUpload, listUploads } from '../../../server/upload-surface'
+import {
+  deleteUpload,
+  handleUpload,
+  listUploads,
+} from '../../../server/upload-surface'
 import { readStudioConfig } from '../../../server/studio-config'
 import { ingestReport, resolveDealerName } from '../../../server/report-ingest'
 
@@ -119,6 +123,31 @@ export const Route = createFileRoute('/api/customer/data-uploads')({
           report,
           uploads: listUploads(profile, { limit: 25 }),
         })
+      },
+      DELETE: async ({ request }) => {
+        const csrfCheck = requireJsonContentType(request)
+        if (csrfCheck) return csrfCheck
+        const body = (await request.json().catch(() => ({}))) as Record<
+          string,
+          unknown
+        >
+        const profile = typeof body.profile === 'string' ? body.profile : ''
+        const id = typeof body.id === 'string' ? body.id : ''
+        if (!profile || !id) {
+          return json(
+            { ok: false, error: 'profile and id are required' },
+            { status: 400 },
+          )
+        }
+        const session = resolveSession(request)
+        if (!isAuthorizedForProfile(session, profile)) {
+          return json({ ok: false, error: 'Forbidden' }, { status: 403 })
+        }
+        const result = deleteUpload(profile, id)
+        if (!result.ok) {
+          return json({ ok: false, error: result.reason }, { status: 404 })
+        }
+        return json({ ok: true, uploads: listUploads(profile, { limit: 25 }) })
       },
     },
   },

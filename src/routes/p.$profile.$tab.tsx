@@ -8,6 +8,7 @@ import {
   InboxIcon,
   Logout03Icon,
   Megaphone01Icon,
+  Message01Icon,
   Notification03Icon,
   Robot01Icon,
 } from '@hugeicons/core-free-icons'
@@ -22,6 +23,7 @@ export const Route = createFileRoute('/p/$profile/$tab')({
 
 const TAB_TO_RENDERER: Record<string, string> = {
   chat: 'customer-console.chat',
+  agents: 'customer-console.agents',
   infostore: 'customer-console.infostore',
   knowledge: 'customer-console.infostore',
   tools: 'customer-console.tools',
@@ -221,13 +223,14 @@ function StorefrontTabRoute() {
   const NAV_ACCENT = '#2f3b4d'
   const activeTab = normalizeActiveTab(tab)
 
-  // WF-014: nav order — Agents, Dashboard, Teambox, Campaigns, StoreFront, InfoStore, Notifications
+  // nav order — Chat, Agents, Dashboard, Teambox, Campaigns, StoreFront, InfoStore, Notifications
   const tabsList: Array<{
     id: string
     label: string
     icon: IconSvgElement
   }> = [
-    { id: 'chat', label: 'Agents', icon: Robot01Icon },
+    { id: 'chat', label: 'Chat', icon: Message01Icon },
+    { id: 'agents', label: 'Agents', icon: Robot01Icon },
     { id: 'dashboard', label: 'Dashboard', icon: Chart01Icon },
     { id: 'comms', label: 'Teambox', icon: InboxIcon },
     { id: 'campaigns', label: 'Campaigns', icon: Megaphone01Icon },

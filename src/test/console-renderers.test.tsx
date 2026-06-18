@@ -8,11 +8,13 @@ import {
 } from '@/lib/console-renderers'
 import { defaultStudioConfig } from '@/lib/studio-config'
 
-// 7-page IA. 12 renderer keys total: 8 page renderers (incl. InfoStore and notifications) +
+// 7-page IA. 13 renderer keys total: 9 page renderers (Chat, Agents, InfoStore,
+// tools, data, performance, comms, campaigns, notifications) +
 // tools-widget sub-page + widget-public (public unauthenticated /w/$slug) +
-// assistant-pane (right-pane slot) + the legacy knowledge/data route shims.
+// assistant-pane (right-pane slot) + the legacy knowledge route shim.
 const EXPECTED_KEYS = [
   'customer-console.chat',
+  'customer-console.agents',
   'customer-console.infostore',
   'customer-console.knowledge',
   'customer-console.tools',

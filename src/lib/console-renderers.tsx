@@ -19,6 +19,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { StudioConfig } from './studio-config'
 import { CustomerChatRenderer } from '../components/customer-console/chat-renderer'
+import { CustomerAgentsRenderer } from '../components/customer-console/agents-renderer'
 import { CustomerKnowledgeRenderer } from '../components/customer-console/knowledge-renderer'
 import { CustomerToolsWidgetRenderer } from '../components/customer-console/tools-widget-renderer'
 import { CustomerCommsRenderer } from '../components/customer-console/comms-renderer'
@@ -59,6 +60,10 @@ function StubFrame({
 
 function ChatRenderer(props: ConsoleRendererProps) {
   return <CustomerChatRenderer profile={props.profile} config={props.config} />
+}
+
+function AgentsRenderer(props: ConsoleRendererProps) {
+  return <CustomerAgentsRenderer profile={props.profile} config={props.config} />
 }
 
 function KnowledgeRenderer(props: ConsoleRendererProps) {
@@ -487,6 +492,7 @@ function AssistantPaneRenderer(props: ConsoleRendererProps) {
 
 export const consoleRenderers: Record<string, ConsoleRenderer> = {
   'customer-console.chat': ChatRenderer,
+  'customer-console.agents': AgentsRenderer,
   'customer-console.infostore': InfoStoreRenderer,
   'customer-console.knowledge': KnowledgeRenderer,
   'customer-console.tools': ToolsRenderer,

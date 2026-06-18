@@ -49,7 +49,8 @@ const TABS: Array<{
   label: string
   menuKey: keyof StudioConfig['menu']
 }> = [
-  { id: 'chat', label: 'Agents', menuKey: 'chat' },
+  { id: 'chat', label: 'Chat', menuKey: 'chat' },
+  { id: 'agents', label: 'Agents', menuKey: 'agents' },
   { id: 'infostore', label: 'InfoStore', menuKey: 'infostore' },
   { id: 'tools', label: 'StoreFront', menuKey: 'tools' },
   { id: 'dashboard', label: 'Dashboard', menuKey: 'dashboard' },
@@ -136,7 +137,9 @@ function StorefrontLandingRoute() {
 function tabBlurb(id: string): string {
   switch (id) {
     case 'chat':
-      return 'Talk to your agents'
+      return 'Chat with your agents'
+    case 'agents':
+      return 'Manage your agents and their tasks'
     case 'infostore':
       return 'Knowledge, data, and guardian hunches in one place'
     case 'tools':

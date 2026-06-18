@@ -175,4 +175,105 @@ describe('/api/customer/chat', () => {
     const res = await handler({ request } as never)
     expect(res.status).toBe(404)
   })
+
+  async function chat(body: Record<string, unknown>) {
+    const { Route } = await import('@/routes/api/customer/chat')
+    const handler = Route.options.server.handlers.POST
+    const res = await handler({
+      request: new Request('http://localhost/api/customer/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }),
+    } as never)
+    return (await res.json()) as { ok: boolean; session_id: string }
+  }
+
+  it('new_session starts a fresh thread; an explicit session_id continues it', async () => {
+    const a = await chat({
+      profile: 'fictitious',
+      agent_id: 'fictitious',
+      new_session: true,
+      message: 'first chat',
+    })
+    const b = await chat({
+      profile: 'fictitious',
+      agent_id: 'fictitious',
+      new_session: true,
+      message: 'second chat',
+    })
+    // Switching/new chat never resumes the previous thread.
+    expect(a.session_id).toBeTruthy()
+    expect(b.session_id).toBeTruthy()
+    expect(b.session_id).not.toBe(a.session_id)
+
+    // Continuing with an explicit id stays on the same thread.
+    const c = await chat({
+      profile: 'fictitious',
+      agent_id: 'fictitious',
+      session_id: a.session_id,
+      message: 'more on first',
+    })
+    expect(c.session_id).toBe(a.session_id)
+    const { getThread } = await import('@/server/messaging-hub-store')
+    expect(getThread('fictitious', a.session_id)?.messages).toHaveLength(4)
+  })
+
+  it('empty interactions create no session (thread only on first send)', async () => {
+    const { listChatSessions } = await import(
+      '@/server/customer-chat-sessions'
+    )
+    // No sends yet → no sessions.
+    expect(listChatSessions('fictitious')).toHaveLength(0)
+    await chat({
+      profile: 'fictitious',
+      agent_id: 'fictitious',
+      new_session: true,
+      message: 'now there is one',
+    })
+    expect(listChatSessions('fictitious')).toHaveLength(1)
+  })
+
+  it('a fresh session is bound to the agent it was started with', async () => {
+    // Add a second profile agent.
+    fs.mkdirSync(
+      path.join(tmpHome, '.hermes', 'profiles', 'fictitious', 'governance', 'agents'),
+      { recursive: true },
+    )
+    fs.writeFileSync(
+      path.join(
+        tmpHome,
+        '.hermes',
+        'profiles',
+        'fictitious',
+        'governance',
+        'agents',
+        'nova.md',
+      ),
+      `# Nova\n\nYou are Nova, a second test agent.\n`,
+    )
+    const first = await chat({
+      profile: 'fictitious',
+      agent_id: 'fictitious',
+      new_session: true,
+      message: 'to fictitious',
+    })
+    const nova = await chat({
+      profile: 'fictitious',
+      agent_id: 'nova',
+      new_session: true,
+      message: 'to nova',
+    })
+    expect(nova.session_id).not.toBe(first.session_id)
+    const { listChatSessions } = await import(
+      '@/server/customer-chat-sessions'
+    )
+    const novaSessions = listChatSessions('fictitious', { agentId: 'nova' })
+    expect(novaSessions).toHaveLength(1)
+    expect(novaSessions[0].id).toBe(nova.session_id)
+    const ficSessions = listChatSessions('fictitious', {
+      agentId: 'fictitious',
+    })
+    expect(ficSessions.map((s) => s.id)).not.toContain(nova.session_id)
+  })
 })

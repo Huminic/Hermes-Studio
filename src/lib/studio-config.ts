@@ -25,6 +25,7 @@ const BrandingSchema = z.object({
 const MenuSchema = z
   .object({
     chat: z.boolean().optional().default(true),
+    agents: z.boolean().optional().default(true),
     infostore: z.boolean().optional().default(true),
     /** Legacy flags retained so older studio.yaml files continue parsing. */
     knowledge: z.boolean().optional().default(true),
@@ -624,6 +625,7 @@ export function defaultStudioConfig(profile: string): StudioConfig {
     branding: { persona_name: profile },
     menu: {
       chat: true,
+      agents: true,
       infostore: true,
       knowledge: true,
       tools: true,
