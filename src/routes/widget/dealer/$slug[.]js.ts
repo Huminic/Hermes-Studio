@@ -87,7 +87,11 @@ export const Route = createFileRoute('/widget/dealer/$slug.js')({
           headers: {
             'Content-Type': 'application/javascript; charset=utf-8',
             'Access-Control-Allow-Origin': '*',
+            // Public embed: explicitly cross-origin so the script is never
+            // blocked when loaded from a dealer (Dealer.com/DDC) origin.
+            'Cross-Origin-Resource-Policy': 'cross-origin',
             'Cache-Control': 'public, max-age=120',
+            Vary: 'Accept-Encoding',
           },
         })
       },
@@ -146,7 +150,7 @@ function buildScript(cfg: EmbedConfig): string {
   root.style.cssText = 'all:initial;font-family:system-ui,-apple-system,Segoe UI,sans-serif;';
   document.body.appendChild(root);
 
-  var panel = null, open = false, view = 'menu', overlay = null;
+  var panel = null, open = false, view = 'menu';
 
   function launcher(){
     var b = document.createElement('button');
@@ -246,28 +250,25 @@ function buildScript(cfg: EmbedConfig): string {
   }
 
   function startVideo(){
-    overlay = document.createElement('div');
-    overlay.style.cssText='position:fixed;inset:0;z-index:2147483647;background:#000;display:flex;align-items:center;justify-content:center';
-    overlay.innerHTML='<button data-vclose aria-label="End video" style="position:absolute;top:16px;right:16px;z-index:10;border:0;border-radius:9999px;background:rgba(255,255,255,.15);color:#fff;padding:8px;cursor:pointer">'+svg(ICON.x,18,'#fff')+'</button><p style="color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:40px">Connecting to video chat…</p>';
-    document.body.appendChild(overlay);
-    overlay.querySelector('[data-vclose]').onclick=endVideo;
+    // Tavus runs in its OWN browser window — never inside an iframe on the
+    // dealer page (cross-origin camera/mic + framing rules make embedding
+    // unreliable). Open the tab synchronously on the user's click so it is not
+    // popup-blocked, then navigate it to the room once the session URL is minted.
+    var win = window.open('', '_blank');
+    if(win){ try{ win.document.write('<!doctype html><meta charset="utf-8"><title>Connecting…</title><body style="margin:0;height:100vh;display:flex;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;color:#374151">Connecting to video chat…</body>'); win.document.close(); }catch(e){} }
     fetch(O+'/api/public/video-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({profile:CFG.profile})})
       .then(function(r){return r.json();})
       .then(function(d){
         if(d && d.ok && d.conversationUrl){
-          var f=document.createElement('iframe');
-          f.title='Video chat'; f.src=d.conversationUrl; f.allow='microphone; camera; autoplay; display-capture';
-          f.style.cssText='width:100%;height:100%;border:0';
-          overlay.innerHTML=''; overlay.appendChild(f);
-          var c=document.createElement('button'); c.innerHTML=svg(ICON.x,18,'#fff');
-          c.style.cssText='position:absolute;top:16px;right:16px;z-index:10;border:0;border-radius:9999px;background:rgba(255,255,255,.15);color:#fff;padding:8px;cursor:pointer';
-          c.onclick=endVideo; overlay.appendChild(c);
-        } else { videoError(); }
+          if(win){ win.location.href = d.conversationUrl; }
+          else { window.open(d.conversationUrl, '_blank', 'noopener'); }
+        } else { videoError(win); }
       })
-      .catch(videoError);
+      .catch(function(){ videoError(win); });
   }
-  function videoError(){ if(overlay) overlay.innerHTML='<button data-vclose aria-label="End video" style="position:absolute;top:16px;right:16px;border:0;border-radius:9999px;background:rgba(255,255,255,.15);color:#fff;padding:8px;cursor:pointer">'+svg(ICON.x,18,'#fff')+'</button><p style="color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:40px">Video chat is temporarily unavailable. Please try Web Chat instead.</p>'; if(overlay){var b=overlay.querySelector('[data-vclose]'); if(b)b.onclick=endVideo;} }
-  function endVideo(){ if(overlay){overlay.remove();overlay=null;} }
+  function videoError(win){
+    if(win){ try{ win.document.body.innerHTML='<div style="text-align:center;padding:40px;font-family:system-ui,-apple-system,sans-serif;color:#374151">Video chat is temporarily unavailable. Please try Web Chat instead.</div>'; return; }catch(e){ try{ win.close(); }catch(_){} } }
+  }
 })();
 `
 }

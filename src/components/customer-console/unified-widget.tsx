@@ -25,7 +25,6 @@ type Props = {
 }
 
 type PanelView = 'menu' | 'chat' | 'form' | 'callback'
-type VideoState = 'idle' | 'loading' | 'live' | 'error'
 
 // Inline lucide paths captured from the live widget so the icons match exactly
 // without taking an icon-library dependency.
@@ -97,8 +96,6 @@ type Option = {
 export function UnifiedWidget({ profile, personaName, unified }: Props) {
   const [open, setOpen] = useState(false)
   const [view, setView] = useState<PanelView>('menu')
-  const [videoState, setVideoState] = useState<VideoState>('idle')
-  const [videoUrl, setVideoUrl] = useState<string | null>(null)
 
   if (unified.enabled === false) return null
 
@@ -116,27 +113,50 @@ export function UnifiedWidget({ profile, personaName, unified }: Props) {
   ]
   const options = allOptions.filter((o) => channels[o.key] !== false)
 
-  async function startVideo() {
-    setVideoState('loading')
-    setVideoUrl(null)
-    try {
-      const res = await fetch('/api/public/video-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profile }),
+  function startVideo() {
+    // Tavus opens in its OWN window/tab — never an iframe (cross-origin
+    // camera/mic + framing rules make embedding unreliable). Open synchronously
+    // on the click so it is not popup-blocked, then navigate it once the room
+    // URL is minted.
+    const win = window.open('', '_blank')
+    if (win) {
+      try {
+        win.document.write(
+          '<!doctype html><meta charset="utf-8"><title>Connecting…</title><body style="margin:0;height:100vh;display:flex;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;color:#374151">Connecting to video chat…</body>',
+        )
+        win.document.close()
+      } catch {
+        /* ignore */
+      }
+    }
+    fetch('/api/public/video-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ profile }),
+    })
+      .then((r) => r.json())
+      .then((data: { ok?: boolean; conversationUrl?: string }) => {
+        if (data?.ok && data.conversationUrl) {
+          if (win) win.location.href = data.conversationUrl
+          else window.open(data.conversationUrl, '_blank', 'noopener')
+        } else {
+          videoFail(win)
+        }
       })
-      const data = (await res.json().catch(() => ({}))) as {
-        ok?: boolean
-        conversationUrl?: string
-      }
-      if (res.ok && data.ok && data.conversationUrl) {
-        setVideoUrl(data.conversationUrl)
-        setVideoState('live')
-      } else {
-        setVideoState('error')
-      }
+      .catch(() => videoFail(win))
+  }
+
+  function videoFail(win: Window | null) {
+    if (!win) return
+    try {
+      win.document.body.innerHTML =
+        '<div style="text-align:center;padding:40px;font-family:system-ui,-apple-system,sans-serif;color:#374151">Video chat is temporarily unavailable. Please try Web Chat instead.</div>'
     } catch {
-      setVideoState('error')
+      try {
+        win.close()
+      } catch {
+        /* ignore */
+      }
     }
   }
 
@@ -151,37 +171,8 @@ export function UnifiedWidget({ profile, personaName, unified }: Props) {
 
   return (
     <>
-      {/* Fullscreen Two-Way Video overlay (mirrors the Nexxus dealer launcher). */}
-      {videoState !== 'idle' && (
-        <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black" data-testid="widget-video-overlay">
-          <button
-            type="button"
-            onClick={() => {
-              setVideoState('idle')
-              setVideoUrl(null)
-            }}
-            className="absolute right-4 top-4 z-10 rounded-full bg-white/15 p-2 text-white hover:bg-white/25"
-            data-testid="widget-video-close"
-            aria-label="End video"
-          >
-            <IconX />
-          </button>
-          {videoState === 'loading' && (
-            <p className="px-10 text-center font-sans text-white">Connecting to video chat…</p>
-          )}
-          {videoState === 'error' && (
-            <p className="px-10 text-center font-sans text-white">Video chat is temporarily unavailable. Please try Web Chat instead.</p>
-          )}
-          {videoState === 'live' && videoUrl && (
-            <iframe
-              title="Video chat"
-              src={videoUrl}
-              className="h-full w-full border-0"
-              allow="microphone; camera; autoplay; display-capture"
-            />
-          )}
-        </div>
-      )}
+      {/* Two-Way Video opens Tavus in its own browser window (see startVideo) —
+          no in-page iframe overlay. */}
 
       {/* Dropdown panel */}
       {open && (

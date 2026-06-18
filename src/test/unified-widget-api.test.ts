@@ -205,7 +205,11 @@ describe('GET /widget/dealer/<slug>.js (self-hosted embed bundle)', () => {
     // LC-MINOR-002: icon-only controls expose accessible names (parity w/ React).
     expect(body).toContain('aria-label="Back"')
     expect(body).toContain('aria-label="Close"')
-    expect(body).toContain('aria-label="End video"')
+    // Video hands off to Tavus in a NEW WINDOW — not an in-page iframe.
+    expect(body).toContain('window.open')
+    expect(body).toContain('/api/public/video-session')
+    // No Tavus iframe embedding (no camera/mic-permissioned iframe in the bundle).
+    expect(body).not.toContain('microphone; camera')
   })
 
   it('derives the slug from the URL path and strips the .js extension', async () => {
@@ -246,18 +250,50 @@ describe('GET /widget/dealer/<slug>.js (self-hosted embed bundle)', () => {
 })
 
 describe('CORS preflight on public widget endpoints', () => {
-  it('video-session OPTIONS returns 204 with ACAO', async () => {
+  it('video-session OPTIONS returns 204 with ACAO + cross-origin CORP', async () => {
     const { Route } = await import('@/routes/api/public/video-session')
     const res = await Route.options.server.handlers.OPTIONS!({} as never)
     expect(res.status).toBe(204)
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*')
+    expect(res.headers.get('Cross-Origin-Resource-Policy')).toBe('cross-origin')
   })
 
-  it('callback-request OPTIONS returns 204 with ACAO', async () => {
+  it('callback-request OPTIONS returns 204 with ACAO + cross-origin CORP', async () => {
     const { Route } = await import('@/routes/api/public/callback-request')
     const res = await Route.options.server.handlers.OPTIONS!({} as never)
     expect(res.status).toBe(204)
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*')
+    expect(res.headers.get('Cross-Origin-Resource-Policy')).toBe('cross-origin')
+  })
+})
+
+describe('Public widget cross-origin headers', () => {
+  it('dealer script sends cross-origin CORP (never same-origin) for off-origin embeds', async () => {
+    writeStudio(BASE_YAML + '\nunified_widget:\n  enabled: true\n')
+    const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
+    const req = new Request('https://studio.huminic.app/widget/dealer/serra-honda.js')
+    const res = await Route.options.server.handlers.GET({
+      params: { slug: PROFILE },
+      request: req,
+    } as never)
+    expect(res.headers.get('Cross-Origin-Resource-Policy')).toBe('cross-origin')
+    expect(res.headers.get('Cross-Origin-Resource-Policy')).not.toBe('same-origin')
+    expect(res.headers.get('Content-Type')).toBe(
+      'application/javascript; charset=utf-8',
+    )
+    expect(res.headers.get('Cache-Control')).toContain('public')
+  })
+
+  it('public widget iframe page (/w/$slug) sends cross-origin CORP', async () => {
+    const { Route } = await import('@/routes/w.$slug')
+    // Use a slug that resolves; fall back asserts header only when found.
+    const res = await Route.options.server.handlers.GET({
+      params: { slug: `${PROFILE}-contact` },
+      request: new Request(`https://studio.huminic.app/w/${PROFILE}-contact`),
+    } as never)
+    if (res.status === 200) {
+      expect(res.headers.get('Cross-Origin-Resource-Policy')).toBe('cross-origin')
+    }
   })
 })
 

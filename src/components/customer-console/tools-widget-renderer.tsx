@@ -445,7 +445,9 @@ function UnifiedWidgetPanel(props: {
               title="Preview of Unified Widget"
               srcDoc={buildUnifiedPreviewHtml(origin, props.profile)}
               className="h-[480px] w-full rounded-md border border-slate-200 bg-white"
-              sandbox="allow-scripts allow-forms"
+              // allow-popups(+escape) lets the Two-Way Video option open the
+              // Tavus room in a new tab — matching real public widget behavior.
+              sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
             />
           </div>
         )}

@@ -27,6 +27,10 @@ export const Route = createFileRoute('/w/$slug')({
           status: 200,
           headers: {
             'Content-Type': 'text/html; charset=utf-8',
+            // Public embed: framed cross-origin from dealer sites (server-entry
+            // already sends frame-ancestors *); cross-origin CORP keeps the
+            // document and its sub-resources loadable off-origin.
+            'Cross-Origin-Resource-Policy': 'cross-origin',
             'Cache-Control': 'public, max-age=60',
           },
         })
