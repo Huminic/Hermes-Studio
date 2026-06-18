@@ -13,6 +13,8 @@ import {
   resolveSession,
 } from '../../../server/customer-auth'
 import { handleUpload, listUploads } from '../../../server/upload-surface'
+import { readStudioConfig } from '../../../server/studio-config'
+import { ingestReport, resolveDealerName } from '../../../server/report-ingest'
 
 export const Route = createFileRoute('/api/customer/data-uploads')({
   server: {
@@ -80,6 +82,31 @@ export const Route = createFileRoute('/api/customer/data-uploads')({
             { status: 400 },
           )
         }
+        // Structured report ingestion: if the upload is a recognizable
+        // VinSolutions ROI/KPI CSV, parse it into the Brain report tables so
+        // the Dashboard can render real metrics. Best-effort — a non-report
+        // CSV (or xlsx) just isn't ingested; the file upload still succeeds.
+        let report: { ok: boolean; kind?: string; rows?: number; reason?: string } | undefined
+        if (/\.csv$/i.test(filename)) {
+          try {
+            const { config } = readStudioConfig(profile)
+            const text = Buffer.from(contentBase64, 'base64').toString('utf8')
+            const ing = ingestReport({
+              profile,
+              text,
+              filename,
+              dealerName: resolveDealerName(config),
+              sourceUploadId: result.id,
+              checksum: result.checksum,
+            })
+            report = ing.ok
+              ? { ok: true, kind: ing.report_kind, rows: ing.row_count }
+              : { ok: false, reason: ing.reason }
+          } catch (err) {
+            report = { ok: false, reason: (err as Error).message }
+          }
+        }
+
         return json({
           ok: true,
           upload: {
@@ -89,6 +116,7 @@ export const Route = createFileRoute('/api/customer/data-uploads')({
             bytes: result.bytes,
             embedded: result.embedded,
           },
+          report,
           uploads: listUploads(profile, { limit: 25 }),
         })
       },

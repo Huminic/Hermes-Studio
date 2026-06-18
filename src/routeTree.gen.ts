@@ -149,6 +149,9 @@ import { Route as ApiCustomerHunchesRouteImport } from './routes/api/customer/hu
 import { Route as ApiCustomerEngagementStateRouteImport } from './routes/api/customer/engagement-state'
 import { Route as ApiCustomerDataUploadsRouteImport } from './routes/api/customer/data-uploads'
 import { Route as ApiCustomerDashboardsRouteImport } from './routes/api/customer/dashboards'
+import { Route as ApiCustomerDashboardQueriesRouteImport } from './routes/api/customer/dashboard-queries'
+import { Route as ApiCustomerDashboardAskRouteImport } from './routes/api/customer/dashboard-ask'
+import { Route as ApiCustomerDashboardRouteImport } from './routes/api/customer/dashboard'
 import { Route as ApiCustomerChatRouteImport } from './routes/api/customer/chat'
 import { Route as ApiCustomerAgentsRouteImport } from './routes/api/customer/agents'
 import { Route as ApiCrewsCrewIdRouteImport } from './routes/api/crews/$crewId'
@@ -901,6 +904,22 @@ const ApiCustomerDashboardsRoute = ApiCustomerDashboardsRouteImport.update({
   path: '/api/customer/dashboards',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerDashboardQueriesRoute =
+  ApiCustomerDashboardQueriesRouteImport.update({
+    id: '/api/customer/dashboard-queries',
+    path: '/api/customer/dashboard-queries',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiCustomerDashboardAskRoute = ApiCustomerDashboardAskRouteImport.update({
+  id: '/api/customer/dashboard-ask',
+  path: '/api/customer/dashboard-ask',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCustomerDashboardRoute = ApiCustomerDashboardRouteImport.update({
+  id: '/api/customer/dashboard',
+  path: '/api/customer/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCustomerChatRoute = ApiCustomerChatRouteImport.update({
   id: '/api/customer/chat',
   path: '/api/customer/chat',
@@ -1256,6 +1275,9 @@ export interface FileRoutesByFullPath {
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
+  '/api/customer/dashboard': typeof ApiCustomerDashboardRoute
+  '/api/customer/dashboard-ask': typeof ApiCustomerDashboardAskRoute
+  '/api/customer/dashboard-queries': typeof ApiCustomerDashboardQueriesRoute
   '/api/customer/dashboards': typeof ApiCustomerDashboardsRoute
   '/api/customer/data-uploads': typeof ApiCustomerDataUploadsRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
@@ -1445,6 +1467,9 @@ export interface FileRoutesByTo {
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
+  '/api/customer/dashboard': typeof ApiCustomerDashboardRoute
+  '/api/customer/dashboard-ask': typeof ApiCustomerDashboardAskRoute
+  '/api/customer/dashboard-queries': typeof ApiCustomerDashboardQueriesRoute
   '/api/customer/dashboards': typeof ApiCustomerDashboardsRoute
   '/api/customer/data-uploads': typeof ApiCustomerDataUploadsRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
@@ -1636,6 +1661,9 @@ export interface FileRoutesById {
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
+  '/api/customer/dashboard': typeof ApiCustomerDashboardRoute
+  '/api/customer/dashboard-ask': typeof ApiCustomerDashboardAskRoute
+  '/api/customer/dashboard-queries': typeof ApiCustomerDashboardQueriesRoute
   '/api/customer/dashboards': typeof ApiCustomerDashboardsRoute
   '/api/customer/data-uploads': typeof ApiCustomerDataUploadsRoute
   '/api/customer/engagement-state': typeof ApiCustomerEngagementStateRoute
@@ -1828,6 +1856,9 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId'
     | '/api/customer/agents'
     | '/api/customer/chat'
+    | '/api/customer/dashboard'
+    | '/api/customer/dashboard-ask'
+    | '/api/customer/dashboard-queries'
     | '/api/customer/dashboards'
     | '/api/customer/data-uploads'
     | '/api/customer/engagement-state'
@@ -2017,6 +2048,9 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId'
     | '/api/customer/agents'
     | '/api/customer/chat'
+    | '/api/customer/dashboard'
+    | '/api/customer/dashboard-ask'
+    | '/api/customer/dashboard-queries'
     | '/api/customer/dashboards'
     | '/api/customer/data-uploads'
     | '/api/customer/engagement-state'
@@ -2207,6 +2241,9 @@ export interface FileRouteTypes {
     | '/api/crews/$crewId'
     | '/api/customer/agents'
     | '/api/customer/chat'
+    | '/api/customer/dashboard'
+    | '/api/customer/dashboard-ask'
+    | '/api/customer/dashboard-queries'
     | '/api/customer/dashboards'
     | '/api/customer/data-uploads'
     | '/api/customer/engagement-state'
@@ -2391,6 +2428,9 @@ export interface RootRouteChildren {
   ApiCrewsCrewIdRoute: typeof ApiCrewsCrewIdRouteWithChildren
   ApiCustomerAgentsRoute: typeof ApiCustomerAgentsRoute
   ApiCustomerChatRoute: typeof ApiCustomerChatRoute
+  ApiCustomerDashboardRoute: typeof ApiCustomerDashboardRoute
+  ApiCustomerDashboardAskRoute: typeof ApiCustomerDashboardAskRoute
+  ApiCustomerDashboardQueriesRoute: typeof ApiCustomerDashboardQueriesRoute
   ApiCustomerDashboardsRoute: typeof ApiCustomerDashboardsRoute
   ApiCustomerDataUploadsRoute: typeof ApiCustomerDataUploadsRoute
   ApiCustomerEngagementStateRoute: typeof ApiCustomerEngagementStateRoute
@@ -3442,6 +3482,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerDashboardsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/dashboard-queries': {
+      id: '/api/customer/dashboard-queries'
+      path: '/api/customer/dashboard-queries'
+      fullPath: '/api/customer/dashboard-queries'
+      preLoaderRoute: typeof ApiCustomerDashboardQueriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/customer/dashboard-ask': {
+      id: '/api/customer/dashboard-ask'
+      path: '/api/customer/dashboard-ask'
+      fullPath: '/api/customer/dashboard-ask'
+      preLoaderRoute: typeof ApiCustomerDashboardAskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/customer/dashboard': {
+      id: '/api/customer/dashboard'
+      path: '/api/customer/dashboard'
+      fullPath: '/api/customer/dashboard'
+      preLoaderRoute: typeof ApiCustomerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/customer/chat': {
       id: '/api/customer/chat'
       path: '/api/customer/chat'
@@ -4120,6 +4181,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCrewsCrewIdRoute: ApiCrewsCrewIdRouteWithChildren,
   ApiCustomerAgentsRoute: ApiCustomerAgentsRoute,
   ApiCustomerChatRoute: ApiCustomerChatRoute,
+  ApiCustomerDashboardRoute: ApiCustomerDashboardRoute,
+  ApiCustomerDashboardAskRoute: ApiCustomerDashboardAskRoute,
+  ApiCustomerDashboardQueriesRoute: ApiCustomerDashboardQueriesRoute,
   ApiCustomerDashboardsRoute: ApiCustomerDashboardsRoute,
   ApiCustomerDataUploadsRoute: ApiCustomerDataUploadsRoute,
   ApiCustomerEngagementStateRoute: ApiCustomerEngagementStateRoute,

@@ -165,8 +165,67 @@ describe('console-renderers registry', () => {
         by_status: { hot: 4, warm: 5 },
       },
     }
+    const dashboard = {
+      profile: 'huminic',
+      generated_at: Date.now(),
+      window_days: 30,
+      comparison_window_days: 30,
+      funnel: {
+        lead_performance: [
+          { key: 'lead_source_performance', label: 'Lead Source Performance', unit: 'count', value: 150, polarity: 'up', status: 'sourced', source: 'report', trend: { current: 150, prior: 100, delta: 50, direction: 'up', good: true } },
+          { key: 'time_to_first_contact', label: 'Time to First Contact', unit: 'days', value: null, polarity: 'down', status: 'pending', source: 'data source pending' },
+          { key: 'time_to_first_discussion', label: 'Time to First Discussion', unit: 'days', value: null, polarity: 'down', status: 'pending', source: 'data source pending' },
+          { key: 'time_to_appt_set', label: 'Time to Appointment Set', unit: 'days', value: 6, polarity: 'down', status: 'sourced', source: 'report', trend: { current: 6, prior: null, delta: null, direction: null, good: null } },
+          { key: 'time_to_appointment', label: 'Time to Appointment', unit: 'days', value: null, polarity: 'down', status: 'pending', source: 'data source pending' },
+          { key: 'time_to_sale', label: 'Time to Sale', unit: 'days', value: 5, polarity: 'down', status: 'sourced', source: 'report', trend: { current: 5, prior: 7, delta: -2, direction: 'down', good: true } },
+          { key: 'total_sales', label: 'Total Sales', unit: 'count', value: 24, polarity: 'up', status: 'sourced', source: 'report', trend: { current: 24, prior: 20, delta: 4, direction: 'up', good: true } },
+        ],
+        pipeline_performance: {
+          stages: [
+            { key: 'leads', label: 'Leads', now: 150, comparison: 100, status: 'sourced' },
+            { key: 'opportunities', label: 'Opportunities', now: 110, comparison: 80, status: 'sourced' },
+            { key: 'appointments', label: 'Appointments', now: 40, comparison: 30, status: 'sourced' },
+            { key: 'sales', label: 'Sales', now: 24, comparison: 20, status: 'sourced' },
+          ],
+          comparison_label: 'prior import',
+        },
+        lead_sources: [
+          { lead_source: 'Repeat Customer', total_leads: 100, good_leads: 80, appts_set: 30, sold_from_leads: 20, sold_from_leads_pct: 0.2, total_gross: 30000 },
+        ],
+      },
+      leads: {
+        statuses: { new: { count: 4, names: [] }, active: { count: 5, names: [] }, abandoned: { count: 0, names: [] } },
+        by_source: [{ lead_source: 'Repeat Customer', total_leads: 100 }],
+        source: 'vin-live',
+      },
+      pipeline: {
+        rows: [{ salesperson: 'Brandon Donald', leads: 30, opportunities: 27, appointments: 6, sales: 4 }],
+        status: 'sourced',
+        comparison_label: 'prior import',
+      },
+      ai_activity: {
+        metrics: [
+          { key: 'conversations', label: 'Conversations', unit: 'count', value: 8, polarity: 'up', status: 'sourced', source: 'live', trend: { current: 8, prior: 5, delta: 3, direction: 'up', good: true } },
+          { key: 'calls_received', label: 'Calls Received', unit: 'count', value: 4, polarity: 'up', status: 'sourced', source: 'live' },
+          { key: 'video_sessions', label: 'Video Sessions', unit: 'count', value: 0, polarity: 'up', status: 'sourced', source: 'live' },
+          { key: 'web_chats', label: 'Web Chats', unit: 'count', value: 5, polarity: 'up', status: 'sourced', source: 'live' },
+          { key: 'emails_sent', label: 'Emails Sent', unit: 'count', value: 0, polarity: 'up', status: 'sourced', source: 'live' },
+          { key: 'texts_sent', label: 'Texts Sent', unit: 'count', value: 5, polarity: 'up', status: 'sourced', source: 'live' },
+          { key: 'calls_made', label: 'Calls Made', unit: 'count', value: 2, polarity: 'up', status: 'sourced', source: 'live' },
+          { key: 'hunches', label: 'Hunches', unit: 'count', value: 1, polarity: 'up', status: 'sourced', source: 'live' },
+          { key: 'infostore_updates', label: 'InfoStore Updates', unit: 'count', value: 3, polarity: 'up', status: 'sourced', source: 'live' },
+        ],
+        observation: { overview: 'Activity looks steady. These are observations, not conclusions.', what_is_good: ['Texts Sent rose.'], opportunities: ['It might be worth reviewing hunches.'] },
+      },
+    }
     const fetchMock = vi.fn(async (url: string | URL | Request) => {
       const u = String(url)
+      if (u.includes('/api/customer/dashboard?')) {
+        return new Response(JSON.stringify({ ok: true, dashboard }), { status: 200 })
+      }
+      if (u.includes('/api/customer/dashboard-queries')) {
+        return new Response(JSON.stringify({ ok: true, queries: [] }), { status: 200 })
+      }
       if (u.includes('/api/customer/performance')) {
         return new Response(JSON.stringify({ ok: true, performance }), { status: 200 })
       }
@@ -189,18 +248,26 @@ describe('console-renderers registry', () => {
     try {
       const config = defaultStudioConfig('huminic')
       const Renderer = consoleRenderers['customer-console.performance']
-      const { container, findByText, getAllByText } = render(
+      const { container, findByText, getByText, getAllByText } = render(
         <Renderer profile="huminic" config={config} params={{}} />,
       )
-      await findByText('Performance Dashboard')
+      // Funnel tab is default; global controls + tabs present.
+      await findByText('Lead Performance')
       const txt = container.textContent ?? ''
       expect(txt).toContain('Export PDF')
-      expect(txt).toContain('+ Add card')
-      expect(txt).toContain('Dashboard (sample cards)')
-      expect(txt).toContain('Customer engagement')
+      expect(txt).toContain('Funnel')
+      expect(txt).toContain('Leads')
+      expect(txt).toContain('Pipeline')
+      expect(txt).toContain('AI Activity')
+      expect(txt).toContain('Custom')
+      expect(txt).toContain('Total Sales')
+      expect(txt).toContain('Data source pending') // honest pending metric
+
+      // Custom tab: Ask AI + Saved + retained Add card builder.
+      fireEvent.click(getByText('Custom'))
+      expect(container.textContent).toContain('Ask AI')
+      expect(container.textContent).toContain('Saved')
       fireEvent.click(getAllByText('+ Add card')[0])
-      expect(container.textContent).toContain('Add dashboard card')
-      expect(container.textContent).toContain('Calls')
       expect(container.textContent).toContain('Combined sources')
     } finally {
       vi.unstubAllGlobals()
