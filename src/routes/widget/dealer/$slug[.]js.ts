@@ -16,10 +16,74 @@
  * Renders the unified "Choose how to connect" launcher (Web Chat / Instant Call
  * Back / Contact Form / Two-Way Video), 1:1 with the storefront component.
  */
+import { brotliCompressSync, gzipSync, constants as zlibConstants } from 'node:zlib'
 import { createFileRoute } from '@tanstack/react-router'
 import { readStudioConfig } from '../../../server/studio-config'
 
 const PUBLIC_WIDGET_CHROME = '#4a5568'
+
+// Dealer.com's CDN library requires a Cache-Control max-age of at least one day
+// for self-hosted scripts. The bundle is config-injected but otherwise static per
+// rooftop, so a 24h cache is safe (a config change is picked up on the next miss).
+const EMBED_MAX_AGE = 86400
+
+/**
+ * Pick the best supported Content-Encoding for the request, honoring an explicit
+ * `q=0` rejection. Brotli is preferred over gzip; returns null when the client
+ * advertises neither (or sends no Accept-Encoding at all — e.g. in unit tests),
+ * in which case the bundle is served identity-encoded.
+ */
+function negotiateEncoding(accept: string | null): 'br' | 'gzip' | null {
+  if (!accept) return null
+  const accepts = (enc: string): boolean => {
+    for (const part of accept.split(',')) {
+      const [tokenRaw, ...params] = part.trim().split(';')
+      const token = tokenRaw.trim().toLowerCase()
+      if (token !== enc && token !== '*') continue
+      const q = params.map((p) => p.trim()).find((p) => p.startsWith('q='))
+      if (q && Number.parseFloat(q.slice(2)) === 0) return false
+      return true
+    }
+    return false
+  }
+  if (accepts('br')) return 'br'
+  if (accepts('gzip')) return 'gzip'
+  return null
+}
+
+/**
+ * Build the script Response, compressing (brotli/gzip) when the client supports
+ * it. Dealer.com flagged the embed as uncompressed because Caddy reverse-proxies
+ * studio.huminic.app WITHOUT an `encode` directive — so compression has to happen
+ * here, in the app, and passes through the proxy transparently via Content-Encoding.
+ */
+function scriptResponse(script: string, request: Request): Response {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/javascript; charset=utf-8',
+    'Access-Control-Allow-Origin': '*',
+    // Public embed: explicitly cross-origin so the script is never blocked when
+    // loaded from a dealer (Dealer.com/DDC) origin.
+    'Cross-Origin-Resource-Policy': 'cross-origin',
+    'Cache-Control': `public, max-age=${EMBED_MAX_AGE}`,
+    Vary: 'Accept-Encoding',
+  }
+  const enc = negotiateEncoding(request.headers.get('accept-encoding'))
+  if (!enc) return new Response(script, { headers })
+  const raw = Buffer.from(script, 'utf8')
+  const body =
+    enc === 'br'
+      ? brotliCompressSync(raw, {
+          params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 5 },
+        })
+      : gzipSync(raw, { level: 6 })
+  return new Response(body, {
+    headers: {
+      ...headers,
+      'Content-Encoding': enc,
+      'Content-Length': String(body.length),
+    },
+  })
+}
 
 function noop(reason: string): Response {
   return new Response(`/* huminic widget: ${reason} */\n`, {
@@ -83,17 +147,7 @@ export const Route = createFileRoute('/widget/dealer/$slug.js')({
         }
 
         const script = buildScript(cfg)
-        return new Response(script, {
-          headers: {
-            'Content-Type': 'application/javascript; charset=utf-8',
-            'Access-Control-Allow-Origin': '*',
-            // Public embed: explicitly cross-origin so the script is never
-            // blocked when loaded from a dealer (Dealer.com/DDC) origin.
-            'Cross-Origin-Resource-Policy': 'cross-origin',
-            'Cache-Control': 'public, max-age=120',
-            Vary: 'Accept-Encoding',
-          },
-        })
+        return scriptResponse(script, request)
       },
     },
   },

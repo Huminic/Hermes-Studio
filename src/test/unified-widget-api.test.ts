@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import zlib from 'node:zlib'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the dealer-notification send (callback-request) so we assert WIRING.
@@ -294,6 +295,72 @@ describe('Public widget cross-origin headers', () => {
     if (res.status === 200) {
       expect(res.headers.get('Cross-Origin-Resource-Policy')).toBe('cross-origin')
     }
+  })
+})
+
+describe('Dealer embed caching + compression (Dealer.com library requirements)', () => {
+  it('serves the bundle with Cache-Control max-age >= 86400 (Dealer.com minimum)', async () => {
+    writeStudio(BASE_YAML + '\nunified_widget:\n  enabled: true\n')
+    const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
+    const req = new Request('https://studio.huminic.app/widget/dealer/serra-honda.js')
+    const res = await Route.options.server.handlers.GET({
+      params: {},
+      request: req,
+    } as never)
+    const cc = res.headers.get('Cache-Control') ?? ''
+    expect(cc).toContain('public')
+    const m = cc.match(/max-age=(\d+)/)
+    expect(m).not.toBeNull()
+    expect(Number(m![1])).toBeGreaterThanOrEqual(86400)
+  })
+
+  it('brotli-compresses when the client advertises Accept-Encoding: br', async () => {
+    writeStudio(BASE_YAML + '\nunified_widget:\n  enabled: true\n')
+    const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
+    const req = new Request('https://studio.huminic.app/widget/dealer/serra-honda.js', {
+      headers: { 'Accept-Encoding': 'br, gzip, deflate' },
+    })
+    const res = await Route.options.server.handlers.GET({
+      params: {},
+      request: req,
+    } as never)
+    expect(res.headers.get('Content-Encoding')).toBe('br')
+    expect(res.headers.get('Vary')).toContain('Accept-Encoding')
+    const buf = Buffer.from(await res.arrayBuffer())
+    // Content-Length must reflect the COMPRESSED payload.
+    expect(Number(res.headers.get('Content-Length'))).toBe(buf.length)
+    // Decompresses back to the real bundle.
+    const decoded = zlib.brotliDecompressSync(buf).toString('utf8')
+    expect(decoded).toContain('huminic-dealer-widget')
+    expect(decoded).toContain('serra-honda')
+  })
+
+  it('falls back to gzip when only gzip is advertised', async () => {
+    writeStudio(BASE_YAML + '\nunified_widget:\n  enabled: true\n')
+    const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
+    const req = new Request('https://studio.huminic.app/widget/dealer/serra-honda.js', {
+      headers: { 'Accept-Encoding': 'gzip, deflate' },
+    })
+    const res = await Route.options.server.handlers.GET({
+      params: {},
+      request: req,
+    } as never)
+    expect(res.headers.get('Content-Encoding')).toBe('gzip')
+    const decoded = zlib.gunzipSync(Buffer.from(await res.arrayBuffer())).toString('utf8')
+    expect(decoded).toContain('huminic-dealer-widget')
+  })
+
+  it('serves identity (no Content-Encoding) when no Accept-Encoding is sent', async () => {
+    writeStudio(BASE_YAML + '\nunified_widget:\n  enabled: true\n')
+    const { Route } = await import('@/routes/widget/dealer/$slug[.]js')
+    const req = new Request('https://studio.huminic.app/widget/dealer/serra-honda.js')
+    const res = await Route.options.server.handlers.GET({
+      params: {},
+      request: req,
+    } as never)
+    expect(res.headers.get('Content-Encoding')).toBeNull()
+    const body = await res.text()
+    expect(body).toContain('huminic-dealer-widget')
   })
 })
 
