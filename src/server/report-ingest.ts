@@ -268,7 +268,10 @@ export function dealerMatches(configDealer: string, csvDealer: string): boolean 
   if (cfg === csv) return true
   const csvTokens = new Set(csv.split(' '))
   const cfgTokens = cfg.split(' ').filter(Boolean)
-  return cfgTokens.length > 0 && cfgTokens.every((t) => csvTokens.has(t))
+  // Require a multi-token configured name for subset matching; a single common
+  // token (e.g. "Serra") must match exactly (handled above) so it can't pull in
+  // sibling dealers like "Serra Honda" + "Serra Nissan".
+  return cfgTokens.length >= 2 && cfgTokens.every((t) => csvTokens.has(t))
 }
 
 // ── Filename period derivation (best-effort, no fabrication) ────────────────

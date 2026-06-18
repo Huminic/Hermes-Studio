@@ -527,10 +527,21 @@ function chTotal(
   return dir ? e[dir] : e.inbound + e.outbound
 }
 
-function windowedConversations(profile: string, sinceMs: number): number {
-  // Conversations started in the window (created_at >= sinceMs).
-  return listThreads({ profile, limit: 5000 }).filter((t) => t.created_at >= sinceMs)
-    .length
+/** Conversations started in the current window and the immediately-prior one,
+ *  from a single thread read. */
+function conversationCounts(
+  profile: string,
+  sinceMs: number,
+  priorSince: number,
+): { current: number; prior: number } {
+  const threads = listThreads({ profile, limit: 5000 })
+  let current = 0
+  let prior = 0
+  for (const t of threads) {
+    if (t.created_at >= sinceMs) current++
+    else if (t.created_at >= priorSince) prior++
+  }
+  return { current, prior }
 }
 
 export function buildAiActivityTab(
@@ -556,11 +567,9 @@ export function buildAiActivityTab(
     handle.close()
   }
   const hunches = listHunches(profile, { limit: 1000 }).length
-  const conversations = windowedConversations(profile, sinceMs)
-  const priorConversations =
-    listThreads({ profile, limit: 5000 }).filter(
-      (t) => t.created_at >= priorSince && t.created_at < sinceMs,
-    ).length
+  const convo = conversationCounts(profile, sinceMs, priorSince)
+  const conversations = convo.current
+  const priorConversations = convo.prior
 
   const m = (
     key: string,

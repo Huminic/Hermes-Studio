@@ -387,22 +387,23 @@ function FunnelView({ funnel }: { funnel: FunnelTab }) {
       <Section title="Lead Performance" subtitle="From your most recent uploaded lead-source report.">
         <div className="flex flex-col items-stretch gap-1.5">
           {funnel.lead_performance.map((m, i) => {
-            const width = 100 - i * (60 / Math.max(1, funnel.lead_performance.length - 1))
+            const n = funnel.lead_performance.length
+            const width = 100 - i * (36 / Math.max(1, n - 1))
             const bg = GREEN_FUNNEL[Math.min(i, GREEN_FUNNEL.length - 1)]
+            // Lightest shades need dark text for contrast.
+            const fg = i >= 4 ? '#052e16' : '#ffffff'
             return (
               <div key={m.key} className="mx-auto flex w-full items-center" style={{ maxWidth: `${width}%` }}>
-                <div className="flex w-full items-center justify-between gap-3 rounded-lg px-4 py-3 text-white shadow-sm" style={{ background: bg }}>
-                  <span className="truncate text-xs font-medium opacity-95">{m.label}</span>
-                  <span className="flex items-center gap-2 whitespace-nowrap">
-                    {m.status === 'pending' ? (
-                      <PendingPill />
-                    ) : (
-                      <>
-                        <span className="text-sm font-semibold">{fmt(m.value, m.unit)}</span>
-                        <TrendBadge trend={m.trend} polarity={m.polarity} />
-                      </>
-                    )}
-                  </span>
+                <div className="flex w-full items-center justify-between gap-3 rounded-lg px-4 py-3 shadow-sm" style={{ background: bg, color: fg }}>
+                  <span className="truncate text-xs font-medium">{m.label}</span>
+                  {m.status === 'pending' ? (
+                    <PendingPill />
+                  ) : (
+                    <span className="flex items-center gap-2 whitespace-nowrap rounded-md bg-white px-2 py-0.5">
+                      <span className="text-sm font-semibold text-slate-900">{fmt(m.value, m.unit)}</span>
+                      <TrendBadge trend={m.trend} polarity={m.polarity} />
+                    </span>
+                  )}
                 </div>
               </div>
             )
