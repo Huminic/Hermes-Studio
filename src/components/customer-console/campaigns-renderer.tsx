@@ -6,8 +6,8 @@
  *   - Campaigns: full CRUD (create/edit/delete) with draft + send.
  *   - Automations: a real multi-object builder (trigger + channel + team agent +
  *     draft/active/paused) backed by /api/customer/automations. Outbound rides
- *     the store communications agent (Caroline sales / Nancy service) through the
- *     same gated send path; draft/paused never fire.
+ *     the store's configured communications agent (per the store's visible
+ *     roster) through the same gated send path; draft/paused never fire.
  *   - Lists: full CRUD, a downloadable sample CSV, DNC-on-import, and CRM-query
  *     list generation.
  *

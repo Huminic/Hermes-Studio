@@ -153,24 +153,35 @@ export function CustomerAgentsRenderer(props: {
         </p>
       </header>
 
-      {/* Top tabs */}
-      <div className="flex gap-1 border-b border-slate-200">
-        {(['agents', 'tasks'] as const).map((t) => (
-          <button
-            key={t}
-            type="button"
-            onClick={() => setTab(t)}
-            className={
-              '-mb-px border-b-2 px-4 py-2 text-sm font-medium capitalize transition-colors ' +
-              (tab === t
-                ? 'text-slate-900'
-                : 'border-transparent text-slate-500 hover:text-slate-800')
-            }
-            style={tab === t ? { borderColor: ACCENT, color: ACCENT } : undefined}
-          >
-            {t}
-          </button>
-        ))}
+      {/* Top tabs — standardized to the Marketing/Campaigns pill style. */}
+      <div className="-mx-1 overflow-x-auto px-1">
+        <div
+          role="tablist"
+          aria-label="Agents sections"
+          className="flex min-w-max gap-1 rounded-lg border border-slate-200 bg-white p-1"
+        >
+          {(['agents', 'tasks'] as const).map((t) => {
+            const active = tab === t
+            return (
+              <button
+                key={t}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => setTab(t)}
+                className={
+                  'rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition ' +
+                  (active
+                    ? 'text-white'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900')
+                }
+                style={active ? { background: ACCENT } : undefined}
+              >
+                {t}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {rosterError ? (
@@ -486,28 +497,39 @@ function ConfigModal(props: {
         )
       }
     >
-      <div className="mb-4 flex gap-1 border-b border-slate-200">
-        {(
-          [
-            ['instructions', 'Contextual Instructions'],
-            ['uploads', 'Uploads'],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setTab(id)}
-            className={
-              '-mb-px border-b-2 px-3 py-2 text-sm font-medium transition-colors ' +
-              (tab === id
-                ? 'text-slate-900'
-                : 'border-transparent text-slate-500 hover:text-slate-800')
-            }
-            style={tab === id ? { borderColor: ACCENT, color: ACCENT } : undefined}
-          >
-            {label}
-          </button>
-        ))}
+      <div className="mb-4 -mx-1 overflow-x-auto px-1">
+        <div
+          role="tablist"
+          aria-label="Agent settings sections"
+          className="flex min-w-max gap-1 rounded-lg border border-slate-200 bg-white p-1"
+        >
+          {(
+            [
+              ['instructions', 'Contextual Instructions'],
+              ['uploads', 'Uploads'],
+            ] as const
+          ).map(([id, label]) => {
+            const active = tab === id
+            return (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => setTab(id)}
+                className={
+                  'rounded-md px-3 py-1.5 text-xs font-semibold transition ' +
+                  (active
+                    ? 'text-white'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900')
+                }
+                style={active ? { background: ACCENT } : undefined}
+              >
+                {label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {err && (
