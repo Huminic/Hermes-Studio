@@ -27,6 +27,7 @@ import {
   YAxis,
 } from 'recharts'
 import type { StudioConfig } from '../../lib/studio-config'
+import { selectClass, selectChevronStyle } from './console-ui'
 
 // ── Theme ───────────────────────────────────────────────────────────────────
 const PRIMARY = '#2f3b4d'
@@ -1071,7 +1072,7 @@ function CustomCards(props: {
               placeholder="Card title"
               className="min-w-0 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-900 focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300"
             />
-            <select value={source} onChange={(e) => setSource(e.target.value)} className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700">
+            <select value={source} onChange={(e) => setSource(e.target.value)} className={selectClass} style={selectChevronStyle}>
               {SOURCE_GROUPS.map((group) => {
                 const gs = group.sources.filter((s) => props.availableSources.includes(s))
                 if (gs.length === 0) return null
@@ -1084,10 +1085,10 @@ function CustomCards(props: {
                 )
               })}
             </select>
-            <select aria-label="Visualization" value={visualization} onChange={(e) => setVisualization(e.target.value as NonNullable<DashboardCard['visualization']>)} className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700">
+            <select aria-label="Visualization" value={visualization} onChange={(e) => setVisualization(e.target.value as NonNullable<DashboardCard['visualization']>)} className={selectClass} style={selectChevronStyle}>
               {VISUALIZATIONS.map((v) => <option key={v.id} value={v.id}>{v.label}</option>)}
             </select>
-            <select aria-label="Display" value={display} onChange={(e) => setDisplay(e.target.value as NonNullable<DashboardCard['display']>)} className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700">
+            <select aria-label="Display" value={display} onChange={(e) => setDisplay(e.target.value as NonNullable<DashboardCard['display']>)} className={selectClass} style={selectChevronStyle}>
               {DISPLAYS.map((d) => <option key={d.id} value={d.id}>{d.label}</option>)}
             </select>
             <button type="button" onClick={() => void add()} disabled={busy || !title.trim()} className="rounded-md px-4 py-1.5 text-sm font-medium text-white transition hover:brightness-95 disabled:opacity-50" style={{ background: PRIMARY }}>

@@ -9,6 +9,7 @@
  */
 import { useEffect, useState } from 'react'
 import type { StudioConfig } from '../../lib/studio-config'
+import { selectClass, selectChevronStyle } from './console-ui'
 
 type Channel = 'email' | 'sms'
 type Rule = {
@@ -156,7 +157,8 @@ export function CustomerNotificationsRenderer({
                 <tr key={i} className="border-t border-slate-100">
                   <td className="px-3 py-2 align-top">
                     <select
-                      className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-900"
+                      className={`w-full ${selectClass}`}
+                      style={selectChevronStyle}
                       value={isCustom ? CUSTOM : rule.event}
                       onChange={(e) =>
                         update(i, {
@@ -192,7 +194,8 @@ export function CustomerNotificationsRenderer({
                   </td>
                   <td className="px-3 py-2 align-top">
                     <select
-                      className="rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-900"
+                      className={selectClass}
+                      style={selectChevronStyle}
                       value={rule.channel}
                       onChange={(e) =>
                         update(i, { channel: e.target.value as Channel })

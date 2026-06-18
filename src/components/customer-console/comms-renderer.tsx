@@ -27,6 +27,7 @@ import {
   useState,
 } from 'react'
 import type { StudioConfig } from '../../lib/studio-config'
+import { selectClass, selectChevronStyle } from './console-ui'
 
 type ThreadSummary = {
   id: string
@@ -668,7 +669,8 @@ export function CustomerCommsRenderer(props: {
               <select
                 value={agentFilter}
                 onChange={(e) => setAgentFilter(e.target.value)}
-                className="min-w-0 flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-[12px] text-slate-700 focus:border-slate-400 focus:outline-none"
+                className={`min-w-0 flex-1 ${selectClass}`}
+                style={selectChevronStyle}
               >
                 <option value="all">All agents</option>
                 {agentOptions.map((a) => (
@@ -687,7 +689,8 @@ export function CustomerCommsRenderer(props: {
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value as SortOrder)}
-                className="rounded-md border border-slate-200 bg-white px-2 py-1 text-[12px] text-slate-700 focus:border-slate-400 focus:outline-none"
+                className={selectClass}
+                style={selectChevronStyle}
                 aria-label="Sort conversations by date"
               >
                 <option value="newest">Newest first</option>
@@ -930,7 +933,8 @@ export function CustomerCommsRenderer(props: {
                       value={composerChannel}
                       onChange={(e) => setComposerChannel(e.target.value)}
                       disabled={busy}
-                      className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-slate-400 focus:outline-none"
+                      className={selectClass}
+                      style={selectChevronStyle}
                     >
                       {composerChannelOptions.map((c) => (
                         <option key={c} value={c}>

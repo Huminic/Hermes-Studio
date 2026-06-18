@@ -11,9 +11,11 @@ beforeEach(async () => {
   vi.spyOn(os, 'homedir').mockReturnValue(tmpHome)
   const dir = path.join(tmpHome, '.hermes', 'profiles', PROFILE)
   fs.mkdirSync(dir, { recursive: true })
+  // visible_agents includes both a sales (caroline) and service (nancy-gaston)
+  // agent so the profile-aware roster offers both teams in this test.
   fs.writeFileSync(
     path.join(dir, 'studio.yaml'),
-    'branding:\n  persona_name: Serra Honda\n',
+    'branding:\n  persona_name: Serra Honda\nagent_picker:\n  visible_agents:\n    - caroline\n    - nancy-gaston\n',
   )
   const mod = await import('@/server/messaging-hub-store')
   mod._resetForTests()

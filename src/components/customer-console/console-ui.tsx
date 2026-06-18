@@ -5,11 +5,26 @@
  * dependencies — plain React + the existing hugeicons set.
  */
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { ArrowDown01Icon, Cancel01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
 const ACCENT = '#2f3b4d'
+
+/**
+ * Shared styling for native <select> controls so they read as modern, consistent
+ * inputs instead of the OS "beveled" default. `appearance-none` strips the native
+ * chrome; `selectChevronStyle` paints a custom chevron matching the Dropdown.
+ * Usage: <select className={selectClass} style={selectChevronStyle}>…</select>
+ */
+export const selectClass =
+  'appearance-none rounded-md border border-slate-200 bg-white py-1.5 pl-2.5 pr-8 text-xs text-slate-700 transition focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300 disabled:opacity-50'
+
+export const selectChevronStyle: CSSProperties = {
+  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'right 0.5rem center',
+}
 
 export type DropdownOption = { value: string; label: string; hint?: string }
 
