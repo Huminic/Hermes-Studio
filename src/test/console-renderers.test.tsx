@@ -372,24 +372,32 @@ describe('console-renderers registry', () => {
     }
   })
 
-  it('comms renderer shows the sales/service segment structure', () => {
+  it('comms renderer shows unified channel tabs and no sales/service segment', () => {
     const config = defaultStudioConfig('huminic')
     const Renderer = consoleRenderers['customer-console.comms']
     const { container } = render(
       <Renderer profile="huminic" config={config} params={{}} />,
     )
-    // C.7 segment switcher labels (capitalize via CSS; text content
-    // matches the lowercase source). Both terms must appear.
-    expect(container.textContent).toMatch(/sales/i)
-    expect(container.textContent).toMatch(/service/i)
-    expect(container.querySelectorAll('[data-role="segment"]')).toHaveLength(2)
+    // Teambox refactor: Sales/Service segment removed (Service is now its own
+    // workspace); the inbox is unified across channels.
+    expect(container.querySelectorAll('[data-role="segment"]')).toHaveLength(0)
+    // Message-type filters now live at the top as tabs: All, Text, Email,
+    // Call, Video, Chat.
+    const tabs = container.querySelector('[data-role="comms-channel-tabs"]')
+    expect(tabs).not.toBeNull()
+    expect(container.querySelectorAll('[data-channel-tab]')).toHaveLength(6)
+    const tabText = tabs?.textContent ?? ''
+    for (const label of ['All', 'Text', 'Email', 'Call', 'Video', 'Chat']) {
+      expect(tabText).toContain(label)
+    }
     expect(container.querySelector('[data-role="comms-sort"]')).not.toBeNull()
   })
 
-  it('comms renderer shows visible takeover and gates manual replies without the old side panel', async () => {
-    // WS-8: with a selected thread loaded, the renderer must keep the
-    // channel filter, handling badge, and takeover control in the main
-    // conversation. The old customer-info side panel must stay removed.
+  it('comms renderer shows visible takeover and an auto-takeover reply composer without the old side panel', async () => {
+    // Teambox refactor: with a selected thread loaded, the renderer keeps the
+    // channel tabs, handling badge, and takeover control in the main
+    // conversation. The old customer-info side panel must stay removed. The
+    // composer is no longer gated — replying auto-takes-over.
     const thread = {
       id: 't1',
       profile: 'huminic',
@@ -467,25 +475,28 @@ describe('console-renderers registry', () => {
       expect(
         root.querySelector('[data-role="customer-info-panel"]'),
       ).toBeNull()
-      // Channel filter tabs (req #4 as a filter).
+      // Channel tabs at the top (message-type filters).
       expect(
-        root.querySelector('[data-role="comms-channel-filter"]'),
+        root.querySelector('[data-role="comms-channel-tabs"]'),
       ).not.toBeNull()
-      // Handling badge defaults to the AI agent (req #5).
+      // Handling badge defaults to the AI agent.
       const badge = root.querySelector('[data-role="handling-badge"]')
       expect(badge?.getAttribute('data-handler')).toBe('agent')
-      // Take-over control present (req #5).
+      // Take-over and delete are action buttons.
       expect(root.querySelector('[data-role="take-over"]')).not.toBeNull()
       expect(
         root.querySelector('[data-role="delete-conversation"]'),
       ).not.toBeNull()
+      // Text is reply-capable: composer is present and NOT gated — replying
+      // auto-takes-over rather than requiring a manual takeover first.
       const composer = root.querySelector<HTMLTextAreaElement>(
         '[data-role="comms-composer"]',
       )
-      expect(composer?.disabled).toBe(true)
+      expect(composer).not.toBeNull()
+      expect(composer?.disabled).toBe(false)
       const txt = root.textContent ?? ''
       expect(txt).not.toContain('pat@example.com')
-      expect(txt).toContain('Take over to reply manually')
+      expect(txt).toContain('Replying takes over')
       expect(txt).toMatch(/take over/i)
     } finally {
       vi.unstubAllGlobals()
