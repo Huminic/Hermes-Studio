@@ -24,6 +24,7 @@ const KNOWN_LABELS: Record<string, string> = {
   new_lead: 'New lead (generic / email)',
   inbound_sms: 'Inbound text (SMS)',
   inbound_call: 'Inbound call',
+  inbound_video: 'Inbound video',
   inbound_chat: 'Website chat',
   website_form: 'Website form',
   all: 'Any notification',

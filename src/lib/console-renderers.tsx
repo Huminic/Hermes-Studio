@@ -114,23 +114,26 @@ function InfoStoreRenderer(props: ConsoleRendererProps) {
         </div>
       </section>
 
-      <nav
-        className="flex flex-wrap gap-2 text-xs"
-        aria-label="InfoStore sections"
-      >
-        <SubButton
-          active={sub === 'knowledge'}
-          onClick={() => setSub('knowledge')}
+      <div className="-mx-1 overflow-x-auto px-1">
+        <nav
+          role="tablist"
+          className="flex min-w-max gap-1 rounded-lg border border-slate-200 bg-white p-1"
+          aria-label="InfoStore sections"
         >
-          Knowledge Store
-        </SubButton>
-        <SubButton active={sub === 'data'} onClick={() => setSub('data')}>
-          Data Store
-        </SubButton>
-        <SubButton active={sub === 'hunches'} onClick={() => setSub('hunches')}>
-          Hunches
-        </SubButton>
-      </nav>
+          <SubButton
+            active={sub === 'knowledge'}
+            onClick={() => setSub('knowledge')}
+          >
+            Knowledge Store
+          </SubButton>
+          <SubButton active={sub === 'data'} onClick={() => setSub('data')}>
+            Data Store
+          </SubButton>
+          <SubButton active={sub === 'hunches'} onClick={() => setSub('hunches')}>
+            Hunches
+          </SubButton>
+        </nav>
+      </div>
 
       {sub === 'knowledge' && (
         <CustomerKnowledgeRenderer
@@ -403,17 +406,15 @@ function SubButton({
   return (
     <button
       type="button"
+      role="tab"
+      aria-selected={active}
       className={
-        'rounded-md px-3 py-1.5 text-sm transition ' +
+        'whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-semibold transition ' +
         (active
-          ? 'font-semibold'
-          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900')
+          ? 'text-white'
+          : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900')
       }
-      style={
-        active
-          ? { background: `${CUSTOMER_ACCENT}14`, color: CUSTOMER_ACCENT }
-          : undefined
-      }
+      style={active ? { background: CUSTOMER_ACCENT } : undefined}
       onClick={onClick}
     >
       {children}
