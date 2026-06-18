@@ -144,6 +144,45 @@ describe('Teambox — Call/Video are not reply-capable', () => {
 })
 
 describe('Teambox — message attribution', () => {
+  it('attributes AI (via hermes), campaign, and human replies correctly even when the thread has no assigned agent', async () => {
+    // Mirrors a real prod thread: assigned_agent_id is null, yet the AI replied.
+    const t = baseThread({ id: 't1', channel: 'sms', assigned_agent_id: null })
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const path = new URL(String(input), 'http://localhost').pathname
+      const json = (o: unknown) =>
+        new Response(JSON.stringify(o), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      if (/\/api\/messaging\/threads\/[^/]+$/.test(path)) {
+        return json({
+          ok: true,
+          thread: {
+            ...t,
+            human_assigned: false,
+            messages: [
+              { id: 'm1', direction: 'outbound', role: 'assistant', channel: 'sms', content: 'AI handled this', author: 'caroline', created_at: 1, metadata: { via: 'hermes' } },
+              { id: 'm2', direction: 'outbound', role: 'assistant', channel: 'sms', content: 'Campaign blast', author: 'campaign', created_at: 2, metadata: { via: 'sms-textmagic-shared' } },
+              { id: 'm3', direction: 'outbound', role: 'assistant', channel: 'sms', content: 'Rep handled this', author: 'customer-admin', created_at: 3, metadata: { via: 'textmagic' } },
+            ],
+          },
+        })
+      }
+      if (path === '/api/messaging/threads') return json({ ok: true, threads: [t] })
+      if (path === '/api/messaging/contacts') return json({ ok: true, contacts: [] })
+      return json({ ok: true })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    render(<CustomerCommsRenderer profile="serra" config={cfg} />)
+    const find = async (txt: string) =>
+      (await screen.findByText(txt)).closest('[data-role="message"]') as HTMLElement
+    expect((await find('AI handled this')).textContent).toContain('Caroline')
+    expect((await find('Campaign blast')).textContent).toContain('Automated')
+    const rep = await find('Rep handled this')
+    expect(rep.textContent).toContain('You')
+    expect(rep.textContent).not.toContain('Caroline')
+  })
+
   it('shows the agent name for AI replies and "You" for the human rep reply', async () => {
     const t = baseThread({ id: 't1', channel: 'sms', assigned_agent_id: 'caroline' })
     const fetchMock = vi.fn(async (input: RequestInfo | URL) => {

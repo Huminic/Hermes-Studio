@@ -221,14 +221,23 @@ function statusLabel(status: ThreadSummary['status']): string {
   return status === 'open' ? 'Open' : status === 'snoozed' ? 'Snoozed' : 'Closed'
 }
 
-// Who sent an outbound message. The AI agent records its own name as the author
-// (e.g. "Caroline"); a human rep's manual reply records the rep's username, so
-// it must read as "You" — never be mis-attributed to the AI agent.
+// Who sent an outbound message. The signal is the recorded source, not just the
+// thread's assigned agent (which can be null even on AI-sent threads):
+//  - via 'hermes' → an AI agent reply (name it from the author/agent).
+//  - author 'campaign' → an automated campaign send.
+//  - anything else outbound → a human rep's manual reply → "You".
+// This guarantees an AI/automated message is never mis-attributed to the rep,
+// and a rep's manual reply is never mis-attributed to the AI agent.
 function outboundSender(m: ThreadMessage, agentId: string | null): string {
-  const agentName = agentId ? agentLabel(agentId) : null
-  const fromAgent =
-    !!agentName && (m.author === agentName || m.author === agentId)
-  if (fromAgent) return agentName as string
+  const via = typeof m.metadata?.via === 'string' ? m.metadata.via : ''
+  if (via === 'hermes') {
+    if (m.author && m.author !== 'customer-admin') return agentLabel(m.author)
+    return agentId ? agentLabel(agentId) : 'AI agent'
+  }
+  if (m.author === 'campaign') return 'Automated'
+  if (agentId && (m.author === agentId || m.author === agentLabel(agentId))) {
+    return agentLabel(agentId)
+  }
   return 'You'
 }
 
