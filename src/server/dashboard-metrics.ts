@@ -53,24 +53,29 @@ export type Metric = {
   trend?: Trend
 }
 
+/** One layer of a conversion funnel. */
+export type FunnelStage = {
+  key: string
+  label: string
+  now: number | null
+  comparison: number | null
+  /** % of the previous stage that reached this one (0-1); null for stage 1. */
+  conversion: number | null
+  /** Period-over-period trend of `now` vs `comparison` (more = better). */
+  trend: Trend
+  status: MetricStatus
+}
+
 export type FunnelTab = {
-  /** Green tapered "Lead Performance" funnel — 7 spec metrics. */
-  lead_performance: Array<Metric>
-  /** Blue tapered "Pipeline Performance" conversion funnel. */
-  pipeline_performance: {
-    stages: Array<{
-      key: string
-      label: string
-      now: number | null
-      comparison: number | null
-      /** % of the previous stage that reached this one (0-1); null for stage 1. */
-      conversion: number | null
-      /** Period-over-period trend of `now` vs `comparison` (more = better). */
-      trend: Trend
-      status: MetricStatus
-    }>
+  /** Green "Lead Performance" conversion funnel + secondary timing metrics. */
+  lead_performance: {
+    stages: Array<FunnelStage>
+    /** Time-to-X metrics (sourced or "data source pending"). */
+    timings: Array<Metric>
     comparison_label: string
   }
+  /** Blue "Pipeline Performance" conversion funnel. */
+  pipeline_performance: { stages: Array<FunnelStage>; comparison_label: string }
   /** Ranked lead-source rows with performance rating + trend. */
   lead_sources: Array<LeadSourceRow>
 }
@@ -199,7 +204,9 @@ type RoiRow = {
   sold_from_leads_pct: number | null
   avg_days_to_sale: number | null
   avg_days_to_appt_set: number | null
+  internet_actual_contact: number | null
   appts_set: number | null
+  appts_shown: number | null
   total_gross: number | null
 }
 
@@ -234,9 +241,13 @@ function latestImports(
   kind: 'lead_source_roi' | 'kpi_salesperson',
 ): { current: ImportRef | null; prior: ImportRef | null } {
   if (!tableExists(handle, 'report_imports')) return { current: null, prior: null }
+  // Order by report PERIOD (newest report = current), not ingest time, so the
+  // comparison is period-over-period regardless of upload order. Imports with no
+  // derivable period fall back to ingest time.
   const rows = handle.all<ImportRef>(
     `SELECT id, period_start, ts FROM report_imports
-     WHERE report_kind = ? ORDER BY ts DESC LIMIT 2`,
+     WHERE report_kind = ?
+     ORDER BY (period_start IS NULL), period_start DESC, ts DESC LIMIT 2`,
     kind,
   )
   return { current: rows[0] ?? null, prior: rows[1] ?? null }
@@ -249,7 +260,8 @@ function roiRows(
   return handle.all<RoiRow>(
     `SELECT lead_source, total_leads, good_leads, customers_influenced,
             sold_in_timeframe, sold_from_leads, sold_from_leads_pct,
-            avg_days_to_sale, avg_days_to_appt_set, appts_set, total_gross
+            avg_days_to_sale, avg_days_to_appt_set, internet_actual_contact,
+            appts_set, appts_shown, total_gross
        FROM report_lead_source_roi WHERE import_id = ?`,
     importId,
   )
@@ -293,6 +305,32 @@ const weightedAvg = (
 
 // ── Funnel tab ──────────────────────────────────────────────────────────────
 
+/** Build conversion-funnel stages: count per stage, conversion % vs the stage
+ *  above (null for the first), and a period-over-period trend vs the prior import. */
+function conversionStages(
+  rows: Array<RoiRow>,
+  priorRows: Array<RoiRow>,
+  specs: ReadonlyArray<{ key: string; label: string; col: keyof RoiRow }>,
+): Array<FunnelStage> {
+  const hasData = rows.length > 0
+  return specs.map((s, i) => {
+    const now = hasData ? sum(rows, s.col) : null
+    const comparison = priorRows.length ? sum(priorRows, s.col) : null
+    const prevNow = i > 0 && hasData ? sum(rows, specs[i - 1].col) : null
+    const conversion =
+      i > 0 && now != null && prevNow != null && prevNow > 0 ? now / prevNow : null
+    return {
+      key: s.key,
+      label: s.label,
+      now,
+      comparison,
+      conversion,
+      trend: trend(now, comparison, 'up'),
+      status: hasData ? 'sourced' : 'pending',
+    }
+  })
+}
+
 export function buildFunnelTab(
   profile: string,
   opts: { profileRoot?: string } = {},
@@ -308,112 +346,48 @@ export function buildFunnelTab(
       ? prior.period_start ?? 'prior import'
       : 'no prior period'
 
-    // 7 spec metrics. Several are genuinely absent from the most-recent export
-    // (see schema doc) → pending, not fabricated.
-    const lead_performance: Array<Metric> = [
-      {
-        key: 'lead_source_performance',
-        label: 'Lead Source Performance',
-        unit: 'count',
-        value: hasData ? sum(rows, 'total_leads') : null,
-        polarity: 'up',
-        status: hasData ? 'sourced' : 'pending',
-        source: hasData ? 'Uploaded lead-source report' : 'Upload a lead-source report',
-        trend: trend(
-          sum(rows, 'total_leads'),
-          priorRows.length ? sum(priorRows, 'total_leads') : null,
-          'up',
-        ),
-      },
-      PENDING(
-        'time_to_first_contact',
-        'Time to First Contact',
-        'days',
-        'down',
-        'data source pending — not in the current report',
-      ),
-      PENDING(
-        'time_to_first_discussion',
-        'Time to First Discussion',
-        'days',
-        'down',
-        'data source pending — not in the current report',
-      ),
-      {
-        key: 'time_to_appt_set',
-        label: 'Time to Appointment Set',
-        unit: 'days',
-        value: hasData ? weightedAvg(rows, 'avg_days_to_appt_set') : null,
-        polarity: 'down',
-        status: hasData && weightedAvg(rows, 'avg_days_to_appt_set') != null ? 'sourced' : 'pending',
-        source: hasData ? 'Uploaded lead-source report' : 'Upload a lead-source report',
-        trend: trend(
-          weightedAvg(rows, 'avg_days_to_appt_set'),
-          priorRows.length ? weightedAvg(priorRows, 'avg_days_to_appt_set') : null,
-          'down',
-        ),
-      },
-      PENDING(
-        'time_to_appointment',
-        'Time to Appointment',
-        'days',
-        'down',
-        'data source pending — not in the current report',
-      ),
-      {
-        key: 'time_to_sale',
-        label: 'Time to Sale',
-        unit: 'days',
-        value: hasData ? weightedAvg(rows, 'avg_days_to_sale') : null,
-        polarity: 'down',
-        status: hasData && weightedAvg(rows, 'avg_days_to_sale') != null ? 'sourced' : 'pending',
-        source: hasData ? 'Uploaded lead-source report' : 'Upload a lead-source report',
-        trend: trend(
-          weightedAvg(rows, 'avg_days_to_sale'),
-          priorRows.length ? weightedAvg(priorRows, 'avg_days_to_sale') : null,
-          'down',
-        ),
-      },
-      {
-        key: 'total_sales',
-        label: 'Total Sales',
-        unit: 'count',
-        value: hasData ? sum(rows, 'sold_from_leads') : null,
-        polarity: 'up',
-        status: hasData ? 'sourced' : 'pending',
-        source: hasData ? 'Uploaded lead-source report' : 'Upload a lead-source report',
-        trend: trend(
-          sum(rows, 'sold_from_leads'),
-          priorRows.length ? sum(priorRows, 'sold_from_leads') : null,
-          'up',
-        ),
-      },
-    ]
-
-    const rawStages = [
+    // Green Lead Performance = a real conversion funnel from the count columns:
+    // Leads → Contacted → Appointments Set → Appointments Shown → Sold.
+    const leadStages = conversionStages(rows, priorRows, [
       { key: 'leads', label: 'Leads', col: 'total_leads' },
-      { key: 'opportunities', label: 'Opportunities', col: 'good_leads' },
-      { key: 'appointments', label: 'Appointments', col: 'appts_set' },
-      { key: 'sales', label: 'Sales', col: 'sold_from_leads' },
-    ] as const
-    const stages = rawStages.map((s, i) => {
-      const now = hasData ? sum(rows, s.col) : null
-      const comparison = priorRows.length ? sum(priorRows, s.col) : null
-      const prevNow = i > 0 && hasData ? sum(rows, rawStages[i - 1].col) : null
-      // Conversion = % of the previous stage that reached this one.
-      const conversion =
-        i > 0 && now != null && prevNow != null && prevNow > 0 ? now / prevNow : null
+      { key: 'contacted', label: 'Contacted', col: 'internet_actual_contact' },
+      { key: 'appt_set', label: 'Appointments Set', col: 'appts_set' },
+      { key: 'appt_shown', label: 'Appointments Shown', col: 'appts_shown' },
+      { key: 'sold', label: 'Sold', col: 'sold_from_leads' },
+    ])
+    // Secondary timing metrics (sourced where present; pending otherwise — the
+    // current export has days-to-appt-set and days-to-sale, not the others).
+    const timing = (key: string, label: string, col: keyof RoiRow): Metric => {
+      const value = hasData ? weightedAvg(rows, col) : null
       return {
-        key: s.key,
-        label: s.label,
-        now,
-        comparison,
-        conversion,
-        trend: trend(now, comparison, 'up'),
-        status: (hasData ? 'sourced' : 'pending') as MetricStatus,
+        key,
+        label,
+        unit: 'days',
+        value,
+        polarity: 'down',
+        status: value != null ? 'sourced' : 'pending',
+        source: value != null ? 'Uploaded lead-source report' : 'data source pending — not in the current report',
+        trend: trend(value, priorRows.length ? weightedAvg(priorRows, col) : null, 'down'),
       }
-    })
-    const pipeline_performance = { stages, comparison_label: cmpLabel }
+    }
+    const timings: Array<Metric> = [
+      PENDING('time_to_first_contact', 'Time to First Contact', 'days', 'down', 'data source pending — not in the current report'),
+      PENDING('time_to_first_discussion', 'Time to First Discussion', 'days', 'down', 'data source pending — not in the current report'),
+      timing('time_to_appt_set', 'Time to Appointment Set', 'avg_days_to_appt_set'),
+      PENDING('time_to_appointment', 'Time to Appointment', 'days', 'down', 'data source pending — not in the current report'),
+      timing('time_to_sale', 'Time to Sale', 'avg_days_to_sale'),
+    ]
+    const lead_performance = { stages: leadStages, timings, comparison_label: cmpLabel }
+
+    const pipeline_performance = {
+      stages: conversionStages(rows, priorRows, [
+        { key: 'leads', label: 'Leads', col: 'total_leads' },
+        { key: 'opportunities', label: 'Opportunities', col: 'good_leads' },
+        { key: 'appointments', label: 'Appointments', col: 'appts_set' },
+        { key: 'sales', label: 'Sales', col: 'sold_from_leads' },
+      ]),
+      comparison_label: cmpLabel,
+    }
 
     // Contextual rating per lead source: alarm = volume with no sales; good =
     // converts at/above the store-wide sold rate; else watch. Trend = volume vs

@@ -64,31 +64,30 @@ function seedReports(profile = 'fixture') {
 }
 
 describe('buildFunnelTab', () => {
-  it('sources real metrics and marks absent ones data source pending', () => {
+  it('builds a lead conversion funnel + timings, marking absent timings pending', () => {
     seedReports()
     const tab = buildFunnelTab('fixture')
 
-    expect(tab.lead_performance).toHaveLength(7)
-    const byKey = Object.fromEntries(tab.lead_performance.map((m) => [m.key, m]))
+    // Conversion funnel stages from real counts.
+    const stages = Object.fromEntries(tab.lead_performance.stages.map((s) => [s.key, s]))
+    expect(stages.leads.now).toBe(150) // 100 + 50
+    expect(stages.contacted.now).toBe(24) // 4 + 20 internet_actual_contact
+    expect(stages.appt_set.now).toBe(40) // 30 + 10
+    expect(stages.appt_shown.now).toBe(26) // 20 + 6 appts_shown
+    expect(stages.sold.now).toBe(24) // 20 + 4
+    expect(stages.leads.conversion).toBeNull() // first layer
+    expect(stages.contacted.conversion).toBeCloseTo(24 / 150, 4)
 
-    // Sourced
-    expect(byKey.lead_source_performance.status).toBe('sourced')
-    expect(byKey.lead_source_performance.value).toBe(150) // 100 + 50
-    expect(byKey.total_sales.value).toBe(24) // 20 + 4
-    expect(byKey.time_to_sale.status).toBe('sourced')
-    // lead-weighted avg days to sale: (4*100 + 10*50)/150 = 6
-    expect(byKey.time_to_sale.value).toBeCloseTo(6, 5)
-    expect(byKey.time_to_appt_set.value).toBeCloseTo((6 * 100 + 12 * 50) / 150, 5)
-
-    // Pending (genuinely not in the export)
-    expect(byKey.time_to_first_contact.status).toBe('pending')
-    expect(byKey.time_to_first_contact.value).toBeNull()
-    expect(byKey.time_to_first_discussion.status).toBe('pending')
-    expect(byKey.time_to_appointment.status).toBe('pending')
-
-    // Polarity: time metrics are "down = good"
-    expect(byKey.time_to_sale.polarity).toBe('down')
-    expect(byKey.total_sales.polarity).toBe('up')
+    // Secondary timings: sourced ones present, absent ones pending.
+    const t = Object.fromEntries(tab.lead_performance.timings.map((m) => [m.key, m]))
+    expect(t.time_to_sale.status).toBe('sourced')
+    expect(t.time_to_sale.value).toBeCloseTo(6, 5) // (4*100 + 10*50)/150
+    expect(t.time_to_appt_set.value).toBeCloseTo((6 * 100 + 12 * 50) / 150, 5)
+    expect(t.time_to_sale.polarity).toBe('down')
+    expect(t.time_to_first_contact.status).toBe('pending')
+    expect(t.time_to_first_contact.value).toBeNull()
+    expect(t.time_to_first_discussion.status).toBe('pending')
+    expect(t.time_to_appointment.status).toBe('pending')
   })
 
   it('builds the blue pipeline funnel stages and ranked lead sources', () => {
@@ -109,7 +108,8 @@ describe('buildFunnelTab', () => {
 
   it('returns all-pending when no report is uploaded', () => {
     const tab = buildFunnelTab('fixture')
-    expect(tab.lead_performance.every((m) => m.status === 'pending')).toBe(true)
+    expect(tab.lead_performance.stages.every((s) => s.status === 'pending')).toBe(true)
+    expect(tab.lead_performance.timings.every((m) => m.status === 'pending')).toBe(true)
     expect(tab.lead_sources).toHaveLength(0)
   })
 })

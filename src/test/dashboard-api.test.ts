@@ -58,7 +58,7 @@ describe('/api/customer/dashboard', () => {
       ok: boolean
       dashboard: {
         window_days: number
-        funnel: { lead_performance: Array<{ key: string; status: string; value: number | null }> }
+        funnel: { lead_performance: { stages: Array<{ key: string; status: string; now: number | null }> } }
         leads: { source: string }
         pipeline: { status: string }
         ai_activity: { metrics: Array<unknown>; observation: { overview: string } }
@@ -66,11 +66,11 @@ describe('/api/customer/dashboard', () => {
     }
     expect(body.ok).toBe(true)
     expect(body.dashboard.window_days).toBe(30)
-    const lsp = body.dashboard.funnel.lead_performance.find(
-      (m) => m.key === 'lead_source_performance',
+    const leadsStage = body.dashboard.funnel.lead_performance.stages.find(
+      (s) => s.key === 'leads',
     )!
-    expect(lsp.status).toBe('sourced')
-    expect(lsp.value).toBe(100)
+    expect(leadsStage.status).toBe('sourced')
+    expect(leadsStage.now).toBe(100)
     // VIN scope absent in this studio.yaml → leads pending, no fabrication.
     expect(body.dashboard.leads.source).toBe('pending')
     expect(body.dashboard.pipeline.status).toBe('pending') // no KPI uploaded

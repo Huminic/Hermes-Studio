@@ -79,7 +79,7 @@ type FunnelStage = {
   status: MetricStatus
 }
 type FunnelTab = {
-  lead_performance: Array<Metric>
+  lead_performance: { stages: Array<FunnelStage>; timings: Array<Metric>; comparison_label: string }
   pipeline_performance: { stages: Array<FunnelStage>; comparison_label: string }
   lead_sources: Array<LeadSourceRow>
 }
@@ -429,72 +429,83 @@ function EmptyNote({ children }: { children: React.ReactNode }) {
 }
 
 // ── Funnel tab ──────────────────────────────────────────────────────────────
+
+/** Tapered conversion funnel: conversion % inside each bar (first bare), the
+ *  count + period-comparison arrow below each bar. */
+function ConversionFunnel({
+  stages,
+  palette,
+}: {
+  stages: Array<FunnelStage>
+  palette: Array<string>
+}) {
+  return (
+    <div className="flex flex-col items-center">
+      {stages.map((s, i) => {
+        const width = 100 - i * (60 / Math.max(1, stages.length - 1))
+        const bg = palette[Math.min(i, palette.length - 1)]
+        return (
+          <div key={s.key} className="flex w-full flex-col items-center">
+            <div
+              className="flex items-center justify-between gap-3 rounded-lg px-4 py-2.5 text-white shadow-sm"
+              style={{ width: `${width}%`, background: bg }}
+            >
+              <span className="truncate text-xs font-medium opacity-95">{s.label}</span>
+              {i > 0 && s.conversion != null && (
+                <span
+                  className="shrink-0 rounded-md bg-white/25 px-2 py-0.5 text-xs font-semibold"
+                  title={`${(s.conversion * 100).toFixed(0)}% of ${stages[i - 1].label} converted`}
+                >
+                  {(s.conversion * 100).toFixed(0)}%
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-2 py-1.5">
+              <span className="text-sm font-semibold text-slate-900">
+                {s.now != null ? s.now.toLocaleString() : '—'}
+              </span>
+              <TrendArrow trend={s.trend} />
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function FunnelView({ funnel }: { funnel: FunnelTab }) {
   return (
     <div className="flex flex-col gap-6">
       <Section title="Lead Performance" subtitle="How is my lead performance?">
-        <div className="flex flex-col items-stretch gap-1.5">
-          {funnel.lead_performance.map((m, i) => {
-            const n = funnel.lead_performance.length
-            const width = 100 - i * (36 / Math.max(1, n - 1))
-            const bg = GREEN_FUNNEL[Math.min(i, GREEN_FUNNEL.length - 1)]
-            // Lightest shades need dark text for contrast.
-            const fg = i >= 4 ? '#052e16' : '#ffffff'
-            return (
-              <div key={m.key} className="mx-auto flex w-full items-center" style={{ maxWidth: `${width}%` }}>
-                <div className="flex w-full items-center justify-between gap-3 rounded-lg px-4 py-3 shadow-sm" style={{ background: bg, color: fg }}>
-                  <span className="truncate text-xs font-medium">{m.label}</span>
-                  {m.status === 'pending' ? (
+        {funnel.lead_performance.stages.every((s) => s.status === 'pending') ? (
+          <EmptyNote>Upload a lead-source report in the Data tab to populate lead performance.</EmptyNote>
+        ) : (
+          <div className="flex flex-col gap-4">
+            <ConversionFunnel stages={funnel.lead_performance.stages} palette={GREEN_FUNNEL} />
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {funnel.lead_performance.timings.map((t) => (
+                <div key={t.key} className="rounded-lg border border-slate-200 bg-white px-3 py-2">
+                  <div className="mb-1 text-[11px] text-slate-500">{t.label}</div>
+                  {t.status === 'pending' ? (
                     <PendingPill />
                   ) : (
-                    <span className="flex items-center gap-2 whitespace-nowrap rounded-md bg-white px-2 py-0.5">
-                      <span className="text-sm font-semibold text-slate-900">{fmt(m.value, m.unit)}</span>
-                      <TrendBadge trend={m.trend} polarity={m.polarity} />
+                    <span className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-slate-900">{fmt(t.value, t.unit)}</span>
+                      <TrendArrow trend={t.trend} />
                     </span>
                   )}
                 </div>
-              </div>
-            )
-          })}
-        </div>
+              ))}
+            </div>
+          </div>
+        )}
       </Section>
 
       <Section title="Pipeline Performance" subtitle="How is the Pipeline Performing?">
         {funnel.pipeline_performance.stages.every((s) => s.status === 'pending') ? (
           <EmptyNote>Upload a lead-source report to populate the pipeline.</EmptyNote>
         ) : (
-          <div className="flex flex-col items-center">
-            {funnel.pipeline_performance.stages.map((s, i) => {
-              const width = 100 - i * 18
-              const bg = BLUE_FUNNEL[Math.min(i, BLUE_FUNNEL.length - 1)]
-              return (
-                <div key={s.key} className="flex w-full flex-col items-center">
-                  {/* Data between layers: the count + period-comparison arrow. */}
-                  <div className="flex items-center gap-2 py-1.5">
-                    <span className="text-sm font-semibold text-slate-900">
-                      {s.now != null ? s.now.toLocaleString() : '—'}
-                    </span>
-                    <TrendArrow trend={s.trend} />
-                  </div>
-                  {/* The layer bar: label + conversion % (first layer has none). */}
-                  <div
-                    className="flex items-center justify-between gap-3 rounded-lg px-4 py-2.5 text-white shadow-sm"
-                    style={{ width: `${width}%`, background: bg }}
-                  >
-                    <span className="text-xs font-medium opacity-95">{s.label}</span>
-                    {i > 0 && s.conversion != null && (
-                      <span
-                        className="rounded-md bg-white/25 px-2 py-0.5 text-xs font-semibold"
-                        title={`${(s.conversion * 100).toFixed(0)}% of ${funnel.pipeline_performance.stages[i - 1].label} converted`}
-                      >
-                        {(s.conversion * 100).toFixed(0)}%
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+          <ConversionFunnel stages={funnel.pipeline_performance.stages} palette={BLUE_FUNNEL} />
         )}
       </Section>
 
@@ -1166,9 +1177,14 @@ function escapeHtml(value: string): string {
 }
 function buildPrintDocument(profile: string, d: DashboardPayload): string {
   const safeProfile = escapeHtml(profile)
-  const lp = d.funnel.lead_performance
-    .map((m) => `<tr><td>${escapeHtml(m.label)}</td><td>${m.status === 'pending' ? 'Data source pending' : escapeHtml(fmt(m.value, m.unit))}</td></tr>`)
-    .join('')
+  const lp = [
+    ...d.funnel.lead_performance.stages.map(
+      (s) => `<tr><td>${escapeHtml(s.label)}${s.conversion != null ? ` (${(s.conversion * 100).toFixed(0)}%)` : ''}</td><td>${s.now ?? '—'}</td></tr>`,
+    ),
+    ...d.funnel.lead_performance.timings.map(
+      (m) => `<tr><td>${escapeHtml(m.label)}</td><td>${m.status === 'pending' ? 'Data source pending' : escapeHtml(fmt(m.value, m.unit))}</td></tr>`,
+    ),
+  ].join('')
   const pipe = d.funnel.pipeline_performance.stages
     .map((s) => `<tr><td>${escapeHtml(s.label)}</td><td>${s.now ?? '—'}</td><td>${s.comparison ?? '—'}</td></tr>`)
     .join('')

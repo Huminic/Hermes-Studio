@@ -171,26 +171,32 @@ describe('console-renderers registry', () => {
       window_days: 30,
       comparison_window_days: 30,
       funnel: {
-        lead_performance: [
-          { key: 'lead_source_performance', label: 'Lead Source Performance', unit: 'count', value: 150, polarity: 'up', status: 'sourced', source: 'report', trend: { current: 150, prior: 100, delta: 50, direction: 'up', good: true } },
-          { key: 'time_to_first_contact', label: 'Time to First Contact', unit: 'days', value: null, polarity: 'down', status: 'pending', source: 'data source pending' },
-          { key: 'time_to_first_discussion', label: 'Time to First Discussion', unit: 'days', value: null, polarity: 'down', status: 'pending', source: 'data source pending' },
-          { key: 'time_to_appt_set', label: 'Time to Appointment Set', unit: 'days', value: 6, polarity: 'down', status: 'sourced', source: 'report', trend: { current: 6, prior: null, delta: null, direction: null, good: null } },
-          { key: 'time_to_appointment', label: 'Time to Appointment', unit: 'days', value: null, polarity: 'down', status: 'pending', source: 'data source pending' },
-          { key: 'time_to_sale', label: 'Time to Sale', unit: 'days', value: 5, polarity: 'down', status: 'sourced', source: 'report', trend: { current: 5, prior: 7, delta: -2, direction: 'down', good: true } },
-          { key: 'total_sales', label: 'Total Sales', unit: 'count', value: 24, polarity: 'up', status: 'sourced', source: 'report', trend: { current: 24, prior: 20, delta: 4, direction: 'up', good: true } },
-        ],
+        lead_performance: {
+          stages: [
+            { key: 'leads', label: 'Leads', now: 150, comparison: 100, conversion: null, status: 'sourced', trend: { current: 150, prior: 100, delta: 50, direction: 'up', good: true } },
+            { key: 'contacted', label: 'Contacted', now: 120, comparison: 90, conversion: 0.8, status: 'sourced', trend: { current: 120, prior: 90, delta: 30, direction: 'up', good: true } },
+            { key: 'appt_set', label: 'Appointments Set', now: 40, comparison: 30, conversion: 0.33, status: 'sourced', trend: { current: 40, prior: 30, delta: 10, direction: 'up', good: true } },
+            { key: 'appt_shown', label: 'Appointments Shown', now: 24, comparison: 20, conversion: 0.6, status: 'sourced', trend: { current: 24, prior: 20, delta: 4, direction: 'up', good: true } },
+            { key: 'sold', label: 'Sold', now: 24, comparison: 20, conversion: 1.0, status: 'sourced', trend: { current: 24, prior: 20, delta: 4, direction: 'up', good: true } },
+          ],
+          timings: [
+            { key: 'time_to_first_contact', label: 'Time to First Contact', unit: 'days', value: null, polarity: 'down', status: 'pending', source: 'data source pending' },
+            { key: 'time_to_appt_set', label: 'Time to Appointment Set', unit: 'days', value: 6, polarity: 'down', status: 'sourced', source: 'report', trend: { current: 6, prior: null, delta: null, direction: null, good: null } },
+            { key: 'time_to_sale', label: 'Time to Sale', unit: 'days', value: 5, polarity: 'down', status: 'sourced', source: 'report', trend: { current: 5, prior: 7, delta: -2, direction: 'down', good: true } },
+          ],
+          comparison_label: 'prior import',
+        },
         pipeline_performance: {
           stages: [
-            { key: 'leads', label: 'Leads', now: 150, comparison: 100, status: 'sourced' },
-            { key: 'opportunities', label: 'Opportunities', now: 110, comparison: 80, status: 'sourced' },
-            { key: 'appointments', label: 'Appointments', now: 40, comparison: 30, status: 'sourced' },
-            { key: 'sales', label: 'Sales', now: 24, comparison: 20, status: 'sourced' },
+            { key: 'leads', label: 'Leads', now: 150, comparison: 100, conversion: null, status: 'sourced', trend: { current: 150, prior: 100, delta: 50, direction: 'up', good: true } },
+            { key: 'opportunities', label: 'Opportunities', now: 110, comparison: 80, conversion: 0.73, status: 'sourced', trend: { current: 110, prior: 80, delta: 30, direction: 'up', good: true } },
+            { key: 'appointments', label: 'Appointments', now: 40, comparison: 30, conversion: 0.36, status: 'sourced', trend: { current: 40, prior: 30, delta: 10, direction: 'up', good: true } },
+            { key: 'sales', label: 'Sales', now: 24, comparison: 20, conversion: 0.6, status: 'sourced', trend: { current: 24, prior: 20, delta: 4, direction: 'up', good: true } },
           ],
           comparison_label: 'prior import',
         },
         lead_sources: [
-          { lead_source: 'Repeat Customer', total_leads: 100, good_leads: 80, appts_set: 30, sold_from_leads: 20, sold_from_leads_pct: 0.2, total_gross: 30000 },
+          { lead_source: 'Repeat Customer', total_leads: 100, good_leads: 80, appts_set: 30, sold_from_leads: 20, sold_from_leads_pct: 0.2, total_gross: 30000, rating: 'good', trend: { current: 100, prior: 90, delta: 10, direction: 'up', good: true } },
         ],
       },
       leads: {
@@ -260,8 +266,8 @@ describe('console-renderers registry', () => {
       expect(txt).toContain('Pipeline')
       expect(txt).toContain('AI Activity')
       expect(txt).toContain('Custom')
-      expect(txt).toContain('Total Sales')
-      expect(txt).toContain('Data source pending') // honest pending metric
+      expect(txt).toContain('Sold') // lead conversion funnel final stage
+      expect(txt).toContain('Data source pending') // honest pending timing
 
       // Custom tab: Ask AI + Saved + retained Add card builder.
       fireEvent.click(getByText('Custom'))
