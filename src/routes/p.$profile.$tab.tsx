@@ -229,14 +229,14 @@ function StorefrontTabRoute() {
     label: string
     icon: IconSvgElement
   }> = [
-    { id: 'chat', label: 'Chat', icon: Message01Icon },
-    { id: 'agents', label: 'Agents', icon: Robot01Icon },
     { id: 'dashboard', label: 'Dashboard', icon: Chart01Icon },
+    { id: 'chat', label: 'Chat', icon: Message01Icon },
     { id: 'comms', label: 'Teambox', icon: InboxIcon },
     { id: 'campaigns', label: 'Marketing', icon: Megaphone01Icon },
-    { id: 'tools', label: 'StoreFront', icon: GridIcon },
-    { id: 'infostore', label: 'InfoStore', icon: Database01Icon },
+    { id: 'agents', label: 'Agents', icon: Robot01Icon },
+    { id: 'tools', label: 'Storefront', icon: GridIcon },
     { id: 'notifications', label: 'Notifications', icon: Notification03Icon },
+    { id: 'infostore', label: 'InfoStore', icon: Database01Icon },
   ]
 
   return (

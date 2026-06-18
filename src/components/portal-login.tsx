@@ -51,7 +51,7 @@ export function PortalLogin() {
         return
       }
       if (data.is_customer_admin === true && data.profile) {
-        window.location.href = `/p/${encodeURIComponent(data.profile)}/chat`
+        window.location.href = `/p/${encodeURIComponent(data.profile)}/dashboard`
         return
       }
       if (data.is_admin === true) {

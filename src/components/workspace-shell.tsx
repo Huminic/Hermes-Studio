@@ -204,7 +204,7 @@ export function WorkspaceShell() {
       onGlobalRoute
     ) {
       window.location.href = authStatus.profile
-        ? `/p/${encodeURIComponent(authStatus.profile)}/chat`
+        ? `/p/${encodeURIComponent(authStatus.profile)}/dashboard`
         : '/'
     }
   }, [isClient, authStatus, pathname])

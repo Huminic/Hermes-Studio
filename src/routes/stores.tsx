@@ -102,7 +102,7 @@ function StorePickerLanding() {
             <li key={store.profile}>
               <Link
                 to="/p/$profile/$tab"
-                params={{ profile: store.profile, tab: 'chat' }}
+                params={{ profile: store.profile, tab: 'dashboard' }}
                 className="group flex h-full flex-col justify-between overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div

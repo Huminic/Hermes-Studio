@@ -29,6 +29,7 @@ import {
   SALES_AGENT_ID,
   SERVICE_AGENT_ID,
 } from '../../../server/automations'
+import { readStudioConfig } from '../../../server/studio-config'
 
 const TRIGGERS: ReadonlyArray<AutomationTrigger> = ['new_lead', 'lead_followup']
 const STATUSES: ReadonlyArray<AutomationStatus> = ['draft', 'active', 'paused']
@@ -112,13 +113,25 @@ export const Route = createFileRoute('/api/customer/automations')({
         }
         // Seed the two required Serra drafts on first load (idempotent).
         seedDefaultAutomations(profile)
+        // Offer only the agents this store actually has (agent_picker.visible_agents).
+        // A store with no service agent (e.g. Serra Honda — service lives in the
+        // separate Serra Service profile) shows Sales only.
+        const visible = readStudioConfig(profile).config.agent_picker
+          ?.visible_agents ?? []
+        const agents: Array<{ id: string; label: string; team: string }> = []
+        if (visible.includes(SALES_AGENT_ID)) {
+          agents.push({ id: SALES_AGENT_ID, label: 'Sales', team: 'sales' })
+        }
+        if (visible.includes(SERVICE_AGENT_ID)) {
+          agents.push({ id: SERVICE_AGENT_ID, label: 'Service', team: 'service' })
+        }
+        if (agents.length === 0) {
+          agents.push({ id: SALES_AGENT_ID, label: 'Sales', team: 'sales' })
+        }
         return json({
           ok: true,
           automations: listAutomations(profile),
-          agents: [
-            { id: SALES_AGENT_ID, label: 'Sales', team: 'sales' },
-            { id: SERVICE_AGENT_ID, label: 'Service', team: 'service' },
-          ],
+          agents,
         })
       },
       POST: async ({ request }) => {

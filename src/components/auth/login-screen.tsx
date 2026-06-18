@@ -62,7 +62,7 @@ export function LoginScreen() {
           data.profile
         ) {
           // Single-store customer admin: route to their store
-          window.location.href = `/p/${encodeURIComponent(data.profile)}/chat`
+          window.location.href = `/p/${encodeURIComponent(data.profile)}/dashboard`
         } else {
           // Super-admin or scoped partner admin: reload to Global Studio
           window.location.reload()

@@ -159,7 +159,7 @@ function ResetPage() {
         )}
         {done && (
           <a
-            href={`/p/${encodeURIComponent(done.profile)}/chat`}
+            href={`/p/${encodeURIComponent(done.profile)}/dashboard`}
             className="mt-1 rounded bg-indigo-500 px-3 py-1.5 text-center text-sm font-medium text-white hover:bg-indigo-400"
           >
             Continue to sign in
