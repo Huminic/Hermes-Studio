@@ -57,6 +57,7 @@ type Metric = {
   source: string
   trend?: Trend
 }
+type LeadRating = 'good' | 'watch' | 'alarm'
 type LeadSourceRow = {
   lead_source: string
   total_leads: number | null
@@ -65,24 +66,43 @@ type LeadSourceRow = {
   sold_from_leads: number | null
   sold_from_leads_pct: number | null
   total_gross: number | null
+  rating: LeadRating
+  trend: Trend
+}
+type FunnelStage = {
+  key: string
+  label: string
+  now: number | null
+  comparison: number | null
+  conversion: number | null
+  trend: Trend
+  status: MetricStatus
 }
 type FunnelTab = {
   lead_performance: Array<Metric>
-  pipeline_performance: {
-    stages: Array<{ key: string; label: string; now: number | null; comparison: number | null; status: MetricStatus }>
-    comparison_label: string
-  }
+  pipeline_performance: { stages: Array<FunnelStage>; comparison_label: string }
   lead_sources: Array<LeadSourceRow>
 }
 type LeadBucket = { count: number; names: Array<string> }
+type WidgetUsage = { key: string; label: string; engagements: number; trend: Trend }
 type LeadsTab = {
   statuses: { new: LeadBucket; active: LeadBucket; abandoned: LeadBucket }
   by_source: Array<{ lead_source: string; total_leads: number | null }>
   source: 'vin-live' | 'pending'
   reason?: string
+  widgets: Array<WidgetUsage>
+}
+type PipelineRow = {
+  salesperson: string
+  leads: number | null
+  opportunities: number | null
+  appointments: number | null
+  sales: number | null
+  alarm: boolean
+  trend: Trend
 }
 type PipelineTab = {
-  rows: Array<{ salesperson: string; leads: number | null; opportunities: number | null; appointments: number | null; sales: number | null }>
+  rows: Array<PipelineRow>
   status: MetricStatus
   reason?: string
   comparison_label: string
@@ -316,7 +336,7 @@ export function CustomerPerformanceRenderer(props: {
       </div>
 
       {tab === 'funnel' && <FunnelView funnel={data.funnel} />}
-      {tab === 'leads' && <LeadsView leads={data.leads} />}
+      {tab === 'leads' && <LeadsView leads={data.leads} leadSources={data.funnel.lead_sources} />}
       {tab === 'pipeline' && <PipelineView pipeline={data.pipeline} />}
       {tab === 'ai' && <AiActivityView ai={data.ai_activity} />}
       {tab === 'custom' && (
@@ -360,6 +380,34 @@ function PendingPill() {
   )
 }
 
+/** Compact colored arrow for table cells / between-layer labels. */
+function TrendArrow({ trend }: { trend?: Trend }) {
+  if (!trend || trend.direction == null || trend.direction === 'flat') {
+    return <span className="text-[11px] text-slate-300">–</span>
+  }
+  const color = trend.good === true ? '#15803d' : trend.good === false ? '#b91c1c' : '#64748b'
+  return (
+    <span className="text-[11px] font-semibold" style={{ color }} title={`was ${trend.prior}`}>
+      {trend.direction === 'up' ? '▲' : '▼'}
+      {trend.delta != null ? ` ${Math.abs(trend.delta).toLocaleString(undefined, { maximumFractionDigits: 1 })}` : ''}
+    </span>
+  )
+}
+
+const RATING_STYLE: Record<LeadRating, { label: string; cls: string }> = {
+  good: { label: 'Good', cls: 'bg-emerald-50 text-emerald-700 ring-emerald-200' },
+  watch: { label: 'Watch', cls: 'bg-slate-50 text-slate-600 ring-slate-200' },
+  alarm: { label: 'Alarm', cls: 'bg-red-50 text-red-700 ring-red-200' },
+}
+function RatingChip({ rating }: { rating: LeadRating }) {
+  const s = RATING_STYLE[rating]
+  return (
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ${s.cls}`}>
+      {s.label}
+    </span>
+  )
+}
+
 function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <section className="flex flex-col gap-3">
@@ -384,7 +432,7 @@ function EmptyNote({ children }: { children: React.ReactNode }) {
 function FunnelView({ funnel }: { funnel: FunnelTab }) {
   return (
     <div className="flex flex-col gap-6">
-      <Section title="Lead Performance" subtitle="From your most recent uploaded lead-source report.">
+      <Section title="Lead Performance" subtitle="How is my lead performance?">
         <div className="flex flex-col items-stretch gap-1.5">
           {funnel.lead_performance.map((m, i) => {
             const n = funnel.lead_performance.length
@@ -411,23 +459,38 @@ function FunnelView({ funnel }: { funnel: FunnelTab }) {
         </div>
       </Section>
 
-      <Section title="Pipeline Performance" subtitle={`Now vs ${funnel.pipeline_performance.comparison_label}.`}>
+      <Section title="Pipeline Performance" subtitle="How is the Pipeline Performing?">
         {funnel.pipeline_performance.stages.every((s) => s.status === 'pending') ? (
           <EmptyNote>Upload a lead-source report to populate the pipeline.</EmptyNote>
         ) : (
-          <div className="flex flex-col items-center gap-1.5">
+          <div className="flex flex-col items-center">
             {funnel.pipeline_performance.stages.map((s, i) => {
               const width = 100 - i * 18
               const bg = BLUE_FUNNEL[Math.min(i, BLUE_FUNNEL.length - 1)]
               return (
-                <div key={s.key} className="flex items-center justify-between gap-3 rounded-lg px-4 py-3 text-white shadow-sm" style={{ width: `${width}%`, background: bg }}>
-                  <span className="text-xs font-medium opacity-95">{s.label}</span>
-                  <span className="flex items-center gap-4 text-sm">
-                    <span className="font-semibold">{s.now != null ? s.now.toLocaleString() : '—'}</span>
-                    <span className="text-[11px] opacity-80">
-                      was {s.comparison != null ? s.comparison.toLocaleString() : 'n/a'}
+                <div key={s.key} className="flex w-full flex-col items-center">
+                  {/* Data between layers: the count + period-comparison arrow. */}
+                  <div className="flex items-center gap-2 py-1.5">
+                    <span className="text-sm font-semibold text-slate-900">
+                      {s.now != null ? s.now.toLocaleString() : '—'}
                     </span>
-                  </span>
+                    <TrendArrow trend={s.trend} />
+                  </div>
+                  {/* The layer bar: label + conversion % (first layer has none). */}
+                  <div
+                    className="flex items-center justify-between gap-3 rounded-lg px-4 py-2.5 text-white shadow-sm"
+                    style={{ width: `${width}%`, background: bg }}
+                  >
+                    <span className="text-xs font-medium opacity-95">{s.label}</span>
+                    {i > 0 && s.conversion != null && (
+                      <span
+                        className="rounded-md bg-white/25 px-2 py-0.5 text-xs font-semibold"
+                        title={`${(s.conversion * 100).toFixed(0)}% of ${funnel.pipeline_performance.stages[i - 1].label} converted`}
+                      >
+                        {(s.conversion * 100).toFixed(0)}%
+                      </span>
+                    )}
+                  </div>
                 </div>
               )
             })}
@@ -435,7 +498,7 @@ function FunnelView({ funnel }: { funnel: FunnelTab }) {
         )}
       </Section>
 
-      <Section title="Lead Source Performance" subtitle="Ranked by lead volume.">
+      <Section title="Lead Sources" subtitle="Where are my leads coming from?">
         {funnel.lead_sources.length === 0 ? (
           <EmptyNote>No lead-source data yet — upload a lead-source report in the Data tab.</EmptyNote>
         ) : (
@@ -449,10 +512,7 @@ function FunnelView({ funnel }: { funnel: FunnelTab }) {
                   <tr className="border-b border-slate-200">
                     <th className="px-3 py-2 text-left font-medium">Lead source</th>
                     <th className="px-3 py-2 text-right font-medium">Leads</th>
-                    <th className="px-3 py-2 text-right font-medium">Good</th>
-                    <th className="px-3 py-2 text-right font-medium">Appts</th>
-                    <th className="px-3 py-2 text-right font-medium">Sold</th>
-                    <th className="px-3 py-2 text-right font-medium">Gross</th>
+                    <th className="px-3 py-2 text-right font-medium">vs prior</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -460,10 +520,7 @@ function FunnelView({ funnel }: { funnel: FunnelTab }) {
                     <tr key={r.lead_source} className="border-b border-slate-100 last:border-0">
                       <td className="px-3 py-2 text-slate-700">{r.lead_source}</td>
                       <td className="px-3 py-2 text-right text-slate-700">{r.total_leads ?? '—'}</td>
-                      <td className="px-3 py-2 text-right text-slate-700">{r.good_leads ?? '—'}</td>
-                      <td className="px-3 py-2 text-right text-slate-700">{r.appts_set ?? '—'}</td>
-                      <td className="px-3 py-2 text-right text-slate-700">{r.sold_from_leads ?? '—'}</td>
-                      <td className="px-3 py-2 text-right text-slate-700">{r.total_gross != null ? fmt(r.total_gross, 'currency') : '—'}</td>
+                      <td className="px-3 py-2 text-right"><TrendArrow trend={r.trend} /></td>
                     </tr>
                   ))}
                 </tbody>
@@ -477,7 +534,13 @@ function FunnelView({ funnel }: { funnel: FunnelTab }) {
 }
 
 // ── Leads tab ──────────────────────────────────────────────────────────────
-function LeadsView({ leads }: { leads: LeadsTab }) {
+function LeadsView({
+  leads,
+  leadSources,
+}: {
+  leads: LeadsTab
+  leadSources: Array<LeadSourceRow>
+}) {
   const buckets: Array<{ key: 'new' | 'active' | 'abandoned'; label: string }> = [
     { key: 'new', label: 'New' },
     { key: 'active', label: 'Active' },
@@ -485,7 +548,7 @@ function LeadsView({ leads }: { leads: LeadsTab }) {
   ]
   return (
     <div className="flex flex-col gap-6">
-      <Section title="Leads" subtitle="Live lead status.">
+      <Section title="Leads" subtitle="How are my leads doing right now?">
         {leads.source === 'pending' ? (
           <EmptyNote>{leads.reason ?? 'Lead reporting is not enabled for this store yet.'}</EmptyNote>
         ) : (
@@ -510,30 +573,60 @@ function LeadsView({ leads }: { leads: LeadsTab }) {
         )}
       </Section>
 
-      <Section title="Leads by Lead Source">
-        {leads.by_source.length === 0 ? (
+      <Section title="Lead Source Performance" subtitle="Which lead sources are performing?">
+        {leadSources.length === 0 ? (
           <EmptyNote>No lead-source data yet — upload a lead-source report in the Data tab.</EmptyNote>
         ) : (
-          <>
-            <ChartCard rows={leads.by_source.slice(0, 8).map((r) => ({ label: r.lead_source, value: r.total_leads ?? 0 }))} />
-            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
-                <thead className="text-slate-500">
-                  <tr className="border-b border-slate-200">
-                    <th className="px-3 py-2 text-left font-medium">Lead source</th>
-                    <th className="px-3 py-2 text-right font-medium">Leads</th>
+          <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+            <table className="w-full text-sm">
+              <thead className="text-slate-500">
+                <tr className="border-b border-slate-200">
+                  <th className="px-3 py-2 text-left font-medium">Lead source</th>
+                  <th className="px-3 py-2 text-right font-medium">Leads</th>
+                  <th className="px-3 py-2 text-right font-medium">Good</th>
+                  <th className="px-3 py-2 text-right font-medium">Appts</th>
+                  <th className="px-3 py-2 text-right font-medium">Sold</th>
+                  <th className="px-3 py-2 text-right font-medium">Gross</th>
+                  <th className="px-3 py-2 text-center font-medium">vs prior</th>
+                  <th className="px-3 py-2 text-center font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leadSources.map((r) => (
+                  <tr key={r.lead_source} className="border-b border-slate-100 last:border-0">
+                    <td className="px-3 py-2 text-slate-700">{r.lead_source}</td>
+                    <td className="px-3 py-2 text-right text-slate-700">{r.total_leads ?? '—'}</td>
+                    <td className="px-3 py-2 text-right text-slate-700">{r.good_leads ?? '—'}</td>
+                    <td className="px-3 py-2 text-right text-slate-700">{r.appts_set ?? '—'}</td>
+                    <td className="px-3 py-2 text-right text-slate-700">{r.sold_from_leads ?? '—'}</td>
+                    <td className="px-3 py-2 text-right text-slate-700">{r.total_gross != null ? fmt(r.total_gross, 'currency') : '—'}</td>
+                    <td className="px-3 py-2 text-center"><TrendArrow trend={r.trend} /></td>
+                    <td className="px-3 py-2 text-center"><RatingChip rating={r.rating} /></td>
                   </tr>
-                </thead>
-                <tbody>
-                  {leads.by_source.map((r) => (
-                    <tr key={r.lead_source} className="border-b border-slate-100 last:border-0">
-                      <td className="px-3 py-2 text-slate-700">{r.lead_source}</td>
-                      <td className="px-3 py-2 text-right text-slate-700">{r.total_leads ?? '—'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Section>
+
+      <Section title="StoreFront Widgets" subtitle="Which storefront widgets are customers using?">
+        {leads.widgets.every((w) => w.engagements === 0) ? (
+          <EmptyNote>No storefront widget engagements recorded in this period yet.</EmptyNote>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {leads.widgets.map((w) => (
+                <div key={w.key} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="text-2xl font-semibold text-slate-900">{w.engagements.toLocaleString()}</div>
+                  <div className="mt-1 flex items-center justify-between gap-2">
+                    <span className="text-xs text-slate-500">{w.label}</span>
+                    <TrendArrow trend={w.trend} />
+                  </div>
+                </div>
+              ))}
             </div>
+            <ChartCard rows={leads.widgets.map((w) => ({ label: w.label, value: w.engagements }))} />
           </>
         )}
       </Section>
@@ -544,7 +637,7 @@ function LeadsView({ leads }: { leads: LeadsTab }) {
 // ── Pipeline tab ─────────────────────────────────────────────────────────────
 function PipelineView({ pipeline }: { pipeline: PipelineTab }) {
   return (
-    <Section title="Pipeline by Salesperson" subtitle={`Compared to ${pipeline.comparison_label}.`}>
+    <Section title="Pipeline by Salesperson" subtitle="How is each salesperson performing?">
       {pipeline.status === 'pending' ? (
         <EmptyNote>{pipeline.reason ?? 'Upload a salesperson KPI report in the Data tab to populate the pipeline.'}</EmptyNote>
       ) : (
@@ -557,6 +650,8 @@ function PipelineView({ pipeline }: { pipeline: PipelineTab }) {
                 <th className="px-3 py-2 text-right font-medium">Opportunities</th>
                 <th className="px-3 py-2 text-right font-medium">Appointments</th>
                 <th className="px-3 py-2 text-right font-medium">Sales</th>
+                <th className="px-3 py-2 text-center font-medium">vs prior</th>
+                <th className="px-3 py-2 text-center font-medium">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -567,6 +662,16 @@ function PipelineView({ pipeline }: { pipeline: PipelineTab }) {
                   <td className="px-3 py-2 text-right text-slate-700">{r.opportunities ?? '—'}</td>
                   <td className="px-3 py-2 text-right text-slate-700">{r.appointments ?? '—'}</td>
                   <td className="px-3 py-2 text-right font-semibold text-slate-900">{r.sales ?? '—'}</td>
+                  <td className="px-3 py-2 text-center"><TrendArrow trend={r.trend} /></td>
+                  <td className="px-3 py-2 text-center">
+                    {r.alarm ? (
+                      <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-medium text-red-700 ring-1 ring-red-200">
+                        No sales
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-slate-300">–</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

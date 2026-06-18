@@ -8,7 +8,9 @@ import {
   buildPipelineTab,
   buildAiActivityTab,
   buildObservation,
+  buildWidgetUsage,
   type Metric,
+  type LeadSourceRow,
 } from '@/server/dashboard-metrics'
 
 let tmpHome: string
@@ -202,5 +204,83 @@ describe('buildObservation', () => {
       metric('hunches', 0, null),
     ])
     expect(obs.overview).toMatch(/No customer activity/i)
+  })
+
+  it('weaves table continuity: top source in good, alarm source in opportunities', () => {
+    const leadSources = [
+      { lead_source: 'Repeat Customer', sold_from_leads: 24, rating: 'good', total_leads: 100 },
+      { lead_source: 'Thirdparty Honda', sold_from_leads: 0, rating: 'alarm', total_leads: 71 },
+    ] as unknown as Array<LeadSourceRow>
+    const obs = buildObservation([metric('conversations', 5, null)], {
+      leadSources,
+      pipelineRows: [
+        { salesperson: 'Brandon', leads: 26, opportunities: 24, appointments: 1, sales: 3, alarm: false, trend: { current: 3, prior: 0, delta: 3, direction: 'up', good: true } },
+        { salesperson: 'Caleb', leads: 26, opportunities: 19, appointments: 1, sales: 0, alarm: true, trend: { current: 0, prior: 0, delta: 0, direction: 'flat', good: null } },
+      ],
+    })
+    expect(obs.what_is_good.join(' ')).toMatch(/Repeat Customer.*top-selling/i)
+    expect(obs.what_is_good.join(' ')).toMatch(/Brandon leads the team/i)
+    expect(obs.opportunities.join(' ')).toMatch(/Thirdparty Honda.*no sales/i)
+    expect(obs.opportunities.join(' ')).toMatch(/leads but no sales yet/i)
+  })
+})
+
+const RATING_CSV = [
+  'Dealer,Lead_Source,Total_Leads,Good_Leads,Bad_Leads,Duplicate_Leads,Bad_Other_Leads,Customers_Influenced,Sold_in_Timeframe,Sold_in_Timeframe_Pct,Sold_from_Leads,Sold_from_Leads_Pct,Avg_Days_to_Sale,Internet_Attempted_Contact,Internet_Attempted_Contact_Pct,Internet_Actual_Contact,Internet_Actual_Contact_Pct,Internet_Avg_Attempts_to_Contact,Appts_Set,Appts_Set_Pct,Appts_Scheduled,Appts_Scheduled_Pct,Appts_Confirmed,Appts_Confirmed_Pct,Appts_Shown,Appts_Shown_Pct,Avg_Days_to_Appt_Set,Total_Visits,Initial_Visits,Be_Back_Visits,Avg_Days_to_Initial_Visit,Avg_Days_Initial_Visit_to_Be_Back,Total_Front_Gross,Avg_Front_Gross,Total_Back_Gross,Avg_Back_Gross,Total_Gross,Avg_Gross,Total_Cost,Cost_Per_Good_Lead,Cost_Per_Sold,Profit',
+  // good: 30% sold (above store avg)
+  'Serra Honda of Sylacauga,Repeat Customer,100,90,10,0,0,0,30,30%,30,30%,4.0,4,100%,4,100%,0.0,40,40%,30,30%,24,80%,20,74%,6.0,42,42,0,1.5,0.0,"$30,000.00",$300,"$0.00",$0,"$30,000.00","$1,000.00",$0.00,$0.00,$0.00,"$30,000.00"',
+  // alarm: 20 leads, 0 sold
+  'Serra Honda of Sylacauga,Dead Source,20,5,15,0,0,0,0,0%,0,0%,0.0,5,100%,2,40%,3.0,1,5%,1,5%,0,0%,0,0%,9.0,0,0,0,0,0,$0.00,$0.00,$0.00,$0.00,$0.00,$0.00,$0.00,$0.00,$0.00,$0.00',
+].join('\n')
+
+describe('lead-source rating + pipeline conversion', () => {
+  it('rates sources (good / alarm) and computes pipeline conversions', () => {
+    ingestReport({
+      profile: 'fixture',
+      text: RATING_CSV,
+      filename: 'roi_2026-05-13.csv',
+      dealerName: 'Serra Honda',
+      checksum: 'rating-1',
+    })
+    const tab = buildFunnelTab('fixture')
+    const bySrc = Object.fromEntries(tab.lead_sources.map((r) => [r.lead_source, r]))
+    expect(bySrc['Repeat Customer'].rating).toBe('good')
+    expect(bySrc['Dead Source'].rating).toBe('alarm')
+
+    const stages = tab.pipeline_performance.stages
+    expect(stages[0].conversion).toBeNull() // first layer, no conversion
+    // Opportunities (good_leads 90+5=95) / Leads (120) = 0.7917
+    expect(stages[1].conversion).toBeCloseTo(95 / 120, 4)
+    // Sales (30+0) / Appointments (40+1)
+    expect(stages[3].conversion).toBeCloseTo(30 / 41, 4)
+  })
+})
+
+describe('buildWidgetUsage', () => {
+  it('counts inbound engagements per widget surface', async () => {
+    const { getOrCreateThread, appendMessage } = await import(
+      '@/server/messaging-hub-store'
+    )
+    const mk = (channel: string, handle: string) => {
+      const t = getOrCreateThread({
+        profile: 'fixture',
+        domain: 'sales',
+        channel,
+        contact_handle: handle,
+        assigned_agent_id: 'caroline',
+      })
+      appendMessage({ thread_id: t.id, direction: 'inbound', role: 'user', channel, content: 'hi', author: handle })
+    }
+    mk('chat', '+1a')
+    mk('chat', '+1b')
+    mk('form', '+1c')
+    mk('video', '+1d')
+
+    const widgets = buildWidgetUsage('fixture', { now: Date.now(), windowDays: 30 })
+    const byKey = Object.fromEntries(widgets.map((w) => [w.key, w.engagements]))
+    expect(byKey.web_chat).toBe(2)
+    expect(byKey.lead_form).toBe(1)
+    expect(byKey.video_chat).toBe(1)
+    expect(byKey.voice).toBe(0)
   })
 })

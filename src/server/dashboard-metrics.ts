@@ -56,20 +56,27 @@ export type Metric = {
 export type FunnelTab = {
   /** Green tapered "Lead Performance" funnel — 7 spec metrics. */
   lead_performance: Array<Metric>
-  /** Blue tapered "Pipeline Performance" funnel with Now / Comparison. */
+  /** Blue tapered "Pipeline Performance" conversion funnel. */
   pipeline_performance: {
     stages: Array<{
       key: string
       label: string
       now: number | null
       comparison: number | null
+      /** % of the previous stage that reached this one (0-1); null for stage 1. */
+      conversion: number | null
+      /** Period-over-period trend of `now` vs `comparison` (more = better). */
+      trend: Trend
       status: MetricStatus
     }>
     comparison_label: string
   }
-  /** Ranked lead-source rows (drives the funnel's "Lead Source Performance"). */
+  /** Ranked lead-source rows with performance rating + trend. */
   lead_sources: Array<LeadSourceRow>
 }
+
+/** Contextual read on a lead source's performance. */
+export type LeadRating = 'good' | 'watch' | 'alarm'
 
 export type LeadSourceRow = {
   lead_source: string
@@ -79,6 +86,18 @@ export type LeadSourceRow = {
   sold_from_leads: number | null
   sold_from_leads_pct: number | null
   total_gross: number | null
+  /** good = converts at/above the store average; alarm = volume with no sales. */
+  rating: LeadRating
+  /** Volume trend vs the prior uploaded report (more = better). */
+  trend: Trend
+}
+
+export type WidgetUsage = {
+  key: string
+  label: string
+  /** Customer-initiated engagements through this storefront widget surface. */
+  engagements: number
+  trend: Trend
 }
 
 export type LeadsTab = {
@@ -90,6 +109,8 @@ export type LeadsTab = {
   by_source: Array<{ lead_source: string; total_leads: number | null }>
   source: 'vin-live' | 'pending'
   reason?: string
+  /** StoreFront widget usage (engagement by widget surface) over the window. */
+  widgets: Array<WidgetUsage>
 }
 
 export type LeadBucket = {
@@ -105,6 +126,10 @@ export type PipelineTab = {
     opportunities: number | null
     appointments: number | null
     sales: number | null
+    /** leads in the door but no sales — worth a look. */
+    alarm: boolean
+    /** Sales trend vs the prior uploaded report (more = better). */
+    trend: Trend
   }>
   status: MetricStatus
   reason?: string
@@ -365,38 +390,59 @@ export function buildFunnelTab(
       },
     ]
 
-    const stage = (
-      key: string,
-      label: string,
-      col: keyof RoiRow,
-    ) => ({
-      key,
-      label,
-      now: hasData ? sum(rows, col as string) : null,
-      comparison: priorRows.length ? sum(priorRows, col as string) : null,
-      status: (hasData ? 'sourced' : 'pending') as MetricStatus,
+    const rawStages = [
+      { key: 'leads', label: 'Leads', col: 'total_leads' },
+      { key: 'opportunities', label: 'Opportunities', col: 'good_leads' },
+      { key: 'appointments', label: 'Appointments', col: 'appts_set' },
+      { key: 'sales', label: 'Sales', col: 'sold_from_leads' },
+    ] as const
+    const stages = rawStages.map((s, i) => {
+      const now = hasData ? sum(rows, s.col) : null
+      const comparison = priorRows.length ? sum(priorRows, s.col) : null
+      const prevNow = i > 0 && hasData ? sum(rows, rawStages[i - 1].col) : null
+      // Conversion = % of the previous stage that reached this one.
+      const conversion =
+        i > 0 && now != null && prevNow != null && prevNow > 0 ? now / prevNow : null
+      return {
+        key: s.key,
+        label: s.label,
+        now,
+        comparison,
+        conversion,
+        trend: trend(now, comparison, 'up'),
+        status: (hasData ? 'sourced' : 'pending') as MetricStatus,
+      }
     })
+    const pipeline_performance = { stages, comparison_label: cmpLabel }
 
-    const pipeline_performance = {
-      stages: [
-        stage('leads', 'Leads', 'total_leads'),
-        stage('opportunities', 'Opportunities', 'good_leads'),
-        stage('appointments', 'Appointments', 'appts_set'),
-        stage('sales', 'Sales', 'sold_from_leads'),
-      ],
-      comparison_label: cmpLabel,
-    }
-
+    // Contextual rating per lead source: alarm = volume with no sales; good =
+    // converts at/above the store-wide sold rate; else watch. Trend = volume vs
+    // the same source in the prior uploaded report.
+    const priorBySource = new Map(priorRows.map((r) => [r.lead_source, r]))
+    const totalLeadsAll = sum(rows, 'total_leads') ?? 0
+    const totalSoldAll = sum(rows, 'sold_from_leads') ?? 0
+    const overallSoldRate = totalLeadsAll > 0 ? totalSoldAll / totalLeadsAll : 0
     const lead_sources: Array<LeadSourceRow> = rows
-      .map((r) => ({
-        lead_source: r.lead_source,
-        total_leads: r.total_leads,
-        good_leads: r.good_leads,
-        appts_set: r.appts_set,
-        sold_from_leads: r.sold_from_leads,
-        sold_from_leads_pct: r.sold_from_leads_pct,
-        total_gross: r.total_gross,
-      }))
+      .map((r) => {
+        const leads = r.total_leads ?? 0
+        const sold = r.sold_from_leads ?? 0
+        const rate = r.sold_from_leads_pct ?? (leads > 0 ? sold / leads : 0)
+        let rating: LeadRating = 'watch'
+        if (leads >= 10 && sold === 0) rating = 'alarm'
+        else if (sold > 0 && rate >= overallSoldRate) rating = 'good'
+        const prior = priorBySource.get(r.lead_source)
+        return {
+          lead_source: r.lead_source,
+          total_leads: r.total_leads,
+          good_leads: r.good_leads,
+          appts_set: r.appts_set,
+          sold_from_leads: r.sold_from_leads,
+          sold_from_leads_pct: r.sold_from_leads_pct,
+          total_gross: r.total_gross,
+          rating,
+          trend: trend(r.total_leads, prior ? prior.total_leads : null, 'up'),
+        }
+      })
       .sort((a, b) => (b.total_leads ?? 0) - (a.total_leads ?? 0))
 
     return { lead_performance, pipeline_performance, lead_sources }
@@ -441,8 +487,23 @@ export function buildPipelineTab(
       cur.sales += r.appts_shown_sold ?? 0
       byPerson.set(r.salesperson, cur)
     }
+    // Prior-import sales per salesperson, for the trend arrow.
+    const priorSales = new Map<string, number>()
+    if (prior) {
+      for (const r of kpiRows(handle, prior.id)) {
+        priorSales.set(
+          r.salesperson,
+          (priorSales.get(r.salesperson) ?? 0) + (r.appts_shown_sold ?? 0),
+        )
+      }
+    }
     const rows = Array.from(byPerson.entries())
-      .map(([salesperson, v]) => ({ salesperson, ...v }))
+      .map(([salesperson, v]) => ({
+        salesperson,
+        ...v,
+        alarm: v.leads > 0 && v.sales === 0,
+        trend: trend(v.sales, prior ? (priorSales.get(salesperson) ?? 0) : null, 'up'),
+      }))
       .sort((a, b) => b.sales - a.sales || b.leads - a.leads)
     return {
       rows,
@@ -473,6 +534,7 @@ function classifyStatus(status: string): 'new' | 'active' | 'abandoned' {
 export function buildLeadsTab(
   reports: CustomerReports,
   funnel: FunnelTab,
+  widgets: Array<WidgetUsage> = [],
 ): LeadsTab {
   const by_source = funnel.lead_sources.map((r) => ({
     lead_source: r.lead_source,
@@ -490,6 +552,7 @@ export function buildLeadsTab(
       by_source,
       source: 'pending',
       reason: lf.reason,
+      widgets,
     }
   }
   const buckets = {
@@ -506,7 +569,44 @@ export function buildLeadsTab(
     const b = buckets[classifyStatus(entry.status)]
     if (b.names.length < 25) b.names.push(entry.name)
   }
-  return { statuses: buckets, by_source, source: 'vin-live' }
+  return { statuses: buckets, by_source, source: 'vin-live', widgets }
+}
+
+/**
+ * StoreFront widget usage — customer-initiated engagements per widget surface
+ * over the window, with a prior-window trend. Sourced from live messaging-hub
+ * inbound messages (the storefront widgets land threads on these channels).
+ */
+const WIDGET_SURFACES: Array<{ key: string; label: string; channels: Array<string> }> = [
+  { key: 'web_chat', label: 'Web Chat', channels: ['chat'] },
+  { key: 'lead_form', label: 'Lead Form', channels: ['form'] },
+  { key: 'video_chat', label: 'Video Chat', channels: ['video', 'tavus'] },
+  { key: 'voice', label: 'Voice / Callback', channels: ['voice', 'vapi', 'callback'] },
+]
+
+export function buildWidgetUsage(
+  profile: string,
+  opts: { now: number; windowDays: number; profileRoot?: string },
+): Array<WidgetUsage> {
+  void opts.profileRoot
+  const sinceMs = opts.now - opts.windowDays * DAY_MS
+  const priorSince = opts.now - 2 * opts.windowDays * DAY_MS
+  const cur = aggregateMessages(profile, sinceMs)
+  const priorWin = aggregateMessages(profile, priorSince)
+  const inbound = (
+    by: Record<string, { inbound: number; outbound: number }>,
+    chs: Array<string>,
+  ) => chs.reduce((t, c) => t + (by[c]?.inbound ?? 0), 0)
+  return WIDGET_SURFACES.map((w) => {
+    const now = inbound(cur.by_channel, w.channels)
+    const prior = inbound(priorWin.by_channel, w.channels) - now
+    return {
+      key: w.key,
+      label: w.label,
+      engagements: now,
+      trend: trend(now, prior, 'up'),
+    }
+  })
 }
 
 // ── AI Activity tab ─────────────────────────────────────────────────────────
@@ -546,7 +646,12 @@ function conversationCounts(
 
 export function buildAiActivityTab(
   profile: string,
-  opts: { now: number; windowDays: number; profileRoot?: string },
+  opts: {
+    now: number
+    windowDays: number
+    profileRoot?: string
+    observationContext?: ObservationContext
+  },
 ): AiActivityTab {
   const { now, windowDays } = opts
   const sinceMs = now - windowDays * DAY_MS
@@ -627,7 +732,7 @@ export function buildAiActivityTab(
     m('infostore_updates', 'InfoStore Updates', uploads, null),
   ]
 
-  return { metrics, observation: buildObservation(metrics) }
+  return { metrics, observation: buildObservation(metrics, opts.observationContext) }
 }
 
 /**
@@ -635,7 +740,15 @@ export function buildAiActivityTab(
  * Frames anything notable as worth verifying, never as a definitive judgment
  * (spec AI-Observation tone rule).
  */
-export function buildObservation(metrics: Array<Metric>): AiObservation {
+export type ObservationContext = {
+  leadSources?: Array<LeadSourceRow>
+  pipelineRows?: PipelineTab['rows']
+}
+
+export function buildObservation(
+  metrics: Array<Metric>,
+  context: ObservationContext = {},
+): AiObservation {
   const get = (k: string) => metrics.find((x) => x.key === k)
   const val = (k: string) => get(k)?.value ?? 0
   const totalActivity =
@@ -673,6 +786,37 @@ export function buildObservation(metrics: Array<Metric>): AiObservation {
       )
     }
   }
+  // Continuity with the Funnel / Leads / Pipeline tables: surface the standout
+  // good and the things flagged as alarms so the narrative matches the tables.
+  const sources = context.leadSources ?? []
+  const topSource = sources
+    .filter((s) => (s.sold_from_leads ?? 0) > 0)
+    .sort((a, b) => (b.sold_from_leads ?? 0) - (a.sold_from_leads ?? 0))[0]
+  if (topSource) {
+    what_is_good.push(
+      `"${topSource.lead_source}" is the top-selling lead source with ${topSource.sold_from_leads} sales.`,
+    )
+  }
+  for (const s of sources.filter((x) => x.rating === 'alarm').slice(0, 3)) {
+    opportunities.push(
+      `"${s.lead_source}" brought ${s.total_leads} leads but no sales — this might be worth verifying.`,
+    )
+  }
+  const pipe = context.pipelineRows ?? []
+  const topRep = pipe
+    .filter((r) => (r.sales ?? 0) > 0)
+    .sort((a, b) => (b.sales ?? 0) - (a.sales ?? 0))[0]
+  if (topRep) {
+    what_is_good.push(`${topRep.salesperson} leads the team with ${topRep.sales} sales.`)
+  }
+  const stalled = pipe.filter((r) => r.alarm)
+  if (stalled.length > 0) {
+    opportunities.push(
+      `${stalled.length} team member${stalled.length === 1 ? '' : 's'} ${
+        stalled.length === 1 ? 'has' : 'have'
+      } leads but no sales yet — it might be worth a check-in.`,
+    )
+  }
   if (what_is_good.length === 0) {
     what_is_good.push('Activity is being tracked; no standout positive change to call out yet.')
   }
@@ -698,12 +842,21 @@ export async function buildDashboard(
   const windowDays = opts.windowDays ?? 30
   const reports = await buildCustomerReports(profile, { now, windowDays })
   const funnel = buildFunnelTab(profile, { profileRoot: opts.profileRoot })
-  const leads = buildLeadsTab(reports, funnel)
   const pipeline = buildPipelineTab(profile, { profileRoot: opts.profileRoot })
+  const widgets = buildWidgetUsage(profile, {
+    now,
+    windowDays,
+    profileRoot: opts.profileRoot,
+  })
+  const leads = buildLeadsTab(reports, funnel, widgets)
   const ai_activity = buildAiActivityTab(profile, {
     now,
     windowDays,
     profileRoot: opts.profileRoot,
+    observationContext: {
+      leadSources: funnel.lead_sources,
+      pipelineRows: pipeline.rows,
+    },
   })
   return {
     profile,
