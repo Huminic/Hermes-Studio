@@ -318,21 +318,35 @@ export function CustomerPerformanceRenderer(props: {
         </div>
       </div>
 
-      {/* Tab bar */}
-      <div className="flex gap-1 overflow-x-auto rounded-lg border border-slate-200 bg-slate-50 p-1 text-xs">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => setTab(t.id)}
-            className={
-              'flex-1 whitespace-nowrap rounded-md px-3 py-1.5 font-medium transition-colors ' +
-              (tab === t.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900')
-            }
-          >
-            {t.label}
-          </button>
-        ))}
+      {/* Tab bar — standardized to the Marketing/Campaigns tab style. */}
+      <div className="-mx-1 overflow-x-auto px-1">
+        <div
+          role="tablist"
+          aria-label="Dashboard sections"
+          className="flex min-w-max gap-1 rounded-lg border border-slate-200 bg-white p-1"
+        >
+          {TABS.map((t) => {
+            const active = tab === t.id
+            return (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => setTab(t.id)}
+                className={
+                  'whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-semibold transition ' +
+                  (active
+                    ? 'text-white'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900')
+                }
+                style={active ? { background: PRIMARY } : undefined}
+              >
+                {t.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {tab === 'funnel' && <FunnelView funnel={data.funnel} />}
@@ -478,7 +492,7 @@ function FunnelView({ funnel }: { funnel: FunnelTab }) {
     <div className="flex flex-col gap-6">
       <Section title="Lead Performance" subtitle="How is my lead performance?">
         {funnel.lead_performance.stages.every((s) => s.status === 'pending') ? (
-          <EmptyNote>Upload a lead-source report in the Data tab to populate lead performance.</EmptyNote>
+          <EmptyNote>Upload a lead-source report in InfoStore to populate lead performance.</EmptyNote>
         ) : (
           <div className="flex flex-col gap-4">
             <ConversionFunnel stages={funnel.lead_performance.stages} palette={GREEN_FUNNEL} />
@@ -511,7 +525,7 @@ function FunnelView({ funnel }: { funnel: FunnelTab }) {
 
       <Section title="Lead Sources" subtitle="Where are my leads coming from?">
         {funnel.lead_sources.length === 0 ? (
-          <EmptyNote>No lead-source data yet — upload a lead-source report in the Data tab.</EmptyNote>
+          <EmptyNote>No lead-source data yet — upload a lead-source report in InfoStore.</EmptyNote>
         ) : (
           <>
             <ChartCard
@@ -586,7 +600,7 @@ function LeadsView({
 
       <Section title="Lead Source Performance" subtitle="Which lead sources are performing?">
         {leadSources.length === 0 ? (
-          <EmptyNote>No lead-source data yet — upload a lead-source report in the Data tab.</EmptyNote>
+          <EmptyNote>No lead-source data yet — upload a lead-source report in InfoStore.</EmptyNote>
         ) : (
           <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
             <table className="w-full text-sm">
@@ -650,7 +664,7 @@ function PipelineView({ pipeline }: { pipeline: PipelineTab }) {
   return (
     <Section title="Pipeline by Salesperson" subtitle="How is each salesperson performing?">
       {pipeline.status === 'pending' ? (
-        <EmptyNote>{pipeline.reason ?? 'Upload a salesperson KPI report in the Data tab to populate the pipeline.'}</EmptyNote>
+        <EmptyNote>{pipeline.reason ?? 'Upload a salesperson KPI report in InfoStore to populate the pipeline.'}</EmptyNote>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
           <table className="w-full text-sm">
