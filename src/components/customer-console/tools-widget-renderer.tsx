@@ -546,41 +546,40 @@ function buildUnifiedPreviewHtml(origin: string, profile: string): string {
       color-scheme: light;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: #0f172a;
-      background: #f8fafc;
     }
+    html, body { height: 100%; }
     body {
       margin: 0;
-      min-height: 100vh;
-      background: #f8fafc;
+      background: #ffffff;
     }
+    /* The preview surface fills the iframe (the white preview box), so the
+       floating launcher sits INSIDE the box — no gray frame, no empty slop. */
     main {
       box-sizing: border-box;
-      min-height: 100vh;
-      padding: 28px;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 32px 36px;
     }
-    .preview-page {
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      background: #ffffff;
-      padding: 22px;
-      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
-    }
+    .preview-page { max-width: 30rem; }
     .eyebrow {
       margin: 0 0 8px;
-      color: #64748b;
+      color: #94a3b8;
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
     h1 {
-      margin: 0 0 8px;
-      font-size: 24px;
+      margin: 0 0 10px;
+      font-size: 26px;
       line-height: 1.2;
+      color: #0f172a;
     }
     p {
       margin: 0;
-      max-width: 28rem;
+      max-width: 26rem;
       color: #64748b;
       font-size: 14px;
       line-height: 1.55;
@@ -590,9 +589,9 @@ function buildUnifiedPreviewHtml(origin: string, profile: string): string {
 <body>
   <main>
     <section class="preview-page">
-      <p class="eyebrow">Website preview</p>
+      <p class="eyebrow">Your website</p>
       <h1>${escapeHtml(title)}</h1>
-      <p>The unified launcher appears in the corner of this preview, just like it will on the dealership website.</p>
+      <p>The unified launcher appears in the corner — exactly as visitors will see it on the dealership website.</p>
     </section>
   </main>
   <script async src="${escapeAttribute(widgetSrc)}"></script>
