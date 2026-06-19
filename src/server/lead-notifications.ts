@@ -501,16 +501,44 @@ export function renderDealerNotificationEmail(input: {
  * token → `{ ok: false, via: 'unconfigured' }` (logged, never throws). This is
  * distinct from the customer-facing follow-up SMS (WS-2).
  */
+/**
+ * For the ADF-XML template only, enrich the lead with the dealer's configured
+ * brand + lead source (mirrors the Nexxus org `adfBrand` / `adfLeadSource`) so
+ * the DMS-ingested document carries the right vehicle <make> and <vendorname>.
+ * Returns the lead unchanged when neither is configured or for the email card.
+ */
+function enrichAdfLead(
+  lead: AdfLead,
+  notif: { adf_brand?: string; adf_lead_source?: string },
+): AdfLead {
+  if (!notif.adf_brand && !notif.adf_lead_source) return lead
+  const vehicles =
+    lead.vehicles && lead.vehicles.length > 0
+      ? lead.vehicles
+      : notif.adf_brand
+        ? [{ interest: 'buy' as const, status: 'unknown' as const, make: notif.adf_brand }]
+        : lead.vehicles
+  const vendor = notif.adf_lead_source
+    ? { name: notif.adf_lead_source, service: lead.vendor?.service }
+    : lead.vendor
+  return { ...lead, vehicles, vendor }
+}
+
 export async function notifyDealer(input: {
   profile: string
   event: AdfLead
   subjectPrefix?: string
   /** Override the resolved recipient (testing / one-off). */
   forceTo?: string
+  /**
+   * Override the template for THIS send (per-notification routing, #NW).
+   * Falls back to the store-level `lead_format` when absent.
+   */
+  forceFormat?: 'adf-xml' | 'email'
 }): Promise<LeadNotificationResult> {
   const { config } = readStudioConfig(input.profile)
   const notif = config.notifications
-  const format = notif.lead_format ?? 'email'
+  const format = input.forceFormat ?? notif.lead_format ?? 'email'
   const to =
     input.forceTo ??
     notif.lead_recipient ??
@@ -539,7 +567,7 @@ export async function notifyDealer(input: {
 
   const rendered = renderDealerNotificationEmail({
     format,
-    lead: input.event,
+    lead: format === 'adf-xml' ? enrichAdfLead(input.event, notif) : input.event,
     orgName,
     subjectPrefix: input.subjectPrefix,
   })
@@ -629,6 +657,52 @@ export function resolveNotificationEmails(
 }
 
 /**
+ * Format-aware recipient resolver (#NW). Like {@link resolveNotificationEmails}
+ * but returns each email recipient paired with the template it should receive:
+ * the rule's own `format`, else the store-level `lead_format`. This lets one
+ * store fan a lead out to human recipients on the styled email card AND a DMS
+ * intake address on ADF-XML in a single dispatch.
+ */
+export function resolveNotificationRecipients(
+  config: {
+    notifications: {
+      lead_format?: string
+      routing?: Array<{
+        event: string
+        to: string
+        channel?: string
+        format?: string
+        enabled?: boolean
+      }>
+    }
+  },
+  event: string,
+): {
+  recipients: Array<{ to: string; format: 'email' | 'adf-xml' }>
+  smsSkipped: number
+} {
+  const rules = config.notifications.routing ?? []
+  const storeFormat: 'email' | 'adf-xml' =
+    config.notifications.lead_format === 'adf-xml' ? 'adf-xml' : 'email'
+  const matched = rules.filter(
+    (r) => r.enabled !== false && (r.event === event || r.event === 'all'),
+  )
+  const seen = new Set<string>()
+  const recipients: Array<{ to: string; format: 'email' | 'adf-xml' }> = []
+  for (const r of matched) {
+    if ((r.channel ?? 'email') !== 'email') continue
+    const format: 'email' | 'adf-xml' =
+      r.format === 'adf-xml' ? 'adf-xml' : r.format === 'email' ? 'email' : storeFormat
+    const key = `${r.to}::${format}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    recipients.push({ to: r.to, format })
+  }
+  const smsSkipped = matched.filter((r) => r.channel === 'sms').length
+  return { recipients, smsSkipped }
+}
+
+/**
  * Routing + cooldown + fan-out core. Takes a fully-built {@link AdfLead} and an
  * event, resolves the recipient(s) from the per-profile routing matrix (#207),
  * applies the per-(profile, cooldownKey) anti-spam window, and fans the dealer
@@ -652,7 +726,10 @@ export async function dispatchLeadNotification(input: {
       reason: `within ${cooldownHours}h cooldown for ${input.cooldownKey}`,
     }
   }
-  const { emails, smsSkipped } = resolveNotificationEmails(config, input.event)
+  const { recipients, smsSkipped } = resolveNotificationRecipients(
+    config,
+    input.event,
+  )
   if (smsSkipped > 0) {
     console.warn(
       `[notify] ${input.profile}/${input.event}: ${smsSkipped} sms routing rule(s) skipped (email-only in this version)`,
@@ -660,9 +737,10 @@ export async function dispatchLeadNotification(input: {
   }
   try {
     let results: Array<LeadNotificationResult>
-    if (emails.length === 0) {
+    if (recipients.length === 0) {
       // No routing email targets matched → legacy single-recipient path
-      // (notifyDealer resolves notifications.lead_recipient / adf_email itself).
+      // (notifyDealer resolves notifications.lead_recipient / adf_email itself,
+      // and the store-level lead_format picks the template).
       results = [
         await notifyDealer({
           profile: input.profile,
@@ -672,12 +750,13 @@ export async function dispatchLeadNotification(input: {
       ]
     } else {
       results = await Promise.all(
-        emails.map((to) =>
+        recipients.map((r) =>
           notifyDealer({
             profile: input.profile,
             event: input.lead,
             subjectPrefix: input.subjectPrefix,
-            forceTo: to,
+            forceTo: r.to,
+            forceFormat: r.format,
           }),
         ),
       )

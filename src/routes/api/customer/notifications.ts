@@ -22,6 +22,7 @@ type RuleInput = {
   event: string
   to: string
   channel?: 'email' | 'sms'
+  format?: 'adf-xml' | 'email'
   label?: string
   enabled?: boolean
 }
@@ -42,10 +43,13 @@ function normalizeRouting(
     if (channel === 'email' && !to.includes('@')) {
       return { ok: false, error: `rule ${i + 1}: "${to}" is not a valid email` }
     }
+    const format =
+      r?.format === 'adf-xml' ? 'adf-xml' : r?.format === 'email' ? 'email' : undefined
     rules.push({
       event,
       to,
       channel,
+      ...(format ? { format } : {}),
       label: typeof r?.label === 'string' ? r.label.trim() || undefined : undefined,
       enabled: r?.enabled !== false,
     })

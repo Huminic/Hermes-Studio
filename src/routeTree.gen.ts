@@ -144,6 +144,7 @@ import { Route as ApiEventsReplayRouteImport } from './routes/api/events/replay'
 import { Route as ApiCustomerSessionsRouteImport } from './routes/api/customer/sessions'
 import { Route as ApiCustomerReportsRouteImport } from './routes/api/customer/reports'
 import { Route as ApiCustomerPerformanceRouteImport } from './routes/api/customer/performance'
+import { Route as ApiCustomerNotificationsTestRouteImport } from './routes/api/customer/notifications-test'
 import { Route as ApiCustomerNotificationsRouteImport } from './routes/api/customer/notifications'
 import { Route as ApiCustomerLeadFlowRouteImport } from './routes/api/customer/lead-flow'
 import { Route as ApiCustomerHunchesRouteImport } from './routes/api/customer/hunches'
@@ -881,6 +882,12 @@ const ApiCustomerPerformanceRoute = ApiCustomerPerformanceRouteImport.update({
   path: '/api/customer/performance',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerNotificationsTestRoute =
+  ApiCustomerNotificationsTestRouteImport.update({
+    id: '/api/customer/notifications-test',
+    path: '/api/customer/notifications-test',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCustomerNotificationsRoute =
   ApiCustomerNotificationsRouteImport.update({
     id: '/api/customer/notifications',
@@ -1311,6 +1318,7 @@ export interface FileRoutesByFullPath {
   '/api/customer/hunches': typeof ApiCustomerHunchesRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
+  '/api/customer/notifications-test': typeof ApiCustomerNotificationsTestRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/customer/sessions': typeof ApiCustomerSessionsRoute
@@ -1507,6 +1515,7 @@ export interface FileRoutesByTo {
   '/api/customer/hunches': typeof ApiCustomerHunchesRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
+  '/api/customer/notifications-test': typeof ApiCustomerNotificationsTestRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/customer/sessions': typeof ApiCustomerSessionsRoute
@@ -1705,6 +1714,7 @@ export interface FileRoutesById {
   '/api/customer/hunches': typeof ApiCustomerHunchesRoute
   '/api/customer/lead-flow': typeof ApiCustomerLeadFlowRoute
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
+  '/api/customer/notifications-test': typeof ApiCustomerNotificationsTestRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/customer/sessions': typeof ApiCustomerSessionsRoute
@@ -1904,6 +1914,7 @@ export interface FileRouteTypes {
     | '/api/customer/hunches'
     | '/api/customer/lead-flow'
     | '/api/customer/notifications'
+    | '/api/customer/notifications-test'
     | '/api/customer/performance'
     | '/api/customer/reports'
     | '/api/customer/sessions'
@@ -2100,6 +2111,7 @@ export interface FileRouteTypes {
     | '/api/customer/hunches'
     | '/api/customer/lead-flow'
     | '/api/customer/notifications'
+    | '/api/customer/notifications-test'
     | '/api/customer/performance'
     | '/api/customer/reports'
     | '/api/customer/sessions'
@@ -2297,6 +2309,7 @@ export interface FileRouteTypes {
     | '/api/customer/hunches'
     | '/api/customer/lead-flow'
     | '/api/customer/notifications'
+    | '/api/customer/notifications-test'
     | '/api/customer/performance'
     | '/api/customer/reports'
     | '/api/customer/sessions'
@@ -2488,6 +2501,7 @@ export interface RootRouteChildren {
   ApiCustomerHunchesRoute: typeof ApiCustomerHunchesRoute
   ApiCustomerLeadFlowRoute: typeof ApiCustomerLeadFlowRoute
   ApiCustomerNotificationsRoute: typeof ApiCustomerNotificationsRoute
+  ApiCustomerNotificationsTestRoute: typeof ApiCustomerNotificationsTestRoute
   ApiCustomerPerformanceRoute: typeof ApiCustomerPerformanceRoute
   ApiCustomerReportsRoute: typeof ApiCustomerReportsRoute
   ApiCustomerSessionsRoute: typeof ApiCustomerSessionsRoute
@@ -3499,6 +3513,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerPerformanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/notifications-test': {
+      id: '/api/customer/notifications-test'
+      path: '/api/customer/notifications-test'
+      fullPath: '/api/customer/notifications-test'
+      preLoaderRoute: typeof ApiCustomerNotificationsTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/customer/notifications': {
       id: '/api/customer/notifications'
       path: '/api/customer/notifications'
@@ -4273,6 +4294,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCustomerHunchesRoute: ApiCustomerHunchesRoute,
   ApiCustomerLeadFlowRoute: ApiCustomerLeadFlowRoute,
   ApiCustomerNotificationsRoute: ApiCustomerNotificationsRoute,
+  ApiCustomerNotificationsTestRoute: ApiCustomerNotificationsTestRoute,
   ApiCustomerPerformanceRoute: ApiCustomerPerformanceRoute,
   ApiCustomerReportsRoute: ApiCustomerReportsRoute,
   ApiCustomerSessionsRoute: ApiCustomerSessionsRoute,

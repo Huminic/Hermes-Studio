@@ -51,6 +51,8 @@ export type NotificationRuleInput = {
   event: string
   to: string
   channel?: 'email' | 'sms'
+  /** Per-notification template: 'email' card vs 'adf-xml' DMS document (#NW). */
+  format?: 'adf-xml' | 'email'
   label?: string
   enabled?: boolean
 }
