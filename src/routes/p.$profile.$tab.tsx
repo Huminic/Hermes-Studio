@@ -16,6 +16,7 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import type { IconSvgElement } from '@hugeicons/react'
 import { defaultStudioConfig, type StudioConfig } from '@/lib/studio-config'
 import { getRenderer } from '@/lib/console-renderers'
+import { HelpButton } from '@/components/customer-console/help-modal'
 
 export const Route = createFileRoute('/p/$profile/$tab')({
   component: StorefrontTabRoute,
@@ -310,6 +311,7 @@ function StorefrontTabRoute() {
             <span className="text-slate-400">|</span>
             <span className="text-sm text-slate-300">Workspace</span>
           </div>
+          <HelpButton />
         </header>
 
         <div className="flex min-h-0 flex-1 flex-row">

@@ -343,6 +343,15 @@ const NotificationRuleSchema = z.object({
   /** Recipient: an email address for channel:email, a phone for channel:sms. */
   to: z.string().min(1),
   channel: z.enum(['email', 'sms']).optional().default('email'),
+  /**
+   * Per-notification template (#NW): how THIS recipient receives the alert.
+   * 'email' = the styled HTML lead card; 'adf-xml' = the DMS-ingestable ADF
+   * document (a .adf.xml attachment + raw XML body), used for a dealer's CRM
+   * intake address. Absent → fall back to the store-level `lead_format`, so a
+   * dealer can have human recipients on the email card AND a DMS contact on ADF
+   * within the SAME store.
+   */
+  format: z.enum(['adf-xml', 'email']).optional(),
   /** Optional human label for the UI (e.g. "Sales BDC", "Service Manager"). */
   label: z.string().optional(),
   enabled: z.boolean().optional().default(true),
@@ -357,6 +366,15 @@ const NotificationsSchema = z
       .union([z.literal(''), z.string().email()])
       .optional()
       .transform((v) => (v === '' ? undefined : v)),
+    /**
+     * ADF parity fields (#NW) — mirror the dealer's DMS config so the ADF-XML
+     * document a CRM ingests carries the right vehicle make and lead source.
+     * `adf_brand` → the vehicle <make> (e.g. "Honda"); `adf_lead_source` → the
+     * ADF <vendorname>/source (e.g. "Dealers WebSite"). Sourced from the Nexxus
+     * org settings (adfBrand / adfLeadSource). Email format ignores these.
+     */
+    adf_brand: z.string().optional(),
+    adf_lead_source: z.string().optional(),
     /** Per-event recipient × channel routing matrix (#207). Empty = use lead_recipient. */
     routing: z.array(NotificationRuleSchema).optional().default([]),
     /**
