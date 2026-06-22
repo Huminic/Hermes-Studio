@@ -20,6 +20,9 @@ import { aggregateMessages, listThreads } from './messaging-hub-store'
 import { listHunches } from './hunches-store'
 import { buildCustomerReports } from './customer-reports'
 import type { CustomerReports } from './customer-reports'
+import { assembleCanonicalFunnel, persistCanonicalFunnel } from './crm-guru'
+import { buildLeadOpportunities } from './lead-opportunities'
+import type { OpportunitySummary } from './lead-opportunities'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
@@ -66,7 +69,21 @@ export type FunnelStage = {
   status: MetricStatus
 }
 
+/** Where each half of the funnel came from — surfaced so a capped/unavailable
+ *  window is never silent to the dealer. Assembled by CRM-Guru. */
+export type FunnelProvenance = {
+  leads_source: 'api' | 'unavailable'
+  leads_capped: boolean
+  metrics_source: 'report' | 'needs_supplemental'
+  report_as_of: string | null
+  /** Non-sales leadTypes seen that the sales-scope rule doesn't recognize. */
+  unrecognized_lead_types: Array<string>
+  generated_at: number
+}
+
 export type FunnelTab = {
+  /** Source/coverage provenance for the funnel (drives honest UI banners). */
+  provenance: FunnelProvenance
   /** Green "Lead Performance" conversion funnel + secondary timing metrics. */
   lead_performance: {
     stages: Array<FunnelStage>
@@ -184,17 +201,9 @@ function trend(
   return { current, prior, delta, direction, good }
 }
 
-const PENDING = (
-  key: string,
-  label: string,
-  unit: MetricUnit,
-  polarity: Polarity,
-  reason: string,
-): Metric => ({ key, label, unit, value: null, polarity, status: 'pending', source: reason })
-
 // ── Brain report reads ──────────────────────────────────────────────────────
 
-type RoiRow = {
+export type RoiRow = {
   lead_source: string
   total_leads: number | null
   good_leads: number | null
@@ -279,150 +288,53 @@ function kpiRows(
   )
 }
 
-const sum = (rows: Array<Record<string, unknown>>, col: string): number | null => {
-  const vals = rows.map((r) => r[col]).filter((v): v is number => typeof v === 'number')
-  if (vals.length === 0) return null
-  return vals.reduce((a, b) => a + b, 0)
-}
+// ── Funnel tab (metric-split via CRM-Guru) ───────────────────────────────────
 
-/** Lead-count-weighted average of a per-source rate/days column. */
-const weightedAvg = (
-  rows: Array<RoiRow>,
-  col: keyof RoiRow,
-): number | null => {
-  let num = 0
-  let den = 0
-  for (const r of rows) {
-    const v = r[col]
-    const w = r.total_leads ?? 0
-    if (typeof v === 'number' && w > 0) {
-      num += v * w
-      den += w
-    }
-  }
-  return den > 0 ? num / den : null
-}
-
-// ── Funnel tab ──────────────────────────────────────────────────────────────
-
-/** Build conversion-funnel stages: count per stage, conversion % vs the stage
- *  above (null for the first), and a period-over-period trend vs the prior import. */
-function conversionStages(
-  rows: Array<RoiRow>,
-  priorRows: Array<RoiRow>,
-  specs: ReadonlyArray<{ key: string; label: string; col: keyof RoiRow }>,
-): Array<FunnelStage> {
-  const hasData = rows.length > 0
-  return specs.map((s, i) => {
-    const now = hasData ? sum(rows, s.col) : null
-    const comparison = priorRows.length ? sum(priorRows, s.col) : null
-    const prevNow = i > 0 && hasData ? sum(rows, specs[i - 1].col) : null
-    const conversion =
-      i > 0 && now != null && prevNow != null && prevNow > 0 ? now / prevNow : null
-    return {
-      key: s.key,
-      label: s.label,
-      now,
-      comparison,
-      conversion,
-      trend: trend(now, comparison, 'up'),
-      status: hasData ? 'sourced' : 'pending',
-    }
-  })
-}
-
+/**
+ * Build the funnel tab via the metric-split. Lead COUNTS (the Leads stage and
+ * the per-source Leads column) come from the API opportunity summary passed in
+ * `opts.opportunities` — defensible, sales-scoped, deduped by customer (see
+ * lead-opportunities.ts). Contacted / appointments / sold / timing / gross come
+ * from the uploaded report in the Brain, or render "needs supplemental data"
+ * when no report covers the window. CRM-Guru assembles the canonical funnel and
+ * persists a snapshot to the Brain; this returns that canonical funnel — the
+ * dashboard no longer computes its own counts from the report's raw total_leads.
+ */
 export function buildFunnelTab(
   profile: string,
-  opts: { profileRoot?: string } = {},
+  opts: {
+    profileRoot?: string
+    opportunities?: OpportunitySummary | null
+    /** True when the API lead window hit the page ceiling (may undercount). */
+    leadsCapped?: boolean
+    windowDays?: number
+  } = {},
 ): FunnelTab {
   const handle = openBrain(profile, { profileRoot: opts.profileRoot })
+  let roiCurrent: Array<RoiRow> = []
+  let roiPrior: Array<RoiRow> = []
+  let comparisonLabel = 'no prior period'
   try {
     const { current, prior } = latestImports(handle, 'lead_source_roi')
-    const rows = current ? roiRows(handle, current.id) : []
-    const priorRows = prior ? roiRows(handle, prior.id) : []
-    const hasData = rows.length > 0
-
-    const cmpLabel = prior
-      ? prior.period_start ?? 'prior import'
-      : 'no prior period'
-
-    // Green Lead Performance = a real conversion funnel from the count columns:
-    // Leads → Contacted → Appointments Set → Appointments Shown → Sold.
-    const leadStages = conversionStages(rows, priorRows, [
-      { key: 'leads', label: 'Leads', col: 'total_leads' },
-      { key: 'contacted', label: 'Contacted', col: 'internet_actual_contact' },
-      { key: 'appt_set', label: 'Appointments Set', col: 'appts_set' },
-      { key: 'appt_shown', label: 'Appointments Shown', col: 'appts_shown' },
-      { key: 'sold', label: 'Sold', col: 'sold_from_leads' },
-    ])
-    // Secondary timing metrics (sourced where present; pending otherwise — the
-    // current export has days-to-appt-set and days-to-sale, not the others).
-    const timing = (key: string, label: string, col: keyof RoiRow): Metric => {
-      const value = hasData ? weightedAvg(rows, col) : null
-      return {
-        key,
-        label,
-        unit: 'days',
-        value,
-        polarity: 'down',
-        status: value != null ? 'sourced' : 'pending',
-        source: value != null ? 'Uploaded lead-source report' : 'data source pending — not in the current report',
-        trend: trend(value, priorRows.length ? weightedAvg(priorRows, col) : null, 'down'),
-      }
-    }
-    const timings: Array<Metric> = [
-      PENDING('time_to_first_contact', 'Time to First Contact', 'days', 'down', 'data source pending — not in the current report'),
-      PENDING('time_to_first_discussion', 'Time to First Discussion', 'days', 'down', 'data source pending — not in the current report'),
-      timing('time_to_appt_set', 'Time to Appointment Set', 'avg_days_to_appt_set'),
-      PENDING('time_to_appointment', 'Time to Appointment', 'days', 'down', 'data source pending — not in the current report'),
-      timing('time_to_sale', 'Time to Sale', 'avg_days_to_sale'),
-    ]
-    const lead_performance = { stages: leadStages, timings, comparison_label: cmpLabel }
-
-    const pipeline_performance = {
-      stages: conversionStages(rows, priorRows, [
-        { key: 'leads', label: 'Leads', col: 'total_leads' },
-        { key: 'opportunities', label: 'Opportunities', col: 'good_leads' },
-        { key: 'appointments', label: 'Appointments', col: 'appts_set' },
-        { key: 'sales', label: 'Sales', col: 'sold_from_leads' },
-      ]),
-      comparison_label: cmpLabel,
-    }
-
-    // Contextual rating per lead source: alarm = volume with no sales; good =
-    // converts at/above the store-wide sold rate; else watch. Trend = volume vs
-    // the same source in the prior uploaded report.
-    const priorBySource = new Map(priorRows.map((r) => [r.lead_source, r]))
-    const totalLeadsAll = sum(rows, 'total_leads') ?? 0
-    const totalSoldAll = sum(rows, 'sold_from_leads') ?? 0
-    const overallSoldRate = totalLeadsAll > 0 ? totalSoldAll / totalLeadsAll : 0
-    const lead_sources: Array<LeadSourceRow> = rows
-      .map((r) => {
-        const leads = r.total_leads ?? 0
-        const sold = r.sold_from_leads ?? 0
-        const rate = r.sold_from_leads_pct ?? (leads > 0 ? sold / leads : 0)
-        let rating: LeadRating = 'watch'
-        if (leads >= 10 && sold === 0) rating = 'alarm'
-        else if (sold > 0 && rate >= overallSoldRate) rating = 'good'
-        const prior = priorBySource.get(r.lead_source)
-        return {
-          lead_source: r.lead_source,
-          total_leads: r.total_leads,
-          good_leads: r.good_leads,
-          appts_set: r.appts_set,
-          sold_from_leads: r.sold_from_leads,
-          sold_from_leads_pct: r.sold_from_leads_pct,
-          total_gross: r.total_gross,
-          rating,
-          trend: trend(r.total_leads, prior ? prior.total_leads : null, 'up'),
-        }
-      })
-      .sort((a, b) => (b.total_leads ?? 0) - (a.total_leads ?? 0))
-
-    return { lead_performance, pipeline_performance, lead_sources }
+    roiCurrent = current ? roiRows(handle, current.id) : []
+    roiPrior = prior ? roiRows(handle, prior.id) : []
+    comparisonLabel = prior ? prior.period_start ?? 'prior import' : 'no prior period'
   } finally {
     handle.close()
   }
+
+  const canonical = assembleCanonicalFunnel({
+    opportunities: opts.opportunities ?? null,
+    roiCurrent,
+    roiPrior,
+    comparisonLabel,
+    leadsCapped: opts.leadsCapped ?? false,
+  })
+  persistCanonicalFunnel(profile, canonical, {
+    windowDays: opts.windowDays ?? 30,
+    profileRoot: opts.profileRoot,
+  })
+  return canonical.funnel
 }
 
 // ── Pipeline tab ────────────────────────────────────────────────────────────
@@ -815,7 +727,17 @@ export async function buildDashboard(
   const now = opts.now ?? Date.now()
   const windowDays = opts.windowDays ?? 30
   const reports = await buildCustomerReports(profile, { now, windowDays })
-  const funnel = buildFunnelTab(profile, { profileRoot: opts.profileRoot })
+  // Defensible lead counts from the live API (sales-scoped, deduped). Unavailable
+  // → null, and the funnel's Leads stage renders pending rather than a fabricated
+  // count. Timing/gross/appts/sold still come from the report.
+  const opp = await buildLeadOpportunities(profile, { now, windowDays })
+  const opportunities = opp.available ? opp.summary : null
+  const funnel = buildFunnelTab(profile, {
+    profileRoot: opts.profileRoot,
+    opportunities,
+    leadsCapped: opp.available ? opp.capped : false,
+    windowDays,
+  })
   const pipeline = buildPipelineTab(profile, { profileRoot: opts.profileRoot })
   const widgets = buildWidgetUsage(profile, {
     now,

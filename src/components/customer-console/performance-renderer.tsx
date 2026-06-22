@@ -79,7 +79,16 @@ type FunnelStage = {
   trend: Trend
   status: MetricStatus
 }
+type FunnelProvenance = {
+  leads_source: 'api' | 'unavailable'
+  leads_capped: boolean
+  metrics_source: 'report' | 'needs_supplemental'
+  report_as_of: string | null
+  unrecognized_lead_types: Array<string>
+  generated_at: number
+}
 type FunnelTab = {
+  provenance?: FunnelProvenance
   lead_performance: { stages: Array<FunnelStage>; timings: Array<Metric>; comparison_label: string }
   pipeline_performance: { stages: Array<FunnelStage>; comparison_label: string }
   lead_sources: Array<LeadSourceRow>
@@ -159,10 +168,14 @@ const SOURCE_LABELS: Record<string, string> = {
   leads: 'Leads', service: 'Service threads', sales: 'Sales threads', campaigns: 'Campaigns',
   followups: 'Follow-ups', federated: 'Combined sources',
 }
+// Sales and Service are kept in SEPARATE groups so the picker never presents
+// them as one interchangeable "Customers" bucket — blending sales leads with
+// service threads is exactly the inflation this dashboard exists to avoid.
 const SOURCE_GROUPS: Array<{ label: string; sources: Array<(typeof DASHBOARD_SOURCES)[number]> }> = [
   { label: 'Combined', sources: ['federated'] },
   { label: 'Communications', sources: ['calls', 'sms', 'email', 'chat', 'video'] },
-  { label: 'Customers', sources: ['leads', 'sales', 'service'] },
+  { label: 'Sales', sources: ['leads', 'sales'] },
+  { label: 'Service', sources: ['service'] },
   { label: 'Campaigns', sources: ['campaigns', 'followups'] },
 ]
 
@@ -368,6 +381,7 @@ export function CustomerPerformanceRenderer(props: {
           dashboards={dashboards}
           setDashboards={setDashboards}
           availableSources={availableSources}
+          dedupedLeads={data.funnel.lead_performance.stages.find((s) => s.key === 'leads')?.now ?? null}
         />
       )}
     </div>
@@ -393,10 +407,14 @@ function TrendBadge({ trend, polarity }: { trend?: Trend; polarity: Polarity }) 
   )
 }
 
+/** Literal fallback text for any metric that needs an uploaded report for the
+ *  selected window — never a fabricated or inflated number. */
+const NEEDS_SUPPLEMENTAL = 'needs supplemental data'
+
 function PendingPill() {
   return (
     <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 ring-1 ring-amber-200">
-      Data source pending
+      {NEEDS_SUPPLEMENTAL}
     </span>
   )
 }
@@ -482,10 +500,18 @@ function ConversionFunnel({
               )}
             </div>
             <div className="flex items-center gap-2 py-1.5">
-              <span className="text-sm font-semibold text-slate-900">
-                {s.now != null ? s.now.toLocaleString() : '—'}
-              </span>
-              <TrendArrow trend={s.trend} />
+              {s.now != null ? (
+                <>
+                  <span className="text-sm font-semibold text-slate-900">
+                    {s.now.toLocaleString()}
+                  </span>
+                  <TrendArrow trend={s.trend} />
+                </>
+              ) : s.status === 'pending' ? (
+                <span className="text-[11px] font-medium text-amber-700">{NEEDS_SUPPLEMENTAL}</span>
+              ) : (
+                <span className="text-sm font-semibold text-slate-900">—</span>
+              )}
             </div>
           </div>
         )
@@ -494,9 +520,31 @@ function ConversionFunnel({
   )
 }
 
+/** Honest banner for coverage/provenance issues — so a capped or unavailable
+ *  lead window is never silent. */
+function ProvenanceNotice({ p }: { p?: FunnelProvenance }) {
+  if (!p) return null
+  const notes: Array<string> = []
+  if (p.leads_source === 'unavailable')
+    notes.push('Live lead counts are temporarily unavailable — Leads show "needs supplemental data".')
+  if (p.leads_capped)
+    notes.push('This window exceeded the fetch limit — lead counts may undercount.')
+  if (p.unrecognized_lead_types.length > 0)
+    notes.push(`Unrecognized lead types not counted as sales: ${p.unrecognized_lead_types.join(', ')} (may undercount — review scope rule).`)
+  if (notes.length === 0) return null
+  return (
+    <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+      {notes.map((n, i) => (
+        <div key={i}>{n}</div>
+      ))}
+    </div>
+  )
+}
+
 function FunnelView({ funnel }: { funnel: FunnelTab }) {
   return (
     <div className="flex flex-col gap-6">
+      <ProvenanceNotice p={funnel.provenance} />
       <Section title="Lead Performance" subtitle="How is my lead performance?">
         {funnel.lead_performance.stages.every((s) => s.status === 'pending') ? (
           <EmptyNote>Upload a lead-source report in InfoStore to populate lead performance.</EmptyNote>
@@ -764,6 +812,8 @@ function CustomView(props: {
   dashboards: Array<DashboardCard>
   setDashboards: (cards: Array<DashboardCard>) => void
   availableSources: ReadonlyArray<string>
+  /** Defensible deduped lead count from the funnel — Custom 'leads' uses this. */
+  dedupedLeads: number | null
 }) {
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState<string | null>(null)
@@ -945,6 +995,7 @@ function CustomView(props: {
         dashboards={props.dashboards}
         setDashboards={props.setDashboards}
         availableSources={props.availableSources}
+        dedupedLeads={props.dedupedLeads}
       />
     </div>
   )
@@ -990,6 +1041,7 @@ function CustomCards(props: {
   dashboards: Array<DashboardCard>
   setDashboards: (cards: Array<DashboardCard>) => void
   availableSources: ReadonlyArray<string>
+  dedupedLeads: number | null
 }) {
   const [showAdd, setShowAdd] = useState(false)
   const [title, setTitle] = useState('')
@@ -1121,7 +1173,7 @@ function CustomCards(props: {
             <div key={i} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-2xl font-semibold text-slate-900">{resolveCardValue(props.reports!, card).toLocaleString()}</div>
+                  <div className="text-2xl font-semibold text-slate-900">{resolveCardValue(props.reports!, card, props.dedupedLeads).toLocaleString()}</div>
                   <div className="mt-1 text-xs text-slate-500">{card.title}</div>
                   <div className="mt-1 text-[11px] text-slate-400">{SOURCE_LABELS[card.source] ?? card.source}</div>
                 </div>
@@ -1136,10 +1188,10 @@ function CustomCards(props: {
               {(card.visualization === 'bar' || card.visualization === 'table') && (
                 <div className="mt-3">
                   {card.visualization === 'bar' ? (
-                    <ChartCard rows={resolveCardRows(props.reports!, card)} />
+                    <ChartCard rows={resolveCardRows(props.reports!, card, props.dedupedLeads)} />
                   ) : (
                     <div className="overflow-hidden rounded-md border border-slate-100">
-                      {resolveCardRows(props.reports!, card).map((row) => (
+                      {resolveCardRows(props.reports!, card, props.dedupedLeads).map((row) => (
                         <div key={row.label} className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 border-b border-slate-100 px-3 py-2 text-xs last:border-0">
                           <span className="truncate text-slate-500">{row.label}</span>
                           <span className="font-semibold text-slate-800">{row.value.toLocaleString()}</span>
@@ -1163,7 +1215,7 @@ function metricSources(card: DashboardCard): Array<string> {
     (DASHBOARD_METRIC_SOURCES as readonly string[]).includes(s),
   )
 }
-function resolveMetricValue(reports: Reports, source: string): number {
+function resolveMetricValue(reports: Reports, source: string, dedupedLeads: number | null): number {
   const chTotal = (ch: string) => {
     const c = reports.comms.messages.by_channel[ch]
     return c ? c.inbound + c.outbound : 0
@@ -1174,7 +1226,10 @@ function resolveMetricValue(reports: Reports, source: string): number {
     case 'sms': return reports.comms.texts_out || chTotal('sms')
     case 'email': return chTotal('email') + chTotal('email-adf')
     case 'chat': return chTotal('chat')
-    case 'leads': return reports.lead_funnel.available ? reports.lead_funnel.total : reports.comms.threads.total
+    // Leads use the SAME defensible deduped count as the funnel — never the raw
+    // VIN total (lead_funnel.total), which includes BAD + DUPLICATE + service.
+    // When the deduped count is unavailable, fall back to 0 (never inflate).
+    case 'leads': return dedupedLeads ?? 0
     case 'service': return reports.comms.threads.by_domain['service'] ?? 0
     case 'sales': return reports.comms.threads.by_domain['sales'] ?? 0
     case 'campaigns': return reports.campaigns.campaigns
@@ -1182,14 +1237,14 @@ function resolveMetricValue(reports: Reports, source: string): number {
     default: return 0
   }
 }
-function resolveCardValue(reports: Reports, card: DashboardCard): number {
-  return metricSources(card).reduce((t, s) => t + resolveMetricValue(reports, s), 0)
+function resolveCardValue(reports: Reports, card: DashboardCard, dedupedLeads: number | null): number {
+  return metricSources(card).reduce((t, s) => t + resolveMetricValue(reports, s, dedupedLeads), 0)
 }
-function resolveCardRows(reports: Reports, card: DashboardCard): Array<{ label: string; value: number }> {
+function resolveCardRows(reports: Reports, card: DashboardCard, dedupedLeads: number | null): Array<{ label: string; value: number }> {
   if (card.source !== 'federated') {
-    return [{ label: SOURCE_LABELS[card.source] ?? card.source, value: resolveMetricValue(reports, card.source) }]
+    return [{ label: SOURCE_LABELS[card.source] ?? card.source, value: resolveMetricValue(reports, card.source, dedupedLeads) }]
   }
-  return metricSources(card).map((s) => ({ label: SOURCE_LABELS[s] ?? s, value: resolveMetricValue(reports, s) }))
+  return metricSources(card).map((s) => ({ label: SOURCE_LABELS[s] ?? s, value: resolveMetricValue(reports, s, dedupedLeads) }))
 }
 
 // ── PDF export ────────────────────────────────────────────────────────────────

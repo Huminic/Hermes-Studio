@@ -12,6 +12,22 @@ import {
   type Metric,
   type LeadSourceRow,
 } from '@/server/dashboard-metrics'
+import type { OpportunitySummary } from '@/server/lead-opportunities'
+
+/** Synthetic API opportunity summary — the defensible Leads counts. */
+function opp(
+  bySource: Array<{ lead_source: string; opportunities: number }>,
+  sold = 0,
+): OpportunitySummary {
+  const total = bySource.reduce((a, b) => a + b.opportunities, 0)
+  return {
+    raw_total: total,
+    opportunities: total,
+    sold,
+    by_source: bySource,
+    dropped: { non_sales: 0, bad: 0, duplicates: 0, no_contact: 0, unrecognized_types: [] },
+  }
+}
 
 let tmpHome: string
 
@@ -66,17 +82,27 @@ function seedReports(profile = 'fixture') {
 describe('buildFunnelTab', () => {
   it('builds a lead conversion funnel + timings, marking absent timings pending', () => {
     seedReports()
-    const tab = buildFunnelTab('fixture')
+    // Leads count comes from the API (metric-split); the report supplies the
+    // downstream stages + timings.
+    const tab = buildFunnelTab('fixture', {
+      opportunities: opp([
+        { lead_source: 'Repeat Customer', opportunities: 100 },
+        { lead_source: 'Autoweb', opportunities: 50 },
+      ]),
+    })
 
-    // Conversion funnel stages from real counts.
+    // Conversion funnel stages: Leads from API, the rest from the report.
     const stages = Object.fromEntries(tab.lead_performance.stages.map((s) => [s.key, s]))
-    expect(stages.leads.now).toBe(150) // 100 + 50
+    expect(stages.leads.now).toBe(150) // API opportunities (100 + 50)
     expect(stages.contacted.now).toBe(24) // 4 + 20 internet_actual_contact
     expect(stages.appt_set.now).toBe(40) // 30 + 10
     expect(stages.appt_shown.now).toBe(26) // 20 + 6 appts_shown
     expect(stages.sold.now).toBe(24) // 20 + 4
     expect(stages.leads.conversion).toBeNull() // first layer
-    expect(stages.contacted.conversion).toBeCloseTo(24 / 150, 4)
+    // Contacted sits under the API Leads stage — no defensible cross-source %.
+    expect(stages.contacted.conversion).toBeNull()
+    // Report→report conversion is computed: appts set / contacted.
+    expect(stages.appt_set.conversion).toBeCloseTo(40 / 24, 4)
 
     // Secondary timings: sourced ones present, absent ones pending.
     const t = Object.fromEntries(tab.lead_performance.timings.map((m) => [m.key, m]))
@@ -92,7 +118,12 @@ describe('buildFunnelTab', () => {
 
   it('builds the blue pipeline funnel stages and ranked lead sources', () => {
     seedReports()
-    const tab = buildFunnelTab('fixture')
+    const tab = buildFunnelTab('fixture', {
+      opportunities: opp([
+        { lead_source: 'Repeat Customer', opportunities: 100 },
+        { lead_source: 'Autoweb', opportunities: 50 },
+      ]),
+    })
     const stages = Object.fromEntries(
       tab.pipeline_performance.stages.map((s) => [s.key, s.now]),
     )
@@ -242,16 +273,21 @@ describe('lead-source rating + pipeline conversion', () => {
       dealerName: 'Serra Honda',
       checksum: 'rating-1',
     })
-    const tab = buildFunnelTab('fixture')
+    const tab = buildFunnelTab('fixture', {
+      opportunities: opp([
+        { lead_source: 'Repeat Customer', opportunities: 100 },
+        { lead_source: 'Dead Source', opportunities: 20 },
+      ]),
+    })
     const bySrc = Object.fromEntries(tab.lead_sources.map((r) => [r.lead_source, r]))
     expect(bySrc['Repeat Customer'].rating).toBe('good')
     expect(bySrc['Dead Source'].rating).toBe('alarm')
 
     const stages = tab.pipeline_performance.stages
-    expect(stages[0].conversion).toBeNull() // first layer, no conversion
-    // Opportunities (good_leads 90+5=95) / Leads (120) = 0.7917
-    expect(stages[1].conversion).toBeCloseTo(95 / 120, 4)
-    // Sales (30+0) / Appointments (40+1)
+    expect(stages[0].conversion).toBeNull() // first layer (API Leads), no conversion
+    // Opportunities sits under the API Leads stage — no defensible cross-source %.
+    expect(stages[1].conversion).toBeNull()
+    // Sales (30+0) / Appointments (40+1) — report→report conversion.
     expect(stages[3].conversion).toBeCloseTo(30 / 41, 4)
   })
 })

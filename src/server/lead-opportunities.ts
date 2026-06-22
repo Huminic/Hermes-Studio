@@ -1,0 +1,342 @@
+/**
+ * Lead opportunities — defensible lead COUNTS from the live VinSolutions API.
+ *
+ * The dashboard funnel's Leads stage must reconcile to the CRM. The uploaded ROI
+ * report's `total_leads` column includes BAD + DUPLICATE rows and blends service,
+ * inflating the count ~1.7–2x. This module instead derives counts from the
+ * lead-level API (`vin_query_leads`), which carries `contact` (customer id),
+ * `leadType`, and `leadStatusType` — enough to scope to SALES, drop BAD, and
+ * dedupe by contact, which the pre-summed report cannot.
+ *
+ * Rules (grounded on a live hyundai-of-columbia sample, 2026-05-20→06-19, all 60
+ * pages — see work/2026-06-19-dashboard-data-investigation.md, NOT assumed):
+ *   - leadType:       SALES = INTERNET | PHONE | WALK_IN ;
+ *                     dropped (non-sales) = SERVICE | PARTS_ORDER
+ *   - leadStatusType: dropped = BAD ;  SOLD marks a sold opportunity
+ *   - dedupe key:     `contact` (fall back to leadId when a row carries no contact)
+ *
+ * The pure core `summarizeOpportunities` is unit-tested with fixtures; the IO
+ * wrapper `buildLeadOpportunities` paginates EVERY page before summarizing (the
+ * legacy `buildLeadFunnel` only read the first page). Timing / gross / appts /
+ * sold-detail come from the uploaded report, never from here.
+ */
+
+import { callCentralMcpTool } from './central-mcp'
+import { resolveVinOrgId } from './vin-client'
+import { readStudioConfig } from './studio-config'
+import { hasVinScope } from './customer-reports'
+import type { StudioConfig } from '../lib/studio-config'
+
+const DAY_MS = 24 * 60 * 60 * 1000
+
+/** Page size VinSolutions returns for `vin_query_leads`. */
+export const VIN_PAGE_SIZE = 50
+/** Hard ceiling on pages fetched per build, so a bad totalItems can't run away.
+ *  200 pages × 50 = 10,000 leads/window. If hit, it is reported, never silent. */
+export const MAX_PAGES = 200
+
+export const SALES_LEAD_TYPES = new Set(['INTERNET', 'PHONE', 'WALK_IN'])
+export const DROPPED_LEAD_TYPES = new Set(['SERVICE', 'PARTS_ORDER'])
+export const BAD_STATUS_TYPES = new Set(['BAD'])
+export const SOLD_STATUS_TYPES = new Set(['SOLD'])
+
+// ── Field extraction (VIN response shape isn't owned by us — accept variants) ─
+
+function firstString(lead: Record<string, unknown>, keys: Array<string>): string {
+  for (const k of keys) {
+    const v = lead[k]
+    if (typeof v === 'string' && v.trim()) return v.trim()
+    if (typeof v === 'number') return String(v)
+  }
+  return ''
+}
+
+/** Enum-ish field, upper-cased for stable comparison against the rule sets. */
+function leadTypeOf(lead: Record<string, unknown>): string {
+  return firstString(lead, ['leadType', 'lead_type', 'type']).toUpperCase()
+}
+
+function statusTypeOf(lead: Record<string, unknown>): string {
+  return firstString(lead, [
+    'leadStatusType',
+    'lead_status_type',
+    'statusType',
+  ]).toUpperCase()
+}
+
+/** Customer id used to dedupe touches into one opportunity. */
+function contactOf(lead: Record<string, unknown>): string {
+  return firstString(lead, ['contact', 'contactId', 'contact_id', 'customerId'])
+}
+
+function leadIdOf(lead: Record<string, unknown>): string {
+  return firstString(lead, ['leadId', 'lead_id', 'id'])
+}
+
+/** Lead source label, preserved verbatim (reconciliation is per source). */
+function leadSourceOf(lead: Record<string, unknown>): string {
+  return firstString(lead, ['leadSource', 'lead_source', 'source']) || 'Unknown'
+}
+
+// ── Pure summary core ────────────────────────────────────────────────────────
+
+export type LeadSourceOpportunities = {
+  lead_source: string
+  opportunities: number
+}
+
+export type OpportunitySummary = {
+  /** Every row the API returned for the window (incl. service + bad + dupes). */
+  raw_total: number
+  /** Deduped sales, non-bad leads — globally unique contacts. */
+  opportunities: number
+  /** Deduped sales opportunities whose status is SOLD. */
+  sold: number
+  /** Per-source deduped opportunities (a contact spanning sources counts once
+   *  per source, so the sum may exceed `opportunities` — documented, expected). */
+  by_source: Array<LeadSourceOpportunities>
+  /** What was removed and why — provenance for a defensible count. */
+  dropped: {
+    non_sales: number
+    bad: number
+    duplicates: number
+    no_contact: number
+    /** Non-sales leadType values seen that are NOT in the known set
+     *  (SERVICE/PARTS_ORDER). A populated list means a store emitted a leadType
+     *  the sales-scope rule doesn't recognize — a potential silent UNDERCOUNT,
+     *  surfaced here so it never goes unnoticed. */
+    unrecognized_types: Array<string>
+  }
+}
+
+/**
+ * Reduce raw `vin_query_leads` rows to defensible opportunity counts.
+ * Order: drop non-sales leadType → drop BAD status → dedupe by contact.
+ * A row with no contact falls back to its leadId as the dedupe key (never
+ * silently dropped) and is also tallied under `dropped.no_contact` for audit.
+ */
+export function summarizeOpportunities(
+  leads: Array<Record<string, unknown>>,
+): OpportunitySummary {
+  let nonSales = 0
+  let bad = 0
+  let noContact = 0
+  let salesNonBadRows = 0
+
+  const seenGlobal = new Set<string>()
+  const soldGlobal = new Set<string>()
+  const perSource = new Map<string, Set<string>>()
+  const unrecognized = new Set<string>()
+
+  for (const lead of leads) {
+    const lt = leadTypeOf(lead)
+    // Drop anything not affirmatively a sales lead type (SERVICE/PARTS_ORDER,
+    // plus any unrecognized/blank type — fail toward NOT counting it as sales).
+    if (!SALES_LEAD_TYPES.has(lt)) {
+      nonSales++
+      // Flag a non-sales type that is NOT a known non-sales type — it may be an
+      // unmapped SALES type at this store, i.e. a silent undercount. Make it loud.
+      if (lt !== '' && !DROPPED_LEAD_TYPES.has(lt)) unrecognized.add(lt)
+      continue
+    }
+    const st = statusTypeOf(lead)
+    if (BAD_STATUS_TYPES.has(st)) {
+      bad++
+      continue
+    }
+    salesNonBadRows++
+    const contact = contactOf(lead)
+    if (!contact) noContact++
+    const key = contact || leadIdOf(lead) || `__row_${salesNonBadRows}`
+
+    seenGlobal.add(key)
+    if (SOLD_STATUS_TYPES.has(st)) soldGlobal.add(key)
+
+    const src = leadSourceOf(lead)
+    let set = perSource.get(src)
+    if (!set) {
+      set = new Set<string>()
+      perSource.set(src, set)
+    }
+    set.add(key)
+  }
+
+  const by_source: Array<LeadSourceOpportunities> = Array.from(perSource.entries())
+    .map(([lead_source, set]) => ({ lead_source, opportunities: set.size }))
+    .sort((a, b) => b.opportunities - a.opportunities)
+
+  return {
+    raw_total: leads.length,
+    opportunities: seenGlobal.size,
+    sold: soldGlobal.size,
+    by_source,
+    dropped: {
+      non_sales: nonSales,
+      bad,
+      duplicates: salesNonBadRows - seenGlobal.size,
+      no_contact: noContact,
+      unrecognized_types: Array.from(unrecognized).sort(),
+    },
+  }
+}
+
+// ── Paginated fetch ──────────────────────────────────────────────────────────
+
+/** Minimal shape of the central-mcp tool caller (injectable for tests). */
+export type CallCentralMcp = (
+  tool: string,
+  args: Record<string, unknown>,
+  opts?: { timeoutMs?: number },
+) => Promise<{ ok: boolean; data?: unknown; error?: string; unconfigured?: boolean }>
+
+/** Pull rows out of the common VIN payload shapes. */
+function extractRows(data: unknown): Array<Record<string, unknown>> | null {
+  if (Array.isArray(data)) return data as Array<Record<string, unknown>>
+  if (data && typeof data === 'object') {
+    for (const key of ['items', 'leads', 'data', 'results', 'records']) {
+      const v = (data as Record<string, unknown>)[key]
+      if (Array.isArray(v)) return v as Array<Record<string, unknown>>
+    }
+  }
+  return null
+}
+
+/** The window's true total when the payload reports it, else null (unknown). */
+function totalItemsOf(data: unknown): number | null {
+  if (data && typeof data === 'object') {
+    const t = (data as { totalItems?: unknown }).totalItems
+    if (typeof t === 'number') return t
+  }
+  return null
+}
+
+export type FetchAllLeadsResult =
+  | { ok: true; leads: Array<Record<string, unknown>>; pages: number; capped: boolean }
+  | { ok: false; reason: string }
+
+/**
+ * Fetch ALL pages of `vin_query_leads` for an org + ISO window. Reads
+ * `totalItems` from page 1 to bound the loop; stops on an empty page; caps at
+ * MAX_PAGES (capped:true is surfaced so a truncated window is never silent).
+ */
+export async function fetchAllLeads(input: {
+  orgId: string
+  startDate: string
+  endDate: string
+  timeoutMs?: number
+  call?: CallCentralMcp
+}): Promise<FetchAllLeadsResult> {
+  const call = input.call ?? (callCentralMcpTool as CallCentralMcp)
+  const timeoutMs = input.timeoutMs ?? 15_000
+  const leads: Array<Record<string, unknown>> = []
+  let totalItems: number | null = null
+  let pagesFetched = 0
+  let capped = false
+
+  for (let page = 1; page <= MAX_PAGES; page++) {
+    const r = await call(
+      'vin_query_leads',
+      {
+        orgId: input.orgId,
+        startDate: input.startDate,
+        endDate: input.endDate,
+        pageNumber: page,
+        pageSize: VIN_PAGE_SIZE,
+      },
+      { timeoutMs },
+    )
+    if (!r.ok) {
+      return {
+        ok: false,
+        reason: r.unconfigured ? 'unconfigured' : r.error ?? 'lead query failed',
+      }
+    }
+    const rows = extractRows(r.data)
+    if (!rows) return { ok: false, reason: 'unexpected lead response shape' }
+    if (page === 1) totalItems = totalItemsOf(r.data)
+    leads.push(...rows)
+    pagesFetched = page
+
+    // Stop when the reported total is reached, OR on a short/empty final page.
+    // When totalItems is absent we rely ONLY on the short-page signal, so a full
+    // first page is never mistaken for the whole window (no silent truncation).
+    const reachedTotal = totalItems != null && leads.length >= totalItems
+    const lastPage = rows.length < VIN_PAGE_SIZE
+    if (reachedTotal || lastPage) break
+    // More to fetch but we are at the ceiling — surface the truncation.
+    if (page === MAX_PAGES) capped = true
+  }
+
+  return { ok: true, leads, pages: pagesFetched, capped }
+}
+
+// ── Top-level build (profile → defensible opportunity summary) ────────────────
+
+export type LeadOpportunitiesResult =
+  | {
+      available: true
+      source: 'vin-live'
+      window_days: number
+      summary: OpportunitySummary
+      pages: number
+      capped: boolean
+    }
+  | { available: false; source: 'vin-live' | 'none'; reason: string }
+
+/**
+ * Build defensible lead opportunities for a profile over a trailing window.
+ * Mirrors buildLeadFunnel's availability contract: a store without VIN scope or
+ * a resolvable org id returns available:false with a dealer-safe reason — never
+ * a fabricated number.
+ */
+export async function buildLeadOpportunities(
+  profile: string,
+  opts: {
+    now?: number
+    windowDays?: number
+    vinTimeoutMs?: number
+    config?: StudioConfig
+    call?: CallCentralMcp
+  } = {},
+): Promise<LeadOpportunitiesResult> {
+  const now = opts.now ?? Date.now()
+  const windowDays = opts.windowDays ?? 30
+  const config = opts.config ?? readStudioConfig(profile).config
+
+  if (!hasVinScope(config)) {
+    return {
+      available: false,
+      source: 'none',
+      reason: 'Lead reporting is not enabled for this store yet.',
+    }
+  }
+  const org = resolveVinOrgId(profile, config)
+  if (!org.ok) {
+    return { available: false, source: 'vin-live', reason: org.reason }
+  }
+
+  const fetched = await fetchAllLeads({
+    orgId: org.orgId,
+    startDate: new Date(now - windowDays * DAY_MS).toISOString(),
+    endDate: new Date(now).toISOString(),
+    timeoutMs: opts.vinTimeoutMs,
+    call: opts.call,
+  })
+  if (!fetched.ok) {
+    console.warn(`[lead-opportunities] ${profile} live lead query failed: ${fetched.reason}`)
+    return {
+      available: false,
+      source: 'vin-live',
+      reason: 'Lead reporting is temporarily unavailable.',
+    }
+  }
+
+  return {
+    available: true,
+    source: 'vin-live',
+    window_days: windowDays,
+    summary: summarizeOpportunities(fetched.leads),
+    pages: fetched.pages,
+    capped: fetched.capped,
+  }
+}
