@@ -66,12 +66,19 @@ describe('/api/customer/dashboard', () => {
     }
     expect(body.ok).toBe(true)
     expect(body.dashboard.window_days).toBe(30)
-    const leadsStage = body.dashboard.funnel.lead_performance.stages.find(
-      (s) => s.key === 'leads',
-    )!
-    expect(leadsStage.status).toBe('sourced')
-    expect(leadsStage.now).toBe(100)
-    // VIN scope absent in this studio.yaml → leads pending, no fabrication.
+    const stages = Object.fromEntries(
+      body.dashboard.funnel.lead_performance.stages.map((s) => [s.key, s]),
+    )
+    // Metric-split: Leads come from the live API. VIN scope is absent in this
+    // studio.yaml → the API is unavailable → Leads is pending, never fabricated
+    // from the report's inflated total_leads.
+    expect(stages.leads.status).toBe('pending')
+    expect(stages.leads.now).toBeNull()
+    // The ingested report still surfaces in the downstream stages.
+    expect(stages.contacted.status).toBe('sourced')
+    expect(stages.contacted.now).toBe(4) // internet_actual_contact
+    expect(stages.sold.now).toBe(20) // sold_from_leads
+    // Leads TAB funnel is VIN-live → pending here too.
     expect(body.dashboard.leads.source).toBe('pending')
     expect(body.dashboard.pipeline.status).toBe('pending') // no KPI uploaded
     expect(body.dashboard.ai_activity.metrics).toHaveLength(9)

@@ -269,7 +269,7 @@ describe('console-renderers registry', () => {
       expect(txt).toContain('AI Activity')
       expect(txt).toContain('Custom')
       expect(txt).toContain('Sold') // lead conversion funnel final stage
-      expect(txt).toContain('Data source pending') // honest pending timing
+      expect(txt).toContain('needs supplemental data') // honest fallback, never fabricated
 
       // Custom tab: Ask AI + Saved + retained Add card builder.
       fireEvent.click(getByText('Custom'))
