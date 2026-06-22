@@ -58,6 +58,45 @@ const BRAND_HEADER_EMOJI = '&#127919;'
 /** One retry for transient central-mcp/HTTP stream failures. */
 const RESEND_MAX_ATTEMPTS = 2
 const TRANSIENT_RESEND_RE = /terminated|aborted|timeout|timed out|socket|econnreset|fetch failed|network/i
+/**
+ * Backstop timeout for the central-mcp send. The broker emits the tool result
+ * early but can leave the SSE stream open; we resolve as soon as the result line
+ * is buffered (see readResendResult), so this only fires on a genuinely stalled
+ * connection — NOT on every call (which is what `await res.text()` used to do,
+ * blocking ~10 min until the connection idle-timed-out).
+ */
+const RESEND_READ_TIMEOUT_MS = 20_000
+
+/**
+ * Read a central-mcp streamable-HTTP (SSE) response only until the first complete
+ * `data: {...}` line is buffered, then stop and cancel the reader. The broker
+ * sends the JSON-RPC result early but may hold the stream open; awaiting
+ * res.text() would block until the connection idle-times-out. Falls back to
+ * res.text() when the body isn't a readable stream (e.g. test mocks).
+ */
+async function readResendResult(res: Response): Promise<string> {
+  const body = res.body as ReadableStream<Uint8Array> | null
+  if (!body || typeof body.getReader !== 'function') return await res.text()
+  const reader = body.getReader()
+  const decoder = new TextDecoder()
+  let buf = ''
+  try {
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (value) buf += decoder.decode(value, { stream: true })
+      // Same shape the parser below extracts; once it's present we have the result.
+      if (/data: \{[\s\S]*?\}\n/.test(buf)) break
+      if (done) break
+    }
+  } finally {
+    try {
+      await reader.cancel()
+    } catch {
+      // already closed
+    }
+  }
+  return buf
+}
 
 function readEnvFromProfile(profile: string): Record<string, string> {
   const file = path.join(
@@ -154,6 +193,8 @@ async function sendViaResend(input: {
 
   let lastFailure: LeadNotificationResult | null = null
   for (let attempt = 1; attempt <= RESEND_MAX_ATTEMPTS; attempt++) {
+    const ctl = new AbortController()
+    const timer = setTimeout(() => ctl.abort(), RESEND_READ_TIMEOUT_MS)
     try {
       const res = await fetch(input.central, {
         method: 'POST',
@@ -169,8 +210,11 @@ async function sendViaResend(input: {
           method: 'tools/call',
           params: { name: 'resend_send_email', arguments: args },
         }),
+        signal: ctl.signal,
       })
-      const responseText = await res.text()
+      // Resolve as soon as the result line is buffered; don't wait for the broker
+      // to close the stream (that could be ~10 min) — see readResendResult.
+      const responseText = await readResendResult(res)
       if (!res.ok) {
         lastFailure = {
           ok: false,
@@ -216,7 +260,12 @@ async function sendViaResend(input: {
       }
       return { ok: true, via: 'resend', external_id: emailId }
     } catch (err) {
-      const reason = err instanceof Error ? err.message : 'network error'
+      const reason =
+        err instanceof Error && err.name === 'AbortError'
+          ? `central-mcp read timeout after ${RESEND_READ_TIMEOUT_MS}ms`
+          : err instanceof Error
+            ? err.message
+            : 'network error'
       lastFailure = { ok: false, via: 'failed', reason }
       if (attempt < RESEND_MAX_ATTEMPTS && TRANSIENT_RESEND_RE.test(reason)) {
         continue
@@ -226,6 +275,8 @@ async function sendViaResend(input: {
         via: 'failed',
         reason,
       }
+    } finally {
+      clearTimeout(timer)
     }
   }
   return lastFailure ?? { ok: false, via: 'failed', reason: 'network error' }
