@@ -99,6 +99,17 @@ describe('summarizeOpportunities', () => {
     expect(s.opportunities).toBe(2)
   })
 
+  it('tracks SOLD per source (defensible per-source sold)', () => {
+    const s = summarizeOpportunities([
+      lead({ contact: 'a', leadSource: 'AutoTrader', leadStatusType: 'SOLD' }),
+      lead({ contact: 'b', leadSource: 'AutoTrader', leadStatusType: 'ACTIVE' }),
+      lead({ contact: 'c', leadSource: 'Cars.com', leadStatusType: 'SOLD' }),
+    ])
+    const bs = Object.fromEntries(s.by_source.map((r) => [r.lead_source, r]))
+    expect(bs['AutoTrader']).toEqual({ lead_source: 'AutoTrader', opportunities: 2, sold: 1 })
+    expect(bs['Cars.com'].sold).toBe(1)
+  })
+
   it('produces per-source deduped counts sorted desc', () => {
     const s = summarizeOpportunities([
       lead({ contact: 'a', leadSource: 'AutoTrader' }),
@@ -107,8 +118,8 @@ describe('summarizeOpportunities', () => {
       lead({ contact: 'c', leadSource: 'Cars.com' }),
     ])
     expect(s.by_source).toEqual([
-      { lead_source: 'AutoTrader', opportunities: 2 },
-      { lead_source: 'Cars.com', opportunities: 1 },
+      { lead_source: 'AutoTrader', opportunities: 2, sold: 0 },
+      { lead_source: 'Cars.com', opportunities: 1, sold: 0 },
     ])
   })
 

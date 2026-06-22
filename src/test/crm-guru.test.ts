@@ -20,7 +20,7 @@ import type { OpportunitySummary } from '@/server/lead-opportunities'
 import type { RoiRow } from '@/server/dashboard-metrics'
 
 const summary = (
-  bySource: Array<{ lead_source: string; opportunities: number }>,
+  bySource: Array<{ lead_source: string; opportunities: number; sold?: number }>,
   sold = 0,
 ): OpportunitySummary => {
   const total = bySource.reduce((a, b) => a + b.opportunities, 0)
@@ -28,7 +28,11 @@ const summary = (
     raw_total: total,
     opportunities: total,
     sold,
-    by_source: bySource,
+    by_source: bySource.map((s) => ({
+      lead_source: s.lead_source,
+      opportunities: s.opportunities,
+      sold: s.sold ?? 0,
+    })),
     dropped: { non_sales: 0, bad: 0, duplicates: 0, no_contact: 0, unrecognized_types: [] },
   }
 }
@@ -57,48 +61,61 @@ const base: AssembleInput = {
 }
 
 describe('assembleCanonicalFunnel — metric split', () => {
-  it('takes Leads from the API and downstream stages from the report', () => {
+  it('takes Leads + Sold from the API, Contacted/Appts from the report (when trusted)', () => {
     const c = assembleCanonicalFunnel({
       ...base,
-      opportunities: summary([{ lead_source: 'AutoTrader', opportunities: 120 }]),
+      trustReport: true, // exercise the report-attach path (off by default in prod)
+      opportunities: summary([{ lead_source: 'AutoTrader', opportunities: 120, sold: 18 }], 18),
       roiCurrent: [
         roi({ lead_source: 'AutoTrader', internet_actual_contact: 80, appts_set: 40, appts_shown: 25, sold_from_leads: 12 }),
       ],
     })
     const stages = Object.fromEntries(c.funnel.lead_performance.stages.map((s) => [s.key, s]))
     expect(stages.leads.now).toBe(120) // API
-    expect(stages.leads.status).toBe('sourced')
-    expect(stages.contacted.now).toBe(80) // report
+    expect(stages.sold.now).toBe(18) // API sold (deduped), NOT report's 12
+    expect(stages.contacted.now).toBe(80) // report (trusted)
     expect(stages.contacted.conversion).toBeNull() // cross-source boundary
     expect(stages.appt_set.conversion).toBeCloseTo(40 / 80, 4) // report→report
     expect(c.provenance.leads_source).toBe('api')
     expect(c.provenance.metrics_source).toBe('report')
   })
 
-  it('marks report-only metrics "needs supplemental data" when no report covers the window', () => {
+  it('Sold comes from the API even with no report; report-only stages are supplemental', () => {
     const c = assembleCanonicalFunnel({
       ...base,
-      opportunities: summary([{ lead_source: 'AutoTrader', opportunities: 50 }]),
+      opportunities: summary([{ lead_source: 'AutoTrader', opportunities: 50, sold: 9 }], 9),
       roiCurrent: [], // no report
     })
     const stages = Object.fromEntries(c.funnel.lead_performance.stages.map((s) => [s.key, s]))
-    expect(stages.leads.now).toBe(50) // still defensible from API
-    expect(stages.leads.status).toBe('sourced')
-    expect(stages.contacted.now).toBeNull()
-    expect(stages.contacted.status).toBe('pending')
-    expect(stages.sold.status).toBe('pending')
-    // Every timing falls back to the literal supplemental-data text.
+    expect(stages.leads.now).toBe(50) // API
+    expect(stages.sold.now).toBe(9) // API sold
+    expect(stages.sold.status).toBe('sourced')
+    expect(stages.contacted.status).toBe('pending') // report-only → supplemental
     for (const t of c.funnel.lead_performance.timings) {
       expect(t.status).toBe('pending')
       expect(t.source).toBe(NEEDS_SUPPLEMENTAL)
     }
     expect(c.provenance.metrics_source).toBe('needs_supplemental')
-    expect(c.provenance.report_as_of).toBeNull()
+  })
+
+  it('production default does NOT trust the report — report stages are supplemental', () => {
+    const c = assembleCanonicalFunnel({
+      ...base, // no trustReport → REPORT_METRICS_TRUSTED (false)
+      opportunities: summary([{ lead_source: 'AutoTrader', opportunities: 120, sold: 18 }], 18),
+      roiCurrent: [roi({ lead_source: 'AutoTrader', internet_actual_contact: 80, appts_set: 40 })],
+    })
+    const stages = Object.fromEntries(c.funnel.lead_performance.stages.map((s) => [s.key, s]))
+    expect(stages.leads.now).toBe(120) // API
+    expect(stages.sold.now).toBe(18) // API
+    expect(stages.contacted.status).toBe('pending') // report untrusted → supplemental
+    expect(stages.appt_set.status).toBe('pending')
+    expect(c.provenance.metrics_source).toBe('needs_supplemental')
   })
 
   it('marks Leads unavailable (never fabricated) when the API could not be read', () => {
     const c = assembleCanonicalFunnel({
       ...base,
+      trustReport: true,
       opportunities: null,
       roiCurrent: [roi({ lead_source: 'AutoTrader', internet_actual_contact: 80 })],
     })
@@ -106,12 +123,8 @@ describe('assembleCanonicalFunnel — metric split', () => {
     expect(leads.now).toBeNull()
     expect(leads.status).toBe('pending')
     expect(c.provenance.leads_source).toBe('unavailable')
-    // Regression fix: report-sourced lead-source rows STILL surface when the API
-    // is down (sold/gross/good are defensible report data); the Leads count is
-    // null ("needs supplemental"), never the report's inflated raw total.
-    expect(c.funnel.lead_sources).toHaveLength(1)
-    expect(c.funnel.lead_sources[0].lead_source).toBe('AutoTrader')
-    expect(c.funnel.lead_sources[0].total_leads).toBeNull()
+    // No API → no defensible per-source counts; lead_sources are API-driven.
+    expect(c.funnel.lead_sources).toHaveLength(0)
   })
 
   it('with neither API nor report, there is nothing to show', () => {
@@ -129,25 +142,29 @@ describe('assembleCanonicalFunnel — metric split', () => {
     expect(c.provenance.unrecognized_lead_types).toEqual(['CHAT', 'SHOWROOM'])
   })
 
-  it('builds per-source rows with the API Leads count + matched report columns + rating', () => {
+  it('builds per-source rows: Leads + Sold from API, report gross attaches when trusted', () => {
     const c = assembleCanonicalFunnel({
       ...base,
-      opportunities: summary([
-        { lead_source: 'Repeat Customer', opportunities: 100 },
-        { lead_source: 'Dead Source', opportunities: 20 },
-      ]),
+      trustReport: true,
+      opportunities: summary(
+        [
+          { lead_source: 'Repeat Customer', opportunities: 100, sold: 30 },
+          { lead_source: 'Dead Source', opportunities: 20, sold: 0 },
+        ],
+        30,
+      ),
       roiCurrent: [
-        roi({ lead_source: 'repeat customer', sold_from_leads: 30, good_leads: 90, total_gross: 30000 }),
-        roi({ lead_source: 'Dead Source', sold_from_leads: 0, good_leads: 5 }),
+        roi({ lead_source: 'repeat customer', good_leads: 90, total_gross: 30000 }),
+        roi({ lead_source: 'Dead Source', good_leads: 5 }),
       ],
     })
     const bySrc = Object.fromEntries(c.funnel.lead_sources.map((r) => [r.lead_source, r]))
-    // API count is the Leads column; report columns attach via normalized match.
+    // Leads + Sold are API; gross attaches from the (trusted) report by name.
     expect(bySrc['Repeat Customer'].total_leads).toBe(100)
-    expect(bySrc['Repeat Customer'].sold_from_leads).toBe(30)
-    expect(bySrc['Repeat Customer'].total_gross).toBe(30000)
+    expect(bySrc['Repeat Customer'].sold_from_leads).toBe(30) // API per-source sold
+    expect(bySrc['Repeat Customer'].total_gross).toBe(30000) // report (trusted)
     expect(bySrc['Repeat Customer'].rating).toBe('good') // 30/100 >= 30/120 store rate
-    expect(bySrc['Dead Source'].rating).toBe('alarm') // 20 leads, 0 sold
+    expect(bySrc['Dead Source'].rating).toBe('alarm') // 20 leads, 0 sold (API)
   })
 })
 
@@ -155,6 +172,7 @@ describe('timing is de-blended (not weighted by raw total_leads)', () => {
   it('weights timing by sales opportunities, not raw total_leads', () => {
     const c = assembleCanonicalFunnel({
       ...base,
+      trustReport: true,
       opportunities: summary([
         { lead_source: 'A', opportunities: 90 },
         { lead_source: 'B', opportunities: 10 },
@@ -172,6 +190,7 @@ describe('timing is de-blended (not weighted by raw total_leads)', () => {
   it('falls back to good_leads weighting (still de-blended) when the API is unavailable', () => {
     const c = assembleCanonicalFunnel({
       ...base,
+      trustReport: true,
       opportunities: null,
       roiCurrent: [
         roi({ lead_source: 'A', avg_days_to_sale: 2, total_leads: 100, good_leads: 90 }),

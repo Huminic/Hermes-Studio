@@ -307,6 +307,8 @@ export function buildFunnelTab(
     opportunities?: OpportunitySummary | null
     /** True when the API lead window hit the page ceiling (may undercount). */
     leadsCapped?: boolean
+    /** Override report-trust (tests exercise the report-attach path). */
+    trustReport?: boolean
     windowDays?: number
   } = {},
 ): FunnelTab {
@@ -329,6 +331,7 @@ export function buildFunnelTab(
     roiPrior,
     comparisonLabel,
     leadsCapped: opts.leadsCapped ?? false,
+    trustReport: opts.trustReport,
   })
   persistCanonicalFunnel(profile, canonical, {
     windowDays: opts.windowDays ?? 30,
