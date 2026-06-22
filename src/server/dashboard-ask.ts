@@ -64,7 +64,11 @@ export function groundingForDashboard(d: DashboardPayload): string {
     `Window: last ${d.window_days} days (compared to the prior ${d.comparison_window_days} days).`,
     ``,
     `## Lead Performance`,
-    ...d.funnel.lead_performance.map(metricLine),
+    ...d.funnel.lead_performance.stages.map(
+      (s) =>
+        `- ${s.label}: ${s.status === 'pending' ? 'needs supplemental data' : `${s.now ?? 'n/a'}${s.conversion != null ? ` (${(s.conversion * 100).toFixed(0)}% of previous stage)` : ''}`}`,
+    ),
+    ...d.funnel.lead_performance.timings.map(metricLine),
     ``,
     `## Pipeline Performance (now vs comparison)`,
     ...d.funnel.pipeline_performance.stages.map(

@@ -255,6 +255,50 @@ describe('fetchAllLeads (pagination)', () => {
     }
   })
 
+  it('does NOT stop on a transient short page mid-stream when totalItems is known', async () => {
+    // totalItems=100; page 1 returns a SHORT 30 (transient), then 50, then 20.
+    const counts = [30, 50, 20]
+    const call: CallCentralMcp = async (_tool, args) => {
+      const page = Number(args.pageNumber)
+      const n = counts[page - 1] ?? 0
+      const items = Array.from({ length: n }, (_, i) => ({
+        leadId: `${page}-${i}`,
+        contact: `${page}-${i}`,
+        leadType: 'INTERNET',
+        leadStatusType: 'ACTIVE',
+      }))
+      return { ok: true, data: { totalItems: 100, items } }
+    }
+    const r = await fetchAllLeads({ orgId: 'o', startDate: 's', endDate: 'e', call })
+    expect(r.ok).toBe(true)
+    if (r.ok) {
+      expect(r.leads).toHaveLength(100) // kept paging past the transient short page
+      expect(r.incomplete).toBe(false)
+    }
+  })
+
+  it('flags incomplete when the API ends short of a known total', async () => {
+    // totalItems=100 but only 40 ever return (page 2 empty) — partial/transient.
+    const counts = [40, 0]
+    const call: CallCentralMcp = async (_tool, args) => {
+      const page = Number(args.pageNumber)
+      const n = counts[page - 1] ?? 0
+      const items = Array.from({ length: n }, (_, i) => ({
+        leadId: `${page}-${i}`,
+        contact: `${page}-${i}`,
+        leadType: 'INTERNET',
+        leadStatusType: 'ACTIVE',
+      }))
+      return { ok: true, data: { totalItems: 100, items } }
+    }
+    const r = await fetchAllLeads({ orgId: 'o', startDate: 's', endDate: 'e', call })
+    expect(r.ok).toBe(true)
+    if (r.ok) {
+      expect(r.leads).toHaveLength(40)
+      expect(r.incomplete).toBe(true) // never shown as a confident count
+    }
+  })
+
   it('surfaces a failed call with a reason', async () => {
     const r = await fetchAllLeads({
       orgId: 'org',

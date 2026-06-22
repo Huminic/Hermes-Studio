@@ -288,7 +288,14 @@ export async function fetchLeadSources(input: {
 }
 
 export type FetchAllLeadsResult =
-  | { ok: true; leads: Array<Record<string, unknown>>; pages: number; capped: boolean }
+  | {
+      ok: true
+      leads: Array<Record<string, unknown>>
+      pages: number
+      capped: boolean
+      /** Known totalItems but fewer rows fetched — a partial/transient fetch. */
+      incomplete: boolean
+    }
   | { ok: false; reason: string }
 
 /**
@@ -334,17 +341,24 @@ export async function fetchAllLeads(input: {
     leads.push(...rows)
     pagesFetched = page
 
-    // Stop when the reported total is reached, OR on a short/empty final page.
-    // When totalItems is absent we rely ONLY on the short-page signal, so a full
-    // first page is never mistaken for the whole window (no silent truncation).
-    const reachedTotal = totalItems != null && leads.length >= totalItems
-    const lastPage = rows.length < VIN_PAGE_SIZE
-    if (reachedTotal || lastPage) break
-    // More to fetch but we are at the ceiling — surface the truncation.
+    // An empty page always ends the loop (genuine end of data).
+    if (rows.length === 0) break
+    if (totalItems != null) {
+      // Known total: page until we reach it. Do NOT stop on a short page — the
+      // API occasionally returns a short page mid-stream (observed: serra-nissan
+      // flickered 32 vs 228), and stopping there would silently undercount.
+      if (leads.length >= totalItems) break
+    } else if (rows.length < VIN_PAGE_SIZE) {
+      // Unknown total: a short page is the only end-of-data signal.
+      break
+    }
     if (page === MAX_PAGES) capped = true
   }
 
-  return { ok: true, leads, pages: pagesFetched, capped }
+  // Known total but we ended short → an incomplete/transient fetch, never to be
+  // shown as a confident count.
+  const incomplete = totalItems != null && leads.length < totalItems
+  return { ok: true, leads, pages: pagesFetched, capped, incomplete }
 }
 
 // ── Top-level build (profile → defensible opportunity summary) ────────────────
@@ -422,6 +436,8 @@ export async function buildLeadOpportunities(
     window_days: windowDays,
     summary: summarizeOpportunities(fetched.leads, sourceNames),
     pages: fetched.pages,
-    capped: fetched.capped,
+    // An incomplete/transient fetch undercounts just like a capped one — surface
+    // it the same way so the dashboard never presents it as a confident count.
+    capped: fetched.capped || fetched.incomplete,
   }
 }

@@ -2,17 +2,17 @@
  * Dashboard metrics — the Workspace Dashboard backend (Funnel / Leads /
  * Pipeline / AI Activity tabs).
  *
- * Federates three honest sources, per docs/dashboard-brain-schema.md:
- *   - Uploaded VinSolutions ROI/KPI snapshots in the Brain (report_* tables,
- *     populated by report-ingest.ts) → Funnel + Pipeline + Leads-by-source.
- *   - LIVE local comms (messaging-hub.db) → AI Activity comms metrics, with
- *     period-over-period windows.
- *   - LIVE federated VinSolutions lead funnel (via buildCustomerReports) →
- *     Leads tab statuses + names.
+ * Metric-split (CRM-Guru, see crm-guru.ts):
+ *   - Funnel COUNTS + SOLD + Leads-by-source come from the LIVE API
+ *     (lead-opportunities.ts): sales-scoped, BAD dropped, deduped by contact.
+ *   - Report-derived metrics (contacted, appointments, timing, gross) come from
+ *     uploaded snapshots ONLY when trusted (REPORT_METRICS_TRUSTED) — otherwise
+ *     "needs supplemental data" (the verified report read ~1.8–2x inflated).
+ *   - LIVE local comms (messaging-hub.db) → AI Activity metrics.
+ *   - LIVE federated VinSolutions lead funnel (buildCustomerReports) → Leads tab.
  *
- * Anything a source does not provide is returned with status:'pending' and
- * value:null so the UI renders "data source pending" — never a fabricated
- * number (spec honesty rule G).
+ * Anything a source does not provide is returned status:'pending' / value:null so
+ * the UI renders "needs supplemental data" — never a fabricated number.
  */
 
 import { openBrain } from './brain-store'
