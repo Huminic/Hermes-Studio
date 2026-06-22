@@ -69,15 +69,16 @@ describe('/api/customer/dashboard', () => {
     const stages = Object.fromEntries(
       body.dashboard.funnel.lead_performance.stages.map((s) => [s.key, s]),
     )
-    // Metric-split: Leads come from the live API. VIN scope is absent in this
-    // studio.yaml → the API is unavailable → Leads is pending, never fabricated
-    // from the report's inflated total_leads.
+    // Metric-split: Leads + Sold come from the live API. VIN scope is absent in
+    // this studio.yaml → API unavailable → Leads + Sold are pending, never
+    // fabricated from the report. And the report is NOT trusted for the funnel by
+    // default (it reads inflated for the window) → contacted/appts are also
+    // "needs supplemental data". Honest: every cell pending, nothing inflated.
     expect(stages.leads.status).toBe('pending')
     expect(stages.leads.now).toBeNull()
-    // The ingested report still surfaces in the downstream stages.
-    expect(stages.contacted.status).toBe('sourced')
-    expect(stages.contacted.now).toBe(4) // internet_actual_contact
-    expect(stages.sold.now).toBe(20) // sold_from_leads
+    expect(stages.sold.status).toBe('pending')
+    expect(stages.contacted.status).toBe('pending')
+    expect(stages.appt_set.status).toBe('pending')
     // Leads TAB funnel is VIN-live → pending here too.
     expect(body.dashboard.leads.source).toBe('pending')
     expect(body.dashboard.pipeline.status).toBe('pending') // no KPI uploaded

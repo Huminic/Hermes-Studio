@@ -41,6 +41,17 @@ export const LEADS_SOURCE_NOTE = 'Live CRM — sales leads, deduped by customer'
 /** Max canonical-funnel snapshots retained per profile (audit/history window). */
 export const CANONICAL_RETENTION = 50
 
+/**
+ * Whether report-derived funnel metrics (contacted, appointments, timing, gross,
+ * good-leads) are trusted for display. Default OFF: live verification (serra-honda,
+ * 2026-06-22) showed the uploaded report reads ~1.8–2x the CRM for the selected
+ * window (window/quality mismatch), so trusting it would re-introduce the very
+ * inflation this fix removes. Until a window-matched / validated ingestion path
+ * exists (backlogged intelligent CRM-Guru ingester), these render
+ * "needs supplemental data". Leads and Sold always come from the live API. Flip
+ * to true (or pass trustReport) to re-enable report metrics. */
+export const REPORT_METRICS_TRUSTED = false
+
 // ── Local pure helpers (mirror dashboard-metrics; kept local to avoid a cycle) ─
 
 function trend(
@@ -120,6 +131,8 @@ export type AssembleInput = {
   comparisonLabel: string
   /** True when the API lead fetch hit the page ceiling (counts may undercount). */
   leadsCapped?: boolean
+  /** Override REPORT_METRICS_TRUSTED (tests exercise the report-attach path). */
+  trustReport?: boolean
 }
 
 // ── Stage builders ────────────────────────────────────────────────────────────
@@ -132,6 +145,25 @@ function apiLeadStage(opportunities: OpportunitySummary | null): FunnelStage {
     label: 'Leads',
     now,
     comparison: null, // no prior API window is fetched; trend stays neutral
+    conversion: null,
+    trend: trend(now, null, 'up'),
+    status: opportunities ? 'sourced' : 'pending',
+  }
+}
+
+/** API-sourced Sold stage — deduped SOLD opportunities (matches the CRM; the
+ *  report's sold_from_leads reads inflated). Conversion null (cross-source). */
+function apiSoldStage(
+  opportunities: OpportunitySummary | null,
+  key = 'sold',
+  label = 'Sold',
+): FunnelStage {
+  const now = opportunities ? opportunities.sold : null
+  return {
+    key,
+    label,
+    now,
+    comparison: null,
     conversion: null,
     trend: trend(now, null, 'up'),
     status: opportunities ? 'sourced' : 'pending',
@@ -219,95 +251,73 @@ const pendingTiming = (
 export function assembleCanonicalFunnel(input: AssembleInput): CanonicalFunnel {
   const { opportunities, roiCurrent, roiPrior, comparisonLabel } = input
   const generated_at = brainNow()
-  const hasReport = roiCurrent.length > 0
+  const trustReport = input.trustReport ?? REPORT_METRICS_TRUSTED
+  // Gate the report: when untrusted, the report-derived stages/metrics get no
+  // rows → they render "needs supplemental data" instead of inflated numbers.
+  const repRows = trustReport ? roiCurrent : []
+  const repPrior = trustReport ? roiPrior : []
+  const reportShown = trustReport && roiCurrent.length > 0
 
-  // Lead Performance: API Leads, then report Contacted → Appt Set → Shown → Sold.
+  // Lead Performance: Leads + Sold from the API (defensible, deduped; Sold matches
+  // the CRM). Contacted / Appointments from the report, or "needs supplemental".
   const leadStage = apiLeadStage(opportunities)
-  const contacted = reportStage('contacted', 'Contacted', 'internet_actual_contact', roiCurrent, roiPrior, null)
-  const apptSet = reportStage('appt_set', 'Appointments Set', 'appts_set', roiCurrent, roiPrior, contacted.now)
-  const apptShown = reportStage('appt_shown', 'Appointments Shown', 'appts_shown', roiCurrent, roiPrior, apptSet.now)
-  const sold = reportStage('sold', 'Sold', 'sold_from_leads', roiCurrent, roiPrior, apptShown.now)
+  const contacted = reportStage('contacted', 'Contacted', 'internet_actual_contact', repRows, repPrior, null)
+  const apptSet = reportStage('appt_set', 'Appointments Set', 'appts_set', repRows, repPrior, contacted.now)
+  const apptShown = reportStage('appt_shown', 'Appointments Shown', 'appts_shown', repRows, repPrior, apptSet.now)
+  const sold = apiSoldStage(opportunities)
   const leadStages = [leadStage, contacted, apptSet, apptShown, sold]
 
   // De-blended timing weights: sales opportunities per source (API, deduped).
-  // weightedAvg falls back to good_leads when a source has no API weight.
   const weightBySource = new Map<string, number>(
     (opportunities?.by_source ?? []).map((s) => [normSource(s.lead_source), s.opportunities]),
   )
   const timings: Array<Metric> = [
     pendingTiming('time_to_first_contact', 'Time to First Contact', 'days', 'down'),
     pendingTiming('time_to_first_discussion', 'Time to First Discussion', 'days', 'down'),
-    timingMetric('time_to_appt_set', 'Time to Appointment Set', 'avg_days_to_appt_set', roiCurrent, roiPrior, weightBySource),
+    timingMetric('time_to_appt_set', 'Time to Appointment Set', 'avg_days_to_appt_set', repRows, repPrior, weightBySource),
     pendingTiming('time_to_appointment', 'Time to Appointment', 'days', 'down'),
-    timingMetric('time_to_sale', 'Time to Sale', 'avg_days_to_sale', roiCurrent, roiPrior, weightBySource),
+    timingMetric('time_to_sale', 'Time to Sale', 'avg_days_to_sale', repRows, repPrior, weightBySource),
   ]
 
-  // Pipeline Performance: API Leads, then report Opportunities → Appts → Sales.
+  // Pipeline Performance: API Leads + Sales; Opportunities/Appointments from report.
   const pLeads = apiLeadStage(opportunities)
-  const pOpp = reportStage('opportunities', 'Opportunities', 'good_leads', roiCurrent, roiPrior, null)
-  const pAppt = reportStage('appointments', 'Appointments', 'appts_set', roiCurrent, roiPrior, pOpp.now)
-  const pSales = reportStage('sales', 'Sales', 'sold_from_leads', roiCurrent, roiPrior, pAppt.now)
+  const pOpp = reportStage('opportunities', 'Opportunities', 'good_leads', repRows, repPrior, null)
+  const pAppt = reportStage('appointments', 'Appointments', 'appts_set', repRows, repPrior, pOpp.now)
+  const pSales = apiSoldStage(opportunities, 'sales', 'Sales')
 
-  // Lead sources: the defensible Leads count is the API per-source opportunities;
-  // report-only columns attach where the source name matches.
-  const reportBySource = new Map(roiCurrent.map((r) => [normSource(r.lead_source), r]))
-  const totalSoldAll = sum(roiCurrent, 'sold_from_leads') ?? 0
+  // Lead sources: Leads + Sold per source from the API (defensible); report-only
+  // columns (good_leads/appts/gross) attach only when the report is trusted.
+  const reportBySource = new Map(repRows.map((r) => [normSource(r.lead_source), r]))
+  const totalSoldAll = opportunities?.sold ?? 0
   const totalLeadsAll = opportunities?.opportunities ?? 0
   const overallSoldRate = totalLeadsAll > 0 ? totalSoldAll / totalLeadsAll : 0
 
-  let lead_sources: Array<LeadSourceRow>
-  if (opportunities) {
-    // API available → defensible Leads count per source; report-only columns
-    // attach where the normalized source name matches.
-    lead_sources = opportunities.by_source.map((row) => {
-      const rep = reportBySource.get(normSource(row.lead_source))
-      const leads = row.opportunities
-      // Only rate when the report carries a real sold number — a null (missing)
-      // sold must NOT be read as zero sales (that would be a false "alarm").
-      const soldNum = typeof rep?.sold_from_leads === 'number' ? rep.sold_from_leads : null
-      const rate = rep?.sold_from_leads_pct ?? (soldNum != null && leads > 0 ? soldNum / leads : 0)
-      let rating: LeadRating = 'watch'
-      if (rep && soldNum != null) {
-        if (leads >= 10 && soldNum === 0) rating = 'alarm'
-        else if (soldNum > 0 && rate >= overallSoldRate) rating = 'good'
-      }
-      return {
-        lead_source: row.lead_source,
-        total_leads: leads,
-        good_leads: rep?.good_leads ?? null,
-        appts_set: rep?.appts_set ?? null,
-        sold_from_leads: rep?.sold_from_leads ?? null,
-        sold_from_leads_pct: rep?.sold_from_leads_pct ?? null,
-        total_gross: rep?.total_gross ?? null,
-        rating,
-        trend: trend(leads, null, 'up'),
-      }
-    })
-  } else {
-    // API unavailable but a report exists → still surface the report-sourced rows
-    // (sold/gross/good are defensible report data). The Leads count is NOT
-    // defensible without the API, so total_leads stays null ("needs supplemental")
-    // — never the report's inflated raw total. Rating stays neutral.
-    lead_sources = roiCurrent
-      .map((r) => ({
-        lead_source: r.lead_source,
-        total_leads: null,
-        good_leads: r.good_leads,
-        appts_set: r.appts_set,
-        sold_from_leads: r.sold_from_leads,
-        sold_from_leads_pct: r.sold_from_leads_pct,
-        total_gross: r.total_gross,
-        rating: 'watch' as LeadRating,
-        trend: trend(null, null, 'up'),
-      }))
-      .sort((a, b) => (b.sold_from_leads ?? 0) - (a.sold_from_leads ?? 0))
-  }
+  const lead_sources: Array<LeadSourceRow> = (opportunities?.by_source ?? []).map((row) => {
+    const rep = reportBySource.get(normSource(row.lead_source))
+    const leads = row.opportunities
+    const soldNum = row.sold // API per-source sold (deduped)
+    const rate = leads > 0 ? soldNum / leads : 0
+    let rating: LeadRating = 'watch'
+    if (leads >= 10 && soldNum === 0) rating = 'alarm'
+    else if (soldNum > 0 && rate >= overallSoldRate) rating = 'good'
+    return {
+      lead_source: row.lead_source,
+      total_leads: leads,
+      good_leads: rep?.good_leads ?? null,
+      appts_set: rep?.appts_set ?? null,
+      sold_from_leads: soldNum,
+      sold_from_leads_pct: leads > 0 ? soldNum / leads : null,
+      total_gross: rep?.total_gross ?? null,
+      rating,
+      trend: trend(leads, null, 'up'),
+    }
+  })
 
   const provenance: FunnelProvenance = {
     leads_source: opportunities ? 'api' : 'unavailable',
     leads_capped: input.leadsCapped ?? false,
-    metrics_source: hasReport ? 'report' : 'needs_supplemental',
-    report_as_of: hasReport ? comparisonLabel : null,
+    metrics_source: reportShown ? 'report' : 'needs_supplemental',
+    report_as_of: reportShown ? comparisonLabel : null,
     unrecognized_lead_types: opportunities?.dropped.unrecognized_types ?? [],
     generated_at,
   }

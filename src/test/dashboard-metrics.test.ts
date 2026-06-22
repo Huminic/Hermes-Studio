@@ -16,7 +16,7 @@ import type { OpportunitySummary } from '@/server/lead-opportunities'
 
 /** Synthetic API opportunity summary — the defensible Leads counts. */
 function opp(
-  bySource: Array<{ lead_source: string; opportunities: number }>,
+  bySource: Array<{ lead_source: string; opportunities: number; sold?: number }>,
   sold = 0,
 ): OpportunitySummary {
   const total = bySource.reduce((a, b) => a + b.opportunities, 0)
@@ -24,7 +24,11 @@ function opp(
     raw_total: total,
     opportunities: total,
     sold,
-    by_source: bySource,
+    by_source: bySource.map((s) => ({
+      lead_source: s.lead_source,
+      opportunities: s.opportunities,
+      sold: s.sold ?? 0,
+    })),
     dropped: { non_sales: 0, bad: 0, duplicates: 0, no_contact: 0, unrecognized_types: [] },
   }
 }
@@ -82,22 +86,25 @@ function seedReports(profile = 'fixture') {
 describe('buildFunnelTab', () => {
   it('builds a lead conversion funnel + timings, marking absent timings pending', () => {
     seedReports()
-    // Leads count comes from the API (metric-split); the report supplies the
-    // downstream stages + timings.
+    // Leads + Sold come from the API; Contacted/Appts from the report (trusted
+    // here to exercise the report-attach path — off by default in production).
     const tab = buildFunnelTab('fixture', {
-      opportunities: opp([
-        { lead_source: 'Repeat Customer', opportunities: 100 },
-        { lead_source: 'Autoweb', opportunities: 50 },
-      ]),
+      trustReport: true,
+      opportunities: opp(
+        [
+          { lead_source: 'Repeat Customer', opportunities: 100 },
+          { lead_source: 'Autoweb', opportunities: 50 },
+        ],
+        33, // API sold total
+      ),
     })
 
-    // Conversion funnel stages: Leads from API, the rest from the report.
     const stages = Object.fromEntries(tab.lead_performance.stages.map((s) => [s.key, s]))
     expect(stages.leads.now).toBe(150) // API opportunities (100 + 50)
-    expect(stages.contacted.now).toBe(24) // 4 + 20 internet_actual_contact
-    expect(stages.appt_set.now).toBe(40) // 30 + 10
-    expect(stages.appt_shown.now).toBe(26) // 20 + 6 appts_shown
-    expect(stages.sold.now).toBe(24) // 20 + 4
+    expect(stages.contacted.now).toBe(24) // 4 + 20 internet_actual_contact (report)
+    expect(stages.appt_set.now).toBe(40) // 30 + 10 (report)
+    expect(stages.appt_shown.now).toBe(26) // 20 + 6 appts_shown (report)
+    expect(stages.sold.now).toBe(33) // API sold (deduped), NOT report's 24
     expect(stages.leads.conversion).toBeNull() // first layer
     // Contacted sits under the API Leads stage — no defensible cross-source %.
     expect(stages.contacted.conversion).toBeNull()
@@ -119,18 +126,22 @@ describe('buildFunnelTab', () => {
   it('builds the blue pipeline funnel stages and ranked lead sources', () => {
     seedReports()
     const tab = buildFunnelTab('fixture', {
-      opportunities: opp([
-        { lead_source: 'Repeat Customer', opportunities: 100 },
-        { lead_source: 'Autoweb', opportunities: 50 },
-      ]),
+      trustReport: true,
+      opportunities: opp(
+        [
+          { lead_source: 'Repeat Customer', opportunities: 100 },
+          { lead_source: 'Autoweb', opportunities: 50 },
+        ],
+        24, // API sold total
+      ),
     })
     const stages = Object.fromEntries(
       tab.pipeline_performance.stages.map((s) => [s.key, s.now]),
     )
-    expect(stages.leads).toBe(150)
-    expect(stages.opportunities).toBe(110) // 80 + 30 good_leads
-    expect(stages.appointments).toBe(40) // 30 + 10
-    expect(stages.sales).toBe(24) // 20 + 4
+    expect(stages.leads).toBe(150) // API
+    expect(stages.opportunities).toBe(110) // 80 + 30 good_leads (report)
+    expect(stages.appointments).toBe(40) // 30 + 10 (report)
+    expect(stages.sales).toBe(24) // API sold
     expect(tab.pipeline_performance.comparison_label).toBe('no prior period')
 
     expect(tab.lead_sources[0].lead_source).toBe('Repeat Customer') // most leads first
@@ -274,12 +285,17 @@ describe('lead-source rating + pipeline conversion', () => {
       checksum: 'rating-1',
     })
     const tab = buildFunnelTab('fixture', {
-      opportunities: opp([
-        { lead_source: 'Repeat Customer', opportunities: 100 },
-        { lead_source: 'Dead Source', opportunities: 20 },
-      ]),
+      trustReport: true,
+      opportunities: opp(
+        [
+          { lead_source: 'Repeat Customer', opportunities: 100, sold: 30 },
+          { lead_source: 'Dead Source', opportunities: 20, sold: 0 },
+        ],
+        30,
+      ),
     })
     const bySrc = Object.fromEntries(tab.lead_sources.map((r) => [r.lead_source, r]))
+    // Rating uses API per-source sold (30/100 >= store 30/120 → good; 20 leads, 0 sold → alarm).
     expect(bySrc['Repeat Customer'].rating).toBe('good')
     expect(bySrc['Dead Source'].rating).toBe('alarm')
 
@@ -287,8 +303,8 @@ describe('lead-source rating + pipeline conversion', () => {
     expect(stages[0].conversion).toBeNull() // first layer (API Leads), no conversion
     // Opportunities sits under the API Leads stage — no defensible cross-source %.
     expect(stages[1].conversion).toBeNull()
-    // Sales (30+0) / Appointments (40+1) — report→report conversion.
-    expect(stages[3].conversion).toBeCloseTo(30 / 41, 4)
+    // Sales now comes from the API (cross-source from report Appointments) → null.
+    expect(stages[3].conversion).toBeNull()
   })
 })
 

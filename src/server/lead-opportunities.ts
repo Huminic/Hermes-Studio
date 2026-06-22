@@ -121,6 +121,8 @@ function resolveSourceLabel(raw: string, names?: Map<string, string>): string {
 export type LeadSourceOpportunities = {
   lead_source: string
   opportunities: number
+  /** Deduped sales opportunities from this source whose status is SOLD. */
+  sold: number
 }
 
 export type OpportunitySummary = {
@@ -165,6 +167,7 @@ export function summarizeOpportunities(
   const seenGlobal = new Set<string>()
   const soldGlobal = new Set<string>()
   const perSource = new Map<string, Set<string>>()
+  const perSourceSold = new Map<string, Set<string>>()
   const unrecognized = new Set<string>()
 
   for (const lead of leads) {
@@ -188,20 +191,32 @@ export function summarizeOpportunities(
     if (!contact) noContact++
     const key = contact || leadIdOf(lead) || `__row_${salesNonBadRows}`
 
-    seenGlobal.add(key)
-    if (SOLD_STATUS_TYPES.has(st)) soldGlobal.add(key)
-
     const src = resolveSourceLabel(leadSourceOf(lead), sourceNames)
+    seenGlobal.add(key)
     let set = perSource.get(src)
     if (!set) {
       set = new Set<string>()
       perSource.set(src, set)
     }
     set.add(key)
+
+    if (SOLD_STATUS_TYPES.has(st)) {
+      soldGlobal.add(key)
+      let ss = perSourceSold.get(src)
+      if (!ss) {
+        ss = new Set<string>()
+        perSourceSold.set(src, ss)
+      }
+      ss.add(key)
+    }
   }
 
   const by_source: Array<LeadSourceOpportunities> = Array.from(perSource.entries())
-    .map(([lead_source, set]) => ({ lead_source, opportunities: set.size }))
+    .map(([lead_source, set]) => ({
+      lead_source,
+      opportunities: set.size,
+      sold: perSourceSold.get(lead_source)?.size ?? 0,
+    }))
     .sort((a, b) => b.opportunities - a.opportunities)
 
   return {
