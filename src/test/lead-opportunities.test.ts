@@ -49,6 +49,24 @@ describe('summarizeOpportunities', () => {
     expect(s.dropped.unrecognized_types).toEqual(['MYSTERY'])
   })
 
+  it('counts all retail sales lead types, drops the non-retail desks', () => {
+    const s = summarizeOpportunities([
+      lead({ leadType: 'INTERNET', contact: '1' }),
+      lead({ leadType: 'PHONE', contact: '2' }),
+      lead({ leadType: 'WALK_IN', contact: '3' }),
+      lead({ leadType: 'REFERRAL', contact: '4' }),
+      lead({ leadType: 'PREVIOUS_CUSTOMER', contact: '5' }),
+      lead({ leadType: 'WEBSITE_CHAT', contact: '6' }),
+      lead({ leadType: 'IMPORT', contact: '7' }),
+      lead({ leadType: 'SERVICE', contact: '8' }),
+      lead({ leadType: 'PARTS_ORDER', contact: '9' }),
+      lead({ leadType: 'WHOLESALE', contact: '10' }),
+    ])
+    expect(s.opportunities).toBe(7) // the 7 retail sales types
+    expect(s.dropped.non_sales).toBe(3) // SERVICE, PARTS_ORDER, WHOLESALE
+    expect(s.dropped.unrecognized_types).toEqual([]) // all 10 are known
+  })
+
   it('drops BAD-status leads', () => {
     const s = summarizeOpportunities([
       lead({ contact: 'a', leadStatusType: 'ACTIVE' }),

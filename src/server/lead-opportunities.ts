@@ -35,8 +35,22 @@ export const VIN_PAGE_SIZE = 50
  *  200 pages × 50 = 10,000 leads/window. If hit, it is reported, never silent. */
 export const MAX_PAGES = 200
 
-export const SALES_LEAD_TYPES = new Set(['INTERNET', 'PHONE', 'WALK_IN'])
-export const DROPPED_LEAD_TYPES = new Set(['SERVICE', 'PARTS_ORDER'])
+// Authoritative VinSolutions lead types (vin_get_lead_types, verified live across
+// hyundai/ford/serra-honda on 2026-06-22): INTERNET, WALK_IN, PHONE, IMPORT,
+// PARTS_ORDER, SERVICE, WEBSITE_CHAT, WHOLESALE, REFERRAL, PREVIOUS_CUSTOMER.
+// Retail SALES opportunities = every customer-facing lead type EXCEPT the
+// non-retail desks (service, parts, wholesale). Earlier this was just
+// INTERNET/PHONE/WALK_IN, which silently undercounted stores using REFERRAL etc.
+export const SALES_LEAD_TYPES = new Set([
+  'INTERNET',
+  'PHONE',
+  'WALK_IN',
+  'REFERRAL',
+  'PREVIOUS_CUSTOMER',
+  'WEBSITE_CHAT',
+  'IMPORT',
+])
+export const DROPPED_LEAD_TYPES = new Set(['SERVICE', 'PARTS_ORDER', 'WHOLESALE'])
 export const BAD_STATUS_TYPES = new Set(['BAD'])
 export const SOLD_STATUS_TYPES = new Set(['SOLD'])
 
