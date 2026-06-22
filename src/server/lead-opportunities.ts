@@ -73,9 +73,33 @@ function leadIdOf(lead: Record<string, unknown>): string {
   return firstString(lead, ['leadId', 'lead_id', 'id'])
 }
 
-/** Lead source label, preserved verbatim (reconciliation is per source). */
+/** Raw lead source value — VinSolutions returns a URL href, e.g.
+ *  https://api.vinsolutions.com/leadsources/id/3742136?dealerid=13399 */
 function leadSourceOf(lead: Record<string, unknown>): string {
   return firstString(lead, ['leadSource', 'lead_source', 'source']) || 'Unknown'
+}
+
+/** Extract the numeric VinSolutions lead-source id from a source URL, or null. */
+function leadSourceIdOf(raw: string): string | null {
+  const m = raw.match(/leadsources\/id\/(\d+)/)
+  return m ? m[1] : null
+}
+
+/** Clean a VinSolutions lead-source name (strips control chars + trailing dashes). */
+function cleanSourceName(name: string): string {
+  return name.replace(/\s+/g, ' ').replace(/[\s-]+$/, '').trim()
+}
+
+/**
+ * Resolve a raw lead-source value to a human label: the resolved name when the
+ * id→name map has it, else "Source <id>" (never a raw API URL on screen), else
+ * the raw value (already a plain name).
+ */
+function resolveSourceLabel(raw: string, names?: Map<string, string>): string {
+  const id = leadSourceIdOf(raw)
+  if (id && names?.get(id)) return names.get(id) as string
+  if (id) return `Source ${id}`
+  return raw || 'Unknown'
 }
 
 // ── Pure summary core ────────────────────────────────────────────────────────
@@ -117,6 +141,7 @@ export type OpportunitySummary = {
  */
 export function summarizeOpportunities(
   leads: Array<Record<string, unknown>>,
+  sourceNames?: Map<string, string>,
 ): OpportunitySummary {
   let nonSales = 0
   let bad = 0
@@ -152,7 +177,7 @@ export function summarizeOpportunities(
     seenGlobal.add(key)
     if (SOLD_STATUS_TYPES.has(st)) soldGlobal.add(key)
 
-    const src = leadSourceOf(lead)
+    const src = resolveSourceLabel(leadSourceOf(lead), sourceNames)
     let set = perSource.get(src)
     if (!set) {
       set = new Set<string>()
@@ -208,6 +233,29 @@ function totalItemsOf(data: unknown): number | null {
     if (typeof t === 'number') return t
   }
   return null
+}
+
+/**
+ * Fetch the org's lead-source id→name map via `vin_get_lead_sources`. Best-effort:
+ * on any failure returns an empty map (labels fall back to "Source <id>"), so a
+ * naming hiccup never blocks the defensible counts.
+ */
+export async function fetchLeadSources(input: {
+  orgId: string
+  timeoutMs?: number
+  call?: CallCentralMcp
+}): Promise<Map<string, string>> {
+  const call = input.call ?? (callCentralMcpTool as CallCentralMcp)
+  const map = new Map<string, string>()
+  const r = await call('vin_get_lead_sources', { orgId: input.orgId }, { timeoutMs: input.timeoutMs ?? 15_000 })
+  if (!r.ok) return map
+  const rows = extractRows(r.data) ?? []
+  for (const row of rows) {
+    const id = firstString(row, ['leadSourceId']) || leadSourceIdOf(firstString(row, ['href']))
+    const name = cleanSourceName(firstString(row, ['leadSourceName', 'name']))
+    if (id && name) map.set(id, name)
+  }
+  return map
 }
 
 export type FetchAllLeadsResult =
@@ -331,11 +379,19 @@ export async function buildLeadOpportunities(
     }
   }
 
+  // Resolve lead-source id→name so per-source rows show real names (and match the
+  // uploaded report by name), not raw VinSolutions URLs.
+  const sourceNames = await fetchLeadSources({
+    orgId: org.orgId,
+    timeoutMs: opts.vinTimeoutMs,
+    call: opts.call,
+  })
+
   return {
     available: true,
     source: 'vin-live',
     window_days: windowDays,
-    summary: summarizeOpportunities(fetched.leads),
+    summary: summarizeOpportunities(fetched.leads, sourceNames),
     pages: fetched.pages,
     capped: fetched.capped,
   }

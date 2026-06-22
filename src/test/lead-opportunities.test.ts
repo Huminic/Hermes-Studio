@@ -103,6 +103,26 @@ describe('summarizeOpportunities', () => {
     expect(s.dropped.no_contact).toBe(2)
   })
 
+  it('resolves lead-source URLs to names (never shows a raw URL)', () => {
+    const names = new Map([
+      ['196', 'AutoTrader'],
+      ['33340', 'Cargurus'],
+    ])
+    const s = summarizeOpportunities(
+      [
+        lead({ contact: 'a', leadSource: 'https://api.vinsolutions.com/leadsources/id/196?dealerid=13399' }),
+        lead({ contact: 'b', leadSource: 'https://api.vinsolutions.com/leadsources/id/33340?dealerid=13399' }),
+        lead({ contact: 'c', leadSource: 'https://api.vinsolutions.com/leadsources/id/999?dealerid=13399' }), // unmapped
+      ],
+      names,
+    )
+    const labels = s.by_source.map((r) => r.lead_source)
+    expect(labels).toContain('AutoTrader')
+    expect(labels).toContain('Cargurus')
+    expect(labels).toContain('Source 999') // unmapped id → label, never a URL
+    expect(labels.some((l) => l.startsWith('http'))).toBe(false)
+  })
+
   it('handles an empty window', () => {
     const s = summarizeOpportunities([])
     expect(s).toEqual({
