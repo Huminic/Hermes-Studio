@@ -34,6 +34,13 @@ COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/tsconfig.json ./
 
+# Chromium for the Sentinel's daily synthetic widget monitor (verifies our
+# embedded widget on each customer's public site). Playwright launches this
+# system browser via PLAYWRIGHT_CHROMIUM_PATH — Alpine cannot run Playwright's
+# own bundled build, which is why PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD stays set.
+RUN apk add --no-cache chromium nss freetype harfbuzz ca-certificates ttf-freefont
+ENV PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium-browser
+
 EXPOSE 3000
 
 USER hermes
