@@ -37,6 +37,12 @@ import {
   type TextmagicProbe,
   type ConversationGrade,
 } from './sentinel-probes'
+import {
+  checkWidget as defaultCheckWidget,
+  readWidgetTargets as defaultReadWidgetTargets,
+  type WidgetCheckResult,
+  type WidgetTarget,
+} from './widget-monitor'
 
 export type Severity = 'info' | 'warning' | 'critical'
 
@@ -92,6 +98,13 @@ export type SentinelDeps = {
   probeTextmagic?: () => Promise<TextmagicProbe>
   /** Conversation-quality grader (tests inject a fake). */
   gradeConversation?: (transcript: string) => Promise<ConversationGrade>
+  /** Synthetic widget checker (tests inject a fake). */
+  checkWidget?: (
+    url: string,
+    opts?: { expectChannels?: Array<string> },
+  ) => Promise<WidgetCheckResult>
+  /** Monitored-widget targets (tests inject). */
+  widgetTargets?: () => Array<WidgetTarget>
   /** Override the check registry (tests). Defaults to the built-in checks. */
   checks?: Array<SentinelCheck>
   /** Re-alert throttle: don't re-email the same open finding within this window. */
@@ -159,6 +172,13 @@ export type CheckCtx = {
   probeTextmagic: () => Promise<TextmagicProbe>
   /** Conversation-quality grader (injectable). */
   grade: (transcript: string) => Promise<ConversationGrade>
+  /** Synthetic widget checker (injectable). */
+  checkWidget: (
+    url: string,
+    opts?: { expectChannels?: Array<string> },
+  ) => Promise<WidgetCheckResult>
+  /** Per-customer monitored-widget targets (injectable). */
+  widgetTargets: () => Array<WidgetTarget>
 }
 
 export type SentinelCheck = {
@@ -182,6 +202,7 @@ const DATA_STALE_MS = 48 * 60 * 60_000 // no inbound for 48h ⇒ data may not be
 const QC_GRADE_INTERVAL_MS = 60 * 60_000 // grade conversations at most hourly (token cost)
 const QC_SAMPLE_SIZE = 5 // threads graded per QC pass
 const QC_LOW_SCORE = 3 // grade <= 3 (of 5) ⇒ quality finding
+const WIDGET_CHECK_INTERVAL_MS = 24 * 60 * 60_000 // synthetic widget test: once/day (heavy)
 /** TextMagic low-balance alert threshold (credits). Override via env. */
 const TEXTMAGIC_MIN_BALANCE = Number(
   process.env.SENTINEL_TEXTMAGIC_MIN_BALANCE ?? 20,
@@ -759,6 +780,82 @@ export const appHealthCheck: SentinelCheck = {
   },
 }
 
+/**
+ * Synthetic widget monitor — loads each customer's PUBLIC site in a real
+ * browser and verifies OUR embedded widget renders + opens + shows the expected
+ * channels. Once per day (heavy). Catches "a deploy broke the widget on every
+ * customer page" — which no in-app check can see. System-scoped: iterates the
+ * configured per-customer targets.
+ *
+ * A browser that cannot launch yields ONE warning ("coverage down"), never a
+ * false "widget broken". A genuine widget failure is CRITICAL.
+ */
+export const widgetSyntheticCheck: SentinelCheck = {
+  name: 'widget-synthetic',
+  category: 'widget',
+  scope: 'system',
+  async run({ now, brain, checkWidget, widgetTargets }) {
+    const targets = widgetTargets()
+    if (targets.length === 0) return [] // nothing configured ⇒ nothing to assert
+
+    // Throttle to daily; stamp up-front so a slow browser can't re-trigger.
+    const last = brain.get<{ v: number }>(
+      `SELECT v FROM sentinel_meta WHERE k='widget_checked_at'`,
+    )
+    if (last && now - last.v < WIDGET_CHECK_INTERVAL_MS) return []
+    brain.run(
+      `INSERT INTO sentinel_meta (k, v) VALUES ('widget_checked_at', ?)
+       ON CONFLICT(k) DO UPDATE SET v=excluded.v`,
+      now,
+    )
+
+    const findings: Array<Finding> = []
+    let infraDown = false
+    for (const t of targets) {
+      for (const url of t.urls) {
+        const r = await checkWidget(url, { expectChannels: t.expectChannels }).catch(
+          (e: unknown) => ({
+            url,
+            ok: false,
+            infra: true,
+            error: e instanceof Error ? e.message : String(e),
+          }) as WidgetCheckResult,
+        )
+        if (r.infra) {
+          infraDown = true
+          continue // coverage gap surfaced once below, not per-URL
+        }
+        if (!r.ok) {
+          findings.push({
+            key: `widget:${t.profile}:down:${url}`,
+            severity: 'critical',
+            category: 'widget',
+            title: `Widget not functioning on ${t.profile}`,
+            detail: `${url}: ${r.error ?? 'widget failed synthetic check'} (script=${r.scriptPresent}, launcher=${r.launcherPresent}, channels=${Object.keys(
+              r.channels,
+            )
+              .filter((k) => r.channels[k])
+              .join('/') || 'none'}).`,
+            profile: t.profile,
+          })
+        }
+      }
+    }
+    if (infraDown) {
+      findings.push({
+        key: 'widget:browser-unavailable',
+        severity: 'warning',
+        category: 'widget',
+        title: 'Widget monitor could not launch a browser',
+        detail:
+          'The synthetic widget monitor failed to start a browser — widget coverage is DOWN until this is fixed (check Chromium in the container).',
+        profile: '_system',
+      })
+    }
+    return findings
+  },
+}
+
 export const DEFAULT_CHECKS: Array<SentinelCheck> = [
   commsCronLivenessCheck,
   threadSlaCheck,
@@ -768,6 +865,7 @@ export const DEFAULT_CHECKS: Array<SentinelCheck> = [
   dataCollectionCheck,
   conversationOpsCheck,
   conversationQualityCheck,
+  widgetSyntheticCheck,
   appHealthCheck,
 ]
 
@@ -783,6 +881,8 @@ export async function runSentinelPass(
   const store = deps.store ?? DEFAULT_STORE
   const probeTextmagic = deps.probeTextmagic ?? defaultProbeTextmagic
   const grade = deps.gradeConversation ?? defaultGradeConversation
+  const checkWidget = deps.checkWidget ?? defaultCheckWidget
+  const widgetTargets = deps.widgetTargets ?? defaultReadWidgetTargets
   const reAlertMs = deps.reAlertMs ?? DEFAULT_RE_ALERT_MS
   const heartbeatMs = deps.heartbeatMs ?? DEFAULT_HEARTBEAT_MS
   const profiles =
@@ -813,7 +913,7 @@ export async function runSentinelPass(
   const toAlert: Array<Finding> = []
 
   for (const check of checks) {
-    const base = { now, call, brain, store, probeTextmagic, grade }
+    const base = { now, call, brain, store, probeTextmagic, grade, checkWidget, widgetTargets }
     const ctxs: Array<CheckCtx> =
       check.scope === 'system'
         ? [{ profile: null, ...base }]

@@ -11,6 +11,7 @@ import {
   dataCollectionCheck,
   conversationOpsCheck,
   conversationQualityCheck,
+  widgetSyntheticCheck,
   appHealthCheck,
   listSentinelFindings,
   type SentinelCheck,
@@ -595,5 +596,92 @@ describe('sentinel — vendors, notifications, automations, data, conversation Q
       now: NOW,
     })
     expect(s.findings).toHaveLength(0)
+  })
+})
+
+describe('sentinel — synthetic widget monitor', () => {
+  const target = [{ profile: 'serra-honda', urls: ['https://www.serrahonda.net'] }]
+  const okResult = {
+    url: 'https://www.serrahonda.net',
+    ok: true,
+    scriptPresent: true,
+    launcherPresent: true,
+    channels: { chat: true, video: true },
+  }
+
+  it('no targets configured ⇒ no findings, no browser calls', async () => {
+    const spy = vi.fn()
+    const s = await runSentinelPass({
+      brain,
+      profiles: [],
+      checks: [widgetSyntheticCheck],
+      widgetTargets: () => [],
+      checkWidget: spy as never,
+      alertTo: [],
+      now: NOW,
+    })
+    expect(s.findings).toHaveLength(0)
+    expect(spy).not.toHaveBeenCalled()
+  })
+
+  it('healthy widget ⇒ no finding', async () => {
+    const s = await runSentinelPass({
+      brain,
+      profiles: [],
+      checks: [widgetSyntheticCheck],
+      widgetTargets: () => target,
+      checkWidget: async () => okResult,
+      alertTo: [],
+      now: NOW,
+    })
+    expect(s.findings).toHaveLength(0)
+  })
+
+  it('broken widget ⇒ critical finding', async () => {
+    const s = await runSentinelPass({
+      brain,
+      profiles: [],
+      checks: [widgetSyntheticCheck],
+      widgetTargets: () => target,
+      checkWidget: async () => ({
+        ...okResult,
+        ok: false,
+        launcherPresent: false,
+        error: 'launcher did not render',
+      }),
+      alertTo: [],
+      now: NOW,
+    })
+    const f = s.findings.find((x) => x.key.startsWith('widget:serra-honda:down'))
+    expect(f?.severity).toBe('critical')
+  })
+
+  it('browser unavailable ⇒ ONE coverage-down warning, not a widget fault', async () => {
+    const s = await runSentinelPass({
+      brain,
+      profiles: [],
+      checks: [widgetSyntheticCheck],
+      widgetTargets: () => target,
+      checkWidget: async () => ({ ...okResult, ok: false, infra: true, error: 'no browser' }),
+      alertTo: [],
+      now: NOW,
+    })
+    expect(s.findings.map((f) => f.key)).toEqual(['widget:browser-unavailable'])
+    expect(s.findings[0].severity).toBe('warning')
+  })
+
+  it('throttled — does not re-run within 24h', async () => {
+    const spy = vi.fn().mockResolvedValue(okResult)
+    const opts = {
+      brain,
+      profiles: [],
+      checks: [widgetSyntheticCheck],
+      widgetTargets: () => target,
+      checkWidget: spy as never,
+      alertTo: [],
+    }
+    await runSentinelPass({ ...opts, now: NOW })
+    await runSentinelPass({ ...opts, now: NOW + 60 * 60_000 })
+    expect(spy).toHaveBeenCalledTimes(1)
   })
 })
