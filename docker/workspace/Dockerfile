@@ -44,6 +44,14 @@ COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/tsconfig.json ./
 
+# Chromium for the Sentinel's daily synthetic widget monitor (verifies our
+# embedded widget on each customer's public site). Playwright launches this
+# system browser — Alpine cannot run Playwright's bundled build, which is why
+# PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD stays set in the build stage. The runtime
+# resolver (widget-monitor.ts) also probes /usr/bin/chromium{,-browser}.
+RUN apk add --no-cache chromium nss freetype harfbuzz ca-certificates ttf-freefont
+ENV PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium-browser
+
 # Hermes profile data + .env live on the shared hermes-state volume
 # mounted at /root/.hermes by docker-compose. Keep the runtime user as
 # root so the existing volume permissions continue to work.
