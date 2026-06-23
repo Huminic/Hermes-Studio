@@ -5,7 +5,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   runSentinelPass,
   commsCronLivenessCheck,
+  threadSlaCheck,
   integrationHealthCheck,
+  vinHealthCheck,
   notificationsDeliveryCheck,
   automationsFiringCheck,
   dataCollectionCheck,
@@ -360,7 +362,6 @@ describe('sentinel built-in checks', () => {
     expect(s.findings.map((f) => f.key).sort()).toEqual([
       'integration:tavus:unreachable',
       'integration:vapi:unreachable',
-      'integration:vin:unreachable',
     ])
   })
 
@@ -537,11 +538,13 @@ describe('sentinel — vendors, notifications, automations, data, conversation Q
   })
 
   it('data-collection: stale inbound warns; recent and never-seen are clean', async () => {
+    const liveTargets = () => [{ profile: 'p1', urls: ['https://x.test'] }]
     const stale = await runSentinelPass({
       brain,
       profiles: ['p1'],
       checks: [dataCollectionCheck],
       store: fakeStore({ latestInboundAt: () => NOW - 60 * HOUR_MS }),
+      widgetTargets: liveTargets,
       alertTo: [],
       now: NOW,
     })
@@ -552,6 +555,7 @@ describe('sentinel — vendors, notifications, automations, data, conversation Q
       profiles: ['p1'],
       checks: [dataCollectionCheck],
       store: fakeStore({ latestInboundAt: () => NOW - 1 * HOUR_MS }),
+      widgetTargets: liveTargets,
       alertTo: [],
       now: NOW + 1000,
     })
@@ -562,10 +566,24 @@ describe('sentinel — vendors, notifications, automations, data, conversation Q
       profiles: ['p1'],
       checks: [dataCollectionCheck],
       store: fakeStore({ latestInboundAt: () => null }),
+      widgetTargets: liveTargets,
       alertTo: [],
       now: NOW + 2000,
     })
     expect(never.findings).toHaveLength(0)
+  })
+
+  it('data-collection: skipped for stores with no live conversational channel', async () => {
+    const s = await runSentinelPass({
+      brain,
+      profiles: ['quiet-store'],
+      checks: [dataCollectionCheck],
+      store: fakeStore({ latestInboundAt: () => NOW - 600 * HOUR_MS }),
+      widgetTargets: () => [], // not a widget/conversational target
+      alertTo: [],
+      now: NOW,
+    })
+    expect(s.findings).toHaveLength(0)
   })
 
   it('conversation-ops: failed reply jobs + queued backlog raise findings', async () => {
@@ -732,5 +750,83 @@ describe('sentinel — synthetic widget monitor', () => {
     await runSentinelPass({ ...opts, now: NOW })
     await runSentinelPass({ ...opts, now: NOW + 60 * 60_000 })
     expect(spy).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('sentinel — per-store VIN health', () => {
+  it('skips stores with no configured orgId (no alarm, no call)', async () => {
+    const spy = vi.fn()
+    const s = await runSentinelPass({
+      brain,
+      profiles: ['p1'],
+      checks: [vinHealthCheck],
+      vinOrgId: () => ({ ok: false }),
+      call: spy as never,
+      alertTo: [],
+      now: NOW,
+    })
+    expect(s.findings).toHaveLength(0)
+    expect(spy).not.toHaveBeenCalled()
+  })
+
+  it('clean when vin_token_status succeeds for the store orgId', async () => {
+    const s = await runSentinelPass({
+      brain,
+      profiles: ['p1'],
+      checks: [vinHealthCheck],
+      vinOrgId: () => ({ ok: true, orgId: 'org-uuid' }),
+      call: (async () => ({ ok: true as const, data: {} })) as never,
+      alertTo: [],
+      now: NOW,
+    })
+    expect(s.findings).toHaveLength(0)
+  })
+
+  it('warns per store when vin_token_status fails', async () => {
+    const s = await runSentinelPass({
+      brain,
+      profiles: ['serra-honda'],
+      checks: [vinHealthCheck],
+      vinOrgId: () => ({ ok: true, orgId: 'org-uuid' }),
+      call: (async () => ({ ok: false as const, error: 'unauthorized' })) as never,
+      alertTo: [],
+      now: NOW,
+    })
+    expect(s.findings.map((f) => f.key)).toEqual(['integration:vin:serra-honda:unreachable'])
+  })
+})
+
+describe('sentinel — SLA recency window', () => {
+  function threadStore(lastInboundAgeMs: number): Partial<SentinelStore> {
+    return {
+      listOpenThreads: () => [{ id: 't1' }],
+      getThread: () => ({
+        messages: [{ direction: 'inbound', created_at: NOW - lastInboundAgeMs }],
+      }),
+    }
+  }
+
+  it('flags a recent unanswered inbound (past SLA, within 24h)', async () => {
+    const s = await runSentinelPass({
+      brain,
+      profiles: ['p1'],
+      checks: [threadSlaCheck],
+      store: fakeStore(threadStore(2 * HOUR_MS)),
+      alertTo: [],
+      now: NOW,
+    })
+    expect(s.findings.map((f) => f.key)).toContain('agent-health:p1:unanswered')
+  })
+
+  it('ignores a stale/abandoned unanswered inbound (older than 24h)', async () => {
+    const s = await runSentinelPass({
+      brain,
+      profiles: ['p1'],
+      checks: [threadSlaCheck],
+      store: fakeStore(threadStore(300 * HOUR_MS)),
+      alertTo: [],
+      now: NOW,
+    })
+    expect(s.findings).toHaveLength(0)
   })
 })
