@@ -45,6 +45,8 @@ import {
 } from './widget-monitor'
 import { sampleHostStats, formatUptime, type HostStats } from './host-stats'
 import { runDailyBackup, type BackupReport } from './sentinel-backup'
+import { readStudioConfig } from './studio-config'
+import { resolveVinOrgId } from './vin-client'
 
 export type Severity = 'info' | 'warning' | 'critical'
 
@@ -108,6 +110,8 @@ export type SentinelDeps = {
   ) => Promise<WidgetCheckResult>
   /** Monitored-widget targets (tests inject). */
   widgetTargets?: () => Array<WidgetTarget>
+  /** Per-store VIN org id resolver (tests inject). */
+  vinOrgId?: (profile: string) => { ok: boolean; orgId?: string }
   /** Override the check registry (tests). Defaults to the built-in checks. */
   checks?: Array<SentinelCheck>
   /** Re-alert throttle: don't re-email the same open finding within this window. */
@@ -186,6 +190,8 @@ export type CheckCtx = {
   ) => Promise<WidgetCheckResult>
   /** Per-customer monitored-widget targets (injectable). */
   widgetTargets: () => Array<WidgetTarget>
+  /** Per-store VIN org id resolver (injectable). */
+  vinOrgId: (profile: string) => { ok: boolean; orgId?: string }
 }
 
 export type SentinelCheck = {
@@ -202,6 +208,7 @@ const DEFAULT_RE_ALERT_MS = 6 * 60 * 60_000 // 6h — don't spam the same open i
 const DEFAULT_HEARTBEAT_MS = 24 * 60 * 60_000 // daily all-clear
 const COMMS_TICK_STALE_MS = 10 * 60_000 // tick should run ≥ every minute; 10m ⇒ dead
 const THREAD_SLA_MS = 30 * 60_000 // inbound unanswered > 30m ⇒ agent not responding
+const SLA_RECENT_MS = 24 * 60 * 60_000 // only alert on inbound from the last 24h (ignore stale/abandoned)
 const COMMS_ERROR_WINDOW_MS = 60 * 60_000 // look back 1h for send failures
 const AUTOMATION_OVERDUE_MS = 30 * 60_000 // due > 30m ago + unsent ⇒ tick not advancing
 const REPLY_FAIL_WINDOW_MS = 60 * 60_000 // look back 1h for failed agent replies
@@ -613,7 +620,11 @@ export const threadSlaCheck: SentinelCheck = {
       if (!full || !full.messages.length) continue
       const last = full.messages[full.messages.length - 1]
       if (last.direction !== 'inbound') continue
-      if (now - (last.created_at ?? 0) >= THREAD_SLA_MS) breached++
+      const age = now - (last.created_at ?? 0)
+      // Past SLA AND still recent — a message older than SLA_RECENT_MS is treated
+      // as abandoned/handled, not an actively-waiting customer (avoids alerting
+      // on stale or test threads forever).
+      if (age >= THREAD_SLA_MS && age <= SLA_RECENT_MS) breached++
     }
     if (breached === 0) return []
     return [
@@ -624,7 +635,7 @@ export const threadSlaCheck: SentinelCheck = {
         title: `${breached} unanswered customer message(s) past SLA`,
         detail: `${profile}: ${breached} open thread(s) with an inbound message unanswered for >${Math.round(
           THREAD_SLA_MS / 60_000,
-        )}m — an agent may not be responding.`,
+        )}m (within the last ${Math.round(SLA_RECENT_MS / 3_600_000)}h) — an agent may not be responding.`,
         profile,
       },
     ]
@@ -644,11 +655,61 @@ export const threadSlaCheck: SentinelCheck = {
  * alarm); a probe that errors yields an explicit "unreachable" warning — never
  * a fabricated "healthy".
  */
+// Global central-mcp providers (no per-store context needed). VIN is NOT here:
+// vin_token_status requires a per-store orgId, so it is checked per-profile by
+// vinHealthCheck.
 const PROVIDER_PROBES: Array<{ provider: string; tool: string }> = [
   { provider: 'vapi', tool: 'vapi_list_assistants' },
   { provider: 'tavus', tool: 'tavus_list_personas' },
-  { provider: 'vin', tool: 'vin_token_status' },
 ]
+
+/**
+ * Re-emit currently-open findings whose key starts with `prefix`. Used by
+ * throttled checks when they skip a pass, so their open findings stay "seen"
+ * and are NOT auto-resolved between runs (they resolve only when the check
+ * actually re-runs and finds them gone).
+ */
+function reEmitOpen(brain: BrainLike, prefix: string): Array<Finding> {
+  return brain.all<Finding>(
+    `SELECT key, severity, category, profile, title, detail
+       FROM sentinel_event WHERE status='open' AND key LIKE ?`,
+    `${prefix}%`,
+  )
+}
+
+/**
+ * Per-store VIN reachability/auth — `vin_token_status` needs the store's orgId.
+ * Stores without a configured orgId are skipped (not an alarm). VIN is live for
+ * all stores, so this runs per profile.
+ */
+export const vinHealthCheck: SentinelCheck = {
+  name: 'vin-health',
+  category: 'integration',
+  scope: 'profile',
+  async run({ profile, call, vinOrgId }) {
+    if (!profile) return []
+    const org = vinOrgId(profile)
+    if (!org.ok || !org.orgId) return [] // not configured for VIN ⇒ skip
+    const res = await call('vin_token_status', { orgId: org.orgId }).catch((e: unknown) => ({
+      ok: false as const,
+      error: e instanceof Error ? e.message : String(e),
+    }))
+    if ('unconfigured' in res && res.unconfigured) return []
+    if (res.ok) return []
+    return [
+      {
+        key: `integration:vin:${profile}:unreachable`,
+        severity: 'warning',
+        category: 'integration',
+        title: `VIN integration probe failed for ${profile}`,
+        detail: `vin_token_status failed: ${
+          ('error' in res && res.error) || 'unknown'
+        } — VIN may be unreachable or unauthenticated for this store.`,
+        profile,
+      },
+    ]
+  },
+}
 
 export const integrationHealthCheck: SentinelCheck = {
   name: 'integration-health',
@@ -791,8 +852,13 @@ export const dataCollectionCheck: SentinelCheck = {
   name: 'data-collection',
   category: 'data-collection',
   scope: 'profile',
-  async run({ profile, now, store }) {
+  async run({ profile, now, store, widgetTargets }) {
     if (!profile) return []
+    // Only meaningful where a conversational channel is live (the widget). VIN
+    // leads don't flow through messaging-hub inbound, so a quiet/pre-launch
+    // store having "no inbound" is expected, not a fault. Scope to widget
+    // targets so this only fires for stores we expect inbound conversations on.
+    if (!widgetTargets().some((t) => t.profile === profile)) return []
     const last = store.latestInboundAt(profile)
     // No inbound ever recorded ⇒ nothing to assert (new/empty profile).
     if (last == null) return []
@@ -878,7 +944,11 @@ export const conversationQualityCheck: SentinelCheck = {
       `SELECT v FROM sentinel_meta WHERE k=?`,
       metaKey,
     )
-    if (lastRow && now - lastRow.v < QC_GRADE_INTERVAL_MS) return []
+    // When throttled, re-emit this profile's open low-quality findings so they
+    // aren't auto-resolved between hourly grading runs.
+    if (lastRow && now - lastRow.v < QC_GRADE_INTERVAL_MS) {
+      return reEmitOpen(brain, `conversation-qc:${profile}:low-quality:`)
+    }
 
     const samples = store.sampleRecentThreads(
       profile,
@@ -972,10 +1042,12 @@ export const widgetSyntheticCheck: SentinelCheck = {
     if (targets.length === 0) return [] // nothing configured ⇒ nothing to assert
 
     // Throttle to daily; stamp up-front so a slow browser can't re-trigger.
+    // When throttled, re-emit open widget findings so they are not auto-resolved
+    // between daily runs.
     const last = brain.get<{ v: number }>(
       `SELECT v FROM sentinel_meta WHERE k='widget_checked_at'`,
     )
-    if (last && now - last.v < WIDGET_CHECK_INTERVAL_MS) return []
+    if (last && now - last.v < WIDGET_CHECK_INTERVAL_MS) return reEmitOpen(brain, 'widget:')
     brain.run(
       `INSERT INTO sentinel_meta (k, v) VALUES ('widget_checked_at', ?)
        ON CONFLICT(k) DO UPDATE SET v=excluded.v`,
@@ -1033,6 +1105,7 @@ export const DEFAULT_CHECKS: Array<SentinelCheck> = [
   commsCronLivenessCheck,
   threadSlaCheck,
   integrationHealthCheck,
+  vinHealthCheck,
   notificationsDeliveryCheck,
   automationsFiringCheck,
   dataCollectionCheck,
@@ -1058,6 +1131,12 @@ export async function runSentinelPass(
   const widgetTargets = deps.widgetTargets ?? defaultReadWidgetTargets
   const sampleStats = deps.sampleStats ?? sampleHostStats
   const runBackup = deps.runBackup ?? (() => runDailyBackup({ now }))
+  const vinOrgId =
+    deps.vinOrgId ??
+    ((p: string) => {
+      const r = resolveVinOrgId(p, readStudioConfig(p).config)
+      return r.ok ? { ok: true, orgId: r.orgId } : { ok: false }
+    })
   const reAlertMs = deps.reAlertMs ?? DEFAULT_RE_ALERT_MS
   const heartbeatMs = deps.heartbeatMs ?? DEFAULT_HEARTBEAT_MS
   const profiles =
@@ -1088,7 +1167,7 @@ export async function runSentinelPass(
   const toAlert: Array<Finding> = []
 
   for (const check of checks) {
-    const base = { now, call, brain, store, probeTextmagic, grade, checkWidget, widgetTargets }
+    const base = { now, call, brain, store, probeTextmagic, grade, checkWidget, widgetTargets, vinOrgId }
     const ctxs: Array<CheckCtx> =
       check.scope === 'system'
         ? [{ profile: null, ...base }]
