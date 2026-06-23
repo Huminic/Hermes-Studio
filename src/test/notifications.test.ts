@@ -47,7 +47,26 @@ describe('sendNotification', () => {
     const body = JSON.parse(call[1].body as string)
     expect(body.params.name).toBe('resend_send_email')
     expect(body.params.arguments.from).toMatch(/Huminic Studio/)
-    expect(body.params.arguments.to).toEqual(['op@huminic.ai'])
+    // central-mcp resend_send_email requires a STRING recipient (array is rejected).
+    expect(body.params.arguments.to).toBe('op@huminic.ai')
+  })
+
+  it('joins multiple recipients into a comma-separated string', async () => {
+    process.env.CENTRAL_MCP_STUDIO_TOKEN = 'test-token'
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: async () =>
+        'event: message\ndata: {"jsonrpc":"2.0","id":1,"result":{"content":[{"type":"text","text":"{\\"id\\":\\"abc-123\\"}"}]}}',
+    } as Response)
+    vi.stubGlobal('fetch', fetchMock)
+    const { sendNotification } = await import('@/server/notifications')
+    await sendNotification({
+      to: ['a@huminic.ai', 'b@huminic.ai'],
+      subject: 'test',
+      html: '<p>hi</p>',
+    })
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body as string)
+    expect(body.params.arguments.to).toBe('a@huminic.ai, b@huminic.ai')
   })
 
   it('returns an error when the MCP response signals isError', async () => {

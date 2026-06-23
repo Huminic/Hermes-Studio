@@ -51,12 +51,15 @@ export async function sendNotification(
       name: 'resend_send_email',
       arguments: {
         from: input.from ?? STUDIO_SENDER,
-        to: Array.isArray(input.to) ? input.to : [input.to],
+        // central-mcp resend_send_email expects STRING recipients (comma-
+        // separated for multiple) — passing an array is rejected with
+        // "Expected string, received array".
+        to: Array.isArray(input.to) ? input.to.join(', ') : input.to,
         subject: input.subject,
         html: input.html,
         ...(input.text ? { text: input.text } : {}),
-        ...(input.cc ? { cc: input.cc } : {}),
-        ...(input.bcc ? { bcc: input.bcc } : {}),
+        ...(input.cc ? { cc: Array.isArray(input.cc) ? input.cc.join(', ') : input.cc } : {}),
+        ...(input.bcc ? { bcc: Array.isArray(input.bcc) ? input.bcc.join(', ') : input.bcc } : {}),
       },
     },
   }
