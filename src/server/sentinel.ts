@@ -219,8 +219,13 @@ type EventRow = {
 /**
  * Record a finding and decide whether it warrants an alert this pass.
  * Alert when: newly seen, severity escalated, or the re-alert window elapsed.
+ *
+ * IMPORTANT: this does NOT stamp `last_alerted_at` — that happens only after a
+ * successful send (see `markAlerted`). If the email send fails, the finding
+ * stays un-alerted so the NEXT pass retries instead of going silent for the
+ * whole re-alert window.
  */
-function upsertAndShouldAlert(
+function upsertFindingAndShouldAlert(
   brain: BrainLike,
   f: Finding,
   now: number,
@@ -234,14 +239,13 @@ function upsertAndShouldAlert(
     brain.run(
       `INSERT INTO sentinel_event
          (key, severity, category, profile, title, detail, status, first_seen, last_seen, last_alerted_at, alert_count)
-       VALUES (?, ?, ?, ?, ?, ?, 'open', ?, ?, ?, 1)`,
+       VALUES (?, ?, ?, ?, ?, ?, 'open', ?, ?, NULL, 0)`,
       f.key,
       f.severity,
       f.category,
       f.profile,
       f.title,
       f.detail,
-      now,
       now,
       now,
     )
@@ -254,10 +258,10 @@ function upsertAndShouldAlert(
     prior.last_alerted_at == null || now - prior.last_alerted_at >= reAlertMs
   const shouldAlert = escalated || reopened || stale
 
+  // Refresh the finding's content/status but NOT its alert ledger.
   brain.run(
     `UPDATE sentinel_event
-       SET severity=?, category=?, profile=?, title=?, detail=?, status='open',
-           last_seen=?, last_alerted_at=?, alert_count=alert_count + ?
+       SET severity=?, category=?, profile=?, title=?, detail=?, status='open', last_seen=?
      WHERE key=?`,
     f.severity,
     f.category,
@@ -265,11 +269,26 @@ function upsertAndShouldAlert(
     f.title,
     f.detail,
     now,
-    shouldAlert ? now : prior.last_alerted_at,
-    shouldAlert ? 1 : 0,
     f.key,
   )
   return shouldAlert
+}
+
+/** Stamp alert ledger AFTER a successful send so failed sends are retried. */
+function markAlerted(
+  brain: BrainLike,
+  keys: Array<string>,
+  now: number,
+): void {
+  for (const key of keys) {
+    brain.run(
+      `UPDATE sentinel_event
+         SET last_alerted_at=?, alert_count=alert_count + 1
+       WHERE key=?`,
+      now,
+      key,
+    )
+  }
 }
 
 /** Mark any previously-open finding not seen this pass as resolved. */
@@ -814,7 +833,7 @@ export async function runSentinelPass(
       for (const f of found) {
         summary.findings.push(f)
         seen.add(f.key)
-        if (upsertAndShouldAlert(brain, f, now, reAlertMs)) toAlert.push(f)
+        if (upsertFindingAndShouldAlert(brain, f, now, reAlertMs)) toAlert.push(f)
       }
     }
   }
@@ -829,8 +848,14 @@ export async function runSentinelPass(
       subject: `🛡️ Sentinel: ${toAlert.length} issue(s) — ${maxSeverity(toAlert)}`,
       html: alertHtml(toAlert),
     })
-    if (r.ok) summary.alertsSent = toAlert.length
-    else summary.errors.push({ check: 'alert-dispatch', error: r.error ?? 'send failed' })
+    if (r.ok) {
+      // Only now (after a confirmed send) stamp the alert ledger, so a failed
+      // send is retried next pass instead of being silently throttled.
+      markAlerted(brain, toAlert.map((f) => f.key), now)
+      summary.alertsSent = toAlert.length
+    } else {
+      summary.errors.push({ check: 'alert-dispatch', error: r.error ?? 'send failed' })
+    }
   }
 
   // Daily heartbeat (all-clear) — at most once per heartbeatMs, only when healthy.
