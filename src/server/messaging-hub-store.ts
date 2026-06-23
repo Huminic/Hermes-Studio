@@ -2326,3 +2326,133 @@ export function _resetForTests(profile?: string): void {
   _inMemory.clear()
   _dbs.clear()
 }
+
+// ─── Sentinel readers ───────────────────────────────────────────────────────
+// Read-only, best-effort gauges the application health monitor uses. Each one
+// fails safe (returns a zero/empty result) when the per-profile DB is
+// unavailable, so a read error never produces a false alarm.
+
+export type StuckAutomationGauge = { automations: number; flows: number }
+
+/**
+ * Count automation runs / flow enrollments that are due but still un-advanced
+ * past `overdueMs` — the signal that the tick is alive but NOT processing work
+ * (or has stalled). Distinct from comms-cron liveness (did it tick at all).
+ */
+export function countStuckAutomations(
+  profile: string,
+  now: number,
+  overdueMs: number,
+): StuckAutomationGauge {
+  const cutoff = now - overdueMs
+  try {
+    const db = getDb(profile)
+    if (!db) return { automations: 0, flows: 0 }
+    const a = db
+      .prepare(
+        `SELECT COUNT(*) AS n FROM automation_runs
+          WHERE profile=? AND status='pending' AND due_at < ?`,
+      )
+      .get(profile, cutoff) as { n: number } | undefined
+    const f = db
+      .prepare(
+        `SELECT COUNT(*) AS n FROM flow_enrollments
+          WHERE profile=? AND status='active' AND next_due_at IS NOT NULL AND next_due_at < ?`,
+      )
+      .get(profile, cutoff) as { n: number } | undefined
+    return { automations: a?.n ?? 0, flows: f?.n ?? 0 }
+  } catch {
+    return { automations: 0, flows: 0 }
+  }
+}
+
+export type ReplyJobGauge = { failed: number; queued: number }
+
+/**
+ * Agent reply-job health: jobs that ended in `failed` within the recent window
+ * (the agent tried and could not send) and jobs currently stuck in `queued`
+ * (the reply worker may not be draining). `rejected` is excluded — a rejection
+ * is usually a legitimate gate decision, not a fault.
+ */
+export function countReplyJobs(
+  profile: string,
+  sinceMs: number,
+  now: number,
+): ReplyJobGauge {
+  const cutoff = now - sinceMs
+  try {
+    const db = getDb(profile)
+    if (!db) return { failed: 0, queued: 0 }
+    const failed = db
+      .prepare(
+        `SELECT COUNT(*) AS n FROM agent_reply_jobs
+          WHERE status='failed' AND attempted_at IS NOT NULL AND attempted_at >= ?`,
+      )
+      .get(cutoff) as { n: number } | undefined
+    const queued = db
+      .prepare(`SELECT COUNT(*) AS n FROM agent_reply_jobs WHERE status='queued'`)
+      .get() as { n: number } | undefined
+    return { failed: failed?.n ?? 0, queued: queued?.n ?? 0 }
+  } catch {
+    return { failed: 0, queued: 0 }
+  }
+}
+
+/** Most-recent inbound message timestamp across all threads, or null. */
+export function latestInboundAt(profile: string): number | null {
+  try {
+    const db = getDb(profile)
+    if (!db) return null
+    const row = db
+      .prepare(
+        `SELECT MAX(created_at) AS t FROM messages WHERE direction='inbound'`,
+      )
+      .get() as { t: number | null } | undefined
+    return row?.t ?? null
+  } catch {
+    return null
+  }
+}
+
+export type QcThreadSample = { id: string; transcript: string }
+
+/**
+ * Sample recent threads that have at least one outbound (agent) reply, for
+ * conversation-quality grading. Returns a compact transcript per thread (the
+ * tail of the exchange). Bounded by `limit`.
+ */
+export function sampleRecentThreads(
+  profile: string,
+  sinceMs: number,
+  now: number,
+  limit: number,
+): Array<QcThreadSample> {
+  const cutoff = now - sinceMs
+  try {
+    const db = getDb(profile)
+    if (!db) return []
+    const rows = db
+      .prepare(
+        `SELECT DISTINCT t.id AS id, t.updated_at AS updated_at
+           FROM threads t
+           JOIN messages m ON m.thread_id = t.id AND m.direction='outbound' AND m.role='assistant'
+          WHERE t.updated_at >= ?
+          ORDER BY t.updated_at DESC
+          LIMIT ?`,
+      )
+      .all(cutoff, limit) as Array<{ id: string }>
+    const out: Array<QcThreadSample> = []
+    for (const r of rows) {
+      const thread = getThread(profile, r.id)
+      if (!thread || !thread.messages.length) continue
+      const tail = thread.messages.slice(-8)
+      const transcript = tail
+        .map((m) => `${m.direction === 'inbound' ? 'Customer' : 'Agent'}: ${m.content}`)
+        .join('\n')
+      out.push({ id: r.id, transcript })
+    }
+    return out
+  } catch {
+    return []
+  }
+}
