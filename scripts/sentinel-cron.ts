@@ -17,7 +17,7 @@ async function main() {
   const s = await runSentinelPass()
   console.log(
     `[sentinel] ${new Date().toISOString()} checks=${s.checksRun} findings=${s.findings.length} ` +
-      `alerts=${s.alertsSent} resolved=${s.resolved} heartbeat=${s.heartbeatSent} ` +
+      `alerts=${s.alertsSent} resolved=${s.resolved} digest=${s.digestSent} ` +
       `errors=${s.errors.length} healthy=${s.healthy}`,
   )
   for (const e of s.errors) console.error(`[sentinel] ${e.check}: ${e.error}`)

@@ -53,7 +53,29 @@ beforeEach(() => {
     recursive: true,
   })
   brain = openBrain('_sentinel') as unknown as BrainLike
+  // Seed a recent digest timestamp so the always-on daily digest does not fire
+  // in alert-focused tests (the digest tests clear it explicitly).
+  brain.exec(`CREATE TABLE IF NOT EXISTS sentinel_meta (k TEXT PRIMARY KEY, v INTEGER)`)
+  brain.run(
+    `INSERT INTO sentinel_meta (k, v) VALUES ('last_heartbeat', ?)
+     ON CONFLICT(k) DO UPDATE SET v=excluded.v`,
+    NOW,
+  )
 })
+
+const FAKE_STATS = {
+  cpuLoad1: 1,
+  cpuCores: 4,
+  cpuPct: 25,
+  memUsedGb: 8,
+  memTotalGb: 16,
+  memUsedPct: 50,
+  diskUsedGb: 20,
+  diskTotalGb: 100,
+  diskUsedPct: 20,
+  uptimeSec: 90_000,
+}
+const OK_BACKUP = { ok: true, dbCount: 3, bytes: 1_500_000, dir: '/x', at: NOW, errors: [] }
 afterEach(() => {
   vi.restoreAllMocks()
   fs.rmSync(tmpHome, { recursive: true, force: true })
@@ -214,8 +236,9 @@ describe('sentinel engine', () => {
     expect(listSentinelFindings({ brain, status: 'all' }).map((r) => r.key)).toContain('k1')
   })
 
-  it('sends a daily all-clear heartbeat once when healthy', async () => {
+  it('sends a daily digest once per window with stats + backup, color-coded', async () => {
     const email = emailSink()
+    brain.run(`DELETE FROM sentinel_meta WHERE k='last_heartbeat'`)
     const opts = {
       brain,
       profiles: [],
@@ -223,12 +246,38 @@ describe('sentinel engine', () => {
       sendEmail: email.fn,
       alertTo: ['op@example.com'],
       heartbeatMs: 24 * HOUR,
+      sampleStats: () => FAKE_STATS,
+      runBackup: () => OK_BACKUP,
     }
     const s1 = await runSentinelPass({ ...opts, now: NOW })
     const s2 = await runSentinelPass({ ...opts, now: NOW + HOUR })
-    expect(s1.heartbeatSent).toBe(true)
-    expect(s2.heartbeatSent).toBe(false)
+    expect(s1.digestSent).toBe(true)
+    expect(s2.digestSent).toBe(false)
     expect(email.sent).toHaveLength(1)
+    expect(email.sent[0].subject).toContain('daily digest')
+    expect(email.sent[0].html).toContain('Backup')
+    expect(email.sent[0].html).toContain('25%') // cpu card
+    expect(email.sent[0].html).toContain('Uptime')
+  })
+
+  it('daily digest reflects open issues + a failed backup', async () => {
+    const email = emailSink()
+    brain.run(`DELETE FROM sentinel_meta WHERE k='last_heartbeat'`)
+    const s = await runSentinelPass({
+      brain,
+      profiles: [],
+      checks: [fakeCheck([CRIT])],
+      sendEmail: email.fn,
+      alertTo: ['op@example.com'],
+      heartbeatMs: 24 * HOUR,
+      sampleStats: () => FAKE_STATS,
+      runBackup: () => ({ ok: false, dbCount: 0, bytes: 0, dir: null, at: NOW, errors: ['disk full'] }),
+      now: NOW,
+    })
+    expect(s.digestSent).toBe(true)
+    const digest = email.sent.find((e) => e.subject.includes('daily digest'))
+    expect(digest?.subject).toContain('1 open issue')
+    expect(digest?.html).toContain('backup FAILED')
   })
 })
 
