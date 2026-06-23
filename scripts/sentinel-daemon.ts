@@ -30,7 +30,7 @@ async function tick(): Promise<void> {
     console.log(
       `[sentinel] pass: ${s.checksRun} checks, ${s.findings.length} finding(s), ` +
         `${s.alertsSent} alert(s), ${s.resolved} resolved, ` +
-        `heartbeat=${s.heartbeatSent}, healthy=${s.healthy}` +
+        `digest=${s.digestSent}, healthy=${s.healthy}` +
         (s.errors.length ? `, ${s.errors.length} check error(s)` : ''),
     )
   } catch (err) {

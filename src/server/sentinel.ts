@@ -43,6 +43,8 @@ import {
   type WidgetCheckResult,
   type WidgetTarget,
 } from './widget-monitor'
+import { sampleHostStats, formatUptime, type HostStats } from './host-stats'
+import { runDailyBackup, type BackupReport } from './sentinel-backup'
 
 export type Severity = 'info' | 'warning' | 'critical'
 
@@ -64,7 +66,8 @@ export type SentinelSummary = {
   findings: Array<Finding>
   alertsSent: number
   resolved: number
-  heartbeatSent: boolean
+  /** True when the once-daily digest email was sent this pass. */
+  digestSent: boolean
   errors: Array<{ check: string; error: string }>
   healthy: boolean
 }
@@ -109,8 +112,12 @@ export type SentinelDeps = {
   checks?: Array<SentinelCheck>
   /** Re-alert throttle: don't re-email the same open finding within this window. */
   reAlertMs?: number
-  /** Heartbeat cadence: at most one "all clear" summary per this window. */
+  /** Daily digest cadence: at most one digest email per this window. */
   heartbeatMs?: number
+  /** Host-stats sampler (tests inject). */
+  sampleStats?: () => HostStats
+  /** Daily backup runner (tests inject). */
+  runBackup?: () => BackupReport
   now?: number
 }
 
@@ -334,27 +341,193 @@ function resolveStale(
   return resolved
 }
 
+const SEV_COLOR: Record<Severity, string> = {
+  critical: '#dc2626',
+  warning: '#d97706',
+  info: '#2563eb',
+}
+const SEV_BG: Record<Severity, string> = {
+  critical: '#fef2f2',
+  warning: '#fffbeb',
+  info: '#eff6ff',
+}
+
+function sevBadge(sev: Severity): string {
+  return (
+    `<span style="display:inline-block;padding:2px 8px;border-radius:9999px;font-size:11px;` +
+    `font-weight:700;text-transform:uppercase;color:#fff;background:${SEV_COLOR[sev]}">${sev}</span>`
+  )
+}
+
 function alertHtml(findings: Array<Finding>): string {
   const rows = findings
     .map(
       (f) =>
-        `<tr><td style="padding:6px 10px;font-weight:600;text-transform:uppercase">${f.severity}</td>` +
-        `<td style="padding:6px 10px">${escapeHtml(f.profile)}</td>` +
-        `<td style="padding:6px 10px">${escapeHtml(f.title)}</td>` +
-        `<td style="padding:6px 10px;color:#555">${escapeHtml(f.detail)}</td></tr>`,
+        `<tr style="background:${SEV_BG[f.severity]}">` +
+        `<td style="padding:8px 10px;border-bottom:1px solid #eee">${sevBadge(f.severity)}</td>` +
+        `<td style="padding:8px 10px;border-bottom:1px solid #eee;font-weight:600">${escapeHtml(f.profile)}</td>` +
+        `<td style="padding:8px 10px;border-bottom:1px solid #eee">${escapeHtml(f.title)}</td>` +
+        `<td style="padding:8px 10px;border-bottom:1px solid #eee;color:#555">${escapeHtml(f.detail)}</td></tr>`,
     )
     .join('')
+  const top = maxSeverity(findings)
   return (
-    `<div style="font-family:sans-serif;max-width:680px">` +
-    `<h2 style="color:#1a1a1a">Sentinel alert — ${findings.length} issue(s)</h2>` +
-    `<table style="border-collapse:collapse;width:100%"><thead><tr>` +
-    `<th align="left" style="padding:6px 10px">Severity</th>` +
-    `<th align="left" style="padding:6px 10px">Scope</th>` +
-    `<th align="left" style="padding:6px 10px">Issue</th>` +
-    `<th align="left" style="padding:6px 10px">Detail</th>` +
+    `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:720px">` +
+    `<div style="background:${SEV_COLOR[top]};color:#fff;padding:14px 18px;border-radius:8px 8px 0 0">` +
+    `<h2 style="margin:0;font-size:18px">🛡️ Sentinel alert — ${findings.length} issue(s)</h2></div>` +
+    `<table style="border-collapse:collapse;width:100%;border:1px solid #eee;border-top:0"><thead>` +
+    `<tr style="background:#f9fafb">` +
+    `<th align="left" style="padding:8px 10px;font-size:12px;color:#6b7280">Severity</th>` +
+    `<th align="left" style="padding:8px 10px;font-size:12px;color:#6b7280">Scope</th>` +
+    `<th align="left" style="padding:8px 10px;font-size:12px;color:#6b7280">Issue</th>` +
+    `<th align="left" style="padding:8px 10px;font-size:12px;color:#6b7280">Detail</th>` +
     `</tr></thead><tbody>${rows}</tbody></table>` +
-    `<p style="color:#888;font-size:12px">Huminic Studio Sentinel — application health monitor.</p></div>`
+    `<p style="color:#9ca3af;font-size:12px;margin-top:10px">Huminic Studio Sentinel — application health monitor.</p></div>`
   )
+}
+
+// ── Daily digest (uptime + system stats + backup + open issues) ─────────────
+
+/** Green/amber/red by usage percentage. */
+function pctColor(pct: number): string {
+  if (pct >= 90) return '#dc2626'
+  if (pct >= 70) return '#d97706'
+  return '#16a34a'
+}
+
+type StatWindow = { memHi: number; memLo: number; cpuHi: number; cpuLo: number }
+
+function statCard(
+  label: string,
+  valueText: string,
+  pct: number,
+  sub: string,
+): string {
+  const color = pctColor(pct)
+  const barW = Math.max(2, Math.min(100, pct))
+  return (
+    `<td style="padding:8px;vertical-align:top;width:33%">` +
+    `<div style="border:1px solid #eee;border-radius:8px;padding:12px">` +
+    `<div style="font-size:12px;color:#6b7280">${label}</div>` +
+    `<div style="font-size:20px;font-weight:700;color:${color};margin:2px 0">${valueText}</div>` +
+    `<div style="height:6px;background:#f3f4f6;border-radius:9999px;overflow:hidden;margin:6px 0">` +
+    `<div style="height:6px;width:${barW}%;background:${color}"></div></div>` +
+    `<div style="font-size:11px;color:#9ca3af">${sub}</div></div></td>`
+  )
+}
+
+function digestHtml(input: {
+  now: number
+  stats: HostStats
+  window: StatWindow
+  backup: BackupReport
+  open: Array<Finding>
+}): string {
+  const { stats, window, backup, open } = input
+  const healthy = open.length === 0
+  const headColor = healthy ? '#16a34a' : SEV_COLOR[maxSeverity(open)]
+  const headText = healthy
+    ? '🛡️ Sentinel daily digest — all clear'
+    : `🛡️ Sentinel daily digest — ${open.length} open issue(s)`
+
+  const cards =
+    `<table style="border-collapse:collapse;width:100%"><tr>` +
+    statCard(
+      'CPU',
+      `${stats.cpuPct}%`,
+      stats.cpuPct,
+      `load ${stats.cpuLoad1} / ${stats.cpuCores} cores · day ${window.cpuLo}–${window.cpuHi}%`,
+    ) +
+    statCard(
+      'Memory',
+      `${stats.memUsedPct}%`,
+      stats.memUsedPct,
+      `${stats.memUsedGb}/${stats.memTotalGb} GB · day ${window.memLo}–${window.memHi}%`,
+    ) +
+    statCard(
+      'Disk',
+      `${stats.diskUsedPct}%`,
+      stats.diskUsedPct,
+      `${stats.diskUsedGb}/${stats.diskTotalGb} GB used`,
+    ) +
+    `</tr></table>`
+
+  const backupColor = backup.ok ? '#16a34a' : '#dc2626'
+  const backupText = backup.ok
+    ? `✅ ${backup.dbCount} database(s) backed up · ${(backup.bytes / 1e6).toFixed(1)} MB`
+    : `⚠️ backup FAILED${backup.errors.length ? ` — ${escapeHtml(backup.errors[0])}` : ''}`
+
+  const issues = healthy
+    ? `<p style="color:#16a34a;font-weight:600">No open application issues. ✅</p>`
+    : `<table style="border-collapse:collapse;width:100%;border:1px solid #eee">` +
+      open
+        .map(
+          (f) =>
+            `<tr style="background:${SEV_BG[f.severity]}">` +
+            `<td style="padding:6px 10px">${sevBadge(f.severity)}</td>` +
+            `<td style="padding:6px 10px;font-weight:600">${escapeHtml(f.profile)}</td>` +
+            `<td style="padding:6px 10px">${escapeHtml(f.title)}</td></tr>`,
+        )
+        .join('') +
+      `</table>`
+
+  return (
+    `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:720px">` +
+    `<div style="background:${headColor};color:#fff;padding:14px 18px;border-radius:8px 8px 0 0">` +
+    `<h2 style="margin:0;font-size:18px">${headText}</h2>` +
+    `<div style="font-size:12px;opacity:.9;margin-top:2px">Uptime ${formatUptime(stats.uptimeSec)} · ${new Date(input.now).toUTCString()}</div></div>` +
+    `<div style="border:1px solid #eee;border-top:0;border-radius:0 0 8px 8px;padding:12px">` +
+    `<div style="font-size:13px;font-weight:600;color:#374151;margin:4px 0 2px">System</div>${cards}` +
+    `<div style="font-size:13px;font-weight:600;color:#374151;margin:12px 0 4px">Backup</div>` +
+    `<div style="color:${backupColor};font-weight:600;font-size:14px">${backupText}</div>` +
+    `<div style="font-size:13px;font-weight:600;color:#374151;margin:12px 0 4px">Open issues</div>${issues}` +
+    `<p style="color:#9ca3af;font-size:12px;margin-top:12px">Huminic Studio Sentinel — daily digest.</p></div></div>`
+  )
+}
+
+function recordStatSample(brain: BrainLike, stats: HostStats): void {
+  const put = (k: string, v: number) =>
+    brain.run(
+      `INSERT INTO sentinel_meta (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v=excluded.v`,
+      k,
+      v,
+    )
+  const get = (k: string) =>
+    brain.get<{ v: number }>(`SELECT v FROM sentinel_meta WHERE k=?`, k)?.v
+  for (const [base, cur] of [
+    ['mem', stats.memUsedPct],
+    ['cpu', stats.cpuPct],
+  ] as const) {
+    put(`stat_${base}_cur`, cur)
+    const hi = get(`stat_${base}_hi`)
+    const lo = get(`stat_${base}_lo`)
+    put(`stat_${base}_hi`, hi == null ? cur : Math.max(hi, cur))
+    put(`stat_${base}_lo`, lo == null ? cur : Math.min(lo, cur))
+  }
+}
+
+function readStatWindow(brain: BrainLike, fallback: HostStats): StatWindow {
+  const g = (k: string, d: number) =>
+    brain.get<{ v: number }>(`SELECT v FROM sentinel_meta WHERE k=?`, k)?.v ?? d
+  return {
+    memHi: g('stat_mem_hi', fallback.memUsedPct),
+    memLo: g('stat_mem_lo', fallback.memUsedPct),
+    cpuHi: g('stat_cpu_hi', fallback.cpuPct),
+    cpuLo: g('stat_cpu_lo', fallback.cpuPct),
+  }
+}
+
+function resetStatWindow(brain: BrainLike, stats: HostStats): void {
+  const put = (k: string, v: number) =>
+    brain.run(
+      `INSERT INTO sentinel_meta (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v=excluded.v`,
+      k,
+      v,
+    )
+  put('stat_mem_hi', stats.memUsedPct)
+  put('stat_mem_lo', stats.memUsedPct)
+  put('stat_cpu_hi', stats.cpuPct)
+  put('stat_cpu_lo', stats.cpuPct)
 }
 
 function escapeHtml(s: string): string {
@@ -883,6 +1056,8 @@ export async function runSentinelPass(
   const grade = deps.gradeConversation ?? defaultGradeConversation
   const checkWidget = deps.checkWidget ?? defaultCheckWidget
   const widgetTargets = deps.widgetTargets ?? defaultReadWidgetTargets
+  const sampleStats = deps.sampleStats ?? sampleHostStats
+  const runBackup = deps.runBackup ?? (() => runDailyBackup({ now }))
   const reAlertMs = deps.reAlertMs ?? DEFAULT_RE_ALERT_MS
   const heartbeatMs = deps.heartbeatMs ?? DEFAULT_HEARTBEAT_MS
   const profiles =
@@ -904,7 +1079,7 @@ export async function runSentinelPass(
     findings: [],
     alertsSent: 0,
     resolved: 0,
-    heartbeatSent: false,
+    digestSent: false,
     errors: [],
     healthy: true,
   }
@@ -958,26 +1133,57 @@ export async function runSentinelPass(
     }
   }
 
-  // Daily heartbeat (all-clear) — at most once per heartbeatMs, only when healthy.
-  if (summary.healthy && alertTo.length > 0) {
-    const lastHb = brain.get<{ v: number }>(
+  // Sample host stats every pass (feeds the digest's daily high/low).
+  let stats: HostStats | null = null
+  try {
+    stats = sampleStats()
+    recordStatSample(brain, stats)
+  } catch (e) {
+    summary.errors.push({ check: 'host-stats', error: e instanceof Error ? e.message : String(e) })
+  }
+
+  // Daily digest — ALWAYS once per heartbeatMs (uptime + system stats + backup
+  // + open issues), regardless of health. Immediate alerts above are separate.
+  if (alertTo.length > 0 && stats) {
+    const lastDigest = brain.get<{ v: number }>(
       `SELECT v FROM sentinel_meta WHERE k='last_heartbeat'`,
     )
-    if (!lastHb || now - lastHb.v >= heartbeatMs) {
+    if (!lastDigest || now - lastDigest.v >= heartbeatMs) {
+      const window = readStatWindow(brain, stats)
+      let backup: BackupReport
+      try {
+        backup = runBackup()
+      } catch (e) {
+        backup = {
+          ok: false,
+          dbCount: 0,
+          bytes: 0,
+          dir: null,
+          at: now,
+          errors: [e instanceof Error ? e.message : String(e)],
+        }
+      }
+      const open = brain
+        .all<{ severity: Severity; profile: string; title: string; detail: string; category: string }>(
+          `SELECT severity, profile, title, detail, category FROM sentinel_event WHERE status='open'
+           ORDER BY CASE severity WHEN 'critical' THEN 0 WHEN 'warning' THEN 1 ELSE 2 END`,
+        )
+        .map((r) => ({ ...r, key: '' }) as Finding)
       const r = await sendEmail({
         to: alertTo,
-        subject: '🛡️ Sentinel: all clear',
-        html: `<div style="font-family:sans-serif"><h2>All clear</h2><p>No open application issues at ${new Date(
-          now,
-        ).toISOString()}.</p></div>`,
+        subject: open.length
+          ? `🛡️ Sentinel daily digest — ${open.length} open issue(s)`
+          : '🛡️ Sentinel daily digest — all clear',
+        html: digestHtml({ now, stats, window, backup, open }),
       })
       if (r.ok) {
-        summary.heartbeatSent = true
+        summary.digestSent = true
         brain.run(
           `INSERT INTO sentinel_meta (k, v) VALUES ('last_heartbeat', ?)
            ON CONFLICT(k) DO UPDATE SET v=excluded.v`,
           now,
         )
+        resetStatWindow(brain, stats) // start a fresh daily high/low window
       }
     }
   }
