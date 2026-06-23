@@ -18,6 +18,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { buildAdfXml, type AdfLead } from './adf-xml'
 import { readStudioConfig } from './studio-config'
+import { recordCommsOutcome } from './comms-log'
 import {
   recordLeadNotify,
   wasLeadNotifiedWithin,
@@ -152,6 +153,8 @@ export async function emitLeadAdfEmail(input: {
   // Resend accepts attachments as `[{ filename, content: base64 }]`.
   const attachment = Buffer.from(adfXml, 'utf8').toString('base64')
   return sendViaResend({
+    profile: input.profile,
+    actor: 'lead-adf',
     central,
     token,
     to,
@@ -170,7 +173,45 @@ export async function emitLeadAdfEmail(input: {
  * JSON-RPC response for the email id. Never throws — network/HTTP errors
  * come back as `{ ok: false, via: 'failed', reason }`.
  */
+/**
+ * Public wrapper over the raw Resend send that additionally records the send
+ * outcome to comms_log (best-effort) when a `profile` is supplied, so the
+ * Sentinel's notifications-delivery check can see lead-notification failures
+ * (this path does not otherwise log to comms_log). Telemetry never alters the
+ * send result and never throws.
+ */
 async function sendViaResend(input: {
+  profile?: string
+  actor?: string
+  central: string
+  token: string
+  to: string
+  from: string
+  subject: string
+  html: string
+  text: string
+  attachments?: Array<{ filename: string; content: string }>
+}): Promise<LeadNotificationResult> {
+  const result = await sendViaResendRaw(input)
+  if (input.profile) {
+    try {
+      recordCommsOutcome(input.profile, {
+        direction: 'outbound',
+        channel: 'email',
+        actor: input.actor ?? 'lead-notify',
+        recipients: [input.to],
+        subject: input.subject,
+        external_id: result.ok ? (result.external_id ?? null) : null,
+        outcome: result.ok ? 'ok' : 'error',
+      })
+    } catch {
+      /* telemetry must never break a send */
+    }
+  }
+  return result
+}
+
+async function sendViaResendRaw(input: {
   central: string
   token: string
   to: string
@@ -639,6 +680,8 @@ export async function notifyDealer(input: {
         : `${emailFromName} <leads@huminic.ai>`
 
   const result = await sendViaResend({
+    profile: input.profile,
+    actor: 'lead-notify',
     central,
     token,
     to,
@@ -1212,6 +1255,8 @@ export async function notifyActiveConversation(input: {
     const results = await Promise.all(
       recipients.map((to) =>
         sendViaResend({
+          profile: input.profile,
+          actor: 'conversation-alert',
           central,
           token,
           to,

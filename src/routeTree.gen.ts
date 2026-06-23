@@ -142,6 +142,7 @@ import { Route as ApiHermesProxySplatRouteImport } from './routes/api/hermes-pro
 import { Route as ApiHermesJobsJobIdRouteImport } from './routes/api/hermes-jobs.$jobId'
 import { Route as ApiEventsReplayRouteImport } from './routes/api/events/replay'
 import { Route as ApiCustomerSessionsRouteImport } from './routes/api/customer/sessions'
+import { Route as ApiCustomerSentinelRouteImport } from './routes/api/customer/sentinel'
 import { Route as ApiCustomerReportsRouteImport } from './routes/api/customer/reports'
 import { Route as ApiCustomerPerformanceRouteImport } from './routes/api/customer/performance'
 import { Route as ApiCustomerNotificationsTestRouteImport } from './routes/api/customer/notifications-test'
@@ -872,6 +873,11 @@ const ApiCustomerSessionsRoute = ApiCustomerSessionsRouteImport.update({
   path: '/api/customer/sessions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerSentinelRoute = ApiCustomerSentinelRouteImport.update({
+  id: '/api/customer/sentinel',
+  path: '/api/customer/sentinel',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCustomerReportsRoute = ApiCustomerReportsRouteImport.update({
   id: '/api/customer/reports',
   path: '/api/customer/reports',
@@ -1321,6 +1327,7 @@ export interface FileRoutesByFullPath {
   '/api/customer/notifications-test': typeof ApiCustomerNotificationsTestRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
+  '/api/customer/sentinel': typeof ApiCustomerSentinelRoute
   '/api/customer/sessions': typeof ApiCustomerSessionsRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
@@ -1518,6 +1525,7 @@ export interface FileRoutesByTo {
   '/api/customer/notifications-test': typeof ApiCustomerNotificationsTestRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
+  '/api/customer/sentinel': typeof ApiCustomerSentinelRoute
   '/api/customer/sessions': typeof ApiCustomerSessionsRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
@@ -1717,6 +1725,7 @@ export interface FileRoutesById {
   '/api/customer/notifications-test': typeof ApiCustomerNotificationsTestRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
+  '/api/customer/sentinel': typeof ApiCustomerSentinelRoute
   '/api/customer/sessions': typeof ApiCustomerSessionsRoute
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
@@ -1917,6 +1926,7 @@ export interface FileRouteTypes {
     | '/api/customer/notifications-test'
     | '/api/customer/performance'
     | '/api/customer/reports'
+    | '/api/customer/sentinel'
     | '/api/customer/sessions'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
@@ -2114,6 +2124,7 @@ export interface FileRouteTypes {
     | '/api/customer/notifications-test'
     | '/api/customer/performance'
     | '/api/customer/reports'
+    | '/api/customer/sentinel'
     | '/api/customer/sessions'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
@@ -2312,6 +2323,7 @@ export interface FileRouteTypes {
     | '/api/customer/notifications-test'
     | '/api/customer/performance'
     | '/api/customer/reports'
+    | '/api/customer/sentinel'
     | '/api/customer/sessions'
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
@@ -2504,6 +2516,7 @@ export interface RootRouteChildren {
   ApiCustomerNotificationsTestRoute: typeof ApiCustomerNotificationsTestRoute
   ApiCustomerPerformanceRoute: typeof ApiCustomerPerformanceRoute
   ApiCustomerReportsRoute: typeof ApiCustomerReportsRoute
+  ApiCustomerSentinelRoute: typeof ApiCustomerSentinelRoute
   ApiCustomerSessionsRoute: typeof ApiCustomerSessionsRoute
   ApiHermesProxySplatRoute: typeof ApiHermesProxySplatRoute
   ApiKnowledgeGraphRoute: typeof ApiKnowledgeGraphRoute
@@ -3499,6 +3512,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerSessionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/sentinel': {
+      id: '/api/customer/sentinel'
+      path: '/api/customer/sentinel'
+      fullPath: '/api/customer/sentinel'
+      preLoaderRoute: typeof ApiCustomerSentinelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/customer/reports': {
       id: '/api/customer/reports'
       path: '/api/customer/reports'
@@ -4297,6 +4317,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCustomerNotificationsTestRoute: ApiCustomerNotificationsTestRoute,
   ApiCustomerPerformanceRoute: ApiCustomerPerformanceRoute,
   ApiCustomerReportsRoute: ApiCustomerReportsRoute,
+  ApiCustomerSentinelRoute: ApiCustomerSentinelRoute,
   ApiCustomerSessionsRoute: ApiCustomerSessionsRoute,
   ApiHermesProxySplatRoute: ApiHermesProxySplatRoute,
   ApiKnowledgeGraphRoute: ApiKnowledgeGraphRoute,

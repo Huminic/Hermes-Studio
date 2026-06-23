@@ -19,6 +19,7 @@ import { tickVinWatcher } from './vin-watcher'
 import { tickFlows } from './lead-flow'
 import { tickAutomations } from './automations'
 import { openBrain } from './brain-store'
+import { stampCommsHeartbeat } from './comms-heartbeat'
 
 export const ESCALATE_AFTER_MS = 30 * 60_000
 
@@ -174,6 +175,9 @@ export async function runDueWork(
       summary.errors.push({ profile, error: `automations: ${(err as Error).message}` })
     }
   }
+  // Liveness heartbeat + error signal for the Sentinel — proves the driver ran
+  // this pass and surfaces any per-profile failures as an app-health signal.
+  stampCommsHeartbeat(now, summary.errors.length)
   return summary
 }
 

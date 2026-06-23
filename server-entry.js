@@ -181,3 +181,37 @@ const httpServer = createServer(async (req, res) => {
 httpServer.listen(port, host, () => {
   console.log(`Huminic Studio running at http://${host}:${port}`)
 })
+
+// Sentinel monitor — a supervised sibling process inside this container.
+// Env-gated OFF by default: set SENTINEL_TICK_ENABLED=true to run it. It emails
+// alerts only (no customer sends, no SMS). Kept in its own process so it keeps
+// watching even if the request handler above wedges; respawned with a delay if
+// it ever exits.
+if (process.env.SENTINEL_TICK_ENABLED === 'true') {
+  const { spawn } = await import('node:child_process')
+  let stopping = false
+  const startSentinel = () => {
+    // `npx tsx scripts/<file>.ts` is the proven in-container script mechanism
+    // (npx is global in the node image; tsx + src/ + scripts/ ship in the image
+    // per the Dockerfile). Runs in THIS container so the monitor sees the same
+    // ~/.hermes profile data and provider keys the app uses.
+    const child = spawn('npx', ['tsx', 'scripts/sentinel-daemon.ts'], {
+      cwd: __dirname,
+      env: process.env,
+      stdio: 'inherit',
+    })
+    child.on('exit', (code) => {
+      if (stopping) return
+      console.error(`[sentinel] daemon exited (code ${code}); restarting in 30s`)
+      setTimeout(startSentinel, 30_000)
+    })
+    child.on('error', (err) => {
+      console.error('[sentinel] failed to spawn daemon:', err?.message || err)
+    })
+  }
+  process.on('SIGTERM', () => {
+    stopping = true
+  })
+  startSentinel()
+  console.log('[sentinel] monitor supervision enabled')
+}
