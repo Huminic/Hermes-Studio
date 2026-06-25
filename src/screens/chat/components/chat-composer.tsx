@@ -1782,14 +1782,20 @@ function ChatComposerComponent({
                   ].join(' '),
             ].join(' ')
           : [
-              'relative z-40 shrink-0 w-full mx-auto px-3 pt-2 sm:px-5',
-              'bg-[var(--theme-card)]',
+              // No opaque background on desktop: the rounded PromptInput owns
+              // its own surface (--composer-bg) and its animated glow bleeds
+              // onto the page instead of being framed by a card rectangle and
+              // clipped by the chat <main> (overflow-hidden). Extra pt/px/pb
+              // gives the glow room so it isn't cut off on any side.
+              'relative z-40 shrink-0 w-full mx-auto px-4 pt-4 sm:px-6',
             ].join(' '),
-        // Mobile: pin above tab bar + safe-area inset. Desktop: normal bottom padding.
+        // Mobile: pin above tab bar + safe-area inset. Desktop: leave room
+        // below the input for the downward glow (box-shadow ~54px) so the
+        // overflow-hidden chat <main> does not clip it.
         !isMobileViewport
-          ? 'pb-[max(var(--safe-b),8px)] md:pb-[calc(var(--safe-b)+0.75rem)]'
+          ? 'pb-[max(var(--safe-b),8px)] md:pb-[calc(var(--safe-b)+2rem)]'
           : '',
-        'md:bg-[var(--theme-card)]/95 md:backdrop-blur md:transition-[padding-bottom,background-color,backdrop-filter] md:duration-200',
+        'md:transition-[padding-bottom] md:duration-200',
       )}
       style={composerWrapperStyle}
       ref={setWrapperRefs}
