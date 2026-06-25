@@ -33,7 +33,7 @@ type WorkspaceState = {
 export const useWorkspaceStore = create<WorkspaceState>()(
   persist(
     (set) => ({
-      sidebarCollapsed: true,
+      sidebarCollapsed: false,
       fileExplorerCollapsed: true,
       chatFocusMode: false,
       activeSubPage: null,
@@ -64,8 +64,10 @@ export const useWorkspaceStore = create<WorkspaceState>()(
     {
       name: 'hermes-workspace-v1',
       partialize: (state) => ({
-        // sidebarCollapsed intentionally NOT persisted. Studio starts compact
-        // on each visit, and users can pin it open from the sidebar toggle.
+        // sidebarCollapsed IS persisted: the arrow toggle pins the desktop
+        // sidebar open/closed and that position is remembered across visits.
+        // (ChatSidebar renders desktop-only; mobile uses the tab bar/hamburger.)
+        sidebarCollapsed: state.sidebarCollapsed,
         fileExplorerCollapsed: state.fileExplorerCollapsed,
         chatPanelOpen: state.chatPanelOpen,
         chatPanelSessionKey: state.chatPanelSessionKey,

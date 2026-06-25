@@ -529,7 +529,6 @@ function ChatSidebarComponent({
   const [deleteSessionTitle, setDeleteSessionTitle] = useState('')
   const [providersOpen, setProvidersOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-  const [isHoverExpanded, setIsHoverExpanded] = useState(false)
   const sidebarRef = useRef<HTMLElement | null>(null)
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null)
 
@@ -584,19 +583,12 @@ function ChatSidebarComponent({
     return () => media.removeEventListener('change', update)
   }, [])
 
-  useEffect(() => {
-    if (isMobile || !isCollapsed) {
-      setIsHoverExpanded(false)
-    }
-  }, [isCollapsed, isMobile])
-
-  const isVisuallyCollapsed = isCollapsed && !isHoverExpanded
-  const isHoverPreviewExpanded = !isMobile && isCollapsed && isHoverExpanded
+  // Collapsed = icon rail with per-item tooltips (text preview on hover).
+  // Hover no longer auto-expands the whole menu; the arrow toggle pins it
+  // open/closed and that position is persisted by the workspace store.
+  const isVisuallyCollapsed = isCollapsed
 
   function handleSidebarToggle() {
-    if (isHoverPreviewExpanded) {
-      setIsHoverExpanded(false)
-    }
     onToggleCollapse()
   }
 
@@ -890,12 +882,6 @@ function ChatSidebarComponent({
       )}
       data-tour="sidebar-container"
       style={isMobile ? { maxWidth: 360 } : undefined}
-      onMouseEnter={() => {
-        if (!isMobile && isCollapsed) setIsHoverExpanded(true)
-      }}
-      onMouseLeave={() => {
-        if (!isMobile) setIsHoverExpanded(false)
-      }}
       aria-hidden={isMobile && isCollapsed ? true : undefined}
       {...(isMobile && isCollapsed ? { inert: '' as unknown as boolean } : {})}
     >
