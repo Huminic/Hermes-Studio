@@ -64,6 +64,23 @@ export function LoginScreen() {
           // Single-store customer admin: route to their store
           window.location.href = `/p/${encodeURIComponent(data.profile)}/dashboard`
         } else {
+          // Super-admin: activate the operator's own "huminic" profile first so
+          // the session lands on huminic rather than inheriting whatever
+          // customer profile was last active globally. Gated to is_admin, so
+          // scoped partner admins (e.g. cage-automotive) skip it entirely and
+          // just reload into Global Studio — their scope-filtered profile list
+          // and active profile are untouched.
+          if (data.is_admin === true) {
+            try {
+              await fetch('/api/profiles/activate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: 'huminic' }),
+              })
+            } catch {
+              // non-fatal: fall through to Global Studio regardless
+            }
+          }
           // Super-admin or scoped partner admin: reload to Global Studio
           window.location.reload()
         }
