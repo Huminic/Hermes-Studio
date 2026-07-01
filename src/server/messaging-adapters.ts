@@ -156,8 +156,12 @@ async function dispatchSms(
   if (modeFor(profile, 'sms') === 'shared') {
     const env = readEnvFromProfile(profile)
     const from = env.SMS_FROM ?? process.env.SMS_FROM
+    // Route to the store's own central-mcp TextMagic account (e.g. serra_honda)
+    // so it sends from its provisioned number, not the broker's default.
+    const account = readStudioConfig(profile).config.sms?.account
     const args: Record<string, unknown> = { text: content, phones: to }
     if (from) args.from = from
+    if (account) args.account = account
     const r = await callCentralMcpTool(profile, 'tm_send_message', args)
     if (r.unconfigured) return { status: 'unconfigured', via: 'sms-textmagic-shared' }
     if (!r.ok) return { status: 'failed', via: 'sms-textmagic-shared', error: r.error }
