@@ -114,6 +114,25 @@ function readProviderName(config: Record<string, unknown>): string | undefined {
   return undefined
 }
 
+/**
+ * The real default model configured for inference, read from the global
+ * ~/.hermes/config.yaml (model.default / model.provider). This is the model
+ * the gateway actually talks to (e.g. gpt-4.1 via the `custom` provider) — as
+ * opposed to the gateway's OpenAI-compat /v1/models response, which advertises
+ * the active-profile-at-boot NAME (e.g. "serra-honda") as its single "model".
+ * Used by /api/models to surface a truthful model label. Returns null when no
+ * model is configured.
+ */
+export function getConfiguredDefaultModel(): {
+  id: string
+  provider: string
+} | null {
+  const config = readYamlConfig(path.join(getHermesRoot(), 'config.yaml'))
+  const id = readModelName(config)
+  if (!id) return null
+  return { id, provider: readProviderName(config) || 'custom' }
+}
+
 function countFilesRecursive(
   rootPath: string,
   predicate: (fullPath: string) => boolean,
