@@ -66,6 +66,45 @@ describe('messaging-hub-store threads', () => {
     expect(b.id).toBe(a.id)
   })
 
+  it('correlates an SMS reply (no +) to the outbound E.164 thread (no split)', async () => {
+    const { getOrCreateThread } = await import('@/server/messaging-hub-store')
+    // Outbound automation/vin-watcher stores E.164 with the leading +.
+    const outbound = getOrCreateThread({
+      profile: 'serra-honda',
+      domain: 'sales',
+      channel: 'sms',
+      contact_handle: '+17313946907',
+      assigned_agent_id: 'caroline',
+    })
+    // TextMagic delivers the inbound sender WITHOUT the + (e.g. 17313946907).
+    const inbound = getOrCreateThread({
+      profile: 'serra-honda',
+      domain: 'sales',
+      channel: 'sms',
+      contact_handle: '17313946907',
+    })
+    expect(inbound.id).toBe(outbound.id)
+    // Both are stored canonically so future lookups agree.
+    expect(inbound.contact_handle).toBe('+17313946907')
+  })
+
+  it('does NOT collapse different email handles (non-phone channels untouched)', async () => {
+    const { getOrCreateThread } = await import('@/server/messaging-hub-store')
+    const a = getOrCreateThread({
+      profile: 'huminic',
+      domain: 'sales',
+      channel: 'email',
+      contact_handle: 'a@example.com',
+    })
+    const b = getOrCreateThread({
+      profile: 'huminic',
+      domain: 'sales',
+      channel: 'email',
+      contact_handle: 'b@example.com',
+    })
+    expect(b.id).not.toBe(a.id)
+  })
+
   it('honors an existing_thread_id', async () => {
     const { getOrCreateThread } = await import('@/server/messaging-hub-store')
     const a = getOrCreateThread({

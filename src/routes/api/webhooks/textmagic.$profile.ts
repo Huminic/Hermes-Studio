@@ -38,6 +38,7 @@ import {
   removeFromBlacklist,
 } from '../../../server/comms-blacklist'
 import { readStudioConfig } from '../../../server/studio-config'
+import { canonicalizeContactHandle } from '../../../server/phone-handle'
 
 /** TCPA opt-out / opt-in keywords (carrier-standard). Matched on the first word. */
 const STOP_RE = /^\s*(stop|stopall|unsubscribe|cancel|end|quit|optout|opt-out)\b/i
@@ -111,7 +112,13 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
             }
           }
         }
-        const sender = body.sender ?? body.from ?? ''
+        // Canonicalize the sender to E.164 (+…) up front so the thread lands on
+        // the SAME thread as the outbound conversation, and so STOP/START
+        // opt-out matching agrees with the outbound recipient handle. TextMagic
+        // posts the sender WITHOUT a leading '+'. Empty (delivery receipts) stays
+        // empty so the non-inbound branch below still triggers.
+        const rawSender = body.sender ?? body.from ?? ''
+        const sender = rawSender ? canonicalizeContactHandle('sms', rawSender) : ''
         const receiver = body.receiver ?? body.to ?? ''
         const text = body.text ?? body.message ?? ''
         // TextMagic's inbound webhook posts the message id as `id`; keep the

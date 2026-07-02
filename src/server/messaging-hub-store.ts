@@ -21,6 +21,7 @@ import { join } from 'node:path'
 import os from 'node:os'
 import { randomUUID } from 'node:crypto'
 import { publishMessagingEvent } from './messaging-hub-bus'
+import { canonicalizeContactHandle } from './phone-handle'
 
 const _require = createRequire(import.meta.url)
 
@@ -405,12 +406,21 @@ export function getOrCreateThreadEx(input: {
     if (found) return { thread: found, created: false }
   }
 
+  // Canonicalize phone handles to E.164 (+…) so inbound (webhook sender, no '+')
+  // and outbound (E.164 with '+') land on ONE thread. Non-phone channels pass
+  // through unchanged. Applied here — the single thread choke point — so every
+  // caller (inbound webhooks + outbound producers) agrees automatically.
+  const contact_handle = canonicalizeContactHandle(
+    input.channel,
+    input.contact_handle,
+  )
+
   // Try to reuse the most-recent open thread for this contact_handle+channel
   // (so multi-turn chats stay on one thread by default). Skipped when the
   // caller demands a fresh thread.
   if (!input.force_new) {
     const reuse = findOpenThreadFor(input.profile, {
-      contact_handle: input.contact_handle,
+      contact_handle,
       channel: input.channel,
       domain: input.domain,
     })
@@ -422,8 +432,8 @@ export function getOrCreateThreadEx(input: {
     profile: input.profile,
     domain: input.domain,
     channel: input.channel,
-    subject: input.subject ?? `${input.channel} · ${input.contact_handle}`,
-    contact_handle: input.contact_handle,
+    subject: input.subject ?? `${input.channel} · ${contact_handle}`,
+    contact_handle,
     assigned_agent_id: input.assigned_agent_id ?? null,
     status: 'open',
     created_at: now,
@@ -453,7 +463,7 @@ export function getOrCreateThreadEx(input: {
   upsertContact({
     profile: input.profile,
     display_name: null,
-    identifiers: { [input.channel]: input.contact_handle },
+    identifiers: { [input.channel]: contact_handle },
   })
   publishMessagingEvent(input.profile, {
     type: 'thread_created',

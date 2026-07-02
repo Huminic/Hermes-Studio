@@ -181,6 +181,41 @@ describe('/api/webhooks/textmagic/$profile', () => {
     expect(inbound?.content).toContain('schedule service')
   })
 
+  it('correlates an inbound reply (no +) to the existing outbound thread — no split, no re-notify', async () => {
+    const dir = path.join(tmpHome, '.hermes/profiles/serra-honda')
+    fs.mkdirSync(dir, { recursive: true })
+    fs.writeFileSync(
+      path.join(dir, 'studio.yaml'),
+      ['branding:', '  persona_name: Serra Honda', 'sms:', '  inbound_domain: sales', ''].join('\n'),
+    )
+    // Outbound producers store the recipient as E.164 with a leading +.
+    const { getOrCreateThread, getThread } = await import('@/server/messaging-hub-store')
+    const outbound = getOrCreateThread({
+      profile: 'serra-honda',
+      domain: 'sales',
+      channel: 'sms',
+      contact_handle: '+15555550100',
+      assigned_agent_id: 'caroline',
+    })
+    const { Route } = await import('@/routes/api/webhooks/textmagic.$profile')
+    const handler = Route.options.server.handlers.POST
+    // TextMagic delivers the sender WITHOUT the + (15555550100).
+    const req = new Request('http://localhost/api/webhooks/textmagic/serra-honda', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sender: '15555550100', text: 'Absolutely!!', messageId: 'tm_reply_1' }),
+    })
+    const res = await handler({ request: req, params: { profile: 'serra-honda' } } as never)
+    expect(res.status).toBe(200)
+    const body = (await res.json()) as { thread_id: string }
+    // Same thread as the outbound → subscription fires; created:false → no new-lead re-notify.
+    expect(body.thread_id).toBe(outbound.id)
+    const thread = getThread('serra-honda', outbound.id)
+    expect(thread?.messages.some((m) => m.content === 'Absolutely!!')).toBe(true)
+    // No "Lead notification" system message: reuse path does not re-notify the BDC.
+    expect(thread?.messages.some((m) => m.content.startsWith('Lead notification'))).toBe(false)
+  })
+
   it('routes inbound to the profile-configured domain (sales) without a query param', async () => {
     // serra-honda is a SALES store (Caroline). Its studio.yaml declares
     // sms.inbound_domain: sales so texts do NOT fall into the Service tab.
