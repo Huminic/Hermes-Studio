@@ -257,6 +257,13 @@ const SmsSchema = z
      * (serra-service / Nancy) sets `service`. Absent → 'service' (legacy default).
      */
     inbound_domain: z.enum(['sales', 'service']).optional(),
+    /**
+     * central-mcp TextMagic account key to send FROM in `shared` mode (e.g.
+     * `serra_honda`, `serra_service`). Passed as `account` to `tm_send_message`
+     * so each store sends from its own provisioned number. Omit to use the
+     * broker's default account. Only used when channel_credentials.sms=shared.
+     */
+    account: z.string().optional(),
   })
   .optional()
   .default({ inbound_numbers: [] })
