@@ -10,6 +10,7 @@ import {
   isAuthenticated,
   requireLocalOrAuth,
 } from '../../server/auth-middleware'
+import { isAuthorizedForProfile, resolveSession } from '../../server/customer-auth'
 import {
   getClientIp,
   rateLimit,
@@ -64,11 +65,6 @@ function ensureWorkspacePathFor(input: string, root: string) {
     throw new Error('Path is outside workspace')
   }
   return resolved
-}
-
-/** Legacy single-root version — kept so existing call sites compile */
-function ensureWorkspacePath(input: string) {
-  return ensureWorkspacePathFor(input, WORKSPACE_ROOT)
 }
 
 function toRelativeFor(resolvedPath: string, root: string) {
@@ -208,9 +204,13 @@ async function readDirectory(
   return sortEntries(mapped)
 }
 
-async function readGlobDirectory(globPath: string) {
+async function readGlobDirectory(globPath: string, root: string) {
   const { directoryPath, regex } = parseGlobPattern(globPath)
-  const resolvedDirectory = ensureWorkspacePath(directoryPath)
+  // Scope the glob to the authorized (effective) root, NOT the global
+  // WORKSPACE_ROOT — otherwise a session authorized for one profile could glob
+  // the global ~/.hermes (or another tenant's directory) after passing the
+  // per-profile auth check. (P0 cross-tenant fix — glob branch.)
+  const resolvedDirectory = ensureWorkspacePathFor(directoryPath, root)
   const entries = await fs.readdir(resolvedDirectory, { withFileTypes: true })
   const mapped: Array<FileEntry> = []
 
@@ -220,7 +220,7 @@ async function readGlobDirectory(globPath: string) {
     const stats = await fs.stat(fullPath)
     mapped.push({
       name: entry.name,
-      path: toRelative(fullPath),
+      path: toRelativeFor(fullPath, root),
       type: entry.isDirectory() ? 'folder' : 'file',
       size: stats.size,
       modifiedAt: stats.mtime.toISOString(),
@@ -228,7 +228,7 @@ async function readGlobDirectory(globPath: string) {
   }
 
   return {
-    root: toRelative(resolvedDirectory),
+    root: toRelativeFor(resolvedDirectory, root),
     entries: sortEntries(mapped),
   }
 }
@@ -274,11 +274,28 @@ export const Route = createFileRoute('/api/files')({
             url.searchParams.get('maxEntries'),
           )
 
+          // Authorization (P0 cross-tenant file read fix).
+          // A profile-scoped read requires authorization for that specific
+          // profile (super-admin = all, partner = scope_profiles, customer-admin
+          // = own). The global root (no profile / 'default') resolves to
+          // ~/.hermes, which exposes EVERY profile's workspace — including each
+          // profile's auth.yaml password hashes — so it is super-admin-only,
+          // mirroring the admin gate on the POST handler below.
+          if (!profileName || profileName === 'default') {
+            if (!isAdmin(request)) {
+              return json({ ok: false, error: 'Forbidden' }, { status: 403 })
+            }
+          } else if (
+            !isAuthorizedForProfile(resolveSession(request), profileName)
+          ) {
+            return json({ ok: false, error: 'Forbidden' }, { status: 403 })
+          }
+
           // Resolve effective root — profile-scoped or global
           const effectiveRoot = getEffectiveRoot(profileName)
 
           if (action === 'list' && hasGlob(inputPath)) {
-            const globListing = await readGlobDirectory(inputPath)
+            const globListing = await readGlobDirectory(inputPath, effectiveRoot)
             return json({
               root: globListing.root,
               base: effectiveRoot,

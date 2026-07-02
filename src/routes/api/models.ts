@@ -9,6 +9,7 @@ import {
   getGatewayCapabilities,
 } from '../../server/hermes-api'
 import { BEARER_TOKEN } from '../../server/gateway-capabilities'
+import { getConfiguredDefaultModel } from '../../server/profiles-browser'
 
 const HERMES_API_URL = process.env.HERMES_API_URL || 'http://127.0.0.1:8642'
 
@@ -150,13 +151,39 @@ export const Route = createFileRoute('/api/models')({
           })
         }
         try {
-          const models = await fetchHermesModels()
+          const gatewayModels = await fetchHermesModels()
+
+          // Surface the REAL configured model (e.g. gpt-4.1 / custom from
+          // ~/.hermes/config.yaml) as the primary entry. The gateway's
+          // /v1/models advertises the active-profile-at-boot NAME (e.g.
+          // "serra-honda") as its single "model", which is a misleading label
+          // for the operator. Chat routing is session-based and does not use
+          // this model param, so relabeling is display-only and routing-safe.
+          // (GAP-MODEL-LABEL — Phase 1B.)
+          const configured = getConfiguredDefaultModel()
+          const models: Array<ModelEntry> = []
+          const existingIds = new Set<string | undefined>()
+          if (configured) {
+            const entry: ModelEntry = {
+              id: configured.id,
+              name: configured.id,
+              provider: configured.provider,
+            }
+            models.push(entry)
+            existingIds.add(configured.id)
+          }
+          for (const m of gatewayModels) {
+            if (!existingIds.has(m.id)) {
+              models.push(m)
+              existingIds.add(m.id)
+            }
+          }
           // Add models from auth store providers (Anthropic, OpenAI, etc.)
           const authModels = getAuthStoreModels()
-          const existingIds = new Set(models.map((m) => m.id))
           for (const m of authModels) {
             if (!existingIds.has(m.id)) {
               models.push(m)
+              existingIds.add(m.id)
             }
           }
           const configuredProviders = Array.from(

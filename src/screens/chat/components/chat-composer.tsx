@@ -157,93 +157,13 @@ async function fetchModels(): Promise<{
   providerLabels?: Record<string, string>
   providers?: Array<HermesProviderOption>
 }> {
-  // Prefer Hermes' current provider models; fetch other providers lazily if needed.
-  try {
-    const richRes = await fetch('/api/hermes-proxy/api/available-models')
-    if (richRes.ok) {
-      const richData = (await richRes.json()) as HermesAvailableModelsResponse
-      const authenticatedProviders = (richData.providers || []).filter(
-        (p) => p.authenticated,
-      )
-      const configuredProviders = authenticatedProviders.map((p) => p.id)
-      const providerLabels = authenticatedProviders.reduce<
-        Record<string, string>
-      >((acc, provider) => {
-        acc[provider.id] = provider.label || provider.id
-        return acc
-      }, {})
-      const currentProvider = readModelText(richData.provider)
-      let models = (richData.models || []).map((model) => ({
-        id: model.id,
-        name: model.id,
-        provider:
-          ((model as Record<string, unknown>).provider as string) ||
-          currentProvider ||
-          undefined,
-      }))
-
-      // If gateway returns no models, try /v1/models as fallback
-      if (models.length === 0) {
-        try {
-          const fallbackRes = await fetch('/api/hermes-proxy/v1/models')
-          if (fallbackRes.ok) {
-            const fallbackData = (await fallbackRes.json()) as {
-              data?: Array<Record<string, unknown>>
-              models?: Array<Record<string, unknown>>
-            }
-            const rawFallback = Array.isArray(fallbackData.data)
-              ? fallbackData.data
-              : Array.isArray(fallbackData.models)
-                ? fallbackData.models
-                : []
-            models = rawFallback.map((m) => ({
-              id: readModelText(m.id) || readModelText(m.model) || 'unknown',
-              name: readModelText(m.id) || readModelText(m.model) || 'unknown',
-              provider: currentProvider || undefined,
-            }))
-          }
-        } catch {
-          /* ignore fallback failure */
-        }
-      }
-
-      // Always include current configured model so it appears in the list
-      if (currentProvider && models.length === 0) {
-        // Fetch current model from config
-        try {
-          const cfgRes = await fetch('/api/hermes-proxy/api/config')
-          if (cfgRes.ok) {
-            const cfg = (await cfgRes.json()) as Record<string, unknown>
-            const cfgModel = readModelText(cfg.model)
-            if (cfgModel) {
-              models = [
-                { id: cfgModel, name: cfgModel, provider: currentProvider },
-              ]
-            }
-          }
-        } catch {
-          /* ignore */
-        }
-      }
-
-      return {
-        ok: true,
-        models,
-        configuredProviders,
-        currentProvider,
-        providerLabels,
-        providers: authenticatedProviders,
-      }
-    }
-  } catch {
-    // Fall back to the Studio's own server-side models route (below).
-  }
-
-  // Fall back to the Studio server route — same-origin + authenticated +
-  // gateway-bearer-aware. The old fallback fetched the gateway directly at
-  // ${HERMES_API_URL}/v1/models which, client-side, resolves to the unreachable
-  // http://127.0.0.1:8642 and only ever produced a CORS "loopback denied"
-  // console error (GAP-CONSOLE-003).
+  // Use the Studio's own server-side models route — same-origin, authenticated,
+  // gateway-bearer-aware, and it surfaces the real configured model (gpt-4.1)
+  // as the primary entry. The legacy `/api/hermes-proxy/api/available-models`
+  // call was removed: it 404s on stock Hermes, producing a red console error on
+  // every login (GAP-CONSOLE-003 / GAP-MODEL-LABEL). The direct-gateway
+  // ${HERMES_API_URL}/v1/models fallback was also removed — client-side it
+  // resolves to the unreachable http://127.0.0.1:8642 (CORS "loopback denied").
   const response = await fetch('/api/models')
   if (!response.ok) {
     throw new Error(`Hermes models request failed (${response.status})`)
