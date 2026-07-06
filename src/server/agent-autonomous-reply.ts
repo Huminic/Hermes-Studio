@@ -96,6 +96,17 @@ const ANTHROPIC_MODEL =
 const MAX_TOKENS = 256
 
 /**
+ * Benign, routing "never go dead" fallback. Sent verbatim ONLY when the model
+ * is unavailable or returns nothing — a sales channel must never leave a
+ * customer on read (a returning buyer is a sale). The normal no-context /
+ * ambiguous case is handled gracefully by the agent's persona; this is the
+ * last-resort safety net when inference itself fails. Overridable per-deploy.
+ */
+const DEAD_RESPONSE_FALLBACK =
+  process.env.AUTONOMOUS_REPLY_FALLBACK_TEXT ||
+  "Sorry, can you refresh me on what you're looking for? Happy to help set up a sales or service appointment."
+
+/**
  * Read a key from the shared `~/.hermes/.env` on the studio volume. Mirrors
  * the inline reader used by the widget/customer chat handlers (those keys
  * live on the shared Hermes volume, not always in this process's env). Kept
@@ -411,16 +422,20 @@ export async function maybeAutonomousReply(input: {
       systemPrompt,
       messages: history,
     })
-    if (!providerResult.ok) {
-      updateReplyJob(input.profile, job.id, {
-        status: 'failed',
-        attempted_at: now,
-        reason: providerResult.reason,
-      })
-      results.push({ ok: false, jobId: job.id, reason: providerResult.reason })
-      continue
+    // NEVER go dead: if the model errors or returns nothing, still send a
+    // benign, routing fallback so the customer always gets a reply. Silence on
+    // a sales channel can cost a sale (a lead who resurfaces is an opportunity).
+    const modelReply =
+      providerResult.ok && providerResult.reply.trim()
+        ? providerResult.reply.trim()
+        : null
+    const replyText = modelReply ?? DEAD_RESPONSE_FALLBACK
+    const replyVia = modelReply ? providerResult.via : 'fallback'
+    if (!modelReply) {
+      console.warn(
+        `[autonomous-reply] provider unavailable for ${input.profile} thread ${input.threadId} — sending benign fallback (${providerResult.ok ? 'empty reply' : providerResult.reason})`,
+      )
     }
-    const replyText = providerResult.reply
     // Re-check human takeover immediately before send (race window): a human
     // may have claimed the thread while the model was generating.
     if (isHumanAssigned(input.profile, input.threadId)) {
@@ -448,7 +463,7 @@ export async function maybeAutonomousReply(input: {
       author: sub.agent_id,
       metadata: {
         agent_id: sub.agent_id,
-        via: providerResult.via,
+        via: replyVia,
         adapter_status: adapterResult.status,
         adapter_error: adapterResult.error ?? null,
         autonomous: true,
