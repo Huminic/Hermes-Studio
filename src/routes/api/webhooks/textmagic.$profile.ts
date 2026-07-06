@@ -44,6 +44,30 @@ import { canonicalizeContactHandle } from '../../../server/phone-handle'
 const STOP_RE = /^\s*(stop|stopall|unsubscribe|cancel|end|quit|optout|opt-out)\b/i
 const START_RE = /^\s*(start|unstop|yes|subscribe)\b/i
 
+/**
+ * Read the profile's own sending number (`SMS_FROM`) from its `.env`, used to
+ * detect TextMagic delivery-report echoes (a callback whose sender IS our own
+ * number). Falls back to the process-level `SMS_FROM`. Null when unknown.
+ */
+function readOurNumber(profile: string): string | null {
+  try {
+    const file = path.join(os.homedir(), '.hermes', 'profiles', profile, '.env')
+    const raw = fs.readFileSync(file, 'utf8')
+    for (const line of raw.split('\n')) {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith('#')) continue
+      const eq = trimmed.indexOf('=')
+      if (eq === -1) continue
+      if (trimmed.slice(0, eq).trim() === 'SMS_FROM') {
+        return trimmed.slice(eq + 1).trim() || null
+      }
+    }
+  } catch {
+    // missing per-profile env is fine
+  }
+  return process.env.SMS_FROM ?? null
+}
+
 function readSecret(profile: string): string | null {
   try {
     const file = path.join(
@@ -138,6 +162,31 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
             ignored: true,
             kind: status ? 'delivery_receipt' : 'non_message',
             status,
+            message_id: messageId,
+          })
+        }
+        // DELIVERY-REPORT / ECHO GUARD. TextMagic posts delivery-status callbacks
+        // for messages WE sent to this SAME URL. Unlike a bare receipt, they can
+        // carry sender=<our number>, receiver=<customer>, the message text, AND a
+        // status — so they slip past the !sender||!text check and were being
+        // recorded as PHANTOM inbounds on our OWN number (BDC-spam + agent
+        // self-reply-loop risk). A real inbound is addressed TO our number and
+        // has no delivery status. Drop the echo before recording an inbound.
+        const ourNumber = readOurNumber(profile)
+        const deliveryStatus =
+          body.status ?? body.messageStatus ?? body.deliveryStatus ?? null
+        const senderIsOurs = ourNumber
+          ? canonicalizeContactHandle('sms', ourNumber) === sender
+          : false
+        // sender==ours is definitive when we know our number; otherwise fall back
+        // to the delivery-status signal (avoids dropping real inbounds blindly).
+        if (senderIsOurs || (!ourNumber && deliveryStatus)) {
+          return json({
+            ok: true,
+            ignored: true,
+            kind: 'delivery_report',
+            reason: senderIsOurs ? 'sender-is-own-number' : 'delivery-status-present',
+            status: deliveryStatus,
             message_id: messageId,
           })
         }

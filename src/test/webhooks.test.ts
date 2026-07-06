@@ -181,6 +181,31 @@ describe('/api/webhooks/textmagic/$profile', () => {
     expect(inbound?.content).toContain('schedule service')
   })
 
+  it('drops a TextMagic delivery-report echo (sender = our own number) instead of recording a phantom inbound', async () => {
+    const dir = path.join(tmpHome, '.hermes/profiles/serra-honda')
+    fs.mkdirSync(dir, { recursive: true })
+    fs.writeFileSync(path.join(dir, 'studio.yaml'), ['sms:', '  inbound_domain: sales', ''].join('\n'))
+    // Our own sending number, pinned via SMS_FROM (as in production).
+    fs.writeFileSync(path.join(dir, '.env'), 'SMS_FROM=+18339785374\n')
+    const { Route } = await import('@/routes/api/webhooks/textmagic.$profile')
+    const handler = Route.options.server.handlers.POST
+    // TextMagic delivery-report for an outbound we sent: sender = OUR number,
+    // receiver = the customer, carries the text + a delivery status.
+    const req = new Request('http://localhost/api/webhooks/textmagic/serra-honda', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sender: '18339785374', receiver: '14126546500', text: 'Hi Durran, this is Serra Honda…', status: 'd', messageId: 'dlr_1' }),
+    })
+    const res = await handler({ request: req, params: { profile: 'serra-honda' } } as never)
+    expect(res.status).toBe(200)
+    const body = (await res.json()) as { ignored?: boolean; kind?: string; thread_id?: string }
+    expect(body.ignored).toBe(true)
+    // No inbound thread created on our own number
+    const { listThreads } = await import('@/server/messaging-hub-store')
+    const threads = listThreads({ profile: 'serra-honda' })
+    expect(threads.some((t) => t.contact_handle.includes('8339785374'))).toBe(false)
+  })
+
   it('correlates an inbound reply (no +) to the existing outbound thread — no split, no re-notify', async () => {
     const dir = path.join(tmpHome, '.hermes/profiles/serra-honda')
     fs.mkdirSync(dir, { recursive: true })

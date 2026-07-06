@@ -88,6 +88,52 @@ describe('agent-autonomous-reply', () => {
     expect(updated?.messages[1].author).toBe('caroline')
   })
 
+  it('NEVER goes dead: dispatches a benign fallback when the provider fails', async () => {
+    const { getOrCreateThread, appendMessage, subscribeAgentToThread, getThread } =
+      await import('@/server/messaging-hub-store')
+    const ar = await import('@/server/agent-autonomous-reply')
+    // Provider is down / errors — a returning buyer must still get a reply.
+    ar.setAutonomousReplyProvider(async () => ({ ok: false, reason: 'provider down' }))
+    const thread = getOrCreateThread({
+      profile: 'huminic',
+      domain: 'service',
+      channel: 'sms',
+      contact_handle: '+15555550100',
+    })
+    const inbound = appendMessage({
+      thread_id: thread.id, direction: 'inbound', role: 'user', channel: 'sms', content: 'still there?', author: 'lead',
+    })
+    subscribeAgentToThread({
+      thread_id: thread.id, agent_id: 'caroline', profile: 'huminic', channel: 'sms', mode: 'reply', rules: {}, created_at: Date.now(),
+    })
+    const results = await ar.maybeAutonomousReply({
+      profile: 'huminic', threadId: thread.id, inboundMessageId: inbound.id, now: Date.UTC(2026, 4, 29, 16, 0, 0),
+    })
+    expect(results[0].ok).toBe(true)
+    const updated = getThread('huminic', thread.id)
+    expect(updated?.messages).toHaveLength(2)
+    const reply = updated?.messages[1]
+    expect(reply?.direction).toBe('outbound')
+    // A real, benign, routing reply went out (not empty, not dead)
+    expect((reply?.content ?? '').length).toBeGreaterThan(0)
+    expect(reply?.metadata?.via).toBe('fallback')
+  })
+
+  it('NEVER goes dead: dispatches a benign fallback when the provider returns an empty reply', async () => {
+    const { getOrCreateThread, appendMessage, subscribeAgentToThread, getThread } =
+      await import('@/server/messaging-hub-store')
+    const ar = await import('@/server/agent-autonomous-reply')
+    ar.setAutonomousReplyProvider(async () => ({ ok: true, reply: '   ', via: 'mock' }))
+    const thread = getOrCreateThread({ profile: 'huminic', domain: 'service', channel: 'sms', contact_handle: '+15555550101' })
+    const inbound = appendMessage({ thread_id: thread.id, direction: 'inbound', role: 'user', channel: 'sms', content: 'hi', author: 'lead' })
+    subscribeAgentToThread({ thread_id: thread.id, agent_id: 'caroline', profile: 'huminic', channel: 'sms', mode: 'reply', rules: {}, created_at: Date.now() })
+    const results = await ar.maybeAutonomousReply({ profile: 'huminic', threadId: thread.id, inboundMessageId: inbound.id, now: Date.UTC(2026, 4, 29, 16, 0, 0) })
+    expect(results[0].ok).toBe(true)
+    const reply = getThread('huminic', thread.id)?.messages[1]
+    expect((reply?.content ?? '').trim().length).toBeGreaterThan(0)
+    expect(reply?.metadata?.via).toBe('fallback')
+  })
+
   it('rejects when channel not in allowed_channels', async () => {
     const {
       getOrCreateThread,
