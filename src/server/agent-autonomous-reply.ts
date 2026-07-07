@@ -418,12 +418,20 @@ export async function maybeAutonomousReply(input: {
             : 'user',
       content: m.content,
     }))
-    const providerResult = await providerCall({
-      systemPrompt,
-      messages: history,
-    })
-    // NEVER go dead: if the model errors or returns nothing, still send a
-    // benign, routing fallback so the customer always gets a reply. Silence on
+    // The provider is a tagged result, but a rate-limit / timeout can THROW
+    // (uncaught) — which previously left the reply job stuck at `queued` with no
+    // reply (observed live). Treat a throw exactly like an {ok:false} return.
+    let providerResult: Awaited<ReturnType<typeof providerCall>>
+    try {
+      providerResult = await providerCall({ systemPrompt, messages: history })
+    } catch (err) {
+      providerResult = {
+        ok: false,
+        reason: err instanceof Error ? err.message : 'provider threw',
+      }
+    }
+    // NEVER go dead: if the model errors, throws, or returns nothing, still send
+    // a benign, routing fallback so the customer always gets a reply. Silence on
     // a sales channel can cost a sale (a lead who resurfaces is an opportunity).
     const modelReply =
       providerResult.ok && providerResult.reply.trim()
@@ -447,46 +455,58 @@ export async function maybeAutonomousReply(input: {
       results.push({ ok: false, jobId: job.id, reason: 'human takeover' })
       continue
     }
-    // Dispatch outbound through the channel adapter.
-    const adapterResult = await dispatchOutbound({
-      profile: input.profile,
-      channel: inbound.channel,
-      thread,
-      content: replyText,
-    })
-    appendMessage({
-      thread_id: thread.id,
-      direction: 'outbound',
-      role: 'assistant',
-      channel: inbound.channel,
-      content: replyText,
-      author: sub.agent_id,
-      metadata: {
+    // Dispatch + record. Guard the whole send so a broker/adapter throw can't
+    // leave the job silently stuck at `queued` — record a hard failure and move
+    // on (visible + retryable), never silence.
+    try {
+      const adapterResult = await dispatchOutbound({
+        profile: input.profile,
+        channel: inbound.channel,
+        thread,
+        content: replyText,
+      })
+      appendMessage({
+        thread_id: thread.id,
+        direction: 'outbound',
+        role: 'assistant',
+        channel: inbound.channel,
+        content: replyText,
+        author: sub.agent_id,
+        metadata: {
+          agent_id: sub.agent_id,
+          via: replyVia,
+          adapter_status: adapterResult.status,
+          adapter_error: adapterResult.error ?? null,
+          autonomous: true,
+        },
+      })
+      updateReplyJob(input.profile, job.id, {
+        status: 'sent',
+        attempted_at: now,
+        sent_at: now,
+        reason: null,
+      })
+      publishMessagingEvent(input.profile, {
+        type: 'agent_reply_sent',
+        thread_id: thread.id,
         agent_id: sub.agent_id,
+        channel: inbound.channel,
+      })
+      results.push({
+        ok: true,
+        jobId: job.id,
+        reply: replyText,
         via: replyVia,
-        adapter_status: adapterResult.status,
-        adapter_error: adapterResult.error ?? null,
-        autonomous: true,
-      },
-    })
-    updateReplyJob(input.profile, job.id, {
-      status: 'sent',
-      attempted_at: now,
-      sent_at: now,
-      reason: null,
-    })
-    publishMessagingEvent(input.profile, {
-      type: 'agent_reply_sent',
-      thread_id: thread.id,
-      agent_id: sub.agent_id,
-      channel: inbound.channel,
-    })
-    results.push({
-      ok: true,
-      jobId: job.id,
-      reply: replyText,
-      via: providerResult.via,
-    })
+      })
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : 'dispatch error'
+      updateReplyJob(input.profile, job.id, {
+        status: 'failed',
+        attempted_at: now,
+        reason,
+      })
+      results.push({ ok: false, jobId: job.id, reason })
+    }
   }
   return results
 }
