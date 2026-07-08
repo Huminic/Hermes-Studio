@@ -33,6 +33,7 @@ import {
   maybeAutonomousReply,
 } from '../../../server/agent-autonomous-reply'
 import { notifyNewLead } from '../../../server/lead-notifications'
+import { applyOptOutKeyword } from '../../../server/comms-blacklist'
 
 function readInboundTokenFor(profile: string): string | null {
   try {
@@ -167,6 +168,11 @@ export const Route = createFileRoute('/api/messaging/inbound')({
           },
         })
 
+        // TCPA opt-out / opt-in on phone-channel inbound — PARITY with the
+        // TextMagic webhook so an adapter posting sms/voice here also honors STOP
+        // (blacklist) and never auto-replies after opt-out. No-op for chat/email.
+        const optOut = applyOptOutKeyword({ profile, channel, handle, text: messageBody })
+
         // Move the store's comms agent onto this thread (no-op unless the store
         // enabled autonomous reply; actual send still gated by OUTBOUND_LIVE_ENABLED).
         try {
@@ -177,14 +183,16 @@ export const Route = createFileRoute('/api/messaging/inbound')({
         // Fire agent-autonomous reply if any agents are subscribed in
         // mode: reply. Errors here are non-fatal — adapter still gets a 200.
         let autoResults: Array<unknown> = []
-        try {
-          autoResults = await maybeAutonomousReply({
-            profile,
-            threadId: thread.id,
-            inboundMessageId: inbound.id,
-          })
-        } catch {
-          // continue
+        if (!optOut.stop) {
+          try {
+            autoResults = await maybeAutonomousReply({
+              profile,
+              threadId: thread.id,
+              inboundMessageId: inbound.id,
+            })
+          } catch {
+            // continue
+          }
         }
 
         return json({
@@ -193,6 +201,8 @@ export const Route = createFileRoute('/api/messaging/inbound')({
           message_id: inbound.id,
           channel,
           lead_meta: leadMeta,
+          opt_out: optOut.stop,
+          opt_in: optOut.start,
           autonomous_replies: autoResults,
         })
       },

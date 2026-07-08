@@ -97,7 +97,10 @@ function firstString(...vals: Array<unknown>): string | null {
  * `{ Contact: {…} }`.
  */
 export function flattenContact(raw: unknown): FlatContact {
-  const root = (raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {})
+  // The live broker returns the contact as an ARRAY ([{ContactId, ContactInformation:{…}}]);
+  // older/other shapes wrap it as {contact}/{Contact} or the object directly. Unwrap all.
+  const unwrapped = Array.isArray(raw) ? raw[0] : raw
+  const root = (unwrapped && typeof unwrapped === 'object' ? (unwrapped as Record<string, unknown>) : {})
   const contact = (
     root.contact && typeof root.contact === 'object'
       ? root.contact
@@ -114,19 +117,27 @@ export function flattenContact(raw: unknown): FlatContact {
         : {}
   ) as Record<string, unknown>
 
-  const firstName = firstString(contact.firstName, contact.FirstName, contact.first_name)
-  const lastName = firstString(contact.lastName, contact.LastName, contact.last_name)
+  // Names live under ContactInformation in the live shape; also accept them on the
+  // contact root (older shape) + camel/snake variants.
+  const firstName = firstString(
+    ci.FirstName, ci.firstName, ci.first_name,
+    contact.firstName, contact.FirstName, contact.first_name,
+  )
+  const lastName = firstString(
+    ci.LastName, ci.lastName, ci.last_name,
+    contact.lastName, contact.LastName, contact.last_name,
+  )
   const fullName =
     [firstName, lastName].filter(Boolean).join(' ').trim() ||
-    firstString(contact.fullName, contact.FullName, contact.name, contact.Name)
+    firstString(ci.FullName, ci.Name, contact.fullName, contact.FullName, contact.name, contact.Name)
 
   const emails = asArray(ci.Emails ?? ci.emails)
   const primaryEmail = emails.find(
     (e) => String(e.EmailType ?? e.emailType ?? '').toLowerCase() === 'primary',
   )
   const email = firstString(
-    primaryEmail?.Email ?? primaryEmail?.email ?? primaryEmail?.Address,
-    emails[0]?.Email ?? emails[0]?.email ?? emails[0]?.Address,
+    primaryEmail?.EmailAddress ?? primaryEmail?.Email ?? primaryEmail?.email ?? primaryEmail?.Address,
+    emails[0]?.EmailAddress ?? emails[0]?.Email ?? emails[0]?.email ?? emails[0]?.Address,
     contact.email,
     contact.Email,
   )
@@ -143,7 +154,7 @@ export function flattenContact(raw: unknown): FlatContact {
     firstString(contact.phone, contact.Phone)
 
   return {
-    contactId: firstString(contact.id, contact.Id, contact.contactId, contact.ContactId),
+    contactId: firstString(contact.id, contact.Id, contact.contactId, contact.ContactId, ci.ContactId),
     firstName,
     lastName,
     fullName,

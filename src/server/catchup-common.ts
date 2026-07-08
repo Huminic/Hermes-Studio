@@ -64,7 +64,13 @@ export function str(v: unknown): string | null {
  * by the catch-up gathers rather than texted.
  */
 export function isValidSmsE164(handle: string): boolean {
-  return /^\+[1-9]\d{9,14}$/.test(handle)
+  // US/NANP only (these are US dealership leads): +1 + area code [2-9]XX +
+  // exchange [2-9]XX + 4 digits. Rejects 7-digit fragments, fused extensions,
+  // leading-zero junk, and mis-parsed international numbers (e.g. an extension
+  // fused onto a "+7…"). NOTE: a structurally-valid but UNASSIGNED area code
+  // (e.g. 676) still passes and will bounce at the carrier (logged, non-fatal) —
+  // full assigned-NANP validation would need an area-code table.
+  return /^\+1[2-9]\d{2}[2-9]\d{6}$/.test(handle)
 }
 
 /** Best-effort readable vehicle from a raw lead row (often only hrefs exist). */

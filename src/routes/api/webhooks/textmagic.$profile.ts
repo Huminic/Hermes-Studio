@@ -33,16 +33,9 @@ import {
   notifyNewLead,
   notifyActiveConversation,
 } from '../../../server/lead-notifications'
-import {
-  addToBlacklist,
-  removeFromBlacklist,
-} from '../../../server/comms-blacklist'
+import { applyOptOutKeyword } from '../../../server/comms-blacklist'
 import { readStudioConfig } from '../../../server/studio-config'
 import { canonicalizeContactHandle } from '../../../server/phone-handle'
-
-/** TCPA opt-out / opt-in keywords (carrier-standard). Matched on the first word. */
-const STOP_RE = /^\s*(stop|stopall|unsubscribe|cancel|end|quit|optout|opt-out)\b/i
-const START_RE = /^\s*(start|unstop|yes|subscribe)\b/i
 
 /**
  * Read the profile's own sending number (`SMS_FROM`) from its `.env`, used to
@@ -199,13 +192,12 @@ export const Route = createFileRoute('/api/webhooks/textmagic/$profile')({
         // blacklist so CommGate refuses all future outbound to them; a START
         // clears it. We still record the inbound message (audit) but suppress
         // any autonomous reply on a STOP so the AI never texts back after opt-out.
-        const isStop = STOP_RE.test(text)
-        const isStart = START_RE.test(text)
-        if (isStop) {
-          addToBlacklist(profile, sender, 'STOP (inbound SMS)')
-        } else if (isStart) {
-          removeFromBlacklist(profile, sender)
-        }
+        const { stop: isStop, start: isStart } = applyOptOutKeyword({
+          profile,
+          channel: 'sms',
+          handle: sender,
+          text,
+        })
         // Domain (sales vs service) decides which Teambox segment the thread
         // lands in. Priority: explicit `?domain=` override → the profile's
         // configured `sms.inbound_domain` → 'service' (legacy default). A sales

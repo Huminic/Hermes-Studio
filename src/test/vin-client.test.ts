@@ -73,6 +73,41 @@ describe('flattenContact — dig ContactInformation', () => {
   it('is null-safe on garbage', () => {
     expect(flattenContact(null)).toMatchObject({ firstName: null, email: null, phone: null })
   })
+
+  it('parses the LIVE broker shape: an ARRAY with names/phone under ContactInformation', () => {
+    // Exact shape returned by the production vin_get_contact broker (2026-07-08):
+    // an array; FirstName/Phones/Emails live inside ContactInformation; phone field
+    // is "Number"; email field is "EmailAddress".
+    const live = [
+      {
+        ContactId: 1429588156,
+        DealerId: 21043,
+        ContactInformation: {
+          FirstName: 'Brian',
+          LastName: 'Young',
+          Emails: [{ EmailAddress: 'brian@example.com', EmailType: 'Primary' }],
+          Phones: [{ PhoneType: 'Cell', Number: '3522863676', Extension: '' }],
+        },
+      },
+    ]
+    const f = flattenContact(live)
+    expect(f).toMatchObject({
+      contactId: '1429588156',
+      firstName: 'Brian',
+      lastName: 'Young',
+      fullName: 'Brian Young',
+      email: 'brian@example.com',
+      phone: '3522863676',
+    })
+  })
+
+  it('live shape with empty Phones resolves phone=null (email-only lead)', () => {
+    const f = flattenContact([
+      { ContactId: 1, ContactInformation: { FirstName: 'Dew', Phones: [], Emails: [] } },
+    ])
+    expect(f.firstName).toBe('Dew')
+    expect(f.phone).toBeNull()
+  })
 })
 
 describe('resolveVinOrgId — config source + no-slug-fallback', () => {
