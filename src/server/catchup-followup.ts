@@ -6,10 +6,11 @@
  * and who have NOT already been followed up (the automation_runs ledger — makes
  * re-runs idempotent, so the script can "catch up" after a pause).
  *
- * Unlike the immediate text, the follow-up goes to ALL leads (operator: "all the
- * leads however get the 24 hour follow up 24 hours later") — so NO Vapi/Tavus
- * exclude is applied here. It is anniversary-timed and only bounded by the A2P
- * daytime window (08:00–21:00 CT).
+ * Unlike the immediate text, no Vapi/Tavus exclude is applied. It IS restricted to
+ * SALES leads by default (`salesOnly`, operator 2026-07-08): the follow-up is spoken
+ * by Caroline/sales, so SERVICE/PARTS leads are dropped (they have their own channel).
+ * Pass salesOnly:false to include them. Anniversary-timed; bounded by the A2P daytime
+ * window (08:00–21:00 CT).
  *
  * Pure/injectable: the VIN broker call and the ledger check are injectable so the
  * selection logic is unit-tested without a live broker or DB.
@@ -33,9 +34,13 @@ export type FollowupCandidate = {
   phone: string
   firstName: string | null
   vehicle: string | null
+  leadType: string | null
   createdUtc: string | null
   anniversaryMs: number
 }
+
+/** VIN leadType values treated as NON-sales (excluded when salesOnly). */
+const SERVICE_LEAD_TYPES = new Set(['SERVICE', 'PARTS_ORDER'])
 
 export type FollowupDrop = { leadId: string | null; phone: string | null; reason: string }
 
@@ -67,8 +72,12 @@ export async function gatherFollowupCandidates(input: {
   followupAutomationId?: string
   /** Look-back window in days (default 7). */
   days?: number
+  /** When true (default), exclude SERVICE/PARTS leads — the follow-up is spoken by
+   * the SALES agent (Caroline), so service leads should not get a sales check-in. */
+  salesOnly?: boolean
   deps?: FollowupGatherDeps
 }): Promise<FollowupGatherResult> {
+  const salesOnly = input.salesOnly ?? true
   const now = input.now ?? Date.now()
   const call = input.deps?.call ?? callCentralMcpTool
   const hasRun =
@@ -129,10 +138,26 @@ export async function gatherFollowupCandidates(input: {
     return Number.isFinite(t) && t + FOLLOWUP_AFTER_MS <= now
   })
 
-  const resolved = await resolveLeadNames(due, { orgId: org.orgId, cap: due.length, call })
+  const dropped: FollowupDrop[] = []
+
+  // Sales-only: drop SERVICE/PARTS leads (the follow-up is spoken by Caroline/sales).
+  const sendable = due.filter((l) => {
+    if (!salesOnly) return true
+    const lt = (str(l.leadType) ?? '').toUpperCase()
+    if (SERVICE_LEAD_TYPES.has(lt)) {
+      dropped.push({
+        leadId: str(l.leadId) ?? str(l.id),
+        phone: null,
+        reason: `excluded: ${lt.toLowerCase()} lead (sales follow-up)`,
+      })
+      return false
+    }
+    return true
+  })
+
+  const resolved = await resolveLeadNames(sendable, { orgId: org.orgId, cap: sendable.length, call })
 
   const candidates: FollowupCandidate[] = []
-  const dropped: FollowupDrop[] = []
   for (const lead of resolved) {
     const leadId = str(lead.leadId) ?? str(lead.id)
     const rawPhone = lead.resolved?.phone ?? null
@@ -156,6 +181,7 @@ export async function gatherFollowupCandidates(input: {
       phone,
       firstName: lead.resolved?.firstName ?? null,
       vehicle: leadVehicle(lead),
+      leadType: str(lead.leadType),
       createdUtc: created,
       anniversaryMs: created ? Date.parse(created) + FOLLOWUP_AFTER_MS : now,
     })

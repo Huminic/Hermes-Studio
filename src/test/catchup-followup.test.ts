@@ -46,11 +46,18 @@ function fakeCall(
   }
 }
 
-function lead(id: number, statusType: string, contactId: number, createdMsAgo: number): Lead {
+function lead(
+  id: number,
+  statusType: string,
+  contactId: number,
+  createdMsAgo: number,
+  leadType = 'INTERNET',
+): Lead {
   return {
     leadId: id,
     contact: `https://api.vinsolutions.com/contacts/id/${contactId}?dealerid=21043`,
     leadStatusType: statusType,
+    leadType,
     createdUtc: new Date(NOW - createdMsAgo).toISOString(),
   }
 }
@@ -82,7 +89,43 @@ describe('gatherFollowupCandidates', () => {
     expect(res.windowOpen).toBe(true)
   })
 
-  it('does NOT apply the Vapi/Tavus exclude — follow-up goes to all leads', async () => {
+  it('excludes SERVICE/PARTS leads by default (sales-only follow-up)', async () => {
+    const leads = [
+      lead(1, 'ACTIVE', 101, 30 * H, 'INTERNET'),
+      lead(2, 'ACTIVE', 102, 30 * H, 'SERVICE'),
+      lead(3, 'ACTIVE', 103, 30 * H, 'PARTS_ORDER'),
+      lead(4, 'ACTIVE', 104, 30 * H, 'PHONE'),
+    ]
+    const contacts = {
+      '101': { firstName: 'Ann', phone: '7313946907' },
+      '104': { firstName: 'Bob', phone: '2055550104' },
+    }
+    const res = await gatherFollowupCandidates({
+      profile: 'serra-honda',
+      now: NOW,
+      config: CONFIG,
+      deps: { call: fakeCall(leads, contacts), hasRun: () => false },
+    })
+    expect(res.candidates.map((c) => c.phone).sort()).toEqual(['+12055550104', '+17313946907'])
+    expect(res.dropped.map((d) => d.reason).sort()).toEqual([
+      'excluded: parts_order lead (sales follow-up)',
+      'excluded: service lead (sales follow-up)',
+    ])
+  })
+
+  it('includes SERVICE leads when salesOnly:false', async () => {
+    const leads = [lead(1, 'ACTIVE', 101, 30 * H, 'SERVICE')]
+    const res = await gatherFollowupCandidates({
+      profile: 'serra-honda',
+      now: NOW,
+      config: CONFIG,
+      salesOnly: false,
+      deps: { call: fakeCall(leads, { '101': { firstName: 'Sam', phone: '7313946907' } }), hasRun: () => false },
+    })
+    expect(res.candidates.map((c) => c.phone)).toEqual(['+17313946907'])
+  })
+
+  it('does NOT apply the Vapi/Tavus exclude — follow-up goes to all sales leads', async () => {
     // Even a lead that would be agent-handled for immediate still gets the follow-up.
     const leads = [lead(1, 'ACTIVE', 101, 30 * H)]
     const res = await gatherFollowupCandidates({

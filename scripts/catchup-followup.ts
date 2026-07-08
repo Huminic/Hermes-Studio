@@ -35,14 +35,23 @@ type Args = {
   days: number | null
   limit: number | null
   ignoreWindow: boolean
+  includeService: boolean
 }
 
 function parseArgs(argv: string[]): Args {
-  const a: Args = { profile: 'serra-honda', send: false, days: null, limit: null, ignoreWindow: false }
+  const a: Args = {
+    profile: 'serra-honda',
+    send: false,
+    days: null,
+    limit: null,
+    ignoreWindow: false,
+    includeService: false,
+  }
   for (let i = 0; i < argv.length; i++) {
     const t = argv[i]
     if (t === '--send') a.send = true
     else if (t === '--ignore-window') a.ignoreWindow = true
+    else if (t === '--include-service') a.includeService = true
     else if (t === '--profile') a.profile = argv[++i]
     else if (t.startsWith('--profile=')) a.profile = t.slice('--profile='.length)
     else if (t === '--days') a.days = Number(argv[++i])
@@ -78,12 +87,14 @@ async function main() {
     config,
     followupAutomationId: followup.id,
     days: args.days ?? undefined,
+    salesOnly: !args.includeService,
   })
 
   const limited = args.limit != null ? res.candidates.slice(0, args.limit) : res.candidates
 
   console.log(`\n=== CATCH-UP: 24-HOUR FOLLOW-UP (${args.profile}) ===`)
   console.log(`mode:        ${args.send ? 'SEND' : 'DRY-RUN (no sends)'}`)
+  console.log(`scope:       ${args.includeService ? 'ALL lead types' : 'SALES only (SERVICE/PARTS excluded)'}`)
   console.log(`window:      ${res.startDate} .. ${res.endDate}`)
   console.log(`automation:  ${followup.name} (${followup.id})`)
   console.log(
@@ -104,7 +115,7 @@ async function main() {
   for (const c of limited) {
     console.log(
       `  ${c.phone}  ${c.firstName ?? '(no name)'}  lead=${c.leadId ?? '?'}  ` +
-        `anniv=${fmtTs(c.anniversaryMs)}  ${c.vehicle ?? ''}`,
+        `type=${c.leadType ?? '?'}  anniv=${fmtTs(c.anniversaryMs)}  ${c.vehicle ?? ''}`,
     )
   }
   if (res.dropped.length) {
