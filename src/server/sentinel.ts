@@ -29,8 +29,10 @@ import {
   countReplyJobs,
   latestInboundAt,
   sampleRecentThreads,
+  recentOutboundAgentMessages,
 } from './messaging-hub-store'
 import { countCommsErrors } from './comms-log'
+import { detectPersonaViolations } from './persona-compliance'
 import {
   defaultProbeTextmagic,
   defaultGradeConversation,
@@ -158,6 +160,12 @@ export type SentinelStore = {
     now: number,
     limit: number,
   ) => Array<{ id: string; transcript: string }>
+  recentOutboundAgentMessages: (
+    profile: string,
+    sinceMs: number,
+    now: number,
+    limit: number,
+  ) => Array<{ thread_id: string; content: string; created_at: number }>
 }
 
 const DEFAULT_STORE: SentinelStore = {
@@ -169,6 +177,7 @@ const DEFAULT_STORE: SentinelStore = {
   countReplyJobs,
   latestInboundAt,
   sampleRecentThreads,
+  recentOutboundAgentMessages,
 }
 
 export type CheckCtx = {
@@ -925,6 +934,47 @@ export const conversationOpsCheck: SentinelCheck = {
   },
 }
 
+/** Persona-compliance scan window + cap. */
+const PERSONA_SCAN_WINDOW_MS = 60 * 60_000
+const PERSONA_SCAN_LIMIT = 200
+
+/**
+ * Persona compliance — deterministic pre-filter. Scans recent OUTBOUND agent SMS
+ * for hard-rule violations (quoting pricing/financing, claiming inventory/stock,
+ * quoting specs) via {@link detectPersonaViolations}. A pricing hit is critical;
+ * inventory/specs are warnings. Coarse guard — the AI grader handles nuance.
+ * Per profile.
+ */
+export const personaComplianceCheck: SentinelCheck = {
+  name: 'persona-compliance',
+  category: 'persona-compliance',
+  scope: 'profile',
+  async run({ profile, now, store }) {
+    if (!profile) return []
+    const msgs = store.recentOutboundAgentMessages(
+      profile,
+      PERSONA_SCAN_WINDOW_MS,
+      now,
+      PERSONA_SCAN_LIMIT,
+    )
+    const findings: Array<Finding> = []
+    for (const m of msgs) {
+      const violations = detectPersonaViolations(m.content)
+      for (const v of violations) {
+        findings.push({
+          key: `persona-compliance:${profile}:${m.thread_id}:${v.ruleClass}`,
+          severity: v.ruleClass === 'pricing' ? 'critical' : 'warning',
+          category: 'persona-compliance',
+          title: `Agent ${v.ruleClass} violation in an outbound text`,
+          detail: `${profile}: an outbound agent message on thread ${m.thread_id} appears to break the ${v.ruleClass} hard rule (matched "${v.match}"). Review — the agent must defer ${v.ruleClass} to a person.`,
+          profile,
+        })
+      }
+    }
+    return findings
+  },
+}
+
 /**
  * Conversation QC — content quality (AI). Grades a small sample of recent
  * agent-replied conversations, throttled to at most once per
@@ -1110,6 +1160,7 @@ export const DEFAULT_CHECKS: Array<SentinelCheck> = [
   automationsFiringCheck,
   dataCollectionCheck,
   conversationOpsCheck,
+  personaComplianceCheck,
   conversationQualityCheck,
   widgetSyntheticCheck,
   appHealthCheck,

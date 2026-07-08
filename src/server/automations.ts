@@ -215,6 +215,124 @@ async function gatedSend(input: {
 }
 
 /**
+ * Fire ONE immediate (new_lead) automation for a single lead: dedup, record the
+ * run, gated-send, update run status + last_triggered, audit to Brain. Extracted
+ * from {@link processNewLead} so the catch-up scripts can drive the immediate
+ * engagement text for exactly one automation (without also enrolling the 24h
+ * follow-up). Idempotent: a lead already in the run ledger is skipped.
+ *
+ * NOTE: this is window-AGNOSTIC — the immediate 7-9pm/8am send window is enforced
+ * by the caller (catch-up script / staged driver) via send-windows; the global
+ * comms-gate business-hours layer still applies inside gatedSend.
+ */
+export async function sendImmediateAutomation(input: {
+  profile: string
+  automation: MarketingAutomation
+  lead: AutomationLead
+  now?: number
+  dealer?: string
+  config?: StudioConfig
+  deps?: { dispatch?: Dispatch }
+}): Promise<AutomationOutcome> {
+  return sendAutomationNow({ ...input, isFirst: true })
+}
+
+/**
+ * Fire ONE automation for a single lead RIGHT NOW (not enroll): dedup, record the
+ * run, gated-send (`isFirst` picks the immediate vs. 24h-check-in template),
+ * update run status + last_triggered, audit to Brain. Powers both catch-up
+ * scripts (immediate via {@link sendImmediateAutomation}; follow-up with
+ * `isFirst:false`). Idempotent: a lead already in the run ledger is skipped.
+ *
+ * Window-AGNOSTIC — the 7-9pm/8am (immediate) and A2P-daytime (follow-up) send
+ * windows are enforced by the caller via send-windows; the global comms-gate
+ * business-hours layer still applies inside gatedSend.
+ */
+export async function sendAutomationNow(input: {
+  profile: string
+  automation: MarketingAutomation
+  lead: AutomationLead
+  isFirst: boolean
+  now?: number
+  dealer?: string
+  config?: StudioConfig
+  deps?: { dispatch?: Dispatch }
+}): Promise<AutomationOutcome> {
+  const now = input.now ?? Date.now()
+  const config = input.config ?? readStudioConfig(input.profile).config
+  const dealer = input.dealer ?? resolveDealerName(input.profile, config)
+  const dispatch = input.deps?.dispatch ?? dispatchOutbound
+  const automation = input.automation
+  const base = {
+    automation_id: automation.id,
+    name: automation.name,
+    trigger: automation.trigger,
+  }
+
+  const handle = handleForChannel(input.lead.handles, automation.channel)
+  if (!handle) {
+    return { ...base, action: 'skipped', reason: `lead has no ${automation.channel} handle` }
+  }
+  // Dedup: one fire per (automation, contact) — makes re-runs idempotent.
+  if (hasAutomationRun(input.profile, automation.id, input.lead.contact_handle)) {
+    return { ...base, action: 'skipped', reason: 'already processed for this lead' }
+  }
+
+  const run = createAutomationRun({
+    profile: input.profile,
+    automation_id: automation.id,
+    contact_handle: input.lead.contact_handle,
+    handles: input.lead.handles,
+    first_name: input.lead.first_name ?? null,
+    vehicle: input.lead.vehicle ?? null,
+    dealer,
+    due_at: now,
+  })
+  const sent = await gatedSend({
+    profile: input.profile,
+    automation,
+    handle,
+    firstName: input.lead.first_name ?? null,
+    dealer,
+    vehicle: input.lead.vehicle ?? null,
+    isFirst: input.isFirst,
+    dispatch,
+  })
+  const action: AutomationOutcome['action'] =
+    sent.status === 'sent'
+      ? 'sent'
+      : sent.status === 'blocked'
+        ? 'blocked'
+        : sent.status === 'failed'
+          ? 'failed'
+          : 'skipped'
+  updateAutomationRunStatus(
+    input.profile,
+    run.id,
+    action === 'sent' ? 'sent' : action === 'failed' ? 'failed' : 'skipped',
+  )
+  if (action === 'sent') {
+    updateAutomation(input.profile, automation.id, { last_triggered_at: now })
+  }
+  recordBrain({
+    profile: input.profile,
+    automation,
+    action,
+    channel: automation.channel,
+    handle,
+    thread_id: sent.thread_id,
+    status: sent.status,
+  })
+  return {
+    ...base,
+    action,
+    reason: `${input.isFirst ? 'immediate' : 'follow-up'} send via ${sent.via} (${sent.status})`,
+    channel: automation.channel,
+    thread_id: sent.thread_id,
+  }
+}
+
+/**
  * Process a freshly-detected lead against every ACTIVE automation. Immediate
  * (new_lead) automations send now; follow-up (lead_followup) automations enroll
  * the lead for a send after `wait_hours`. Draft/paused automations are ignored.
@@ -276,59 +394,19 @@ export async function processNewLead(input: {
       continue
     }
 
-    // new_lead → immediate gated send. Record the run (so re-detection dedups).
-    const run = createAutomationRun({
-      profile: input.profile,
-      automation_id: automation.id,
-      contact_handle: input.lead.contact_handle,
-      handles: input.lead.handles,
-      first_name: input.lead.first_name ?? null,
-      vehicle: input.lead.vehicle ?? null,
-      dealer,
-      due_at: now,
-    })
-    const sent = await gatedSend({
-      profile: input.profile,
-      automation,
-      handle,
-      firstName: input.lead.first_name ?? null,
-      dealer,
-      vehicle: input.lead.vehicle ?? null,
-      isFirst: true,
-      dispatch,
-    })
-    const action: AutomationOutcome['action'] =
-      sent.status === 'sent'
-        ? 'sent'
-        : sent.status === 'blocked'
-          ? 'blocked'
-          : sent.status === 'failed'
-            ? 'failed'
-            : 'skipped'
-    updateAutomationRunStatus(
-      input.profile,
-      run.id,
-      action === 'sent' ? 'sent' : action === 'failed' ? 'failed' : 'skipped',
+    // new_lead → immediate gated send (single code path shared with the
+    // catch-up script). Dedup + ledger + Brain audit live in the helper.
+    outcomes.push(
+      await sendImmediateAutomation({
+        profile: input.profile,
+        automation,
+        lead: input.lead,
+        now,
+        dealer,
+        config,
+        deps: input.deps,
+      }),
     )
-    if (action === 'sent') {
-      updateAutomation(input.profile, automation.id, { last_triggered_at: now })
-    }
-    recordBrain({
-      profile: input.profile,
-      automation,
-      action,
-      channel: automation.channel,
-      handle,
-      thread_id: sent.thread_id,
-      status: sent.status,
-    })
-    outcomes.push({
-      ...base,
-      action,
-      reason: `immediate send via ${sent.via} (${sent.status})`,
-      channel: automation.channel,
-      thread_id: sent.thread_id,
-    })
   }
   return outcomes
 }
