@@ -2162,6 +2162,39 @@ function rowToRun(r: {
   }
 }
 
+/**
+ * All distinct message `via` metadata values across every thread for a contact
+ * handle (canonical E.164). Used by the immediate-exclude filter to tell whether
+ * a lead was already handled by a conversational agent (vapi/tavus webhooks etc.)
+ * before it appeared in the VIN feed. Empty array when the contact is unknown.
+ */
+export function listContactVias(profile: string, contactHandle: string): string[] {
+  const out = new Set<string>()
+  const db = getDb(profile)
+  if (db) {
+    const rows = db
+      .prepare(
+        `SELECT m.metadata AS metadata
+           FROM messages m JOIN threads t ON m.thread_id = t.id
+          WHERE t.profile = ? AND t.contact_handle = ? AND m.metadata IS NOT NULL`,
+      )
+      .all(profile, contactHandle) as Array<{ metadata: string | null }>
+    for (const r of rows) {
+      const via = r.metadata ? (safeJson(r.metadata) as { via?: unknown }).via : undefined
+      if (typeof via === 'string' && via) out.add(via)
+    }
+    return [...out]
+  }
+  for (const thread of getStore(profile).threads.values()) {
+    if (thread.profile !== profile || thread.contact_handle !== contactHandle) continue
+    for (const m of thread.messages) {
+      const via = (m.metadata as { via?: unknown } | undefined)?.via
+      if (typeof via === 'string' && via) out.add(via)
+    }
+  }
+  return [...out]
+}
+
 /** Has this automation already enrolled this contact (dedup, any status)? */
 export function hasAutomationRun(
   profile: string,
@@ -2405,6 +2438,45 @@ export function countReplyJobs(
     return { failed: failed?.n ?? 0, queued: queued?.n ?? 0 }
   } catch {
     return { failed: 0, queued: 0 }
+  }
+}
+
+export type OutboundAgentMessage = { thread_id: string; content: string; created_at: number }
+
+/**
+ * Recent OUTBOUND agent/automation messages (direction=outbound, role=assistant)
+ * for persona-compliance scanning by the Sentinel. Bounded by window + limit.
+ */
+export function recentOutboundAgentMessages(
+  profile: string,
+  sinceMs: number,
+  now: number,
+  limit: number,
+): Array<OutboundAgentMessage> {
+  const cutoff = now - sinceMs
+  try {
+    const db = getDb(profile)
+    if (!db) {
+      const out: Array<OutboundAgentMessage> = []
+      for (const thread of getStore(profile).threads.values()) {
+        if (thread.profile !== profile) continue
+        for (const m of thread.messages) {
+          if (m.direction === 'outbound' && m.role === 'assistant' && m.created_at >= cutoff) {
+            out.push({ thread_id: thread.id, content: m.content, created_at: m.created_at })
+          }
+        }
+      }
+      return out.sort((a, b) => b.created_at - a.created_at).slice(0, limit)
+    }
+    return db
+      .prepare(
+        `SELECT thread_id, content, created_at FROM messages
+          WHERE direction='outbound' AND role='assistant' AND created_at >= ?
+          ORDER BY created_at DESC LIMIT ?`,
+      )
+      .all(cutoff, limit) as Array<OutboundAgentMessage>
+  } catch {
+    return []
   }
 }
 

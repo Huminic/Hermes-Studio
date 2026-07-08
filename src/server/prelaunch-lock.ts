@@ -17,14 +17,18 @@
  *     recorded with a reason in the hub before it ever reaches the gate.
  */
 
-/** E.164-ish normalisation: keep a leading + then digits, so "+1 (415) 555-0100"
- *  and "+14155550100" compare equal across VIN rows, hub handles, and the env. */
+import { toE164 } from './phone-handle'
+
+/** Canonical E.164 normalisation (shared with hub handles): "+1 (415) 555-0100",
+ *  "4155550100", and "+14155550100" all compare equal. Using the same canonical
+ *  form as producers means an allowlisted "+1…" number matches a candidate handle
+ *  regardless of the format it arrives in (a bare 10-digit test number still
+ *  matches). Falls back to a digits-only form if the value can't be parsed. */
 export function normalizePhone(p: unknown): string | null {
   if (typeof p !== 'string') return null
   const t = p.trim()
   if (!t) return null
-  const digits = t.replace(/[^\d+]/g, '')
-  return digits || null
+  return toE164(t) ?? (t.replace(/[^\d+]/g, '') || null)
 }
 
 export function prelaunchLockEngaged(): boolean {

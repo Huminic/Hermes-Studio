@@ -437,6 +437,32 @@ const BusinessHoursSchema = z
   .optional()
   .default({})
 
+/** Minutes-since-midnight for "HH:MM". */
+function hhmmToMin(s: string): number {
+  const [h, m] = s.split(':').map((x) => parseInt(x, 10))
+  return h * 60 + m
+}
+
+/**
+ * One send window. Refined to the A2P/CTIA/TCPA daytime envelope (08:00–21:00
+ * local): start < end (no overnight/wraparound) and neither bound in quiet hours.
+ * This makes it impossible to configure a window that would text during quiet
+ * hours (21:00–08:00), which the send-windows evaluator would otherwise honor.
+ */
+const SendWindowSchema = z
+  .object({
+    start: z.string().regex(/^\d{2}:\d{2}$/),
+    end: z.string().regex(/^\d{2}:\d{2}$/),
+  })
+  .refine(
+    (w) => {
+      const s = hhmmToMin(w.start)
+      const e = hhmmToMin(w.end)
+      return s < e && s >= hhmmToMin('08:00') && e <= hhmmToMin('21:00')
+    },
+    { message: 'send window must be within the A2P daytime envelope 08:00–21:00 (start < end)' },
+  )
+
 const CommsSchema = z
   .object({
     /** Master per-profile outbound switch (still gated by OUTBOUND_LIVE_ENABLED env). */
@@ -496,6 +522,30 @@ const CommsSchema = z
       )
       .optional()
       .default({}),
+    /**
+     * Per-message-class send windows (consumed by src/server/send-windows.ts —
+     * NOT by the global comms-gate business-hours layer). `immediate` gates the
+     * lead-engagement first-touch (after-hours only); `followup` gates the 24h
+     * follow-up (A2P daytime). `tz` defaults to business_hours.tz. When absent
+     * the module applies A2P-compliant defaults (immediate 08:00–09:00 +
+     * 19:00–21:00; followup 08:00–21:00). Quiet hours (21:00–08:00) are never
+     * inside a default window.
+     */
+    send_windows: z
+      .object({
+        tz: z.string().optional(),
+        immediate: z.array(SendWindowSchema).optional(),
+        followup: z.array(SendWindowSchema).optional(),
+      })
+      .optional(),
+    /**
+     * Hub `via` tags whose leads are ALREADY handled by a conversational agent
+     * and must be EXCLUDED from the immediate lead-engagement text (they are
+     * engaged by Vapi/Tavus directly). Default: vapi-webhook + tavus-webhook
+     * (voice + video, incl. widget video). Add 'widget-callback' to also exclude
+     * call-back requests. Consumed by src/server/immediate-exclude.ts.
+     */
+    immediate_exclude_via: z.array(z.string()).optional(),
   })
   .optional()
   .default({})
@@ -702,6 +752,10 @@ export function defaultStudioConfig(profile: string): StudioConfig {
       business_hours: { tz: 'America/New_York', start: '08:00', end: '21:00' },
       vin_check: true,
       vin_check_fail_open: false,
+      sms_consent_check: false,
+      sms_opt_in_statuses: [],
+      sms_consent_mode: 'either',
+      sms_block_on_do_not_mail: false,
       rate_caps: {},
     },
     sms_triggers: {

@@ -35,6 +35,7 @@ function fakeStore(over: Partial<SentinelStore> = {}): SentinelStore {
     countReplyJobs: () => ({ failed: 0, queued: 0 }),
     latestInboundAt: () => null,
     sampleRecentThreads: () => [],
+    recentOutboundAgentMessages: () => [],
     ...over,
   }
 }
