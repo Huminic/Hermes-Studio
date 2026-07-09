@@ -30,9 +30,13 @@ import {
   latestInboundAt,
   sampleRecentThreads,
   recentOutboundAgentMessages,
+  listOpenHolds,
+  type AgentReplyHold,
 } from './messaging-hub-store'
 import { countCommsErrors } from './comms-log'
 import { detectPersonaViolations } from './persona-compliance'
+import { listCustomerWikiTree, readCustomerWikiFile, type CustomerWikiNode } from './customer-wiki'
+import { extractFrontmatter } from '../lib/frontmatter'
 import {
   defaultProbeTextmagic,
   defaultGradeConversation,
@@ -166,6 +170,61 @@ export type SentinelStore = {
     now: number,
     limit: number,
   ) => Array<{ thread_id: string; content: string; created_at: number }>
+  /** Open Semantic Guardian / text-gate holds for the profile (stale-hold check). */
+  listOpenHolds: (profile: string) => Array<AgentReplyHold>
+  /** Company-wiki nodes with their overlay frontmatter (grounding + integrity checks). */
+  listWikiNodes: (profile: string) => Array<SentinelWikiNode>
+}
+
+/** A company-wiki node as the Sentinel sees it (overlay frontmatter fields). */
+export type SentinelWikiNode = {
+  path: string
+  id?: string
+  nodeType?: string
+  status?: string
+  domain?: string
+  sourceOfTruth?: string
+  /** related_nodes + typed_relationships.target ids this node points at. */
+  related: Array<string>
+}
+
+function defaultListWikiNodes(profile: string): Array<SentinelWikiNode> {
+  const flatten = (nodes: Array<CustomerWikiNode>): Array<CustomerWikiNode> =>
+    nodes.flatMap((n) =>
+      n.type === 'file' ? [n] : n.children ? flatten(n.children) : [],
+    )
+  try {
+    return flatten(listCustomerWikiTree(profile).tree).map((f) => {
+      const read = readCustomerWikiFile(profile, f.path)
+      const fm =
+        read.ok && read.content
+          ? (extractFrontmatter(read.content).frontmatter ?? {})
+          : {}
+      const rel = fm as Record<string, unknown>
+      const related = [
+        ...(Array.isArray(rel.related_nodes) ? rel.related_nodes : []),
+        ...(Array.isArray(rel.typed_relationships)
+          ? (rel.typed_relationships as Array<Record<string, unknown>>).map(
+              (r) => r?.target,
+            )
+          : []),
+      ].filter((x): x is string => typeof x === 'string')
+      return {
+        path: f.path,
+        id: typeof rel.id === 'string' ? rel.id : undefined,
+        nodeType: typeof rel.node_type === 'string' ? rel.node_type : undefined,
+        status: typeof rel.status === 'string' ? rel.status : undefined,
+        domain: typeof rel.domain === 'string' ? rel.domain : undefined,
+        sourceOfTruth:
+          typeof rel.source_of_truth === 'string'
+            ? rel.source_of_truth
+            : undefined,
+        related,
+      }
+    })
+  } catch {
+    return []
+  }
 }
 
 const DEFAULT_STORE: SentinelStore = {
@@ -178,6 +237,8 @@ const DEFAULT_STORE: SentinelStore = {
   latestInboundAt,
   sampleRecentThreads,
   recentOutboundAgentMessages,
+  listOpenHolds: (profile) => listOpenHolds(profile),
+  listWikiNodes: defaultListWikiNodes,
 }
 
 export type CheckCtx = {
@@ -1151,6 +1212,109 @@ export const widgetSyntheticCheck: SentinelCheck = {
   },
 }
 
+const HOLD_STALE_MS = 24 * 60 * 60_000 // a held reply unresolved > 24h ⇒ customer waiting
+
+/**
+ * A Semantic Guardian / text-gate hold that has gone unresolved for > 24h — a
+ * real customer is still waiting on an answer. The operator was right to trust
+ * the Sentinel; this is the check that watches the thing we built.
+ */
+export const staleHoldCheck: SentinelCheck = {
+  name: 'guardian-stale-hold',
+  category: 'guardian',
+  scope: 'profile',
+  async run({ profile, now, store }) {
+    if (!profile) return []
+    const findings: Array<Finding> = []
+    for (const h of store.listOpenHolds(profile)) {
+      const age = now - h.created_at
+      if (age > HOLD_STALE_MS) {
+        findings.push({
+          key: `guardian:stale-hold:${profile}:${h.id}`,
+          severity: 'critical',
+          category: 'guardian',
+          title: 'Held reply unresolved > 24h',
+          detail: `${profile}: a ${h.channel} reply (${h.reason}) on thread ${h.thread_id} has been held ${Math.round(age / 3600_000)}h. Patch the wiki node to release it, or reply by hand.`,
+          profile,
+        })
+      }
+    }
+    return findings
+  },
+}
+
+/**
+ * Autonomous reply is only as good as the canonical knowledge behind it. If a
+ * store has wiki nodes but none are canonical, Caroline can ground nothing and
+ * will hold every fact-ask — surface that so the operator promotes verified nodes.
+ */
+export const groundingReadinessCheck: SentinelCheck = {
+  name: 'grounding-readiness',
+  category: 'grounding',
+  scope: 'profile',
+  async run({ profile, store }) {
+    if (!profile) return []
+    const nodes = store.listWikiNodes(profile)
+    const canonical = nodes.filter((n) => n.status === 'canonical')
+    if (nodes.length > 0 && canonical.length === 0) {
+      return [
+        {
+          key: `grounding:no-canonical:${profile}`,
+          severity: 'warning',
+          category: 'grounding',
+          title: 'No canonical knowledge to ground on',
+          detail: `${profile}: ${nodes.length} wiki node(s) exist but none are status:canonical — Caroline cannot ground any answer and will hold fact-asks. Promote verified nodes.`,
+          profile,
+        },
+      ]
+    }
+    return []
+  },
+}
+
+/**
+ * Overlay integrity: a canonical node must carry the contract fields, and every
+ * relationship target must resolve to a real node id (no orphans).
+ */
+export const wikiNodeIntegrityCheck: SentinelCheck = {
+  name: 'wiki-node-integrity',
+  category: 'wiki',
+  scope: 'profile',
+  async run({ profile, store }) {
+    if (!profile) return []
+    const nodes = store.listWikiNodes(profile)
+    const ids = new Set(
+      nodes.map((n) => n.id).filter((x): x is string => !!x),
+    )
+    const findings: Array<Finding> = []
+    for (const n of nodes) {
+      if (n.status === 'canonical' && (!n.id || !n.sourceOfTruth || !n.nodeType)) {
+        findings.push({
+          key: `wiki:incomplete:${profile}:${n.path}`,
+          severity: 'warning',
+          category: 'wiki',
+          title: 'Canonical node missing overlay fields',
+          detail: `${profile}: ${n.path} is canonical but missing id/source_of_truth/node_type.`,
+          profile,
+        })
+      }
+      for (const t of n.related) {
+        if (!ids.has(t)) {
+          findings.push({
+            key: `wiki:orphan:${profile}:${n.path}:${t}`,
+            severity: 'warning',
+            category: 'wiki',
+            title: 'Wiki node references a missing node',
+            detail: `${profile}: ${n.path} → ${t} does not resolve to a node id.`,
+            profile,
+          })
+        }
+      }
+    }
+    return findings
+  },
+}
+
 export const DEFAULT_CHECKS: Array<SentinelCheck> = [
   commsCronLivenessCheck,
   threadSlaCheck,
@@ -1164,6 +1328,9 @@ export const DEFAULT_CHECKS: Array<SentinelCheck> = [
   conversationQualityCheck,
   widgetSyntheticCheck,
   appHealthCheck,
+  staleHoldCheck,
+  groundingReadinessCheck,
+  wikiNodeIntegrityCheck,
 ]
 
 // ── Orchestrator ─────────────────────────────────────────────────────────

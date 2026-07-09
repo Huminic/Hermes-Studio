@@ -87,10 +87,53 @@ export type AgentReplyJob = {
   message_id: string
   agent_id: string
   channel: string
-  status: 'queued' | 'sent' | 'rejected' | 'failed'
+  status: 'queued' | 'sent' | 'rejected' | 'failed' | 'held' | 'deferred'
   attempted_at: number | null
   sent_at: number | null
   reason: string | null
+  /**
+   * Wall-clock ms the job was enqueued (closes the text-gate debt: without it a
+   * job stuck in `queued`/`held`/`deferred` can't be aged). Nullable for rows
+   * written before the migration.
+   */
+  enqueued_at: number | null
+}
+
+export type ReplyHoldReason = 'unbacked' | 'outside-window'
+export type ReplyHoldStatus =
+  | 'held'
+  | 'releasing'
+  | 'released'
+  | 'escalated'
+  | 'cancelled'
+
+/**
+ * A reply the Semantic Guardian / text-gate is holding instead of sending:
+ *  - `unbacked`      — the model would assert a dealer fact with no canonical
+ *                      wiki backing; held until the knowledge is patched.
+ *  - `outside-window`— generated in-scope but outside the TCPA window; the drafted
+ *                      text is stored in `pending_reply` and released at window open.
+ * Release is exactly-once: `UNIQUE(profile,message_id,agent_id)` blocks a second
+ * hold, and an atomic `held → releasing` claim blocks a second release.
+ */
+export type AgentReplyHold = {
+  id: string
+  profile: string
+  thread_id: string
+  message_id: string
+  agent_id: string
+  channel: string
+  reason: ReplyHoldReason
+  pending_reply: string | null
+  status: ReplyHoldStatus
+  reply_job_id: string | null
+  created_at: number
+  notified_at: number | null
+  last_recheck_at: number | null
+  recheck_count: number
+  released_at: number | null
+  released_job_id: string | null
+  escalated_at: number | null
 }
 
 const _dbs = new Map<string, SqliteDb | null>()
@@ -127,6 +170,18 @@ function getDb(profile: string): SqliteDb | null {
     db.pragma('synchronous = NORMAL')
     db.pragma('foreign_keys = ON')
     db.exec(SCHEMA)
+    // Guarded additive migration: older DBs have agent_reply_jobs WITHOUT
+    // enqueued_at (CREATE TABLE IF NOT EXISTS won't add a column). Add it once.
+    try {
+      const cols = db
+        .prepare(`PRAGMA table_info(agent_reply_jobs)`)
+        .all() as Array<{ name: string }>
+      if (!cols.some((c) => c.name === 'enqueued_at')) {
+        db.exec(`ALTER TABLE agent_reply_jobs ADD COLUMN enqueued_at INTEGER`)
+      }
+    } catch {
+      // migration best-effort; the column is nullable so reads still work
+    }
     _dbs.set(profile, db)
     return db
   } catch {
@@ -237,9 +292,36 @@ CREATE TABLE IF NOT EXISTS agent_reply_jobs (
   status       TEXT NOT NULL,
   attempted_at INTEGER,
   sent_at      INTEGER,
-  reason       TEXT
+  reason       TEXT,
+  enqueued_at  INTEGER
 );
 CREATE INDEX IF NOT EXISTS agent_reply_jobs_status ON agent_reply_jobs(status, attempted_at);
+CREATE INDEX IF NOT EXISTS agent_reply_jobs_dedup ON agent_reply_jobs(thread_id, message_id, agent_id);
+
+-- Semantic Guardian / text-gate holds: replies deferred instead of sent (see
+-- AgentReplyHold). UNIQUE(profile,message_id,agent_id) makes a redelivered
+-- inbound webhook a no-op; the atomic held→releasing claim makes release once.
+CREATE TABLE IF NOT EXISTS agent_reply_holds (
+  id              TEXT PRIMARY KEY,
+  profile         TEXT NOT NULL,
+  thread_id       TEXT NOT NULL,
+  message_id      TEXT NOT NULL,
+  agent_id        TEXT NOT NULL,
+  channel         TEXT NOT NULL,
+  reason          TEXT NOT NULL,
+  pending_reply   TEXT,
+  status          TEXT NOT NULL DEFAULT 'held',
+  reply_job_id    TEXT,
+  created_at      INTEGER NOT NULL,
+  notified_at     INTEGER,
+  last_recheck_at INTEGER,
+  recheck_count   INTEGER NOT NULL DEFAULT 0,
+  released_at     INTEGER,
+  released_job_id TEXT,
+  escalated_at    INTEGER
+);
+CREATE UNIQUE INDEX IF NOT EXISTS agent_reply_holds_uniq ON agent_reply_holds(profile, message_id, agent_id);
+CREATE INDEX IF NOT EXISTS agent_reply_holds_active ON agent_reply_holds(profile, status, last_recheck_at);
 
 CREATE TABLE IF NOT EXISTS lead_flow (
   profile     TEXT PRIMARY KEY,
@@ -328,6 +410,7 @@ type InMemoryStore = {
   }>
   subscriptions: Map<string, AgentSubscription>
   replyJobs: Map<string, AgentReplyJob>
+  replyHolds: Map<string, AgentReplyHold>
   deliveries: Map<string, { id: string; campaign_id: string; contact_id: string; thread_id: string | null; status: string; sent_at: number | null; error: string | null }>
   leadFlow: LeadFlowRow | null
   enrollments: Map<string, FlowEnrollment>
@@ -347,6 +430,7 @@ function getStore(profile: string): InMemoryStore {
       campaigns: new Map(),
       subscriptions: new Map(),
       replyJobs: new Map(),
+      replyHolds: new Map(),
       deliveries: new Map(),
       leadFlow: null,
       enrollments: new Map(),
@@ -1327,6 +1411,7 @@ export function enqueueAgentReplyJob(input: {
   agent_id: string
   channel: string
   profile: string
+  now?: number
 }): AgentReplyJob {
   const job: AgentReplyJob = {
     id: randomUUID(),
@@ -1338,11 +1423,12 @@ export function enqueueAgentReplyJob(input: {
     attempted_at: null,
     sent_at: null,
     reason: null,
+    enqueued_at: input.now ?? Date.now(),
   }
   const db = getDb(input.profile)
   if (db) {
     db.prepare(
-      `INSERT INTO agent_reply_jobs(id,thread_id,message_id,agent_id,channel,status,attempted_at,sent_at,reason) VALUES(?,?,?,?,?,?,?,?,?)`,
+      `INSERT INTO agent_reply_jobs(id,thread_id,message_id,agent_id,channel,status,attempted_at,sent_at,reason,enqueued_at) VALUES(?,?,?,?,?,?,?,?,?,?)`,
     ).run(
       job.id,
       job.thread_id,
@@ -1353,6 +1439,7 @@ export function enqueueAgentReplyJob(input: {
       job.attempted_at,
       job.sent_at,
       job.reason,
+      job.enqueued_at,
     )
   } else {
     getStore(input.profile).replyJobs.set(job.id, job)
@@ -1408,6 +1495,328 @@ export function listQueuedReplyJobs(profile: string): Array<AgentReplyJob> {
   return [...getStore(profile).replyJobs.values()].filter(
     (j) => j.status === 'queued',
   )
+}
+
+/**
+ * Find an existing reply job for this exact inbound (thread+message+agent),
+ * newest first. The entry-guard in maybeAutonomousReply uses it so a redelivered
+ * inbound webhook (or a retry) does not enqueue a second job / double-send.
+ */
+export function findReplyJob(
+  profile: string,
+  threadId: string,
+  messageId: string,
+  agentId: string,
+): AgentReplyJob | null {
+  const db = getDb(profile)
+  if (db) {
+    return (
+      (db
+        .prepare(
+          `SELECT * FROM agent_reply_jobs WHERE thread_id=? AND message_id=? AND agent_id=? ORDER BY enqueued_at DESC, id DESC LIMIT 1`,
+        )
+        .get(threadId, messageId, agentId) as AgentReplyJob | undefined) ?? null
+    )
+  }
+  const jobs = [...getStore(profile).replyJobs.values()].filter(
+    (j) =>
+      j.thread_id === threadId &&
+      j.message_id === messageId &&
+      j.agent_id === agentId,
+  )
+  return jobs.length ? jobs[jobs.length - 1] : null
+}
+
+export function getReplyJobById(
+  profile: string,
+  id: string,
+): AgentReplyJob | null {
+  const db = getDb(profile)
+  if (db) {
+    return (
+      (db
+        .prepare(`SELECT * FROM agent_reply_jobs WHERE id=?`)
+        .get(id) as AgentReplyJob | undefined) ?? null
+    )
+  }
+  return getStore(profile).replyJobs.get(id) ?? null
+}
+
+// ─── Semantic Guardian / text-gate holds ────────────────────────────────────
+
+function rowToHold(r: Record<string, unknown>): AgentReplyHold {
+  return {
+    id: String(r.id),
+    profile: String(r.profile),
+    thread_id: String(r.thread_id),
+    message_id: String(r.message_id),
+    agent_id: String(r.agent_id),
+    channel: String(r.channel),
+    reason: r.reason as ReplyHoldReason,
+    pending_reply: (r.pending_reply as string | null) ?? null,
+    status: r.status as ReplyHoldStatus,
+    reply_job_id: (r.reply_job_id as string | null) ?? null,
+    created_at: Number(r.created_at),
+    notified_at: r.notified_at == null ? null : Number(r.notified_at),
+    last_recheck_at: r.last_recheck_at == null ? null : Number(r.last_recheck_at),
+    recheck_count: Number(r.recheck_count ?? 0),
+    released_at: r.released_at == null ? null : Number(r.released_at),
+    released_job_id: (r.released_job_id as string | null) ?? null,
+    escalated_at: r.escalated_at == null ? null : Number(r.escalated_at),
+  }
+}
+
+export function getGuardianHold(
+  profile: string,
+  messageId: string,
+  agentId: string,
+): AgentReplyHold | null {
+  const db = getDb(profile)
+  if (db) {
+    const r = db
+      .prepare(
+        `SELECT * FROM agent_reply_holds WHERE profile=? AND message_id=? AND agent_id=?`,
+      )
+      .get(profile, messageId, agentId) as Record<string, unknown> | undefined
+    return r ? rowToHold(r) : null
+  }
+  for (const h of getStore(profile).replyHolds.values()) {
+    if (h.message_id === messageId && h.agent_id === agentId) return h
+  }
+  return null
+}
+
+/**
+ * Create a hold, idempotent on UNIQUE(profile,message_id,agent_id). Returns the
+ * hold that now exists for that inbound×agent — the freshly-inserted one, or the
+ * pre-existing one when a duplicate inbound raced in (so callers never create a
+ * second hold or a second pending reply).
+ */
+export function createGuardianHold(input: {
+  profile: string
+  thread_id: string
+  message_id: string
+  agent_id: string
+  channel: string
+  reason: ReplyHoldReason
+  pending_reply?: string | null
+  reply_job_id?: string | null
+  now?: number
+}): { hold: AgentReplyHold; created: boolean } {
+  const now = input.now ?? Date.now()
+  const existing = getGuardianHold(input.profile, input.message_id, input.agent_id)
+  if (existing) return { hold: existing, created: false }
+  const hold: AgentReplyHold = {
+    id: randomUUID(),
+    profile: input.profile,
+    thread_id: input.thread_id,
+    message_id: input.message_id,
+    agent_id: input.agent_id,
+    channel: input.channel,
+    reason: input.reason,
+    pending_reply: input.pending_reply ?? null,
+    status: 'held',
+    reply_job_id: input.reply_job_id ?? null,
+    created_at: now,
+    notified_at: null,
+    last_recheck_at: null,
+    recheck_count: 0,
+    released_at: null,
+    released_job_id: null,
+    escalated_at: null,
+  }
+  const db = getDb(input.profile)
+  if (db) {
+    try {
+      db.prepare(
+        `INSERT INTO agent_reply_holds(id,profile,thread_id,message_id,agent_id,channel,reason,pending_reply,status,reply_job_id,created_at,notified_at,last_recheck_at,recheck_count,released_at,released_job_id,escalated_at)
+         VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      ).run(
+        hold.id, hold.profile, hold.thread_id, hold.message_id, hold.agent_id,
+        hold.channel, hold.reason, hold.pending_reply, hold.status, hold.reply_job_id,
+        hold.created_at, hold.notified_at, hold.last_recheck_at, hold.recheck_count,
+        hold.released_at, hold.released_job_id, hold.escalated_at,
+      )
+    } catch {
+      // UNIQUE race: a concurrent inbound inserted first — return that row.
+      const e = getGuardianHold(input.profile, input.message_id, input.agent_id)
+      if (e) return { hold: e, created: false }
+      throw new Error('createGuardianHold: insert failed and no existing row')
+    }
+  } else {
+    getStore(input.profile).replyHolds.set(hold.id, hold)
+  }
+  return { hold, created: true }
+}
+
+/** Holds still awaiting recheck/release (status='held'), oldest first. */
+export function listActiveHolds(profile: string): Array<AgentReplyHold> {
+  const db = getDb(profile)
+  if (db) {
+    return (
+      db
+        .prepare(
+          `SELECT * FROM agent_reply_holds WHERE profile=? AND status='held' ORDER BY created_at ASC`,
+        )
+        .all(profile) as Array<Record<string, unknown>>
+    ).map(rowToHold)
+  }
+  return [...getStore(profile).replyHolds.values()]
+    .filter((h) => h.status === 'held')
+    .sort((a, b) => a.created_at - b.created_at)
+}
+
+/** All non-terminal holds — for Sentinel age/stale checks. */
+export function listOpenHolds(profile: string): Array<AgentReplyHold> {
+  const db = getDb(profile)
+  if (db) {
+    return (
+      db
+        .prepare(
+          `SELECT * FROM agent_reply_holds WHERE profile=? AND status IN ('held','releasing','escalated') ORDER BY created_at ASC`,
+        )
+        .all(profile) as Array<Record<string, unknown>>
+    ).map(rowToHold)
+  }
+  return [...getStore(profile).replyHolds.values()]
+    .filter(
+      (h) =>
+        h.status === 'held' ||
+        h.status === 'releasing' ||
+        h.status === 'escalated',
+    )
+    .sort((a, b) => a.created_at - b.created_at)
+}
+
+/** Holds stuck mid-release (status='releasing') — crash-recovery candidates. */
+export function listReleasingHolds(profile: string): Array<AgentReplyHold> {
+  const db = getDb(profile)
+  if (db) {
+    return (
+      db
+        .prepare(
+          `SELECT * FROM agent_reply_holds WHERE profile=? AND status='releasing' ORDER BY created_at ASC`,
+        )
+        .all(profile) as Array<Record<string, unknown>>
+    ).map(rowToHold)
+  }
+  return [...getStore(profile).replyHolds.values()]
+    .filter((h) => h.status === 'releasing')
+    .sort((a, b) => a.created_at - b.created_at)
+}
+
+/**
+ * Atomically claim a held row for release: held → releasing. Returns true for the
+ * single caller that wins; false if already claimed/released/cancelled. This is
+ * the release-exactly-once guarantee under concurrent ticks / restart.
+ */
+export function claimHoldForRelease(profile: string, id: string): boolean {
+  const db = getDb(profile)
+  if (db) {
+    const res = db
+      .prepare(
+        `UPDATE agent_reply_holds SET status='releasing' WHERE id=? AND status='held'`,
+      )
+      .run(id)
+    return res.changes === 1
+  }
+  const h = getStore(profile).replyHolds.get(id)
+  if (h && h.status === 'held') {
+    h.status = 'releasing'
+    return true
+  }
+  return false
+}
+
+/** Revert a claimed row back to held (gate blocked the send, or crash recovery). */
+export function revertHoldToHeld(profile: string, id: string): void {
+  const db = getDb(profile)
+  if (db) {
+    db.prepare(
+      `UPDATE agent_reply_holds SET status='held' WHERE id=? AND status='releasing'`,
+    ).run(id)
+    return
+  }
+  const h = getStore(profile).replyHolds.get(id)
+  if (h && h.status === 'releasing') h.status = 'held'
+}
+
+export function markHoldReleased(
+  profile: string,
+  id: string,
+  releasedJobId: string | null,
+  now: number,
+): void {
+  const db = getDb(profile)
+  if (db) {
+    db.prepare(
+      `UPDATE agent_reply_holds SET status='released', released_at=?, released_job_id=? WHERE id=?`,
+    ).run(now, releasedJobId, id)
+    return
+  }
+  const h = getStore(profile).replyHolds.get(id)
+  if (h) {
+    h.status = 'released'
+    h.released_at = now
+    h.released_job_id = releasedJobId
+  }
+}
+
+/**
+ * Stamp escalated_at (operator alerted about age). Status stays 'held' so the
+ * hold keeps re-checking and still auto-releases once the knowledge is patched.
+ */
+export function markHoldEscalated(profile: string, id: string, now: number): void {
+  const db = getDb(profile)
+  if (db) {
+    db.prepare(
+      `UPDATE agent_reply_holds SET escalated_at=? WHERE id=?`,
+    ).run(now, id)
+    return
+  }
+  const h = getStore(profile).replyHolds.get(id)
+  if (h) h.escalated_at = now
+}
+
+export function markHoldNotified(profile: string, id: string, now: number): void {
+  const db = getDb(profile)
+  if (db) {
+    db.prepare(`UPDATE agent_reply_holds SET notified_at=? WHERE id=?`).run(now, id)
+    return
+  }
+  const h = getStore(profile).replyHolds.get(id)
+  if (h) h.notified_at = now
+}
+
+export function recordHoldRecheck(profile: string, id: string, now: number): void {
+  const db = getDb(profile)
+  if (db) {
+    db.prepare(
+      `UPDATE agent_reply_holds SET last_recheck_at=?, recheck_count=recheck_count+1 WHERE id=?`,
+    ).run(now, id)
+    return
+  }
+  const h = getStore(profile).replyHolds.get(id)
+  if (h) {
+    h.last_recheck_at = now
+    h.recheck_count += 1
+  }
+}
+
+/** Cancel a hold (opt-out / human takeover / dead thread) — never releases. */
+export function cancelHold(profile: string, id: string, now: number): void {
+  const db = getDb(profile)
+  if (db) {
+    db.prepare(
+      `UPDATE agent_reply_holds SET status='cancelled', released_at=? WHERE id=? AND status IN ('held','releasing')`,
+    ).run(now, id)
+    return
+  }
+  const h = getStore(profile).replyHolds.get(id)
+  if (h && (h.status === 'held' || h.status === 'releasing')) {
+    h.status = 'cancelled'
+    h.released_at = now
+  }
 }
 
 // ─── Report aggregates (P3 native reports) ──────────────────────────────────

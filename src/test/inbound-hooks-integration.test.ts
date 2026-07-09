@@ -78,7 +78,21 @@ beforeEach(async () => {
   )
   fs.writeFileSync(
     path.join(dir, 'studio.yaml'),
-    'branding:\n  persona_name: Serra Honda\n',
+    [
+      'branding:',
+      '  persona_name: Serra Honda',
+      // All-day window: this suite exercises the CommGate/kill-switch path, which
+      // requires the reply to REACH the gate. Without this, the text-gate would
+      // (correctly) defer any regulated reply generated outside business hours,
+      // making the gate assertions wall-clock-dependent. Text-gate deferral has
+      // its own dedicated coverage in guardian-text-gate.test.ts.
+      'comms:',
+      '  business_hours:',
+      '    tz: America/Chicago',
+      "    start: '00:00'",
+      "    end: '23:59'",
+      '',
+    ].join('\n'),
   )
   const store = await import('@/server/messaging-hub-store')
   store._resetForTests()
