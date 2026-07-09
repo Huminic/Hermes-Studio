@@ -136,7 +136,7 @@ const DEAD_RESPONSE_FALLBACK =
  */
 const PERSONA_BLOCK_FALLBACK =
   process.env.AUTONOMOUS_REPLY_PRICING_BLOCK_TEXT ||
-  "Our team will get you the best price and financing options when you come in — want me to have a salesperson reach out to set that up?"
+  "I'm here to make sure your buying experience is flawless — the team has the tools to get you exact numbers fast. Would a call be better this afternoon or tomorrow morning?"
 
 /**
  * Read a key from the shared `~/.hermes/.env` on the studio volume. Mirrors
