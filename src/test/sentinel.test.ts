@@ -15,6 +15,9 @@ import {
   conversationQualityCheck,
   widgetSyntheticCheck,
   appHealthCheck,
+  staleHoldCheck,
+  groundingReadinessCheck,
+  wikiNodeIntegrityCheck,
   listSentinelFindings,
   type SentinelCheck,
   type SentinelStore,
@@ -22,6 +25,7 @@ import {
   type BrainLike,
 } from '@/server/sentinel'
 import { openBrain } from '@/server/brain-store'
+import type { AgentReplyHold } from '@/server/messaging-hub-store'
 
 const HOUR_MS = 60 * 60_000
 
@@ -36,6 +40,8 @@ function fakeStore(over: Partial<SentinelStore> = {}): SentinelStore {
     latestInboundAt: () => null,
     sampleRecentThreads: () => [],
     recentOutboundAgentMessages: () => [],
+    listOpenHolds: () => [],
+    listWikiNodes: () => [],
     ...over,
   }
 }
@@ -829,5 +835,75 @@ describe('sentinel — SLA recency window', () => {
       now: NOW,
     })
     expect(s.findings).toHaveLength(0)
+  })
+})
+
+describe('sentinel — Guardian / grounding / wiki-integrity checks', () => {
+  const H = 60 * 60_000
+  function heldReply(over: Partial<AgentReplyHold> = {}): AgentReplyHold {
+    return {
+      id: 'h1', profile: 'p1', thread_id: 't1', message_id: 'm1', agent_id: 'caroline',
+      channel: 'sms', reason: 'unbacked', pending_reply: null, status: 'held',
+      reply_job_id: null, created_at: NOW, notified_at: null, last_recheck_at: null,
+      recheck_count: 0, released_at: null, released_job_id: null, escalated_at: null,
+      ...over,
+    }
+  }
+
+  it('stale-hold: a hold older than 24h is critical; a fresh hold is clean', async () => {
+    const stale = await runSentinelPass({
+      brain, profiles: ['p1'], checks: [staleHoldCheck],
+      store: fakeStore({ listOpenHolds: () => [heldReply({ created_at: NOW - 25 * H })] }),
+      alertTo: [], now: NOW,
+    })
+    expect(stale.findings.map((f) => f.key)).toContain('guardian:stale-hold:p1:h1')
+    expect(stale.findings[0].severity).toBe('critical')
+
+    const fresh = await runSentinelPass({
+      brain, profiles: ['p1'], checks: [staleHoldCheck],
+      store: fakeStore({ listOpenHolds: () => [heldReply({ created_at: NOW - 1 * H })] }),
+      alertTo: [], now: NOW + 2 * H,
+    })
+    expect(fresh.findings).toHaveLength(0)
+  })
+
+  it('grounding-readiness: nodes exist but none canonical → warning; a canonical node → clean', async () => {
+    const warn = await runSentinelPass({
+      brain, profiles: ['p1'], checks: [groundingReadinessCheck],
+      store: fakeStore({ listWikiNodes: () => [{ path: 'sales/x.md', status: 'draft', related: [] }] }),
+      alertTo: [], now: NOW,
+    })
+    expect(warn.findings.map((f) => f.key)).toContain('grounding:no-canonical:p1')
+
+    const ok = await runSentinelPass({
+      brain, profiles: ['p1'], checks: [groundingReadinessCheck],
+      store: fakeStore({ listWikiNodes: () => [{ path: 'sales/x.md', id: 'sales.x', nodeType: 'knowledge', status: 'canonical', sourceOfTruth: 'ops', related: [] }] }),
+      alertTo: [], now: NOW + 2 * H,
+    })
+    expect(ok.findings).toHaveLength(0)
+  })
+
+  it('wiki-integrity: canonical missing fields + unresolved relation warn; a clean set is silent', async () => {
+    const bad = await runSentinelPass({
+      brain, profiles: ['p1'], checks: [wikiNodeIntegrityCheck],
+      store: fakeStore({ listWikiNodes: () => [
+        { path: 'sales/a.md', status: 'canonical', related: [] },
+        { path: 'sales/b.md', id: 'sales.b', nodeType: 'knowledge', status: 'canonical', sourceOfTruth: 'ops', related: ['sales.missing'] },
+      ] }),
+      alertTo: [], now: NOW,
+    })
+    const keys = bad.findings.map((f) => f.key)
+    expect(keys).toContain('wiki:incomplete:p1:sales/a.md')
+    expect(keys).toContain('wiki:orphan:p1:sales/b.md:sales.missing')
+
+    const clean = await runSentinelPass({
+      brain, profiles: ['p1'], checks: [wikiNodeIntegrityCheck],
+      store: fakeStore({ listWikiNodes: () => [
+        { path: 'sales/a.md', id: 'sales.a', nodeType: 'knowledge', status: 'canonical', sourceOfTruth: 'ops', related: ['sales.b'] },
+        { path: 'sales/b.md', id: 'sales.b', nodeType: 'knowledge', status: 'canonical', sourceOfTruth: 'ops', related: [] },
+      ] }),
+      alertTo: [], now: NOW + 2 * H,
+    })
+    expect(clean.findings).toHaveLength(0)
   })
 })
