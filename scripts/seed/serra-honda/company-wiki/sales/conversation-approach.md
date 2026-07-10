@@ -7,11 +7,11 @@ status: canonical
 source_of_truth: "Operator sales-conversation coaching — 2026-07-09"
 owner: operator
 related_nodes:
-  - agent.caroline.role
-  - policy.guardrails
-  - sales.lead-followup-cadence
+  - serra-honda/agents/caroline/role
+  - serra-honda/policy/guardrails
+  - serra-honda/sales/lead-followup-cadence
 typed_relationships:
-  - { type: governed_by, target: policy.guardrails }
+  - { type: governed_by, target: serra-honda/policy/guardrails }
 last_reviewed: 2026-07-09
 ---
 
