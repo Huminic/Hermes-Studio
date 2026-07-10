@@ -17,7 +17,10 @@
 
 import { toE164 } from './phone-handle'
 
-export type ChatTurn = { role: string; content: string }
+// `content` is typed loosely because the value arrives from an untrusted
+// request body (widget-chat `history`), so the coercions below are real
+// runtime guards, not dead defensive code.
+export type ChatTurn = { role: string; content: unknown }
 
 export type ExtractedContact = {
   /** E.164 phone if a plausible number was found in a visitor turn, else null. */
@@ -113,7 +116,7 @@ export function extractContactFromHistory(
   let phone: string | null = null
   let name: string | null = null
   for (const turn of history) {
-    if (!turn || turn.role === 'assistant') continue
+    if (turn.role === 'assistant') continue
     const content = String(turn.content ?? '')
     if (!phone) phone = firstPhoneInText(content)
     if (!name) name = extractName(content)

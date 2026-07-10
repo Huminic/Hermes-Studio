@@ -58,7 +58,10 @@ describe('extractContactFromHistory', () => {
     // back — extraction must credit the VISITOR turn, not the assistant.
     const history = [
       { role: 'user', content: 'How much down?' },
-      { role: 'assistant', content: "I can't quote that; can a rep reach you?" },
+      {
+        role: 'assistant',
+        content: "I can't quote that; can a rep reach you?",
+      },
       { role: 'user', content: 'Yes' },
       { role: 'assistant', content: 'Great — what is the best number?' },
       { role: 'user', content: '678-492-1396' },

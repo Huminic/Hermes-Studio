@@ -7,13 +7,13 @@ import { findPublicWidget, readAgentSoul } from '../../../server/public-widgets'
 import {
   appendMessage,
   getOrCreateThreadEx,
+  recordLeadNotify,
   upsertContact,
   wasLeadNotifiedWithin,
-  recordLeadNotify,
 } from '../../../server/messaging-hub-store'
 import {
-  notifyNewLead,
   notifyActiveConversation,
+  notifyNewLead,
 } from '../../../server/lead-notifications'
 import { extractContactFromHistory } from '../../../server/chat-contact-extract'
 import { VENDOR_GUARDRAIL, scrubVendorTerms } from '../../../server/dealer-safe'
@@ -441,8 +441,10 @@ export const Route = createFileRoute('/api/public/widget-chat')({
             }
             if (res.ok && !data.error) {
               // LC-BLOCKER-008 backstop: scrub any vendor term the model emits
-            // before it reaches the visitor OR the Teambox.
-            const reply = scrubVendorTerms(data.choices?.[0]?.message?.content ?? '')
+              // before it reaches the visitor OR the Teambox.
+              const reply = scrubVendorTerms(
+                data.choices?.[0]?.message?.content ?? '',
+              )
               persistReply(reply, 'hermes')
               // Public response: reply only. The provider/gateway identity
               // ('hermes') stays in thread metadata for diagnostics, never on
@@ -485,7 +487,9 @@ export const Route = createFileRoute('/api/public/widget-chat')({
             }
             // LC-BLOCKER-008 backstop: scrub any vendor term the model emits
             // before it reaches the visitor OR the Teambox.
-            const reply = scrubVendorTerms(data.choices?.[0]?.message?.content ?? '')
+            const reply = scrubVendorTerms(
+              data.choices?.[0]?.message?.content ?? '',
+            )
             persistReply(reply, 'openai-direct')
             // Public response: reply only. The provider identity
             // ('openai-direct') stays in thread metadata for diagnostics,
