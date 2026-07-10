@@ -304,7 +304,13 @@ export function assembleCanonicalFunnel(input: AssembleInput): CanonicalFunnel {
   // the live API is down). A window-mismatched / over-reading report (the ~1.8-2x
   // case) fails the guard → "needs supplemental data"; inflated numbers never render.
   const varianceOk =
-    apiLeads <= 0 || maxReportFunnel <= apiLeads * REPORT_VARIANCE_TOLERANCE
+    apiLeads > 0
+      ? maxReportFunnel <= apiLeads * REPORT_VARIANCE_TOLERANCE
+      : // No live baseline to validate against: the DEFAULT/production path must
+        // SUPPRESS (can't confirm the report isn't inflated). Only an explicit
+        // caller override (input.trustReport===true) may trust — the report-only
+        // fallback (e.g. timing weights when the live API is momentarily down).
+        input.trustReport === true
   const trustReport = trustFlag && varianceOk
   // Gate the report: when untrusted, the report-derived stages/metrics get no
   // rows → they render "needs supplemental data" instead of inflated numbers.
