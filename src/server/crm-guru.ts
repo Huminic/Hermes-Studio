@@ -50,14 +50,17 @@ export const CANONICAL_RETENTION = 50
  * exists (backlogged intelligent CRM-Guru ingester), these render
  * "needs supplemental data". Leads and Sold always come from the live API.
  *
- * 2026-07-10: re-enabled, now GUARDED by the variance guardrail in
- * assembleCanonicalFunnel — report metrics display ONLY when internally
- * consistent with the live API window (report Contacted <= live Leads, and the
- * funnel is monotonic). A window-mismatched / over-reading report (the 1.8-2x
- * case) fails the guardrail and is suppressed to "needs supplemental data", so
- * inflated numbers can never reach a customer. Consistent, window-matched
- * uploads display. Set false to hard-disable regardless of consistency. */
-export const REPORT_METRICS_TRUSTED = true
+ * 2026-07-10: a variance guardrail was added to assembleCanonicalFunnel (report
+ * funnel totals must be <= live Leads) to allow safe display of window-matched
+ * reports. It briefly ran enabled (true) but the guard shipped a bug (compared a
+ * per-row max instead of the summed total → an over-reading multi-source report
+ * displayed). Fixed to sum-across-sources, BUT REVERTED to false for safety: the
+ * guard is not yet fully verified (gross/appts_shown have no lead-count baseline;
+ * "consistent" needs proof against the true live window per store) and shipping
+ * customer-facing inflation is worse than the honest "needs supplemental data".
+ * The guard code + tests are retained; re-enable to true ONLY after full,
+ * per-store, real-live-data verification (checker sign-off). */
+export const REPORT_METRICS_TRUSTED = false
 
 /**
  * Variance tolerance for the anti-inflation guardrail. Report funnel counts may
@@ -286,20 +289,22 @@ export function assembleCanonicalFunnel(input: AssembleInput): CanonicalFunnel {
     0,
   )
   const sumApptsSet = roiCurrent.reduce((s, r) => s + (r.appts_set ?? 0), 0)
+  const sumApptsShown = roiCurrent.reduce((s, r) => s + (r.appts_shown ?? 0), 0)
   const sumGoodLeads = roiCurrent.reduce((s, r) => s + (r.good_leads ?? 0), 0)
-  const maxReportFunnel = Math.max(sumContacted, sumApptsSet, sumGoodLeads)
-  // An EXPLICIT trustReport:true is a caller override (tests / a path that has
-  // validated the report itself) and bypasses the guardrail. The PRODUCTION
-  // default path (trustReport undefined → REPORT_METRICS_TRUSTED) is guarded:
-  // it shows report data only when a live API baseline exists AND no report
-  // funnel stage exceeds live Leads beyond tolerance. So a window-mismatched /
-  // over-reading report (the ~1.8-2x case), or a report with no live baseline to
-  // validate against, falls back to "needs supplemental" — inflated numbers can
-  // never render on the default (production) dashboard.
-  const explicitTrust = input.trustReport === true
+  const maxReportFunnel = Math.max(
+    sumContacted,
+    sumApptsSet,
+    sumApptsShown,
+    sumGoodLeads,
+  )
+  // The guardrail applies whenever a live baseline exists (apiLeads > 0), for BOTH
+  // the default path AND an explicit trustReport:true — so no caller can display an
+  // over-read. Without a baseline (apiLeads <= 0) there is nothing to validate
+  // against, so we defer to the trust flag (report-only fallback, e.g. timing when
+  // the live API is down). A window-mismatched / over-reading report (the ~1.8-2x
+  // case) fails the guard → "needs supplemental data"; inflated numbers never render.
   const varianceOk =
-    explicitTrust ||
-    (apiLeads > 0 && maxReportFunnel <= apiLeads * REPORT_VARIANCE_TOLERANCE)
+    apiLeads <= 0 || maxReportFunnel <= apiLeads * REPORT_VARIANCE_TOLERANCE
   const trustReport = trustFlag && varianceOk
   // Gate the report: when untrusted, the report-derived stages/metrics get no
   // rows → they render "needs supplemental data" instead of inflated numbers.
