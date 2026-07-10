@@ -200,31 +200,50 @@ export const Route = createFileRoute('/api/webhooks/tavus/$profile')({
           },
         })
 
-        const lead = buildLeadFromSession(event)
-        const notification = await dispatchLeadNotification({
-          profile,
-          event: 'inbound_video',
-          lead,
-          // Subtle "AI" reference in the subject (operator 2026-06-12). Used by
-          // the email format only; ADF subject is the CRM-parsed "New Lead - …".
-          subjectPrefix: 'New AI video lead',
-          cooldownKey: thread.contact_handle,
-        })
-
-        appendMessage({
-          thread_id: thread.id,
-          direction: 'outbound',
-          role: 'system',
-          channel: 'video',
-          content: `Lead notification: ${notification.ok ? 'sent' : 'not delivered'}`,
-          author: 'system',
-          metadata: {
-            via: 'lead-notification',
-            delivery: notification.via,
-            external_id: notification.external_id ?? null,
-            reason: notification.reason ?? null,
-          },
-        })
+        // Only alert the dealer when the session produced real content. Empty
+        // video sessions (a visitor opened the widget but left no transcript or
+        // summary) were firing phantom "New AI video lead" notifications and
+        // spamming the BDC with content-less leads (P2-8). Record the session
+        // either way; skip the dealer notification when there's nothing to act on.
+        let notification: Awaited<
+          ReturnType<typeof dispatchLeadNotification>
+        > | null = null
+        if (hasContent) {
+          const lead = buildLeadFromSession(event)
+          notification = await dispatchLeadNotification({
+            profile,
+            event: 'inbound_video',
+            lead,
+            // Subtle "AI" reference in the subject (operator 2026-06-12). Used by
+            // the email format only; ADF subject is the CRM-parsed "New Lead - …".
+            subjectPrefix: 'New AI video lead',
+            cooldownKey: thread.contact_handle,
+          })
+          appendMessage({
+            thread_id: thread.id,
+            direction: 'outbound',
+            role: 'system',
+            channel: 'video',
+            content: `Lead notification: ${notification.ok ? 'sent' : 'not delivered'}`,
+            author: 'system',
+            metadata: {
+              via: 'lead-notification',
+              delivery: notification.via,
+              external_id: notification.external_id ?? null,
+              reason: notification.reason ?? null,
+            },
+          })
+        } else {
+          appendMessage({
+            thread_id: thread.id,
+            direction: 'outbound',
+            role: 'system',
+            channel: 'video',
+            content: 'Empty video session — no dealer lead notification sent',
+            author: 'system',
+            metadata: { via: 'lead-notification', delivery: 'skipped-empty' },
+          })
+        }
 
         return json({
           ok: true,
