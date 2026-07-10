@@ -36,11 +36,21 @@ const force = process.argv.includes('--force')
 
 function genericize(content: string, store: string, display: string): string {
   return content
-    .replace(/serra-honda\//g, `${store}/`)
+    // Slug in ALL forms: path prefix `serra-honda/`, the widget slug
+    // `serra-honda-sales-chat`, and any bare occurrence.
+    .replace(/serra-honda/g, store)
     .replace(/The Serra Way|Serra Way/g, 'Our Sales Approach')
     .replace(/Serra Honda of Sylacauga/g, display)
     .replace(/Serra Honda/g, display)
-    .replace(/\bProlog(?:ue)?\b/gi, 'model') // neutralize the one Honda model example
+    // Neutralize Honda model names (used as examples in the guardrail/approach
+    // nodes) so a non-Honda store never surfaces a Honda model.
+    .replace(/the CR-V is a popular SUV/g, 'an SUV is a popular body style')
+    .replace(/\bCR-V\b/g, 'SUV')
+    .replace(/\bProlog(?:ue)?\b/gi, 'model')
+    .replace(/\b(Accord|Civic|Pilot|Passport|HR-V|Ridgeline|Odyssey)\b/g, 'that model')
+    // Drop Serra-specific customer-protection PROGRAM NAMES (not applicable to a
+    // non-Serra store — asserting them would fabricate); keep the generic routing.
+    .replace(/\s*\(Best Deal,?\s*72-Hour Exchange,?\s*No-Hassle Trade\)/g, '')
 }
 
 let ok = 0
