@@ -56,9 +56,22 @@ const BRAND_GRADIENT_START = '#667eea'
 const BRAND_GRADIENT_END = '#764ba2'
 /** Target-icon emoji entity (matches the voice-lead headerEmoji). */
 const BRAND_HEADER_EMOJI = '&#127919;'
-/** One retry for transient central-mcp/HTTP stream failures. */
-const RESEND_MAX_ATTEMPTS = 2
-const TRANSIENT_RESEND_RE = /terminated|aborted|timeout|timed out|socket|econnreset|fetch failed|network/i
+/** Retries for transient central-mcp/HTTP/Resend failures (incl. rate-limit). */
+const RESEND_MAX_ATTEMPTS = 3
+const TRANSIENT_RESEND_RE =
+  /terminated|aborted|timeout|timed out|socket|econnreset|fetch failed|network|rate.?limit|too many requests|429|throttl/i
+/** Base backoff (ms) between Resend retries; multiplied by the attempt number. */
+const RESEND_RETRY_BASE_MS = Number(process.env.RESEND_RETRY_BASE_MS ?? 600)
+/**
+ * Spacing (ms) between successive recipient sends in a multi-recipient fan-out.
+ * The old 6-way Promise.all fired every dealer notification at once and tripped
+ * the Resend/central-mcp per-second rate limit — the root cause of the ~62%
+ * lead-notification delivery failure. Sequential + spacing keeps each send under
+ * the limiter; per-recipient transient/rate-limit retries live in sendViaResendRaw.
+ */
+const FANOUT_SPACING_MS = Number(process.env.LEAD_FANOUT_SPACING_MS ?? 400)
+const sleep = (ms: number): Promise<void> =>
+  ms > 0 ? new Promise((resolve) => setTimeout(resolve, ms)) : Promise.resolve()
 /**
  * Backstop timeout for the central-mcp send. The broker emits the tool result
  * early but can leave the SSE stream open; we resolve as soon as the result line
@@ -201,6 +214,9 @@ async function sendViaResend(input: {
         actor: input.actor ?? 'lead-notify',
         recipients: [input.to],
         subject: input.subject,
+        // Persist the provider failure reason (previously dropped) so failures
+        // are diagnosable and the Sentinel/operator can see WHY a send failed.
+        body_summary: result.ok ? null : (result.reason ?? null),
         external_id: result.ok ? (result.external_id ?? null) : null,
         outcome: result.ok ? 'ok' : 'error',
       })
@@ -257,12 +273,16 @@ async function sendViaResendRaw(input: {
       // to close the stream (that could be ~10 min) — see readResendResult.
       const responseText = await readResendResult(res)
       if (!res.ok) {
-        lastFailure = {
-          ok: false,
-          via: 'failed',
-          reason: `HTTP ${res.status} ${responseText.slice(0, 200)}`,
+        const reason = `HTTP ${res.status} ${responseText.slice(0, 200)}`
+        lastFailure = { ok: false, via: 'failed', reason }
+        const retryable =
+          res.status >= 500 ||
+          res.status === 429 ||
+          TRANSIENT_RESEND_RE.test(reason)
+        if (retryable && attempt < RESEND_MAX_ATTEMPTS) {
+          await sleep(RESEND_RETRY_BASE_MS * attempt)
+          continue
         }
-        if (res.status >= 500 && attempt < RESEND_MAX_ATTEMPTS) continue
         return lastFailure
       }
       const dataMatch = responseText.match(/data: ({[\s\S]*?})\n/)
@@ -285,13 +305,15 @@ async function sendViaResendRaw(input: {
             // body carries `error`/`code`. Surface the rejection as a real
             // failure instead of a silent false-positive `ok:true`.
             if (obj.result?.isError || innerObj.error || innerObj.code) {
-              return {
-                ok: false,
-                via: 'failed',
-                reason: String(
-                  innerObj.error ?? innerObj.message ?? 'resend rejected the send',
-                ).slice(0, 200),
+              const reason = String(
+                innerObj.error ?? innerObj.message ?? 'resend rejected the send',
+              ).slice(0, 200)
+              lastFailure = { ok: false, via: 'failed', reason }
+              if (attempt < RESEND_MAX_ATTEMPTS && TRANSIENT_RESEND_RE.test(reason)) {
+                await sleep(RESEND_RETRY_BASE_MS * attempt)
+                continue
               }
+              return lastFailure
             }
             emailId = innerObj.id ?? null
           }
@@ -309,6 +331,7 @@ async function sendViaResendRaw(input: {
             : 'network error'
       lastFailure = { ok: false, via: 'failed', reason }
       if (attempt < RESEND_MAX_ATTEMPTS && TRANSIENT_RESEND_RE.test(reason)) {
+        await sleep(RESEND_RETRY_BASE_MS * attempt)
         continue
       }
       return {
@@ -843,17 +866,34 @@ export async function dispatchLeadNotification(input: {
         }),
       ]
     } else {
-      results = await Promise.all(
-        recipients.map((r) =>
-          notifyDealer({
-            profile: input.profile,
-            event: input.lead,
-            subjectPrefix: input.subjectPrefix,
-            forceTo: r.to,
-            forceFormat: r.format,
-          }),
-        ),
-      )
+      // Serialize the fan-out with spacing. The old Promise.all fired all
+      // recipients at once and tripped the Resend/central-mcp per-second rate
+      // limit — the root cause of the ~62% dealer lead-notification failure.
+      // Sequential + FANOUT_SPACING_MS keeps each send under the limiter.
+      results = []
+      for (let i = 0; i < recipients.length; i++) {
+        const r = recipients[i]
+        try {
+          results.push(
+            await notifyDealer({
+              profile: input.profile,
+              event: input.lead,
+              subjectPrefix: input.subjectPrefix,
+              forceTo: r.to,
+              forceFormat: r.format,
+            }),
+          )
+        } catch (err) {
+          // One recipient failing must not stop the rest (stricter than the old
+          // Promise.all, which also surfaced only the first rejection).
+          results.push({
+            ok: false,
+            via: 'failed',
+            reason: err instanceof Error ? err.message : 'notifyDealer threw',
+          })
+        }
+        if (i < recipients.length - 1) await sleep(FANOUT_SPACING_MS)
+      }
     }
     const anyOk = results.some((r) => r.ok)
     // Consume the cooldown window only on a real send, so a transient or
@@ -1252,21 +1292,34 @@ export async function notifyActiveConversation(input: {
     const senderName = config.lead_notifications.sender_name ?? `${orgName} conversation`
     const from = senderName.includes('@') ? senderName : `${senderName} <leads@huminic.ai>`
 
-    const results = await Promise.all(
-      recipients.map((to) =>
-        sendViaResend({
-          profile: input.profile,
-          actor: 'conversation-alert',
-          central,
-          token,
-          to,
-          from,
-          subject: rendered.subject,
-          html: rendered.html,
-          text: rendered.text,
-        }),
-      ),
-    )
+    // Serialize the fan-out with spacing — SAME rate-limit root cause as
+    // dispatchLeadNotification (a Promise.all burst trips the Resend/central-mcp
+    // per-second limiter). Per-recipient throw-safe. (P0-2 condition 1.)
+    const results: Array<LeadNotificationResult> = []
+    for (let i = 0; i < recipients.length; i++) {
+      try {
+        results.push(
+          await sendViaResend({
+            profile: input.profile,
+            actor: 'conversation-alert',
+            central,
+            token,
+            to: recipients[i],
+            from,
+            subject: rendered.subject,
+            html: rendered.html,
+            text: rendered.text,
+          }),
+        )
+      } catch (err) {
+        results.push({
+          ok: false,
+          via: 'failed',
+          reason: err instanceof Error ? err.message : 'sendViaResend threw',
+        })
+      }
+      if (i < recipients.length - 1) await sleep(FANOUT_SPACING_MS)
+    }
     const anyOk = results.some((r) => r.ok)
     if (anyOk) {
       recordLeadNotify(input.profile, dedupeKey)

@@ -33,7 +33,7 @@ import {
   listOpenHolds,
   type AgentReplyHold,
 } from './messaging-hub-store'
-import { countCommsErrors } from './comms-log'
+import { countCommsByOutcome, countCommsErrors } from './comms-log'
 import { detectPersonaViolations } from './persona-compliance'
 import { listCustomerWikiTree, readCustomerWikiFile, type CustomerWikiNode } from './customer-wiki'
 import { extractFrontmatter } from '../lib/frontmatter'
@@ -147,6 +147,12 @@ export type SentinelStore = {
     sinceMs: number,
     now: number,
   ) => { count: number; byChannel: Record<string, number> }
+  countCommsByOutcome: (
+    profile: string,
+    sinceMs: number,
+    now: number,
+    channel?: string,
+  ) => { ok: number; error: number; total: number }
   countStuckAutomations: (
     profile: string,
     now: number,
@@ -232,6 +238,7 @@ const DEFAULT_STORE: SentinelStore = {
     listThreads({ profile, status: 'open', limit: 500 }).map((t) => ({ id: t.id })),
   getThread: (profile, id) => getThread(profile, id),
   countCommsErrors,
+  countCommsByOutcome,
   countStuckAutomations,
   countReplyJobs,
   latestInboundAt,
@@ -280,6 +287,13 @@ const COMMS_TICK_STALE_MS = 10 * 60_000 // tick should run ≥ every minute; 10m
 const THREAD_SLA_MS = 30 * 60_000 // inbound unanswered > 30m ⇒ agent not responding
 const SLA_RECENT_MS = 24 * 60 * 60_000 // only alert on inbound from the last 24h (ignore stale/abandoned)
 const COMMS_ERROR_WINDOW_MS = 60 * 60_000 // look back 1h for send failures
+// Rolling 24h delivery-RATE check — catches a SUSTAINED send failure (e.g. a 60%
+// lead-notify email failure running for weeks) that the 1h burst check misses
+// because leads arrive in bursts hours apart.
+const DELIVERY_RATE_WINDOW_MS = 24 * 60 * 60_000
+const DELIVERY_RATE_MIN_VOLUME = 8 // need enough sends for a ratio to be meaningful
+const DELIVERY_RATE_WARN = 0.3 // >30% of email sends failing in 24h ⇒ warn
+const DELIVERY_RATE_CRIT = 0.5 // >50% ⇒ critical
 const AUTOMATION_OVERDUE_MS = 30 * 60_000 // due > 30m ago + unsent ⇒ tick not advancing
 const REPLY_FAIL_WINDOW_MS = 60 * 60_000 // look back 1h for failed agent replies
 const DATA_STALE_MS = 48 * 60 * 60_000 // no inbound for 48h ⇒ data may not be flowing
@@ -881,6 +895,43 @@ export const notificationsDeliveryCheck: SentinelCheck = {
 }
 
 /**
+ * Notifications / outbound-send delivery RATE over a rolling 24h window. The 1h
+ * burst check above only fires when many failures cluster in one hour; leads
+ * arrive in bursts hours apart, so a sustained high failure rate (the ~62%
+ * dealer lead-notify email failure) runs invisibly. This catches it: if email
+ * sends have a high error ratio over 24h (with enough volume), alert. Per profile.
+ */
+export const notificationsDeliveryRateCheck: SentinelCheck = {
+  name: 'notifications-delivery-rate',
+  category: 'notifications',
+  scope: 'profile',
+  async run({ profile, now, store }) {
+    if (!profile) return []
+    const { error, total } = store.countCommsByOutcome(
+      profile,
+      DELIVERY_RATE_WINDOW_MS,
+      now,
+      'email',
+    )
+    if (total < DELIVERY_RATE_MIN_VOLUME) return []
+    const rate = error / total
+    if (rate < DELIVERY_RATE_WARN) return []
+    const pct = Math.round(rate * 100)
+    const hrs = Math.round(DELIVERY_RATE_WINDOW_MS / 3_600_000)
+    return [
+      {
+        key: `notifications:${profile}:delivery-rate`,
+        severity: rate >= DELIVERY_RATE_CRIT ? 'critical' : 'warning',
+        category: 'notifications',
+        title: `${pct}% of email sends failed over ${hrs}h`,
+        detail: `${profile}: ${error}/${total} outbound email sends recorded outcome=error over the last ${hrs}h (${pct}% failure). Dealer lead notifications may not be reaching the dealership — check comms_log.body_summary for the provider reason.`,
+        profile,
+      },
+    ]
+  },
+}
+
+/**
  * Automations firing — runs/enrollments that are due but un-advanced past the
  * overdue window mean the tick is not processing work (even if it is ticking).
  * Per profile.
@@ -1321,6 +1372,7 @@ export const DEFAULT_CHECKS: Array<SentinelCheck> = [
   integrationHealthCheck,
   vinHealthCheck,
   notificationsDeliveryCheck,
+  notificationsDeliveryRateCheck,
   automationsFiringCheck,
   dataCollectionCheck,
   conversationOpsCheck,

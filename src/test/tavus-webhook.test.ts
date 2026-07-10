@@ -88,6 +88,38 @@ describe('/api/webhooks/tavus/$profile', () => {
     expect(thread!.messages[0].content).toContain('CR-V')
   })
 
+  it('does NOT notify the dealer for an empty video session (P2-8)', async () => {
+    const { Route } = await import('@/routes/api/webhooks/tavus.$profile')
+    const handler = Route.options.server.handlers.POST
+    const req = new Request('http://localhost/api/webhooks/tavus/serra-honda', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_type: 'conversation.ended',
+        conversation_id: 'tavus_conv_empty',
+        // No transcript and no summary → an empty session that must NOT fire a
+        // phantom "New AI video lead" to the BDC.
+        properties: { customer_name: 'Ghost Visitor' },
+      }),
+    })
+    const res = await handler({
+      request: req,
+      params: { profile: 'serra-honda' },
+    } as never)
+    expect(res.status).toBe(200)
+    const body = (await res.json()) as {
+      ok: boolean
+      thread_id: string
+      notification: unknown
+    }
+    expect(body.ok).toBe(true)
+    expect(body.notification).toBeNull() // P2-8: no dealer notification for empty session
+    const { getThread } = await import('@/server/messaging-hub-store')
+    const thread = getThread('serra-honda', body.thread_id)
+    const sysNote = thread?.messages.find((m) => m.role === 'system')
+    expect(sysNote?.content).toMatch(/empty video session/i)
+  })
+
   it('strips injected system/context turns from the stored transcript (PFF-007)', async () => {
     const { Route } = await import('@/routes/api/webhooks/tavus.$profile')
     const handler = Route.options.server.handlers.POST

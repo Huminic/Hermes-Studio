@@ -75,12 +75,21 @@ describe('inbound SMS → lead lands + dealer notified ONCE (new thread only)', 
   async function postSms(text: string) {
     const { Route } = await import('@/routes/api/webhooks/textmagic.$profile')
     const handler = Route.options.server.handlers.POST
-    const req = new Request('http://localhost/api/webhooks/textmagic/serra-honda', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sender: '+15555550123', receiver: '+15550000000', text }),
-    })
-    return (await (await handler({ request: req, params: { profile: PROFILE } } as never)).json()) as {
+    const req = new Request(
+      'http://localhost/api/webhooks/textmagic/serra-honda',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sender: '+15555550123',
+          receiver: '+15550000000',
+          text,
+        }),
+      },
+    )
+    return (await (
+      await handler({ request: req, params: { profile: PROFILE } } as never)
+    ).json()) as {
       ok: boolean
       thread_id: string
       new_lead: boolean
@@ -108,7 +117,8 @@ describe('inbound SMS → lead lands + dealer notified ONCE (new thread only)', 
     // A later START clears the opt-out.
     const start = await postSms('START')
     expect(start.opt_in).toBe(true)
-    const { isBlacklisted: isBlacklisted2 } = await import('@/server/comms-blacklist')
+    const { isBlacklisted: isBlacklisted2 } =
+      await import('@/server/comms-blacklist')
     expect(isBlacklisted2(PROFILE, '+15555550123')).toBe(false)
   })
 
@@ -117,7 +127,11 @@ describe('inbound SMS → lead lands + dealer notified ONCE (new thread only)', 
     expect(first.ok).toBe(true)
     expect(first.new_lead).toBe(true)
     expect(notifySpy).toHaveBeenCalledTimes(1)
-    const arg = notifySpy.mock.calls[0][0] as { profile: string; channel: string; phone: string }
+    const arg = notifySpy.mock.calls[0][0] as {
+      profile: string
+      channel: string
+      phone: string
+    }
     expect(arg.profile).toBe(PROFILE)
     expect(arg.channel).toBe('SMS')
     expect(arg.phone).toBe('+15555550123')
@@ -143,7 +157,11 @@ describe('inbound SMS → lead lands + dealer notified ONCE (new thread only)', 
 })
 
 describe('generic /api/messaging/inbound → dealer notified on new lead only', () => {
-  async function postInbound(handle: string, displayName: string, text: string) {
+  async function postInbound(
+    handle: string,
+    displayName: string,
+    text: string,
+  ) {
     const { Route } = await import('@/routes/api/messaging/inbound')
     const handler = Route.options.server.handlers.POST
     const req = new Request('http://localhost/api/messaging/inbound', {
@@ -166,7 +184,11 @@ describe('generic /api/messaging/inbound → dealer notified on new lead only', 
   }
 
   it('notifies once with the lead name+email, not on a follow-up', async () => {
-    const first = await postInbound('pat@example.com', 'Pat Buyer', 'Looking for an SUV')
+    const first = await postInbound(
+      'pat@example.com',
+      'Pat Buyer',
+      'Looking for an SUV',
+    )
     expect(first.ok).toBe(true)
     expect(notifySpy).toHaveBeenCalledTimes(1)
     const arg = notifySpy.mock.calls[0][0] as {
@@ -188,65 +210,107 @@ describe('generic /api/messaging/inbound → dealer notified on new lead only', 
 describe('public widget-chat → conversation captured in Teambox + dealer alerted', () => {
   beforeEach(() => {
     process.env.API_SERVER_KEY = 'test-hermes-key'
-    vi.spyOn(global, 'fetch').mockResolvedValue(
-      new Response(
-        JSON.stringify({ choices: [{ message: { content: 'Happy to help!' } }] }),
-        { status: 200, headers: { 'content-type': 'application/json' } },
-      ),
+    // Return a FRESH Response per call — a single shared Response's body can only
+    // be read once, so multi-turn tests that call the handler repeatedly would
+    // otherwise trip "Body has already been read" on the second inference call.
+    vi.spyOn(global, 'fetch').mockImplementation(
+      async () =>
+        new Response(
+          JSON.stringify({
+            choices: [{ message: { content: 'Happy to help!' } }],
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        ),
     )
   })
   afterEach(() => {
     delete process.env.API_SERVER_KEY
   })
 
-  it('persists the visitor message + agent reply and fires notifyNewLead once', async () => {
+  // P0-1: the lead now fires ONCE, WITH the visitor's phone, the first turn the
+  // phone appears — NOT on the anonymous first message (which produced the empty
+  // ADF → duplicate blank VIN leads). An anonymous conversation makes no lead.
+  async function postChat(
+    sessionId: string,
+    ip: string,
+    history: Array<{ role: string; content: string }>,
+  ) {
     const { Route } = await import('@/routes/api/public/widget-chat')
     const handler = Route.options.server.handlers.POST
     const req = new Request('http://localhost/api/public/widget-chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-real-ip': '203.0.113.20' },
+      headers: { 'Content-Type': 'application/json', 'x-real-ip': ip },
       body: JSON.stringify({
         profile: PROFILE,
         slug: SLUG,
-        session_id: 'visitor-abc',
-        history: [{ role: 'user', content: 'Do you have any trucks?' }],
+        session_id: sessionId,
+        history,
       }),
     })
     const res = await handler({ request: req } as never)
-    const body = (await res.json()) as { ok: boolean; reply: string }
-    expect(body).toMatchObject({ ok: true, reply: 'Happy to help!' })
+    return (await res.json()) as { ok: boolean; reply: string }
+  }
+
+  it('defers the lead on an anonymous message, then fires ONCE with the phone when the visitor provides it', async () => {
+    // Turn 1: anonymous question — captured in the Teambox, but NO lead yet.
+    const first = await postChat('visitor-abc', '203.0.113.20', [
+      { role: 'user', content: 'Do you have any trucks?' },
+    ])
+    expect(first).toMatchObject({ ok: true, reply: 'Happy to help!' })
     await flushMicrotasks()
 
-    // Conversation landed in the Teambox on a chat thread.
-    const { listThreads, getThread } = await import('@/server/messaging-hub-store')
-    const threads = listThreads({ profile: PROFILE, channel: 'chat' })
+    const { listThreads, getThread } =
+      await import('@/server/messaging-hub-store')
+    let threads = listThreads({ profile: PROFILE, channel: 'chat' })
     expect(threads.length).toBe(1)
-    const thread = getThread(PROFILE, threads[0].id)
-    // visitor inbound + agent outbound + Slice-A delivery annotation.
-    expect(thread?.messages.length).toBe(3)
+    let thread = getThread(PROFILE, threads[0].id)
     expect(thread?.messages[0].direction).toBe('inbound')
+    // No lead on the anonymous turn.
+    expect(notifySpy).not.toHaveBeenCalled()
     expect(
-      thread?.messages.some(
-        (m) => m.direction === 'outbound' && m.content === 'Happy to help!',
-      ),
-    ).toBe(true)
+      thread?.messages.some((m) => m.content.startsWith('Lead notification')),
+    ).toBe(false)
+
+    // Turn 2 (same session): the visitor types their phone → lead fires once,
+    // carrying the E.164 phone.
+    await postChat('visitor-abc', '203.0.113.20', [
+      { role: 'user', content: 'Do you have any trucks?' },
+      { role: 'assistant', content: 'Happy to help!' },
+      { role: 'user', content: 'call me at 678-492-1396' },
+    ])
+    await flushMicrotasks()
+
+    expect(notifySpy).toHaveBeenCalledTimes(1)
+    const arg = notifySpy.mock.calls[0][0] as {
+      profile: string
+      channel: string
+      phone: string
+    }
+    expect(arg.profile).toBe(PROFILE)
+    expect(arg.channel).toBe('website chat')
+    expect(arg.phone).toBe('+16784921396')
+
+    thread = getThread(PROFILE, threads[0].id)
     expect(
       thread?.messages.some(
         (m) => m.role === 'system' && m.content.startsWith('Lead notification'),
       ),
     ).toBe(true)
 
-    // Dealer alerted exactly once on the first message of the session.
+    // Turn 3: a follow-on on the SAME thread must NOT fire a second lead.
+    await postChat('visitor-abc', '203.0.113.20', [
+      { role: 'user', content: 'Do you have any trucks?' },
+      { role: 'assistant', content: 'Happy to help!' },
+      { role: 'user', content: 'call me at 678-492-1396' },
+      { role: 'assistant', content: 'Will do!' },
+      { role: 'user', content: 'thanks' },
+    ])
+    await flushMicrotasks()
     expect(notifySpy).toHaveBeenCalledTimes(1)
-    const arg = notifySpy.mock.calls[0][0] as { profile: string; channel: string }
-    expect(arg.profile).toBe(PROFILE)
-    expect(arg.channel).toBe('website chat')
   })
 
   it('does not block the visitor reply when lead notification is still pending', async () => {
-    let resolveNotify:
-      | ((value: { ok: true; via: 'mock' }) => void)
-      | undefined
+    let resolveNotify: ((value: { ok: true; via: 'mock' }) => void) | undefined
     notifySpy.mockImplementationOnce(
       () =>
         new Promise<{ ok: true; via: 'mock' }>((resolve) => {
@@ -257,25 +321,33 @@ describe('public widget-chat → conversation captured in Teambox + dealer alert
     const handler = Route.options.server.handlers.POST
     const req = new Request('http://localhost/api/public/widget-chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-real-ip': '203.0.113.21' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-real-ip': '203.0.113.21',
+      },
       body: JSON.stringify({
         profile: PROFILE,
         slug: SLUG,
         session_id: 'visitor-pending-notify',
-        history: [{ role: 'user', content: 'Can I schedule a test drive?' }],
+        // Phone present so the (mocked, pending) lead notify is triggered.
+        history: [{ role: 'user', content: 'text me at 731-394-6907 please' }],
       }),
     })
     const res = await Promise.race([
       handler({ request: req } as never),
       new Promise<Response>((_, reject) =>
-        setTimeout(() => reject(new Error('widget-chat blocked on notify')), 50),
+        setTimeout(
+          () => reject(new Error('widget-chat blocked on notify')),
+          50,
+        ),
       ),
     ])
     const body = (await res.json()) as { ok: boolean; reply: string }
     expect(body).toMatchObject({ ok: true, reply: 'Happy to help!' })
     expect(notifySpy).toHaveBeenCalledTimes(1)
 
-    const { listThreads, getThread } = await import('@/server/messaging-hub-store')
+    const { listThreads, getThread } =
+      await import('@/server/messaging-hub-store')
     const threads = listThreads({ profile: PROFILE, channel: 'chat' })
     const thread = getThread(PROFILE, threads[0].id)
     expect(

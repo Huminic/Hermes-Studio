@@ -7,12 +7,15 @@ import { findPublicWidget, readAgentSoul } from '../../../server/public-widgets'
 import {
   appendMessage,
   getOrCreateThreadEx,
+  recordLeadNotify,
   upsertContact,
+  wasLeadNotifiedWithin,
 } from '../../../server/messaging-hub-store'
 import {
-  notifyNewLead,
   notifyActiveConversation,
+  notifyNewLead,
 } from '../../../server/lead-notifications'
+import { extractContactFromHistory } from '../../../server/chat-contact-extract'
 import { VENDOR_GUARDRAIL, scrubVendorTerms } from '../../../server/dealer-safe'
 import { recallCompanyWikiTop } from '../../../server/knowledge-mcp-handlers'
 
@@ -203,8 +206,24 @@ export const Route = createFileRoute('/api/public/widget-chat')({
         // The widget chat was previously stateless: replies were generated but
         // the exchange never landed in the inbox and no lead alert fired. Persist
         // the visitor's message NOW (before inference, so it survives even if the
-        // model is unreachable) and alert the dealer on the FIRST message of a
-        // session. All best-effort — capture/notify must never break the reply.
+        // model is unreachable) and alert the dealer ONCE the visitor's contact
+        // info appears in the chat. All best-effort — capture/notify must never
+        // break the reply.
+        //
+        // P0-1 FIX (chat→VIN "no name / no phone / two leads"): the lead used to
+        // fire on the FIRST message, while the visitor was still anonymous, so
+        // the ADF carried an empty <contact>. A contactless ADF cannot be deduped
+        // by VinSolutions — it minted a fresh anonymous contact per ingest, which
+        // is what produced the junk "two blank leads" the dealer saw. We now scan
+        // the accumulated visitor turns for a phone/name and fire the lead EXACTLY
+        // ONCE per thread, WITH that identity, as soon as it appears. Deduped via
+        // the lead-notify ledger keyed on the thread id (a NEW per-thread key, not
+        // the old per-IP cooldown, which could suppress a distinct visitor behind
+        // shared NAT). A purely anonymous conversation (visitor never leaves a
+        // phone or name) intentionally does NOT create a DMS lead — first-touch
+        // awareness still lives in the Teambox + the optional active-conversation
+        // alert. See src/server/chat-contact-extract.ts and
+        // outputs/p0-1-vin-investigation.md.
         const sessionId = String(body.session_id ?? '') || clientKey(request)
         const chatHandle = `chat:${sessionId}`
         const chatDomain =
@@ -260,16 +279,60 @@ export const Route = createFileRoute('/api/public/widget-chat')({
               )
             })
           }
-          if (ex.created) {
+          // ── Fire the DMS lead ONCE per thread, WITH captured identity ───────
+          // Scan the accumulated visitor turns for a phone/name. Fire the lead
+          // the FIRST time identity appears and never again for this thread
+          // (per-thread ledger key). Deferring until identity exists is what
+          // fixes the empty-ADF → duplicate-VIN-lead P0. A visitor who never
+          // leaves contact info produces no DMS lead (by design — see block
+          // comment above). Dedupe window is effectively permanent (10y) so a
+          // long conversation can never re-fire.
+          const { phone: chatPhone, name: chatName } =
+            extractContactFromHistory(history)
+          if (chatName) {
+            // Surface the captured name in the Teambox contact card too.
+            try {
+              upsertContact({
+                profile: widget.profile,
+                display_name: chatName,
+                identifiers: { chat: chatHandle },
+              })
+            } catch {
+              // best-effort
+            }
+          }
+          // Per-thread reservation key for OUR race guard. Distinct from the
+          // key the notifier consumes for its own cooldown (below) so our
+          // pre-reservation does not make the notifier see a self-inflicted
+          // "within cooldown" and skip the send.
+          const leadReserveKey = `chat-lead-fired:${ex.thread.id}`
+          const TEN_YEARS_MS = 10 * 365 * 24 * 3_600_000
+          if (
+            (chatPhone || chatName) &&
+            !wasLeadNotifiedWithin(widget.profile, leadReserveKey, TEN_YEARS_MS)
+          ) {
+            // Reserve the per-thread slot BEFORE the async send so a rapid
+            // second message can't race in a duplicate notify. If the send
+            // fails we do NOT roll this back — a retry would risk a duplicate
+            // DMS lead, which is exactly the P0 we are fixing; the failure is
+            // still recorded on the thread for the operator.
+            try {
+              recordLeadNotify(widget.profile, leadReserveKey)
+            } catch {
+              // best-effort — if the ledger write fails we still notify once
+            }
             void notifyNewLead({
               profile: widget.profile,
               channel: 'website chat',
               contact_handle: chatHandle,
+              name: chatName,
+              phone: chatPhone,
               message: String(lastUser?.content ?? ''),
               subjectPrefix: 'Website chat',
-              // Anonymous sessions rotate the handle, so key the cooldown on the
-              // visitor IP — one bot/visitor can't blast the BDC across sessions.
-              cooldownKey: `chat:${widget.profile}:${clientKey(request)}`,
+              // Per-thread cooldown key inside the notifier — one lead per
+              // conversation, never the old rotating anonymous handle / per-IP
+              // key (which could suppress a distinct visitor behind shared NAT).
+              cooldownKey: `chat-lead:${ex.thread.id}`,
             })
               .then((notified) => {
                 // Annotate the thread with the delivery outcome (system-role —
@@ -288,6 +351,8 @@ export const Route = createFileRoute('/api/public/widget-chat')({
                       delivery: notified.via,
                       external_id: notified.external_id ?? null,
                       reason: notified.reason ?? null,
+                      lead_phone: chatPhone ?? null,
+                      lead_name: chatName ?? null,
                     },
                   })
                 } catch {
@@ -376,8 +441,10 @@ export const Route = createFileRoute('/api/public/widget-chat')({
             }
             if (res.ok && !data.error) {
               // LC-BLOCKER-008 backstop: scrub any vendor term the model emits
-            // before it reaches the visitor OR the Teambox.
-            const reply = scrubVendorTerms(data.choices?.[0]?.message?.content ?? '')
+              // before it reaches the visitor OR the Teambox.
+              const reply = scrubVendorTerms(
+                data.choices?.[0]?.message?.content ?? '',
+              )
               persistReply(reply, 'hermes')
               // Public response: reply only. The provider/gateway identity
               // ('hermes') stays in thread metadata for diagnostics, never on
@@ -420,7 +487,9 @@ export const Route = createFileRoute('/api/public/widget-chat')({
             }
             // LC-BLOCKER-008 backstop: scrub any vendor term the model emits
             // before it reaches the visitor OR the Teambox.
-            const reply = scrubVendorTerms(data.choices?.[0]?.message?.content ?? '')
+            const reply = scrubVendorTerms(
+              data.choices?.[0]?.message?.content ?? '',
+            )
             persistReply(reply, 'openai-direct')
             // Public response: reply only. The provider identity
             // ('openai-direct') stays in thread metadata for diagnostics,
