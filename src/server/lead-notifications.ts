@@ -331,6 +331,7 @@ async function sendViaResendRaw(input: {
             : 'network error'
       lastFailure = { ok: false, via: 'failed', reason }
       if (attempt < RESEND_MAX_ATTEMPTS && TRANSIENT_RESEND_RE.test(reason)) {
+        await sleep(RESEND_RETRY_BASE_MS * attempt)
         continue
       }
       return {
@@ -1291,21 +1292,34 @@ export async function notifyActiveConversation(input: {
     const senderName = config.lead_notifications.sender_name ?? `${orgName} conversation`
     const from = senderName.includes('@') ? senderName : `${senderName} <leads@huminic.ai>`
 
-    const results = await Promise.all(
-      recipients.map((to) =>
-        sendViaResend({
-          profile: input.profile,
-          actor: 'conversation-alert',
-          central,
-          token,
-          to,
-          from,
-          subject: rendered.subject,
-          html: rendered.html,
-          text: rendered.text,
-        }),
-      ),
-    )
+    // Serialize the fan-out with spacing — SAME rate-limit root cause as
+    // dispatchLeadNotification (a Promise.all burst trips the Resend/central-mcp
+    // per-second limiter). Per-recipient throw-safe. (P0-2 condition 1.)
+    const results: Array<LeadNotificationResult> = []
+    for (let i = 0; i < recipients.length; i++) {
+      try {
+        results.push(
+          await sendViaResend({
+            profile: input.profile,
+            actor: 'conversation-alert',
+            central,
+            token,
+            to: recipients[i],
+            from,
+            subject: rendered.subject,
+            html: rendered.html,
+            text: rendered.text,
+          }),
+        )
+      } catch (err) {
+        results.push({
+          ok: false,
+          via: 'failed',
+          reason: err instanceof Error ? err.message : 'sendViaResend threw',
+        })
+      }
+      if (i < recipients.length - 1) await sleep(FANOUT_SPACING_MS)
+    }
     const anyOk = results.some((r) => r.ok)
     if (anyOk) {
       recordLeadNotify(input.profile, dedupeKey)
