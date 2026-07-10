@@ -175,6 +175,10 @@ export const Route = createFileRoute('/api/public/widget-chat')({
           ``,
           `You are this widget's conversational agent. Keep replies short (1-3 sentences).`,
           `Stay on the topic of the customer profile. If a visitor asks for something outside scope (a price, a deal, a written commitment), offer to connect them to a human via the agent's escalation path. Do not invent specific prices or vehicle availability.`,
+          // Brand fidelity — prevents cross-brand hallucination (e.g. a Nissan
+          // store's widget describing Honda models). The persona/greeting names
+          // the dealership's brand; never drift to another manufacturer.
+          `Brand fidelity: You represent ONLY this dealership, whose brand is named in your persona and greeting. NEVER name, list, compare, or recommend vehicles from a DIFFERENT manufacturer. If you are not certain a model belongs to this dealership's brand, do not name it — offer to have the team confirm exact models and availability.`,
           ``,
           // P2-6 — the sales-conversation style, applied to the public widget (it
           // previously used only SOUL and asked yes/no questions / said "I can't").
