@@ -276,19 +276,18 @@ export function assembleCanonicalFunnel(input: AssembleInput): CanonicalFunnel {
   // data internally consistent with the live window is shown; otherwise the
   // report stages fall back to "needs supplemental data" (safe, honest).
   const apiLeads = opportunities?.opportunities ?? 0
-  // Every report funnel stage (Contacted, Appts Set, Good Leads) is a SUBSET of
-  // the leads, so in a window-matched report each must be <= live Leads. Take the
-  // largest and compare to the live lead count.
-  const maxReportFunnel = roiCurrent.reduce(
-    (max, r) =>
-      Math.max(
-        max,
-        r.internet_actual_contact ?? 0,
-        r.appts_set ?? 0,
-        r.good_leads ?? 0,
-      ),
+  // Each report funnel stage (Contacted, Appts Set, Good Leads) is a SUBSET of the
+  // leads, and the funnel displays each as a TOTAL summed across sources. So sum
+  // each stage across all rows, then take the largest total — in a window-matched
+  // report that total must be <= live Leads. (Summing, NOT per-row max: a report
+  // split across 33 sources has small per-row values but a large total.)
+  const sumContacted = roiCurrent.reduce(
+    (s, r) => s + (r.internet_actual_contact ?? 0),
     0,
   )
+  const sumApptsSet = roiCurrent.reduce((s, r) => s + (r.appts_set ?? 0), 0)
+  const sumGoodLeads = roiCurrent.reduce((s, r) => s + (r.good_leads ?? 0), 0)
+  const maxReportFunnel = Math.max(sumContacted, sumApptsSet, sumGoodLeads)
   // An EXPLICIT trustReport:true is a caller override (tests / a path that has
   // validated the report itself) and bypasses the guardrail. The PRODUCTION
   // default path (trustReport undefined → REPORT_METRICS_TRUSTED) is guarded:

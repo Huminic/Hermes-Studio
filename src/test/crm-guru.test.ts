@@ -129,6 +129,25 @@ describe('assembleCanonicalFunnel — metric split', () => {
     expect(c.provenance.metrics_source).toBe('needs_supplemental')
   })
 
+  it('guardrail sums stages across MULTIPLE sources (small per-row, TOTAL over-reads → suppress)', () => {
+    // Regression: a report split across many sources has small per-row good_leads
+    // but a large TOTAL. The guard must compare the SUMMED total to live Leads,
+    // not a per-row max (which would let the inflated total through).
+    const c = assembleCanonicalFunnel({
+      ...base,
+      opportunities: summary([{ lead_source: 'Mix', opportunities: 100, sold: 12 }], 12),
+      roiCurrent: [
+        roi({ lead_source: 'A', good_leads: 50, appts_set: 10 }),
+        roi({ lead_source: 'B', good_leads: 50, appts_set: 10 }),
+        roi({ lead_source: 'C', good_leads: 50, appts_set: 10 }), // sum good_leads=150 > 100
+      ],
+    })
+    const stages = Object.fromEntries(c.funnel.lead_performance.stages.map((s) => [s.key, s]))
+    expect(stages.leads.now).toBe(100)
+    expect(stages.contacted.status).toBe('pending') // summed 150 > 100 → suppressed
+    expect(c.provenance.metrics_source).toBe('needs_supplemental')
+  })
+
   it('marks Leads unavailable (never fabricated) when the API could not be read', () => {
     const c = assembleCanonicalFunnel({
       ...base,
