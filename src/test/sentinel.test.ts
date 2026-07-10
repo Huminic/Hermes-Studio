@@ -9,6 +9,7 @@ import {
   integrationHealthCheck,
   vinHealthCheck,
   notificationsDeliveryCheck,
+  notificationsDeliveryRateCheck,
   automationsFiringCheck,
   dataCollectionCheck,
   conversationOpsCheck,
@@ -35,6 +36,7 @@ function fakeStore(over: Partial<SentinelStore> = {}): SentinelStore {
     listOpenThreads: () => [],
     getThread: () => null,
     countCommsErrors: () => ({ count: 0, byChannel: {} }),
+    countCommsByOutcome: () => ({ ok: 0, error: 0, total: 0 }),
     countStuckAutomations: () => ({ automations: 0, flows: 0 }),
     countReplyJobs: () => ({ failed: 0, queued: 0 }),
     latestInboundAt: () => null,
@@ -522,6 +524,37 @@ describe('sentinel — vendors, notifications, automations, data, conversation Q
       profiles: ['p1'],
       checks: [notificationsDeliveryCheck],
       store: fakeStore(),
+      alertTo: [],
+      now: NOW,
+    })
+    expect(s.findings).toHaveLength(0)
+  })
+
+  it('notifications: sustained high email failure rate over 24h raises critical', async () => {
+    const s = await runSentinelPass({
+      brain,
+      profiles: ['p1'],
+      checks: [notificationsDeliveryRateCheck],
+      store: fakeStore({
+        countCommsByOutcome: () => ({ ok: 4, error: 8, total: 12 }),
+      }),
+      alertTo: [],
+      now: NOW,
+    })
+    const f = s.findings.find((x) => x.key === 'notifications:p1:delivery-rate')
+    expect(f?.severity).toBe('critical') // 8/12 = 67% > 50% crit threshold
+    expect(f?.detail).toContain('67%')
+  })
+
+  it('notifications: delivery-rate check ignores low volume', async () => {
+    const s = await runSentinelPass({
+      brain,
+      profiles: ['p1'],
+      checks: [notificationsDeliveryRateCheck],
+      store: fakeStore({
+        // 3 sends all failed, but below DELIVERY_RATE_MIN_VOLUME ⇒ no finding
+        countCommsByOutcome: () => ({ ok: 0, error: 3, total: 3 }),
+      }),
       alertTo: [],
       now: NOW,
     })

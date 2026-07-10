@@ -119,3 +119,48 @@ export function countCommsErrors(
     }
   }
 }
+
+export type CommsOutcomeCounts = { ok: number; error: number; total: number }
+
+/**
+ * Count outbound sends by outcome over the last `sinceMs` window (optionally
+ * scoped to a `channel`). Used by the Sentinel's rolling-window delivery-RATE
+ * check to catch a SUSTAINED failure (e.g. a 60% lead-notify email failure that
+ * runs for weeks) which the short 1h burst check misses because leads arrive in
+ * bursts hours apart. Read-only, best-effort: a read error yields zeroes so the
+ * Sentinel never false-alarms on a read failure.
+ */
+export function countCommsByOutcome(
+  profile: string,
+  sinceMs: number,
+  nowMs: number = Date.now(),
+  channel?: string,
+): CommsOutcomeCounts {
+  const cutoff = nowMs - sinceMs
+  let handle: ReturnType<typeof openBrain> | null = null
+  try {
+    handle = openBrain(profile)
+    const rows = handle.all<{ outcome: string; n: number }>(
+      `SELECT outcome, COUNT(*) AS n
+         FROM comms_log
+        WHERE direction='outbound' AND ts >= ?${channel ? ' AND channel = ?' : ''}
+        GROUP BY outcome`,
+      ...(channel ? [cutoff, channel] : [cutoff]),
+    )
+    let ok = 0
+    let error = 0
+    for (const r of rows) {
+      if (r.outcome === 'ok') ok += r.n
+      else if (r.outcome === 'error') error += r.n
+    }
+    return { ok, error, total: ok + error }
+  } catch {
+    return { ok: 0, error: 0, total: 0 }
+  } finally {
+    try {
+      handle?.close()
+    } catch {
+      /* ignore */
+    }
+  }
+}
