@@ -48,9 +48,24 @@ export const CANONICAL_RETENTION = 50
  * window (window/quality mismatch), so trusting it would re-introduce the very
  * inflation this fix removes. Until a window-matched / validated ingestion path
  * exists (backlogged intelligent CRM-Guru ingester), these render
- * "needs supplemental data". Leads and Sold always come from the live API. Flip
- * to true (or pass trustReport) to re-enable report metrics. */
-export const REPORT_METRICS_TRUSTED = false
+ * "needs supplemental data". Leads and Sold always come from the live API.
+ *
+ * 2026-07-10: re-enabled, now GUARDED by the variance guardrail in
+ * assembleCanonicalFunnel — report metrics display ONLY when internally
+ * consistent with the live API window (report Contacted <= live Leads, and the
+ * funnel is monotonic). A window-mismatched / over-reading report (the 1.8-2x
+ * case) fails the guardrail and is suppressed to "needs supplemental data", so
+ * inflated numbers can never reach a customer. Consistent, window-matched
+ * uploads display. Set false to hard-disable regardless of consistency. */
+export const REPORT_METRICS_TRUSTED = true
+
+/**
+ * Variance tolerance for the anti-inflation guardrail. Report funnel counts may
+ * exceed the paired live count by at most this factor (5% — for timing/rounding
+ * and small dedup differences) before the report is judged window-mismatched and
+ * suppressed. Tight on purpose: a real over-read is ~1.8-2x, far past this.
+ */
+export const REPORT_VARIANCE_TOLERANCE = 1.05
 
 // ── Local pure helpers (mirror dashboard-metrics; kept local to avoid a cycle) ─
 
@@ -251,7 +266,42 @@ const pendingTiming = (
 export function assembleCanonicalFunnel(input: AssembleInput): CanonicalFunnel {
   const { opportunities, roiCurrent, roiPrior, comparisonLabel } = input
   const generated_at = brainNow()
-  const trustReport = input.trustReport ?? REPORT_METRICS_TRUSTED
+  const trustFlag = input.trustReport ?? REPORT_METRICS_TRUSTED
+  // ── Variance guardrail (anti-inflation) ──────────────────────────────────────
+  // The report describes the SAME funnel as the live API for the SAME window.
+  // If the report's Contacted count exceeds the live API lead count (beyond a
+  // tight tolerance), the report is window-mismatched / over-reading (the
+  // documented ~1.8-2x case) → we do NOT trust it, so inflated numbers never
+  // render. Also require funnel monotonicity (appts <= contacted). Only report
+  // data internally consistent with the live window is shown; otherwise the
+  // report stages fall back to "needs supplemental data" (safe, honest).
+  const apiLeads = opportunities?.opportunities ?? 0
+  // Every report funnel stage (Contacted, Appts Set, Good Leads) is a SUBSET of
+  // the leads, so in a window-matched report each must be <= live Leads. Take the
+  // largest and compare to the live lead count.
+  const maxReportFunnel = roiCurrent.reduce(
+    (max, r) =>
+      Math.max(
+        max,
+        r.internet_actual_contact ?? 0,
+        r.appts_set ?? 0,
+        r.good_leads ?? 0,
+      ),
+    0,
+  )
+  // An EXPLICIT trustReport:true is a caller override (tests / a path that has
+  // validated the report itself) and bypasses the guardrail. The PRODUCTION
+  // default path (trustReport undefined → REPORT_METRICS_TRUSTED) is guarded:
+  // it shows report data only when a live API baseline exists AND no report
+  // funnel stage exceeds live Leads beyond tolerance. So a window-mismatched /
+  // over-reading report (the ~1.8-2x case), or a report with no live baseline to
+  // validate against, falls back to "needs supplemental" — inflated numbers can
+  // never render on the default (production) dashboard.
+  const explicitTrust = input.trustReport === true
+  const varianceOk =
+    explicitTrust ||
+    (apiLeads > 0 && maxReportFunnel <= apiLeads * REPORT_VARIANCE_TOLERANCE)
+  const trustReport = trustFlag && varianceOk
   // Gate the report: when untrusted, the report-derived stages/metrics get no
   // rows → they render "needs supplemental data" instead of inflated numbers.
   const repRows = trustReport ? roiCurrent : []

@@ -98,16 +98,33 @@ describe('assembleCanonicalFunnel — metric split', () => {
     expect(c.provenance.metrics_source).toBe('needs_supplemental')
   })
 
-  it('production default does NOT trust the report — report stages are supplemental', () => {
+  it('production default trusts a WINDOW-CONSISTENT report (variance guardrail passes)', () => {
+    // Default now = REPORT_METRICS_TRUSTED (true), GUARDED by the variance check.
+    // Contacted 80 <= Leads 120 and appts 40 <= contacted 80 → consistent → shown.
     const c = assembleCanonicalFunnel({
-      ...base, // no trustReport → REPORT_METRICS_TRUSTED (false)
+      ...base, // no trustReport → REPORT_METRICS_TRUSTED (true) + guardrail
       opportunities: summary([{ lead_source: 'AutoTrader', opportunities: 120, sold: 18 }], 18),
       roiCurrent: [roi({ lead_source: 'AutoTrader', internet_actual_contact: 80, appts_set: 40 })],
     })
     const stages = Object.fromEntries(c.funnel.lead_performance.stages.map((s) => [s.key, s]))
     expect(stages.leads.now).toBe(120) // API
     expect(stages.sold.now).toBe(18) // API
-    expect(stages.contacted.status).toBe('pending') // report untrusted → supplemental
+    expect(stages.contacted.status).not.toBe('pending') // consistent report → shown
+    expect(c.provenance.metrics_source).toBe('report')
+  })
+
+  it('variance guardrail SUPPRESSES an over-reading report (Contacted > live Leads) — no inflation', () => {
+    // The documented ~1.8-2x over-read: report Contacted 120 vs live Leads 60.
+    // Guardrail fails → report stages fall back to supplemental (never inflated).
+    const c = assembleCanonicalFunnel({
+      ...base, // default trusted, but guardrail must catch the mismatch
+      opportunities: summary([{ lead_source: 'AutoTrader', opportunities: 60, sold: 9 }], 9),
+      roiCurrent: [roi({ lead_source: 'AutoTrader', internet_actual_contact: 120, appts_set: 55 })],
+    })
+    const stages = Object.fromEntries(c.funnel.lead_performance.stages.map((s) => [s.key, s]))
+    expect(stages.leads.now).toBe(60) // live API still shown
+    expect(stages.sold.now).toBe(9)
+    expect(stages.contacted.status).toBe('pending') // over-read → suppressed
     expect(stages.appt_set.status).toBe('pending')
     expect(c.provenance.metrics_source).toBe('needs_supplemental')
   })
