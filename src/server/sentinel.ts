@@ -33,7 +33,14 @@ import {
   listOpenHolds,
   type AgentReplyHold,
 } from './messaging-hub-store'
-import { countCommsByOutcome, countCommsErrors } from './comms-log'
+import {
+  countCommsByOutcome,
+  countCommsByRecipient,
+  countCommsErrors,
+} from './comms-log'
+import type { CommsRecipientCounts } from './comms-log'
+import { isHumanAssigned } from './thread-takeover'
+import { STOP_RE } from './comms-blacklist'
 import { detectPersonaViolations } from './persona-compliance'
 import { listCustomerWikiTree, readCustomerWikiFile, type CustomerWikiNode } from './customer-wiki'
 import { extractFrontmatter } from '../lib/frontmatter'
@@ -141,7 +148,12 @@ export type SentinelStore = {
   getThread: (
     profile: string,
     id: string,
-  ) => { messages: Array<{ direction: string; created_at?: number }> } | null
+  ) => {
+    contact_handle?: string
+    messages: Array<{ direction: string; created_at?: number; content?: string }>
+  } | null
+  /** True iff a human has taken over the thread (AI is paused for it). */
+  isHumanAssigned: (profile: string, threadId: string) => boolean
   countCommsErrors: (
     profile: string,
     sinceMs: number,
@@ -153,6 +165,12 @@ export type SentinelStore = {
     now: number,
     channel?: string,
   ) => { ok: number; error: number; total: number }
+  countCommsByRecipient: (
+    profile: string,
+    sinceMs: number,
+    now: number,
+    channel?: string,
+  ) => Array<CommsRecipientCounts>
   countStuckAutomations: (
     profile: string,
     now: number,
@@ -237,8 +255,10 @@ const DEFAULT_STORE: SentinelStore = {
   listOpenThreads: (profile) =>
     listThreads({ profile, status: 'open', limit: 500 }).map((t) => ({ id: t.id })),
   getThread: (profile, id) => getThread(profile, id),
+  isHumanAssigned: (profile, threadId) => isHumanAssigned(profile, threadId),
   countCommsErrors,
   countCommsByOutcome,
+  countCommsByRecipient,
   countStuckAutomations,
   countReplyJobs,
   latestInboundAt,
@@ -294,6 +314,15 @@ const DELIVERY_RATE_WINDOW_MS = 24 * 60 * 60_000
 const DELIVERY_RATE_MIN_VOLUME = 8 // need enough sends for a ratio to be meaningful
 const DELIVERY_RATE_WARN = 0.3 // >30% of email sends failing in 24h ⇒ warn
 const DELIVERY_RATE_CRIT = 0.5 // >50% ⇒ critical
+
+// Per-recipient health — catches ONE bad entry in a dealer's notification list
+// (a dead external mailbox, a mistyped domain) that the aggregate rate hides.
+// Uses the same 24h window. A recipient needs enough attempts for a ratio to be
+// meaningful, then a high per-address failure ratio names that exact entry.
+const RECIPIENT_WINDOW_MS = DELIVERY_RATE_WINDOW_MS
+const RECIPIENT_MIN_VOLUME = 6 // ≥6 sends to this address before judging it
+const RECIPIENT_FAIL_WARN = 0.5 // ≥50% of sends to ONE address failing ⇒ warn
+const RECIPIENT_FAIL_CRIT = 0.9 // ≥90% (e.g. a fully dead mailbox) ⇒ critical
 const AUTOMATION_OVERDUE_MS = 30 * 60_000 // due > 30m ago + unsent ⇒ tick not advancing
 const REPLY_FAIL_WINDOW_MS = 60 * 60_000 // look back 1h for failed agent replies
 const DATA_STALE_MS = 48 * 60 * 60_000 // no inbound for 48h ⇒ data may not be flowing
@@ -699,20 +728,44 @@ export const threadSlaCheck: SentinelCheck = {
       return []
     }
     let breached = 0
+    // Human-owned threads that have gone dark. A person explicitly took the
+    // thread over (AI is paused for it), so if the customer's last message goes
+    // unanswered NOBODY responds — the AI won't step in and the rep may have
+    // forgotten. This is exactly how a taken-over prospect gets stranded (live
+    // incident 2026-07-13: a buying-signal reply sat 56h on a taken-over thread).
+    // These are named individually and have NO 24h abandon ceiling — a human
+    // owns it, so it must never silently go dark regardless of age.
+    const stranded: Array<{ id: string; handle: string; ageMs: number }> = []
     for (const t of threads) {
       const full = store.getThread(profile, t.id)
       if (!full || !full.messages.length) continue
       const last = full.messages[full.messages.length - 1]
       if (last.direction !== 'inbound') continue
+      // An opt-out (STOP/unsubscribe) needs no reply — never flag it.
+      if (STOP_RE.test(String(last.content ?? ''))) continue
       const age = now - (last.created_at ?? 0)
-      // Past SLA AND still recent — a message older than SLA_RECENT_MS is treated
-      // as abandoned/handled, not an actively-waiting customer (avoids alerting
-      // on stale or test threads forever).
-      if (age >= THREAD_SLA_MS && age <= SLA_RECENT_MS) breached++
+      if (age < THREAD_SLA_MS) continue
+      let owned = false
+      try {
+        owned = store.isHumanAssigned(profile, t.id)
+      } catch {
+        owned = false
+      }
+      if (owned) {
+        stranded.push({
+          id: t.id,
+          handle: full.contact_handle ?? t.id,
+          ageMs: age,
+        })
+      } else if (age <= SLA_RECENT_MS) {
+        // Non-owned: keep the recency ceiling (a truly abandoned/test thread
+        // the AI never engaged should not alert forever).
+        breached++
+      }
     }
-    if (breached === 0) return []
-    return [
-      {
+    const findings: Array<Finding> = []
+    if (breached > 0) {
+      findings.push({
         key: `agent-health:${profile}:unanswered`,
         severity: breached >= 5 ? 'critical' : 'warning',
         category: 'agent-health',
@@ -721,8 +774,21 @@ export const threadSlaCheck: SentinelCheck = {
           THREAD_SLA_MS / 60_000,
         )}m (within the last ${Math.round(SLA_RECENT_MS / 3_600_000)}h) — an agent may not be responding.`,
         profile,
-      },
-    ]
+      })
+    }
+    for (const s of stranded) {
+      const mins = Math.round(s.ageMs / 60_000)
+      const ageLabel = mins >= 120 ? `${Math.round(mins / 60)}h` : `${mins}m`
+      findings.push({
+        key: `agent-health:${profile}:stranded-takeover:${s.id}`,
+        severity: s.ageMs >= 4 * 60 * 60_000 ? 'critical' : 'warning',
+        category: 'agent-health',
+        title: `Taken-over thread gone dark: ${s.handle} waiting ${ageLabel}`,
+        detail: `${profile}: thread ${s.id} (${s.handle}) was TAKEN OVER by a person, but the customer's last message has been unanswered for ${ageLabel}. Because a human owns the thread the AI will not step in — the assigned rep must reply or hand it back to the AI. No 24h auto-abandon applies to human-owned threads; this is how a taken-over prospect gets left behind.`,
+        profile,
+      })
+    }
+    return findings
   },
 }
 
@@ -928,6 +994,47 @@ export const notificationsDeliveryRateCheck: SentinelCheck = {
         profile,
       },
     ]
+  },
+}
+
+/**
+ * Notifications / PER-RECIPIENT health — a single bad entry in a dealer's
+ * notification list (a dead external mailbox, a mistyped `.net`-vs-`.co` domain)
+ * fails every time while the AGGREGATE delivery rate can still look acceptable
+ * because the other recipients on the same fan-out succeed. This names the exact
+ * failing address so the operator can fix that one list entry. The list itself
+ * is operator-owned (multi-recipient redundancy is by design) — the Sentinel's
+ * job is only to advise which entry is bad. Per profile, 24h window, email only.
+ */
+export const notificationRecipientHealthCheck: SentinelCheck = {
+  name: 'notifications-recipient-health',
+  category: 'notifications',
+  scope: 'profile',
+  async run({ profile, now, store }) {
+    if (!profile) return []
+    const recipients = store.countCommsByRecipient(
+      profile,
+      RECIPIENT_WINDOW_MS,
+      now,
+      'email',
+    )
+    const hrs = Math.round(RECIPIENT_WINDOW_MS / 3_600_000)
+    const findings: Array<Finding> = []
+    for (const r of recipients) {
+      if (r.total < RECIPIENT_MIN_VOLUME) continue
+      const rate = r.error / r.total
+      if (rate < RECIPIENT_FAIL_WARN) continue
+      const pct = Math.round(rate * 100)
+      findings.push({
+        key: `notifications:${profile}:recipient:${r.recipient}`,
+        severity: rate >= RECIPIENT_FAIL_CRIT ? 'critical' : 'warning',
+        category: 'notifications',
+        title: `Notification recipient failing: ${r.recipient} (${pct}%)`,
+        detail: `${profile}: ${r.error}/${r.total} lead-notification emails to ${r.recipient} failed over the last ${hrs}h (${pct}% failure). This one address in the notification list is likely bad (dead mailbox or wrong domain) — advise the dealer to fix or replace this entry. Other recipients on the same list are unaffected.`,
+        profile,
+      })
+    }
+    return findings
   },
 }
 
@@ -1373,6 +1480,7 @@ export const DEFAULT_CHECKS: Array<SentinelCheck> = [
   vinHealthCheck,
   notificationsDeliveryCheck,
   notificationsDeliveryRateCheck,
+  notificationRecipientHealthCheck,
   automationsFiringCheck,
   dataCollectionCheck,
   conversationOpsCheck,
