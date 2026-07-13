@@ -10,6 +10,7 @@ import {
   vinHealthCheck,
   notificationsDeliveryCheck,
   notificationsDeliveryRateCheck,
+  notificationRecipientHealthCheck,
   automationsFiringCheck,
   dataCollectionCheck,
   conversationOpsCheck,
@@ -35,8 +36,10 @@ function fakeStore(over: Partial<SentinelStore> = {}): SentinelStore {
   return {
     listOpenThreads: () => [],
     getThread: () => null,
+    isHumanAssigned: () => false,
     countCommsErrors: () => ({ count: 0, byChannel: {} }),
     countCommsByOutcome: () => ({ ok: 0, error: 0, total: 0 }),
+    countCommsByRecipient: () => [],
     countStuckAutomations: () => ({ automations: 0, flows: 0 }),
     countReplyJobs: () => ({ failed: 0, queued: 0 }),
     latestInboundAt: () => null,
@@ -561,6 +564,53 @@ describe('sentinel — vendors, notifications, automations, data, conversation Q
     expect(s.findings).toHaveLength(0)
   })
 
+  it('notifications: one dead recipient is named while others are fine', async () => {
+    const s = await runSentinelPass({
+      brain,
+      profiles: ['p1'],
+      checks: [notificationRecipientHealthCheck],
+      store: fakeStore({
+        countCommsByRecipient: () => [
+          // dead external mailbox — 0/32 delivered ⇒ critical, named exactly
+          { recipient: 'victoria@misscommunicationconsulting.com', ok: 0, error: 32, total: 32 },
+          // healthy DMS intake — must NOT be flagged
+          { recipient: 'leads@serrahonda.co', ok: 30, error: 2, total: 32 },
+        ],
+      }),
+      alertTo: [],
+      now: NOW,
+    })
+    const dead = s.findings.find(
+      (x) => x.key === 'notifications:p1:recipient:victoria@misscommunicationconsulting.com',
+    )
+    expect(dead?.severity).toBe('critical') // 100% failure ≥ crit
+    expect(dead?.title).toContain('victoria@misscommunicationconsulting.com')
+    expect(dead?.detail).toContain('100%')
+    // the healthy recipient produced no finding
+    expect(
+      s.findings.find((x) => x.key.includes('leads@serrahonda.co')),
+    ).toBeUndefined()
+  })
+
+  it('notifications: recipient health ignores low volume and healthy addresses', async () => {
+    const s = await runSentinelPass({
+      brain,
+      profiles: ['p1'],
+      checks: [notificationRecipientHealthCheck],
+      store: fakeStore({
+        countCommsByRecipient: () => [
+          // all failed but only 3 attempts — below RECIPIENT_MIN_VOLUME ⇒ no finding
+          { recipient: 'new@dealer.co', ok: 0, error: 3, total: 3 },
+          // plenty of volume, mostly fine ⇒ no finding
+          { recipient: 'sdew@serrahonda.co', ok: 18, error: 2, total: 20 },
+        ],
+      }),
+      alertTo: [],
+      now: NOW,
+    })
+    expect(s.findings).toHaveLength(0)
+  })
+
   it('automations: overdue runs/enrollments raise a finding', async () => {
     const s = await runSentinelPass({
       brain,
@@ -864,6 +914,53 @@ describe('sentinel — SLA recency window', () => {
       profiles: ['p1'],
       checks: [threadSlaCheck],
       store: fakeStore(threadStore(300 * HOUR_MS)),
+      alertTo: [],
+      now: NOW,
+    })
+    expect(s.findings).toHaveLength(0)
+  })
+
+  it('names a HUMAN-OWNED thread gone dark, with NO 24h ceiling (stranded-takeover)', async () => {
+    // 56h old (past the 24h abandon ceiling) but a human owns it → must still fire,
+    // named by contact. This is the live Shawn incident.
+    const s = await runSentinelPass({
+      brain,
+      profiles: ['p1'],
+      checks: [threadSlaCheck],
+      store: fakeStore({
+        listOpenThreads: () => [{ id: '6a646c1b' }],
+        getThread: () => ({
+          contact_handle: '+12052539897',
+          messages: [
+            { direction: 'outbound', created_at: NOW - 60 * HOUR_MS },
+            { direction: 'inbound', created_at: NOW - 56 * HOUR_MS, content: 'I wish. I needed a vehicle' },
+          ],
+        }),
+        isHumanAssigned: () => true,
+      }),
+      alertTo: [],
+      now: NOW,
+    })
+    const f = s.findings.find((x) => x.key === 'agent-health:p1:stranded-takeover:6a646c1b')
+    expect(f).toBeTruthy()
+    expect(f?.severity).toBe('critical') // >4h
+    expect(f?.title).toContain('+12052539897')
+    expect(f?.detail).toContain('TAKEN OVER')
+  })
+
+  it('does NOT flag a human-owned thread whose last inbound is an opt-out (STOP)', async () => {
+    const s = await runSentinelPass({
+      brain,
+      profiles: ['p1'],
+      checks: [threadSlaCheck],
+      store: fakeStore({
+        listOpenThreads: () => [{ id: 'tstop' }],
+        getThread: () => ({
+          contact_handle: '+15550000000',
+          messages: [{ direction: 'inbound', created_at: NOW - 3 * HOUR_MS, content: 'STOP' }],
+        }),
+        isHumanAssigned: () => true,
+      }),
       alertTo: [],
       now: NOW,
     })

@@ -164,3 +164,64 @@ export function countCommsByOutcome(
     }
   }
 }
+
+export type CommsRecipientCounts = {
+  recipient: string
+  ok: number
+  error: number
+  total: number
+}
+
+/**
+ * Count outbound sends by INDIVIDUAL RECIPIENT over the last `sinceMs` window
+ * (optionally scoped to a `channel`). Unnests the `recipients` JSON array so a
+ * fan-out row that names one address per send is attributed to that address.
+ *
+ * Powers the Sentinel's per-recipient health check: a single dead/wrong entry in
+ * a dealer's notification list (e.g. a mistyped `.net` domain, or an external
+ * mailbox that bounces every time) shows up as one recipient at ~0% delivery
+ * while the aggregate rate still looks fine. This surfaces the exact address so
+ * the operator can fix that one list entry.
+ *
+ * Read-only, best-effort: a read error yields an empty array so the Sentinel
+ * never false-alarms on a read failure.
+ */
+export function countCommsByRecipient(
+  profile: string,
+  sinceMs: number,
+  nowMs: number = Date.now(),
+  channel?: string,
+): Array<CommsRecipientCounts> {
+  const cutoff = nowMs - sinceMs
+  let handle: ReturnType<typeof openBrain> | null = null
+  try {
+    handle = openBrain(profile)
+    const rows = handle.all<{ recipient: string; outcome: string; n: number }>(
+      `SELECT je.value AS recipient, outcome, COUNT(*) AS n
+         FROM comms_log, json_each(comms_log.recipients) je
+        WHERE direction='outbound' AND ts >= ?${channel ? ' AND channel = ?' : ''}
+        GROUP BY je.value, outcome`,
+      ...(channel ? [cutoff, channel] : [cutoff]),
+    )
+    const byRecipient = new Map<string, CommsRecipientCounts>()
+    for (const r of rows) {
+      if (!r.recipient) continue
+      const cur =
+        byRecipient.get(r.recipient) ??
+        { recipient: r.recipient, ok: 0, error: 0, total: 0 }
+      if (r.outcome === 'ok') cur.ok += r.n
+      else if (r.outcome === 'error') cur.error += r.n
+      cur.total = cur.ok + cur.error
+      byRecipient.set(r.recipient, cur)
+    }
+    return [...byRecipient.values()]
+  } catch {
+    return []
+  } finally {
+    try {
+      handle?.close()
+    } catch {
+      /* ignore */
+    }
+  }
+}
