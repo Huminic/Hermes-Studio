@@ -144,6 +144,7 @@ import { Route as ApiEventsReplayRouteImport } from './routes/api/events/replay'
 import { Route as ApiCustomerSessionsRouteImport } from './routes/api/customer/sessions'
 import { Route as ApiCustomerSentinelRouteImport } from './routes/api/customer/sentinel'
 import { Route as ApiCustomerReportsRouteImport } from './routes/api/customer/reports'
+import { Route as ApiCustomerReportGenerateRouteImport } from './routes/api/customer/report-generate'
 import { Route as ApiCustomerPerformanceRouteImport } from './routes/api/customer/performance'
 import { Route as ApiCustomerNotificationsTestRouteImport } from './routes/api/customer/notifications-test'
 import { Route as ApiCustomerNotificationsRouteImport } from './routes/api/customer/notifications'
@@ -883,6 +884,12 @@ const ApiCustomerReportsRoute = ApiCustomerReportsRouteImport.update({
   path: '/api/customer/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerReportGenerateRoute =
+  ApiCustomerReportGenerateRouteImport.update({
+    id: '/api/customer/report-generate',
+    path: '/api/customer/report-generate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCustomerPerformanceRoute = ApiCustomerPerformanceRouteImport.update({
   id: '/api/customer/performance',
   path: '/api/customer/performance',
@@ -1326,6 +1333,7 @@ export interface FileRoutesByFullPath {
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
   '/api/customer/notifications-test': typeof ApiCustomerNotificationsTestRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
+  '/api/customer/report-generate': typeof ApiCustomerReportGenerateRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/customer/sentinel': typeof ApiCustomerSentinelRoute
   '/api/customer/sessions': typeof ApiCustomerSessionsRoute
@@ -1524,6 +1532,7 @@ export interface FileRoutesByTo {
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
   '/api/customer/notifications-test': typeof ApiCustomerNotificationsTestRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
+  '/api/customer/report-generate': typeof ApiCustomerReportGenerateRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/customer/sentinel': typeof ApiCustomerSentinelRoute
   '/api/customer/sessions': typeof ApiCustomerSessionsRoute
@@ -1724,6 +1733,7 @@ export interface FileRoutesById {
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
   '/api/customer/notifications-test': typeof ApiCustomerNotificationsTestRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
+  '/api/customer/report-generate': typeof ApiCustomerReportGenerateRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/customer/sentinel': typeof ApiCustomerSentinelRoute
   '/api/customer/sessions': typeof ApiCustomerSessionsRoute
@@ -1925,6 +1935,7 @@ export interface FileRouteTypes {
     | '/api/customer/notifications'
     | '/api/customer/notifications-test'
     | '/api/customer/performance'
+    | '/api/customer/report-generate'
     | '/api/customer/reports'
     | '/api/customer/sentinel'
     | '/api/customer/sessions'
@@ -2123,6 +2134,7 @@ export interface FileRouteTypes {
     | '/api/customer/notifications'
     | '/api/customer/notifications-test'
     | '/api/customer/performance'
+    | '/api/customer/report-generate'
     | '/api/customer/reports'
     | '/api/customer/sentinel'
     | '/api/customer/sessions'
@@ -2322,6 +2334,7 @@ export interface FileRouteTypes {
     | '/api/customer/notifications'
     | '/api/customer/notifications-test'
     | '/api/customer/performance'
+    | '/api/customer/report-generate'
     | '/api/customer/reports'
     | '/api/customer/sentinel'
     | '/api/customer/sessions'
@@ -2515,6 +2528,7 @@ export interface RootRouteChildren {
   ApiCustomerNotificationsRoute: typeof ApiCustomerNotificationsRoute
   ApiCustomerNotificationsTestRoute: typeof ApiCustomerNotificationsTestRoute
   ApiCustomerPerformanceRoute: typeof ApiCustomerPerformanceRoute
+  ApiCustomerReportGenerateRoute: typeof ApiCustomerReportGenerateRoute
   ApiCustomerReportsRoute: typeof ApiCustomerReportsRoute
   ApiCustomerSentinelRoute: typeof ApiCustomerSentinelRoute
   ApiCustomerSessionsRoute: typeof ApiCustomerSessionsRoute
@@ -3526,6 +3540,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/report-generate': {
+      id: '/api/customer/report-generate'
+      path: '/api/customer/report-generate'
+      fullPath: '/api/customer/report-generate'
+      preLoaderRoute: typeof ApiCustomerReportGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/customer/performance': {
       id: '/api/customer/performance'
       path: '/api/customer/performance'
@@ -4316,6 +4337,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCustomerNotificationsRoute: ApiCustomerNotificationsRoute,
   ApiCustomerNotificationsTestRoute: ApiCustomerNotificationsTestRoute,
   ApiCustomerPerformanceRoute: ApiCustomerPerformanceRoute,
+  ApiCustomerReportGenerateRoute: ApiCustomerReportGenerateRoute,
   ApiCustomerReportsRoute: ApiCustomerReportsRoute,
   ApiCustomerSentinelRoute: ApiCustomerSentinelRoute,
   ApiCustomerSessionsRoute: ApiCustomerSessionsRoute,
