@@ -24,6 +24,7 @@ const EXPECTED_KEYS = [
   'customer-console.comms',
   'customer-console.campaigns',
   'customer-console.notifications',
+  'customer-console.activity',
   'customer-console.widget-public',
   'customer-console.assistant-pane',
 ]
@@ -358,8 +359,8 @@ describe('console-renderers registry', () => {
       expect(txt).toContain('Campaigns')
       expect(txt).toContain('Follow-ups')
       expect(txt).toContain('Uploaded reports')
-      expect(txt).toContain('Data uploads')
-      expect(txt).toContain('Upload data')
+      expect(txt).toContain('Upload a report')
+      expect(txt).toContain('Upload report (CSV)')
       expect(txt).toContain('service-report.csv')
       // Explanatory note pointing to Dashboard tab for metrics:
       expect(txt).toContain('Dashboard')

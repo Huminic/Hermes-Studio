@@ -27,6 +27,7 @@ import { CustomerCampaignsRenderer } from '../components/customer-console/campai
 import { CustomerDataRenderer } from '../components/customer-console/data-renderer'
 import { CustomerPerformanceRenderer } from '../components/customer-console/performance-renderer'
 import { CustomerNotificationsRenderer } from '../components/customer-console/notifications-renderer'
+import { CustomerActivityRenderer } from '../components/customer-console/activity-renderer'
 import { ConsultPanel } from '../components/customer-console/consult-panel'
 
 const CUSTOMER_ACCENT = '#2f3b4d'
@@ -463,6 +464,10 @@ function NotificationsRenderer(props: ConsoleRendererProps) {
   )
 }
 
+function ActivityRenderer(props: ConsoleRendererProps) {
+  return <CustomerActivityRenderer profile={props.profile} />
+}
+
 function WidgetPublicRenderer(props: ConsoleRendererProps) {
   return (
     <StubFrame
@@ -503,6 +508,7 @@ export const consoleRenderers: Record<string, ConsoleRenderer> = {
   'customer-console.comms': CommsRenderer,
   'customer-console.campaigns': CampaignsRenderer,
   'customer-console.notifications': NotificationsRenderer,
+  'customer-console.activity': ActivityRenderer,
   'customer-console.widget-public': WidgetPublicRenderer,
   'customer-console.assistant-pane': AssistantPaneRenderer,
 }

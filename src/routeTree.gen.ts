@@ -161,6 +161,7 @@ import { Route as ApiCustomerAutomationsRouteImport } from './routes/api/custome
 import { Route as ApiCustomerAgentsRouteImport } from './routes/api/customer/agents'
 import { Route as ApiCustomerAgentTasksRouteImport } from './routes/api/customer/agent-tasks'
 import { Route as ApiCustomerAgentConfigRouteImport } from './routes/api/customer/agent-config'
+import { Route as ApiCustomerActivityRouteImport } from './routes/api/customer/activity'
 import { Route as ApiCrewsCrewIdRouteImport } from './routes/api/crews/$crewId'
 import { Route as ApiBrainUploadsRouteImport } from './routes/api/brain/uploads'
 import { Route as ApiBrainReadinessRouteImport } from './routes/api/brain/readiness'
@@ -974,6 +975,11 @@ const ApiCustomerAgentConfigRoute = ApiCustomerAgentConfigRouteImport.update({
   path: '/api/customer/agent-config',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerActivityRoute = ApiCustomerActivityRouteImport.update({
+  id: '/api/customer/activity',
+  path: '/api/customer/activity',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCrewsCrewIdRoute = ApiCrewsCrewIdRouteImport.update({
   id: '/api/crews/$crewId',
   path: '/api/crews/$crewId',
@@ -1317,6 +1323,7 @@ export interface FileRoutesByFullPath {
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/brain/uploads': typeof ApiBrainUploadsRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
+  '/api/customer/activity': typeof ApiCustomerActivityRoute
   '/api/customer/agent-config': typeof ApiCustomerAgentConfigRoute
   '/api/customer/agent-tasks': typeof ApiCustomerAgentTasksRoute
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
@@ -1516,6 +1523,7 @@ export interface FileRoutesByTo {
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/brain/uploads': typeof ApiBrainUploadsRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
+  '/api/customer/activity': typeof ApiCustomerActivityRoute
   '/api/customer/agent-config': typeof ApiCustomerAgentConfigRoute
   '/api/customer/agent-tasks': typeof ApiCustomerAgentTasksRoute
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
@@ -1717,6 +1725,7 @@ export interface FileRoutesById {
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/brain/uploads': typeof ApiBrainUploadsRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
+  '/api/customer/activity': typeof ApiCustomerActivityRoute
   '/api/customer/agent-config': typeof ApiCustomerAgentConfigRoute
   '/api/customer/agent-tasks': typeof ApiCustomerAgentTasksRoute
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
@@ -1919,6 +1928,7 @@ export interface FileRouteTypes {
     | '/api/brain/readiness'
     | '/api/brain/uploads'
     | '/api/crews/$crewId'
+    | '/api/customer/activity'
     | '/api/customer/agent-config'
     | '/api/customer/agent-tasks'
     | '/api/customer/agents'
@@ -2118,6 +2128,7 @@ export interface FileRouteTypes {
     | '/api/brain/readiness'
     | '/api/brain/uploads'
     | '/api/crews/$crewId'
+    | '/api/customer/activity'
     | '/api/customer/agent-config'
     | '/api/customer/agent-tasks'
     | '/api/customer/agents'
@@ -2318,6 +2329,7 @@ export interface FileRouteTypes {
     | '/api/brain/readiness'
     | '/api/brain/uploads'
     | '/api/crews/$crewId'
+    | '/api/customer/activity'
     | '/api/customer/agent-config'
     | '/api/customer/agent-tasks'
     | '/api/customer/agents'
@@ -2512,6 +2524,7 @@ export interface RootRouteChildren {
   ApiBrainReadinessRoute: typeof ApiBrainReadinessRoute
   ApiBrainUploadsRoute: typeof ApiBrainUploadsRoute
   ApiCrewsCrewIdRoute: typeof ApiCrewsCrewIdRouteWithChildren
+  ApiCustomerActivityRoute: typeof ApiCustomerActivityRoute
   ApiCustomerAgentConfigRoute: typeof ApiCustomerAgentConfigRoute
   ApiCustomerAgentTasksRoute: typeof ApiCustomerAgentTasksRoute
   ApiCustomerAgentsRoute: typeof ApiCustomerAgentsRoute
@@ -3659,6 +3672,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerAgentConfigRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/activity': {
+      id: '/api/customer/activity'
+      path: '/api/customer/activity'
+      fullPath: '/api/customer/activity'
+      preLoaderRoute: typeof ApiCustomerActivityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/crews/$crewId': {
       id: '/api/crews/$crewId'
       path: '/api/crews/$crewId'
@@ -4321,6 +4341,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiBrainReadinessRoute: ApiBrainReadinessRoute,
   ApiBrainUploadsRoute: ApiBrainUploadsRoute,
   ApiCrewsCrewIdRoute: ApiCrewsCrewIdRouteWithChildren,
+  ApiCustomerActivityRoute: ApiCustomerActivityRoute,
   ApiCustomerAgentConfigRoute: ApiCustomerAgentConfigRoute,
   ApiCustomerAgentTasksRoute: ApiCustomerAgentTasksRoute,
   ApiCustomerAgentsRoute: ApiCustomerAgentsRoute,
