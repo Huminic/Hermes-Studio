@@ -204,6 +204,40 @@ describe('buildAiActivityTab', () => {
     expect(byKey.infostore_updates.value).toBe(0)
     expect(byKey.texts_sent.status).toBe('sourced')
   })
+
+  it('counts Video Sessions / Web Chats as SESSIONS (distinct threads), not message volume', async () => {
+    const { getOrCreateThread, appendMessage } = await import(
+      '@/server/messaging-hub-store'
+    )
+    // ONE video session with 4 messages — must count as 1 session, not 4.
+    const v = getOrCreateThread({
+      profile: 'sessfix',
+      domain: 'sales',
+      channel: 'video',
+      contact_handle: '+15553334444',
+      assigned_agent_id: 'caroline',
+    })
+    for (const [dir, role] of [['inbound', 'user'], ['outbound', 'assistant'], ['inbound', 'user'], ['outbound', 'assistant']] as const) {
+      appendMessage({ thread_id: v.id, direction: dir, role, channel: 'video', content: 'x', author: dir === 'inbound' ? 'cust' : 'caroline' })
+    }
+    // ONE web chat with 3 messages — must count as 1 chat, not 3.
+    const c = getOrCreateThread({
+      profile: 'sessfix',
+      domain: 'sales',
+      channel: 'chat',
+      contact_handle: 'web:abc',
+      assigned_agent_id: 'caroline',
+    })
+    for (const [dir, role] of [['inbound', 'user'], ['outbound', 'assistant'], ['inbound', 'user']] as const) {
+      appendMessage({ thread_id: c.id, direction: dir, role, channel: 'chat', content: 'y', author: dir === 'inbound' ? 'cust' : 'caroline' })
+    }
+
+    const tab = buildAiActivityTab('sessfix', { now: Date.now(), windowDays: 30 })
+    const byKey = Object.fromEntries(tab.metrics.map((m) => [m.key, m]))
+    expect(byKey.video_sessions.value).toBe(1) // 1 session, NOT 4 messages
+    expect(byKey.web_chats.value).toBe(1) // 1 chat, NOT 3 messages
+    expect(byKey.conversations.value).toBe(2) // both threads
+  })
 })
 
 describe('buildObservation', () => {
