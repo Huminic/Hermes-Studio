@@ -52,6 +52,17 @@ const REPORTS = new Set([
   'competitor',
 ])
 
+/** Per-report artifact description (metadata blurb shown in the artifacts list). */
+const REPORT_DESCRIPTIONS: Record<string, string> = {
+  'missed-opportunities': 'Prospects lost to an AI/automation gap (rep takeovers excluded).',
+  'lead-source-detail': 'Per-source funnel and ROI, deeper than the dashboard table.',
+  'salesperson-effectiveness': 'Per-rep internet-lead funnel from the ingested KPI report.',
+  'ai-conversation-insights': 'Themes, objections, and knowledge gaps from recent conversations.',
+  'data-issues': 'Data-hygiene scan: undeliverable contacts, unowned threads, stuck holds.',
+  'store-performance-trend': 'Pipeline characteristics trended across report periods.',
+  competitor: 'Area-competitor comparison: listings, pricing, specials, and lead presence.',
+}
+
 export const Route = createFileRoute('/api/customer/report-generate')({
   server: {
     handlers: {
@@ -122,7 +133,7 @@ export const Route = createFileRoute('/api/customer/report-generate')({
           const artifact = createArtifact({
             profile,
             title,
-            description: 'Prospects lost to an AI/automation gap (rep takeovers excluded).',
+            description: REPORT_DESCRIPTIONS[report] ?? `${report} report`,
             type: 'report',
             createdBy: session?.username ?? 'report-generate',
             outputs: [
