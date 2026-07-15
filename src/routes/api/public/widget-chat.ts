@@ -17,7 +17,7 @@ import {
 } from '../../../server/lead-notifications'
 import { extractContactFromHistory } from '../../../server/chat-contact-extract'
 import { VENDOR_GUARDRAIL, scrubVendorTerms } from '../../../server/dealer-safe'
-import { recallCompanyWikiTop } from '../../../server/knowledge-mcp-handlers'
+import { recallWidgetGrounding } from '../../../server/knowledge-mcp-handlers'
 
 // Information-Store grounding for the PUBLIC widget chat (C). recallCompanyWikiTop
 // scores pages by query-term overlap (heading match = 2/term, body = 1/term).
@@ -154,14 +154,19 @@ export const Route = createFileRoute('/api/public/widget-chat')({
         // the authenticated in-app chat uses, gated by a safe score threshold
         // so generic scaffold content isn't forced into answers (C).
         const latestVisitor = history[history.length - 1]
-        const wikiHits =
+        const visitorText =
           latestVisitor && latestVisitor.role !== 'assistant'
-            ? recallCompanyWikiTop(
-                widget.profile,
-                String(latestVisitor.content ?? ''),
-                3,
-              ).filter((h) => h.score >= WIDGET_MIN_RECALL_SCORE)
-            : []
+            ? String(latestVisitor.content ?? '')
+            : ''
+        // Grounding = top keyword hits + a pinned canonical dealership contact
+        // node on hours/address/phone/location asks (anti-fabrication: that fact
+        // node is otherwise out-ranked by verbose play pages and dropped, after
+        // which the model invents an address). See recallWidgetGrounding.
+        const grounding = recallWidgetGrounding(widget.profile, visitorText, {
+          minScore: WIDGET_MIN_RECALL_SCORE,
+        })
+        const wikiHits = grounding.hits
+        const contactNoGround = grounding.contactNoGround
         const systemPrompt = [
           // LC-BLOCKER-008: vendor-name confidentiality guardrail FIRST so it
           // outranks the SOUL/body context that follows.
@@ -195,6 +200,15 @@ export const Route = createFileRoute('/api/public/widget-chat')({
           ``,
           `# Widget body (additional context)`,
           widget.body.slice(0, 4000),
+          // Anti-fabrication guard: the visitor asked for hours/address/phone but
+          // the store has no verified contact node to ground on. Forbid inventing.
+          ...(contactNoGround
+            ? [
+                ``,
+                `# Contact facts are NOT verified for this store`,
+                `The visitor is asking about hours, address, phone, or location, but the Information Store has no verified answer. Do NOT state any specific address, hours, or phone number — say you'll have the team confirm the exact details and offer to connect them.`,
+              ]
+            : []),
           // Information-Store grounding (only when a strong match cleared the
           // threshold). The agent answers from this when relevant; if it does
           // not cover the question it must not invent — offer a human handoff.

@@ -21,6 +21,7 @@ import {
   type CustomerWikiNode,
 } from './customer-wiki'
 import { guardedWikiWrite } from './guarded-wiki'
+import { extractFrontmatter, readWikiFields } from '../lib/frontmatter'
 
 export type KnowledgeToolContext = {
   token_label: string
@@ -124,6 +125,124 @@ export function recallCompanyWikiTop(
 /** Addressing-based recall: best WHOLE page by query-term overlap. */
 export function recallCompanyWiki(profile: string, query: string): RecallHit | null {
   return recallCompanyWikiTop(profile, query, 1)[0] ?? null
+}
+
+/**
+ * True when a visitor's question is about hours / address / phone / location —
+ * the class of factual "where/when/how do I reach you" asks that MUST be
+ * answered from the store's canonical dealership contact node, never invented.
+ *
+ * Keyword recall alone under-serves these: the single fact node is easily
+ * out-ranked by verbose sales-play pages and dropped from the top-N, after
+ * which the model fabricates a plausible address. Callers use this signal to
+ * PIN the canonical contact node into grounding regardless of rank.
+ */
+// Tightened to genuine contact asks. Bare "where"/"open"/"call"/"number"/
+// "reach" are deliberately NOT matched — they produced false positives like
+// "where can I test drive", "open recalls on this VIN", "call me a price",
+// "what number of miles", "reach a decision".
+const CONTACT_INTENT_RE = new RegExp(
+  [
+    'address',
+    'directions?',
+    'locat(?:ed|ion)',
+    '\\bhours\\b',
+    'opening|closing',
+    '\\bphone\\b',
+    'call (?:you|your)',
+    'reach (?:you|us|the (?:team|dealership|store))',
+    'contact (?:you|us|info|information|number)',
+    'get in touch',
+    '(?:phone|contact) number',
+    'number to call',
+    'where (?:are|is) (?:you|your)',
+    'where.{0,15}located',
+    'what time.{0,20}(?:open|clos)',
+    'when.{0,20}(?:open|clos)',
+  ].join('|'),
+  'i',
+)
+
+export function isContactIntent(query: string): boolean {
+  return CONTACT_INTENT_RE.test(query)
+}
+
+/** Path of the canonical dealership contact fact node (seeded convention). */
+const CONTACT_NODE_PATH_RE = /(^|\/)dealership\/hours-location-contact(\.md)?$/i
+
+/** A wiki node is the dealership contact fact node by path convention or canonical_name. */
+function looksLikeContactNode(path: string, frontmatter: Record<string, unknown>): boolean {
+  if (CONTACT_NODE_PATH_RE.test(path)) return true
+  const canonicalName = String(frontmatter.canonical_name ?? '')
+  return canonicalName === 'dealership-hours-location-contact'
+}
+
+/**
+ * Resolve a profile's CANONICAL dealership hours/location/contact fact node, if
+ * one exists. Requires `status: canonical` — a `draft` fact node (unverified
+ * dealer facts pending operator sign-off) is NEVER returned as fact, upholding
+ * the anti-fabrication invariant. Returns null when no canonical contact node
+ * exists (caller then must not let the model invent — offer a human handoff).
+ */
+export function findCanonicalContactNode(profile: string): RecallHit | null {
+  for (const f of flatten(listCustomerWikiTree(profile).tree)) {
+    // Cheap path prefilter before reading — the contact node lives under
+    // dealership/ or carries "hours"/"location"/"contact" in its path.
+    if (!/dealership|hours|location|contact/i.test(f.path)) continue
+    const read = readCustomerWikiFile(profile, f.path)
+    if (!read.ok || !read.content) continue
+    const { frontmatter } = extractFrontmatter(read.content)
+    if (!looksLikeContactNode(f.path, frontmatter ?? {})) continue
+    const { status } = readWikiFields(frontmatter)
+    if (status !== 'canonical') continue // draft never grounds as fact
+    // Sentinel score above the recall threshold so it sorts ahead of keyword hits.
+    return { path: f.path, content: read.content, score: 999 }
+  }
+  return null
+}
+
+export type WidgetGrounding = {
+  /** Final pages to inject, best first; the pinned contact node (if any) leads. */
+  hits: Array<RecallHit>
+  /** True when a canonical contact node was force-pinned for a contact-intent ask. */
+  contactPinned: boolean
+  /** True when the ask was contact-intent but NO canonical node exists to ground on. */
+  contactNoGround: boolean
+}
+
+/**
+ * Grounding page set for the PUBLIC widget: the top keyword hits, PLUS a pinned
+ * canonical dealership contact node whenever the visitor asks about
+ * hours/address/phone/location (that fact node is otherwise out-ranked by
+ * verbose play pages and dropped, causing the model to invent an address).
+ * Shared so the pin behavior is unit-testable independent of the route + LLM.
+ */
+export function recallWidgetGrounding(
+  profile: string,
+  query: string,
+  opts?: { minScore?: number; limit?: number },
+): WidgetGrounding {
+  const minScore = opts?.minScore ?? 3
+  const limit = opts?.limit ?? 3
+  let base = query
+    ? recallCompanyWikiTop(profile, query, limit).filter((h) => h.score >= minScore)
+    : []
+  const contactIntent = query ? isContactIntent(query) : false
+  // On a contact-intent ask, the ONLY contact node allowed to ground is the
+  // canonical pin below — drop any contact node the keyword recall surfaced so a
+  // DRAFT (unverified) contact node can never reach a customer as fact.
+  if (contactIntent) base = base.filter((h) => !CONTACT_NODE_PATH_RE.test(h.path))
+  const pin = contactIntent ? findCanonicalContactNode(profile) : null
+  // Dedup by path (the pin can match by canonical_name at a path the base
+  // filter did not catch) — pin first, so it always leads.
+  const seen = new Set<string>()
+  const hits: Array<RecallHit> = []
+  for (const h of pin ? [pin, ...base] : base) {
+    if (seen.has(h.path)) continue
+    seen.add(h.path)
+    hits.push(h)
+  }
+  return { hits, contactPinned: !!pin, contactNoGround: contactIntent && !pin }
 }
 
 /** Normalize a caller path to the company-wiki tree (so agents can omit the prefix). */
