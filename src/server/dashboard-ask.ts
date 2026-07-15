@@ -188,3 +188,61 @@ export async function askDashboard(
     return { ok: false, error: err instanceof Error ? err.message : 'Provider call failed.' }
   }
 }
+
+export type ChatResult =
+  | { ok: true; text: string; via: 'hermes' | 'openai-direct' }
+  | { ok: false; error: string; unconfigured?: boolean }
+
+/**
+ * Reusable single-shot chat completion over the same provider path as Ask-AI
+ * (Hermes gateway, else OpenAI-direct, else honest-unconfigured). Used by report
+ * generators that need a grounded LLM pass over already-gathered, real data.
+ * Output is vendor-scrubbed. NEVER invents a provider — returns unconfigured.
+ */
+export async function completeChat(
+  system: string,
+  user: string,
+  opts: { maxTokens?: number; temperature?: number } = {},
+): Promise<ChatResult> {
+  const messages = [
+    { role: 'system', content: system },
+    { role: 'user', content: user },
+  ]
+  const { hermes, openai, model } = keys()
+  const max_tokens = opts.maxTokens ?? 1200
+  const temperature = opts.temperature ?? 0.3
+  try {
+    if (hermes) {
+      const res = await fetch(`${HERMES_URL}/v1/chat/completions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${hermes}` },
+        body: JSON.stringify({ model, messages, temperature, max_tokens }),
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: { message?: string }
+        choices?: Array<{ message?: { content?: string } }>
+      }
+      if (res.ok && !data.error) {
+        return { ok: true, text: scrubVendorTerms(data.choices?.[0]?.message?.content ?? ''), via: 'hermes' }
+      }
+    }
+    if (openai) {
+      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${openai}` },
+        body: JSON.stringify({ model, messages, temperature, max_tokens }),
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: { message?: string }
+        choices?: Array<{ message?: { content?: string } }>
+      }
+      if (!res.ok || data.error) {
+        return { ok: false, error: data.error?.message ?? 'Upstream provider error.' }
+      }
+      return { ok: true, text: scrubVendorTerms(data.choices?.[0]?.message?.content ?? ''), via: 'openai-direct' }
+    }
+    return { ok: false, unconfigured: true, error: 'No inference provider configured for this workspace.' }
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : 'Provider call failed.' }
+  }
+}

@@ -143,6 +143,7 @@ export function CustomerDataRenderer(props: {
           ok: boolean
           error?: string
           upload?: { filename: string; embedded: boolean }
+          report?: { ok: boolean; kind?: string; rows?: number; reason?: string }
           uploads?: Array<UploadRow>
         }
         if (!res.ok || !j.ok) {
@@ -150,11 +151,7 @@ export function CustomerDataRenderer(props: {
           return
         }
         setUploads(j.uploads ?? [])
-        setUploadNote(
-          `${j.upload?.filename ?? file.name} uploaded${
-            j.upload?.embedded ? ' and indexed for search.' : '.'
-          }`,
-        )
+        setUploadNote(uploadResultNote(j.upload?.filename ?? file.name, j.upload?.embedded, j.report))
       } catch {
         setUploadNote('We could not upload that file.')
       } finally {
@@ -241,11 +238,13 @@ export function CustomerDataRenderer(props: {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="text-sm font-semibold text-slate-900">
-              Data uploads
+              Upload a report
             </h3>
             <p className="mt-1 text-xs leading-relaxed text-slate-500">
-              Upload reports, exports, and reference files into the Data Store.
-              Text-readable files are indexed for search when possible.
+              Upload your VinSolutions ROI or salesperson-KPI export as{' '}
+              <span className="font-medium text-slate-700">CSV</span> and it is
+              recognized automatically for this store — the numbers flow straight to
+              your dashboard. PDFs and other files are stored as reference only.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -266,7 +265,7 @@ export function CustomerDataRenderer(props: {
               className="rounded-md px-3 py-1.5 text-xs font-semibold text-white transition hover:brightness-95 disabled:opacity-50"
               style={{ background: PRIMARY }}
             >
-              {uploadBusy ? 'Uploading…' : 'Upload data'}
+              {uploadBusy ? 'Uploading…' : 'Upload report (CSV)'}
             </button>
           </div>
         </div>
@@ -318,6 +317,30 @@ export function CustomerDataRenderer(props: {
       </div>
     </div>
   )
+}
+
+/**
+ * Build the post-upload confirmation message. Priority:
+ *  1. a recognized ROI/KPI report was ingested → tell the dealer it now powers the dashboard;
+ *  2. a PDF (or any non-ingested spreadsheet) → guide them to upload CSV for metrics;
+ *  3. otherwise a plain file → stored / indexed. Pure + exported for tests.
+ */
+export function uploadResultNote(
+  filename: string,
+  embedded: boolean | undefined,
+  report: { ok: boolean; kind?: string; rows?: number; reason?: string } | undefined,
+): string {
+  if (report?.ok) {
+    const kind = report.kind === 'kpi_salesperson' ? 'salesperson KPI' : 'lead-source ROI'
+    return `${filename} recognized as a ${kind} report — ${report.rows ?? 0} rows now power your dashboard.`
+  }
+  if (/\.pdf$/i.test(filename)) {
+    return `${filename} stored as a reference file. PDF can't be read for dashboard metrics — export the report as CSV and upload the CSV to populate your dashboard.`
+  }
+  if (report && !report.ok && /\.(csv|xls|xlsx)$/i.test(filename)) {
+    return `${filename} stored, but it wasn't recognized as a dashboard report (${report.reason ?? 'unrecognized format'}). Upload the VinSolutions ROI or KPI export as CSV for dashboard metrics.`
+  }
+  return `${filename} uploaded${embedded ? ' and indexed for search.' : '.'}`
 }
 
 function classifyForUpload(file: File): 'document' | 'data' | undefined {

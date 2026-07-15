@@ -144,6 +144,7 @@ import { Route as ApiEventsReplayRouteImport } from './routes/api/events/replay'
 import { Route as ApiCustomerSessionsRouteImport } from './routes/api/customer/sessions'
 import { Route as ApiCustomerSentinelRouteImport } from './routes/api/customer/sentinel'
 import { Route as ApiCustomerReportsRouteImport } from './routes/api/customer/reports'
+import { Route as ApiCustomerReportGenerateRouteImport } from './routes/api/customer/report-generate'
 import { Route as ApiCustomerPerformanceRouteImport } from './routes/api/customer/performance'
 import { Route as ApiCustomerNotificationsTestRouteImport } from './routes/api/customer/notifications-test'
 import { Route as ApiCustomerNotificationsRouteImport } from './routes/api/customer/notifications'
@@ -160,6 +161,7 @@ import { Route as ApiCustomerAutomationsRouteImport } from './routes/api/custome
 import { Route as ApiCustomerAgentsRouteImport } from './routes/api/customer/agents'
 import { Route as ApiCustomerAgentTasksRouteImport } from './routes/api/customer/agent-tasks'
 import { Route as ApiCustomerAgentConfigRouteImport } from './routes/api/customer/agent-config'
+import { Route as ApiCustomerActivityRouteImport } from './routes/api/customer/activity'
 import { Route as ApiCrewsCrewIdRouteImport } from './routes/api/crews/$crewId'
 import { Route as ApiBrainUploadsRouteImport } from './routes/api/brain/uploads'
 import { Route as ApiBrainReadinessRouteImport } from './routes/api/brain/readiness'
@@ -883,6 +885,12 @@ const ApiCustomerReportsRoute = ApiCustomerReportsRouteImport.update({
   path: '/api/customer/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerReportGenerateRoute =
+  ApiCustomerReportGenerateRouteImport.update({
+    id: '/api/customer/report-generate',
+    path: '/api/customer/report-generate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCustomerPerformanceRoute = ApiCustomerPerformanceRouteImport.update({
   id: '/api/customer/performance',
   path: '/api/customer/performance',
@@ -965,6 +973,11 @@ const ApiCustomerAgentTasksRoute = ApiCustomerAgentTasksRouteImport.update({
 const ApiCustomerAgentConfigRoute = ApiCustomerAgentConfigRouteImport.update({
   id: '/api/customer/agent-config',
   path: '/api/customer/agent-config',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCustomerActivityRoute = ApiCustomerActivityRouteImport.update({
+  id: '/api/customer/activity',
+  path: '/api/customer/activity',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiCrewsCrewIdRoute = ApiCrewsCrewIdRouteImport.update({
@@ -1310,6 +1323,7 @@ export interface FileRoutesByFullPath {
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/brain/uploads': typeof ApiBrainUploadsRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
+  '/api/customer/activity': typeof ApiCustomerActivityRoute
   '/api/customer/agent-config': typeof ApiCustomerAgentConfigRoute
   '/api/customer/agent-tasks': typeof ApiCustomerAgentTasksRoute
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
@@ -1326,6 +1340,7 @@ export interface FileRoutesByFullPath {
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
   '/api/customer/notifications-test': typeof ApiCustomerNotificationsTestRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
+  '/api/customer/report-generate': typeof ApiCustomerReportGenerateRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/customer/sentinel': typeof ApiCustomerSentinelRoute
   '/api/customer/sessions': typeof ApiCustomerSessionsRoute
@@ -1508,6 +1523,7 @@ export interface FileRoutesByTo {
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/brain/uploads': typeof ApiBrainUploadsRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
+  '/api/customer/activity': typeof ApiCustomerActivityRoute
   '/api/customer/agent-config': typeof ApiCustomerAgentConfigRoute
   '/api/customer/agent-tasks': typeof ApiCustomerAgentTasksRoute
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
@@ -1524,6 +1540,7 @@ export interface FileRoutesByTo {
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
   '/api/customer/notifications-test': typeof ApiCustomerNotificationsTestRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
+  '/api/customer/report-generate': typeof ApiCustomerReportGenerateRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/customer/sentinel': typeof ApiCustomerSentinelRoute
   '/api/customer/sessions': typeof ApiCustomerSessionsRoute
@@ -1708,6 +1725,7 @@ export interface FileRoutesById {
   '/api/brain/readiness': typeof ApiBrainReadinessRoute
   '/api/brain/uploads': typeof ApiBrainUploadsRoute
   '/api/crews/$crewId': typeof ApiCrewsCrewIdRouteWithChildren
+  '/api/customer/activity': typeof ApiCustomerActivityRoute
   '/api/customer/agent-config': typeof ApiCustomerAgentConfigRoute
   '/api/customer/agent-tasks': typeof ApiCustomerAgentTasksRoute
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
@@ -1724,6 +1742,7 @@ export interface FileRoutesById {
   '/api/customer/notifications': typeof ApiCustomerNotificationsRoute
   '/api/customer/notifications-test': typeof ApiCustomerNotificationsTestRoute
   '/api/customer/performance': typeof ApiCustomerPerformanceRoute
+  '/api/customer/report-generate': typeof ApiCustomerReportGenerateRoute
   '/api/customer/reports': typeof ApiCustomerReportsRoute
   '/api/customer/sentinel': typeof ApiCustomerSentinelRoute
   '/api/customer/sessions': typeof ApiCustomerSessionsRoute
@@ -1909,6 +1928,7 @@ export interface FileRouteTypes {
     | '/api/brain/readiness'
     | '/api/brain/uploads'
     | '/api/crews/$crewId'
+    | '/api/customer/activity'
     | '/api/customer/agent-config'
     | '/api/customer/agent-tasks'
     | '/api/customer/agents'
@@ -1925,6 +1945,7 @@ export interface FileRouteTypes {
     | '/api/customer/notifications'
     | '/api/customer/notifications-test'
     | '/api/customer/performance'
+    | '/api/customer/report-generate'
     | '/api/customer/reports'
     | '/api/customer/sentinel'
     | '/api/customer/sessions'
@@ -2107,6 +2128,7 @@ export interface FileRouteTypes {
     | '/api/brain/readiness'
     | '/api/brain/uploads'
     | '/api/crews/$crewId'
+    | '/api/customer/activity'
     | '/api/customer/agent-config'
     | '/api/customer/agent-tasks'
     | '/api/customer/agents'
@@ -2123,6 +2145,7 @@ export interface FileRouteTypes {
     | '/api/customer/notifications'
     | '/api/customer/notifications-test'
     | '/api/customer/performance'
+    | '/api/customer/report-generate'
     | '/api/customer/reports'
     | '/api/customer/sentinel'
     | '/api/customer/sessions'
@@ -2306,6 +2329,7 @@ export interface FileRouteTypes {
     | '/api/brain/readiness'
     | '/api/brain/uploads'
     | '/api/crews/$crewId'
+    | '/api/customer/activity'
     | '/api/customer/agent-config'
     | '/api/customer/agent-tasks'
     | '/api/customer/agents'
@@ -2322,6 +2346,7 @@ export interface FileRouteTypes {
     | '/api/customer/notifications'
     | '/api/customer/notifications-test'
     | '/api/customer/performance'
+    | '/api/customer/report-generate'
     | '/api/customer/reports'
     | '/api/customer/sentinel'
     | '/api/customer/sessions'
@@ -2499,6 +2524,7 @@ export interface RootRouteChildren {
   ApiBrainReadinessRoute: typeof ApiBrainReadinessRoute
   ApiBrainUploadsRoute: typeof ApiBrainUploadsRoute
   ApiCrewsCrewIdRoute: typeof ApiCrewsCrewIdRouteWithChildren
+  ApiCustomerActivityRoute: typeof ApiCustomerActivityRoute
   ApiCustomerAgentConfigRoute: typeof ApiCustomerAgentConfigRoute
   ApiCustomerAgentTasksRoute: typeof ApiCustomerAgentTasksRoute
   ApiCustomerAgentsRoute: typeof ApiCustomerAgentsRoute
@@ -2515,6 +2541,7 @@ export interface RootRouteChildren {
   ApiCustomerNotificationsRoute: typeof ApiCustomerNotificationsRoute
   ApiCustomerNotificationsTestRoute: typeof ApiCustomerNotificationsTestRoute
   ApiCustomerPerformanceRoute: typeof ApiCustomerPerformanceRoute
+  ApiCustomerReportGenerateRoute: typeof ApiCustomerReportGenerateRoute
   ApiCustomerReportsRoute: typeof ApiCustomerReportsRoute
   ApiCustomerSentinelRoute: typeof ApiCustomerSentinelRoute
   ApiCustomerSessionsRoute: typeof ApiCustomerSessionsRoute
@@ -3526,6 +3553,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/report-generate': {
+      id: '/api/customer/report-generate'
+      path: '/api/customer/report-generate'
+      fullPath: '/api/customer/report-generate'
+      preLoaderRoute: typeof ApiCustomerReportGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/customer/performance': {
       id: '/api/customer/performance'
       path: '/api/customer/performance'
@@ -3636,6 +3670,13 @@ declare module '@tanstack/react-router' {
       path: '/api/customer/agent-config'
       fullPath: '/api/customer/agent-config'
       preLoaderRoute: typeof ApiCustomerAgentConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/customer/activity': {
+      id: '/api/customer/activity'
+      path: '/api/customer/activity'
+      fullPath: '/api/customer/activity'
+      preLoaderRoute: typeof ApiCustomerActivityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/crews/$crewId': {
@@ -4300,6 +4341,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiBrainReadinessRoute: ApiBrainReadinessRoute,
   ApiBrainUploadsRoute: ApiBrainUploadsRoute,
   ApiCrewsCrewIdRoute: ApiCrewsCrewIdRouteWithChildren,
+  ApiCustomerActivityRoute: ApiCustomerActivityRoute,
   ApiCustomerAgentConfigRoute: ApiCustomerAgentConfigRoute,
   ApiCustomerAgentTasksRoute: ApiCustomerAgentTasksRoute,
   ApiCustomerAgentsRoute: ApiCustomerAgentsRoute,
@@ -4316,6 +4358,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCustomerNotificationsRoute: ApiCustomerNotificationsRoute,
   ApiCustomerNotificationsTestRoute: ApiCustomerNotificationsTestRoute,
   ApiCustomerPerformanceRoute: ApiCustomerPerformanceRoute,
+  ApiCustomerReportGenerateRoute: ApiCustomerReportGenerateRoute,
   ApiCustomerReportsRoute: ApiCustomerReportsRoute,
   ApiCustomerSentinelRoute: ApiCustomerSentinelRoute,
   ApiCustomerSessionsRoute: ApiCustomerSessionsRoute,

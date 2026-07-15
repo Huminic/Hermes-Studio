@@ -24,6 +24,7 @@ import {
   type CredentialMode,
 } from '../lib/studio-config'
 import { checkCommGate, type GateChannel } from './comms-gate'
+import { recordCommsOutcome, type CommsOutcomeRow } from './comms-log'
 
 type AdapterStatus = 'sent' | 'unconfigured' | 'failed' | 'simulated' | 'blocked'
 
@@ -466,14 +467,17 @@ export async function dispatchOutbound(input: {
       return { status: 'blocked', via: `${input.channel}-gate`, error: gate.reason, gate_rule: gate.rule }
     }
   }
+  let result: AdapterResult
   switch (input.channel) {
     case 'sms':
     case 'textmagic':
-      return dispatchSms(input.profile, input.thread, input.content)
+      result = await dispatchSms(input.profile, input.thread, input.content)
+      break
     case 'voice':
     case 'phone':
     case 'vapi':
-      return dispatchVapi(input.profile, input.thread, input.content)
+      result = await dispatchVapi(input.profile, input.thread, input.content)
+      break
     case 'video':
     case 'tavus':
       return dispatchTavus(input.profile, input.thread, input.content)
@@ -485,5 +489,44 @@ export async function dispatchOutbound(input: {
       // already produces an assistant message via /api/customer/chat.
       // For a reply on a chat thread we just record it.
       return { status: 'simulated', via: 'chat' }
+  }
+  // Record the delivery OUTCOME for regulated customer channels (text/voice) so a
+  // FAILED customer send is visible to the Sentinel (notifications-delivery check,
+  // channel-agnostic 1h burst → email alert). Previously only lead-notification
+  // EMAILS recorded here, so failed texts were invisible. Best-effort; a telemetry
+  // write never breaks a send.
+  const row = commsOutcomeRowFor(input.channel, input.thread.contact_handle, result)
+  if (row) recordCommsOutcome(input.profile, row)
+  return result
+}
+
+/**
+ * Map a send result to a comms_log row for the regulated customer channels
+ * (text/voice), or null when it should not be recorded. Only 'sent'/'failed' are
+ * true delivery outcomes — 'blocked' (a gate decision), 'unconfigured' (no creds),
+ * and 'simulated' (chat) are not delivery errors. Email is recorded by the
+ * lead-notification path, not here (avoid double counting). Pure + exported for tests.
+ */
+export function commsOutcomeRowFor(
+  channel: string,
+  recipient: string,
+  result: AdapterResult,
+): CommsOutcomeRow | null {
+  const logChannel: 'sms' | 'voice' | null =
+    channel === 'sms' || channel === 'textmagic'
+      ? 'sms'
+      : channel === 'voice' || channel === 'phone' || channel === 'vapi'
+        ? 'voice'
+        : null
+  if (!logChannel) return null
+  if (result.status !== 'sent' && result.status !== 'failed') return null
+  return {
+    direction: 'outbound',
+    channel: logChannel,
+    actor: `system:${channel}-send`,
+    recipients: [recipient],
+    body_summary: result.status === 'failed' ? (result.error ?? 'send failed').slice(0, 200) : null,
+    external_id: result.external_id ?? null,
+    outcome: result.status === 'sent' ? 'ok' : 'error',
   }
 }

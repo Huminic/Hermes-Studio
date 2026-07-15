@@ -134,3 +134,40 @@ describe('dispatchOutbound — shared/own credential routing', () => {
     expect(body.params.arguments.customerNumber).toBe('+12025550123')
   })
 })
+
+describe('commsOutcomeRowFor (A3: failed customer texts become Sentinel-visible)', () => {
+  it('records a FAILED sms send as outcome=error so Sentinel can see it', async () => {
+    const { commsOutcomeRowFor } = await import('@/server/messaging-adapters')
+    const row = commsOutcomeRowFor('sms', '+12025550123', {
+      status: 'failed',
+      via: 'sms-textmagic-shared',
+      error: 'provider rejected: invalid number',
+    })
+    expect(row).not.toBeNull()
+    expect(row!.channel).toBe('sms')
+    expect(row!.outcome).toBe('error')
+    expect(row!.recipients).toEqual(['+12025550123'])
+    expect(row!.body_summary).toMatch(/provider rejected/)
+  })
+
+  it('records a sent sms as outcome=ok', async () => {
+    const { commsOutcomeRowFor } = await import('@/server/messaging-adapters')
+    const row = commsOutcomeRowFor('textmagic', '+12025550123', {
+      status: 'sent',
+      via: 'sms-textmagic-shared',
+      external_id: 'ext-1',
+    })
+    expect(row!.outcome).toBe('ok')
+    expect(row!.channel).toBe('sms')
+    expect(row!.external_id).toBe('ext-1')
+  })
+
+  it('maps voice channels to voice, and does NOT record blocked/unconfigured/email/chat', async () => {
+    const { commsOutcomeRowFor } = await import('@/server/messaging-adapters')
+    expect(commsOutcomeRowFor('vapi', '+1', { status: 'sent', via: 'v' })!.channel).toBe('voice')
+    expect(commsOutcomeRowFor('sms', '+1', { status: 'blocked', via: 'g' })).toBeNull()
+    expect(commsOutcomeRowFor('sms', '+1', { status: 'unconfigured', via: 'u' })).toBeNull()
+    expect(commsOutcomeRowFor('email', '+1', { status: 'sent', via: 'e' })).toBeNull()
+    expect(commsOutcomeRowFor('chat', '+1', { status: 'simulated', via: 'c' })).toBeNull()
+  })
+})

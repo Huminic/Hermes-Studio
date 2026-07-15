@@ -11,6 +11,7 @@ import {
   Message01Icon,
   Notification03Icon,
   Robot01Icon,
+  Activity01Icon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import type { IconSvgElement } from '@hugeicons/react'
@@ -33,6 +34,7 @@ const TAB_TO_RENDERER: Record<string, string> = {
   comms: 'customer-console.comms',
   campaigns: 'customer-console.campaigns',
   notifications: 'customer-console.notifications',
+  activity: 'customer-console.activity',
 }
 
 function normalizeActiveTab(tab: string): string {
@@ -237,6 +239,7 @@ function StorefrontTabRoute() {
     { id: 'agents', label: 'Agents', icon: Robot01Icon },
     { id: 'tools', label: 'Storefront', icon: GridIcon },
     { id: 'notifications', label: 'Notifications', icon: Notification03Icon },
+    { id: 'activity', label: 'Activity', icon: Activity01Icon },
     { id: 'infostore', label: 'InfoStore', icon: Database01Icon },
   ]
 

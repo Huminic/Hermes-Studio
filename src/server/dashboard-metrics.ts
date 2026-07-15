@@ -533,6 +533,28 @@ function conversationCounts(
   return { current, prior }
 }
 
+/** Per-channel SESSION (thread) counts for the current + prior window. Used so
+ *  "Video Sessions" / "Web Chats" mean distinct conversations (like
+ *  "Conversations"), not raw message volume — a session with 8 messages is ONE
+ *  session, not 8. Channels are matched against the thread's `channel`. */
+function channelSessionCounts(
+  profile: string,
+  sinceMs: number,
+  priorSince: number,
+  channels: Array<string>,
+): { current: number; prior: number } {
+  const set = new Set(channels)
+  const threads = listThreads({ profile, limit: 5000 })
+  let current = 0
+  let prior = 0
+  for (const t of threads) {
+    if (!set.has(t.channel)) continue
+    if (t.created_at >= sinceMs) current++
+    else if (t.created_at >= priorSince) prior++
+  }
+  return { current, prior }
+}
+
 export function buildAiActivityTab(
   profile: string,
   opts: {
@@ -564,6 +586,10 @@ export function buildAiActivityTab(
   const convo = conversationCounts(profile, sinceMs, priorSince)
   const conversations = convo.current
   const priorConversations = convo.prior
+  // SESSION (distinct-thread) counts — NOT message volume — so these read as
+  // conversations, consistent with "Conversations" above (no message-count inflation).
+  const videoSess = channelSessionCounts(profile, sinceMs, priorSince, ['video', 'tavus'])
+  const chatSess = channelSessionCounts(profile, sinceMs, priorSince, ['chat'])
 
   const m = (
     key: string,
@@ -590,13 +616,8 @@ export function buildAiActivityTab(
       chTotal(cur.by_channel, 'voice', 'inbound') + chTotal(cur.by_channel, 'vapi', 'inbound'),
       priorCh('voice', 'inbound') + priorCh('vapi', 'inbound'),
     ),
-    m(
-      'video_sessions',
-      'Video Sessions',
-      chTotal(cur.by_channel, 'video') + chTotal(cur.by_channel, 'tavus'),
-      priorCh('video') + priorCh('tavus'),
-    ),
-    m('web_chats', 'Web Chats', chTotal(cur.by_channel, 'chat'), priorCh('chat')),
+    m('video_sessions', 'Video Sessions', videoSess.current, videoSess.prior),
+    m('web_chats', 'Web Chats', chatSess.current, chatSess.prior),
     m(
       'emails_sent',
       'Emails Sent',
