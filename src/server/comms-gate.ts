@@ -20,6 +20,7 @@ import { readStudioConfig } from './studio-config'
 import { checkAndRecord } from './comms-rate-limiter'
 import { isBlacklisted } from './comms-blacklist'
 import { allowedByPrelaunchLock } from './prelaunch-lock'
+import { isDemoProfile, checkDemoAllowlist } from './demo-comms-guard'
 import { callCentralMcpTool } from './central-mcp'
 import { resolveVinOrgId } from './vin-client'
 import { fetchSmsConsent } from './vin-sms-consent'
@@ -155,11 +156,27 @@ export async function checkCommGate(input: CommGateInput): Promise<CommGateResul
     }
   }
 
-  // 1b. Pre-launch SAFE-TEST allowlist (phone channels). Even with the global
-  // switch flipped ON for a controlled live test, a real sms/voice send may
-  // only reach numbers in PRELAUNCH_TEST_RECIPIENTS while PRELAUNCH_SMS_LOCK is
-  // engaged — so a test can never become a broadcast. No-op when the lock is off.
-  if (REGULATED.has(input.channel) && !allowedByPrelaunchLock(input.to)) {
+  // 1a. DEMO-SAFE hard allowlist. For a demo profile (e.g. huminic-motors), a
+  // regulated send may ONLY reach the current demo session's captured contact —
+  // every other destination is a CRITICAL drop, never sent. This REPLACES the
+  // prelaunch allowlist for demo profiles (the per-session allowlist is stricter)
+  // and, when the visitor's own contact clears it, lets that one destination
+  // bypass the gates that do not apply to a self-initiated demo (prelaunch,
+  // business hours, VIN) — while opt-out (5) and rate limits (7) still apply.
+  const isDemo = isDemoProfile(input.profile)
+  if (isDemo && REGULATED.has(input.channel)) {
+    const demo = checkDemoAllowlist(input.profile, input.channel, input.to, nowMs)
+    if (!demo.ok) {
+      return { ok: false, rule: 'demo-not-allowlisted', reason: demo.reason }
+    }
+  }
+
+  // 1b. Pre-launch SAFE-TEST allowlist (phone channels) — PROD profiles only.
+  // Even with the global switch flipped ON for a controlled live test, a real
+  // sms/voice send may only reach numbers in PRELAUNCH_TEST_RECIPIENTS while
+  // PRELAUNCH_SMS_LOCK is engaged — so a test can never become a broadcast.
+  // No-op when the lock is off. Skipped for demo profiles (rule 1a is authoritative).
+  if (!isDemo && REGULATED.has(input.channel) && !allowedByPrelaunchLock(input.to)) {
     return {
       ok: false,
       rule: 'prelaunch-locked',
@@ -180,8 +197,9 @@ export async function checkCommGate(input: CommGateInput): Promise<CommGateResul
     return { ok: false, rule: 'channel-disabled', reason: `channel ${input.channel} disabled for ${input.profile}` }
   }
 
-  // 4. TCPA business hours (sms + voice).
-  if (REGULATED.has(input.channel) && !o.bypassBusinessHours) {
+  // 4. TCPA business hours (sms + voice) — not for a self-initiated demo to the
+  // visitor's own number (they asked for it right now).
+  if (!isDemo && REGULATED.has(input.channel) && !o.bypassBusinessHours) {
     if (!withinBusinessHours(comms.business_hours, nowMs)) {
       return {
         ok: false,
@@ -200,7 +218,7 @@ export async function checkCommGate(input: CommGateInput): Promise<CommGateResul
   // enabled this IS the SMS DNC check — it supersedes the voice-oriented lead
   // check below for sms. ALWAYS fail-closed: vin_check_fail_open does NOT apply.
   // Requires a contactId (VIN-sourced recipient); a phone-only send is blocked.
-  if (input.channel === 'sms' && comms.sms_consent_check === true) {
+  if (!isDemo && input.channel === 'sms' && comms.sms_consent_check === true) {
     const org = resolveVinOrgId(input.profile, config)
     if (!org.ok) {
       return {
@@ -236,6 +254,7 @@ export async function checkCommGate(input: CommGateInput): Promise<CommGateResul
   // 6. Live VIN lead-status check (voice; and sms only when the SMS consent gate
   // above is NOT enabled), when scoped + enabled.
   if (
+    !isDemo &&
     REGULATED.has(input.channel) &&
     comms.vin_check &&
     hasVinScope(config) &&

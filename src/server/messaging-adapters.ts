@@ -234,16 +234,18 @@ async function dispatchVapi(
     if (!r.ok) return { status: 'failed', via: 'vapi-shared', error: r.error }
     return { status: 'sent', via: 'vapi-shared', external_id: r.externalId ?? null }
   }
-  // OWN: the profile's own Vapi key, direct to the provider.
+  // OWN: the profile's own Vapi setup, direct to the provider. The profile env
+  // supplies the API key, the assistant to dial with, and the caller-ID number —
+  // so a per-profile assistant (e.g. huminic-motors' "Anastasia") places the
+  // call WITHOUT touching the studio-level shared assistant other stores use.
   const env = readEnvFromProfile(profile)
   const key = env.VAPI_API_KEY
-  if (!key) {
+  const assistantId = env.VAPI_ASSISTANT_ID
+  const phoneNumberId = env.VAPI_PHONE_NUMBER_ID
+  if (!key || !assistantId || !phoneNumberId) {
+    // A real outbound Vapi call needs all three; missing any → not configured.
     return { status: 'unconfigured', via: 'vapi-own' }
   }
-  // Vapi outbound is a dial action; the actual "message" carrier is the
-  // assistant's initial_message override. The bridge submits a call
-  // request and returns the resulting call id. Full integration lands in
-  // AC.6.2; this scaffold confirms the credential path.
   try {
     const res = await fetch('https://api.vapi.ai/call', {
       method: 'POST',
@@ -252,6 +254,8 @@ async function dispatchVapi(
         Authorization: `Bearer ${key}`,
       },
       body: JSON.stringify({
+        assistantId,
+        phoneNumberId,
         customer: { number: thread.contact_handle },
         assistantOverrides: { firstMessage: content.slice(0, 400) },
       }),

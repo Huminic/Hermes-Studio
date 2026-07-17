@@ -16,6 +16,8 @@ export type SessionMetadata = {
   scope_profiles?: string[]
   /** Username from the profile's auth.yaml. Null in legacy mode. */
   username: string | null
+  /** True for a frictionless demo session (Huminic Motors) — drives the Demo Mode banner. */
+  is_demo?: boolean
   /** Creation epoch ms. */
   created_at: number
 }

@@ -19,6 +19,13 @@ import {
   upsertContact,
 } from '../../../server/messaging-hub-store'
 import { notifyNewLead } from '../../../server/lead-notifications'
+import { dispatchOutbound } from '../../../server/messaging-adapters'
+import {
+  isDemoProfile,
+  registerDemoContact,
+  demoRateOk,
+  demoRateRecord,
+} from '../../../server/demo-comms-guard'
 
 const CORS: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
@@ -61,6 +68,12 @@ export const Route = createFileRoute('/api/public/callback-request')({
         }
         if (source !== 'file') {
           return reply({ ok: false, error: 'unknown profile' }, 404)
+        }
+
+        // Demo tenant: register the visitor's own number in the demo-safe
+        // allowlist so — and only so — the AI callback can reach them.
+        if (isDemoProfile(profile)) {
+          registerDemoContact(profile, `widget-callback:${phone}`, { phone })
         }
 
         const handle = phone
@@ -119,10 +132,40 @@ export const Route = createFileRoute('/api/public/callback-request')({
           },
         })
 
+        // Demo tenant: actually PLACE the AI call back to the visitor (a real
+        // dealer is only alerted to call; the demo shows the AI doing it). The
+        // demo-safe guard bounds this to the visitor's own number; live once the
+        // tenant's Vapi assistant (Anastasia) + number are provisioned.
+        let callback: { attempted: boolean; status?: string; reason?: string } = {
+          attempted: false,
+        }
+        if (isDemoProfile(profile)) {
+          const session = `widget-callback:${phone}`
+          if (demoRateOk(session, 'call')) {
+            const res = await dispatchOutbound({
+              profile,
+              channel: 'voice',
+              thread,
+              content: `Instant call-back requested from the demo site${
+                name ? ` by ${name}` : ''
+              }.`,
+            }).catch(
+              (e) => ({ status: 'error', via: 'voice', error: String(e) }) as const,
+            )
+            callback = {
+              attempted: true,
+              status: res.status,
+              reason: (res as { error?: string }).error,
+            }
+            if (res.status === 'sent') demoRateRecord(session, 'call')
+          }
+        }
+
         return reply({
           ok: true,
           thread_id: thread.id,
           notified: notified.ok,
+          callback,
         })
       },
     },

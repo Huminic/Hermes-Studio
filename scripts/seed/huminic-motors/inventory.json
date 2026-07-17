@@ -1,0 +1,720 @@
+{
+  "generated_for": "huminic-motors-demo",
+  "count": 42,
+  "vehicles": [
+    {
+      "vin": "HMN00DEMO100000",
+      "stock_number": "HM-1000",
+      "condition": "used",
+      "year": 2019,
+      "make": "Huminic",
+      "model": "Aurora",
+      "body": "Sedan",
+      "trim": "Base",
+      "mileage": 28000,
+      "price_usd": 12190,
+      "exterior_color": "Glacier White",
+      "photos": [
+        "/img/veh/aurora.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN01DEMO100037",
+      "stock_number": "HM-1001",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Breeze",
+      "body": "Compact",
+      "trim": "Select",
+      "mileage": 6,
+      "price_usd": 27590,
+      "exterior_color": "Graphite Gray",
+      "photos": [
+        "/img/veh/breeze.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN02DEMO100074",
+      "stock_number": "HM-1002",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Ridge",
+      "body": "SUV",
+      "trim": "Signature",
+      "mileage": 7,
+      "price_usd": 42190,
+      "exterior_color": "Midnight Black",
+      "photos": [
+        "/img/veh/ridge.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN03DEMO100111",
+      "stock_number": "HM-1003",
+      "condition": "cpo",
+      "year": 2025,
+      "make": "Huminic",
+      "model": "Summit",
+      "body": "3-Row SUV",
+      "trim": "Signature AWD",
+      "mileage": 15900,
+      "price_usd": 50190,
+      "exterior_color": "Summit Silver",
+      "photos": [
+        "/img/veh/summit.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN04DEMO100148",
+      "stock_number": "HM-1004",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Trail",
+      "body": "Pickup",
+      "trim": "Base",
+      "mileage": 9,
+      "price_usd": 41990,
+      "exterior_color": "Ember Red",
+      "photos": [
+        "/img/veh/trail.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN05DEMO100185",
+      "stock_number": "HM-1005",
+      "condition": "used",
+      "year": 2019,
+      "make": "Huminic",
+      "model": "Ion",
+      "body": "Electric",
+      "trim": "Select",
+      "mileage": 38500,
+      "price_usd": 26790,
+      "exterior_color": "Pacific Blue",
+      "photos": [
+        "/img/veh/ion.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN06DEMO100222",
+      "stock_number": "HM-1006",
+      "condition": "cpo",
+      "year": 2024,
+      "make": "Huminic",
+      "model": "Vega",
+      "body": "Crossover",
+      "trim": "Signature",
+      "mileage": 19800,
+      "price_usd": 29190,
+      "exterior_color": "Glacier White",
+      "photos": [
+        "/img/veh/vega.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN07DEMO100259",
+      "stock_number": "HM-1007",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Apex",
+      "body": "Sport",
+      "trim": "Signature AWD",
+      "mileage": 12,
+      "price_usd": 60790,
+      "exterior_color": "Graphite Gray",
+      "photos": [
+        "/img/veh/apex.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN08DEMO100296",
+      "stock_number": "HM-1008",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Aurora",
+      "body": "Sedan",
+      "trim": "Base",
+      "mileage": 13,
+      "price_usd": 31990,
+      "exterior_color": "Midnight Black",
+      "photos": [
+        "/img/veh/aurora.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN09DEMO100333",
+      "stock_number": "HM-1009",
+      "condition": "cpo",
+      "year": 2025,
+      "make": "Huminic",
+      "model": "Breeze",
+      "body": "Compact",
+      "trim": "Select",
+      "mileage": 23700,
+      "price_usd": 23990,
+      "exterior_color": "Summit Silver",
+      "photos": [
+        "/img/veh/breeze.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN10DEMO100370",
+      "stock_number": "HM-1010",
+      "condition": "used",
+      "year": 2019,
+      "make": "Huminic",
+      "model": "Ridge",
+      "body": "SUV",
+      "trim": "Signature",
+      "mileage": 49000,
+      "price_usd": 22390,
+      "exterior_color": "Ember Red",
+      "photos": [
+        "/img/veh/ridge.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN11DEMO100407",
+      "stock_number": "HM-1011",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Summit",
+      "body": "3-Row SUV",
+      "trim": "Signature AWD",
+      "mileage": 16,
+      "price_usd": 53790,
+      "exterior_color": "Pacific Blue",
+      "photos": [
+        "/img/veh/summit.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN12DEMO100444",
+      "stock_number": "HM-1012",
+      "condition": "cpo",
+      "year": 2024,
+      "make": "Huminic",
+      "model": "Trail",
+      "body": "Pickup",
+      "trim": "Base",
+      "mileage": 27600,
+      "price_usd": 35990,
+      "exterior_color": "Glacier White",
+      "photos": [
+        "/img/veh/trail.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN13DEMO100481",
+      "stock_number": "HM-1013",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Ion",
+      "body": "Electric",
+      "trim": "Select",
+      "mileage": 18,
+      "price_usd": 46590,
+      "exterior_color": "Graphite Gray",
+      "photos": [
+        "/img/veh/ion.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN14DEMO100518",
+      "stock_number": "HM-1014",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Vega",
+      "body": "Crossover",
+      "trim": "Signature",
+      "mileage": 19,
+      "price_usd": 35190,
+      "exterior_color": "Midnight Black",
+      "photos": [
+        "/img/veh/vega.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN15DEMO100555",
+      "stock_number": "HM-1015",
+      "condition": "used",
+      "year": 2019,
+      "make": "Huminic",
+      "model": "Apex",
+      "body": "Sport",
+      "trim": "Signature AWD",
+      "mileage": 59500,
+      "price_usd": 40990,
+      "exterior_color": "Summit Silver",
+      "photos": [
+        "/img/veh/apex.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN16DEMO100592",
+      "stock_number": "HM-1016",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Aurora",
+      "body": "Sedan",
+      "trim": "Base",
+      "mileage": 21,
+      "price_usd": 31990,
+      "exterior_color": "Ember Red",
+      "photos": [
+        "/img/veh/aurora.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN17DEMO100629",
+      "stock_number": "HM-1017",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Breeze",
+      "body": "Compact",
+      "trim": "Select",
+      "mileage": 22,
+      "price_usd": 27590,
+      "exterior_color": "Pacific Blue",
+      "photos": [
+        "/img/veh/breeze.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN18DEMO100666",
+      "stock_number": "HM-1018",
+      "condition": "cpo",
+      "year": 2024,
+      "make": "Huminic",
+      "model": "Ridge",
+      "body": "SUV",
+      "trim": "Signature",
+      "mileage": 35400,
+      "price_usd": 36190,
+      "exterior_color": "Glacier White",
+      "photos": [
+        "/img/veh/ridge.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN19DEMO100703",
+      "stock_number": "HM-1019",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Summit",
+      "body": "3-Row SUV",
+      "trim": "Signature AWD",
+      "mileage": 24,
+      "price_usd": 53790,
+      "exterior_color": "Graphite Gray",
+      "photos": [
+        "/img/veh/summit.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN20DEMO100740",
+      "stock_number": "HM-1020",
+      "condition": "used",
+      "year": 2019,
+      "make": "Huminic",
+      "model": "Trail",
+      "body": "Pickup",
+      "trim": "Base",
+      "mileage": 70000,
+      "price_usd": 22190,
+      "exterior_color": "Midnight Black",
+      "photos": [
+        "/img/veh/trail.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN21DEMO100777",
+      "stock_number": "HM-1021",
+      "condition": "cpo",
+      "year": 2025,
+      "make": "Huminic",
+      "model": "Ion",
+      "body": "Electric",
+      "trim": "Select",
+      "mileage": 13300,
+      "price_usd": 42990,
+      "exterior_color": "Summit Silver",
+      "photos": [
+        "/img/veh/ion.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN22DEMO100814",
+      "stock_number": "HM-1022",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Vega",
+      "body": "Crossover",
+      "trim": "Signature",
+      "mileage": 7,
+      "price_usd": 35190,
+      "exterior_color": "Ember Red",
+      "photos": [
+        "/img/veh/vega.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN23DEMO100851",
+      "stock_number": "HM-1023",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Apex",
+      "body": "Sport",
+      "trim": "Signature AWD",
+      "mileage": 8,
+      "price_usd": 60790,
+      "exterior_color": "Pacific Blue",
+      "photos": [
+        "/img/veh/apex.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN24DEMO100888",
+      "stock_number": "HM-1024",
+      "condition": "cpo",
+      "year": 2024,
+      "make": "Huminic",
+      "model": "Aurora",
+      "body": "Sedan",
+      "trim": "Base",
+      "mileage": 17200,
+      "price_usd": 25990,
+      "exterior_color": "Glacier White",
+      "photos": [
+        "/img/veh/aurora.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN25DEMO100925",
+      "stock_number": "HM-1025",
+      "condition": "used",
+      "year": 2019,
+      "make": "Huminic",
+      "model": "Breeze",
+      "body": "Compact",
+      "trim": "Select",
+      "mileage": 80500,
+      "price_usd": 9990,
+      "exterior_color": "Graphite Gray",
+      "photos": [
+        "/img/veh/breeze.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN26DEMO100962",
+      "stock_number": "HM-1026",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Ridge",
+      "body": "SUV",
+      "trim": "Signature",
+      "mileage": 11,
+      "price_usd": 42190,
+      "exterior_color": "Midnight Black",
+      "photos": [
+        "/img/veh/ridge.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN27DEMO100999",
+      "stock_number": "HM-1027",
+      "condition": "cpo",
+      "year": 2025,
+      "make": "Huminic",
+      "model": "Summit",
+      "body": "3-Row SUV",
+      "trim": "Signature AWD",
+      "mileage": 21100,
+      "price_usd": 50190,
+      "exterior_color": "Summit Silver",
+      "photos": [
+        "/img/veh/summit.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN28DEMO101036",
+      "stock_number": "HM-1028",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Trail",
+      "body": "Pickup",
+      "trim": "Base",
+      "mileage": 13,
+      "price_usd": 41990,
+      "exterior_color": "Ember Red",
+      "photos": [
+        "/img/veh/trail.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN29DEMO101073",
+      "stock_number": "HM-1029",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Ion",
+      "body": "Electric",
+      "trim": "Select",
+      "mileage": 14,
+      "price_usd": 46590,
+      "exterior_color": "Pacific Blue",
+      "photos": [
+        "/img/veh/ion.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN30DEMO101110",
+      "stock_number": "HM-1030",
+      "condition": "used",
+      "year": 2019,
+      "make": "Huminic",
+      "model": "Vega",
+      "body": "Crossover",
+      "trim": "Signature",
+      "mileage": 31000,
+      "price_usd": 15390,
+      "exterior_color": "Glacier White",
+      "photos": [
+        "/img/veh/vega.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN31DEMO101147",
+      "stock_number": "HM-1031",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Apex",
+      "body": "Sport",
+      "trim": "Signature AWD",
+      "mileage": 16,
+      "price_usd": 60790,
+      "exterior_color": "Graphite Gray",
+      "photos": [
+        "/img/veh/apex.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN32DEMO101184",
+      "stock_number": "HM-1032",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Aurora",
+      "body": "Sedan",
+      "trim": "Base",
+      "mileage": 17,
+      "price_usd": 31990,
+      "exterior_color": "Midnight Black",
+      "photos": [
+        "/img/veh/aurora.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN33DEMO101221",
+      "stock_number": "HM-1033",
+      "condition": "cpo",
+      "year": 2025,
+      "make": "Huminic",
+      "model": "Breeze",
+      "body": "Compact",
+      "trim": "Select",
+      "mileage": 28900,
+      "price_usd": 23990,
+      "exterior_color": "Summit Silver",
+      "photos": [
+        "/img/veh/breeze.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN34DEMO101258",
+      "stock_number": "HM-1034",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Ridge",
+      "body": "SUV",
+      "trim": "Signature",
+      "mileage": 19,
+      "price_usd": 42190,
+      "exterior_color": "Ember Red",
+      "photos": [
+        "/img/veh/ridge.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN35DEMO101295",
+      "stock_number": "HM-1035",
+      "condition": "used",
+      "year": 2019,
+      "make": "Huminic",
+      "model": "Summit",
+      "body": "3-Row SUV",
+      "trim": "Signature AWD",
+      "mileage": 41500,
+      "price_usd": 33990,
+      "exterior_color": "Pacific Blue",
+      "photos": [
+        "/img/veh/summit.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN36DEMO101332",
+      "stock_number": "HM-1036",
+      "condition": "cpo",
+      "year": 2024,
+      "make": "Huminic",
+      "model": "Trail",
+      "body": "Pickup",
+      "trim": "Base",
+      "mileage": 32800,
+      "price_usd": 35990,
+      "exterior_color": "Glacier White",
+      "photos": [
+        "/img/veh/trail.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN37DEMO101369",
+      "stock_number": "HM-1037",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Ion",
+      "body": "Electric",
+      "trim": "Select",
+      "mileage": 22,
+      "price_usd": 46590,
+      "exterior_color": "Graphite Gray",
+      "photos": [
+        "/img/veh/ion.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN38DEMO101406",
+      "stock_number": "HM-1038",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Vega",
+      "body": "Crossover",
+      "trim": "Signature",
+      "mileage": 23,
+      "price_usd": 35190,
+      "exterior_color": "Midnight Black",
+      "photos": [
+        "/img/veh/vega.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN39DEMO101443",
+      "stock_number": "HM-1039",
+      "condition": "cpo",
+      "year": 2025,
+      "make": "Huminic",
+      "model": "Apex",
+      "body": "Sport",
+      "trim": "Signature AWD",
+      "mileage": 36700,
+      "price_usd": 57190,
+      "exterior_color": "Summit Silver",
+      "photos": [
+        "/img/veh/apex.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN40DEMO101480",
+      "stock_number": "HM-1040",
+      "condition": "used",
+      "year": 2019,
+      "make": "Huminic",
+      "model": "Aurora",
+      "body": "Sedan",
+      "trim": "Base",
+      "mileage": 52000,
+      "price_usd": 12190,
+      "exterior_color": "Ember Red",
+      "photos": [
+        "/img/veh/aurora.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    },
+    {
+      "vin": "HMN41DEMO101517",
+      "stock_number": "HM-1041",
+      "condition": "new",
+      "year": 2026,
+      "make": "Huminic",
+      "model": "Breeze",
+      "body": "Compact",
+      "trim": "Select",
+      "mileage": 6,
+      "price_usd": 27590,
+      "exterior_color": "Pacific Blue",
+      "photos": [
+        "/img/veh/breeze.svg"
+      ],
+      "dealer_location_id": "loc_main"
+    }
+  ]
+}

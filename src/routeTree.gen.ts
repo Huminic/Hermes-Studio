@@ -113,6 +113,8 @@ import { Route as ApiSessionsSendRouteImport } from './routes/api/sessions/send'
 import { Route as ApiPublicWidgetFormRouteImport } from './routes/api/public/widget-form'
 import { Route as ApiPublicWidgetChatRouteImport } from './routes/api/public/widget-chat'
 import { Route as ApiPublicVideoSessionRouteImport } from './routes/api/public/video-session'
+import { Route as ApiPublicDemoLoginRouteImport } from './routes/api/public/demo-login'
+import { Route as ApiPublicDemoCaptureRouteImport } from './routes/api/public/demo-capture'
 import { Route as ApiPublicCallbackRequestRouteImport } from './routes/api/public/callback-request'
 import { Route as ApiProfilesRenameRouteImport } from './routes/api/profiles/rename'
 import { Route as ApiProfilesReadRouteImport } from './routes/api/profiles/read'
@@ -727,6 +729,16 @@ const ApiPublicWidgetChatRoute = ApiPublicWidgetChatRouteImport.update({
 const ApiPublicVideoSessionRoute = ApiPublicVideoSessionRouteImport.update({
   id: '/api/public/video-session',
   path: '/api/public/video-session',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicDemoLoginRoute = ApiPublicDemoLoginRouteImport.update({
+  id: '/api/public/demo-login',
+  path: '/api/public/demo-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicDemoCaptureRoute = ApiPublicDemoCaptureRouteImport.update({
+  id: '/api/public/demo-capture',
+  path: '/api/public/demo-capture',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicCallbackRequestRoute =
@@ -1372,6 +1384,8 @@ export interface FileRoutesByFullPath {
   '/api/profiles/read': typeof ApiProfilesReadRoute
   '/api/profiles/rename': typeof ApiProfilesRenameRoute
   '/api/public/callback-request': typeof ApiPublicCallbackRequestRoute
+  '/api/public/demo-capture': typeof ApiPublicDemoCaptureRoute
+  '/api/public/demo-login': typeof ApiPublicDemoLoginRoute
   '/api/public/video-session': typeof ApiPublicVideoSessionRoute
   '/api/public/widget-chat': typeof ApiPublicWidgetChatRoute
   '/api/public/widget-form': typeof ApiPublicWidgetFormRoute
@@ -1572,6 +1586,8 @@ export interface FileRoutesByTo {
   '/api/profiles/read': typeof ApiProfilesReadRoute
   '/api/profiles/rename': typeof ApiProfilesRenameRoute
   '/api/public/callback-request': typeof ApiPublicCallbackRequestRoute
+  '/api/public/demo-capture': typeof ApiPublicDemoCaptureRoute
+  '/api/public/demo-login': typeof ApiPublicDemoLoginRoute
   '/api/public/video-session': typeof ApiPublicVideoSessionRoute
   '/api/public/widget-chat': typeof ApiPublicWidgetChatRoute
   '/api/public/widget-form': typeof ApiPublicWidgetFormRoute
@@ -1774,6 +1790,8 @@ export interface FileRoutesById {
   '/api/profiles/read': typeof ApiProfilesReadRoute
   '/api/profiles/rename': typeof ApiProfilesRenameRoute
   '/api/public/callback-request': typeof ApiPublicCallbackRequestRoute
+  '/api/public/demo-capture': typeof ApiPublicDemoCaptureRoute
+  '/api/public/demo-login': typeof ApiPublicDemoLoginRoute
   '/api/public/video-session': typeof ApiPublicVideoSessionRoute
   '/api/public/widget-chat': typeof ApiPublicWidgetChatRoute
   '/api/public/widget-form': typeof ApiPublicWidgetFormRoute
@@ -1977,6 +1995,8 @@ export interface FileRouteTypes {
     | '/api/profiles/read'
     | '/api/profiles/rename'
     | '/api/public/callback-request'
+    | '/api/public/demo-capture'
+    | '/api/public/demo-login'
     | '/api/public/video-session'
     | '/api/public/widget-chat'
     | '/api/public/widget-form'
@@ -2177,6 +2197,8 @@ export interface FileRouteTypes {
     | '/api/profiles/read'
     | '/api/profiles/rename'
     | '/api/public/callback-request'
+    | '/api/public/demo-capture'
+    | '/api/public/demo-login'
     | '/api/public/video-session'
     | '/api/public/widget-chat'
     | '/api/public/widget-form'
@@ -2378,6 +2400,8 @@ export interface FileRouteTypes {
     | '/api/profiles/read'
     | '/api/profiles/rename'
     | '/api/public/callback-request'
+    | '/api/public/demo-capture'
+    | '/api/public/demo-login'
     | '/api/public/video-session'
     | '/api/public/widget-chat'
     | '/api/public/widget-form'
@@ -2567,6 +2591,8 @@ export interface RootRouteChildren {
   ApiProfilesReadRoute: typeof ApiProfilesReadRoute
   ApiProfilesRenameRoute: typeof ApiProfilesRenameRoute
   ApiPublicCallbackRequestRoute: typeof ApiPublicCallbackRequestRoute
+  ApiPublicDemoCaptureRoute: typeof ApiPublicDemoCaptureRoute
+  ApiPublicDemoLoginRoute: typeof ApiPublicDemoLoginRoute
   ApiPublicVideoSessionRoute: typeof ApiPublicVideoSessionRoute
   ApiPublicWidgetChatRoute: typeof ApiPublicWidgetChatRoute
   ApiPublicWidgetFormRoute: typeof ApiPublicWidgetFormRoute
@@ -3334,6 +3360,20 @@ declare module '@tanstack/react-router' {
       path: '/api/public/video-session'
       fullPath: '/api/public/video-session'
       preLoaderRoute: typeof ApiPublicVideoSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/demo-login': {
+      id: '/api/public/demo-login'
+      path: '/api/public/demo-login'
+      fullPath: '/api/public/demo-login'
+      preLoaderRoute: typeof ApiPublicDemoLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/demo-capture': {
+      id: '/api/public/demo-capture'
+      path: '/api/public/demo-capture'
+      fullPath: '/api/public/demo-capture'
+      preLoaderRoute: typeof ApiPublicDemoCaptureRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/callback-request': {
@@ -4384,6 +4424,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiProfilesReadRoute: ApiProfilesReadRoute,
   ApiProfilesRenameRoute: ApiProfilesRenameRoute,
   ApiPublicCallbackRequestRoute: ApiPublicCallbackRequestRoute,
+  ApiPublicDemoCaptureRoute: ApiPublicDemoCaptureRoute,
+  ApiPublicDemoLoginRoute: ApiPublicDemoLoginRoute,
   ApiPublicVideoSessionRoute: ApiPublicVideoSessionRoute,
   ApiPublicWidgetChatRoute: ApiPublicWidgetChatRoute,
   ApiPublicWidgetFormRoute: ApiPublicWidgetFormRoute,
