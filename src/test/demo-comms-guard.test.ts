@@ -55,6 +55,7 @@ afterEach(() => {
   fs.rmSync(tmpRoot, { recursive: true, force: true })
   delete process.env.OUTBOUND_LIVE_ENABLED
   delete process.env.PRELAUNCH_SMS_LOCK
+  delete process.env.DEMO_TEST_RECIPIENTS
   vi.restoreAllMocks()
 })
 
@@ -118,6 +119,13 @@ describe('demo-comms-guard (unit)', () => {
     expect(demoRateOk(SESSION, 'call')).toBe(false)
   })
 
+  it('allows a persistent DEMO_TEST_RECIPIENTS number (rep testing) with no session', () => {
+    process.env.DEMO_TEST_RECIPIENTS = '+15125550142, rep@huminic.ai'
+    expect(demoAllowlistHas(DEMO, VISITOR)).toBe(true) // rep number, no registration
+    expect(demoAllowlistHas(DEMO, 'rep@huminic.ai')).toBe(true)
+    expect(demoAllowlistHas(DEMO, STRANGER)).toBe(false)
+  })
+
   it('reset purges session + profile state', () => {
     registerDemoContact(DEMO, SESSION, { phone: VISITOR })
     demoRateRecord(SESSION, 'sms')
@@ -170,6 +178,28 @@ describe('checkCommGate demo integration', () => {
     })
     expect(r.ok).toBe(false)
     if (!r.ok) expect(r.rule).toBe('outside-business-hours')
+  })
+
+  it('bounds a DEMO CAMPAIGN to the test recipient (rep passes, a real contact is dropped)', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    process.env.OUTBOUND_LIVE_ENABLED = 'true'
+    process.env.DEMO_TEST_RECIPIENTS = VISITOR // the rep's own number
+    // A campaign fans out via dispatchOutbound -> checkCommGate for each contact.
+    const toRep = await checkCommGate({
+      profile: DEMO,
+      channel: 'sms',
+      to: VISITOR,
+      options: { config: cfg(), nowMs: NIGHT, profileRoot: tmpRoot },
+    })
+    const toRealContact = await checkCommGate({
+      profile: DEMO,
+      channel: 'sms',
+      to: STRANGER,
+      options: { config: cfg(), nowMs: NIGHT, profileRoot: tmpRoot },
+    })
+    expect(toRep.ok).toBe(true)
+    expect(toRealContact.ok).toBe(false)
+    if (!toRealContact.ok) expect(toRealContact.rule).toBe('demo-not-allowlisted')
   })
 
   it('still blocks demo sends when the global kill switch is off', async () => {

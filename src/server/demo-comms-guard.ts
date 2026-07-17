@@ -32,6 +32,24 @@ export function isDemoProfile(profile: string): boolean {
   return DEMO_PROFILES.has(profile)
 }
 
+/**
+ * PERSISTENT demo test recipients (env DEMO_TEST_RECIPIENTS, comma-separated
+ * phones/emails). Always allowed for demo profiles — this is how a REP testing
+ * workspace functions (campaigns, automations, manual sends) makes THEMSELF the
+ * only reachable recipient without going through the public-site capture. A
+ * campaign in the demo tenant fans out to its contact list, but the guard drops
+ * every destination except these test recipients (and any live session's own
+ * captured contact), so a demo campaign can never reach a real person.
+ */
+function persistentTestRecipients(): Set<string> {
+  const raw = process.env.DEMO_TEST_RECIPIENTS ?? ''
+  const out = new Set<string>()
+  for (const entry of raw.split(',').map((s) => s.trim()).filter(Boolean)) {
+    out.add(entry.includes('@') ? 'e:' + normEmail(entry) : 'p:' + normPhone(entry))
+  }
+  return out
+}
+
 /** Default registration TTL — matches the demo lead retention window. */
 const DEFAULT_TTL_MS = 2 * 60 * 60 * 1000 // 2h
 const SMS_CAP_PER_SESSION = 10
@@ -94,15 +112,18 @@ export function registerDemoContact(
   }
 }
 
-/** Does an ACTIVE (unexpired) demo session own this destination? */
+/** Does an ACTIVE demo session — or a persistent test recipient — own this destination? */
 export function demoAllowlistHas(profile: string, to: string, nowMs?: number): boolean {
+  const key = normContact(to)
+  // Persistent rep/tester recipients (env) are always allowed for demo profiles.
+  if (persistentTestRecipients().has(key)) return true
   const now = nowMs ?? Date.now()
   const m = allowlist.get(profile)
   if (!m) return false
-  const reg = m.get(normContact(to))
+  const reg = m.get(key)
   if (!reg) return false
   if (reg.expiresAt <= now) {
-    m.delete(normContact(to)) // lazy purge
+    m.delete(key) // lazy purge
     return false
   }
   return true
