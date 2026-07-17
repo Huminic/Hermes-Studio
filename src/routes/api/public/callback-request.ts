@@ -19,6 +19,7 @@ import {
   upsertContact,
 } from '../../../server/messaging-hub-store'
 import { notifyNewLead } from '../../../server/lead-notifications'
+import { isDemoProfile, registerDemoContact } from '../../../server/demo-comms-guard'
 
 const CORS: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
@@ -61,6 +62,12 @@ export const Route = createFileRoute('/api/public/callback-request')({
         }
         if (source !== 'file') {
           return reply({ ok: false, error: 'unknown profile' }, 404)
+        }
+
+        // Demo tenant: register the visitor's own number in the demo-safe
+        // allowlist so — and only so — the AI callback can reach them.
+        if (isDemoProfile(profile)) {
+          registerDemoContact(profile, `widget-callback:${phone}`, { phone })
         }
 
         const handle = phone
