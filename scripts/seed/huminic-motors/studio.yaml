@@ -52,6 +52,7 @@ notifications:
   notify_cooldown_hours: 0
 channel_credentials:
   sms: own
+  vapi: own    # dial with the per-profile Anastasia assistant (not the shared one)
 sms:
   inbound_domain: sales
   account: huminic_motors
