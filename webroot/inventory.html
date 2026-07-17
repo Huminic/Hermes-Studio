@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inventory — Huminic Motors</title>
+<meta name="description" content="Browse new, certified pre-owned, and used Huminic vehicles at Huminic Motors of Austin. Filter by condition, model, and price.">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body data-page="inventory">
+<div data-header data-active="inventory"></div>
+
+<div class="wrap pagehead">
+  <h1>Our Inventory</h1>
+  <p>Filter by condition, model, and price to find your next Huminic.</p>
+</div>
+
+<section class="block" style="padding-top:24px">
+  <div class="wrap">
+    <div class="inv-layout">
+      <aside class="filters">
+        <h3>Filters</h3>
+        <p class="fcount" data-inv-count>Loading…</p>
+
+        <div class="fgroup">
+          <label>Condition</label>
+          <div class="chip-row">
+            <button class="chip active" data-f-cond="all">All</button>
+            <button class="chip" data-f-cond="new">New</button>
+            <button class="chip" data-f-cond="used">Used</button>
+            <button class="chip" data-f-cond="cpo">Certified</button>
+          </div>
+        </div>
+
+        <div class="fgroup">
+          <label for="fmodel">Model</label>
+          <select id="fmodel" data-f-model>
+            <option value="all">All models</option>
+          </select>
+        </div>
+
+        <div class="fgroup">
+          <label>Price range</label>
+          <div class="range-row">
+            <div class="fgroup"><input type="number" inputmode="numeric" placeholder="Min $" data-f-min min="0" step="1000"></div>
+            <div class="fgroup"><input type="number" inputmode="numeric" placeholder="Max $" data-f-max min="0" step="1000"></div>
+          </div>
+        </div>
+
+        <button class="btn btn-ghost btn-block btn-sm" data-f-reset>Reset filters</button>
+      </aside>
+
+      <div>
+        <div class="inv-topbar">
+          <span class="result-count" data-inv-count>Loading…</span>
+          <div class="inv-sort">
+            <label for="fsort">Sort</label>
+            <select id="fsort" data-f-sort>
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="miles-asc">Mileage: Low to High</option>
+            </select>
+          </div>
+        </div>
+        <div class="veh-grid" data-inv-grid>
+          <div class="empty-state">Loading inventory…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div data-footer></div>
+
+<script src="js/site.js"></script>
+<script async src="https://studio.huminic.app/widget/dealer/huminic-motors.js"></script>
+</body>
+</html>
