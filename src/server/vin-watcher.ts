@@ -48,6 +48,7 @@ import {
 import type { LeadSource } from './sms-triggers'
 import { enrollLead } from './lead-flow'
 import { processNewLead } from './automations'
+import { DROPPED_LEAD_TYPES } from './lead-opportunities'
 import { renderImmediate, renderCheckin } from './lead-templates'
 import { openBrain } from './brain-store'
 import type { StudioConfig } from '../lib/studio-config'
@@ -445,6 +446,22 @@ async function evaluateLead(ctx: {
   }
   if (!firstName) {
     return { kind: null, action: 'skipped', reason: 'name unresolved', ...base }
+  }
+  // SERVICE EXCLUSION (do NOT text service/parts/wholesale customers a SALES
+  // follow-up). The outbound is spoken by the sales agent; a non-sales leadType
+  // must never receive it. Only KNOWN non-sales types are skipped — unknown/blank
+  // leadType keeps prior behaviour so no legitimate sales lead is newly blocked.
+  // Mirrors the sales-scope filter in lead-opportunities.ts / catchup-followup.ts.
+  const leadType = String(
+    (lead as Record<string, unknown>).leadType ?? '',
+  ).toUpperCase()
+  if (DROPPED_LEAD_TYPES.has(leadType)) {
+    return {
+      kind: null,
+      action: 'skipped',
+      reason: `non-sales leadType ${leadType} — service/parts excluded`,
+      ...base,
+    }
   }
 
   // ── 24h CHECK-IN: the phone already got an immediate text ~1440 min ago. ──

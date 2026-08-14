@@ -161,6 +161,39 @@ describe('tickVinWatcher — immediate trigger', () => {
     expect(res.resolved).toBe(1)
   })
 
+  it('SERVICE leadType is NEVER texted (service-exclusion) — even with a third-party source', async () => {
+    const { tickVinWatcher } = await import('@/server/vin-watcher')
+    const dispatch = dispatchMock()
+    const res = await tickVinWatcher({
+      profile: 'serra',
+      now: NOW,
+      config: watcherConfig(),
+      deps: {
+        call: callStub({
+          leads: [
+            {
+              contact: '/contacts/id/77',
+              leadId: 'L77',
+              // SERVICE lead with a third-party source: passes the third-party
+              // gate, so ONLY the leadType filter can stop it. It must be skipped.
+              leadType: 'SERVICE',
+              leadSource: 'Cars.com',
+              createdUtc: new Date(NOW - 10 * 60_000).toISOString(),
+              syncedUtc: new Date(NOW - 5 * 60_000).toISOString(),
+            },
+          ],
+        }),
+        dispatch,
+        triggerStore: memTriggerStore(),
+        knownPhones: () => new Set(),
+      },
+    })
+    expect(dispatch).not.toHaveBeenCalled()
+    expect(res.sent).toBe(0)
+    expect(res.outcomes[0].action).toBe('skipped')
+    expect(res.outcomes[0].reason).toContain('service')
+  })
+
   it('dedup: a second tick (trigger already recorded) does not re-send', async () => {
     const { tickVinWatcher } = await import('@/server/vin-watcher')
     const store = memTriggerStore()
