@@ -243,6 +243,30 @@ export function detectReportKind(headers: Array<string>): ReportKind | null {
   return null
 }
 
+/** Split a report's headers into recognized (mapped) vs ignored (unknown)
+ *  columns for the detected kind. Lets the ingest API surface schema drift (a
+ *  new VinSolutions column) without failing: recognized columns are ingested,
+ *  ignored columns are reported back to the caller but never break ingestion
+ *  (the raw file is retained losslessly regardless). Returns kind=null when the
+ *  headers are not a recognizable ROI/KPI export. */
+export function classifyHeaders(headers: Array<string>): {
+  kind: ReportKind | null
+  recognized: Array<string>
+  ignored: Array<string>
+} {
+  const trimmed = headers.map((h) => h.trim()).filter((h) => h.length > 0)
+  const kind = detectReportKind(trimmed)
+  const known =
+    kind === 'kpi_salesperson'
+      ? new Set<string>([...Object.keys(KPI_COLUMNS), 'Dealer', 'Salesperson'])
+      : kind === 'lead_source_roi'
+        ? new Set<string>([...Object.keys(ROI_COLUMNS), 'Dealer', 'Lead_Source'])
+        : new Set<string>()
+  const recognized = trimmed.filter((h) => known.has(h))
+  const ignored = trimmed.filter((h) => !known.has(h))
+  return { kind, recognized, ignored }
+}
+
 /** The dealership name to filter rows to: vin.watcher.dealer_name → persona_name. */
 export function resolveDealerName(config: StudioConfig): string {
   return (
@@ -294,6 +318,12 @@ export type IngestOptions = {
   sourceUploadId?: string | null
   checksum?: string | null
   nowMs?: number
+  /** Explicit coverage window (ISO YYYY-MM-DD). When a trusted caller supplies
+   *  it (the ingest API's `period_hint`), it overrides the fragile filename-date
+   *  scrape — closing the P1-5 zero-width-period gap. Falls back to the filename
+   *  date when omitted. */
+  periodStart?: string | null
+  periodEnd?: string | null
   profileRoot?: string
 }
 
@@ -333,6 +363,8 @@ export function ingestReport(opts: IngestOptions): IngestResult {
   const dealerIdx = idx('Dealer')
   const ts = opts.nowMs ?? brainNow()
   const period = periodFromFilename(opts.filename)
+  const periodStart = opts.periodStart ?? period
+  const periodEnd = opts.periodEnd ?? period
   const dataRows = matrix.slice(1)
 
   const dealersInFile = new Set<string>()
@@ -377,8 +409,8 @@ export function ingestReport(opts: IngestOptions): IngestResult {
           import_id: importId,
           dealer: (dealerIdx >= 0 ? r[dealerIdx] : dealer)?.trim() ?? dealer,
           lead_source: leadSource,
-          period_start: period,
-          period_end: period,
+          period_start: periodStart,
+          period_end: periodEnd,
           tenant: opts.profile,
         }
         for (const [header, spec] of Object.entries(ROI_COLUMNS)) {
@@ -400,8 +432,8 @@ export function ingestReport(opts: IngestOptions): IngestResult {
           dealer: (dealerIdx >= 0 ? r[dealerIdx] : dealer)?.trim() ?? dealer,
           lead_type: (ltIdx >= 0 ? r[ltIdx] : '')?.trim() ?? null,
           salesperson,
-          period_start: period,
-          period_end: period,
+          period_start: periodStart,
+          period_end: periodEnd,
           tenant: opts.profile,
         }
         for (const [header, spec] of Object.entries(KPI_COLUMNS)) {
@@ -424,8 +456,8 @@ export function ingestReport(opts: IngestOptions): IngestResult {
       opts.sourceUploadId ?? null,
       opts.checksum ?? null,
       dealer,
-      period,
-      period,
+      periodStart,
+      periodEnd,
       rowCount,
       opts.profile,
     )
