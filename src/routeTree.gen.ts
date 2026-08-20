@@ -159,6 +159,7 @@ import { Route as ApiCustomerDashboardsRouteImport } from './routes/api/customer
 import { Route as ApiCustomerDashboardQueriesRouteImport } from './routes/api/customer/dashboard-queries'
 import { Route as ApiCustomerDashboardAskRouteImport } from './routes/api/customer/dashboard-ask'
 import { Route as ApiCustomerDashboardRouteImport } from './routes/api/customer/dashboard'
+import { Route as ApiCustomerCockpitRouteImport } from './routes/api/customer/cockpit'
 import { Route as ApiCustomerChatRouteImport } from './routes/api/customer/chat'
 import { Route as ApiCustomerAutomationsRouteImport } from './routes/api/customer/automations'
 import { Route as ApiCustomerAgentsRouteImport } from './routes/api/customer/agents'
@@ -968,6 +969,11 @@ const ApiCustomerDashboardRoute = ApiCustomerDashboardRouteImport.update({
   path: '/api/customer/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerCockpitRoute = ApiCustomerCockpitRouteImport.update({
+  id: '/api/customer/cockpit',
+  path: '/api/customer/cockpit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCustomerChatRoute = ApiCustomerChatRouteImport.update({
   id: '/api/customer/chat',
   path: '/api/customer/chat',
@@ -1347,6 +1353,7 @@ export interface FileRoutesByFullPath {
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/automations': typeof ApiCustomerAutomationsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
+  '/api/customer/cockpit': typeof ApiCustomerCockpitRoute
   '/api/customer/dashboard': typeof ApiCustomerDashboardRoute
   '/api/customer/dashboard-ask': typeof ApiCustomerDashboardAskRoute
   '/api/customer/dashboard-queries': typeof ApiCustomerDashboardQueriesRoute
@@ -1550,6 +1557,7 @@ export interface FileRoutesByTo {
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/automations': typeof ApiCustomerAutomationsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
+  '/api/customer/cockpit': typeof ApiCustomerCockpitRoute
   '/api/customer/dashboard': typeof ApiCustomerDashboardRoute
   '/api/customer/dashboard-ask': typeof ApiCustomerDashboardAskRoute
   '/api/customer/dashboard-queries': typeof ApiCustomerDashboardQueriesRoute
@@ -1755,6 +1763,7 @@ export interface FileRoutesById {
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
   '/api/customer/automations': typeof ApiCustomerAutomationsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
+  '/api/customer/cockpit': typeof ApiCustomerCockpitRoute
   '/api/customer/dashboard': typeof ApiCustomerDashboardRoute
   '/api/customer/dashboard-ask': typeof ApiCustomerDashboardAskRoute
   '/api/customer/dashboard-queries': typeof ApiCustomerDashboardQueriesRoute
@@ -1961,6 +1970,7 @@ export interface FileRouteTypes {
     | '/api/customer/agents'
     | '/api/customer/automations'
     | '/api/customer/chat'
+    | '/api/customer/cockpit'
     | '/api/customer/dashboard'
     | '/api/customer/dashboard-ask'
     | '/api/customer/dashboard-queries'
@@ -2164,6 +2174,7 @@ export interface FileRouteTypes {
     | '/api/customer/agents'
     | '/api/customer/automations'
     | '/api/customer/chat'
+    | '/api/customer/cockpit'
     | '/api/customer/dashboard'
     | '/api/customer/dashboard-ask'
     | '/api/customer/dashboard-queries'
@@ -2368,6 +2379,7 @@ export interface FileRouteTypes {
     | '/api/customer/agents'
     | '/api/customer/automations'
     | '/api/customer/chat'
+    | '/api/customer/cockpit'
     | '/api/customer/dashboard'
     | '/api/customer/dashboard-ask'
     | '/api/customer/dashboard-queries'
@@ -2566,6 +2578,7 @@ export interface RootRouteChildren {
   ApiCustomerAgentsRoute: typeof ApiCustomerAgentsRoute
   ApiCustomerAutomationsRoute: typeof ApiCustomerAutomationsRoute
   ApiCustomerChatRoute: typeof ApiCustomerChatRoute
+  ApiCustomerCockpitRoute: typeof ApiCustomerCockpitRoute
   ApiCustomerDashboardRoute: typeof ApiCustomerDashboardRoute
   ApiCustomerDashboardAskRoute: typeof ApiCustomerDashboardAskRoute
   ApiCustomerDashboardQueriesRoute: typeof ApiCustomerDashboardQueriesRoute
@@ -3697,6 +3710,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/cockpit': {
+      id: '/api/customer/cockpit'
+      path: '/api/customer/cockpit'
+      fullPath: '/api/customer/cockpit'
+      preLoaderRoute: typeof ApiCustomerCockpitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/customer/chat': {
       id: '/api/customer/chat'
       path: '/api/customer/chat'
@@ -4407,6 +4427,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCustomerAgentsRoute: ApiCustomerAgentsRoute,
   ApiCustomerAutomationsRoute: ApiCustomerAutomationsRoute,
   ApiCustomerChatRoute: ApiCustomerChatRoute,
+  ApiCustomerCockpitRoute: ApiCustomerCockpitRoute,
   ApiCustomerDashboardRoute: ApiCustomerDashboardRoute,
   ApiCustomerDashboardAskRoute: ApiCustomerDashboardAskRoute,
   ApiCustomerDashboardQueriesRoute: ApiCustomerDashboardQueriesRoute,

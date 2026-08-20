@@ -29,6 +29,7 @@ import { CustomerPerformanceRenderer } from '../components/customer-console/perf
 import { CustomerNotificationsRenderer } from '../components/customer-console/notifications-renderer'
 import { CustomerActivityRenderer } from '../components/customer-console/activity-renderer'
 import { ConsultPanel } from '../components/customer-console/consult-panel'
+import { DashboardLanding } from '../components/customer-console/cockpit/DashboardLanding'
 
 const CUSTOMER_ACCENT = '#2f3b4d'
 
@@ -496,7 +497,12 @@ function AssistantPaneRenderer(props: ConsoleRendererProps) {
   )
 }
 
+function CockpitRenderer(props: ConsoleRendererProps) {
+  return <DashboardLanding profile={props.profile} />
+}
+
 export const consoleRenderers: Record<string, ConsoleRenderer> = {
+  'customer-console.cockpit': CockpitRenderer,
   'customer-console.chat': ChatRenderer,
   'customer-console.agents': AgentsRenderer,
   'customer-console.infostore': InfoStoreRenderer,
