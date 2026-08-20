@@ -1880,6 +1880,98 @@ export function aggregateMessages(profile: string, sinceMs?: number): MessageSta
   return stats
 }
 
+/** Raw inputs for the cockpit window computation (dashboard gauges/heartbeats).
+ *  Reads threads opened in the window + all their messages + contact identities
+ *  + automation/agent-reply counts. Availability-safe: no db → empty inputs. */
+export type CockpitHubInputs = {
+  threads: Array<{
+    id: string
+    contact_handle: string | null
+    channel: string
+    created_at: number
+  }>
+  messagesByThread: Map<
+    string,
+    Array<{
+      thread_id: string
+      direction: 'inbound' | 'outbound'
+      created_at: number
+      content: string | null
+    }>
+  >
+  handleToContact: Map<string, string>
+  automationRunsInWindow: number
+  agentRepliesInWindow: number
+}
+
+export function loadCockpitInputs(
+  profile: string,
+  sinceMs: number,
+  untilMs: number = Number.MAX_SAFE_INTEGER,
+): CockpitHubInputs {
+  const out: CockpitHubInputs = {
+    threads: [],
+    messagesByThread: new Map(),
+    handleToContact: new Map(),
+    automationRunsInWindow: 0,
+    agentRepliesInWindow: 0,
+  }
+  const db = getDb(profile)
+  if (!db) return out
+  out.threads = db
+    .prepare(
+      `SELECT id, contact_handle, channel, created_at FROM threads
+       WHERE created_at >= ? AND created_at <= ?`,
+    )
+    .all(sinceMs, untilMs) as CockpitHubInputs['threads']
+  // Messages of the in-window threads (JOIN avoids a huge IN-list / param cap).
+  const msgs = db
+    .prepare(
+      `SELECT m.thread_id, m.direction, m.created_at, m.content
+         FROM messages m JOIN threads t ON t.id = m.thread_id
+        WHERE t.created_at >= ? AND t.created_at <= ?
+        ORDER BY m.created_at ASC`,
+    )
+    .all(sinceMs, untilMs) as Array<{
+    thread_id: string
+    direction: 'inbound' | 'outbound'
+    created_at: number
+    content: string | null
+  }>
+  for (const m of msgs) {
+    const arr = out.messagesByThread.get(m.thread_id)
+    if (arr) arr.push(m)
+    else out.messagesByThread.set(m.thread_id, [m])
+  }
+  const idents = db
+    .prepare(`SELECT handle, contact_id FROM contact_identities WHERE profile = ?`)
+    .all(profile) as Array<{ handle: string; contact_id: string }>
+  for (const i of idents) out.handleToContact.set(i.handle, i.contact_id)
+  try {
+    const ar = db
+      .prepare(
+        `SELECT COUNT(*) AS n FROM automation_runs WHERE created_at >= ? AND created_at <= ?`,
+      )
+      .get(sinceMs, untilMs) as { n: number } | undefined
+    out.automationRunsInWindow = ar?.n ?? 0
+  } catch {
+    /* table may not exist on older dbs — availability-safe */
+  }
+  try {
+    const rp = db
+      .prepare(
+        `SELECT COUNT(*) AS n FROM agent_reply_jobs
+          WHERE COALESCE(enqueued_at, attempted_at, sent_at) >= ?
+            AND COALESCE(enqueued_at, attempted_at, sent_at) <= ?`,
+      )
+      .get(sinceMs, untilMs) as { n: number } | undefined
+    out.agentRepliesInWindow = rp?.n ?? 0
+  } catch {
+    /* availability-safe */
+  }
+  return out
+}
+
 /** Thread rollup: total / open / closed and a sales-vs-service domain split. */
 export function aggregateThreads(profile: string): ThreadStats {
   const stats: ThreadStats = { total: 0, open: 0, closed: 0, by_domain: {} }
