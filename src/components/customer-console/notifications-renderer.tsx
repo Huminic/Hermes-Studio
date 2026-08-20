@@ -10,6 +10,7 @@
 import { useEffect, useState } from 'react'
 import type { StudioConfig } from '../../lib/studio-config'
 import { selectClass, selectChevronStyle } from './console-ui'
+import { AlertsPanel } from './AlertsPanel'
 
 type Channel = 'email' | 'sms'
 type Template = 'email' | 'adf-xml'
@@ -173,6 +174,8 @@ export function CustomerNotificationsRenderer({
           Each rule is “when <em>this</em> happens, notify <em>this person</em>.”
         </p>
       </header>
+
+      <AlertsPanel profile={profile} />
 
       {leadRecipient && rules.length === 0 && (
         <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">

@@ -163,6 +163,7 @@ import { Route as ApiCustomerDashboardRouteImport } from './routes/api/customer/
 import { Route as ApiCustomerCockpitRouteImport } from './routes/api/customer/cockpit'
 import { Route as ApiCustomerChatRouteImport } from './routes/api/customer/chat'
 import { Route as ApiCustomerAutomationsRouteImport } from './routes/api/customer/automations'
+import { Route as ApiCustomerAlertsRouteImport } from './routes/api/customer/alerts'
 import { Route as ApiCustomerAgentsRouteImport } from './routes/api/customer/agents'
 import { Route as ApiCustomerAgentTasksRouteImport } from './routes/api/customer/agent-tasks'
 import { Route as ApiCustomerAgentConfigRouteImport } from './routes/api/customer/agent-config'
@@ -990,6 +991,11 @@ const ApiCustomerAutomationsRoute = ApiCustomerAutomationsRouteImport.update({
   path: '/api/customer/automations',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCustomerAlertsRoute = ApiCustomerAlertsRouteImport.update({
+  id: '/api/customer/alerts',
+  path: '/api/customer/alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCustomerAgentsRoute = ApiCustomerAgentsRouteImport.update({
   id: '/api/customer/agents',
   path: '/api/customer/agents',
@@ -1357,6 +1363,7 @@ export interface FileRoutesByFullPath {
   '/api/customer/agent-config': typeof ApiCustomerAgentConfigRoute
   '/api/customer/agent-tasks': typeof ApiCustomerAgentTasksRoute
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
+  '/api/customer/alerts': typeof ApiCustomerAlertsRoute
   '/api/customer/automations': typeof ApiCustomerAutomationsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/cockpit': typeof ApiCustomerCockpitRoute
@@ -1562,6 +1569,7 @@ export interface FileRoutesByTo {
   '/api/customer/agent-config': typeof ApiCustomerAgentConfigRoute
   '/api/customer/agent-tasks': typeof ApiCustomerAgentTasksRoute
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
+  '/api/customer/alerts': typeof ApiCustomerAlertsRoute
   '/api/customer/automations': typeof ApiCustomerAutomationsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/cockpit': typeof ApiCustomerCockpitRoute
@@ -1769,6 +1777,7 @@ export interface FileRoutesById {
   '/api/customer/agent-config': typeof ApiCustomerAgentConfigRoute
   '/api/customer/agent-tasks': typeof ApiCustomerAgentTasksRoute
   '/api/customer/agents': typeof ApiCustomerAgentsRoute
+  '/api/customer/alerts': typeof ApiCustomerAlertsRoute
   '/api/customer/automations': typeof ApiCustomerAutomationsRoute
   '/api/customer/chat': typeof ApiCustomerChatRoute
   '/api/customer/cockpit': typeof ApiCustomerCockpitRoute
@@ -1977,6 +1986,7 @@ export interface FileRouteTypes {
     | '/api/customer/agent-config'
     | '/api/customer/agent-tasks'
     | '/api/customer/agents'
+    | '/api/customer/alerts'
     | '/api/customer/automations'
     | '/api/customer/chat'
     | '/api/customer/cockpit'
@@ -2182,6 +2192,7 @@ export interface FileRouteTypes {
     | '/api/customer/agent-config'
     | '/api/customer/agent-tasks'
     | '/api/customer/agents'
+    | '/api/customer/alerts'
     | '/api/customer/automations'
     | '/api/customer/chat'
     | '/api/customer/cockpit'
@@ -2388,6 +2399,7 @@ export interface FileRouteTypes {
     | '/api/customer/agent-config'
     | '/api/customer/agent-tasks'
     | '/api/customer/agents'
+    | '/api/customer/alerts'
     | '/api/customer/automations'
     | '/api/customer/chat'
     | '/api/customer/cockpit'
@@ -2588,6 +2600,7 @@ export interface RootRouteChildren {
   ApiCustomerAgentConfigRoute: typeof ApiCustomerAgentConfigRoute
   ApiCustomerAgentTasksRoute: typeof ApiCustomerAgentTasksRoute
   ApiCustomerAgentsRoute: typeof ApiCustomerAgentsRoute
+  ApiCustomerAlertsRoute: typeof ApiCustomerAlertsRoute
   ApiCustomerAutomationsRoute: typeof ApiCustomerAutomationsRoute
   ApiCustomerChatRoute: typeof ApiCustomerChatRoute
   ApiCustomerCockpitRoute: typeof ApiCustomerCockpitRoute
@@ -3751,6 +3764,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCustomerAutomationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/customer/alerts': {
+      id: '/api/customer/alerts'
+      path: '/api/customer/alerts'
+      fullPath: '/api/customer/alerts'
+      preLoaderRoute: typeof ApiCustomerAlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/customer/agents': {
       id: '/api/customer/agents'
       path: '/api/customer/agents'
@@ -4445,6 +4465,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCustomerAgentConfigRoute: ApiCustomerAgentConfigRoute,
   ApiCustomerAgentTasksRoute: ApiCustomerAgentTasksRoute,
   ApiCustomerAgentsRoute: ApiCustomerAgentsRoute,
+  ApiCustomerAlertsRoute: ApiCustomerAlertsRoute,
   ApiCustomerAutomationsRoute: ApiCustomerAutomationsRoute,
   ApiCustomerChatRoute: ApiCustomerChatRoute,
   ApiCustomerCockpitRoute: ApiCustomerCockpitRoute,
