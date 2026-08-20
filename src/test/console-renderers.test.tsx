@@ -13,6 +13,7 @@ import { defaultStudioConfig } from '@/lib/studio-config'
 // tools-widget sub-page + widget-public (public unauthenticated /w/$slug) +
 // assistant-pane (right-pane slot) + the legacy knowledge route shim.
 const EXPECTED_KEYS = [
+  'customer-console.cockpit',
   'customer-console.chat',
   'customer-console.agents',
   'customer-console.infostore',
