@@ -4,8 +4,22 @@ import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 let tmpHome: string
+const INFERENCE_ENV_KEYS = [
+  'OPENAI_API_KEY',
+  'ANTHROPIC_API_KEY',
+  'API_SERVER_KEY',
+  'HERMES_API_KEY',
+] as const
+let savedInferenceEnv: Record<string, string | undefined> = {}
 
 beforeEach(async () => {
+  // Isolate inference-provider selection from the ambient environment so the
+  // provider-order tests are deterministic regardless of CI/dev env.
+  savedInferenceEnv = {}
+  for (const k of INFERENCE_ENV_KEYS) {
+    savedInferenceEnv[k] = process.env[k]
+    delete process.env[k]
+  }
   tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), 'aar-test-'))
   vi.spyOn(os, 'homedir').mockReturnValue(tmpHome)
   const dir = path.join(tmpHome, '.hermes', 'profiles', 'huminic')
@@ -34,6 +48,10 @@ beforeEach(async () => {
 afterEach(() => {
   vi.restoreAllMocks()
   fs.rmSync(tmpHome, { recursive: true, force: true })
+  for (const k of INFERENCE_ENV_KEYS) {
+    if (savedInferenceEnv[k] === undefined) delete process.env[k]
+    else process.env[k] = savedInferenceEnv[k]
+  }
 })
 
 describe('agent-autonomous-reply', () => {
@@ -366,6 +384,10 @@ describe('agent-autonomous-reply', () => {
     ar.setAutonomousReplyProvider(
       ar.makeDefaultAutonomousReplyProvider(fakeFetch),
     )
+    // OpenAI-direct is the primary leg; disable it here so this test exercises
+    // the Hermes gateway leg specifically.
+    const savedOpenaiKey1 = process.env.OPENAI_API_KEY
+    delete process.env.OPENAI_API_KEY
     process.env.API_SERVER_KEY = 'test-hermes-key'
 
     const thread = getOrCreateThread({
@@ -398,6 +420,7 @@ describe('agent-autonomous-reply', () => {
       now: Date.UTC(2026, 4, 29, 16, 0, 0),
     })
     delete process.env.API_SERVER_KEY
+    if (savedOpenaiKey1 !== undefined) process.env.OPENAI_API_KEY = savedOpenaiKey1
 
     expect(results).toHaveLength(1)
     expect(results[0].ok).toBe(true)
@@ -483,12 +506,101 @@ describe('agent-autonomous-reply', () => {
     expect(results).toHaveLength(1)
     expect(results[0].ok).toBe(true)
     if (results[0].ok) {
-      expect(results[0].via).toBe('openai-direct')
+      expect(results[0].via).toBe('anthropic')
       expect(results[0].reply).toBe('Sure — when can you stop by?')
     }
     // Both endpoints were tried, in order.
     expect(calls.some((u) => u.includes('/v1/chat/completions'))).toBe(true)
     expect(calls.some((u) => u.includes('api.anthropic.com'))).toBe(true)
+  })
+
+  it('default provider: prefers direct OpenAI and labels it openai-direct', async () => {
+    const ar = await import('@/server/agent-autonomous-reply')
+    const calls: Array<string> = []
+    const fakeFetch = (async (url: string) => {
+      calls.push(String(url))
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({ choices: [{ message: { content: 'Hey there!' } }] }),
+      } as unknown as Response
+    }) as unknown as typeof fetch
+
+    const savedOpenai = process.env.OPENAI_API_KEY
+    process.env.OPENAI_API_KEY = 'test-openai-key'
+    const provider = ar.makeDefaultAutonomousReplyProvider(fakeFetch)
+    const res = await provider({
+      systemPrompt: 'sys',
+      messages: [{ role: 'user', content: 'hi' }],
+    })
+    if (savedOpenai === undefined) delete process.env.OPENAI_API_KEY
+    else process.env.OPENAI_API_KEY = savedOpenai
+
+    expect(res.ok).toBe(true)
+    if (res.ok) {
+      expect(res.via).toBe('openai-direct')
+      expect(res.reply).toBe('Hey there!')
+    }
+    // OpenAI is hit first, before any gateway/Anthropic leg.
+    expect(calls[0]).toContain('api.openai.com')
+  })
+
+  it('default provider: never returns an error string as a reply (billing-error guard)', async () => {
+    const ar = await import('@/server/agent-autonomous-reply')
+    const fakeFetch = (async (url: string) => {
+      const u = String(url)
+      if (u.includes('/v1/chat/completions')) {
+        // OpenAI-compatible endpoint (direct or gateway) echoes an upstream
+        // billing error as HTTP-200 "content" — the exact incident shape.
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            choices: [
+              {
+                message: {
+                  content:
+                    'API call failed after 3 retries: HTTP 429: You have no credits remaining. Add credits to continue.',
+                },
+              },
+            ],
+          }),
+        } as unknown as Response
+      }
+      // Anthropic fallback returns a real reply.
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          content: [{ type: 'text', text: 'Happy to help — when works for you?' }],
+        }),
+      } as unknown as Response
+    }) as unknown as typeof fetch
+
+    const savedOpenai = process.env.OPENAI_API_KEY
+    const savedAnthropic = process.env.ANTHROPIC_API_KEY
+    const savedHermes = process.env.API_SERVER_KEY
+    process.env.OPENAI_API_KEY = 'test-openai-key'
+    process.env.ANTHROPIC_API_KEY = 'test-anthropic-key'
+    delete process.env.API_SERVER_KEY
+    const provider = ar.makeDefaultAutonomousReplyProvider(fakeFetch)
+    const res = await provider({
+      systemPrompt: 'sys',
+      messages: [{ role: 'user', content: 'still interested' }],
+    })
+    if (savedOpenai === undefined) delete process.env.OPENAI_API_KEY
+    else process.env.OPENAI_API_KEY = savedOpenai
+    if (savedAnthropic === undefined) delete process.env.ANTHROPIC_API_KEY
+    else process.env.ANTHROPIC_API_KEY = savedAnthropic
+    if (savedHermes !== undefined) process.env.API_SERVER_KEY = savedHermes
+
+    expect(res.ok).toBe(true)
+    if (res.ok) {
+      // The billing-error text must never surface as a customer reply.
+      expect(res.reply).not.toMatch(/no credits remaining|api call failed/i)
+      expect(res.reply).toBe('Happy to help — when works for you?')
+      expect(res.via).toBe('anthropic')
+    }
   })
 
   it('returns empty when no subscriptions exist', async () => {

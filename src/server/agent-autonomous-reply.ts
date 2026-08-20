@@ -81,7 +81,11 @@ type ProviderCall = (input: {
   systemPrompt: string
   messages: Array<{ role: string; content: string }>
 }) => Promise<
-  | { ok: true; reply: string; via: 'hermes' | 'openai-direct' | 'mock' }
+  | {
+      ok: true
+      reply: string
+      via: 'hermes' | 'openai-direct' | 'anthropic' | 'mock'
+    }
   | { ok: false; reason: string }
 >
 
@@ -117,6 +121,24 @@ const REPLY_MODEL = process.env.AUTONOMOUS_REPLY_MODEL || 'gpt-4.1'
 const ANTHROPIC_MODEL =
   process.env.AUTONOMOUS_REPLY_FALLBACK_MODEL || 'claude-sonnet-4-6'
 const MAX_TOKENS = 256
+
+// Direct-OpenAI leg base URL (OpenAI-compatible). Lets the SMS reply path reach
+// the funded OpenAI account directly, independent of the Hermes gateway — so a
+// gateway provider-routing fault can't take the customer path down.
+const OPENAI_DIRECT_URL =
+  process.env.AUTONOMOUS_REPLY_OPENAI_URL || 'https://api.openai.com'
+
+/**
+ * Reject provider output that is actually an error string. Guards against an
+ * upstream (or gateway) that returns a billing/auth/quota error as HTTP-200
+ * "content" — a sales SMS must never surface a raw API error to a customer.
+ * Patterns are unambiguous error signatures, not phrases a real reply contains.
+ */
+function looksLikeProviderError(text: string): boolean {
+  return /\bapi call failed\b|no credits remaining|insufficient_quota|missing authentication header|error code:\s*\d{3}/i.test(
+    text,
+  )
+}
 
 /**
  * Benign, routing "never go dead" fallback. Sent verbatim ONLY when the model
@@ -180,6 +202,8 @@ export function makeDefaultAutonomousReplyProvider(
     const anthropicKey =
       process.env.ANTHROPIC_API_KEY ||
       readKeyFromHermesEnv('ANTHROPIC_API_KEY')
+    const openaiKey =
+      process.env.OPENAI_API_KEY || readKeyFromHermesEnv('OPENAI_API_KEY')
 
     // OpenAI-style chat messages: system prompt first, then the trailing
     // thread window already shaped by the pipeline.
@@ -196,7 +220,40 @@ export function makeDefaultAutonomousReplyProvider(
       })),
     ]
 
-    // 1) Hermes-first.
+    // 1) Direct OpenAI (primary). Reaches the funded OpenAI account directly so a
+    // Hermes-gateway provider-routing fault cannot take the customer path down.
+    if (openaiKey) {
+      try {
+        const res = await fetchImpl(`${OPENAI_DIRECT_URL}/v1/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${openaiKey}`,
+          },
+          body: JSON.stringify({
+            model: REPLY_MODEL,
+            messages: chatMessages,
+            temperature: 0.4,
+            max_tokens: MAX_TOKENS,
+          }),
+        })
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: { message?: string }
+          choices?: Array<{ message?: { content?: string } }>
+        }
+        if (res.ok && !data.error) {
+          const reply = (data.choices?.[0]?.message?.content ?? '').trim()
+          if (reply && !looksLikeProviderError(reply))
+            return { ok: true, reply, via: 'openai-direct' }
+        }
+        // else fall through to the gateway / Anthropic legs
+      } catch {
+        // network/OpenAI down — fall through
+      }
+    }
+
+    // 2) Hermes gateway (on-network). Output is rejected if it is an error string
+    // (a gateway fault can echo an upstream billing/auth error as 200 "content").
     if (hermesKey) {
       try {
         const res = await fetchImpl(`${HERMES_URL}/v1/chat/completions`, {
@@ -218,7 +275,8 @@ export function makeDefaultAutonomousReplyProvider(
         }
         if (res.ok && !data.error) {
           const reply = (data.choices?.[0]?.message?.content ?? '').trim()
-          if (reply) return { ok: true, reply, via: 'hermes' }
+          if (reply && !looksLikeProviderError(reply))
+            return { ok: true, reply, via: 'hermes' }
         }
         // else fall through to the Anthropic fallback
       } catch {
@@ -226,7 +284,7 @@ export function makeDefaultAutonomousReplyProvider(
       }
     }
 
-    // 2) claude-sonnet-4-6 direct (Anthropic Messages API). System prompt is
+    // 3) claude-sonnet-4-6 direct (Anthropic Messages API). System prompt is
     // a top-level field; the message turns carry only user/assistant.
     if (anthropicKey) {
       try {
@@ -266,7 +324,7 @@ export function makeDefaultAutonomousReplyProvider(
           .map((b) => b.text ?? '')
           .join('')
           .trim()
-        if (reply) return { ok: true, reply, via: 'openai-direct' }
+        if (reply) return { ok: true, reply, via: 'anthropic' }
         return { ok: false, reason: 'Anthropic returned an empty reply' }
       } catch (err) {
         return {
@@ -280,7 +338,7 @@ export function makeDefaultAutonomousReplyProvider(
     return {
       ok: false,
       reason:
-        'No inference provider configured. Set API_SERVER_KEY (Hermes) or ANTHROPIC_API_KEY.',
+        'No inference provider configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or API_SERVER_KEY (Hermes).',
     }
   }
 }
