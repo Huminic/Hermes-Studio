@@ -28,6 +28,10 @@ const _require = createRequire(import.meta.url)
 type SqliteDb = import('better-sqlite3').Database
 
 function profilesRoot(): string {
+  // Honor BRAIN_PROFILES_ROOT (consistent with brain-store); default to the
+  // real volume at ~/.hermes/profiles. Additive/backward-compatible.
+  const envRoot = process.env.BRAIN_PROFILES_ROOT
+  if (envRoot && envRoot.trim()) return envRoot
   return join(os.homedir(), '.hermes', 'profiles')
 }
 
