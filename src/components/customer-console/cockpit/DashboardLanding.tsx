@@ -58,14 +58,7 @@ export function DashboardLanding({
   return (
     <div className="cockpit" style={{ padding: 20, minHeight: '100%' }}>
       <div className="panel" style={{ padding: 20 }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(0,1fr) auto minmax(0,1fr)',
-            gap: 16,
-            alignItems: 'center',
-          }}
-        >
+        <div className="cockpit-gauges">
           <div className="gslot coolg">
             <Gauge
               label="Reach"

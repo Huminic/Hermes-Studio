@@ -39,6 +39,24 @@
   margin: 0 0 12px;
 }
 
+/* Gauge cockpit row — 3-up on desktop/tablet, stacked on mobile. */
+.cockpit .cockpit-gauges {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+@media (max-width: 720px) {
+  .cockpit .cockpit-gauges {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 24px;
+  }
+  .cockpit .cockpit-gauges .gslot {
+    max-width: 300px;
+  }
+}
+
 /* Gauge labels */
 .cockpit .gslot {
   text-align: center;
