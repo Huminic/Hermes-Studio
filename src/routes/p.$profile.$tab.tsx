@@ -31,6 +31,7 @@ const TAB_TO_RENDERER: Record<string, string> = {
   tools: 'customer-console.tools',
   data: 'customer-console.infostore',
   cockpit: 'customer-console.cockpit',
+  issues: 'customer-console.issues',
   dashboard: 'customer-console.performance',
   comms: 'customer-console.comms',
   campaigns: 'customer-console.campaigns',
@@ -234,6 +235,7 @@ function StorefrontTabRoute() {
     icon: IconSvgElement
   }> = [
     { id: 'cockpit', label: 'Dashboard', icon: Chart01Icon },
+    { id: 'issues', label: 'Issues', icon: Notification03Icon },
     { id: 'dashboard', label: 'Reports', icon: Chart01Icon },
     { id: 'chat', label: 'Chat', icon: Message01Icon },
     { id: 'comms', label: 'Teambox', icon: InboxIcon },

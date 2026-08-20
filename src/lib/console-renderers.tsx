@@ -30,6 +30,7 @@ import { CustomerNotificationsRenderer } from '../components/customer-console/no
 import { CustomerActivityRenderer } from '../components/customer-console/activity-renderer'
 import { ConsultPanel } from '../components/customer-console/consult-panel'
 import { DashboardLanding } from '../components/customer-console/cockpit/DashboardLanding'
+import { IssuesTab } from '../components/customer-console/cockpit/IssuesTab'
 
 const CUSTOMER_ACCENT = '#2f3b4d'
 
@@ -501,8 +502,13 @@ function CockpitRenderer(props: ConsoleRendererProps) {
   return <DashboardLanding profile={props.profile} />
 }
 
+function IssuesRenderer(props: ConsoleRendererProps) {
+  return <IssuesTab profile={props.profile} />
+}
+
 export const consoleRenderers: Record<string, ConsoleRenderer> = {
   'customer-console.cockpit': CockpitRenderer,
+  'customer-console.issues': IssuesRenderer,
   'customer-console.chat': ChatRenderer,
   'customer-console.agents': AgentsRenderer,
   'customer-console.infostore': InfoStoreRenderer,

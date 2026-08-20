@@ -14,6 +14,7 @@ import { defaultStudioConfig } from '@/lib/studio-config'
 // assistant-pane (right-pane slot) + the legacy knowledge route shim.
 const EXPECTED_KEYS = [
   'customer-console.cockpit',
+  'customer-console.issues',
   'customer-console.chat',
   'customer-console.agents',
   'customer-console.infostore',
