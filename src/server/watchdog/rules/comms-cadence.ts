@@ -46,7 +46,9 @@ export const customerWaitingRule: WatchdogRule = {
       const last = msgs[msgs.length - 1]
       if (!last || last.direction !== 'inbound') continue
       const ageH = (ctx.now - last.created_at) / HOUR
-      if (ageH < 4) continue
+      // 4h..7d: an ACTIVE thread waiting on us. Older is a cold lead (a Part-2
+      // reactivation opportunity), not a response-cadence failure.
+      if (ageH < 4 || ageH > 168) continue
       const priority = ageH >= 24 ? 'high' : ageH >= 8 ? 'medium' : 'low'
       out.push({
         key: `${customerWaitingRule.id}:${t.id}`,
@@ -78,6 +80,8 @@ export const customerChasingRule: WatchdogRule = {
     if (!ctx.hub) return out
     for (const t of ctx.hub.threads) {
       const msgs = sortedMsgs(ctx, t.id)
+      const last = msgs[msgs.length - 1]
+      if (!last || (ctx.now - last.created_at) / HOUR > 168) continue // active threads only
       let trailing = 0
       for (let i = msgs.length - 1; i >= 0 && msgs[i].direction === 'inbound'; i--) trailing++
       if (trailing < 2) continue
@@ -116,7 +120,8 @@ export const silentAfterHotRule: WatchdogRule = {
       if (!hot) continue
       const last = msgs[msgs.length - 1]
       const quietH = (ctx.now - last.created_at) / HOUR
-      if (quietH < 72) continue
+      // 72h..14d: an actionable re-engagement window. Older is dormant (Part 2).
+      if (quietH < 72 || quietH > 336) continue
       out.push({
         key: `${silentAfterHotRule.id}:${t.id}`,
         profile: ctx.profile,
