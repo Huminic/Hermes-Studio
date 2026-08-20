@@ -1,0 +1,219 @@
+/*
+ * Cockpit design system — ported from the Serra report (v2_full_template.html).
+ * Scoped under `.cockpit` so it themes only the redesigned dashboard surface,
+ * not the whole (light) console. Dark canvas + the token set the report uses.
+ */
+.cockpit {
+  --canvas: #0b1220;
+  --surface: #131c2e;
+  --surface-2: #18233a;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.14);
+  --txt: rgba(255, 255, 255, 0.88);
+  --txt-2: rgba(255, 255, 255, 0.55);
+  --txt-3: rgba(255, 255, 255, 0.4);
+  --cool: #4c8df6;
+  --hot: #e8384f;
+  --good: #3ddc8c;
+  --standby: #e2b93b;
+  background: var(--canvas);
+  color: var(--txt);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Panels / section headers */
+.cockpit .panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.cockpit .sect-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--txt);
+  margin: 0 0 2px;
+}
+.cockpit .sect-desc {
+  font-size: 12px;
+  color: var(--txt-2);
+  margin: 0 0 12px;
+}
+
+/* Gauge labels */
+.cockpit .gslot {
+  text-align: center;
+}
+.cockpit .glabel {
+  font-size: 11.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: -22px;
+}
+.cockpit .gslot.coolg .glabel {
+  color: var(--cool);
+}
+.cockpit .gslot.hotg .glabel {
+  color: var(--hot);
+}
+.cockpit .gsub {
+  font-size: 11px;
+  color: var(--txt-2);
+  margin-top: 5px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Odometer */
+.cockpit .odo {
+  text-align: center;
+  margin-top: 14px;
+  padding: 16px 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.cockpit .digits {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
+.cockpit .digit {
+  width: 40px;
+  height: 56px;
+  border-radius: 5px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 600;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.cockpit .comma {
+  width: 8px;
+  height: 56px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  color: var(--txt-2);
+  font-size: 30px;
+  padding-bottom: 8px;
+}
+.cockpit .odo-cap {
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--txt-3);
+  margin-top: 12px;
+}
+.cockpit .digits.mini {
+  gap: 3px;
+}
+.cockpit .digits.mini .digit {
+  width: 22px;
+  height: 32px;
+  font-size: 18px;
+  border-radius: 4px;
+}
+.cockpit .digits.mini .comma {
+  width: 5px;
+  height: 32px;
+  font-size: 16px;
+  padding-bottom: 4px;
+}
+
+/* Power-pack cards */
+.cockpit .svc-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .cockpit .svc-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.cockpit .svc {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.cockpit .svc .ico {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  background: rgba(76, 141, 246, 0.1);
+  border: 1px solid rgba(76, 141, 246, 0.2);
+  color: var(--cool);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.cockpit .svc.hotc .ico {
+  background: rgba(232, 56, 79, 0.1);
+  border-color: rgba(232, 56, 79, 0.22);
+  color: var(--hot);
+}
+.cockpit .svc.goodc .ico {
+  background: rgba(61, 220, 140, 0.1);
+  border-color: rgba(61, 220, 140, 0.22);
+  color: var(--good);
+}
+.cockpit .svc-mid {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.cockpit .svc-n {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--txt);
+}
+.cockpit .svc-d {
+  font-size: 11px;
+  color: var(--txt-2);
+}
+.cockpit .svc-st {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--good);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.cockpit .svc-st .d {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--good);
+  animation: cockpit-pulse 2s infinite;
+}
+.cockpit .svc.standby .svc-st {
+  color: var(--standby);
+}
+.cockpit .svc.standby .svc-st .d {
+  background: var(--standby);
+  animation: none;
+}
+
+@keyframes cockpit-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+/* Heartbeat pulse is disabled in print (print-ready per the design language). */
+@media print {
+  .cockpit .svc-st .d {
+    animation: none;
+  }
+}
