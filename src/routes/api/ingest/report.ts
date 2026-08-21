@@ -30,6 +30,7 @@ import {
   resolveDealerName,
 } from '../../../server/report-ingest'
 import {
+  INGEST_ACTOR,
   isIngestEligible,
   parsePeriodHint,
   verifyIngestSecret,
@@ -122,7 +123,7 @@ export const Route = createFileRoute('/api/ingest/report')({
         // 7. lossless raw retention (governed upload path)
         const up = await handleUpload({
           profile,
-          actor: 'service:report-ingest',
+          actor: INGEST_ACTOR,
           filename,
           content: contentBase64,
           classification: 'data',

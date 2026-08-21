@@ -36,6 +36,14 @@ export function isIngestEligible(profile: string): boolean {
   return ingestEligibleProfiles().includes(profile)
 }
 
+/**
+ * DSG-gate actor identity for the ingest write. Must be one of the gate's
+ * documented forms (`user:<username>` | `token:<label>` | `system:<subsystem>`);
+ * a report-ingest is a subsystem, so it uses the `system:` form. Do NOT invent a
+ * new `service:` identity — that is rejected by the gate (rule `unknown-actor`).
+ */
+export const INGEST_ACTOR = 'system:report-ingest'
+
 /** Constant-time string compare that never throws on length mismatch. */
 function safeEqual(a: string, b: string): boolean {
   const ab = Buffer.from(a, 'utf8')
