@@ -84,6 +84,11 @@ function buildZip(files: Array<ZipFile>): Buffer {
   return Buffer.concat([localBuf, centralBuf, eocd])
 }
 
+/** Build an arbitrary ZIP (for adversarial/malformed-workbook fail-closed tests). */
+export function makeRawZip(files: Array<{ name: string; data: Buffer }>): Buffer {
+  return buildZip(files)
+}
+
 export function makeXlsx(sheets: Array<SheetSpec>): Buffer {
   // shared strings (dedup)
   const strIndex = new Map<string, number>()

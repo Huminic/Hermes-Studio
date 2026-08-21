@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { readXlsx, XlsxError, colToIndex, excelSerialToISO } from '@/server/ingest/xlsx-reader'
-import { makeXlsx } from './helpers/make-xlsx'
+import { makeXlsx, makeRawZip } from './helpers/make-xlsx'
 
 describe('zero-dep xlsx reader (round-trip against the writer)', () => {
   it('reads sheet names in order + a cell matrix (strings, numbers, dates)', () => {
@@ -47,5 +47,53 @@ describe('zero-dep xlsx reader (round-trip against the writer)', () => {
     expect(colToIndex('B2')).toBe(1)
     expect(colToIndex('AA10')).toBe(26)
     expect(excelSerialToISO(46238)).toBe('2026-08-04') // Excel 1900 serial for 2026-08-04
+  })
+})
+
+describe('xlsx reader hardening (caps + fail-closed)', () => {
+  const wb = () =>
+    makeXlsx([{ name: 'Data', rows: [['a', 'b', 'c'], ['1', '2', '3'], ['4', '5', '6']] }])
+
+  it('input-size cap → throws', () => {
+    expect(() => readXlsx(wb(), { maxInputBytes: 100 })).toThrow(/too large/)
+  })
+
+  it('per-entry inflated-size cap (decompression-bomb protection) → throws', () => {
+    expect(() => readXlsx(wb(), { maxEntryBytes: 20 })).toThrow(XlsxError)
+  })
+
+  it('total inflated cap → throws', () => {
+    expect(() => readXlsx(wb(), { maxTotalBytes: 60 })).toThrow(/total inflated/)
+  })
+
+  it('cell-count cap → throws', () => {
+    expect(() => readXlsx(wb(), { maxCells: 3 })).toThrow(/cell-count/)
+  })
+
+  it('sheet-count cap → throws', () => {
+    const many = makeXlsx([
+      { name: 'A', rows: [['x']] },
+      { name: 'B', rows: [['y']] },
+      { name: 'C', rows: [['z']] },
+    ])
+    expect(() => readXlsx(many, { maxSheets: 2 })).toThrow(/too many sheets/)
+  })
+
+  it('malformed ZIP (no EOCD) → XlsxError', () => {
+    expect(() => readXlsx(Buffer.from('PK\x03\x04 not really a zip file at all padding'))).toThrow(
+      XlsxError,
+    )
+  })
+
+  it('valid ZIP but missing xl/workbook.xml → fail-closed', () => {
+    const z = makeRawZip([{ name: 'hello.txt', data: Buffer.from('hi') }])
+    expect(() => readXlsx(z)).toThrow(/missing xl\/workbook/)
+  })
+
+  it('workbook.xml present but no <sheet> → fail-closed', () => {
+    const z = makeRawZip([
+      { name: 'xl/workbook.xml', data: Buffer.from('<workbook><sheets></sheets></workbook>') },
+    ])
+    expect(() => readXlsx(z)).toThrow(/no sheets/)
   })
 })
