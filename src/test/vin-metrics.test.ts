@@ -50,14 +50,16 @@ const ROI_ROWS = [['Serra Honda', 'Repeat', '79', '79', '0', '0', '24'], ['Serra
 const CAGE_H = ['User', 'Total Leads', 'Total Comms', 'Deals from Leads']
 const CAGE_ROWS = [['Jane', '40', '300', '4'], ['Joe', '35', '250', '3']]
 const COMM_H = ['Dealer', 'User Group', 'User', 'Customer', 'Activity Date', 'Direction', 'Comm Channel', 'Comm Type', 'Interaction Result', 'Lead Type', 'Lead Status Type', 'Lead Source', 'Lead Created Date', 'Message Content']
-const comm = (user: string, cust: string, date: string, body: string) => ['Serra Honda', 'Sales', user, cust, date, 'Outbound', 'SMS', 'Text', 'Reached', 'Internet', 'Sales', 'Autoweb', '2026-08-04', body]
+const comm = (dir: string, user: string, cust: string, date: string, body: string) => ['Serra Honda', 'Sales', user, cust, date, dir, 'SMS', 'Text', 'Reached', 'Internet', 'Sales', 'Autoweb', '2026-08-04', body]
 const COMM_ROWS = [
-  comm('Jane', 'Bob', '2026-08-05T10:00:00Z', 'Hi there'),
-  comm('Joe', 'Bob', '2026-08-05T12:00:00Z', 'Hi there'), // Bob: 2 reps within 24h
-  comm('Jane', 'C3', '2026-08-05T10:00:00Z', 'Hi there'),
-  comm('Jane', 'C4', '2026-08-05T10:00:00Z', 'Hi there'),
-  comm('Jane', 'C5', '2026-08-05T10:00:00Z', 'Hi there'), // 'Hi there' x5 → 1 overused template
-  comm('Jane', 'C6', '2026-08-05T10:00:00Z', 'I need a manager now'), // escalation
+  comm('Outbound', 'Jane', 'Bob', '2026-08-05T10:00:00Z', 'Hi there'),
+  comm('Outbound', 'Joe', 'Bob', '2026-08-05T12:00:00Z', 'Hi there'), // Bob: 2 reps within 24h
+  comm('Outbound', 'Jane', 'C3', '2026-08-05T10:00:00Z', 'Hi there'),
+  comm('Outbound', 'Jane', 'C4', '2026-08-05T10:00:00Z', 'Hi there'),
+  comm('Outbound', 'Jane', 'C5', '2026-08-05T10:00:00Z', 'Hi there'), // 'Hi there' x5 → 1 overused template
+  comm('Outbound', 'Jane', 'C6', '2026-08-05T10:00:00Z', 'I need a manager now'), // escalation
+  comm('Inbound', 'Jane', 'C7', '2026-08-05T09:00:00Z', 'What is your best price, is it available today?'), // inbound high-intent
+  comm('Outbound', 'Jane', 'C8', '2026-08-05T09:30:00Z', 'https://serrahonda.com/vdp/123'), // outbound link-only
 ]
 const DASH_H: Array<string> = []
 const DASH_ROWS = [['Dealership Summary'], ['Leads', 'Appts', 'Sold'], ['414', '120', '19'], ['Visit Summary'], ['Total Visits', 'Sold %'], ['42', '45%']]
@@ -89,14 +91,22 @@ describe('Semantic Watchdog calculation engine — six-kind safe aggregates', ()
     expect(m.get('gross.total_sum')!.value).toBe(2700)
   })
 
-  it('ROI volume/funnel carries the zero-cost caveat and never claims actual ROI', () => {
+  it('ROI volume/funnel uses the corrected cost wording and never emits an actual ROI number', () => {
     seedAll()
-    const m = byId(runVinWatchdog(P, PERIOD_OPTS))
+    const run = runVinWatchdog(P, PERIOD_OPTS)
+    const m = byId(run)
     expect(m.get('roi.total_leads')!.value).toBe(99)
     expect(m.get('roi.sold_from_leads')!.value).toBe(26)
-    expect(m.get('roi.total_leads')!.limitations.join(' ')).toMatch(/zero-cost caveat/i)
-    // no metric named actual_roi is emitted; it is fast-follow only
+    // corrected wording: schema HAS cost/profit fields, but configured costs are zero
+    const lim = m.get('roi.total_leads')!.limitations.join(' ')
+    expect(lim).toMatch(/includes cost\/profit fields/i)
+    expect(lim).toMatch(/configured source costs are zero/i)
+    expect(lim).not.toMatch(/carries no cost/i)
+    // actual ROI is never a computed metric — it is withheld with a delivery-specific reason
     expect(m.has('roi.actual_roi')).toBe(false)
+    const wh = run.withheld.find((w) => w.metric_id === 'roi.actual_roi')
+    expect(wh).toBeTruthy()
+    expect(wh!.reason).toMatch(/cost\/profit fields/i)
     expect(FAST_FOLLOW_MANIFEST.some((f) => f.metric_id === 'roi.actual_roi')).toBe(true)
   })
 
@@ -107,17 +117,24 @@ describe('Semantic Watchdog calculation engine — six-kind safe aggregates', ()
     expect(m.get('cage.total_comms')!.value).toBe(550)
   })
 
-  it('comm metrics are provisional, PII-safe, and never persist bodies', () => {
+  it('comm metrics (incl. new screens) are provisional, PII-safe, and never persist bodies', () => {
     seedAll()
     const run = runVinWatchdog(P, PERIOD_OPTS)
     const m = byId(run)
     expect(m.get('comm.template_overuse')).toMatchObject({ value: 1, provisional: true })
     expect(m.get('comm.escalation_keyword_screen')).toMatchObject({ value: 1, provisional: true })
     expect(m.get('comm.multi_rep_within_24h')).toMatchObject({ value: 1, provisional: true })
-    // PII: no message body text anywhere in the output
+    // NEW screens: inbound high-intent + outbound link-only (row_refs only)
+    expect(m.get('comm.inbound_high_intent_keywords')).toMatchObject({ value: 1, provisional: true })
+    expect(m.get('comm.inbound_high_intent_keywords')!.evidence.row_refs!.length).toBe(1)
+    expect(m.get('comm.outbound_link_only')).toMatchObject({ value: 1, provisional: true })
+    expect(m.get('comm.outbound_link_only')!.evidence.row_refs!.length).toBe(1)
+    // PII: no message body text anywhere in the output (incl. new fixtures)
     const blob = JSON.stringify(run)
     expect(blob).not.toContain('Hi there')
     expect(blob).not.toContain('I need a manager now')
+    expect(blob).not.toContain('best price')
+    expect(blob).not.toContain('serrahonda.com/vdp/123')
   })
 
   it('dashboard is surfaced as an aggregate basis, not re-derived', () => {
@@ -185,5 +202,41 @@ describe('contract, contamination guard, unsupported-claims, determinism', () =>
     expect(ids).toContain('cross.lead_to_appointment_to_sale_funnel')
     expect(ids).toContain('comm.response_latency_unanswered')
     for (const f of FAST_FOLLOW_MANIFEST) expect(f.requires.length).toBeGreaterThan(0)
+  })
+})
+
+describe('missing/late/unsupported-data-never-zero rule', () => {
+  it('an absent required column WITHHOLDS the metric (never emits zero)', () => {
+    // ROI export missing the Sold_from_Leads column entirely
+    const H = ['Dealer', 'Lead_Source', 'Total_Leads', 'Good_Leads', 'Bad_Leads', 'Duplicate_Leads']
+    seed('lead_source_roi', H, [['Serra Honda', 'Repeat', '79', '79', '0', '0']], 'roi-nosold')
+    const run = runVinWatchdog(P, PERIOD_OPTS)
+    // NOT present as a metric (would have been a misleading 0)
+    expect(run.metrics.find((m) => m.metric_id === 'roi.sold_from_leads')).toBeUndefined()
+    const wh = run.withheld.find((w) => w.metric_id === 'roi.sold_from_leads')
+    expect(wh).toBeTruthy()
+    expect(wh!.reason).toMatch(/Sold_from_Leads/)
+    expect(wh!.reason).toMatch(/absent/i)
+    // volume metric whose columns ARE present still computes
+    expect(byId(run).get('roi.total_leads')!.value).toBe(79)
+  })
+
+  it('a legitimate source zero remains a real metric (value 0, not withheld)', () => {
+    const H = ['Dealer', 'Lead_Source', 'Total_Leads', 'Good_Leads', 'Bad_Leads', 'Duplicate_Leads', 'Sold_from_Leads']
+    seed('lead_source_roi', H, [['Serra Honda', 'Repeat', '79', '79', '0', '0', '0']], 'roi-zero-sold')
+    const run = runVinWatchdog(P, PERIOD_OPTS)
+    const m = byId(run).get('roi.sold_from_leads')
+    expect(m).toBeTruthy()
+    expect(m!.value).toBe(0) // real zero preserved
+    expect(run.withheld.find((w) => w.metric_id === 'roi.sold_from_leads')).toBeUndefined()
+  })
+
+  it('an unparseable required value WITHHOLDS the metric with a row-specific reason', () => {
+    seed('crm_sales_gross', GROSS_H, [['Serra Honda', '123', '2026-08-05', 'S1', 'D1', 'Delivered', '1000', '500', 'NaN$$']], 'gross-bad')
+    const run = runVinWatchdog(P, PERIOD_OPTS)
+    const wh = run.withheld.find((w) => w.metric_id === 'gross.total_sum')
+    expect(wh).toBeTruthy()
+    expect(wh!.reason).toMatch(/unparseable/i)
+    expect(run.metrics.find((m) => m.metric_id === 'gross.total_sum')).toBeUndefined()
   })
 })
