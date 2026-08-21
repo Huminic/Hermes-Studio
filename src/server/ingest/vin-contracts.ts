@@ -180,10 +180,105 @@ export type Evaluation =
 
 const CAGE_LEAD_TYPES = new Set(['internet', 'phone', 'walk-in', 'walkin', 'walk in'])
 
+/** Filters lead types are EXACTLY {Internet, Phone, Walk-in} (CAGE + Dashboard). */
+function isExactSalesLeadTypes(leadTypes: Array<string>): boolean {
+  const types = leadTypes.map((t) => t.toLowerCase())
+  return (
+    types.length > 0 &&
+    types.every((t) => CAGE_LEAD_TYPES.has(t)) &&
+    ['internet', 'phone'].every((r) => types.includes(r)) &&
+    types.some((t) => t.startsWith('walk'))
+  )
+}
+
+/**
+ * Multi-section families (e.g. Dealership Performance Dashboard) are NOT a flat
+ * header+rows table — classified by title/section markers, validated at the
+ * Filters level (dealer + exact 3 lead types), with EVERY non-blank source row
+ * (incl. section markers) preserved generically. Sales-only fail-closed.
+ */
+type MultiSectionFamily = { kind: ReportKind; title: string; sectionMarkers: Array<string> }
+const MULTI_SECTION_FAMILIES: Array<MultiSectionFamily> = [
+  {
+    kind: 'dealership_performance',
+    title: 'Dealership Performance Dashboard',
+    sectionMarkers: ['Dealership Summary', 'Lead Type & Inventory Type Summary'],
+  },
+]
+
+function flatten(sheet: Sheet): Array<string> {
+  return sheet.rows.flat().map((c) => (c ?? '').trim()).filter(Boolean)
+}
+
+function classifyMultiSection(sheets: Array<Sheet>): { fam: MultiSectionFamily; sheet: Sheet } | null {
+  for (const fam of MULTI_SECTION_FAMILIES) {
+    const candidates = sheets.filter((s) => !/^filters$/i.test(s.name))
+    for (const s of candidates) {
+      const cells = flatten(s)
+      const hasTitle = cells.some((c) => c === fam.title)
+      const hasMarkers = fam.sectionMarkers.every((m) => cells.includes(m))
+      if (hasTitle || hasMarkers) return { fam, sheet: s }
+    }
+  }
+  return null
+}
+
+function evaluateMultiSection(
+  fam: MultiSectionFamily,
+  reportSheet: Sheet,
+  sheets: Array<Sheet>,
+  opts: { profileDealer: string },
+): Evaluation {
+  const nonblank = reportSheet.rows.filter((r) => r.some((c) => (c ?? '').trim() !== ''))
+  const q = (reason: QuarantineReason, detail: string, evidence: Record<string, unknown> = {}): Evaluation => ({
+    status: 'quarantined', reason, detail, kind: fam.kind, source_row_count: nonblank.length, evidence,
+  })
+
+  // only-blank extra sheets tolerated (contracted: this sheet + Filters)
+  const filtersSheet = sheets.find((s) => /^filters$/i.test(s.name))
+  const contracted = new Set([reportSheet.name.toLowerCase(), ...(filtersSheet ? ['filters'] : [])])
+  for (const s of sheets) {
+    if (contracted.has(s.name.toLowerCase())) continue
+    if (s.rows.some((r) => r.some((c) => (c ?? '').trim() !== ''))) return q('extra-nonblank-sheet', `uncontracted non-blank sheet "${s.name}"`, { sheet: s.name })
+  }
+
+  // Filters-level Sales-only validation (aggregate → no per-row proof possible)
+  if (!filtersSheet) return q('incompatible-filter-metadata', 'Dealership Performance Dashboard requires a Filters tab')
+  const filters = parseFilters(filtersSheet.rows)
+  if (filters.dealers.length !== 1) return q('ambiguous-tenant', `expected exactly one dealer, got ${filters.dealers.length}`, { dealers: filters.dealers })
+  if (!dealerMatches(opts.profileDealer, filters.dealers[0])) return q('wrong-dealer', `Filters dealer "${filters.dealers[0]}" ≠ target "${opts.profileDealer}"`, { dealer: filters.dealers[0] })
+  if (!isExactSalesLeadTypes(filters.leadTypes)) return q('incompatible-filter-metadata', `lead types must be exactly {Internet,Phone,Walk-in}; got [${filters.leadTypes.join(', ')}]`, { leadTypes: filters.leadTypes })
+  if ([...filters.leadIntents, ...filters.leadTypes].some(isServiceParts)) return q('non-sales-lead-type', 'Filters select Service/Parts on an aggregate dashboard (no row-level Sales proof possible)', { leadIntents: filters.leadIntents })
+
+  return {
+    status: 'accepted',
+    kind: fam.kind,
+    dealer: filters.dealers[0] || opts.profileDealer,
+    period: filters.period,
+    header: [], // multi-section: no single header — rows preserved generically
+    rows: nonblank,
+    source_row_count: nonblank.length,
+    accepted_row_count: nonblank.length,
+    filters,
+    schedule_vulnerability: false,
+    evidence: {
+      multi_section: true,
+      base_report_name: filters.baseReportName,
+      section_markers_found: fam.sectionMarkers.filter((m) => flatten(reportSheet).includes(m)),
+      rows_preserved: nonblank.length,
+    },
+  }
+}
+
 export function evaluateDelivery(
   sheets: Array<Sheet>,
   opts: { profileDealer: string },
 ): Evaluation {
+  // Multi-section families (Dealership Performance Dashboard) first — they are
+  // not a flat table and are classified by title/section markers.
+  const ms = classifyMultiSection(sheets)
+  if (ms) return evaluateMultiSection(ms.fam, ms.sheet, sheets, opts)
+
   let sourceRowCount = 0
   const q = (reason: QuarantineReason, detail: string, kind: ReportKind | null, evidence: Record<string, unknown> = {}): Evaluation => ({
     status: 'quarantined', reason, detail, kind, source_row_count: sourceRowCount, evidence,
@@ -227,9 +322,7 @@ export function evaluateDelivery(
   if (filters) {
     if (filters.dealers.length > 1) return q('ambiguous-tenant', `Filters select ${filters.dealers.length} rooftops`, fam.kind, { dealers: filters.dealers })
     if (fam.kind === 'cage_kpi') {
-      const types = filters.leadTypes.map((t) => t.toLowerCase())
-      const ok = types.length > 0 && types.every((t) => CAGE_LEAD_TYPES.has(t)) && ['internet', 'phone'].every((r) => types.includes(r)) && types.some((t) => t.startsWith('walk'))
-      if (!ok) return q('incompatible-filter-metadata', `CAGE lead types must be exactly {Internet,Phone,Walk-in}; got [${filters.leadTypes.join(', ')}]`, fam.kind, { leadTypes: filters.leadTypes })
+      if (!isExactSalesLeadTypes(filters.leadTypes)) return q('incompatible-filter-metadata', `CAGE lead types must be exactly {Internet,Phone,Walk-in}; got [${filters.leadTypes.join(', ')}]`, fam.kind, { leadTypes: filters.leadTypes })
     }
   }
 

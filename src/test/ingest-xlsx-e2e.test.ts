@@ -17,10 +17,13 @@ async function post(filename: string, buf: Buffer) {
 }
 
 const ROI_HEADER = ['Dealer', 'Lead_Source', 'Total_Leads', 'Good_Leads', 'Sold_from_Leads']
+// Per-run nonce (benign Filters row) → fresh checksums each run, so the stateful
+// duplicate/supersession assertions stay deterministic against the live dev db.
+const NONCE = String(Date.now())
 const roiWb = (totalLeads: number) =>
   makeXlsx([
     { name: 'Report', rows: [ROI_HEADER, ['Serra Honda of Sylacauga', 'Repeat Customer', totalLeads, totalLeads, 24]] },
-    { name: 'Filters', rows: [['Base Report Name', 'Lead Source ROI'], ['Dealers', 'Serra Honda'], ['Date Range', '2026-09-01 - 2026-09-07']] },
+    { name: 'Filters', rows: [['Base Report Name', 'Lead Source ROI'], ['Dealers', 'Serra Honda'], ['Date Range', '2026-09-01 - 2026-09-07'], ['Run', NONCE]] },
     { name: 'Sheet3', rows: [] },
   ])
 
@@ -66,5 +69,24 @@ describe.skipIf(!hasServer)('XLSX ingest E2E (live dev endpoint :3510 → /srv/i
     const r = await post('broken.xlsx', Buffer.from('PK not a real xlsx at all'))
     expect(r.status).toBe(422)
     expect(r.body.reason).toBe('malformed-workbook')
+  })
+
+  it('accepts a multi-section Dealership Performance Dashboard, preserving rows', async () => {
+    const wb = makeXlsx([
+      { name: 'Report', rows: [
+        ['Dealership Performance Dashboard'],
+        ['Dealership Summary'],
+        ['Leads', 'Appts Set', 'Sold in Period', 'Total Gross'],
+        [414, 120, 19, '$30,016'],
+        ['Lead Type & Inventory Type Summary'],
+        ['Internet', 200, 10, '$15,000'],
+      ] },
+      { name: 'Filters', rows: [['Base Report Name', 'Dealership Performance Dashboard'], ['Dealers', 'Serra Honda of Sylacauga'], ['Lead Types', 'Internet, Phone, Walk-in'], ['Date Range', '2026-08-03 - 2026-08-09'], ['Run', NONCE]] },
+    ])
+    const r = await post('dash_2026-08-03.xlsx', wb)
+    expect(r.status).toBe(200)
+    expect(r.body.ok).toBe(true)
+    expect(r.body.kind).toBe('dealership_performance')
+    expect(Number(r.body.accepted_row_count)).toBeGreaterThan(0)
   })
 })
