@@ -44,6 +44,21 @@ export function isIngestEligible(profile: string): boolean {
  */
 export const INGEST_ACTOR = 'system:report-ingest'
 
+/**
+ * Strict base64 decode. `Buffer.from(s,'base64')` silently accepts many invalid
+ * strings (skips non-alphabet chars, tolerates bad padding), so we validate the
+ * charset + padding + canonical round-trip and return null on anything invalid.
+ */
+export function decodeBase64Strict(input: unknown): Buffer | null {
+  if (typeof input !== 'string') return null
+  const s = input.trim()
+  if (s.length === 0 || s.length % 4 !== 0) return null
+  if (!/^[A-Za-z0-9+/]*={0,2}$/.test(s)) return null
+  const buf = Buffer.from(s, 'base64')
+  if (buf.toString('base64') !== s) return null // reject non-canonical
+  return buf
+}
+
 /** Constant-time string compare that never throws on length mismatch. */
 function safeEqual(a: string, b: string): boolean {
   const ab = Buffer.from(a, 'utf8')

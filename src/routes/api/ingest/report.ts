@@ -31,10 +31,120 @@ import {
 } from '../../../server/report-ingest'
 import {
   INGEST_ACTOR,
+  decodeBase64Strict,
   isIngestEligible,
   parsePeriodHint,
   verifyIngestSecret,
 } from '../../../server/ingest-auth'
+import { readXlsx } from '../../../server/ingest/xlsx-reader'
+import { PARSER_VERSION, evaluateDelivery } from '../../../server/ingest/vin-contracts'
+import { recordDelivery } from '../../../server/ingest/ingest-delivery-store'
+
+/**
+ * XLSX delivery: retain raw (lossless) → classify + Sales-only quarantine
+ * (fail-closed) → record provenance (dup no-op / transactional supersession).
+ * A malformed workbook or any quarantine yields NO accepted metrics/actions.
+ */
+async function handleXlsxDelivery(
+  profile: string,
+  filename: string,
+  contentBase64: string,
+): Promise<Response> {
+  const buf = decodeBase64Strict(contentBase64)
+  if (!buf) return json({ ok: false, error: 'content_base64 is not valid base64' }, { status: 400 })
+
+  // Lossless raw retention regardless of parse/quarantine outcome.
+  const up = await handleUpload({
+    profile,
+    actor: INGEST_ACTOR,
+    filename,
+    content: contentBase64,
+    classification: 'data',
+  })
+  if (!up.ok) return json({ ok: false, error: up.reason, rule: up.rule }, { status: 400 })
+
+  const { config } = readStudioConfig(profile)
+  const profileDealer = resolveDealerName(config)
+  const now = Date.now()
+
+  // Malformed ZIP/XML / caps exceeded → fail-closed quarantine (still recorded).
+  let sheets
+  try {
+    sheets = readXlsx(buf).sheets
+  } catch (err) {
+    const rec = recordDelivery(
+      {
+        profile, dealer: profileDealer, report_kind: 'unknown',
+        period_start: null, period_end: null, source_filename: filename,
+        source_filter_metadata: null, final_filter_metadata: null,
+        checksum: up.checksum, parser_version: PARSER_VERSION,
+        source_row_count: 0, accepted_row_count: 0, header: [],
+        validation_evidence: { error: (err as Error).message },
+        status: 'quarantined', quarantine_reason: 'malformed-workbook',
+      },
+      [],
+      now,
+    )
+    return json(
+      { ok: false, quarantined: true, reason: 'malformed-workbook', error: (err as Error).message, delivery_id: rec.id, upload_id: up.id },
+      { status: 422 },
+    )
+  }
+
+  const evalResult = evaluateDelivery(sheets, { profileDealer })
+
+  if (evalResult.status === 'quarantined') {
+    const rec = recordDelivery(
+      {
+        profile, dealer: profileDealer, report_kind: evalResult.kind ?? 'unknown',
+        period_start: null, period_end: null, source_filename: filename,
+        source_filter_metadata: evalResult.evidence, final_filter_metadata: null,
+        checksum: up.checksum, parser_version: PARSER_VERSION,
+        source_row_count: evalResult.source_row_count, accepted_row_count: 0, header: [],
+        validation_evidence: evalResult.evidence,
+        status: 'quarantined', quarantine_reason: evalResult.reason,
+      },
+      [],
+      now,
+    )
+    return json(
+      { ok: false, quarantined: true, reason: evalResult.reason, detail: evalResult.detail, kind: evalResult.kind, delivery_id: rec.id, upload_id: up.id },
+      { status: 422 },
+    )
+  }
+
+  const rec = recordDelivery(
+    {
+      profile, dealer: evalResult.dealer, report_kind: evalResult.kind,
+      period_start: evalResult.period.start, period_end: evalResult.period.end,
+      source_filename: filename,
+      source_filter_metadata: evalResult.filters?.raw ?? null,
+      final_filter_metadata: evalResult.filters
+        ? { dealers: evalResult.filters.dealers, leadTypes: evalResult.filters.leadTypes, leadIntents: evalResult.filters.leadIntents }
+        : null,
+      checksum: up.checksum, parser_version: PARSER_VERSION,
+      source_row_count: evalResult.source_row_count, accepted_row_count: evalResult.accepted_row_count,
+      header: evalResult.header,
+      validation_evidence: evalResult.evidence, status: 'accepted', quarantine_reason: null,
+    },
+    evalResult.rows,
+    now,
+  )
+  return json({
+    ok: true,
+    kind: evalResult.kind,
+    dealer: evalResult.dealer,
+    period: evalResult.period,
+    source_row_count: evalResult.source_row_count,
+    accepted_row_count: rec.accepted_rows,
+    schedule_vulnerability: evalResult.schedule_vulnerability,
+    outcome: rec.outcome,
+    revision: rec.revision,
+    superseded: rec.superseded,
+    delivery_id: rec.id,
+    upload_id: up.id,
+  })
+}
 
 export const Route = createFileRoute('/api/ingest/report')({
   server: {
@@ -77,22 +187,25 @@ export const Route = createFileRoute('/api/ingest/report')({
           )
         }
 
-        // 5. decode + shape checks
+        // 5. XLSX six-family delivery path (Sales-only quarantine + provenance).
+        //    CSV path (below) is retained unchanged for backward compatibility.
+        if (/\.xlsx$/i.test(filename)) {
+          return await handleXlsxDelivery(profile, filename, contentBase64)
+        }
         if (!/\.csv$/i.test(filename)) {
           return json(
-            { ok: false, error: 'only .csv reports are accepted' },
+            { ok: false, error: 'only .csv or .xlsx reports are accepted' },
             { status: 400 },
           )
         }
-        let text: string
-        try {
-          text = Buffer.from(contentBase64, 'base64').toString('utf8')
-        } catch {
+        const decoded = decodeBase64Strict(contentBase64)
+        if (!decoded) {
           return json(
             { ok: false, error: 'content_base64 is not valid base64' },
             { status: 400 },
           )
         }
+        const text = decoded.toString('utf8')
 
         // 6. header sanity — must look like a VIN ROI/KPI export
         const firstRow = parseCsv(text)[0] ?? []

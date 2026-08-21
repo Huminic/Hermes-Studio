@@ -156,7 +156,14 @@ export type Evaluation =
       kind: ReportKind
       dealer: string
       period: { start: string | null; end: string | null }
-      row_count: number
+      /** the header row (column names). */
+      header: Array<string>
+      /** accepted data rows (every source cell, ISO-resolved dates), immutable. */
+      rows: Array<Array<string>>
+      /** observed data rows in the source. */
+      source_row_count: number
+      /** rows accepted into the analytical store (== source for accepted). */
+      accepted_row_count: number
       filters: FilterMetadata | null
       schedule_vulnerability: boolean
       evidence: Record<string, unknown>
@@ -166,6 +173,8 @@ export type Evaluation =
       reason: QuarantineReason
       detail: string
       kind: ReportKind | null
+      /** observed data rows — preserved even though NONE are accepted. */
+      source_row_count: number
       evidence: Record<string, unknown>
     }
 
@@ -175,8 +184,9 @@ export function evaluateDelivery(
   sheets: Array<Sheet>,
   opts: { profileDealer: string },
 ): Evaluation {
+  let sourceRowCount = 0
   const q = (reason: QuarantineReason, detail: string, kind: ReportKind | null, evidence: Record<string, unknown> = {}): Evaluation => ({
-    status: 'quarantined', reason, detail, kind, evidence,
+    status: 'quarantined', reason, detail, kind, source_row_count: sourceRowCount, evidence,
   })
 
   // classify: find the data/Report sheet + header row matching a family signature
@@ -195,6 +205,13 @@ export function evaluateDelivery(
   if (!matched) return q('unrecognized-family', 'no family signature matched any sheet', null)
 
   const { fam, sheet, header } = matched
+  // Observed data rows up front, so source_row_count is preserved on ANY
+  // subsequent quarantine (never erased).
+  const dataRows = sheet.rows
+    .slice(header.index + 1)
+    .filter((r) => r.some((c) => (c ?? '').trim() !== ''))
+  sourceRowCount = dataRows.length
+
   const filtersSheet = sheets.find((s) => /^filters$/i.test(s.name))
   const filters = filtersSheet ? parseFilters(filtersSheet.rows) : null
 
@@ -221,7 +238,6 @@ export function evaluateDelivery(
 
   // ROW-LEVEL validation (always, for families with rows): dealer-correct + Sales-domain
   const dealerCol = header.map.get('Dealer')
-  const dataRows = sheet.rows.slice(header.index + 1).filter((r) => r.some((c) => (c ?? '').trim() !== ''))
   const dealersSeen = new Set<string>()
   const periodDates: Array<string> = []
   const dateCol = fam.dateField ? header.map.get(fam.dateField) : undefined
@@ -264,7 +280,10 @@ export function evaluateDelivery(
     kind: fam.kind,
     dealer,
     period,
-    row_count: dataRows.length,
+    header: sheet.rows[header.index].map((c) => (c ?? '').trim()),
+    rows: dataRows,
+    source_row_count: dataRows.length,
+    accepted_row_count: dataRows.length,
     filters,
     schedule_vulnerability: scheduleVulnerability,
     evidence: {

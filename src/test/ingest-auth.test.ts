@@ -4,7 +4,23 @@ import {
   isIngestEligible,
   ingestEligibleProfiles,
   parsePeriodHint,
+  decodeBase64Strict,
 } from '@/server/ingest-auth'
+
+describe('decodeBase64Strict', () => {
+  it('decodes canonical base64', () => {
+    const b = decodeBase64Strict(Buffer.from('hello').toString('base64'))
+    expect(b?.toString()).toBe('hello')
+  })
+  it('rejects non-canonical / invalid strings that Buffer.from silently accepts', () => {
+    expect(decodeBase64Strict('not base64!!')).toBeNull()
+    expect(decodeBase64Strict('abc')).toBeNull() // length % 4 != 0
+    expect(decodeBase64Strict('aGVsbG8')).toBeNull() // missing padding
+    expect(decodeBase64Strict('aGVs bG8=')).toBeNull() // embedded space
+    expect(decodeBase64Strict('')).toBeNull()
+    expect(decodeBase64Strict(123 as unknown)).toBeNull()
+  })
+})
 
 const ENV = ['INGEST_SERVICE_SECRET', 'INGEST_ELIGIBLE_PROFILES'] as const
 let saved: Record<string, string | undefined>

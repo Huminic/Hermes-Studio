@@ -23,7 +23,10 @@ describe('Sales Communication Log', () => {
     expect(r.status).toBe('accepted')
     if (r.status === 'accepted') {
       expect(r.kind).toBe('sales_comm_log')
-      expect(r.row_count).toBe(2)
+      expect(r.accepted_row_count).toBe(2)
+      expect(r.source_row_count).toBe(2)
+      expect(r.rows).toHaveLength(2)
+      expect(r.header).toContain('Lead Type')
       expect(r.period).toEqual({ start: '2026-08-04', end: '2026-08-10' })
     }
   })
