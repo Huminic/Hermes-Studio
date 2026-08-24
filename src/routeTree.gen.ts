@@ -141,6 +141,7 @@ import { Route as ApiKnowledgeReadRouteImport } from './routes/api/knowledge/rea
 import { Route as ApiKnowledgeListRouteImport } from './routes/api/knowledge/list'
 import { Route as ApiKnowledgeGraphRouteImport } from './routes/api/knowledge/graph'
 import { Route as ApiIngestReportRouteImport } from './routes/api/ingest/report'
+import { Route as ApiIngestHoldRouteImport } from './routes/api/ingest/hold'
 import { Route as ApiHermesProxySplatRouteImport } from './routes/api/hermes-proxy/$'
 import { Route as ApiHermesJobsJobIdRouteImport } from './routes/api/hermes-jobs.$jobId'
 import { Route as ApiEventsReplayRouteImport } from './routes/api/events/replay'
@@ -873,6 +874,11 @@ const ApiIngestReportRoute = ApiIngestReportRouteImport.update({
   path: '/api/ingest/report',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiIngestHoldRoute = ApiIngestHoldRouteImport.update({
+  id: '/api/ingest/hold',
+  path: '/api/ingest/hold',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiHermesProxySplatRoute = ApiHermesProxySplatRouteImport.update({
   id: '/api/hermes-proxy/$',
   path: '/api/hermes-proxy/$',
@@ -1365,6 +1371,7 @@ export interface FileRoutesByFullPath {
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
   '/api/hermes-proxy/$': typeof ApiHermesProxySplatRoute
+  '/api/ingest/hold': typeof ApiIngestHoldRoute
   '/api/ingest/report': typeof ApiIngestReportRoute
   '/api/knowledge/graph': typeof ApiKnowledgeGraphRoute
   '/api/knowledge/list': typeof ApiKnowledgeListRoute
@@ -1568,6 +1575,7 @@ export interface FileRoutesByTo {
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
   '/api/hermes-proxy/$': typeof ApiHermesProxySplatRoute
+  '/api/ingest/hold': typeof ApiIngestHoldRoute
   '/api/ingest/report': typeof ApiIngestReportRoute
   '/api/knowledge/graph': typeof ApiKnowledgeGraphRoute
   '/api/knowledge/list': typeof ApiKnowledgeListRoute
@@ -1773,6 +1781,7 @@ export interface FileRoutesById {
   '/api/events/replay': typeof ApiEventsReplayRoute
   '/api/hermes-jobs/$jobId': typeof ApiHermesJobsJobIdRoute
   '/api/hermes-proxy/$': typeof ApiHermesProxySplatRoute
+  '/api/ingest/hold': typeof ApiIngestHoldRoute
   '/api/ingest/report': typeof ApiIngestReportRoute
   '/api/knowledge/graph': typeof ApiKnowledgeGraphRoute
   '/api/knowledge/list': typeof ApiKnowledgeListRoute
@@ -1979,6 +1988,7 @@ export interface FileRouteTypes {
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
     | '/api/hermes-proxy/$'
+    | '/api/ingest/hold'
     | '/api/ingest/report'
     | '/api/knowledge/graph'
     | '/api/knowledge/list'
@@ -2182,6 +2192,7 @@ export interface FileRouteTypes {
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
     | '/api/hermes-proxy/$'
+    | '/api/ingest/hold'
     | '/api/ingest/report'
     | '/api/knowledge/graph'
     | '/api/knowledge/list'
@@ -2386,6 +2397,7 @@ export interface FileRouteTypes {
     | '/api/events/replay'
     | '/api/hermes-jobs/$jobId'
     | '/api/hermes-proxy/$'
+    | '/api/ingest/hold'
     | '/api/ingest/report'
     | '/api/knowledge/graph'
     | '/api/knowledge/list'
@@ -2582,6 +2594,7 @@ export interface RootRouteChildren {
   ApiCustomerSentinelRoute: typeof ApiCustomerSentinelRoute
   ApiCustomerSessionsRoute: typeof ApiCustomerSessionsRoute
   ApiHermesProxySplatRoute: typeof ApiHermesProxySplatRoute
+  ApiIngestHoldRoute: typeof ApiIngestHoldRoute
   ApiIngestReportRoute: typeof ApiIngestReportRoute
   ApiKnowledgeGraphRoute: typeof ApiKnowledgeGraphRoute
   ApiKnowledgeListRoute: typeof ApiKnowledgeListRoute
@@ -3571,6 +3584,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiIngestReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ingest/hold': {
+      id: '/api/ingest/hold'
+      path: '/api/ingest/hold'
+      fullPath: '/api/ingest/hold'
+      preLoaderRoute: typeof ApiIngestHoldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/hermes-proxy/$': {
       id: '/api/hermes-proxy/$'
       path: '/api/hermes-proxy/$'
@@ -4423,6 +4443,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCustomerSentinelRoute: ApiCustomerSentinelRoute,
   ApiCustomerSessionsRoute: ApiCustomerSessionsRoute,
   ApiHermesProxySplatRoute: ApiHermesProxySplatRoute,
+  ApiIngestHoldRoute: ApiIngestHoldRoute,
   ApiIngestReportRoute: ApiIngestReportRoute,
   ApiKnowledgeGraphRoute: ApiKnowledgeGraphRoute,
   ApiKnowledgeListRoute: ApiKnowledgeListRoute,
