@@ -27,9 +27,13 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { requireJsonContentType } from '../../../server/rate-limit'
 import { readStudioConfig } from '../../../server/studio-config'
-import { resolveDealerName } from '../../../server/report-ingest'
 import { decodeBase64Strict, verifyIngestSecret } from '../../../server/ingest-auth'
 import { isHoldEligible, landDelivery, type HoldMetadata } from '../../../server/ingest/hold-store'
+
+/** Profile dealer name (inlined to keep this route free of Brain-coupled report-ingest). */
+function resolveProfileDealer(config: { vin?: { watcher?: { dealer_name?: string } }; branding?: { persona_name?: string } }): string {
+  return config.vin?.watcher?.dealer_name?.trim() || config.branding?.persona_name?.trim() || ''
+}
 
 function receiptBody(r: ReturnType<typeof landDelivery>) {
   const m = r.manifest
@@ -40,11 +44,18 @@ function receiptBody(r: ReturnType<typeof landDelivery>) {
     no_action: m.no_action,
     profile: m.profile,
     dealer: m.dealer,
+    source_type: m.source_type,
+    capture_id: m.capture_id,
+    source_url: m.source_url,
+    declared_report_kind: m.declared_report_kind,
     report_kind: m.report_kind,
     period: m.period,
     sha256: m.sha256,
     size_bytes: m.size_bytes,
     filename: m.filename,
+    file_extension: m.file_extension,
+    media_type: m.media_type,
+    structural_transform: m.structural_transform,
     validation_state: m.validation_state,
     quarantine_reason: m.quarantine_reason,
     detail: m.detail,
@@ -80,21 +91,28 @@ export const Route = createFileRoute('/api/ingest/hold')({
         if (!isHoldEligible(profile)) {
           return json({ ok: false, error: `profile '${profile}' is not hold-eligible` }, { status: 403 })
         }
-        if (!/\.xlsx$/i.test(filename)) {
-          return json({ ok: false, error: 'only .xlsx deliveries are accepted' }, { status: 400 })
-        }
+        // Every VinSolutions source file must reach the inert holding point. The
+        // format (.xlsx/.csv/.pdf) and any unknown-format/MIME-mismatch quarantine
+        // (with byte retention) are decided by landDelivery — never rejected here.
         const buf = decodeBase64Strict(contentBase64)
         if (!buf) return json({ ok: false, error: 'content_base64 is not valid base64' }, { status: 400 })
 
         const { config } = readStudioConfig(profile)
-        const profileDealer = resolveDealerName(config)
+        const profileDealer = resolveProfileDealer(config)
 
+        // Pass source_type through verbatim (including an unknown value) so the
+        // provenance gate in landDelivery fails closed rather than silent-coercing.
+        const sourceTypeRaw = str('source_type')
         const meta: HoldMetadata = {
           profile,
           filename,
-          sender: str('sender'),
-          subject: str('subject'),
-          gmail_message_id: str('gmail_message_id'),
+          source_type: (sourceTypeRaw || undefined) as HoldMetadata['source_type'],
+          sender: str('sender') || undefined,
+          subject: str('subject') || undefined,
+          gmail_message_id: str('gmail_message_id') || undefined,
+          capture_id: str('capture_id') || undefined,
+          source_url: str('source_url') || undefined,
+          declared_report_kind: str('declared_report_kind') || undefined,
           received_at: str('received_at') || null,
           period_hint: str('period_hint') || null,
         }
