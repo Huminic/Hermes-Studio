@@ -2,9 +2,10 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { createHash } from 'node:crypto'
 import { makeXlsx, type Cell } from './helpers/make-xlsx'
 import {
-  landDelivery, readHeldReceipt, listHeldDeliveries, isHoldEligible,
+  landDelivery, readHeldReceipt, listHeldDeliveries, isHoldEligible, parseRowDate,
   HOLD_ELIGIBLE, HOLD_CONTRACT, holdRoot, type HoldMetadata,
 } from '@/server/ingest/hold-store'
 
@@ -55,7 +56,7 @@ describe('HOLD_ONLY landing — held happy path', () => {
     expect(m.sender).toBe('reports@vinsolutions.com')
     expect(m.subject).toBe('Lead Source ROI')
     expect(m.parser_version).toBe('vin-xlsx-1')
-    expect(m.transform_version).toBe('hold-only-1')
+    expect(m.transform_version).toBe('hold-only-2')
     expect(m.captured_at).toBe(CAPTURED)
     expect(m.hold_only).toBe(true)
     expect(m.no_action).toBe(true)
@@ -205,5 +206,98 @@ describe('HOLD_ONLY — HARD GUARD (no downstream use)', () => {
   it('holdRoot honours INGEST_HOLD_ROOT (isolated from brain profiles)', () => {
     expect(holdRoot()).toBe(path.join(tmp, 'hold'))
     expect(holdRoot()).not.toContain('profiles')
+  })
+})
+
+// ── Sales Communication daily-period proof (the real fixture gap) ─────────────
+const SC_H = ['Dealer', 'User Group', 'User', 'Customer', 'Activity Date', 'Direction', 'Comm Channel', 'Comm Type', 'Interaction Result', 'Lead Type', 'Lead Status Type', 'Lead Source', 'Lead Created Date', 'Message Content']
+const scRow = (activity: string, o: { dealer?: string; leadType?: string; source?: string } = {}): Array<Cell> => {
+  const r: Array<Cell> = new Array(SC_H.length).fill('')
+  r[0] = o.dealer ?? 'Serra Honda of Sylacauga'; r[1] = 'Sales'; r[2] = 'Jane'; r[3] = 'Cust'
+  r[4] = activity; r[5] = 'Outbound'; r[6] = 'SMS'; r[7] = 'Text'; r[8] = 'Reached'
+  r[9] = o.leadType ?? 'Internet'; r[10] = 'Working'; r[11] = o.source ?? 'Autoweb'; r[12] = '2026-08-20'; r[13] = 'hello'
+  return r
+}
+// Report has a TITLE row above the header (header on row 2), like the real workbook.
+const scWb = (activities: Array<string>, o: { dealer?: string; leadType?: string; dealers?: string; filters?: Array<Array<Cell>> } = {}) =>
+  makeXlsx([
+    { name: 'Report', rows: [['Sales Communication Log'], SC_H, ...activities.map((a) => scRow(a, o))] },
+    { name: 'Filters', rows: o.filters ?? [['Base Report Name', 'Sales Communication Log'], ['Dealers', o.dealers ?? 'Serra Honda']] },
+  ])
+const scMeta = (over: Partial<HoldMetadata> = {}): HoldMetadata => meta({ filename: 'Report-2444.xlsx', subject: 'Sales Communication Log | Daily', ...over })
+
+describe('HOLD_ONLY — Sales Communication daily-period proof', () => {
+  it('parseRowDate handles the real text representation (m/d/y + time) and ISO', () => {
+    expect(parseRowDate('08/22/2026 07:08 PM')).toBe('2026-08-22')
+    expect(parseRowDate('8/2/2026')).toBe('2026-08-02')
+    expect(parseRowDate('2026-08-22T13:00:00')).toBe('2026-08-22')
+    expect(parseRowDate('')).toBeNull()
+    expect(parseRowDate('not-a-date')).toBeNull()
+    expect(parseRowDate('13/40/2026')).toBeNull()
+  })
+
+  it('HELD when every row proves the supplied daily period (period_hint completes missing Filters)', () => {
+    const buf = scWb(['08/22/2026 07:08 PM', '08/22/2026 06:00 AM', '08/22/2026 11:59 PM'])
+    const r = landDelivery(buf, scMeta({ period_hint: '2026-08-22' }), OPTS)
+    expect(r.outcome).toBe('held')
+    expect(r.manifest.report_kind).toBe('sales_comm_log')
+    expect(r.manifest.period).toEqual({ start: '2026-08-22', end: '2026-08-22' })
+    expect(r.manifest.transform_version).toBe('hold-only-2')
+    expect(r.manifest.evidence.period_source).toBe('period_hint')
+  })
+
+  it('QUARANTINE when no supplied daily period (hint absent, Filters has no date)', () => {
+    const r = landDelivery(scWb(['08/22/2026 07:08 PM']), scMeta(), OPTS)
+    expect(r.manifest.quarantine_reason).toBe('unexpected-period')
+    expect(r.manifest.detail).toMatch(/no supplied daily period/i)
+  })
+
+  it('QUARANTINE on multi-day rows', () => {
+    const r = landDelivery(scWb(['08/22/2026 07:08 PM', '08/23/2026 08:00 AM']), scMeta({ period_hint: '2026-08-22' }), OPTS)
+    expect(r.manifest.quarantine_reason).toBe('unexpected-period')
+    expect(r.manifest.detail).toMatch(/span 2 days/i)
+  })
+
+  it('QUARANTINE on an out-of-period row (hint disagrees with row day)', () => {
+    const r = landDelivery(scWb(['08/22/2026 07:08 PM']), scMeta({ period_hint: '2026-08-21' }), OPTS)
+    expect(r.manifest.quarantine_reason).toBe('unexpected-period')
+    expect(r.manifest.detail).toMatch(/≠ supplied period 2026-08-21/)
+  })
+
+  it('QUARANTINE on a missing/unparseable Activity Date', () => {
+    const r = landDelivery(scWb(['08/22/2026 07:08 PM', 'n/a']), scMeta({ period_hint: '2026-08-22' }), OPTS)
+    expect(r.manifest.quarantine_reason).toBe('unexpected-period')
+    expect(r.manifest.detail).toMatch(/unparseable Activity Date/i)
+  })
+
+  it('does NOT weaken the dealer gate', () => {
+    const r = landDelivery(scWb(['08/22/2026 07:08 PM'], { dealer: 'Serra Nissan of Sylacauga' }), scMeta({ period_hint: '2026-08-22' }), OPTS)
+    expect(r.manifest.quarantine_reason).toBe('wrong-dealer')
+  })
+
+  it('does NOT weaken the Service/Parts gate', () => {
+    const r = landDelivery(scWb(['08/22/2026 07:08 PM'], { leadType: 'Service' }), scMeta({ period_hint: '2026-08-22' }), OPTS)
+    expect(r.manifest.quarantine_reason).toBe('non-sales-lead-type')
+  })
+
+  it('same SHA with earlier quarantine: preserves it, attributes it, readback prefers HELD', () => {
+    const buf = scWb(['08/22/2026 07:08 PM', '08/22/2026 06:00 AM'])
+    const sha = createHash('sha256').update(buf).digest('hex')
+    // simulate an earlier hold-only-1 quarantine of the SAME bytes
+    const qdir = path.join(holdRoot(), 'serra-honda', 'quarantine', sha)
+    fs.mkdirSync(qdir, { recursive: true })
+    fs.writeFileSync(path.join(qdir, 'manifest.json'), JSON.stringify({ sha256: sha, validation_state: 'quarantined', quarantine_reason: 'unexpected-period', captured_at: '2026-08-24T07:11:24.703Z', transform_version: 'hold-only-1' }))
+    fs.writeFileSync(path.join(qdir, 'original.xlsx'), buf)
+
+    const r = landDelivery(buf, scMeta({ period_hint: '2026-08-22' }), OPTS)
+    expect(r.outcome).toBe('held')
+    // original quarantine manifest + bytes preserved (not overwritten)
+    expect(JSON.parse(fs.readFileSync(path.join(qdir, 'manifest.json'), 'utf8')).transform_version).toBe('hold-only-1')
+    // held manifest attributes the prior quarantine
+    expect((r.manifest.evidence.prior_quarantine as Record<string, unknown>).reason).toBe('unexpected-period')
+    // readback prefers the accepted held manifest
+    const back = readHeldReceipt('serra-honda', sha)
+    expect(back?.validation_state).toBe('held')
+    expect(back?.transform_version).toBe('hold-only-2')
   })
 })

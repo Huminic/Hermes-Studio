@@ -26,7 +26,10 @@ import { readXlsx } from './xlsx-reader'
 import { evaluateDelivery, PARSER_VERSION, type QuarantineReason, type ReportKind } from './vin-contracts'
 import { parsePeriodHint } from '../ingest-auth'
 
-export const TRANSFORM_VERSION = 'hold-only-1'
+// hold-only-2: Sales Communication daily-period is proven from row-level Activity
+// Date values (text m/d/y or ISO), validated/completed by period_hint — never from
+// a workbook whose dates don't deterministically prove the supplied daily period.
+export const TRANSFORM_VERSION = 'hold-only-2'
 
 /** Only the three exact Serra profiles are supported by the holding contract. */
 export const HOLD_ELIGIBLE = ['serra-honda', 'serra-nissan', 'tony-serra-ford'] as const
@@ -155,6 +158,82 @@ function baseManifest(meta: HoldMetadata, dealer: string, sha: string, size: num
 }
 
 /**
+ * Deterministic calendar-date extraction from a cell (NO timezone math): accepts
+ * ISO `YYYY-MM-DD[...]` and US `M/D/YYYY[ ...]` (the VinSolutions text format).
+ * Returns the `YYYY-MM-DD` day, or null when it does not deterministically parse.
+ */
+export function parseRowDate(raw: string): string | null {
+  const s = (raw ?? '').trim()
+  if (!s) return null
+  const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})(?!\d)/)
+  if (iso) {
+    const m = +iso[2], d = +iso[3]
+    if (m < 1 || m > 12 || d < 1 || d > 31) return null
+    return `${iso[1]}-${iso[2]}-${iso[3]}`
+  }
+  const us = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?!\d)/)
+  if (us) {
+    const m = +us[1], d = +us[2]
+    if (m < 1 || m > 12 || d < 1 || d > 31) return null
+    return `${us[3]}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+  }
+  return null
+}
+
+type PeriodVerdict =
+  | { ok: true; period: HoldPeriod; evidence: Record<string, unknown> }
+  | { ok: false; period: HoldPeriod; detail: string; evidence: Record<string, unknown> }
+
+/**
+ * Sales Communication daily-period proof (hold-only). The report is DAILY and its
+ * Activity Date is per-row text (m/d/y or ISO). Hold ONLY when every relevant data
+ * row has a parseable date equal to ONE supplied day. The supplied day comes from
+ * period_hint (preferred, may complete missing Filters) or a single-day Filters
+ * range. Any missing/unparseable, conflicting, multi-day, or out-of-period row —
+ * or no supplied day to verify against — quarantines the whole delivery.
+ */
+function verifySalesCommDailyPeriod(
+  header: Array<string>,
+  rows: Array<Array<string>>,
+  filtersPeriod: { start: string | null; end: string | null } | null,
+  periodHint: string | undefined,
+): PeriodVerdict {
+  const nil: HoldPeriod = { start: null, end: null }
+  const ci = header.findIndex((h) => h.trim().toLowerCase() === 'activity date')
+  if (ci < 0) return { ok: false, period: nil, detail: 'Activity Date column not found', evidence: {} }
+  if (rows.length === 0) return { ok: false, period: nil, detail: 'no data rows to prove the daily period', evidence: {} }
+
+  const days: Array<string> = []
+  let unparseable = 0
+  for (const r of rows) {
+    const d = parseRowDate(r[ci] ?? '')
+    if (!d) unparseable++
+    else days.push(d)
+  }
+  if (unparseable > 0) return { ok: false, period: nil, detail: `${unparseable} of ${rows.length} row(s) have a missing/unparseable Activity Date`, evidence: { unparseable_rows: unparseable, rows_total: rows.length } }
+  const distinct = [...new Set(days)].sort()
+  if (distinct.length > 1) return { ok: false, period: nil, detail: `rows span ${distinct.length} days (${distinct.join(', ')}); a daily report must be one day`, evidence: { days: distinct } }
+  const rowDay = distinct[0]
+
+  const hint = parsePeriodHint(periodHint)
+  let supplied: string | null = null
+  let source = ''
+  if (hint.periodStart) {
+    if (hint.periodStart !== hint.periodEnd) return { ok: false, period: nil, detail: `period_hint must be a single day for a daily report; got ${hint.periodStart}/${hint.periodEnd}`, evidence: { rows_day: rowDay } }
+    supplied = hint.periodStart
+    source = 'period_hint'
+  } else if (filtersPeriod?.start) {
+    if (filtersPeriod.start !== filtersPeriod.end) return { ok: false, period: nil, detail: `Filters period must be a single day; got ${filtersPeriod.start}/${filtersPeriod.end}`, evidence: { rows_day: rowDay } }
+    supplied = filtersPeriod.start
+    source = 'filters'
+  }
+  if (!supplied) return { ok: false, period: nil, detail: 'no supplied daily period (period_hint or single-day Filters range) to verify row Activity Dates against', evidence: { rows_day: rowDay } }
+  if (supplied !== rowDay) return { ok: false, period: nil, detail: `row Activity Date day ${rowDay} ≠ supplied period ${supplied}`, evidence: { rows_day: rowDay, supplied } }
+
+  return { ok: true, period: { start: rowDay, end: rowDay }, evidence: { period_source: source, rows_verified: rows.length, day: rowDay } }
+}
+
+/**
  * Land a delivery inertly. Preserves bytes + manifest; NEVER computes a metric,
  * runs the Watchdog, populates a dashboard, evaluates a threshold, notifies, or
  * takes a customer action. Quarantines the whole delivery on wrong dealer,
@@ -194,13 +273,25 @@ export function landDelivery(buf: Buffer, meta: HoldMetadata, opts: LandOptions)
     return quarantine(ev.kind ?? 'unknown', { start: null, end: null }, ev.reason, ev.detail, ev.evidence)
   }
 
-  // 4. period must be deterministic + match the hint when supplied
-  if (!ev.period.start || !ev.period.end) {
-    return quarantine(ev.kind, { start: null, end: null }, 'unexpected-period', 'no deterministic period derivable from workbook', ev.evidence)
-  }
-  const hint = parsePeriodHint(meta.period_hint ?? undefined)
-  if (hint.periodStart && (hint.periodStart !== ev.period.start || hint.periodEnd !== ev.period.end)) {
-    return quarantine(ev.kind, ev.period, 'unexpected-period', `period_hint ${hint.periodStart}/${hint.periodEnd} ≠ workbook ${ev.period.start}/${ev.period.end}`, ev.evidence)
+  // 4. period must be deterministic. Sales Communication is DAILY with per-row
+  //    text Activity Dates → prove the day from rows, validated/completed by the
+  //    period_hint. Other families keep the Filters/row-derived period + hint check.
+  let period: HoldPeriod
+  let periodEvidence: Record<string, unknown> = {}
+  if (ev.kind === 'sales_comm_log') {
+    const v = verifySalesCommDailyPeriod(ev.header, ev.rows, ev.filters?.period ?? null, meta.period_hint ?? undefined)
+    if (!v.ok) return quarantine(ev.kind, v.period, 'unexpected-period', v.detail, { ...ev.evidence, ...v.evidence })
+    period = v.period
+    periodEvidence = v.evidence
+  } else {
+    if (!ev.period.start || !ev.period.end) {
+      return quarantine(ev.kind, { start: null, end: null }, 'unexpected-period', 'no deterministic period derivable from workbook', ev.evidence)
+    }
+    const hint = parsePeriodHint(meta.period_hint ?? undefined)
+    if (hint.periodStart && (hint.periodStart !== ev.period.start || hint.periodEnd !== ev.period.end)) {
+      return quarantine(ev.kind, ev.period, 'unexpected-period', `period_hint ${hint.periodStart}/${hint.periodEnd} ≠ workbook ${ev.period.start}/${ev.period.end}`, ev.evidence)
+    }
+    period = ev.period
   }
 
   // 5. HELD — optional structural transport payload (NO business metrics).
@@ -210,7 +301,7 @@ export function landDelivery(buf: Buffer, meta: HoldMetadata, opts: LandOptions)
         note: 'structural passthrough — no business metric computed',
         kind: ev.kind,
         dealer: ev.dealer,
-        period: ev.period,
+        period,
         header: ev.header,
         rows: ev.rows,
         source_row_count: ev.source_row_count,
@@ -220,7 +311,7 @@ export function landDelivery(buf: Buffer, meta: HoldMetadata, opts: LandOptions)
     : null
 
   return persist(
-    { ...base, report_kind: ev.kind, period: ev.period, validation_state: 'held', quarantine_reason: null, detail: null, schedule_vulnerability: ev.schedule_vulnerability, transport_stored: !!transport, evidence: ev.evidence },
+    { ...base, report_kind: ev.kind, period, validation_state: 'held', quarantine_reason: null, detail: null, schedule_vulnerability: ev.schedule_vulnerability, transport_stored: !!transport, evidence: { ...ev.evidence, ...periodEvidence } },
     buf,
     transport,
   )
@@ -251,6 +342,16 @@ function persist(manifest: HoldManifest, buf: Buffer, transport: object | null):
     manifest.prior_sha256_in_period = fs.existsSync(periodDir)
       ? fs.readdirSync(periodDir).filter((d) => d !== manifest.sha256 && fs.existsSync(path.join(periodDir, d, 'manifest.json')))
       : []
+    // If this same SHA was previously quarantined (e.g. under an earlier parser
+    // decision), preserve that manifest untouched and attribute it here so
+    // readback can distinguish/prefer this accepted decision.
+    const qman = path.join(holdRoot(), safe(manifest.profile), 'quarantine', manifest.sha256, 'manifest.json')
+    if (fs.existsSync(qman)) {
+      try {
+        const q = JSON.parse(fs.readFileSync(qman, 'utf8')) as HoldManifest
+        manifest.evidence = { ...manifest.evidence, prior_quarantine: { captured_at: q.captured_at, reason: q.quarantine_reason, transform_version: q.transform_version } }
+      } catch { /* leave unattributed if unreadable */ }
+    }
   }
 
   fs.mkdirSync(dir, { recursive: true })
@@ -280,11 +381,22 @@ function walkManifests(root: string): Array<HoldManifest> {
   return out
 }
 
-/** Durable readback of a single receipt by checksum. */
+/**
+ * Durable readback of a single receipt by checksum. When the same SHA has both an
+ * accepted (held) and an earlier quarantine manifest, PREFER the held one; among
+ * same state, prefer the newer transform_version then captured_at.
+ */
 export function readHeldReceipt(profile: string, sha256: string): HoldManifest | null {
   const root = path.join(holdRoot(), safe(profile))
   if (!fs.existsSync(root)) return null
-  return walkManifests(root).find((m) => m.sha256 === sha256) ?? null
+  const matches = walkManifests(root).filter((m) => m.sha256 === sha256)
+  if (matches.length === 0) return null
+  matches.sort((a, b) => {
+    if (a.validation_state !== b.validation_state) return a.validation_state === 'held' ? -1 : 1
+    if (a.transform_version !== b.transform_version) return b.transform_version.localeCompare(a.transform_version)
+    return b.captured_at.localeCompare(a.captured_at)
+  })
+  return matches[0]
 }
 
 /** Durable readback of all landed deliveries for a profile. */
