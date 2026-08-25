@@ -92,10 +92,17 @@ type HeldManifest = {
   validation_state: string
 }
 
-/** Read-only search for `<holdRoot>/<profile>/**/<sha256>/manifest.json`. */
-function findHeldDir(holdRoot: string, profile: string, sha256: string): string | null {
-  const root = path.join(holdRoot, safe(profile))
-  if (!fs.existsSync(root)) return null
+/**
+ * Read-only search restricted to the profile's HELD namespace only, under
+ * `<holdRoot>/<profile>/held/` (recursively). The quarantine namespace is NEVER
+ * searched, so a preserved prior quarantine of the same SHA can never be selected.
+ * Returns all matches (sorted, deterministic); the caller fails closed on zero or
+ * multiple.
+ */
+function findHeldDirs(holdRoot: string, profile: string, sha256: string): Array<string> {
+  const root = path.join(holdRoot, safe(profile), 'held')
+  if (!fs.existsSync(root)) return []
+  const out: Array<string> = []
   const stack = [root]
   while (stack.length) {
     const d = stack.pop()!
@@ -104,20 +111,22 @@ function findHeldDir(holdRoot: string, profile: string, sha256: string): string 
     for (const e of entries) {
       if (!e.isDirectory()) continue
       const p = path.join(d, e.name)
-      if (e.name === sha256 && fs.existsSync(path.join(p, 'manifest.json'))) return p
-      stack.push(p)
+      if (e.name === sha256 && fs.existsSync(path.join(p, 'manifest.json'))) out.push(p) // leaf; do not descend
+      else stack.push(p)
     }
   }
-  return null
+  return out.sort()
 }
 
 export function promoteHeldToAnalytics(input: PromoteInput): PromoteResult {
   // 1. roots (fail-closed, before touching anything)
   assertRoots(input.holdRoot, input.analyticsRoot)
 
-  // 2. locate + read the held manifest (read-only)
-  const dir = findHeldDir(input.holdRoot, input.profile, input.sha256)
-  if (!dir) throw new PromoteAbort(`no held delivery ${input.sha256} for profile ${input.profile} under ${input.holdRoot}`)
+  // 2. locate + read the held manifest (HELD namespace only; fail closed on 0 or >1)
+  const dirs = findHeldDirs(input.holdRoot, input.profile, input.sha256)
+  if (dirs.length === 0) throw new PromoteAbort(`no held delivery ${input.sha256} for profile ${input.profile} under ${input.holdRoot}/${safe(input.profile)}/held (quarantine namespace is never promoted)`)
+  if (dirs.length > 1) throw new PromoteAbort(`ambiguous: ${dirs.length} held manifests for ${input.sha256} — refusing`)
+  const dir = dirs[0]
   const manifest = JSON.parse(fs.readFileSync(path.join(dir, 'manifest.json'), 'utf8')) as HeldManifest
 
   // 3. verify the hold contract + identity fields

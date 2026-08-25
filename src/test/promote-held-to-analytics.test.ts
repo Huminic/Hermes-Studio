@@ -122,13 +122,35 @@ describe('promote-held-to-analytics — promote + calculate + readback', () => {
 describe('promote-held-to-analytics — fail-closed rejections (abort before any write)', () => {
   const analyticsHasDb = () => fs.existsSync(path.join(analyticsRoot, 'serra-honda', 'brain', 'brain.db'))
 
-  it('a QUARANTINED hold entry cannot be promoted (Sales/Parts rejection)', () => {
-    // a Service appointment reason quarantines at land time
+  it('a QUARANTINED-only hold entry cannot be promoted (Sales/Parts rejection)', () => {
+    // a Service appointment reason quarantines at land time (never enters held/)
     const wb = apptWb([apptRow({ id: 'S1', reason: 'Service Appointment' })])
     const q = landDelivery(wb, meta({ filename: 'svc.xlsx', period_hint: '2026-08-17/2026-08-23' }), OPTS)
     expect(q.outcome).toBe('quarantined')
-    expect(() => promoteHeldToAnalytics(promoteInput(q.manifest.sha256))).toThrow(/not held|quarantin/i)
+    expect(() => promoteHeldToAnalytics(promoteInput(q.manifest.sha256))).toThrow(/no held delivery|quarantine namespace/i)
     expect(analyticsHasDb()).toBe(false) // no analytical write happened
+  })
+
+  it('HELD WINS when the same SHA also has a prior quarantine manifest (the real b189a920 bug)', () => {
+    const sha = seedHeldAppointments() // creates held/appointments/2026-08-17_2026-08-23/<sha>/
+    // simulate a preserved prior quarantine of the SAME sha (pre-fix landing)
+    const qdir = path.join(holdRoot, 'serra-honda', 'quarantine', sha)
+    fs.mkdirSync(qdir, { recursive: true })
+    fs.writeFileSync(path.join(qdir, 'manifest.json'), JSON.stringify({ sha256: sha, validation_state: 'quarantined', hold_only: true, no_action: true, profile: 'serra-honda', dealer: DEALER, report_kind: 'appointments', period: PERIOD, parser_version: 'vin-xlsx-1', file_extension: 'xlsx', filename: 'appt.xlsx', receipt_id: 'hold_prior' }))
+    fs.writeFileSync(path.join(qdir, 'original.xlsx'), Buffer.from('unrelated'))
+    const r = promoteHeldToAnalytics(promoteInput(sha))
+    expect(r.outcome).toBe('promoted') // held selected, quarantine ignored
+    expect(r.report_kind).toBe('appointments')
+    expect(r.accepted_rows).toBe(2)
+  })
+
+  it('fails closed when MULTIPLE held manifests exist for one SHA', () => {
+    const sha = seedHeldAppointments()
+    const dir2 = path.join(holdRoot, 'serra-honda', 'held', 'appointments', '2026-08-10_2026-08-16', sha)
+    fs.mkdirSync(dir2, { recursive: true })
+    fs.writeFileSync(path.join(dir2, 'manifest.json'), '{"validation_state":"held"}')
+    expect(() => promoteHeldToAnalytics(promoteInput(sha))).toThrow(/ambiguous|multiple/i)
+    expect(analyticsHasDb()).toBe(false)
   })
 
   it('period / dealer mismatch aborts before write', () => {
