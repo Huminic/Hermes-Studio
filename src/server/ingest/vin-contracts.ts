@@ -422,16 +422,33 @@ export function evaluateDelivery(
 
   // ROW-LEVEL validation (always, for families with rows): dealer-correct + Sales-domain
   const dealerCol = header.map.get('Dealer')
+  const leadTypeCol = header.map.get('Lead Type')
+  const userCol = header.map.get('User')
   const dealersSeen = new Set<string>()
+  let summaryTotalRows = 0
   const periodDates: Array<string> = []
   const dateCol = fam.dateField ? header.map.get(fam.dateField) : undefined
   const domainCols = (fam.domainFields ?? []).map((f) => header.map.get(f)).filter((c): c is number => c != null)
   const reasonCol = fam.reasonField ? header.map.get(fam.reasonField) : undefined
 
-  for (const r of dataRows) {
+  for (let i = 0; i < dataRows.length; i++) {
+    const r = dataRows[i]
     if (dealerCol != null) {
       const d = (r[dealerCol] ?? '').trim()
-      if (d) {
+      // The grand-total summary row is exempt ONLY under the exact CAGE shape:
+      // cage_kpi, the single FINAL data row, Dealer exactly "TOTAL", blank Lead Type
+      // AND blank User. It is preserved but skips tenant validation. Any TOTAL that
+      // is not the final row / has a non-blank Lead Type or User / appears in another
+      // family stays fail-closed (treated as a dealer value → wrong-dealer).
+      const isCageTotal =
+        fam.kind === 'cage_kpi' &&
+        i === dataRows.length - 1 &&
+        d.toUpperCase() === 'TOTAL' &&
+        leadTypeCol != null && (r[leadTypeCol] ?? '').trim() === '' &&
+        userCol != null && (r[userCol] ?? '').trim() === ''
+      if (isCageTotal) {
+        summaryTotalRows++
+      } else if (d) {
         dealersSeen.add(d)
         if (!dealerMatches(opts.profileDealer, d)) return q('wrong-dealer', `row dealer "${d}" ≠ target "${opts.profileDealer}"`, fam.kind, { rowDealer: d })
       }
@@ -476,6 +493,7 @@ export function evaluateDelivery(
       header_row: header.index + 1,
       base_report_name: filters?.baseReportName ?? null,
       dealers_seen: [...dealersSeen],
+      summary_total_rows: summaryTotalRows,
       schedule_vulnerability: scheduleVulnerability,
       rows_validated: dataRows.length,
     },

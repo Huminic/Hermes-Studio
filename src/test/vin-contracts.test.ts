@@ -98,6 +98,49 @@ describe('CAGE / Enterprise Performance (real schema)', () => {
   it('quarantines a Service/Parts-coded Lead Type row', () => {
     expect(evalXlsx(cageWb({ leadType: 'Service' }))).toMatchObject({ status: 'quarantined', reason: 'non-sales-lead-type' })
   })
+  // Regression: real Enterprise Performance reports end with a grand-TOTAL summary
+  // row (Dealer="TOTAL"). It must NOT be treated as a wrong-dealer tenant row.
+  it('accepts a trailing grand-TOTAL summary row (the real 59b012f0/f344bb68 cause)', () => {
+    const wb = makeXlsx([{ name: 'Report', rows: [CAGE_HEADER, ...cageRows(), ['TOTAL', '', '', 62, 55, 7, 3, 992, 73]] }, { name: 'Filters', rows: cageFilters() }])
+    const r = evalXlsx(wb)
+    expect(r.status).toBe('accepted')
+    if (r.status === 'accepted') {
+      expect(r.kind).toBe('cage_kpi')
+      expect(r.evidence.summary_total_rows).toBe(1)
+      expect(r.rows).toHaveLength(3) // TOTAL row preserved, not dropped
+    }
+  })
+  it('still quarantines a genuine cross-tenant row (not TOTAL) — fail-closed preserved', () => {
+    const wb = makeXlsx([{ name: 'Report', rows: [CAGE_HEADER, ...cageRows(), ['Serra Nissan of Sylacauga', 'Internet', 'Bob', 5, 5, 0, 0, 10, 1]] }, { name: 'Filters', rows: cageFilters() }])
+    expect(evalXlsx(wb)).toMatchObject({ status: 'quarantined', reason: 'wrong-dealer' })
+  })
+})
+
+// ── grand-TOTAL exemption is narrow: cage_kpi + final row + blank Lead Type/User ──
+describe('grand-TOTAL summary-row governance (negative conditions all quarantine)', () => {
+  const cageWithRows = (extra: Array<Array<Cell>>) => makeXlsx([{ name: 'Report', rows: [CAGE_HEADER, ...cageRows(), ...extra] }, { name: 'Filters', rows: cageFilters() }])
+  const TOTAL = (leadType = '', user = ''): Array<Cell> => ['TOTAL', leadType, user, 62, 55, 7, 3, 992, 73]
+
+  it('TOTAL that is NOT the final data row → wrong-dealer', () => {
+    const wb = makeXlsx([{ name: 'Report', rows: [CAGE_HEADER, TOTAL(), ...cageRows()] }, { name: 'Filters', rows: cageFilters() }])
+    expect(evalXlsx(wb)).toMatchObject({ status: 'quarantined', reason: 'wrong-dealer' })
+  })
+  it('multiple TOTAL rows → wrong-dealer', () => {
+    expect(evalXlsx(cageWithRows([TOTAL(), TOTAL()]))).toMatchObject({ status: 'quarantined', reason: 'wrong-dealer' })
+  })
+  it('final TOTAL with non-blank Lead Type → wrong-dealer', () => {
+    expect(evalXlsx(cageWithRows([TOTAL('Internet', '')]))).toMatchObject({ status: 'quarantined', reason: 'wrong-dealer' })
+  })
+  it('final TOTAL with non-blank User → wrong-dealer', () => {
+    expect(evalXlsx(cageWithRows([TOTAL('', 'Jane')]))).toMatchObject({ status: 'quarantined', reason: 'wrong-dealer' })
+  })
+  it('TOTAL in a non-CAGE family (sales_comm_log) → wrong-dealer', () => {
+    const wb = makeXlsx([
+      { name: 'Report', rows: [COMM_HEADER, ['TOTAL', 'Sales', 'Jane', 'Cust', { date: '2026-08-05' }, 'Outbound', 'SMS', 'Text', 'Reached', 'Internet', 'Sales', 'Autoweb', { date: '2026-08-04' }, 'hi']] },
+      { name: 'Filters', rows: [['Dealers', 'Serra Honda']] },
+    ])
+    expect(evalXlsx(wb)).toMatchObject({ status: 'quarantined', reason: 'wrong-dealer' })
+  })
 })
 
 // ── Lead Source ROI (real: spaced headers, NO Dealer column, dealer from Filters) ──
