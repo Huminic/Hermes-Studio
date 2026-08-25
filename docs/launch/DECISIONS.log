@@ -514,3 +514,4 @@ Remaining approval-gated release proof remains unchanged:
 - Third-party video session creation proof, if required.
 - Uploaded-report ingestion into federated search/dashboard usage with approved
   test artifact(s).
+2026-08-25T09:13:16Z ACK acceptance-criteria sha256=30d39ddb2aeffd3fb8fc80a5cccb040cf28c60d6f6dd5988c93daed1c29af1dd  plan sha256=94bbe7c6226b685c91f9f05ee1a6a4f00c3437a2dea10fd51b41c421b70f6edf  by claude-opus-4-8
