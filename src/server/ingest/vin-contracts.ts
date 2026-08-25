@@ -102,25 +102,75 @@ const splitMulti = (v: string): Array<string> =>
     .map((s) => s.trim())
     .filter(Boolean)
 
+const FILTER_MONTHS: Record<string, number> = {
+  jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
+}
+
+/** Parse a Filters date cell → ISO YYYY-MM-DD (timezone-safe; no Date()). Accepts
+ *  ISO and the VinSolutions "MMM DD YYYY[ h:mmAM]" form (e.g. "Aug 17 2026 12:00AM"). */
+export function parseFilterDate(v: string): string | null {
+  const s = (v ?? '').trim()
+  if (!s) return null
+  const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})(?!\d)/)
+  if (iso) {
+    const mo = +iso[2], d = +iso[3]
+    if (mo < 1 || mo > 12 || d < 1 || d > 31) return null
+    return `${iso[1]}-${iso[2]}-${iso[3]}`
+  }
+  const m = s.match(/^([A-Za-z]{3,})\.?\s+(\d{1,2}),?\s+(\d{4})/)
+  if (m) {
+    const mo = FILTER_MONTHS[m[1].slice(0, 3).toLowerCase()]
+    const d = +m[2], y = +m[3]
+    if (!mo || d < 1 || d > 31) return null
+    return `${y}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+  }
+  return null
+}
+
+/**
+ * Parse the Filters sheet. Two layouts are supported:
+ *  - Legacy 2-column `key | value` (value in column B).
+ *  - The real VinSolutions 3-column `Filter Name | Number Selected | Selected Values`
+ *    (header row present) — the value is read from the "Selected Values" column, NOT
+ *    the "Number Selected" count (which would make every value a bare "1"/"3").
+ * Period prefers explicit `Date Range Begin`/`Date Range End` rows (VinSolutions),
+ * falling back to a single `Date Range` cell carrying two ISO dates (legacy fixtures).
+ */
 export function parseFilters(rows: Array<Array<string>>): FilterMetadata {
+  // Detect the 3-column header and use the "Selected Values" column when present.
+  let valueCol = 1
+  for (const r of rows) {
+    if ((r[0] ?? '').trim().toLowerCase() === 'filter name') {
+      const sv = r.findIndex((c) => (c ?? '').trim().toLowerCase() === 'selected values')
+      if (sv >= 0) { valueCol = sv; break }
+    }
+  }
   const raw: Record<string, string> = {}
   for (const r of rows) {
     const key = (r[0] ?? '').trim()
-    const val = (r[1] ?? '').trim()
+    const val = (r[valueCol] ?? '').trim()
     if (key) raw[key] = val
   }
   const get = (k: RegExp): string => {
     const hit = Object.keys(raw).find((x) => k.test(x))
     return hit ? raw[hit] : ''
   }
-  const dateRange = get(/date range|time frame|period/i)
-  const m = dateRange.match(/(\d{4}-\d{2}-\d{2})\D+(\d{4}-\d{2}-\d{2})/)
+  // period: explicit Begin/End rows first, else a legacy single Date Range cell.
+  const begin = parseFilterDate(get(/date range begin|start date|^from date$/i))
+  const end = parseFilterDate(get(/date range end|^to date$/i))
+  let period: { start: string | null; end: string | null }
+  if (begin && end) {
+    period = { start: begin, end }
+  } else {
+    const m = get(/date range|time frame|period/i).match(/(\d{4}-\d{2}-\d{2})\D+(\d{4}-\d{2}-\d{2})/)
+    period = { start: m ? m[1] : null, end: m ? m[2] : null }
+  }
   return {
     baseReportName: get(/base report name/i) || null,
     dealers: splitMulti(get(/^dealers?$/i) || get(/dealership/i)),
     leadTypes: splitMulti(get(/lead type/i)),
     leadIntents: splitMulti(get(/lead intent/i)),
-    period: { start: m ? m[1] : null, end: m ? m[2] : null },
+    period,
     raw,
   }
 }
