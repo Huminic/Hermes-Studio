@@ -5,7 +5,7 @@ import path from 'node:path'
 import { makeXlsx, type Cell } from './helpers/make-xlsx'
 import { readXlsx } from '@/server/ingest/xlsx-reader'
 import { evaluateDelivery, parseFilters, parseFilterDate } from '@/server/ingest/vin-contracts'
-import { landDelivery, type HoldMetadata } from '@/server/ingest/hold-store'
+import { landDelivery, governedDealerId, PROFILE_DEALER_IDS, type HoldMetadata } from '@/server/ingest/hold-store'
 
 // Real VinSolutions Dealer Dashboard shape: Report (multi-section) + 3-column Filters.
 const DASH_REPORT: Array<Array<Cell>> = [
@@ -102,5 +102,70 @@ describe('3-column dashboard hold-layer period_hint cross-check', () => {
     const conflict = landDelivery(dashWb(), nMeta({ filename: 'dash2.xlsx', period_hint: '2026-08-10/2026-08-16' }), NOPTS)
     expect(conflict.outcome).toBe('quarantined')
     expect(conflict.manifest.quarantine_reason).toBe('unexpected-period')
+  })
+})
+
+// Real ROI / CAGE / Appointments recognition + governance (hold layer, landDelivery)
+const APPT_HEADER = ['Appointment ID', 'Dealer', 'Dealer ID', 'Appointment Type', 'Appt Reason', 'Appointment Start Date', 'Appointment Start DateTime', 'Appointment Status']
+const apptRow = (o: { id?: string; dealer?: string; dealerId?: string; reason?: string; date?: string } = {}): Array<Cell> =>
+  [o.id ?? '145710109', o.dealer ?? 'Serra Honda of Sylacauga', o.dealerId ?? '21043', 'Meeting', o.reason ?? 'Sales Appointment', o.date ?? '2026-08-18', o.date ?? '2026-08-18', 'Cancelled']
+const apptWb = (rows: Array<Array<Cell>>) => makeXlsx([{ name: 'Sheet1', rows: [APPT_HEADER, ...rows] }])
+
+const roi3col = (o: { dealer?: string; leadTypes?: string } = {}) => makeXlsx([
+  { name: 'Report', rows: [['Lead Source', 'Total Leads', 'Good Leads', 'Sold from Leads'], ['Thirdparty Honda', 26, 20, 0]] },
+  { name: 'Filters', rows: [
+    ['Filter Name', 'Number Selected', 'Selected Values'],
+    ['Base Report Name', '1', 'Lead Source ROI'],
+    ['Dealers', '1', o.dealer ?? 'Serra Honda of Sylacauga'],
+    ['Lead Types', '8', o.leadTypes ?? 'Import, Internet, Phone, PreviousCustomer, Referral, Walk-in, WebsiteChat, Wholesale'],
+    ['Lead Intents', '4', 'Parts, Sales, Service, Unknown'],
+    ['Lead Sources Excluded', '3', 'Service, Service Dept, Service Referral'],
+    ['Date Range Begin', '1', 'Aug 17 2026 12:00AM'],
+    ['Date Range End', '1', 'Aug 23 2026 11:59PM'],
+  ] },
+])
+
+describe('real ROI / CAGE / Appointments hold recognition + governance', () => {
+  let tmp2: string
+  beforeEach(() => { tmp2 = fs.mkdtempSync(path.join(os.tmpdir(), 'fam-')); process.env.INGEST_HOLD_ROOT = path.join(tmp2, 'hold') })
+  afterEach(() => { try { fs.rmSync(tmp2, { recursive: true, force: true }) } catch { /* ignore */ } ; delete process.env.INGEST_HOLD_ROOT })
+
+  const hMeta = (over: Partial<HoldMetadata> = {}): HoldMetadata => ({ profile: 'serra-honda', filename: 'f.xlsx', sender: 's@motosnap.com', subject: 'x', gmail_message_id: 'g1', received_at: '2026-08-24T00:00:00Z', ...over })
+  const HOPTS = { profileDealer: 'Serra Honda', capturedAt: '2026-08-25T00:00:00.000Z' }
+
+  it('governed dealer-ID registry has exactly the three profiles', () => {
+    expect(PROFILE_DEALER_IDS).toEqual({ 'serra-honda': '21043', 'serra-nissan': '21044', 'tony-serra-ford': '21047' })
+    expect(governedDealerId('serra-honda')).toBe('21043')
+    expect(governedDealerId('unknown')).toBeNull()
+  })
+
+  it('ROI (spaced, dealer-from-Filters, governed 8) HELD; Service exclusions OK', () => {
+    const r = landDelivery(roi3col(), hMeta({ filename: 'roi.xlsx', period_hint: '2026-08-17/2026-08-23' }), HOPTS)
+    expect(r.outcome).toBe('held')
+    expect(r.manifest.report_kind).toBe('lead_source_roi')
+    expect(r.manifest.period).toEqual({ start: '2026-08-17', end: '2026-08-23' })
+  })
+  it('ROI wrong dealer / non-8 lead types quarantine (bytes kept)', () => {
+    expect(landDelivery(roi3col({ dealer: 'Serra Nissan of Sylacauga' }), hMeta({ filename: 'a.xlsx', period_hint: '2026-08-17/2026-08-23' }), HOPTS).manifest.quarantine_reason).toBe('wrong-dealer')
+    expect(landDelivery(roi3col({ leadTypes: 'Internet, Phone, Walk-in' }), hMeta({ filename: 'b.xlsx', period_hint: '2026-08-17/2026-08-23' }), HOPTS).manifest.quarantine_reason).toBe('incompatible-filter-metadata')
+  })
+
+  it('Appointments HELD when dealer IDs match governed profile ID + in period + unique IDs', () => {
+    const r = landDelivery(apptWb([apptRow({ id: 'A1' }), apptRow({ id: 'A2', date: '2026-08-20' })]), hMeta({ filename: 'appt.xlsx', period_hint: '2026-08-17/2026-08-23' }), HOPTS)
+    expect(r.outcome).toBe('held')
+    expect(r.manifest.report_kind).toBe('appointments')
+    expect(r.manifest.period).toEqual({ start: '2026-08-17', end: '2026-08-23' })
+  })
+  it('Appointments quarantine: cross-tenant dealer ID, blank ID, duplicate ID, out-of-period, no hint', () => {
+    // wrong dealer ID (Nissan 21044 in a Honda profile)
+    expect(landDelivery(apptWb([apptRow({ dealerId: '21044' })]), hMeta({ filename: 'x1.xlsx', period_hint: '2026-08-17/2026-08-23' }), HOPTS).manifest.quarantine_reason).toBe('wrong-dealer')
+    // blank dealer ID
+    expect(landDelivery(apptWb([apptRow({ dealerId: '' })]), hMeta({ filename: 'x2.xlsx', period_hint: '2026-08-17/2026-08-23' }), HOPTS).manifest.quarantine_reason).toBe('wrong-dealer')
+    // duplicate Appointment ID
+    expect(landDelivery(apptWb([apptRow({ id: 'DUP' }), apptRow({ id: 'DUP', date: '2026-08-19' })]), hMeta({ filename: 'x3.xlsx', period_hint: '2026-08-17/2026-08-23' }), HOPTS).manifest.quarantine_reason).toBe('unsupported-report')
+    // out-of-period appointment
+    expect(landDelivery(apptWb([apptRow({ date: '2026-08-30' })]), hMeta({ filename: 'x4.xlsx', period_hint: '2026-08-17/2026-08-23' }), HOPTS).manifest.quarantine_reason).toBe('unexpected-period')
+    // no period_hint
+    expect(landDelivery(apptWb([apptRow()]), hMeta({ filename: 'x5.xlsx' }), HOPTS).manifest.quarantine_reason).toBe('unexpected-period')
   })
 })

@@ -23,16 +23,25 @@ const DEALER = 'Serra Honda' // studio config dealer name
 const CAPTURED = '2026-08-24T00:00:00.000Z'
 const OPTS = { profileDealer: DEALER, capturedAt: CAPTURED }
 
-const roiWb = (o: { dealer?: string; total?: number; dealers?: string; dateRange?: string; source?: string } = {}) => {
-  const dealer = o.dealer ?? 'Serra Honda of Sylacauga'
+// Real Lead Source ROI: spaced headers, NO Dealer column, dealer/period from 3-col Filters.
+const ROI_EIGHT = 'Import, Internet, Phone, PreviousCustomer, Referral, Walk-in, WebsiteChat, Wholesale'
+const roiWb = (o: { dealer?: string; total?: number; dealers?: string; period?: [string, string]; source?: string; leadTypes?: string } = {}) => {
   const total = o.total ?? 79
+  const [begin, end] = o.period ?? ['2026-08-03', '2026-08-09']
   const rows: Array<Array<Cell>> = [
-    ['Dealer', 'Lead_Source', 'Total_Leads', 'Good_Leads', 'Sold_from_Leads'],
-    [dealer, o.source ?? 'Repeat', total, total, 24],
+    ['Lead Source', 'Total Leads', 'Good Leads', 'Sold from Leads'],
+    [o.source ?? 'Repeat', total, total, 24],
   ]
   return makeXlsx([
     { name: 'Report', rows },
-    { name: 'Filters', rows: [['Base Report Name', 'Lead Source ROI'], ['Dealers', o.dealers ?? 'Serra Honda'], ['Date Range', o.dateRange ?? '2026-08-03 - 2026-08-09']] },
+    { name: 'Filters', rows: [
+      ['Filter Name', 'Number Selected', 'Selected Values'],
+      ['Base Report Name', '1', 'Lead Source ROI'],
+      ['Dealers', '1', o.dealers ?? o.dealer ?? 'Serra Honda of Sylacauga'],
+      ['Lead Types', '8', o.leadTypes ?? ROI_EIGHT],
+      ['Date Range Begin', '1', begin],
+      ['Date Range End', '1', end],
+    ] },
   ])
 }
 
@@ -136,7 +145,7 @@ describe('HOLD_ONLY — optional transport payload (structural, no metrics)', ()
     expect(r.transport_path).toBeTruthy()
     const t = JSON.parse(fs.readFileSync(r.transport_path!, 'utf8')) as Record<string, unknown>
     expect(t.shape).toBe('transport-only')
-    expect(t.header).toContain('Total_Leads')
+    expect(t.header).toContain('Total Leads')
     expect(Array.isArray(t.rows)).toBe(true)
     // no computed business metric leaked into the transport payload
     const blob = JSON.stringify(t)

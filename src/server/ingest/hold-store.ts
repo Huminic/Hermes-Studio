@@ -302,6 +302,65 @@ function verifySalesCommDailyPeriod(
 }
 
 /**
+ * Governed hold-contract registry: exact VinSolutions dealer IDs per supported
+ * profile. Appointments (Sheet1, no Filters) must prove tenant isolation against
+ * these exact IDs — internal consistency alone is NOT sufficient.
+ */
+export const PROFILE_DEALER_IDS: Record<string, string> = {
+  'serra-honda': '21043',
+  'serra-nissan': '21044',
+  'tony-serra-ford': '21047',
+}
+export function governedDealerId(profile: string): string | null {
+  return PROFILE_DEALER_IDS[profile] ?? null
+}
+
+const colIdx = (header: Array<string>, name: string) => header.findIndex((h) => h.trim().toLowerCase() === name.toLowerCase())
+
+type ApptVerdict =
+  | { ok: true; period: HoldPeriod; evidence: Record<string, unknown> }
+  | { ok: false; period: HoldPeriod; reason: HoldQuarantineReason; detail: string; evidence: Record<string, unknown> }
+
+/**
+ * Appointments hold proof (Sheet1, no Filters). Requires — fail-closed — a valid
+ * period_hint; every populated Dealer ID equal to the governed profile ID (blank/
+ * wrong/inconsistent quarantines); a populated, unique Appointment ID per row; and
+ * every Appointment Start Date AND Start DateTime within the period_hint. (Dealer
+ * name match, Appt Reason = Sales Appointment, and Service/Parts row scan are already
+ * enforced in evaluateDelivery.)
+ */
+function verifyAppointments(header: Array<string>, rows: Array<Array<string>>, profile: string, periodHint: string | undefined): ApptVerdict {
+  const nil: HoldPeriod = { start: null, end: null }
+  const expectedId = governedDealerId(profile)
+  if (!expectedId) return { ok: false, period: nil, reason: 'ineligible-profile', detail: `no governed dealer ID registered for profile "${profile}"`, evidence: { profile } }
+  const hint = parsePeriodHint(periodHint)
+  if (!hint.periodStart || !hint.periodEnd) return { ok: false, period: nil, reason: 'unexpected-period', detail: 'appointments require a valid period_hint (YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD)', evidence: {} }
+
+  const idCol = colIdx(header, 'Dealer ID'), apptCol = colIdx(header, 'Appointment ID')
+  const sdCol = colIdx(header, 'Appointment Start Date'), sdtCol = colIdx(header, 'Appointment Start DateTime')
+  if (idCol < 0 || apptCol < 0 || sdCol < 0) return { ok: false, period: nil, reason: 'unsupported-report', detail: 'missing required Appointment columns (Dealer ID / Appointment ID / Appointment Start Date)', evidence: {} }
+
+  const seen = new Set<string>()
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i]
+    const did = (r[idCol] ?? '').trim()
+    if (!did) return { ok: false, period: nil, reason: 'wrong-dealer', detail: `row ${i} has a blank Dealer ID (governed ${profile} ID ${expectedId} required)`, evidence: { expected: expectedId } }
+    if (did !== expectedId) return { ok: false, period: nil, reason: 'wrong-dealer', detail: `row Dealer ID "${did}" ≠ governed ${profile} ID ${expectedId}`, evidence: { rowDealerId: did, expected: expectedId } }
+    const aid = (r[apptCol] ?? '').trim()
+    if (!aid) return { ok: false, period: nil, reason: 'unsupported-report', detail: `row ${i} has a blank Appointment ID`, evidence: {} }
+    if (seen.has(aid)) return { ok: false, period: nil, reason: 'unsupported-report', detail: 'duplicate Appointment ID', evidence: {} }
+    seen.add(aid)
+    const sd = parseRowDate(r[sdCol] ?? '')
+    const sdt = sdtCol >= 0 ? parseRowDate(r[sdtCol] ?? '') : sd
+    if (!sd || !sdt) return { ok: false, period: nil, reason: 'unexpected-period', detail: `row ${i} has a missing/unparseable Appointment Start Date/DateTime`, evidence: {} }
+    if (sd < hint.periodStart || sd > hint.periodEnd || sdt < hint.periodStart || sdt > hint.periodEnd) {
+      return { ok: false, period: nil, reason: 'unexpected-period', detail: `row Appointment date ${sd}/${sdt} outside period ${hint.periodStart}..${hint.periodEnd}`, evidence: {} }
+    }
+  }
+  return { ok: true, period: { start: hint.periodStart, end: hint.periodEnd }, evidence: { appointments_verified: rows.length, governed_dealer_id: expectedId, period_source: 'period_hint' } }
+}
+
+/**
  * Land a delivery inertly. Preserves bytes + manifest; NEVER computes a metric,
  * runs the Watchdog, populates a dashboard, evaluates a threshold, notifies, or
  * takes a customer action. Quarantines the whole delivery on wrong dealer,
@@ -391,6 +450,11 @@ function landXlsx(buf: Buffer, meta: HoldMetadata, opts: LandOptions, base: Base
   if (ev.kind === 'sales_comm_log') {
     const v = verifySalesCommDailyPeriod(ev.header, ev.rows, ev.filters?.period ?? null, meta.period_hint ?? undefined)
     if (!v.ok) return q(ev.kind, v.period, 'unexpected-period', v.detail, { ...ev.evidence, ...v.evidence })
+    period = v.period
+    periodEvidence = v.evidence
+  } else if (ev.kind === 'appointments') {
+    const v = verifyAppointments(ev.header, ev.rows, meta.profile, meta.period_hint ?? undefined)
+    if (!v.ok) return q(ev.kind, v.period, v.reason, v.detail, { ...ev.evidence, ...v.evidence })
     period = v.period
     periodEvidence = v.evidence
   } else {

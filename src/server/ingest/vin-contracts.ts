@@ -52,6 +52,14 @@ type FamilyDef = {
   domainFields?: Array<string>
   /** row date field used to derive the period for Sheet1-only families. */
   dateField?: string
+  /** required Filters "Base Report Name" to classify as this family (anchoring). */
+  baseReportName?: string
+  /** governed Filters Lead Types set that must match EXACTLY. */
+  leadTypesGovernance?: 'three-sales' | 'governed-eight'
+  /** family whose tenant dealer lives in Filters, not a row Dealer column (ROI). */
+  dealerFromFilters?: boolean
+  /** per-row "reason" column that must equal "Sales Appointment". */
+  reasonField?: string
 }
 
 const FAMILIES: Array<FamilyDef> = [
@@ -62,13 +70,21 @@ const FAMILIES: Array<FamilyDef> = [
     dateField: 'Activity Date',
   },
   {
+    // Enterprise Performance (CAGE): Dealer + Lead Type + User summary rows.
     kind: 'cage_kpi',
-    signature: ['User', 'Total Leads', 'Total Comms', 'Deals from Leads', 'Deals Created in Time Frame'],
+    signature: ['Dealer', 'Lead Type', 'User', 'Total Leads', 'Total Comms'],
+    baseReportName: 'Enterprise Performance',
+    leadTypesGovernance: 'three-sales',
+    domainFields: ['Lead Type'],
   },
   {
+    // Lead Source ROI: spaced headers, NO Dealer column (dealer/period from Filters).
     kind: 'lead_source_roi',
-    signature: ['Dealer', 'Lead_Source', 'Total_Leads', 'Good_Leads', 'Sold_from_Leads'],
-    domainFields: ['Lead_Source'],
+    signature: ['Lead Source', 'Total Leads', 'Good Leads', 'Sold from Leads'],
+    baseReportName: 'Lead Source ROI',
+    leadTypesGovernance: 'governed-eight',
+    dealerFromFilters: true,
+    domainFields: ['Lead Source'],
   },
   {
     kind: 'crm_sales_gross',
@@ -77,10 +93,12 @@ const FAMILIES: Array<FamilyDef> = [
     dateField: 'Sold Date',
   },
   {
+    // Appointments: Sheet1, no Filters. Reason column is "Appt Reason".
     kind: 'appointments',
-    signature: ['Appointment ID', 'Dealer', 'Dealer ID', 'Appointment Status', 'Is Show', 'Is No Show', 'Appointment Reason'],
+    signature: ['Appointment ID', 'Dealer', 'Dealer ID', 'Appt Reason', 'Appointment Start Date', 'Appointment Status'],
     sheet1Only: true,
-    domainFields: ['Appointment Reason'],
+    domainFields: ['Appointment Type'],
+    reasonField: 'Appt Reason',
     dateField: 'Appointment Start Date',
   },
 ]
@@ -241,6 +259,18 @@ function isExactSalesLeadTypes(leadTypes: Array<string>): boolean {
   )
 }
 
+/** The governed eight non-Service/Parts Lead Types for Lead Source ROI. */
+const ROI_GOVERNED_EIGHT = ['import', 'internet', 'phone', 'previouscustomer', 'referral', 'walk-in', 'websitechat', 'wholesale']
+const canonLeadType = (t: string) => {
+  const s = t.toLowerCase().replace(/\s+/g, '')
+  return s === 'walkin' ? 'walk-in' : t.toLowerCase().trim() === 'walk in' ? 'walk-in' : s
+}
+/** Filters Lead Types are EXACTLY the governed eight (no more, no fewer). */
+function isExactGovernedEight(leadTypes: Array<string>): boolean {
+  const canon = new Set(leadTypes.map(canonLeadType))
+  return canon.size === ROI_GOVERNED_EIGHT.length && ROI_GOVERNED_EIGHT.every((r) => canon.has(r))
+}
+
 /**
  * Multi-section families (e.g. Dealership Performance Dashboard) are NOT a flat
  * header+rows table — classified by title/section markers, validated at the
@@ -334,10 +364,16 @@ export function evaluateDelivery(
     status: 'quarantined', reason, detail, kind, source_row_count: sourceRowCount, evidence,
   })
 
-  // classify: find the data/Report sheet + header row matching a family signature
+  // Filters parsed up front — needed to anchor ROI/CAGE classification on Base Report Name.
+  const filtersSheet = sheets.find((s) => /^filters$/i.test(s.name))
+  const filters = filtersSheet ? parseFilters(filtersSheet.rows) : null
+  const baseReportName = (filters?.baseReportName ?? '').trim().toLowerCase()
+
+  // classify: find the data/Report sheet + header row matching a family signature,
+  // requiring the governed Base Report Name when the family declares one.
   let matched: { fam: FamilyDef; sheet: Sheet; header: { index: number; map: Map<string, number> } } | null = null
   for (const fam of FAMILIES) {
-    // Report/Sheet1 candidates: prefer a sheet literally named Report, else the first non-Filters sheet
+    if (fam.baseReportName && baseReportName !== fam.baseReportName.toLowerCase()) continue
     const candidates = fam.sheet1Only
       ? sheets
       : sheets.filter((s) => /^report/i.test(s.name) || !/^filters$/i.test(s.name))
@@ -357,9 +393,6 @@ export function evaluateDelivery(
     .filter((r) => r.some((c) => (c ?? '').trim() !== ''))
   sourceRowCount = dataRows.length
 
-  const filtersSheet = sheets.find((s) => /^filters$/i.test(s.name))
-  const filters = filtersSheet ? parseFilters(filtersSheet.rows) : null
-
   // extra non-blank sheet guard (only truly-blank extras tolerated)
   const contracted = new Set<string>([sheet.name.toLowerCase()])
   if (filtersSheet) contracted.add('filters')
@@ -368,12 +401,20 @@ export function evaluateDelivery(
     if (!isBlankSheet(s.rows)) return q('extra-nonblank-sheet', `uncontracted non-blank sheet "${s.name}"`, fam.kind, { sheet: s.name })
   }
 
-  // Filters-level CONTRACT VIOLATIONS
+  // Filters-level CONTRACT VIOLATIONS + governed Lead Types
   if (filters) {
     if (filters.dealers.length > 1) return q('ambiguous-tenant', `Filters select ${filters.dealers.length} rooftops`, fam.kind, { dealers: filters.dealers })
-    if (fam.kind === 'cage_kpi') {
-      if (!isExactSalesLeadTypes(filters.leadTypes)) return q('incompatible-filter-metadata', `CAGE lead types must be exactly {Internet,Phone,Walk-in}; got [${filters.leadTypes.join(', ')}]`, fam.kind, { leadTypes: filters.leadTypes })
+    if (fam.leadTypesGovernance === 'three-sales' && !isExactSalesLeadTypes(filters.leadTypes)) {
+      return q('incompatible-filter-metadata', `${fam.kind} lead types must be exactly {Internet,Phone,Walk-in}; got [${filters.leadTypes.join(', ')}]`, fam.kind, { leadTypes: filters.leadTypes })
     }
+    if (fam.leadTypesGovernance === 'governed-eight' && !isExactGovernedEight(filters.leadTypes)) {
+      return q('incompatible-filter-metadata', `ROI lead types must be exactly the governed eight; got [${filters.leadTypes.join(', ')}]`, fam.kind, { leadTypes: filters.leadTypes })
+    }
+  }
+  // ROI tenant dealer lives in Filters (no row Dealer column) — validate fail-closed.
+  if (fam.dealerFromFilters) {
+    if (!filters || filters.dealers.length !== 1) return q('ambiguous-tenant', `expected exactly one Filters dealer, got ${filters?.dealers.length ?? 0}`, fam.kind, { dealers: filters?.dealers ?? [] })
+    if (!dealerMatches(opts.profileDealer, filters.dealers[0])) return q('wrong-dealer', `Filters dealer "${filters.dealers[0]}" ≠ target "${opts.profileDealer}"`, fam.kind, { dealer: filters.dealers[0] })
   }
 
   // schedule-definition vulnerability: a Filters tab selecting Service/Parts.
@@ -385,7 +426,7 @@ export function evaluateDelivery(
   const periodDates: Array<string> = []
   const dateCol = fam.dateField ? header.map.get(fam.dateField) : undefined
   const domainCols = (fam.domainFields ?? []).map((f) => header.map.get(f)).filter((c): c is number => c != null)
-  const reasonCol = fam.kind === 'appointments' ? header.map.get('Appointment Reason') : undefined
+  const reasonCol = fam.reasonField ? header.map.get(fam.reasonField) : undefined
 
   for (const r of dataRows) {
     if (dealerCol != null) {
@@ -397,11 +438,10 @@ export function evaluateDelivery(
     }
     if (reasonCol != null) {
       const reason = (r[reasonCol] ?? '').trim()
-      if (reason.toLowerCase() !== 'sales appointment') return q('non-sales-appointment-reason', `Appointment Reason "${reason}" ≠ "Sales Appointment"`, fam.kind, { reason })
-    } else {
-      for (const c of domainCols) {
-        if (isServiceParts(r[c] ?? '')) return q('non-sales-lead-type', `Service/Parts-coded row value "${r[c]}"`, fam.kind, { value: r[c] })
-      }
+      if (reason.toLowerCase() !== 'sales appointment') return q('non-sales-appointment-reason', `${fam.reasonField} "${reason}" ≠ "Sales Appointment"`, fam.kind, { reason })
+    }
+    for (const c of domainCols) {
+      if (isServiceParts(r[c] ?? '')) return q('non-sales-lead-type', `Service/Parts-coded row value "${r[c]}"`, fam.kind, { value: r[c] })
     }
     if (dateCol != null) {
       const dv = (r[dateCol] ?? '').trim().slice(0, 10)
@@ -416,7 +456,9 @@ export function evaluateDelivery(
     ? filters.period
     : { start: periodDates[0] ?? null, end: periodDates[periodDates.length - 1] ?? null }
 
-  const dealer = dealerCol != null && dataRows[0] ? (dataRows[0][dealerCol] ?? opts.profileDealer).trim() || opts.profileDealer : opts.profileDealer
+  const dealer = fam.dealerFromFilters && filters?.dealers[0]
+    ? filters.dealers[0]
+    : dealerCol != null && dataRows[0] ? (dataRows[0][dealerCol] ?? opts.profileDealer).trim() || opts.profileDealer : opts.profileDealer
 
   return {
     status: 'accepted',

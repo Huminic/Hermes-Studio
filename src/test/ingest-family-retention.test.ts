@@ -37,32 +37,42 @@ function ingestReadback(sheets: Array<SheetSpec>, checksum: string) {
 }
 
 const COMM_HEADER = ['Dealer', 'User Group', 'User', 'Customer', 'Activity Date', 'Direction', 'Comm Channel', 'Comm Type', 'Interaction Result', 'Lead Type', 'Lead Status Type', 'Lead Source', 'Lead Created Date', 'Message Content']
-const CAGE_HEADER = ['User', 'Total Leads', 'Good Leads', 'Bad Leads', 'Sold from Leads', 'Total Calls', 'Total Emails', 'Total Texts', 'Total Facebook', 'Total Comms In', 'Total Comms Out', 'Total Comms', 'Active Tasks', 'Completed Tasks', 'Dismissed Tasks', 'Inactive Tasks', 'Missed Tasks', 'Deals from Leads', 'Leads Eligible for Deals', 'Deals from Leads %', 'Deals Created in Time Frame']
-const ROI_HEADER = ['Dealer', 'Lead_Source', 'Total_Leads', 'Good_Leads', 'Sold_from_Leads']
+const CAGE_HEADER = ['Dealer', 'Lead Type', 'User', 'Total Leads', 'Good Leads', 'Bad Leads', 'Sold from Leads', 'Total Comms', 'Active Tasks']
+const ROI_HEADER = ['Lead Source', 'Total Leads', 'Good Leads', 'Bad Leads', 'Duplicate Leads', 'Sold from Leads']
 const GROSS_HEADER = ['Dealer', 'Dealer ID', 'Sold Date', 'Sale ID', 'Deal Number', 'Delivered status', 'Front Gross', 'Back Gross', 'Total Gross']
-const APPT_HEADER = ['Appointment ID', 'Dealer', 'Dealer ID', 'Appointment Start Date', 'Appointment Status', 'Is Confirmed', 'Rescheduled Date', 'Completed Date', 'Is Show', 'Is No Show', 'Appointment Reason']
+const APPT_HEADER = ['Appointment ID', 'Dealer', 'Dealer ID', 'Appointment Type', 'Appt Reason', 'Appointment Start Date', 'Appointment Start DateTime', 'Appointment Status']
+const REAL_FILTERS = (base: string, leadTypes: string): Array<Array<Cell>> => [
+  ['Filter Name', 'Number Selected', 'Selected Values'],
+  ['Base Report Name', '1', base],
+  ['Dealers', '1', HONDA_ROW],
+  ['Lead Types', String(leadTypes.split(',').length), leadTypes],
+  ['Date Range Begin', '1', 'Aug 17 2026 12:00AM'],
+  ['Date Range End', '1', 'Aug 23 2026 11:59PM'],
+]
+const ROI_EIGHT = 'Import, Internet, Phone, PreviousCustomer, Referral, Walk-in, WebsiteChat, Wholesale'
 
 describe('per-family accepted-row retention (workbook → store → readback)', () => {
   it('Lead Source ROI retains its row data', () => {
     const { kind, active } = ingestReadback([
-      { name: 'Report', rows: [ROI_HEADER, [HONDA_ROW, 'Repeat Customer', 79, 79, 24]] },
-      { name: 'Filters', rows: [['Dealers', 'Serra Honda'], ['Date Range', '2026-08-04 - 2026-08-10']] },
+      { name: 'Report', rows: [ROI_HEADER, ['Repeat Customer', 79, 79, 6, 6, 24]] },
+      { name: 'Filters', rows: REAL_FILTERS('Lead Source ROI', ROI_EIGHT) },
+      { name: 'Sheet3', rows: [] },
     ], 'roi')
     expect(kind).toBe('lead_source_roi')
     expect(active).toHaveLength(1)
-    expect(active[0].row).toEqual([HONDA_ROW, 'Repeat Customer', '79', '79', '24'])
+    expect(active[0].row).toEqual(['Repeat Customer', '79', '79', '6', '6', '24'])
   })
 
-  it('CAGE KPI retains its 21 fields', () => {
-    const row: Array<Cell> = ['Jane', 40, 30, 10, 5, 49, 526, 713, 3, 100, 200, 300, 2, 8, 1, 0, 3, 4, 10, '40%', 4]
+  it('CAGE / Enterprise Performance retains its fields', () => {
+    const row: Array<Cell> = [HONDA_ROW, 'Internet', 'Jane', 30, 28, 2, 2, 400, 20]
     const { kind, active } = ingestReadback([
       { name: 'Report', rows: [CAGE_HEADER, row] },
-      { name: 'Filters', rows: [['Base Report Name', 'Enterprise Performance'], ['Dealers', 'Serra Honda'], ['Lead Types', 'Internet, Phone, Walk-in']] },
+      { name: 'Filters', rows: REAL_FILTERS('Enterprise Performance', 'Internet, Phone, Walk-in') },
     ], 'cage')
     expect(kind).toBe('cage_kpi')
-    expect(active[0].row).toHaveLength(21)
-    expect(active[0].row[0]).toBe('Jane')
-    expect(active[0].row[20]).toBe('4')
+    expect(active[0].row).toHaveLength(9)
+    expect(active[0].row[0]).toBe(HONDA_ROW)
+    expect(active[0].row[2]).toBe('Jane')
   })
 
   it('Sales Communication Log retains rows incl. ISO-resolved dates', () => {
@@ -86,10 +96,10 @@ describe('per-family accepted-row retention (workbook → store → readback)', 
 
   it('Appointments (Sheet1-only) retains Sales Appointment rows', () => {
     const { kind, active } = ingestReadback([
-      { name: 'Sheet1', rows: [APPT_HEADER, ['A1', HONDA_ROW, '123', { date: '2026-08-06' }, 'Scheduled', 'TRUE', '', '', 'FALSE', 'FALSE', 'Sales Appointment']] },
+      { name: 'Sheet1', rows: [APPT_HEADER, ['145710109', HONDA_ROW, '21043', 'Meeting', 'Sales Appointment', { date: '2026-08-18' }, { date: '2026-08-18' }, 'Cancelled']] },
     ], 'appt')
     expect(kind).toBe('appointments')
-    expect(active[0].row[3]).toBe('2026-08-06')
-    expect(active[0].row[10]).toBe('Sales Appointment')
+    expect(active[0].row[4]).toBe('Sales Appointment') // Appt Reason
+    expect(active[0].row[5]).toBe('2026-08-18') // Appointment Start Date (ISO)
   })
 })
