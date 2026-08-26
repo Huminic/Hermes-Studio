@@ -56,6 +56,64 @@ Unlike the aggregate native families (which whole-delivery-quarantine on any out
 - **Never shift a timestamp; never invent a field.**
 - **Decision:** for the Aug 17–23 (America/New_York) coverage, the 2 Honda + 1 Ford rows that convert to **Aug 16 local** are **excluded and enumerated** (they belong to an Aug-16 delivery, if any); the remaining in-window rows are accepted. This row-level exclusion is **Response-Times-specific** and does NOT apply to the aggregate native XLSX families.
 
+### A.3 Agreed canonical derivative manifest schema — v1 (frozen 2026-08-26)
+
+The single ground-truth manifest both sides conform to (ends the guess-correct loop). Codex
+regenerates ONLY the derived manifest to this schema; the preserved raw and canonical
+derivative **bytes/checksums remain unchanged**. Field names/values are exact.
+
+```json
+{
+  "schema_version": "huminic.vinsolutions.response_times_derivative_manifest.v1",   // EXACT
+  "derivative_version": "huminic.vinsolutions.response_times.canonical.v1",         // EXACT
+  "hold_only": true,
+  "no_action": true,
+  "validation": { "state": "ready_for_isolated_dev", "sales_only_proved": true, "pii_minimized": true },
+  "sales_only":       { "state": "passed" },        // optional detail object
+  "pii_minimization": { "state": "passed" },        // optional detail object
+  "rooftop": { "profile": "serra-honda|serra-nissan|tony-serra-ford", "vin_dealer_id": "21043|21044|21047" },
+  "source": {
+    "capture_id":   "…",
+    "source_url":   "https://vinsolutions.app.coxautoinc.com/…",   // or final_url; host must be the VinSolutions app host
+    "raw_filename": "raw.csv",
+    "raw_sha256":   "<64-hex, == real raw sha256>",
+    "raw_rows":     0,   // == coverage.total_rows
+    "raw_columns":  0,   // == actual raw header width
+    "raw_bytes":    0    // == actual raw byte length
+  },
+  "derivative": {
+    "filename": "derivative.csv",
+    "sha256":   "<64-hex, == real derivative sha256>",
+    "headers":  [ "…exact ordered column list…" ],   // == actual derivative header, order + no extras
+    "rows":     0,   // == coverage.accepted_rows
+    "columns":  0,   // == headers.length
+    "bytes":    0,   // == actual derivative byte length
+    "local_fields": [   // EVERY additive local-time column + its UTC source + kind, so the consumer recomputes it
+      { "local_col": "activityDateLocal", "utc_col": "activityDateTimeUtc", "kind": "date" }
+      // …plus the sold / task-due / first-contacted / appointment / visit-start local pairs, each declared…
+    ]
+  },
+  "coverage": {
+    "start": "YYYY-MM-DD", "end": "YYYY-MM-DD", "timezone": "America/New_York",
+    "total_rows": 0, "accepted_rows": 0, "excluded_out_of_window": 0,
+    "excluded_rows": [
+      { "lead_id": "…", "activityDateTimeUtc": "…", "computed_local_date": "YYYY-MM-DD", "reason": "out-of-coverage" }
+    ]
+  }
+}
+```
+
+**Row-level (derivative CSV) requirements** the consumer independently enforces:
+- Every derivative row carries `capture_profile`, `vin_dealer_id`, `source_capture_id`,
+  `source_raw_sha256` — each equal to the governed profile / dealer id / manifest capture / real raw sha.
+- For every accepted row, **every retained native field** (every derivative column that also exists
+  in the raw, excluding the four provenance columns and every declared `local_fields.local_col`)
+  equals the raw's value **exactly** — verified as a duplicate-safe multiset of full field tuples.
+- Every declared additive `local_fields` column is **recomputed** from its `utc_col` (America/New_York);
+  `kind:"date"` → `YYYY-MM-DD`. Non-date kinds must declare a `format` before they can be verified.
+- The RAW is scanned for Service/Parts independently (a sanitized derivative cannot hide a raw Service row).
+- Manifest `raw_rows/raw_columns/raw_bytes` and `derivative.rows/columns/bytes` reconcile to the actual files.
+
 ## B. Unanswered Replies — 15-column backlog snapshot
 
 - A **backlog snapshot**, NOT a strict daily event feed. Contract it with **`as_of`** (the snapshot instant, dealer-local) + **`lookback`** semantics (the age window it represents) — not a single-day period proof.

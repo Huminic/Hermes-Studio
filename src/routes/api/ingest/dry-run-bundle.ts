@@ -71,17 +71,20 @@ export const Route = createFileRoute('/api/ingest/dry-run-bundle')({
         if (String(source.raw_filename ?? '') !== rawFile) return bad('manifest source.raw_filename != envelope raw filename')
         if (String(dm.filename ?? '') !== derFile) return bad('manifest derivative.filename != envelope derivative filename')
 
-        // ── Response Times identity + hold/no-action + producer validation gates ──
-        if (!/^response-times-canonical/i.test(String(man.schema_version ?? ''))) return bad('schema_version is not the Response Times canonical schema')
-        if (!String(man.derivative_version ?? '').trim()) return bad('derivative_version required')
+        // ── Response Times identity + hold/no-action + producer validation gates (EXACT real values) ──
+        if (String(man.schema_version ?? '') !== 'huminic.vinsolutions.response_times_derivative_manifest.v1') return bad('unexpected schema_version')
+        if (String(man.derivative_version ?? '') !== 'huminic.vinsolutions.response_times.canonical.v1') return bad('unexpected derivative_version')
         if (man.hold_only !== true) return bad('manifest hold_only must be true')
         if (man.no_action !== true) return bad('manifest no_action must be true')
-        const vstate = String((man.validation ?? {}).state ?? man.validation_state ?? '')
-        if (vstate !== 'ready_for_isolated_dev') return bad('manifest validation.state must be ready_for_isolated_dev')
         const val = man.validation ?? {}
-        const passed = (v: unknown) => v === true || v === 'passed' || v === 'pass'
-        if (!passed(val.sales_only ?? man.sales_only)) return bad('manifest sales_only must be passed')
-        if (!passed(val.pii ?? man.pii)) return bad('manifest pii must be passed')
+        const isPassed = (v: unknown) => v === true || v === 'passed' || v === 'pass'
+        // real manifest: validation.sales_only_proved / pii_minimized (booleans) + top-level
+        // sales_only.state / pii_minimization.state — accept either.
+        if (val.sales_only_proved !== true && !isPassed((man.sales_only ?? {}).state)) return bad('sales_only not proved')
+        if (val.pii_minimized !== true && !isPassed((man.pii_minimization ?? {}).state)) return bad('pii not minimized')
+        // validation.state (if the producer declares it) must be the isolated-dev gate
+        const vstate = String(val.state ?? man.validation_state ?? '')
+        if (vstate && vstate !== 'ready_for_isolated_dev') return bad('validation.state must be ready_for_isolated_dev')
 
         // ── decode + integrity: envelope sha == recomputed == manifest binding ──
         const rawBuf = decodeBase64Strict(String(raw.content_base64 ?? ''))

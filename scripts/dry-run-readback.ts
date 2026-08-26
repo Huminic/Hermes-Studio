@@ -153,19 +153,33 @@ if (rawBuf) {
   const rIdx = (n: string) => rh.findIndex((h) => h.toLowerCase() === n.toLowerCase())
   add('RAW required-core headers', REQUIRED_CORE.every(rHas), REQUIRED_CORE.filter((c) => !rHas(c)).join(', ') || 'all present')
   add('raw row widths sane', rd.every((r) => r.length === rh.length), 'every raw row width == header width')
-  const rAdt2 = rIdx('activityDateTimeUtc'), rLid2 = rIdx('lead.id')
-  const keyOf = (utc: string, id: string) => `${id}|${utc}`
-  const rMap = new Map<string, Array<string>>()
-  for (const r of rd) { const utc = (r[rAdt2] ?? '').trim(); const d = nyDate(utc); if (d && covStart && covEnd && d >= covStart && d <= covEnd) rMap.set(keyOf(utc, (r[rLid2] ?? '').trim()), r) }
-  let fieldMismatch = 0, blankKey = 0
-  for (const dr of dData) {
-    const utc = (dr[dAdt] ?? '').trim(), id = (dLid >= 0 ? (dr[dLid] ?? '').trim() : '')
-    if (!utc || !id) { blankKey++; continue }
-    const rrow = rMap.get(keyOf(utc, id)); if (!rrow) continue // identity mismatch flagged by the multiset check
-    for (const f of REQUIRED_CORE) { const ri = rIdx(f), di = dIdx(f); if (ri >= 0 && di >= 0 && (rrow[ri] ?? '').trim() !== (dr[di] ?? '').trim()) { fieldMismatch++; break } }
-  }
-  add('accepted rows: every retained native field raw==derivative', fieldMismatch === 0, `${fieldMismatch} accepted derivative row(s) differ from the raw on a native field`)
+  add('raw columns == manifest raw_columns', source.raw_columns == null || Number(source.raw_columns) === rh.length, `declared ${source.raw_columns ?? '(n/d)'} vs actual ${rh.length}`)
+  const rAdt2 = rIdx('activityDateTimeUtc')
+  // Comparable native columns = derivative cols present in the raw, MINUS declared provenance +
+  // declared additive-local columns. Compares EVERY retained native field (not only required-core).
+  const localFields: Array<any> = Array.isArray(der.local_fields) ? der.local_fields : []
+  const localCols = new Set(localFields.map((f) => String(f.local_col ?? f.column ?? '').toLowerCase()))
+  const exclude = new Set([...PROVENANCE_COLS.map((s) => s.toLowerCase()), ...localCols])
+  const shared = dHead.filter((h) => rHas(h) && !exclude.has(h.toLowerCase()))
+  add('comparable native columns present', shared.length >= REQUIRED_CORE.length, `${shared.length} shared native columns`)
+  const enc = (row: Array<string>, idxOf: (n: string) => number) => shared.map((c) => (row[idxOf(c)] ?? '').trim()).join('␟')
+  // FULL retained-field tuple multiset (all shared cols) — duplicate-safe: two differing raw
+  // duplicates cannot be replaced by two copies of one row.
+  const tupRaw: Array<string> = []
+  for (const r of rd) { const utc = (r[rAdt2] ?? '').trim(); const d = nyDate(utc); if (d && covStart && covEnd && d >= covStart && d <= covEnd) tupRaw.push(enc(r, rIdx)) }
+  const tupDer: Array<string> = []; let blankKey = 0
+  for (const dr of dData) { const id = dLid >= 0 ? (dr[dLid] ?? '').trim() : ''; const utc = dAdt >= 0 ? (dr[dAdt] ?? '').trim() : ''; if (!id || !utc) blankKey++; tupDer.push(enc(dr, dIdx)) }
+  add('accepted rows: FULL retained-field multiset raw==derivative (all shared cols + multiplicity)', multisetEq(tupRaw, tupDer), `raw ${tupRaw.length} vs derivative ${tupDer.length} tuples`)
   add('no blank accepted identities', blankKey === 0, `${blankKey} blank accepted identity(ies)`)
+  // Additive local fields: recompute each declared local column from its UTC source (date kind).
+  let localBad = 0, localUnk = 0
+  for (const f of localFields) {
+    const li = dIdx(String(f.local_col ?? f.column ?? '')), ui = dIdx(String(f.utc_col ?? f.source_utc ?? '')), kind = String(f.kind ?? 'date')
+    if (li < 0 || ui < 0) { localBad++; continue }
+    if (kind !== 'date') { localUnk++; continue }
+    for (const dr of dData) { const want = nyDate((dr[ui] ?? '').trim()); if (want !== null && (dr[li] ?? '').trim() !== want) localBad++ }
+  }
+  add('additive local date fields recomputed', localBad === 0, `${localBad} mismatch(es)${localUnk ? `; ${localUnk} non-date local field(s) need a declared format` : ''}`)
 }
 // manifest count / byte reconciliation vs the actual files (reconcile-if-declared)
 add('manifest raw rows == actual', cov.total_rows == null || Number(cov.total_rows) === rTotal, `declared ${cov.total_rows} vs actual ${rTotal}`)
