@@ -143,6 +143,36 @@ if (rawBuf) {
 }
 add('Sales-only (RAW — authoritative)', rSvc === 0, rSvc ? `${rSvc} Service/Parts-coded RAW row(s) (a sanitized derivative cannot hide this)` : 'clean')
 
+// ── structural + per-accepted-row native-field comparison (raw is authoritative) ──
+const declaredHeaders: Array<string> = Array.isArray(der.headers) ? der.headers.map((h: any) => String(h)) : []
+add('derivative headers == manifest.derivative.headers (order, no extras)', declaredHeaders.length > 0 && declaredHeaders.length === dHead.length && declaredHeaders.every((h, i) => h === dHead[i]), declaredHeaders.length ? `declared ${declaredHeaders.length} cols vs actual ${dHead.length}` : 'manifest.derivative.headers not declared')
+add('derivative row widths sane', dData.every((r) => r.length === dHead.length), 'every derivative row width == header width')
+if (rawBuf) {
+  const rr = parseCsv(rawBuf.toString('utf8')); const rh = (rr[0] ?? []).map((h) => h.trim()); const rd = rr.slice(1)
+  const rHas = (n: string) => rh.some((h) => h.toLowerCase() === n.toLowerCase())
+  const rIdx = (n: string) => rh.findIndex((h) => h.toLowerCase() === n.toLowerCase())
+  add('RAW required-core headers', REQUIRED_CORE.every(rHas), REQUIRED_CORE.filter((c) => !rHas(c)).join(', ') || 'all present')
+  add('raw row widths sane', rd.every((r) => r.length === rh.length), 'every raw row width == header width')
+  const rAdt2 = rIdx('activityDateTimeUtc'), rLid2 = rIdx('lead.id')
+  const keyOf = (utc: string, id: string) => `${id}|${utc}`
+  const rMap = new Map<string, Array<string>>()
+  for (const r of rd) { const utc = (r[rAdt2] ?? '').trim(); const d = nyDate(utc); if (d && covStart && covEnd && d >= covStart && d <= covEnd) rMap.set(keyOf(utc, (r[rLid2] ?? '').trim()), r) }
+  let fieldMismatch = 0, blankKey = 0
+  for (const dr of dData) {
+    const utc = (dr[dAdt] ?? '').trim(), id = (dLid >= 0 ? (dr[dLid] ?? '').trim() : '')
+    if (!utc || !id) { blankKey++; continue }
+    const rrow = rMap.get(keyOf(utc, id)); if (!rrow) continue // identity mismatch flagged by the multiset check
+    for (const f of REQUIRED_CORE) { const ri = rIdx(f), di = dIdx(f); if (ri >= 0 && di >= 0 && (rrow[ri] ?? '').trim() !== (dr[di] ?? '').trim()) { fieldMismatch++; break } }
+  }
+  add('accepted rows: every retained native field raw==derivative', fieldMismatch === 0, `${fieldMismatch} accepted derivative row(s) differ from the raw on a native field`)
+  add('no blank accepted identities', blankKey === 0, `${blankKey} blank accepted identity(ies)`)
+}
+// manifest count / byte reconciliation vs the actual files (reconcile-if-declared)
+add('manifest raw rows == actual', cov.total_rows == null || Number(cov.total_rows) === rTotal, `declared ${cov.total_rows} vs actual ${rTotal}`)
+add('manifest derivative rows == actual', der.rows == null || Number(der.rows) === dData.length, `declared ${der.rows} vs actual ${dData.length}`)
+add('manifest derivative columns == actual', der.columns == null || Number(der.columns) === dHead.length, `declared ${der.columns} vs actual ${dHead.length}`)
+add('manifest byte counts == actual', (source.raw_bytes == null || Number(source.raw_bytes) === (rawBuf?.length ?? -1)) && (der.bytes == null || Number(der.bytes) === (derBuf?.length ?? -1)), `raw ${source.raw_bytes ?? '(n/d)'}/${rawBuf?.length}, der ${der.bytes ?? '(n/d)'}/${derBuf?.length}`)
+
 // manifest excluded → canonical tuples (must equal MY recomputed local date + reason)
 let mExclBlank = 0
 const mExcl = mExcludedRows.map((e) => {

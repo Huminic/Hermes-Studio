@@ -71,6 +71,18 @@ export const Route = createFileRoute('/api/ingest/dry-run-bundle')({
         if (String(source.raw_filename ?? '') !== rawFile) return bad('manifest source.raw_filename != envelope raw filename')
         if (String(dm.filename ?? '') !== derFile) return bad('manifest derivative.filename != envelope derivative filename')
 
+        // ── Response Times identity + hold/no-action + producer validation gates ──
+        if (!/^response-times-canonical/i.test(String(man.schema_version ?? ''))) return bad('schema_version is not the Response Times canonical schema')
+        if (!String(man.derivative_version ?? '').trim()) return bad('derivative_version required')
+        if (man.hold_only !== true) return bad('manifest hold_only must be true')
+        if (man.no_action !== true) return bad('manifest no_action must be true')
+        const vstate = String((man.validation ?? {}).state ?? man.validation_state ?? '')
+        if (vstate !== 'ready_for_isolated_dev') return bad('manifest validation.state must be ready_for_isolated_dev')
+        const val = man.validation ?? {}
+        const passed = (v: unknown) => v === true || v === 'passed' || v === 'pass'
+        if (!passed(val.sales_only ?? man.sales_only)) return bad('manifest sales_only must be passed')
+        if (!passed(val.pii ?? man.pii)) return bad('manifest pii must be passed')
+
         // ── decode + integrity: envelope sha == recomputed == manifest binding ──
         const rawBuf = decodeBase64Strict(String(raw.content_base64 ?? ''))
         const derBuf = decodeBase64Strict(String(der.content_base64 ?? ''))
@@ -106,9 +118,10 @@ export const Route = createFileRoute('/api/ingest/dry-run-bundle')({
         const tmp = path.join(INBOUND, profile, `.tmp-${captureId}-${process.pid}-${process.hrtime.bigint()}`)
         try {
           fs.mkdirSync(tmp, { recursive: true })
-          fs.writeFileSync(path.join(tmp, rawFile), rawBuf)
-          fs.writeFileSync(path.join(tmp, derFile), derBuf)
-          fs.writeFileSync(path.join(tmp, 'manifest.v1.json'), JSON.stringify(man, null, 2))
+          // Write immutable (0444) BEFORE the atomic reveal so the reconcile only ever sees read-only bytes.
+          fs.writeFileSync(path.join(tmp, rawFile), rawBuf, { mode: 0o444 })
+          fs.writeFileSync(path.join(tmp, derFile), derBuf, { mode: 0o444 })
+          fs.writeFileSync(path.join(tmp, 'manifest.v1.json'), JSON.stringify(man, null, 2), { mode: 0o444 })
           fs.mkdirSync(path.dirname(target), { recursive: true })
           fs.renameSync(tmp, target)
         } catch (e) {
