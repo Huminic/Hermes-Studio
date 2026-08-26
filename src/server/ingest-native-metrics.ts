@@ -49,7 +49,9 @@ export type DealershipPerformance = {
     backGross: number | null
     avgTotalGross: number | null
   }
-  byLeadType: Array<{ label: string; leads: number | null; soldInPeriod: number | null }>
+  // New / Used / Unknown are INVENTORY types (from the "Lead Type & Inventory
+  // Type Summary" section), not lead sources — do not conflate the two.
+  byInventoryType: Array<{ label: string; leads: number | null; soldInPeriod: number | null }>
 }
 
 export type AppointmentsMetrics = {
@@ -62,6 +64,7 @@ export type AppointmentsMetrics = {
   show: number
   noShow: number
   cancelled: number
+  rescheduled: number
   byStatus: Record<string, number>
 }
 
@@ -79,9 +82,9 @@ type SqliteStmt = { get: (...a: unknown[]) => any; all: (...a: unknown[]) => any
 type SqliteDb = { prepare: (sql: string) => SqliteStmt; close: () => void }
 
 function openBrainReadonly(profile: string): SqliteDb | null {
-  const { dbPath } = resolveBrainPaths(profile)
-  if (!fs.existsSync(dbPath)) return null
   try {
+    const { dbPath } = resolveBrainPaths(profile)
+    if (!fs.existsSync(dbPath)) return null
     const Database = _require('better-sqlite3')
     return new Database(dbPath, { readonly: true, fileMustExist: true }) as SqliteDb
   } catch {
@@ -152,6 +155,14 @@ export function readDealershipPerformance(profile: string): DealershipPerformanc
     if (!delivery) return { available: false, reason: 'no accepted dealership_performance delivery' }
     const rows = deliveryRows(db, delivery.id)
 
+    // Integrity: parsed native rows must match the governed accepted count.
+    if (rows.length !== delivery.accepted_row_count) {
+      return {
+        available: false,
+        reason: `row count mismatch: parsed ${rows.length} != accepted_row_count ${delivery.accepted_row_count}`,
+      }
+    }
+
     // Locate the "Dealership Summary" section: section headers are single-cell rows.
     const secIdx = rows.findIndex((r) => r.length === 1 && r[0] === 'Dealership Summary')
     if (secIdx < 0 || !rows[secIdx + 1]) {
@@ -169,6 +180,28 @@ export function readDealershipPerformance(profile: string): DealershipPerformanc
     const idxBack = col('Back Gross')
     const idxAvg = col('Avg Total Gross')
 
+    // Fail closed if any required summary column is absent.
+    const requiredCols: Record<string, number> = {
+      Leads: idxLeads,
+      'Appts Set': idxApptsSet,
+      'Appts Show': idxApptsShow,
+      'Total Visits': idxTotalVisits,
+      'Visits Sold': idxVisitsSold,
+      'Sold in Period': idxSold,
+      'Front Gross': idxFront,
+      'Back Gross': idxBack,
+      'Avg Total Gross': idxAvg,
+    }
+    const missingCols = Object.entries(requiredCols)
+      .filter(([, i]) => i < 0)
+      .map(([name]) => name)
+    if (missingCols.length) {
+      return {
+        available: false,
+        reason: `Dealership Summary missing required columns: ${missingCols.join(', ')}`,
+      }
+    }
+
     // Data rows until the next single-cell section header (or end).
     const data: string[][] = []
     for (let i = secIdx + 2; i < rows.length; i++) {
@@ -178,7 +211,8 @@ export function readDealershipPerformance(profile: string): DealershipPerformanc
     const totalRow = data.find((r) => (r[0] || '').toUpperCase() === 'TOTAL')
     if (!totalRow) return { available: false, reason: 'Dealership Summary TOTAL row not found' }
 
-    const byLeadType = data
+    // New / Used / Unknown are inventory types, not lead sources.
+    const byInventoryType = data
       .filter((r) => (r[0] || '').toUpperCase() !== 'TOTAL')
       .map((r) => ({ label: r[0], leads: num(r[idxLeads]), soldInPeriod: num(r[idxSold]) }))
 
@@ -197,8 +231,10 @@ export function readDealershipPerformance(profile: string): DealershipPerformanc
         backGross: num(totalRow[idxBack]),
         avgTotalGross: num(totalRow[idxAvg]),
       },
-      byLeadType,
+      byInventoryType,
     }
+  } catch (e) {
+    return { available: false, reason: `dealership_performance query failed: ${(e as Error).message}` }
   } finally {
     db.close()
   }
@@ -224,15 +260,43 @@ export function readAppointments(profile: string): AppointmentsMetrics | Unavail
     const iCancelled = h('Is Cancelled')
     const iCompleted = h('Is Completed')
     const iConfirmed = h('Is Confirmed')
+    const iRescheduled = h('Rescheduled Date')
+
+    // Fail closed if any required appointment header is absent.
+    const requiredHeaders: Record<string, number> = {
+      'Appointment Status': iStatus,
+      'Is Show': iShow,
+      'Is No Show': iNoShow,
+      'Is Cancelled': iCancelled,
+      'Is Completed': iCompleted,
+      'Is Confirmed': iConfirmed,
+      'Rescheduled Date': iRescheduled,
+    }
+    const missingHeaders = Object.entries(requiredHeaders)
+      .filter(([, i]) => i < 0)
+      .map(([name]) => name)
+    if (missingHeaders.length) {
+      return { available: false, reason: `appointments missing required headers: ${missingHeaders.join(', ')}` }
+    }
 
     const rows = deliveryRows(db, delivery.id)
+
+    // Integrity: parsed native rows must match the governed accepted count.
+    if (rows.length !== delivery.accepted_row_count) {
+      return {
+        available: false,
+        reason: `row count mismatch: parsed ${rows.length} != accepted_row_count ${delivery.accepted_row_count}`,
+      }
+    }
+
     const yes = (v: string | undefined) => (v || '').trim().toLowerCase() === 'yes'
     const byStatus: Record<string, number> = {}
     let show = 0,
       noShow = 0,
       cancelled = 0,
       completed = 0,
-      confirmed = 0
+      confirmed = 0,
+      rescheduled = 0
     for (const r of rows) {
       const status = iStatus >= 0 ? r[iStatus] || 'Unknown' : 'Unknown'
       byStatus[status] = (byStatus[status] || 0) + 1
@@ -241,6 +305,8 @@ export function readAppointments(profile: string): AppointmentsMetrics | Unavail
       if (iCancelled >= 0 && yes(r[iCancelled])) cancelled++
       if (iCompleted >= 0 && yes(r[iCompleted])) completed++
       if (iConfirmed >= 0 && yes(r[iConfirmed])) confirmed++
+      // Rescheduled Date is a date string when the appointment was moved.
+      if (iRescheduled >= 0 && (r[iRescheduled] || '').trim() !== '') rescheduled++
     }
 
     return {
@@ -253,8 +319,11 @@ export function readAppointments(profile: string): AppointmentsMetrics | Unavail
       show,
       noShow,
       cancelled,
+      rescheduled,
       byStatus,
     }
+  } catch (e) {
+    return { available: false, reason: `appointments query failed: ${(e as Error).message}` }
   } finally {
     db.close()
   }
@@ -264,13 +333,26 @@ export function readAppointments(profile: string): AppointmentsMetrics | Unavail
  * Standalone Response-Time readback metrics (units: minutes). Validated + labeled
  * as its own source. NEVER blended with dealership_performance aggregates.
  */
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
+
 export function readResponseTimes(profile: string): ResponseTimeReadback | Unavailable {
-  const { brainRoot } = resolveBrainPaths(profile)
+  let brainRoot: string
+  try {
+    brainRoot = resolveBrainPaths(profile).brainRoot
+  } catch (e) {
+    return { available: false, reason: `path resolution failed: ${(e as Error).message}` }
+  }
   const rtDir = path.join(path.dirname(brainRoot), 'response-times')
   if (!fs.existsSync(rtDir)) return { available: false, reason: 'no response-times dir' }
 
   let best: ResponseTimeReadback | null = null
-  for (const entry of fs.readdirSync(rtDir)) {
+  let entries: string[] = []
+  try {
+    entries = fs.readdirSync(rtDir)
+  } catch (e) {
+    return { available: false, reason: `response-times unreadable: ${(e as Error).message}` }
+  }
+  for (const entry of entries) {
     const file = path.join(rtDir, entry, 'readback.json')
     if (!fs.existsSync(file)) continue
     let doc: any
@@ -281,10 +363,15 @@ export function readResponseTimes(profile: string): ResponseTimeReadback | Unava
     }
     const prov = doc?.provenance ?? {}
     const cov = prov?.coverage ?? {}
+    const units = prov?.metric_units ?? {}
     // Fail-closed acceptance gate.
     if (prov.profile !== profile) continue
     if (prov.readback_verdict !== 'accepted') continue
     if (cov.reconciles !== true) continue
+    // Coverage window must be valid ISO dates before it can be compared/selected.
+    if (!ISO_DATE.test(String(cov.start)) || !ISO_DATE.test(String(cov.end))) continue
+    // Response-time metric must be expressed in minutes.
+    if (!String(units.response_time ?? '').startsWith('minutes')) continue
     const candidate: ResponseTimeReadback = {
       available: true,
       source: 'response_times_readback',
