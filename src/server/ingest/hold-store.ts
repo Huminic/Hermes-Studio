@@ -360,6 +360,39 @@ function verifyAppointments(header: Array<string>, rows: Array<Array<string>>, p
   return { ok: true, period: { start: hint.periodStart, end: hint.periodEnd }, evidence: { appointments_verified: rows.length, governed_dealer_id: expectedId, period_source: 'period_hint' } }
 }
 
+type GrossVerdict =
+  | { ok: true; period: HoldPeriod; evidence: Record<string, unknown> }
+  | { ok: false; period: HoldPeriod; reason: HoldQuarantineReason; detail: string; evidence: Record<string, unknown> }
+
+/**
+ * CRM Sales Gross COVERAGE-period proof (Sheet1, no Filters). A weekly Gross export
+ * has a coverage window (the scheduled e.g. Mon–Sun period) that is NOT the same as
+ * its observed sale dates — a week may have sales only Tue–Fri. So (operator
+ * correction 2026-08-25) acceptance uses a TRUSTED coverage window from period_hint
+ * and requires every populated Sold Date to fall INSIDE it; it does NOT require the
+ * observed min/max to equal the window endpoints. The stored period is the coverage
+ * window; the observed date range is recorded as evidence. Fail-closed on a missing
+ * coverage hint, a missing Sold Date column, an unparseable date, or any Sold Date
+ * outside the coverage window.
+ */
+function verifyCrmGrossPeriod(header: Array<string>, rows: Array<Array<string>>, periodHint: string | undefined): GrossVerdict {
+  const nil: HoldPeriod = { start: null, end: null }
+  const hint = parsePeriodHint(periodHint)
+  if (!hint.periodStart || !hint.periodEnd) return { ok: false, period: nil, reason: 'unexpected-period', detail: 'CRM Sales Gross requires a coverage period_hint (YYYY-MM-DD/YYYY-MM-DD) — the scheduled window, not the observed sale dates', evidence: {} }
+  const ci = colIdx(header, 'Sold Date')
+  if (ci < 0) return { ok: false, period: nil, reason: 'unsupported-report', detail: 'Sold Date column not found', evidence: {} }
+  if (rows.length === 0) return { ok: false, period: nil, reason: 'unsupported-report', detail: 'no data rows to verify against the coverage period', evidence: {} }
+  const days: Array<string> = []
+  for (let i = 0; i < rows.length; i++) {
+    const d = parseRowDate(rows[i][ci] ?? '')
+    if (!d) return { ok: false, period: nil, reason: 'unexpected-period', detail: `row ${i} has a missing/unparseable Sold Date`, evidence: {} }
+    if (d < hint.periodStart || d > hint.periodEnd) return { ok: false, period: nil, reason: 'unexpected-period', detail: `row Sold Date ${d} is outside the coverage period ${hint.periodStart}..${hint.periodEnd}`, evidence: { out_of_coverage: d } }
+    days.push(d)
+  }
+  days.sort()
+  return { ok: true, period: { start: hint.periodStart, end: hint.periodEnd }, evidence: { period_source: 'period_hint_coverage', observed_date_range: { min: days[0], max: days[days.length - 1] }, rows_verified: rows.length } }
+}
+
 /**
  * Land a delivery inertly. Preserves bytes + manifest; NEVER computes a metric,
  * runs the Watchdog, populates a dashboard, evaluates a threshold, notifies, or
@@ -454,6 +487,11 @@ function landXlsx(buf: Buffer, meta: HoldMetadata, opts: LandOptions, base: Base
     periodEvidence = v.evidence
   } else if (ev.kind === 'appointments') {
     const v = verifyAppointments(ev.header, ev.rows, meta.profile, meta.period_hint ?? undefined)
+    if (!v.ok) return q(ev.kind, v.period, v.reason, v.detail, { ...ev.evidence, ...v.evidence })
+    period = v.period
+    periodEvidence = v.evidence
+  } else if (ev.kind === 'crm_sales_gross') {
+    const v = verifyCrmGrossPeriod(ev.header, ev.rows, meta.period_hint ?? undefined)
     if (!v.ok) return q(ev.kind, v.period, v.reason, v.detail, { ...ev.evidence, ...v.evidence })
     period = v.period
     periodEvidence = v.evidence

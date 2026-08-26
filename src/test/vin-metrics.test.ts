@@ -205,6 +205,22 @@ describe('contract, contamination guard, unsupported-claims, determinism', () =>
   })
 })
 
+describe('ROI Option A: native spaced VinSolutions headers compute (no producer rename)', () => {
+  it('spaced ROI headers ("Total Leads", "Sold from Leads", …) compute the same as underscored', () => {
+    // The real VinSolutions XLSX export lands with SPACED headers; Codex must not
+    // rename them. The consumer recognizes them (space/underscore-insensitive).
+    const SPACED = ['Dealer', 'Lead Source', 'Total Leads', 'Good Leads', 'Bad Leads', 'Duplicate Leads', 'Sold from Leads']
+    seed('lead_source_roi', SPACED, [['Serra Honda', 'Repeat', '79', '79', '0', '0', '24'], ['Serra Honda', 'Autoweb', '20', '15', '5', '3', '2']], 'roi-spaced')
+    const run = runVinWatchdog(P, PERIOD_OPTS)
+    const m = byId(run)
+    expect(m.get('roi.total_leads')!.value).toBe(99)
+    expect(m.get('roi.sold_from_leads')!.value).toBe(26)
+    expect(m.get('roi.duplicate_rate')!.count).toBe(3)
+    // not withheld for a missing column when the spaced column is present
+    expect(run.withheld.find((w) => w.metric_id === 'roi.total_leads')).toBeUndefined()
+  })
+})
+
 describe('missing/late/unsupported-data-never-zero rule', () => {
   it('an absent required column WITHHOLDS the metric (never emits zero)', () => {
     // ROI export missing the Sold_from_Leads column entirely

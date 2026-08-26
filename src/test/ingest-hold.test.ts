@@ -98,6 +98,37 @@ describe('HOLD_ONLY landing — held happy path', () => {
   })
 })
 
+// CRM Sales Gross: coverage window (trusted period_hint) ≠ observed sale dates.
+const GROSS_HEADER = ['Dealer', 'Dealer ID', 'Sold Date', 'Sale ID', 'Deal Number', 'Delivered status', 'Front Gross', 'Back Gross', 'Total Gross']
+const grossWb = (dates: Array<string>) => makeXlsx([{ name: 'Sheet1', rows: [
+  GROSS_HEADER,
+  ...dates.map((d, i): Array<Cell> => ['Serra Honda of Sylacauga', '21043', { date: d }, `S${i}`, `D${i}`, 'Delivered', 1000, 500, 1500]),
+] }])
+const grossMeta = (over: Partial<HoldMetadata> = {}): HoldMetadata => meta({ filename: 'gross.xlsx', subject: 'CRM Sales Gross', ...over })
+
+describe('HOLD_ONLY landing — CRM Sales Gross coverage period (operator correction 2026-08-25)', () => {
+  it('HELD: coverage = trusted period_hint; sales only mid-week fall INSIDE it (not min/max equality)', () => {
+    // scheduled coverage = Mon–Sun; actual sales only Tue + Thu
+    const r = landDelivery(grossWb(['2026-08-18', '2026-08-20']), grossMeta({ period_hint: '2026-08-17/2026-08-23' }), OPTS)
+    expect(r.outcome).toBe('held')
+    expect(r.manifest.report_kind).toBe('crm_sales_gross')
+    // stored period is the COVERAGE window, not the observed 08-18..08-20 range
+    expect(r.manifest.period).toEqual({ start: '2026-08-17', end: '2026-08-23' })
+    expect(r.manifest.evidence.observed_date_range).toEqual({ min: '2026-08-18', max: '2026-08-20' })
+    expect(r.manifest.evidence.period_source).toBe('period_hint_coverage')
+  })
+  it('QUARANTINE: a Sold Date outside the coverage window fails closed', () => {
+    const r = landDelivery(grossWb(['2026-08-18', '2026-08-30']), grossMeta({ filename: 'g2.xlsx', period_hint: '2026-08-17/2026-08-23' }), OPTS)
+    expect(r.outcome).toBe('quarantined')
+    expect(r.manifest.quarantine_reason).toBe('unexpected-period')
+  })
+  it('QUARANTINE: no coverage period_hint (coverage must come from trusted metadata, not observed rows)', () => {
+    const r = landDelivery(grossWb(['2026-08-18']), grossMeta({ filename: 'g3.xlsx' }), OPTS)
+    expect(r.outcome).toBe('quarantined')
+    expect(r.manifest.quarantine_reason).toBe('unexpected-period')
+  })
+})
+
 describe('HOLD_ONLY landing — whole-delivery quarantine triggers', () => {
   const q = (buf: Buffer, m = meta(), opts = OPTS) => landDelivery(buf, m, opts)
 

@@ -4,15 +4,20 @@
  * Pure (no I/O): given parsed sheets + the target dealer, classify the family,
  * read Filters metadata, and decide ACCEPT vs QUARANTINE fail-closed.
  *
- * Two distinct Sales-only decisions:
- *  - CONTRACT VIOLATION → immediate quarantine: multi-rooftop dealer filter /
- *    rows spanning dealers (ambiguous-tenant); CAGE lead types ≠ exactly
- *    {Internet,Phone,Walk-in}; wrong dealer; unrecognized family; extra non-blank
- *    sheet; non-"Sales Appointment" reason.
- *  - SCHEDULE-DEFINITION VULNERABILITY (a Filters tab that selects Service/Parts):
- *    NOT auto-clean. It FORCES exhaustive row-level validation; the delivery may be
- *    accepted only when every data row is explicitly Sales-domain and dealer-correct.
- *    Any Service/Parts-coded or ambiguous row → quarantine the whole delivery.
+ * Sales-only is first-class. Contract violations → immediate quarantine:
+ *  - multi-rooftop dealer filter / rows spanning dealers (ambiguous-tenant);
+ *  - CAGE lead types ≠ exactly {Internet,Phone,Walk-in}; ROI lead types ≠ the
+ *    governed eight; wrong dealer; unrecognized family; extra non-blank sheet;
+ *    non-"Sales Appointment" reason;
+ *  - a Filters tab that POSITIVELY selects Service/Parts in Lead Type or Lead Intent.
+ *    This is a contaminated SCHEDULE DEFINITION: clean data rows in one delivery do
+ *    NOT cure it (the next scheduled run may pull Service/Parts), so it quarantines
+ *    outright — it is never accept-and-flag. (Operator correction 2026-08-25.)
+ *  - Row-level Service/Parts values in the data still quarantine the whole delivery.
+ *
+ * EXCLUSION IS NOT CONTAMINATION: a "Lead Sources Excluded: Service…" filter is proof
+ * of exclusion, not a positive selection, and never disqualifies — parseFilters only
+ * feeds the Lead Type / Lead Intent keys into the scanned selection sets.
  */
 import { dealerMatches } from '../report-ingest'
 
@@ -410,6 +415,14 @@ export function evaluateDelivery(
     if (fam.leadTypesGovernance === 'governed-eight' && !isExactGovernedEight(filters.leadTypes)) {
       return q('incompatible-filter-metadata', `ROI lead types must be exactly the governed eight; got [${filters.leadTypes.join(', ')}]`, fam.kind, { leadTypes: filters.leadTypes })
     }
+    // Sales-only, first-class: a Filters tab that POSITIVELY selects Service/Parts in
+    // Lead Type or Lead Intent contaminates the schedule definition itself. Clean rows
+    // in one delivery do not cure it, so quarantine — never accept-and-flag. Exclusion
+    // filters ("Lead Sources Excluded: Service…") are never in leadTypes/leadIntents.
+    const positiveServiceParts = [...filters.leadTypes, ...filters.leadIntents].filter(isServiceParts)
+    if (positiveServiceParts.length > 0) {
+      return q('non-sales-lead-type', `Filters positively select Service/Parts ([${positiveServiceParts.join(', ')}]); a Sales-only scheduled report must select only Sales Lead Types and Lead Intents`, fam.kind, { positive_service_parts_filter: positiveServiceParts })
+    }
   }
   // ROI tenant dealer lives in Filters (no row Dealer column) — validate fail-closed.
   if (fam.dealerFromFilters) {
@@ -417,8 +430,10 @@ export function evaluateDelivery(
     if (!dealerMatches(opts.profileDealer, filters.dealers[0])) return q('wrong-dealer', `Filters dealer "${filters.dealers[0]}" ≠ target "${opts.profileDealer}"`, fam.kind, { dealer: filters.dealers[0] })
   }
 
-  // schedule-definition vulnerability: a Filters tab selecting Service/Parts.
-  const scheduleVulnerability = !!filters && [...filters.leadIntents, ...filters.leadTypes].some(isServiceParts)
+  // A positive Service/Parts Filters selection has already been quarantined above, so
+  // an accepted delivery is never "vulnerable-but-flagged": schedule_vulnerability is
+  // retained (always false on accept) only for envelope/back-compat stability.
+  const scheduleVulnerability = false
 
   // ROW-LEVEL validation (always, for families with rows): dealer-correct + Sales-domain
   const dealerCol = header.map.get('Dealer')

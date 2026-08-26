@@ -96,8 +96,15 @@ const ROI_COST_NOTE =
 
 // ── row helpers ─────────────────────────────────────────────────────────────
 
+/** Normalize a header/column name so native spaced VinSolutions headers ("Total
+ *  Leads") and underscored variants ("Total_Leads") are recognized as the same
+ *  column. Per operator decision (ROI Option A): Codex delivers the ORIGINAL native
+ *  spaced XLSX headers unchanged; the consumer aligns to them here rather than asking
+ *  the producer to rename native columns. Case-, space-, and underscore-insensitive. */
+const normColName = (s: string): string => s.trim().toLowerCase().replace(/[_\s]+/g, ' ')
 function colIndex(header: Array<string>, name: string): number {
-  return header.findIndex((h) => h.trim().toLowerCase() === name.toLowerCase())
+  const n = normColName(name)
+  return header.findIndex((h) => normColName(h) === n)
 }
 function cell(row: ActiveRow, name: string): string {
   const i = colIndex(row.header, name)

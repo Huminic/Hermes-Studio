@@ -16,19 +16,24 @@ async function post(filename: string, buf: Buffer) {
   return { status: res.status, body: (await res.json()) as Record<string, unknown> }
 }
 
-const ROI_HEADER = ['Dealer', 'Lead_Source', 'Total_Leads', 'Good_Leads', 'Sold_from_Leads']
+// Real Lead Source ROI: SPACED headers, NO Dealer column (dealer + period from
+// Filters), governed-eight Lead Types. (Was underscored/no-lead-types — that predated
+// the real-schema contract and no longer classifies.)
+const ROI_HEADER = ['Lead Source', 'Total Leads', 'Good Leads', 'Sold from Leads']
+const ROI_EIGHT = 'Import, Internet, Phone, PreviousCustomer, Referral, Walk-in, WebsiteChat, Wholesale'
 // Per-run nonce (benign Filters row) → fresh checksums each run, so the stateful
 // duplicate/supersession assertions stay deterministic against the live dev db.
 const NONCE = String(Date.now())
 const roiWb = (totalLeads: number) =>
   makeXlsx([
-    { name: 'Report', rows: [ROI_HEADER, ['Serra Honda of Sylacauga', 'Repeat Customer', totalLeads, totalLeads, 24]] },
-    { name: 'Filters', rows: [['Base Report Name', 'Lead Source ROI'], ['Dealers', 'Serra Honda'], ['Date Range', '2026-09-01 - 2026-09-07'], ['Run', NONCE]] },
+    { name: 'Report', rows: [ROI_HEADER, ['Repeat Customer', totalLeads, totalLeads, 24]] },
+    { name: 'Filters', rows: [['Base Report Name', 'Lead Source ROI'], ['Dealers', 'Serra Honda'], ['Lead Types', ROI_EIGHT], ['Date Range', '2026-09-01 - 2026-09-07'], ['Run', NONCE]] },
     { name: 'Sheet3', rows: [] },
   ])
 
-const CAGE_HEADER = ['User', 'Total Leads', 'Good Leads', 'Bad Leads', 'Sold from Leads', 'Total Calls', 'Total Emails', 'Total Texts', 'Total Facebook', 'Total Comms In', 'Total Comms Out', 'Total Comms', 'Active Tasks', 'Completed Tasks', 'Dismissed Tasks', 'Inactive Tasks', 'Missed Tasks', 'Deals from Leads', 'Leads Eligible for Deals', 'Deals from Leads %', 'Deals Created in Time Frame']
-const cageRow: Array<Cell> = ['Jane', 40, 30, 10, 5, 49, 526, 713, 3, 100, 200, 300, 2, 8, 1, 0, 3, 4, 10, '40%', 4]
+// Real Enterprise Performance (CAGE): Dealer | Lead Type | User summary rows.
+const CAGE_HEADER = ['Dealer', 'Lead Type', 'User', 'Total Leads', 'Good Leads', 'Bad Leads', 'Sold from Leads', 'Total Comms', 'Active Tasks']
+const cageRow: Array<Cell> = ['Serra Honda of Sylacauga', 'Internet', 'Jane', 40, 30, 10, 5, 300, 2]
 
 describe.skipIf(!hasServer)('XLSX ingest E2E (live dev endpoint :3510 → /srv/ingest-dev)', () => {
   it('accepts a valid Honda Lead Source ROI (Report+Filters+blank Sheet3)', async () => {

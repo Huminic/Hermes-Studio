@@ -44,17 +44,18 @@ describe('Sales Communication Log', () => {
     expect(evalXlsx(wb)).toMatchObject({ status: 'quarantined', reason: 'wrong-dealer' })
   })
 
-  it('VULNERABLE filter (selects Service/Parts) but all rows Sales → accepted + flag', () => {
+  // Operator correction 2026-08-25: a POSITIVE Service/Parts selection in the Filters
+  // (Lead Type or Lead Intent) is a contaminated schedule definition — it quarantines
+  // outright; clean rows do NOT cure it (was previously accept-and-flag).
+  it('POSITIVE Service/Parts Filters selection quarantines even with all rows Sales', () => {
     const wb = makeXlsx([
       { name: 'Report', rows: [COMM_HEADER, commRow('Internet')] },
       { name: 'Filters', rows: [['Lead Intents', 'Parts, Sales, Service, Unknown'], ['Dealers', 'Serra Honda']] },
     ])
-    const r = evalXlsx(wb)
-    expect(r.status).toBe('accepted')
-    if (r.status === 'accepted') expect(r.schedule_vulnerability).toBe(true)
+    expect(evalXlsx(wb)).toMatchObject({ status: 'quarantined', reason: 'non-sales-lead-type' })
   })
 
-  it('VULNERABLE filter AND a Service row → quarantine (never silently clean)', () => {
+  it('POSITIVE Service/Parts filter AND a Service row → still quarantine (never silently clean)', () => {
     const wb = makeXlsx([
       { name: 'Report', rows: [COMM_HEADER, commRow('Service')] },
       { name: 'Filters', rows: [['Lead Intents', 'Parts, Sales, Service'], ['Dealers', 'Serra Honda']] },
@@ -69,12 +70,12 @@ const cageRows = (o: { dealer?: string; leadType?: string } = {}): Array<Array<C
   [o.dealer ?? HONDA_ROW, '', '', 62, 55, 7, 3, 992, 73], // dealer summary row (blank Lead Type)
   [o.dealer ?? HONDA_ROW, o.leadType ?? 'Internet', 'Jane', 30, 28, 2, 2, 400, 20], // detail row
 ]
-const cageFilters = (o: { dealers?: string; leadTypes?: string } = {}): Array<Array<Cell>> => [
+const cageFilters = (o: { dealers?: string; leadTypes?: string; leadIntents?: string } = {}): Array<Array<Cell>> => [
   ['Filter Name', 'Number Selected', 'Selected Values'],
   ['Base Report Name', '1', 'Enterprise Performance'],
   ['Dealers', '1', o.dealers ?? HONDA_ROW],
   ['Lead Types', '3', o.leadTypes ?? 'Internet, Phone, Walk-in'],
-  ['Lead Intents', '4', 'Parts, Sales, Service, Unknown'],
+  ['Lead Intents', o.leadIntents ? String(o.leadIntents.split(',').length) : '1', o.leadIntents ?? 'Sales'],
   ['Date Range Begin', '1', 'Aug 17 2026 12:00AM'],
   ['Date Range End', '1', 'Aug 23 2026 11:59PM'],
 ]
@@ -152,7 +153,7 @@ const roiFilters = (o: { dealers?: string; leadTypes?: string } = {}): Array<Arr
   ['Base Report Name', '1', 'Lead Source ROI'],
   ['Dealers', '1', o.dealers ?? HONDA_ROW],
   ['Lead Types', '8', o.leadTypes ?? ROI_EIGHT],
-  ['Lead Intents', '4', 'Parts, Sales, Service, Unknown'],
+  ['Lead Intents', '1', 'Sales'],
   ['Lead Sources Excluded', '5', 'Service, Service Appraisal, Service Dept'],
   ['Date Range Begin', '1', 'Aug 17 2026 12:00AM'],
   ['Date Range End', '1', 'Aug 23 2026 11:59PM'],
@@ -160,14 +161,16 @@ const roiFilters = (o: { dealers?: string; leadTypes?: string } = {}): Array<Arr
 const roiWbC = (o = {}, extraSheet?: SheetSpec) => makeXlsx([{ name: 'Report', rows: [ROI_HEADER, ...roiRows(o)] }, { name: 'Filters', rows: roiFilters(o) }, extraSheet ?? { name: 'Sheet3', rows: [] }])
 
 describe('Lead Source ROI (real schema)', () => {
-  it('accepts: Base Report Name + single Filters dealer + governed 8 + Begin/End; Service in exclusions OK + vulnerability flagged', () => {
+  it('accepts: Base Report Name + single Filters dealer + governed 8 + Begin/End; Service ONLY in exclusions is OK', () => {
     const r = evalXlsx(roiWbC())
     expect(r.status).toBe('accepted')
     if (r.status === 'accepted') {
       expect(r.kind).toBe('lead_source_roi')
       expect(r.dealer).toBe(HONDA_ROW)
       expect(r.period).toEqual({ start: '2026-08-17', end: '2026-08-23' })
-      expect(r.schedule_vulnerability).toBe(true) // Lead Intents implicitly include Parts/Service — preserved, not disqualifying
+      // "Lead Sources Excluded: Service…" is proof of exclusion, not contamination →
+      // accepted; a positive Service/Parts selection would have quarantined (below).
+      expect(r.schedule_vulnerability).toBe(false)
     }
   })
   it('quarantines lead types != the governed eight', () => {
@@ -184,6 +187,34 @@ describe('Lead Source ROI (real schema)', () => {
   })
   it('quarantines a non-blank uncontracted sheet', () => {
     expect(evalXlsx(roiWbC({}, { name: 'Sheet3', rows: [['unexpected', 'content']] }))).toMatchObject({ status: 'quarantined', reason: 'extra-nonblank-sheet' })
+  })
+})
+
+// ── Positive Service/Parts Filters selection is first-class contamination ──
+describe('positive Service/Parts Filters selection → quarantine (operator correction)', () => {
+  it('CAGE with a positive Service/Parts Lead Intent quarantines (clean rows do not cure it)', () => {
+    const wb = makeXlsx([
+      { name: 'Report', rows: [CAGE_HEADER, ...cageRows()] },
+      { name: 'Filters', rows: cageFilters({ leadIntents: 'Sales, Service, Parts' }) },
+    ])
+    expect(evalXlsx(wb)).toMatchObject({ status: 'quarantined', reason: 'non-sales-lead-type' })
+  })
+  it('ROI with a positive Service Lead Intent quarantines even though exclusions also list Service', () => {
+    const wb = makeXlsx([
+      { name: 'Report', rows: [ROI_HEADER, ...roiRows()] },
+      { name: 'Filters', rows: [
+        ['Filter Name', 'Number Selected', 'Selected Values'],
+        ['Base Report Name', '1', 'Lead Source ROI'],
+        ['Dealers', '1', HONDA_ROW],
+        ['Lead Types', '8', ROI_EIGHT],
+        ['Lead Intents', '2', 'Sales, Service'],
+        ['Lead Sources Excluded', '5', 'Service, Service Appraisal, Service Dept'],
+        ['Date Range Begin', '1', 'Aug 17 2026 12:00AM'],
+        ['Date Range End', '1', 'Aug 23 2026 11:59PM'],
+      ] },
+      { name: 'Sheet3', rows: [] },
+    ])
+    expect(evalXlsx(wb)).toMatchObject({ status: 'quarantined', reason: 'non-sales-lead-type' })
   })
 })
 
