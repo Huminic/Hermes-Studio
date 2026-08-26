@@ -82,9 +82,8 @@ export const Route = createFileRoute('/api/ingest/dry-run-bundle')({
         // sales_only.state / pii_minimization.state — accept either.
         if (val.sales_only_proved !== true && !isPassed((man.sales_only ?? {}).state)) return bad('sales_only not proved')
         if (val.pii_minimized !== true && !isPassed((man.pii_minimization ?? {}).state)) return bad('pii not minimized')
-        // validation.state (if the producer declares it) must be the isolated-dev gate
-        const vstate = String(val.state ?? man.validation_state ?? '')
-        if (vstate && vstate !== 'ready_for_isolated_dev') return bad('validation.state must be ready_for_isolated_dev')
+        // validation.state is MANDATORY and must be the isolated-dev gate (matches frozen §A.3)
+        if (String(val.state ?? man.validation_state ?? '') !== 'ready_for_isolated_dev') return bad('validation.state must be ready_for_isolated_dev')
 
         // ── decode + integrity: envelope sha == recomputed == manifest binding ──
         const rawBuf = decodeBase64Strict(String(raw.content_base64 ?? ''))

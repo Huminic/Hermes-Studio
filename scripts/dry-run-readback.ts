@@ -48,6 +48,17 @@ function nyDate(iso: string): string | null {
   const y = p.find((x) => x.type === 'year')?.value, m = p.find((x) => x.type === 'month')?.value, d = p.find((x) => x.type === 'day')?.value
   return y && m && d ? `${y}-${m}-${d}` : null
 }
+/** UTC ISO → ISO-8601 wall time in America/New_York WITH numeric offset: YYYY-MM-DDTHH:mm:ss±HH:MM. */
+function nyDateTime(iso: string): string | null {
+  const t = Date.parse((iso ?? '').trim())
+  if (Number.isNaN(t)) return null
+  const p = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZoneName: 'longOffset' }).formatToParts(new Date(t))
+  const g = (k: string) => p.find((x) => x.type === k)?.value ?? ''
+  let hh = g('hour'); if (hh === '24') hh = '00'
+  const off = (p.find((x) => x.type === 'timeZoneName')?.value ?? '').match(/GMT([+-])(\d{1,2})(?::?(\d{2}))?/)
+  const sign = off ? off[1] : '+', oh = off ? off[2].padStart(2, '0') : '00', om = off && off[3] ? off[3] : '00'
+  return `${g('year')}-${g('month')}-${g('day')}T${hh}:${g('minute')}:${g('second')}${sign}${oh}:${om}`
+}
 const multisetEq = (a: Array<string>, b: Array<string>) => { if (a.length !== b.length) return false; const A = [...a].sort(), B = [...b].sort(); return A.every((v, i) => v === B[i]) }
 
 type Check = { name: string; ok: boolean; detail: string }
@@ -162,7 +173,8 @@ if (rawBuf) {
   const exclude = new Set([...PROVENANCE_COLS.map((s) => s.toLowerCase()), ...localCols])
   const shared = dHead.filter((h) => rHas(h) && !exclude.has(h.toLowerCase()))
   add('comparable native columns present', shared.length >= REQUIRED_CORE.length, `${shared.length} shared native columns`)
-  const enc = (row: Array<string>, idxOf: (n: string) => number) => shared.map((c) => (row[idxOf(c)] ?? '').trim()).join('␟')
+  // collision-safe encoding: JSON-array serialization (no in-data delimiter can forge a match)
+  const enc = (row: Array<string>, idxOf: (n: string) => number) => JSON.stringify(shared.map((c) => (row[idxOf(c)] ?? '').trim()))
   // FULL retained-field tuple multiset (all shared cols) — duplicate-safe: two differing raw
   // duplicates cannot be replaced by two copies of one row.
   const tupRaw: Array<string> = []
@@ -171,15 +183,20 @@ if (rawBuf) {
   for (const dr of dData) { const id = dLid >= 0 ? (dr[dLid] ?? '').trim() : ''; const utc = dAdt >= 0 ? (dr[dAdt] ?? '').trim() : ''; if (!id || !utc) blankKey++; tupDer.push(enc(dr, dIdx)) }
   add('accepted rows: FULL retained-field multiset raw==derivative (all shared cols + multiplicity)', multisetEq(tupRaw, tupDer), `raw ${tupRaw.length} vs derivative ${tupDer.length} tuples`)
   add('no blank accepted identities', blankKey === 0, `${blankKey} blank accepted identity(ies)`)
-  // Additive local fields: recompute each declared local column from its UTC source (date kind).
-  let localBad = 0, localUnk = 0
+  // Additive local fields: recompute each declared local column from its UTC source. 'date' →
+  // YYYY-MM-DD; 'datetime' → ISO-8601 NY offset. Unknown kind, missing column, or an undeclared
+  // local-looking column ALL FAIL (never a silent pass).
+  let localBad = 0
+  const declaredLocal = new Set(localFields.map((f) => String(f.local_col ?? f.column ?? '').toLowerCase()))
   for (const f of localFields) {
-    const li = dIdx(String(f.local_col ?? f.column ?? '')), ui = dIdx(String(f.utc_col ?? f.source_utc ?? '')), kind = String(f.kind ?? 'date')
+    const li = dIdx(String(f.local_col ?? f.column ?? '')), ui = dIdx(String(f.utc_col ?? f.source_utc ?? '')), kind = String(f.kind ?? '')
     if (li < 0 || ui < 0) { localBad++; continue }
-    if (kind !== 'date') { localUnk++; continue }
-    for (const dr of dData) { const want = nyDate((dr[ui] ?? '').trim()); if (want !== null && (dr[li] ?? '').trim() !== want) localBad++ }
+    const recompute = kind === 'date' ? nyDate : kind === 'datetime' ? nyDateTime : null
+    if (!recompute) { localBad++; continue } // unknown/undeclared kind FAILS
+    for (const dr of dData) { const want = recompute((dr[ui] ?? '').trim()); if (want !== null && (dr[li] ?? '').trim() !== want) localBad++ }
   }
-  add('additive local date fields recomputed', localBad === 0, `${localBad} mismatch(es)${localUnk ? `; ${localUnk} non-date local field(s) need a declared format` : ''}`)
+  const undeclaredLocal = dHead.filter((h) => /local$/i.test(h) && !declaredLocal.has(h.toLowerCase()))
+  add('every additive local field declared + recomputed', localBad === 0 && undeclaredLocal.length === 0, `${localBad} recompute/kind failure(s); undeclared local col(s): [${undeclaredLocal.join(', ')}]`)
 }
 // manifest count / byte reconciliation vs the actual files (reconcile-if-declared)
 add('manifest raw rows == actual', cov.total_rows == null || Number(cov.total_rows) === rTotal, `declared ${cov.total_rows} vs actual ${rTotal}`)

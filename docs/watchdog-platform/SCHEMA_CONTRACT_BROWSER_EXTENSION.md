@@ -88,10 +88,20 @@ derivative **bytes/checksums remain unchanged**. Field names/values are exact.
     "rows":     0,   // == coverage.accepted_rows
     "columns":  0,   // == headers.length
     "bytes":    0,   // == actual derivative byte length
-    "local_fields": [   // EVERY additive local-time column + its UTC source + kind, so the consumer recomputes it
-      { "local_col": "activityDateLocal", "utc_col": "activityDateTimeUtc", "kind": "date" }
-      // …plus the sold / task-due / first-contacted / appointment / visit-start local pairs, each declared…
+    "local_fields": [   // EVERY additive local column + its UTC source + kind. Consumer recomputes + verifies each.
+      { "local_col": "activityDateLocal",                   "utc_col": "activityDateTimeUtc",                 "kind": "date" },
+      { "local_col": "activityDateTimeLocal",               "utc_col": "activityDateTimeUtc",                 "kind": "datetime" },
+      { "local_col": "soldDateLocal",                       "utc_col": "soldDateUtc",                         "kind": "datetime" },
+      { "local_col": "unansweredCommunication.taskDueDateLocal", "utc_col": "unansweredCommunication.taskDueDateUtc", "kind": "datetime" },
+      { "local_col": "customerFirstContactedLocal",         "utc_col": "customerFirstContactedUtc",           "kind": "datetime" },
+      { "local_col": "appointmentLocal",                    "utc_col": "appointmentUtc",                      "kind": "datetime" },
+      { "local_col": "visitStartTimeLocal",                 "utc_col": "visitStartTimeUtc",                   "kind": "datetime" }
     ]
+    // datetime kind format (exact): ISO-8601 wall time in America/New_York with numeric offset —
+    //   YYYY-MM-DDTHH:mm:ss±HH:MM (e.g. 2026-08-18T10:00:00-04:00). date kind: YYYY-MM-DD.
+    // The exact producer local_col names may differ — declare the real ones; every additive local
+    // column MUST be declared. An unknown kind, a missing utc_col, or ANY derivative column whose
+    // name ends in "Local" that is NOT declared here FAILS the readback (never a silent pass).
   },
   "coverage": {
     "start": "YYYY-MM-DD", "end": "YYYY-MM-DD", "timezone": "America/New_York",
