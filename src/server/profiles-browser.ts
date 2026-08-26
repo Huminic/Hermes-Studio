@@ -35,7 +35,11 @@ export type ProfileDetail = {
  * This is the fail-closed isolation boundary for the :3730 harness.
  */
 function isolatedProfilesRoot(): string | null {
-  const override = process.env.STUDIO_PROFILES_ROOT?.trim()
+  // Honor an explicit STUDIO_PROFILES_ROOT, else the established isolation env
+  // BRAIN_PROFILES_ROOT (the same root the data layer already uses). When either
+  // is set, ALL profile config resolves under the isolated root with NO
+  // production (~/.hermes) fallback — the fail-closed isolation boundary.
+  const override = (process.env.STUDIO_PROFILES_ROOT || process.env.BRAIN_PROFILES_ROOT)?.trim()
   return override ? path.resolve(override) : null
 }
 
