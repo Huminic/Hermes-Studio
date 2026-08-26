@@ -2,6 +2,13 @@
 
 **Last verified:** 2026-07-17
 
+### [HUM-VIN-006 — 2026-08-26] Non-blocking caveat: pre-existing Studio-wide React 418 hydration mismatch (NOT VIN-006)
+- **Observed:** the built isolated `:3720` runtime (`node server-entry.js` over the `vite build` output) logs a minified React #418 hydration mismatch on each route during the browser acceptance. Data renders and the one authorized inert-notification click succeeded (React recovers by client re-rendering).
+- **Attribution:** studio-wide + pre-existing, NOT attributable to the VIN-006 routes. The shared root (`src/routes/__root.tsx`) uses `shellComponent: RootDocument` — the server renders the shell document and route content is client-rendered/hydrated; the app root div is server-rendered empty for BOTH the pre-existing dashboard route and the new `/dev/vin006/$profile` route. The VIN-006 route component is hydration-symmetric (renders `Loading…` on both SSR and first client render; no Date/random/window in render). It affects the production deploy shell equally.
+- **Impact:** cosmetic console warning only; no functional impact on the acceptance (data + authorized record confirmed).
+- **Scope note:** deliberately NOT fixed here — a fix would modify shared studio SSR (`__root.tsx`/`router.tsx`), which is outside the bounded isolated-dev acceptance goal. Left for a separate shared-scope task if desired.
+- **Status:** OPEN — non-blocking caveat.
+
 ### [HUM-VIN-006 — 2026-08-26, dev/ingest-endpoint] Honest record: transient RT v2 readback provenance defect + non-preserving replacement (isolated dev)
 - **What happened (recorded honestly, not reconstructed):** the DEV Response Times→analytics consumer first wrote v2 readbacks whose `provenance.supersedes.analytics_schema` was `(none)`. Cause: the revision resolver read `existing.provenance.analytics_schema`, but the earlier provisional readbacks carried the schema under `provenance.schema`. To correct attribution I restored each archived v1 to the pointer and re-revised. **That replacement did NOT preserve the FIRST (defective) v2 bytes** — they are not in `superseded/` and were not reconstructed. Only the original v1 content is archived.
 - **Current state (verified):** each profile's `response-times/<period>/readback.json` is the corrected v2 (immutable 0444) and correctly names the archived v1 (`supersedes.analytics_schema = …analytics_readback.v1`). The archived v1 (`superseded/<sha>.readback.json`) is content-addressed, byte-identical to its name-hash (content intact), restored to immutable 0444.
