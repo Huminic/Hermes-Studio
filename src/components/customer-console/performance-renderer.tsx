@@ -302,7 +302,7 @@ export function CustomerPerformanceRenderer(props: {
             Lead funnel, pipeline, and AI activity — last {windowDays} days vs the prior {windowDays}.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex gap-1 rounded-lg border border-slate-200 bg-white p-1">
             {WINDOWS.map((w) => {
               const active = windowDays === w.id
