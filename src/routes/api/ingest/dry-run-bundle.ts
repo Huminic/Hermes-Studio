@@ -23,13 +23,16 @@ import { json } from '@tanstack/react-start'
 import { requireJsonContentType } from '../../../server/rate-limit'
 import { decodeBase64Strict, verifyIngestSecret } from '../../../server/ingest-auth'
 import { isHoldEligible } from '../../../server/ingest/hold-store'
+import { isSafeDeliveryFilename } from '../../../server/ingest/safe-filename'
 
 const INBOUND = '/srv/ingest-dev/dry-run/inbound'
 const VIN_HOST = 'vinsolutions.app.coxautoinc.com'
 const GOVERNED: Record<string, string> = { 'serra-honda': '21043', 'serra-nissan': '21044', 'tony-serra-ford': '21047' }
 const HEX64 = /^[0-9a-f]{64}$/
 const SAFE_ID = /^[A-Za-z0-9_-]+$/ // no dots, no separators
-const SAFE_FILE = /^[A-Za-z0-9][A-Za-z0-9._-]*\.(csv|json)$/ // simple filename, no leading dot, no separators
+// raw/derivative filename safety lives in isSafeDeliveryFilename (accepts real browser
+// basenames with spaces + parentheses, e.g. "OPPORTUNITIES (3).csv"; rejects separators,
+// traversal, control chars, absolute paths, non-.csv).
 const sha256hex = (b: Buffer) => createHash('sha256').update(b).digest('hex')
 const bad = (error: string, status = 400) => json({ ok: false, error }, { status })
 
@@ -54,7 +57,7 @@ export const Route = createFileRoute('/api/ingest/dry-run-bundle')({
         // ── identity + path-safety ──
         if (!isHoldEligible(profile)) return bad(`profile '${profile}' not eligible`, 403)
         if (!SAFE_ID.test(captureId)) return bad('capture_id must match [A-Za-z0-9_-]+ (no dots/separators)')
-        if (!SAFE_FILE.test(rawFile) || !SAFE_FILE.test(derFile)) return bad('unsafe raw/derivative filename')
+        if (!isSafeDeliveryFilename(rawFile) || !isSafeDeliveryFilename(derFile)) return bad('unsafe raw/derivative filename')
         if (rawFile === 'manifest.v1.json' || derFile === 'manifest.v1.json') return bad('filename collides with manifest')
         let host: string | null = null
         try { host = new URL(sourceUrl).hostname.toLowerCase() } catch { host = null }
