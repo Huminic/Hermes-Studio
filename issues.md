@@ -2,6 +2,13 @@
 
 **Last verified:** 2026-07-17
 
+### [HUM-VIN-006 — 2026-08-26, dev/ingest-endpoint] Honest record: transient RT v2 readback provenance defect + non-preserving replacement (isolated dev)
+- **What happened (recorded honestly, not reconstructed):** the DEV Response Times→analytics consumer first wrote v2 readbacks whose `provenance.supersedes.analytics_schema` was `(none)`. Cause: the revision resolver read `existing.provenance.analytics_schema`, but the earlier provisional readbacks carried the schema under `provenance.schema`. To correct attribution I restored each archived v1 to the pointer and re-revised. **That replacement did NOT preserve the FIRST (defective) v2 bytes** — they are not in `superseded/` and were not reconstructed. Only the original v1 content is archived.
+- **Current state (verified):** each profile's `response-times/<period>/readback.json` is the corrected v2 (immutable 0444) and correctly names the archived v1 (`supersedes.analytics_schema = …analytics_readback.v1`). The archived v1 (`superseded/<sha>.readback.json`) is content-addressed, byte-identical to its name-hash (content intact), restored to immutable 0444.
+- **Fixes:** resolver now falls back `analytics_schema ?? schema ?? (none)`; the consumer chmods archived evidence to 0444; a test asserts archived evidence is 0444; a test covers the legacy `provenance.schema` attribution. Content-addressed archive (collision-free) with byte-identical verification; never `rmSync` on evidence.
+- **Impact:** none to real evidence — the hold volume and the dry-run bundle/readback (the authoritative sources) were never touched; the RT analytical readbacks are fully re-derivable from them. The lost artifact was a transient, pre-acceptance, defective computed pointer.
+- **Status:** RESOLVED (recorded for audit). Isolated dev only; no production/shared changes.
+
 ### [HUM-VIN-006 — 2026-08-26, dev/ingest-endpoint] BLOCKER: 11 of 14 selected native held originals fail the CURRENT Sales-only contract (Service/Parts)
 - **How found:** while fixing the hold replay/idempotency precedence (below), a mandated classifier-regression check re-ran the CURRENT classifier against the immutable held originals (read-only; classified into a throwaway `INGEST_HOLD_ROOT`, evidence not mutated).
 - **Finding:** the held dispositions were captured 2026-08-25 ~08:39Z under a pre-enforcement classifier. Under the CURRENT contract, **11 of the 14 selected native originals re-QUARANTINE** with `non-sales-lead-type`, detail *"Filters positively select Service/Parts ([Parts, Service])"* — the reports' Filters tab positively selects `Parts, Service` in Lead Types/Intents, which the Sales-only contract (issue below, 2026-08-25 §1) treats as a scheduled-report misconfiguration.
