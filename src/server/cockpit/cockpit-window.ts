@@ -56,6 +56,9 @@ export type CockpitWindow = {
   replied: number
   conversed: number
   intent: number
+  /** Customers silent after the first touch who replied only after a follow-up
+   *  (≥2 outbound touches precede their first inbound) — the safety-net saves. */
+  resurrections: number
   ah_threads: number
   after_hours_pct: number
   median_reply_secs: number | null
@@ -93,6 +96,7 @@ export function computeCockpitWindow(input: ComputeInputs): CockpitWindow {
   const replied = new Set<string>()
   const conversed = new Set<string>()
   const intent = new Set<string>()
+  const resurrections = new Set<string>()
   const channels: Record<string, number> = {}
   let ahThreads = 0
   const latencies: Array<number> = []
@@ -113,6 +117,11 @@ export function computeCockpitWindow(input: ComputeInputs): CockpitWindow {
       replied.add(cid)
       if (ins.length >= 2) conversed.add(cid)
       if (ins.some((m) => INTENT_RE.test(m.content ?? ''))) intent.add(cid)
+      // Resurrection: the customer's first reply came only after ≥2 outbound touches
+      // (they were silent after touch #1 and revived by the follow-up safety net).
+      const firstIn = Math.min(...ins.map((m) => m.created_at))
+      const outsBefore = outs.filter((m) => m.created_at < firstIn).length
+      if (outsBefore >= 2) resurrections.add(cid)
     }
     if (ins.length && outs.length) {
       const fo = outs[0]
@@ -148,6 +157,7 @@ export function computeCockpitWindow(input: ComputeInputs): CockpitWindow {
     replied: replied.size,
     conversed: conversed.size,
     intent: intent.size,
+    resurrections: resurrections.size,
     ah_threads: ahThreads,
     after_hours_pct:
       wthreads.length > 0 ? Math.round((1000 * ahThreads) / wthreads.length) / 10 : 0,

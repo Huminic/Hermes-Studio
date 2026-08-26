@@ -32,6 +32,11 @@ const TAB_TO_RENDERER: Record<string, string> = {
   data: 'customer-console.infostore',
   cockpit: 'customer-console.cockpit',
   issues: 'customer-console.issues',
+  'ai-activity': 'customer-console.ai-activity',
+  pipeline: 'customer-console.pipeline',
+  leads: 'customer-console.leads',
+  sales: 'customer-console.sales',
+  custom: 'customer-console.custom',
   dashboard: 'customer-console.performance',
   comms: 'customer-console.comms',
   campaigns: 'customer-console.campaigns',
@@ -234,12 +239,19 @@ function StorefrontTabRoute() {
     label: string
     icon: IconSvgElement
   }> = [
+    // The 8 dashboard tabs (Dashboard, Issues, AI Activity, Pipeline, Leads,
+    // Sales, Marketing, Custom) …
     { id: 'cockpit', label: 'Dashboard', icon: Chart01Icon },
     { id: 'issues', label: 'Issues', icon: Notification03Icon },
-    { id: 'dashboard', label: 'Reports', icon: Chart01Icon },
-    { id: 'chat', label: 'Chat', icon: Message01Icon },
-    { id: 'comms', label: 'Teambox', icon: InboxIcon },
+    { id: 'ai-activity', label: 'AI Activity', icon: Activity01Icon },
+    { id: 'pipeline', label: 'Pipeline', icon: Chart01Icon },
+    { id: 'leads', label: 'Leads', icon: Message01Icon },
+    { id: 'sales', label: 'Sales', icon: Chart01Icon },
     { id: 'campaigns', label: 'Marketing', icon: Megaphone01Icon },
+    { id: 'custom', label: 'Custom', icon: GridIcon },
+    // … then the retained workspace surfaces (nothing lost).
+    { id: 'comms', label: 'Teambox', icon: InboxIcon },
+    { id: 'chat', label: 'Chat', icon: Message01Icon },
     { id: 'agents', label: 'Agents', icon: Robot01Icon },
     { id: 'tools', label: 'Storefront', icon: GridIcon },
     { id: 'notifications', label: 'Notifications', icon: Notification03Icon },

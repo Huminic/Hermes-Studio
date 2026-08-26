@@ -10,15 +10,25 @@ import { Gauge } from './Gauge'
 import { Odometer } from './Odometer'
 import { PowerPacks } from './PowerPacks'
 import { AskAi } from './AskAi'
+import { ImpactBoard } from './ImpactBoard'
+import { EngagementLadder } from './EngagementLadder'
+import { NightResurrections } from './NightResurrections'
+import { AlertModal } from '../AlertModal'
 import type { Heartbeats } from './power-packs'
+import type { ImpactMetric, LadderRung } from '../../../server/cockpit/cockpit-data'
 import './cockpit.css'
 
 type GaugeView = { value: number | null; display: string; sub: string }
+type NightShift = { after_hours_pct: number; ah_threads: number; median_reply_secs: number | null; resurrections: number }
 type CockpitView = {
   reach: GaugeView
   night: GaugeView
   odometer: number
   median_reply_secs: number | null
+  impact: Array<ImpactMetric>
+  ladder: Array<LadderRung>
+  night_shift: NightShift
+  accent: string
   heartbeats: Heartbeats
   window_days: number
 }
@@ -33,6 +43,7 @@ export function DashboardLanding({
   const [view, setView] = useState<CockpitView | null>(null)
   const [err, setErr] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [alertOpen, setAlertOpen] = useState(false)
 
   useEffect(() => {
     let live = true
@@ -56,7 +67,23 @@ export function DashboardLanding({
   }, [profile, windowDays])
 
   return (
-    <div className="cockpit" style={{ padding: 20, minHeight: '100%' }}>
+    <div
+      className="cockpit"
+      style={{ padding: 20, minHeight: '100%', ...(view?.accent ? { ['--accent' as string]: view.accent } : {}) }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+        <button
+          type="button"
+          onClick={() => setAlertOpen(true)}
+          style={{
+            background: view?.accent ?? '#4c8df6', color: '#fff', border: 'none',
+            borderRadius: 8, padding: '8px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+          }}
+        >
+          + Create alert
+        </button>
+      </div>
+
       <div className="panel" style={{ padding: 20 }}>
         <div className="cockpit-gauges">
           <div className="gslot coolg">
@@ -98,6 +125,24 @@ export function DashboardLanding({
         )}
       </div>
 
+      {view?.impact && view.impact.length > 0 && (
+        <div style={{ marginTop: 20 }}>
+          <ImpactBoard metrics={view.impact} accent={view.accent} />
+        </div>
+      )}
+
+      {view?.ladder && view.ladder.length > 0 && (
+        <div style={{ marginTop: 20 }}>
+          <EngagementLadder rungs={view.ladder} accent={view.accent} />
+        </div>
+      )}
+
+      {view?.night_shift && (
+        <div style={{ marginTop: 20 }}>
+          <NightResurrections data={view.night_shift} accent={view.accent} />
+        </div>
+      )}
+
       <div style={{ marginTop: 20 }}>
         <AskAi profile={profile} windowDays={windowDays} />
       </div>
@@ -105,6 +150,8 @@ export function DashboardLanding({
       <div style={{ marginTop: 20 }}>
         <PowerPacks heartbeats={view?.heartbeats ?? {}} />
       </div>
+
+      {alertOpen && <AlertModal profile={profile} onClose={() => setAlertOpen(false)} />}
     </div>
   )
 }

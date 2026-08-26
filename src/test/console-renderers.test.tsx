@@ -15,6 +15,11 @@ import { defaultStudioConfig } from '@/lib/studio-config'
 const EXPECTED_KEYS = [
   'customer-console.cockpit',
   'customer-console.issues',
+  'customer-console.ai-activity',
+  'customer-console.pipeline',
+  'customer-console.leads',
+  'customer-console.sales',
+  'customer-console.custom',
   'customer-console.chat',
   'customer-console.agents',
   'customer-console.infostore',

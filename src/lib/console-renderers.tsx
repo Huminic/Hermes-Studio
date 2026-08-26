@@ -447,6 +447,25 @@ function PerformanceRenderer(props: ConsoleRendererProps) {
   )
 }
 
+/** Promoted top-level tabs — each locks the performance view to one sub-section. */
+function makePerfTab(initialTab: 'funnel' | 'leads' | 'pipeline' | 'ai' | 'custom') {
+  return function PerfTabRenderer(props: ConsoleRendererProps) {
+    return (
+      <CustomerPerformanceRenderer
+        profile={props.profile}
+        config={props.config}
+        initialTab={initialTab}
+        lockTab
+      />
+    )
+  }
+}
+const AiActivityRenderer = makePerfTab('ai')
+const PipelineRenderer = makePerfTab('pipeline')
+const LeadsRenderer = makePerfTab('leads')
+const SalesRenderer = makePerfTab('funnel')
+const CustomRenderer = makePerfTab('custom')
+
 function CommsRenderer(props: ConsoleRendererProps) {
   return <CustomerCommsRenderer profile={props.profile} config={props.config} />
 }
@@ -509,6 +528,11 @@ function IssuesRenderer(props: ConsoleRendererProps) {
 export const consoleRenderers: Record<string, ConsoleRenderer> = {
   'customer-console.cockpit': CockpitRenderer,
   'customer-console.issues': IssuesRenderer,
+  'customer-console.ai-activity': AiActivityRenderer,
+  'customer-console.pipeline': PipelineRenderer,
+  'customer-console.leads': LeadsRenderer,
+  'customer-console.sales': SalesRenderer,
+  'customer-console.custom': CustomRenderer,
   'customer-console.chat': ChatRenderer,
   'customer-console.agents': AgentsRenderer,
   'customer-console.infostore': InfoStoreRenderer,

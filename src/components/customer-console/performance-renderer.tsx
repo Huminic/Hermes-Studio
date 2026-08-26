@@ -213,8 +213,12 @@ function fmt(value: number | null, unit: MetricUnit): string {
 export function CustomerPerformanceRenderer(props: {
   profile: string
   config: StudioConfig
+  /** Start on a specific sub-view (used when this renders a promoted top-level tab). */
+  initialTab?: TabId
+  /** When true, hide the sub-tab nav (this IS a single top-level tab). */
+  lockTab?: boolean
 }) {
-  const [tab, setTab] = useState<TabId>('funnel')
+  const [tab, setTab] = useState<TabId>(props.initialTab ?? 'funnel')
   const [windowDays, setWindowDays] = useState<Win>(30)
   const [data, setData] = useState<DashboardPayload | null>(null)
   const [reports, setReports] = useState<Reports | null>(null)
@@ -338,7 +342,8 @@ export function CustomerPerformanceRenderer(props: {
         </div>
       </div>
 
-      {/* Tab bar — standardized to the Marketing/Campaigns tab style. */}
+      {/* Tab bar — hidden when this view IS a single promoted top-level tab. */}
+      {!props.lockTab && (
       <div className="-mx-1 overflow-x-auto px-1">
         <div
           role="tablist"
@@ -368,6 +373,7 @@ export function CustomerPerformanceRenderer(props: {
           })}
         </div>
       </div>
+      )}
 
       {tab === 'funnel' && <FunnelView funnel={data.funnel} />}
       {tab === 'leads' && <LeadsView leads={data.leads} leadSources={data.funnel.lead_sources} />}

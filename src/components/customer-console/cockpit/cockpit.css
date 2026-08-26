@@ -235,3 +235,75 @@
     animation: none;
   }
 }
+
+/* AI Impact Board — top-line five with WoW arrows (direction=arrow, goodness=color). */
+.cockpit .impact-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+@media (max-width: 900px) {
+  .cockpit .impact-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.cockpit .impact-card {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 14px 12px;
+}
+.cockpit .impact-value {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.cockpit .impact-arrow { font-size: 14px; font-weight: 700; }
+.cockpit .impact-arrow.good { color: var(--good); }
+.cockpit .impact-arrow.bad { color: var(--hot); }
+.cockpit .impact-label {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--txt-2);
+}
+.cockpit .impact-note {
+  margin-top: 4px;
+  font-size: 10px;
+  color: var(--standby);
+}
+
+/* Engagement Ladder — New Buyer Funnel Facts (horizontal step bars). */
+.cockpit .ladder-rows { display: flex; flex-direction: column; gap: 10px; }
+.cockpit .ladder-row {
+  display: grid;
+  grid-template-columns: 130px 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+@media (max-width: 640px) {
+  .cockpit .ladder-row { grid-template-columns: 100px 1fr; }
+  .cockpit .ladder-count { grid-column: 2; text-align: right; }
+}
+.cockpit .ladder-label { font-size: 12px; color: var(--txt-2); }
+.cockpit .ladder-bar-wrap {
+  height: 22px;
+  background: var(--surface-2);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.cockpit .ladder-bar {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.4s ease;
+  min-width: 3px;
+}
+.cockpit .ladder-count { font-size: 13px; font-weight: 600; white-space: nowrap; }
+.cockpit .ladder-conv { font-weight: 400; font-size: 11px; color: var(--txt-2); }
+.cockpit .ladder-note { font-weight: 400; font-size: 11px; color: var(--standby); }
+
+/* Night Shift & Resurrections — paired coverage panel. */
+.cockpit .nr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 640px) { .cockpit .nr-grid { grid-template-columns: 1fr; } }
+.cockpit .nr-big { font-size: 34px; font-weight: 700; letter-spacing: -0.01em; margin-top: 4px; }
+.cockpit .nr-sub { font-size: 12px; color: var(--txt-2); margin-top: 4px; }

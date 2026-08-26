@@ -82,6 +82,30 @@ describe('computeCockpitWindow (port of compute_window)', () => {
     expect(w.median_reply_secs).toBe(8) // latencies [4,8]; index floor(2/2)=1 => 8 (matches compute.py)
   })
 
+  it('counts a resurrection: ≥2 outbound touches before the first inbound (silent then revived)', () => {
+    const threads: Array<HubThread> = [
+      { id: 'r1', contact_handle: '+1999', channel: 'sms', created_at: CDT('2026-08-17', 13) },
+      { id: 'r2', contact_handle: '+1888', channel: 'sms', created_at: CDT('2026-08-17', 13) },
+    ]
+    const messagesByThread = new Map<string, Array<HubMessage>>([
+      // r1: outbound (touch 1) → outbound (follow-up) → inbound reply ⇒ resurrection
+      ['r1', [
+        { thread_id: 'r1', direction: 'outbound', created_at: CDT('2026-08-17', 13) },
+        { thread_id: 'r1', direction: 'outbound', created_at: CDT('2026-08-18', 13) },
+        { thread_id: 'r1', direction: 'inbound', created_at: CDT('2026-08-18', 14) },
+      ]],
+      // r2: replied after ONE outbound ⇒ NOT a resurrection
+      ['r2', [
+        { thread_id: 'r2', direction: 'outbound', created_at: CDT('2026-08-17', 13) },
+        { thread_id: 'r2', direction: 'inbound', created_at: CDT('2026-08-17', 14) },
+      ]],
+    ])
+    const handleToContact = new Map([['+1999', 'R1'], ['+1888', 'R2']])
+    const w = computeCockpitWindow({ threads, messagesByThread, handleToContact, bh: BH, sinceMs: since })
+    expect(w.resurrections).toBe(1)
+    expect(w.replied).toBe(2)
+  })
+
   it('excludes threads created before the window', () => {
     const threads: Array<HubThread> = [
       { id: 'old', contact_handle: 'a', channel: 'sms', created_at: since - 1 },
