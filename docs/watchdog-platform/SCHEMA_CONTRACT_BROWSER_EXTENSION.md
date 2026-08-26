@@ -1,6 +1,11 @@
 # Codex ⇄ Ingest Data-Prep Contract — BROWSER-ACQUIRED FAMILIES (extension)
 
-**Status:** PROPOSED — not yet implemented in the consumer, not yet agreed. This is the reaction surface for the browser-scraped families so they can be added **without delaying** the six native XLSX families (which are agreed; see `SCHEMA_CONTRACT.md`).
+**Status (per family, reconciled 2026-08-26):**
+- **§A Response Times — AGREED + IMPLEMENTED in the consumer.** The canonical v1 derivative manifest is frozen (§A.3, 2026-08-26) and enforced end-to-end: the DEV `POST /api/ingest/dry-run-bundle` edge validates the exact `schema_version`/`derivative_version`/`validation.state`, rooftop→governed-dealer binding, sha256 triple-binding, and PII/sales-only gates; the independent `scripts/dry-run-readback.ts` reconcile re-derives every field (provenance, NY-local in-window, full-field-equality multiset, excluded-event multiset, additive local fields) and QUARANTINEs on any mismatch. Delivered MCP-natively via the least-privilege `response_times_bundle` tool.
+- **§B Unanswered Replies — PROPOSED** (not yet agreed/implemented).
+- **§C User Activity, §D Deal Performance — UNAVAILABLE (quarantine) until proven.**
+
+This remains the reaction surface for the browser-scraped families so they can be added **without delaying** the six native XLSX families (which are agreed; see `SCHEMA_CONTRACT.md`).
 **Relationship to the native contract:** the native contract governs original VinSolutions XLSX exports delivered unchanged. This extension governs **browser-acquired** families where Codex may assemble a *canonical derivative* (the original capture is always preserved unchanged **beside** the derivative, and the derivative is attributed to the raw checksum).
 
 Until a family here is implemented + agreed, a delivery of it is **out of contract** and the consumer will quarantine it (`unsupported-report` / `sales-only-unproved`). Nothing here weakens the native path.

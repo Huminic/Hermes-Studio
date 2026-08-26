@@ -1,113 +1,98 @@
-# HUM-VIN-006 — MCP Invocation & Readback Contract (Response Times dry-run)
+# HUM-VIN-006 — MCP Invocation & Readback Contract (dry-run transmission)
 
-Status: **D3 built + proven; D2 harness proven + torn down.** The only remaining
-step is Codex transmitting ONE real Response Times trio through the tool below.
+Status: **D3 + D4 + D5 built, proven, torn down.** Two least-privilege MCP routes + a
+server-side arming wrapper are ready. Remaining: Codex transmits the real deliveries.
 
 Producer/consumer separation (do not violate): **Codex is the data producer/tester;
-Claude is the data-contract owner/consumer.** Claude does not fabricate a "valid" trio
-and then also consume+approve it. Claude supplies + operates the transport and the
-independent readback; Codex supplies the real trio.
+Claude owns the data-contract, the transport, and the independent readback.** Claude does
+not fabricate a "valid" delivery and then also consume+approve it.
+
+Withheld semantics (everywhere): only a **locally-ACCEPTED** delivery flows onward. Any
+refusal / quarantine / stale / duplicate stays **missing/withheld — never zeroed**.
 
 ---
 
-## 1. The transport chain
+## 1. What gets transmitted
+
+| Route | Tool | Count | Delivery |
+|---|---|---|---|
+| Response Times | `response_times_bundle` (:4113) | **3 trios** (serra-honda, serra-nissan, tony-serra-ford) | `deliver-trio.sh` × 3 |
+| Native scheduled XLSX | `xlsx_family_hold` (:4123) | **14 accepted originals** — Honda 5, Nissan 5, Ford 4 (incl. both Aug-23 + Aug-24 Sales Communication) | `deliver-xlsx.sh` × 14 |
+
+7 other Monday XLSX outcomes remain rejected/quarantined at the producer → **withheld** (not sent).
+
+## 2. Arming (server-side; one command)
 
 ```
-Codex (real trio)
-  → MCP call: response_times_bundle           [loopback MCP listener, own port]
-  → forwards Bearer INGEST_SERVICE_SECRET      [server-held; never caller-supplied]
-  → POST /api/ingest/dry-run-bundle            [studio edge, verifyIngestSecret + full validation]
-  → atomic 0444 materialize                     [/srv/ingest-dev/dry-run/inbound/<profile>/<capture_id>/]
-  → dry-run-watch.sh → dry-run-readback.ts     [Claude's INDEPENDENT reconcile → ACCEPT/QUARANTINE]
+bash /home/ubuntu/central-mcp-ingest-dev/scripts/vin006/arm-dry-run.sh
 ```
 
-Nothing in this chain computes a metric, runs the Watchdog, or takes a customer
-action. It only writes a trio directory for the reconcile readback.
+Generates two MCP tokens + one ingest secret **server-side** into `.runtime/secrets.env`
+(0600, never printed / never to the Mac / never on argv), then starts — fully detached —
+the isolated studio edge (`:3623`, `DRY_RUN_BUNDLE_ENABLED=true`, `INGEST_HOLD_ROOT=/srv/ingest-dev/hold`),
+the **RT** one-tool listener (`:4113`), the **XLSX** one-tool listener (`:4123`), and the
+readback watcher (an external watcher it did not spawn is left untouched). It verifies
+fail-closed readiness (edge no-auth→401, both `/healthz`→200) and prints only non-secret
+facts. `disarm-dry-run.sh` tears down 3623/4113/4123 (+ an owned watcher) and removes secrets.
 
-## 2. Listener (D3) — how it is brought up
+## 3. Delivery (per item, over SSH stdin)
 
-File: `central-mcp-ingest-dev/src/dev/vin006/bundle-mcp-server.ts`
-(branch `dev/studio-ingest-dev`, commit `b6a0c3b`). Isolated worktree only — NOT the
-shared central-mcp (no port 4002 / PM2 / config / dist / production).
+Codex streams each envelope over SSH stdin; the wrapper sources the token **server-side**
+and calls the **actual MCP tool** (genuine Central-MCP evidence, not a raw edge POST):
 
 ```
-MCP_BUNDLE_TOKEN=<least-privilege front-door token> \
-INGEST_SERVICE_SECRET=<the edge's server-held secret> \
-  node_modules/.bin/tsx src/dev/vin006/bundle-mcp-server.ts \
-    --port=4113 \
-    --edge=http://127.0.0.1:3623/api/ingest/dry-run-bundle
+# Response Times — run 3× (one per profile)
+ssh <server> 'bash /home/ubuntu/central-mcp-ingest-dev/scripts/vin006/deliver-trio.sh' < <profile>-trio.json
+# Native XLSX — run 14× (one per accepted original)
+ssh <server> 'bash /home/ubuntu/central-mcp-ingest-dev/scripts/vin006/deliver-xlsx.sh' < <family>-envelope.json
 ```
 
-- Two independent secrets. `MCP_BUNDLE_TOKEN` gates `/mcp` identity; a caller presents
-  ONLY this. `INGEST_SERVICE_SECRET` lives in the listener's env, is forwarded to the
-  edge as the bearer, and is never accepted from / returned to / logged for the caller.
-- Refuses to start if either secret is unset; refuses a non-loopback `--edge`.
+Each prints only the non-secret result JSON. Exit 0 iff accepted (`materialized` /
+`held` / `replay` / `idempotent_skip`); non-zero = withheld.
 
-## 3. The MCP tool
+## 4. Route A — `response_times_bundle` (:4113)
 
-- Endpoint: `POST http://127.0.0.1:4113/mcp` (StreamableHTTP, stateless).
-- Auth header: `Authorization: Bearer <MCP_BUNDLE_TOKEN>`. Missing/wrong → **401**.
-- `tools/list` returns **exactly one** tool: `response_times_bundle`. No other tool.
+Envelope: `{ profile, capture_id, source_url, raw{filename,content_base64,sha256},
+derivative{filename,content_base64,sha256}, manifest{…v1…} }` (frozen manifest = browser
+extension §A.3). Forwards to `POST /api/ingest/dry-run-bundle` → atomic 0444 materialize
+into `/srv/ingest-dev/dry-run/inbound/<profile>/<capture_id>/`. Edge gates: exact
+`schema_version`/`derivative_version`/`validation.state=ready_for_isolated_dev`,
+rooftop→governed dealer (honda 21043 / nissan 21044 / ford 21047), source host, sha256
+triple-binding (envelope==recomputed==manifest), PII/sales-only, idempotent-or-409.
 
-`response_times_bundle` input (the envelope):
+## 5. Route B — `xlsx_family_hold` (:4123, SEPARATE token/port)
 
-```jsonc
-{
-  "profile":    "serra-honda | serra-nissan | tony-serra-ford",
-  "capture_id": "<[A-Za-z0-9_-]+ — no dots/separators>",
-  "source_url": "https://vinsolutions.app.coxautoinc.com/...",
-  "raw":        { "filename": "<*.csv>", "content_base64": "...", "sha256": "<64-hex>" },
-  "derivative": { "filename": "<*.csv>", "content_base64": "...", "sha256": "<64-hex>" },
-  "manifest":   { /* frozen v1 manifest — see SCHEMA_CONTRACT_BROWSER_EXTENSION.md §A.3 */ }
-}
-```
+Accepts the **existing governed hold envelope unchanged** (the `--emit-envelope` shape).
+Least-privilege — authorizes ONLY the six native SCHEDULED XLSX families and nothing else
+(enforced in the handler, since the MCP SDK does not validate inputSchema):
+`source_type=gmail_scheduler`, exact OOXML `.xlsx`, `report_kind ∈ {sales_comm_log,
+cage_kpi, lead_source_roi, dealership_performance, crm_sales_gross, appointments}`, exact
+producer fields (`profile, filename, mime_type, report_kind, period_hint, subject, sender,
+gmail_message_id, received_at, content_base64, sha256, size_bytes`), `additionalProperties:false`.
+**Browser CSV/PDF and `browser_export` cannot traverse this listener.** Reuses `runHoldCli`
+(full provenance-union / format-allowlist / magic-byte / integrity / catalog-route gates),
+then `POST /api/ingest/hold` (Studio re-verifies → `held` | `replay` | 422 quarantine).
 
-Return (in `content[0].text`, JSON): `{ http_status, ok, status, profile, capture_id,
-raw_sha256, derivative_sha256, ... }`. `isError:true` whenever the edge rejects.
-Success `status` is `"materialized"` (first time) or `"idempotent_skip"` (identical
-re-send). Any collision on a differing capture_id → **409**, never an overwrite.
+## 6. Secrets & least-privilege
 
-## 4. Edge validation gates (all fail-closed; see `src/routes/api/ingest/dry-run-bundle.ts`)
+- `MCP_BUNDLE_TOKEN` gates `/mcp` on :4113; `MCP_XLSX_TOKEN` gates `/mcp` on :4123. A caller
+  presents only the one token for the route it uses.
+- `INGEST_SERVICE_SECRET` lives only in the listeners' env; it is the forwarded hold/edge
+  bearer and is never accepted from / returned to / logged for the caller.
+- Each listener exposes exactly ONE tool; non-loopback edge/endpoint refused.
 
-DEV-gated (`DRY_RUN_BUNDLE_ENABLED==='true'`); real auth (`verifyIngestSecret`). Rejects
-on: ineligible profile; unsafe capture_id/filename; wrong source host; envelope↔manifest
-disagreement (profile, `rooftop.vin_dealer_id` == governed {honda 21043, nissan 21044,
-ford 21047}, `coverage.timezone`==America/New_York, capture_id, source_url, filenames);
-`schema_version`==`huminic.vinsolutions.response_times_derivative_manifest.v1`;
-`derivative_version`==`huminic.vinsolutions.response_times.canonical.v1`; `hold_only` &&
-`no_action`; `validation.sales_only_proved` && `pii_minimized`; `validation.state`==
-`ready_for_isolated_dev`; sha256 triple-binding (envelope==recomputed==manifest); atomic
-0444 write; idempotent-or-409.
+## 7. Independent readback (Response Times)
 
-## 5. Independent readback (Claude, consumer side)
+`scripts/dry-run-watch.sh` → `scripts/dry-run-readback.ts` re-derives from the authoritative
+v1 manifest and QUARANTINEs on any mismatch. ACCEPT is the only path that clears a trio.
+Readback JSON: `/srv/ingest-dev/dry-run/readback/<profile>/<capture_id>.readback.json`.
 
-`scripts/dry-run-watch.sh` polls the inbound and runs `scripts/dry-run-readback.ts`,
-which re-derives everything from the authoritative v1 manifest and QUARANTINES on any
-mismatch (sha + derivative→raw binding; rooftop→governed; source host; required-core +
-provenance headers; PII-forbidden; per-row provenance; RAW Sales-only; NY-local
-in-window recompute; full-tuple multiset raw-in-window==derivative; excluded-event
-multiset; additive local-field recompute incl. the blank/malformed UTC edge). ACCEPT is
-the only path that clears the trio.
+## 8. Evidence
 
-## 6. Go-live for the transmission window
-
-1. Bring the harness up: `hs-ingest-dev` → `vite dev --port 3623 --host 127.0.0.1`
-   with `DRY_RUN_BUNDLE_ENABLED=true`, the REAL `INGEST_SERVICE_SECRET`, and
-   `INGEST_ELIGIBLE_PROFILES=serra-honda,serra-nissan,tony-serra-ford`.
-2. Bring the listener up (§2) with the same `INGEST_SERVICE_SECRET` and a fresh
-   `MCP_BUNDLE_TOKEN`; hand Codex only the `MCP_BUNDLE_TOKEN` + the `/mcp` URL.
-3. Codex transmits ONE trio → expect `materialized`.
-4. `dry-run-watch.sh` reconcile → ACCEPT.
-5. Tear both down.
-
-## 7. Evidence
-
-- Listener isolation e2e — `bundle-mcp-proof.ts`, commit `95eabe3`, **7/7**: exactly one
-  tool; valid call forwards the server-held secret → materialized (mock edge); unknown
-  tool refused; missing MCP token → 401; secret only ever travels server→edge.
-- Live wiring vs. real harnessed edge — `bundle-mcp-live.ts`, commit `0c6a8fc`, **3/3**:
-  wrong ingest secret → edge 401 via MCP; correct auth + invalid bundle → edge's OWN
-  validation 400 (`rooftop.vin_dealer_id` mismatch, past auth) via MCP, not an auth
-  failure.
-- Harness fail-closed (:3623): no-auth→401, wrong-bearer→401, correct-bearer+empty→403
-  `profile '' not eligible`.
+- RT listener isolation — `bundle-mcp-proof.ts` **7/7**; live vs real edge — `bundle-mcp-live.ts` **3/3**.
+- XLSX listener isolation — `xlsx-hold-mcp-proof.ts` **13/13** (guard withholds all out-of-family;
+  valid Honda `sales_comm_log` reaches edge → held; secret only server→edge; 1 tool; 401 without token).
+- Wrapper live vs harnessed studio: MCP-native delivery reaches the real edges; guard/validation
+  rejections are withheld with no secret leak; arm returns cleanly; disarm removes all + secrets.
+- Known studio debt (non-blocking): hold edge returns 500 (not 422) on an **unparseable** XLSX
+  (synthetic bytes only; real originals parse) — see `issues.md` 2026-08-26.

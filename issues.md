@@ -2,6 +2,13 @@
 
 **Last verified:** 2026-07-17
 
+### [HUM-VIN-006 — 2026-08-26, dev/ingest-endpoint] Hold edge returns 500 (not 422 quarantine) on an unparseable XLSX
+- **Background:** during the native-XLSX MCP route wire-test (D5), a guard-passing gmail_scheduler envelope carrying deliberately-malformed XLSX bytes (`PK` magic + non-workbook body) was delivered through `xlsx_family_hold` → `/api/ingest/hold`. The studio returned **HTTP 500** (surfaced by the client as `hold_http_500`, `unhandled:true`, `HTTPError`) instead of a clean **422 quarantine**.
+- **Evidence:** `deliver-xlsx.sh` result `{"outcome":"withheld","mode":"hold","reason":"hold_http_500","status":500,"unhandled":true}`. The delivery IS still fail-closed/withheld end-to-end (exit 2), and only my synthetic malformed bytes trigger it — real accepted originals parse.
+- **Impact:** fail-closed-hygiene gap: an unparseable/corrupt XLSX should quarantine (422 with a `quarantine_reason`), not throw an unhandled 500. A 500 loses the structured quarantine reason and reads as a server fault rather than a rejected delivery. Does NOT affect the real dry-run (Codex's 14 accepted originals are valid workbooks).
+- **Fix (studio, hold layer):** wrap the XLSX/workbook parse in `hold-store` landDelivery so a parse failure yields a `quarantined` receipt (`unparseable_workbook` or similar) + 422, never an unhandled throw. Add a malformed-xlsx test.
+- **Status:** OPEN — tracked, non-blocking for the dry-run. Owner: studio (hs-ingest-dev). Found by the D5 MCP-route wire-test.
+
 ### [HUM-VIN-006 — 2026-08-25, dev/ingest-endpoint] Codex contract corrections applied (Service/Parts filter, gross coverage, ROI Option A)
 - **Background:** operator (Duane) reviewed the Codex data-prep contract and directed three corrections, now implemented in the isolated dev worktree `hs-ingest-dev` (branch `dev/ingest-endpoint`); full suite 1390 pass / 1 skip, e2e 6/6 vs live :3510, tsc/lint clean on touched files. NOT merged/deployed (gated).
 - **Outcome (what changed + impact):**
