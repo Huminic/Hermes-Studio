@@ -24,6 +24,7 @@ import { requireJsonContentType } from '../../../server/rate-limit'
 import { decodeBase64Strict, verifyIngestSecret } from '../../../server/ingest-auth'
 import { isHoldEligible } from '../../../server/ingest/hold-store'
 import { isSafeDeliveryFilename } from '../../../server/ingest/safe-filename'
+import { materializeTrio } from '../../../server/ingest/materialize-bundle'
 
 const INBOUND = '/srv/ingest-dev/dry-run/inbound'
 const VIN_HOST = 'vinsolutions.app.coxautoinc.com'
@@ -120,15 +121,15 @@ export const Route = createFileRoute('/api/ingest/dry-run-bundle')({
         }
 
         // ── atomic write (temp dir + rename; watcher never sees a partial trio) ──
-        const tmp = path.join(INBOUND, profile, `.tmp-${captureId}-${process.pid}-${process.hrtime.bigint()}`)
+        // Stage the temp dir ONE level under inbound (inbound/.tmp-<profile>-<capture>-...), NOT
+        // under inbound/<profile>/ — otherwise inbound/<profile>/.tmp-.../manifest.v1.json would
+        // match the reconcile watcher glob inbound/*/*/manifest.v1.json before the rename and
+        // produce a bogus .tmp readback. Same filesystem as the target (both under inbound) so
+        // the reveal is still an atomic rename.
+        const profDir = path.join(INBOUND, profile)
+        const tmp = path.join(INBOUND, `.tmp-${profile}-${captureId}-${process.pid}-${process.hrtime.bigint()}`)
         try {
-          fs.mkdirSync(tmp, { recursive: true })
-          // Write immutable (0444) BEFORE the atomic reveal so the reconcile only ever sees read-only bytes.
-          fs.writeFileSync(path.join(tmp, rawFile), rawBuf, { mode: 0o444 })
-          fs.writeFileSync(path.join(tmp, derFile), derBuf, { mode: 0o444 })
-          fs.writeFileSync(path.join(tmp, 'manifest.v1.json'), JSON.stringify(man, null, 2), { mode: 0o444 })
-          fs.mkdirSync(path.dirname(target), { recursive: true })
-          fs.renameSync(tmp, target)
+          materializeTrio({ profDir, tmp, target, rawFile, rawBuf, derFile, derBuf, manifestJson: JSON.stringify(man, null, 2) })
         } catch (e) {
           try { fs.rmSync(tmp, { recursive: true, force: true }) } catch { /* ignore */ }
           return bad('materialize error: ' + String((e as Error).message).slice(0, 120), 500)
