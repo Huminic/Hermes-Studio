@@ -27,22 +27,39 @@ export type ProfileDetail = {
   skillsDir?: string
 }
 
+/**
+ * Isolation override. When STUDIO_PROFILES_ROOT is set (dev/harness instances),
+ * ALL profile config — studio.yaml (notifications routing/comms), auth.yaml,
+ * workspace, knowledge — resolves under that root and NEVER falls back to the
+ * production ~/.hermes tree. When unset, behaviour is the production default.
+ * This is the fail-closed isolation boundary for the :3730 harness.
+ */
+function isolatedProfilesRoot(): string | null {
+  const override = process.env.STUDIO_PROFILES_ROOT?.trim()
+  return override ? path.resolve(override) : null
+}
+
 function getHermesRoot(): string {
+  const iso = isolatedProfilesRoot()
+  if (iso) return path.dirname(iso)
   return path.join(os.homedir(), '.hermes')
 }
 
 export function getProfilesRoot(): string {
+  const iso = isolatedProfilesRoot()
+  if (iso) return iso
   return path.join(getHermesRoot(), 'profiles')
 }
 
 /**
  * Resolve the workspace root for a given profile name.
  *
- * - 'default' (or empty/undefined) → ~/.hermes
- * - Any other name → ~/.hermes/profiles/{name}
+ * - 'default' (or empty/undefined) → the resolved Hermes root
+ * - Any other name → {resolved profiles root}/{name}
  *
- * The returned path is always a child of ~/.hermes — callers can rely on
- * this for path-traversal safety without additional checks.
+ * With STUDIO_PROFILES_ROOT set, both resolve under the isolated root (no prod
+ * fallback). The returned path is always a child of the resolved profiles root —
+ * callers can rely on this for path-traversal safety without additional checks.
  *
  * @throws if profileName contains path-separator characters or '..'
  */
