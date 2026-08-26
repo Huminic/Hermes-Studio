@@ -29,6 +29,7 @@ import { CustomerPerformanceRenderer } from '../components/customer-console/perf
 import { CustomerNotificationsRenderer } from '../components/customer-console/notifications-renderer'
 import { CustomerActivityRenderer } from '../components/customer-console/activity-renderer'
 import { ConsultPanel } from '../components/customer-console/consult-panel'
+import { NativePerformancePanel } from '../components/customer-console/native-performance-panel'
 import { DashboardLanding } from '../components/customer-console/cockpit/DashboardLanding'
 import { IssuesTab } from '../components/customer-console/cockpit/IssuesTab'
 
@@ -463,8 +464,25 @@ function makePerfTab(initialTab: 'funnel' | 'leads' | 'pipeline' | 'ai' | 'custo
 const AiActivityRenderer = makePerfTab('ai')
 const PipelineRenderer = makePerfTab('pipeline')
 const LeadsRenderer = makePerfTab('leads')
-const SalesRenderer = makePerfTab('funnel')
 const CustomRenderer = makePerfTab('custom')
+
+/**
+ * Sales tab: lead with the accepted VinSolutions native weekly performance +
+ * standalone Response-Time panels, then the existing funnel view beneath.
+ */
+function SalesRenderer(props: ConsoleRendererProps) {
+  return (
+    <div className="min-w-0 space-y-4">
+      <NativePerformancePanel profile={props.profile} />
+      <CustomerPerformanceRenderer
+        profile={props.profile}
+        config={props.config}
+        initialTab="funnel"
+        lockTab
+      />
+    </div>
+  )
+}
 
 function CommsRenderer(props: ConsoleRendererProps) {
   return <CustomerCommsRenderer profile={props.profile} config={props.config} />
