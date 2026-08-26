@@ -33,6 +33,7 @@ function mockDeps(opts: { authorized: boolean }) {
         soldInPeriod: 5,
         frontGross: 3184.5,
         backGross: 9056.28,
+        totalGross: 12240.78,
         avgTotalGross: 2448.156,
       },
       byInventoryType: [{ label: 'New', leads: 54, soldInPeriod: 3 }],

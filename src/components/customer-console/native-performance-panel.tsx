@@ -28,6 +28,7 @@ type DealershipPerformance = {
     soldInPeriod: number | null
     frontGross: number | null
     backGross: number | null
+    totalGross: number | null
     avgTotalGross: number | null
   }
   byInventoryType: Array<{
@@ -199,6 +200,7 @@ export function NativePerformancePanel({ profile }: { profile: string }) {
               <Stat label="Sold in Period" value={num(dp.summary.soldInPeriod)} testid="dp-soldInPeriod" />
               <Stat label="Front Gross" value={money(dp.summary.frontGross)} testid="dp-frontGross" />
               <Stat label="Back Gross" value={money(dp.summary.backGross)} testid="dp-backGross" />
+              <Stat label="Total Gross" value={money(dp.summary.totalGross)} testid="dp-totalGross" />
               <Stat label="Avg Total Gross" value={money(dp.summary.avgTotalGross)} testid="dp-avgTotalGross" />
             </dl>
 

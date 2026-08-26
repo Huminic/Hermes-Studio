@@ -31,6 +31,7 @@ const HONDA = {
       soldInPeriod: 5,
       frontGross: 3184.5,
       backGross: 9056.28,
+      totalGross: 12240.78,
       avgTotalGross: 2448.156,
     },
     byInventoryType: [
@@ -83,6 +84,7 @@ describe('NativePerformancePanel', () => {
 
     expect(screen.getByTestId('dp-leads').textContent).toContain('96')
     expect(screen.getByTestId('dp-frontGross').textContent).toContain('$3,184.50')
+    expect(screen.getByTestId('dp-totalGross').textContent).toContain('$12,240.78')
     expect(screen.getByTestId('dp-inventory').textContent).toContain('Used')
 
     expect(screen.getByTestId('appt-total').textContent).toContain('18')

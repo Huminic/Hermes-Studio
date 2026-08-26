@@ -152,6 +152,13 @@ describe('ingest-native-metrics (deterministic fixtures)', () => {
       addDelivery(db, { id: 'ns', profile: 'fixt-nosection', reportKind: 'dealership_performance', periodEnd: '2026-08-23', rows: [['x', 'y'], ['a', 'b']] })
       db.close()
     }
+    {
+      // TOTAL row with Front Gross numeric but Back Gross blank → totalGross null
+      const db = brainFor('fixt-partialgross')
+      const rows = [['Dealership Summary'], DP_HEADER, ['TOTAL', '5', '1', '1', '2', '1', '1', '100', '', '150']]
+      addDelivery(db, { id: 'pg', profile: 'fixt-partialgross', reportKind: 'dealership_performance', periodEnd: '2026-08-23', rows })
+      db.close()
+    }
 
     // — Appointments variants —
     {
@@ -210,8 +217,18 @@ describe('ingest-native-metrics (deterministic fixtures)', () => {
     expect(r.available).toBe(true)
     if (!r.available) return
     expect(r.summary.leads).toBe(99) // not 10 (older), 555 (superseded) or 777 (quarantined)
+    expect(r.summary.totalGross).toBe(320) // Front 110 + Back 210
     expect(r.provenance.period.end).toBe('2026-08-23')
     expect(r.byInventoryType.length).toBe(1) // New only (TOTAL excluded)
+  })
+
+  it('derives Total Gross only when both front and back gross are numeric', () => {
+    const partial = readDealershipPerformance('fixt-partialgross')
+    expect(partial.available).toBe(true)
+    if (!partial.available) return
+    expect(partial.summary.frontGross).toBe(100)
+    expect(partial.summary.backGross).toBeNull()
+    expect(partial.summary.totalGross).toBeNull() // not a partial total
   })
 
   it('rejects a delivery whose row count differs from accepted_row_count', () => {
@@ -312,6 +329,7 @@ describe.runIf(HAVE_DATA)('ingest-native-metrics (isolated store)', () => {
     expect(r.summary.soldInPeriod).toBe(5)
     expect(r.summary.frontGross).toBeCloseTo(3184.5, 2)
     expect(r.summary.backGross).toBeCloseTo(9056.28, 2)
+    expect(r.summary.totalGross).toBeCloseTo(12240.78, 2) // 3184.5 + 9056.28
     expect(r.summary.avgTotalGross).toBeCloseTo(2448.156, 2)
     expect(r.provenance.reportKind).toBe('dealership_performance')
     expect(r.provenance.period.start).toBe('2026-08-17')
@@ -352,6 +370,7 @@ describe.runIf(HAVE_DATA)('ingest-native-metrics (isolated store)', () => {
     expect(r.available).toBe(true)
     if (!r.available) return
     expect(typeof r.summary.leads === 'number' || r.summary.leads === null).toBe(true)
+    expect(r.summary.totalGross).toBeCloseTo(5263.6, 2) // -1300.85 + 6564.45
     expect(r.provenance.period.end).toBe('2026-08-23')
   })
 

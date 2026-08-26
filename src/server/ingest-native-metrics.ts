@@ -47,6 +47,7 @@ export type DealershipPerformance = {
     soldInPeriod: number | null
     frontGross: number | null
     backGross: number | null
+    totalGross: number | null
     avgTotalGross: number | null
   }
   // New / Used / Unknown are INVENTORY types (from the "Lead Type & Inventory
@@ -216,6 +217,13 @@ export function readDealershipPerformance(profile: string): DealershipPerformanc
       .filter((r) => (r[0] || '').toUpperCase() !== 'TOTAL')
       .map((r) => ({ label: r[0], leads: num(r[idxLeads]), soldInPeriod: num(r[idxSold]) }))
 
+    // Total Gross = Front + Back, but ONLY when both are numeric (else null —
+    // never a partial/fabricated total). Not read from the source; derived.
+    const frontGross = num(totalRow[idxFront])
+    const backGross = num(totalRow[idxBack])
+    const totalGross =
+      frontGross !== null && backGross !== null ? frontGross + backGross : null
+
     return {
       available: true,
       source: 'dealership_performance',
@@ -227,8 +235,9 @@ export function readDealershipPerformance(profile: string): DealershipPerformanc
         totalVisits: num(totalRow[idxTotalVisits]),
         visitsSold: num(totalRow[idxVisitsSold]),
         soldInPeriod: num(totalRow[idxSold]),
-        frontGross: num(totalRow[idxFront]),
-        backGross: num(totalRow[idxBack]),
+        frontGross,
+        backGross,
+        totalGross,
         avgTotalGross: num(totalRow[idxAvg]),
       },
       byInventoryType,
