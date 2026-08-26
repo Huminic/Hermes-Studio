@@ -583,17 +583,34 @@ function manifestDir(m: HoldManifest): string {
     : path.join(holdRoot(), safe(m.profile), 'quarantine', m.sha256)
 }
 
+function replayReceipt(dir: string, manifest: HoldManifest): HoldReceipt {
+  const tp = path.join(dir, 'transport.json')
+  return {
+    outcome: 'replay',
+    manifest,
+    hold_path: dir,
+    original_path: path.join(dir, `original.${manifest.file_extension || 'bin'}`),
+    manifest_path: path.join(dir, 'manifest.json'),
+    transport_path: fs.existsSync(tp) ? tp : null,
+  }
+}
+
 function persist(manifest: HoldManifest, buf: Buffer, transport: object | null): HoldReceipt {
+  // The disposition is authoritative from the CURRENT classification. `manifestDir` is keyed by
+  // it: held → held/<kind>/<period>/<sha>, quarantine → quarantine/<sha>. Idempotent replay is
+  // therefore eligible ONLY at the current disposition's deterministic path — i.e. an
+  // authoritative HELD replay requires the CURRENT classification to itself be held at the SAME
+  // family/period/dealer(profile)/hash. When the current classification is QUARANTINE under the
+  // newer contract, we return/persist the quarantine and WITHHOLD promotion — we NEVER replay a
+  // stale held copy of the same SHA (which is preserved untouched as evidence, and vice-versa).
   const dir = manifestDir(manifest)
   const manifestPath = path.join(dir, 'manifest.json')
   const originalPath = path.join(dir, `original.${manifest.file_extension || 'bin'}`)
   const transportPath = transport ? path.join(dir, 'transport.json') : null
 
-  // idempotent replay: identical bytes → same deterministic path → no-op.
   if (fs.existsSync(manifestPath)) {
     const existing = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as HoldManifest
-    const tp = path.join(dir, 'transport.json')
-    return { outcome: 'replay', manifest: existing, hold_path: dir, original_path: originalPath, manifest_path: manifestPath, transport_path: fs.existsSync(tp) ? tp : null }
+    return replayReceipt(dir, existing)
   }
 
   // corrections attribution: sibling checksums already held for this period.

@@ -2,6 +2,23 @@
 
 **Last verified:** 2026-07-17
 
+### [HUM-VIN-006 — 2026-08-26, dev/ingest-endpoint] BLOCKER: 11 of 14 selected native held originals fail the CURRENT Sales-only contract (Service/Parts)
+- **How found:** while fixing the hold replay/idempotency precedence (below), a mandated classifier-regression check re-ran the CURRENT classifier against the immutable held originals (read-only; classified into a throwaway `INGEST_HOLD_ROOT`, evidence not mutated).
+- **Finding:** the held dispositions were captured 2026-08-25 ~08:39Z under a pre-enforcement classifier. Under the CURRENT contract, **11 of the 14 selected native originals re-QUARANTINE** with `non-sales-lead-type`, detail *"Filters positively select Service/Parts ([Parts, Service])"* — the reports' Filters tab positively selects `Parts, Service` in Lead Types/Intents, which the Sales-only contract (issue below, 2026-08-25 §1) treats as a scheduled-report misconfiguration.
+  - **Blocked (11):** six Sales Communication, three Lead Source ROI, two CAGE KPI (across serra-honda / serra-nissan / tony-serra-ford).
+  - **Currently safe (3):** Honda Appointments, Honda Dashboard (dealership_performance), Nissan Dashboard.
+  - (A 15th held original outside the selected 14 — an extra Honda Sales Comm 2026-08-22 — is likewise blocked.)
+- **This is NOT a classifier bug** and NOT masked: it is a deliberate contract tightening the holds predate. The held evidence is stale-per-current-contract.
+- **Impact / decision required (operator + Codex):** a fresh capture of these schedules quarantines today. Either (a) reconfigure the upstream VinSolutions scheduled reports to Sales-only Lead Types/Intents and re-capture, or (b) grant an explicit contract exception for Service/Parts-inclusive Filters. The dry-run must NOT promote the 11 as held on stale evidence.
+- **Reproduce:** re-run the current classifier over `/srv/ingest-dev/hold/<profile>/held/*/*/*/original.xlsx` with a throwaway `INGEST_HOLD_ROOT` and assert `validation_state`.
+- **Status:** OPEN — BLOCKER for the 11; the 3 safe natives may proceed. Owner: operator/Codex (upstream schedule reconfiguration).
+
+### [HUM-VIN-006 — 2026-08-26, dev/ingest-endpoint] Hold replay is current-classification-authoritative (idempotency precedence fixed)
+- **Bug:** `deliver-xlsx` replay of a SHA that exists in BOTH `quarantine/<sha>` (earlier) and `held/<kind>/<period>/<sha>` (later) returned a disposition by naive path precedence.
+- **Fix (`persist` in hold-store.ts):** the disposition is authoritative from the CURRENT classification — replay is eligible only at the current disposition's deterministic path. An authoritative HELD replay therefore requires the CURRENT classification to itself be held at the same family/period/dealer(profile)/hash; when the current classification is QUARANTINE under the newer contract, the delivery returns quarantine and is WITHHELD — it never replays a stale held (or vice-versa). Historical artifacts are preserved untouched as evidence. (An earlier attempt that unconditionally preferred any held copy was reverted because it would have MASKED the blocker above.)
+- **Tests:** `src/test/ingest-hold-idempotency.test.ts` — current-held replays held; current-quarantine (same SHA as a seeded stale held) returns quarantine + withholds + preserves the held; quarantine-only replays quarantine.
+- **Status:** OPEN (implemented in dev, full suite green; gated on independent review + operator merge).
+
 ### [HUM-VIN-006 — 2026-08-26, dev/ingest-endpoint] Hold edge returns 500 (not 422 quarantine) on an unparseable XLSX
 - **Background:** during the native-XLSX MCP route wire-test (D5), a guard-passing gmail_scheduler envelope carrying deliberately-malformed XLSX bytes (`PK` magic + non-workbook body) was delivered through `xlsx_family_hold` → `/api/ingest/hold`. The studio returned **HTTP 500** (surfaced by the client as `hold_http_500`, `unhandled:true`, `HTTPError`) instead of a clean **422 quarantine**.
 - **Evidence:** `deliver-xlsx.sh` result `{"outcome":"withheld","mode":"hold","reason":"hold_http_500","status":500,"unhandled":true}`. The delivery IS still fail-closed/withheld end-to-end (exit 2), and only my synthetic malformed bytes trigger it — real accepted originals parse.
