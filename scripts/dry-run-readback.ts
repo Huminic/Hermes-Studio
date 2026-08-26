@@ -193,7 +193,11 @@ if (rawBuf) {
     if (li < 0 || ui < 0) { localBad++; continue }
     const recompute = kind === 'date' ? nyDate : kind === 'datetime' ? nyDateTime : null
     if (!recompute) { localBad++; continue } // unknown/undeclared kind FAILS
-    for (const dr of dData) { const want = recompute((dr[ui] ?? '').trim()); if (want !== null && (dr[li] ?? '').trim() !== want) localBad++ }
+    for (const dr of dData) {
+      const utc = (dr[ui] ?? '').trim(), local = (dr[li] ?? '').trim()
+      if (utc === '') { if (local !== '') localBad++ } // blank UTC MUST have a blank local
+      else { const want = recompute(utc); if (want === null || local !== want) localBad++ } // malformed UTC fails; else exact
+    }
   }
   const undeclaredLocal = dHead.filter((h) => /local$/i.test(h) && !declaredLocal.has(h.toLowerCase()))
   add('every additive local field declared + recomputed', localBad === 0 && undeclaredLocal.length === 0, `${localBad} recompute/kind failure(s); undeclared local col(s): [${undeclaredLocal.join(', ')}]`)
