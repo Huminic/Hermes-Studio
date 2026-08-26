@@ -40,7 +40,18 @@ function isolatedProfilesRoot(): string | null {
   // is set, ALL profile config resolves under the isolated root with NO
   // production (~/.hermes) fallback — the fail-closed isolation boundary.
   const override = (process.env.STUDIO_PROFILES_ROOT || process.env.BRAIN_PROFILES_ROOT)?.trim()
-  return override ? path.resolve(override) : null
+  if (override) return path.resolve(override)
+  // Fail-closed on harness misconfiguration: if DEV_ANALYTICS_ROOT is set we are
+  // in a dev/harness process and must NEVER silently resolve the production
+  // ~/.hermes tree. Refuse rather than leak production profile config.
+  if (process.env.DEV_ANALYTICS_ROOT?.trim()) {
+    throw new Error(
+      'profiles-browser: DEV_ANALYTICS_ROOT is set (harness mode) but no isolated ' +
+        'profiles root (STUDIO_PROFILES_ROOT / BRAIN_PROFILES_ROOT) is configured — ' +
+        'refusing to read production ~/.hermes profile config.',
+    )
+  }
+  return null
 }
 
 function getHermesRoot(): string {
