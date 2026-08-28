@@ -544,8 +544,30 @@ function selftestDir(): string {
 function selftestMarkerPath(): string {
   return path.join(selftestDir(), '.watchdog-selftest.json')
 }
-function selftestSentPath(): string {
-  return path.join(selftestDir(), '.watchdog-selftest-sent.json')
+/**
+ * Durable one-time SENT receipt — lives at the isolated root, OUTSIDE the
+ * removable wd-selftest dir, so it survives profile cleanup and permanently
+ * blocks a second live send until an operator explicitly removes it. Non-secret
+ * (recipient/subject/email_id/runId/time only); mode 0600; path-guarded.
+ */
+const SELFTEST_RECEIPT_NAME = '.watchdog-selftest-receipt.json'
+function selftestReceiptPath(): string {
+  return path.join(fixtureRoot(), SELFTEST_RECEIPT_NAME)
+}
+function writeSelftestReceipt(rec: {
+  to?: string
+  subject?: string
+  email_id: string | null
+  runId: string
+  at: number
+}): string {
+  const p = selftestReceiptPath()
+  if (path.basename(p) !== SELFTEST_RECEIPT_NAME || canonical(path.dirname(p)) !== canonical(fixtureRoot())) {
+    throw new Error('refusing to write receipt: path-shape validation failed')
+  }
+  fs.writeFileSync(p, JSON.stringify({ tag: SELFTEST_TAG, ...rec }, null, 2), { mode: 0o600 })
+  fs.chmodSync(p, 0o600) // enforce 0600 even if the file pre-existed
+  return p
 }
 
 export type SelfTestMarker = FixtureMarker
@@ -667,51 +689,71 @@ export async function runLiveSelfTest(opts: {
   for (const v of TICK_ENV) {
     if (process.env[v]) throw new Error(`refusing: ${v} is set — ticks/outbound must be off for the self-test.`)
   }
-  if (fs.existsSync(selftestSentPath())) {
-    throw new Error('refusing: a self-test sent-marker already exists (idempotency).')
+  // Durable one-time guard: if the receipt exists, the ONE send was already used.
+  if (fs.existsSync(selftestReceiptPath())) {
+    throw new Error('refusing: a durable self-test sent receipt already exists (one-time send used).')
   }
 
   const seeded = seedSelfTest(opts.recipient, now)
-  // Evaluate the window AFTER seeding so the just-created thread is in-window.
-  const evalNow = Date.now()
-  const values = resolveMetricValues(SELFTEST_PROFILE, WINDOW_DAYS, evalNow)
-  const conversations = values.has(METRIC_ID) ? (values.get(METRIC_ID) ?? null) : null
-  const decisions = evaluateProfileAlerts(SELFTEST_PROFILE, { values, now: evalNow })
-  const firing = decisions.filter((d) => d.decision.fires)
-  if (firing.length !== 1) {
-    throw new Error(`refusing: expected exactly 1 firing alert, got ${firing.length}.`)
-  }
-  if (firing[0].alert.email !== opts.recipient) {
-    throw new Error('refusing: firing alert recipient does not match the allowlisted recipient.')
-  }
+  try {
+    // Evaluate the window AFTER seeding so the just-created thread is in-window.
+    const evalNow = Date.now()
+    const values = resolveMetricValues(SELFTEST_PROFILE, WINDOW_DAYS, evalNow)
+    const conversations = values.has(METRIC_ID) ? (values.get(METRIC_ID) ?? null) : null
+    const decisions = evaluateProfileAlerts(SELFTEST_PROFILE, { values, now: evalNow })
+    const firing = decisions.filter((d) => d.decision.fires)
+    if (firing.length !== 1) {
+      throw new Error(`refusing: expected exactly 1 firing alert, got ${firing.length}.`)
+    }
+    if (firing[0].alert.email !== opts.recipient) {
+      throw new Error('refusing: firing alert recipient does not match the allowlisted recipient.')
+    }
 
-  // Wrap the sender to capture the provider email_id (dispatch does not surface it).
-  const base = opts.sender ?? sendNotification
-  let emailId: string | undefined
-  const sender: AlertSender = async (input) => {
-    const res = await base(input)
-    if (res.ok) emailId = res.email_id
-    return res
-  }
+    // Wrap the sender to capture the provider email_id (dispatch does not surface it).
+    const base = opts.sender ?? sendNotification
+    let emailId: string | undefined
+    const sender: AlertSender = async (input) => {
+      const res = await base(input)
+      if (res.ok) emailId = res.email_id
+      return res
+    }
 
-  const results = await dispatchFiringAlerts(SELFTEST_PROFILE, decisions, {
-    now: evalNow,
-    send: true, // the ONE authorized live send
-    sender,
-    dealer: SELFTEST_PROFILE,
-  })
-  const r = results[0]
-  if (r?.sent) {
-    fs.writeFileSync(
-      selftestSentPath(),
-      JSON.stringify({ to: r.to, subject: r.subject, email_id: emailId ?? null, at: evalNow, runId: seeded.runId }, null, 2),
-    )
-  }
-  return {
-    seeded,
-    conversations,
-    firing: firing.length,
-    dispatch: { to: r?.to, subject: r?.subject, dry_run: r?.dry_run, sent: !!r?.sent, error: r?.error, email_id: emailId },
+    const results = await dispatchFiringAlerts(SELFTEST_PROFILE, decisions, {
+      now: evalNow,
+      send: true, // the ONE authorized live send
+      sender,
+      dealer: SELFTEST_PROFILE,
+    })
+    const r = results[0]
+
+    if (r?.sent) {
+      // Success → write the durable receipt (persists through profile cleanup).
+      writeSelftestReceipt({ to: r.to, subject: r.subject, email_id: emailId ?? null, runId: seeded.runId, at: evalNow })
+      return {
+        seeded,
+        conversations,
+        firing: firing.length,
+        dispatch: { to: r.to, subject: r.subject, dry_run: r.dry_run, sent: true, email_id: emailId },
+      }
+    }
+
+    // Provider reported not-sent → auto-clean the owned profile; NO receipt written.
+    cleanupSelfTest()
+    return {
+      seeded,
+      conversations,
+      firing: firing.length,
+      dispatch: { to: r?.to, subject: r?.subject, dry_run: r?.dry_run, sent: false, error: r?.error },
+    }
+  } catch (err) {
+    // Any throw after a successful seed (assertion or a thrown sender) → remove ONLY
+    // the owned synthetic profile; never write a receipt on failure.
+    try {
+      cleanupSelfTest()
+    } catch {
+      /* best-effort: the profile may already be gone */
+    }
+    throw err
   }
 }
 
@@ -763,11 +805,11 @@ export function cleanupSelfTest(): FixtureCleanup {
 
 export function selfTestStatus() {
   fixtureRoot()
-  const dirExists = fs.existsSync(selftestDir())
   return {
     profile: SELFTEST_PROFILE,
-    dirExists,
-    sentMarker: dirExists && fs.existsSync(selftestSentPath()),
+    dirExists: fs.existsSync(selftestDir()),
+    durableReceipt: fs.existsSync(selftestReceiptPath()),
+    receiptPath: selftestReceiptPath(),
     ticksOff: TICK_ENV.every((v) => !process.env[v]),
     governed: governedHashes(),
   }
