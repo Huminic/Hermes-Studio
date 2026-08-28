@@ -57,6 +57,7 @@ import {
   dispatchFiringAlerts,
   type AlertSender,
 } from '../src/server/watchdog/alert-dispatch'
+import { sendNotification } from '../src/server/notifications'
 
 export const FIXTURE_PROFILE = 'wd-fixture'
 export const TAG = 'WATCHDOG-FIXTURE'
@@ -522,6 +523,261 @@ export function fixtureStatus() {
   return { profile: FIXTURE_PROFILE, dirExists, notifications, governed: governedHashes() }
 }
 
+/* ───────────────────────────────────────────────────────────────────────────
+ * LIVE SELF-TEST (Duane-gated) — sends EXACTLY ONE real notification email to an
+ * allowlisted self address, on an isolated synthetic profile, then stops. Same
+ * app-layer path as the dry-run fixture, but dispatch send:true. Multiply gated:
+ * confirm token + recipient allowlist + ticks/outbound must be off + exactly one
+ * firing alert + a persistent sent-marker (idempotency). Never touches dealer data.
+ * ─────────────────────────────────────────────────────────────────────────── */
+export const SELFTEST_PROFILE = 'wd-selftest'
+export const SELFTEST_TAG = 'WATCHDOG-SELFTEST'
+/** The ONLY addresses this test may ever send to (Duane's self address). */
+export const SELFTEST_ALLOWED_RECIPIENTS = ['duanekwells@gmail.com']
+const SELFTEST_CONTACT = 'wd-selftest+seed@fixture.invalid'
+const SELFTEST_CONFIRM = 'SEND-ONE'
+const TICK_ENV = ['OUTBOUND_LIVE_ENABLED', 'COMMS_TICK_ENABLED', 'SENTINEL_TICK_ENABLED']
+
+function selftestDir(): string {
+  return path.join(fixtureRoot(), SELFTEST_PROFILE)
+}
+function selftestMarkerPath(): string {
+  return path.join(selftestDir(), '.watchdog-selftest.json')
+}
+function selftestSentPath(): string {
+  return path.join(selftestDir(), '.watchdog-selftest-sent.json')
+}
+
+export type SelfTestMarker = FixtureMarker
+
+/** Validated quarantine of an owned provisional dir (generic; never blind-rm). */
+function quarantineProvisionalDir(dir: string, markerFile: string, owned: FixtureMarker): string {
+  let onDisk: FixtureMarker
+  try {
+    onDisk = JSON.parse(fs.readFileSync(markerFile, 'utf8')) as FixtureMarker
+  } catch {
+    throw new Error(`refusing to quarantine: marker unreadable at ${markerFile}`)
+  }
+  if (
+    onDisk.tag !== owned.tag ||
+    onDisk.profile !== owned.profile ||
+    onDisk.recipient !== owned.recipient ||
+    onDisk.phase !== 'seeding' ||
+    onDisk.runId !== owned.runId
+  ) {
+    throw new Error('refusing to quarantine: on-disk marker failed owned-provisional validation')
+  }
+  if (path.basename(dir) !== owned.profile || canonical(path.dirname(dir)) !== canonical(fixtureRoot())) {
+    throw new Error('refusing to quarantine: path-shape validation failed')
+  }
+  const dest = path.join(canonical(os.tmpdir()), `${owned.profile}-quarantine-${owned.runId}`)
+  moveDir(dir, dest)
+  return dest
+}
+
+/** Seed the synthetic self-test alert (transaction-like; recipient allowlisted). */
+export function seedSelfTest(recipient: string, now: number = Date.now()): SelfTestMarker {
+  fixtureRoot()
+  if (!SELFTEST_ALLOWED_RECIPIENTS.includes(recipient)) {
+    throw new Error(`refusing: recipient not allowlisted: ${recipient}`)
+  }
+  const dir = selftestDir()
+  if (fs.existsSync(dir)) {
+    throw new Error(`refusing to seed self-test: dir already exists at ${dir} — clean up first.`)
+  }
+  const runId = crypto.randomUUID()
+  const provisional: FixtureMarker = {
+    tag: SELFTEST_TAG,
+    profile: SELFTEST_PROFILE,
+    recipient,
+    runId,
+    phase: 'seeding',
+    threadId: null,
+    alertId: null,
+    seededAt: now,
+  }
+  fs.mkdirSync(dir, { recursive: true })
+  fs.writeFileSync(selftestMarkerPath(), JSON.stringify(provisional, null, 2))
+  try {
+    upsertContact({
+      profile: SELFTEST_PROFILE,
+      display_name: `${SELFTEST_TAG} synthetic customer`,
+      identifiers: { chat: SELFTEST_CONTACT },
+    })
+    const thread = getOrCreateThread({
+      profile: SELFTEST_PROFILE,
+      domain: 'sales',
+      channel: 'chat',
+      contact_handle: SELFTEST_CONTACT,
+      subject: `${SELFTEST_TAG} seed thread`,
+      force_new: true,
+    })
+    appendMessage({ thread_id: thread.id, direction: 'outbound', role: 'assistant', channel: 'chat', content: `[${SELFTEST_TAG}] synthetic outbound touch`, author: 'selftest-agent' })
+    appendMessage({ thread_id: thread.id, direction: 'inbound', role: 'user', channel: 'chat', content: `[${SELFTEST_TAG}] synthetic inbound reply`, author: SELFTEST_CONTACT })
+    const created = createMetricAlert(
+      {
+        profile: SELFTEST_PROFILE,
+        email: recipient,
+        metric_id: METRIC_ID,
+        metric_label: METRIC_LABEL,
+        rule_type: 'threshold',
+        direction: 'below',
+        threshold: THRESHOLD,
+        query_name: `${SELFTEST_TAG} conversations low`,
+        description: `${SELFTEST_TAG} synthetic metric alert — heads-up only, never an autonomous action.`,
+      },
+      now,
+    )
+    if (!created.ok) throw new Error(`createMetricAlert failed: ${created.error}`)
+    const ready: FixtureMarker = { ...provisional, phase: 'ready', threadId: thread.id, alertId: created.id }
+    fs.writeFileSync(selftestMarkerPath(), JSON.stringify(ready, null, 2))
+    return ready
+  } catch (err) {
+    const q = quarantineProvisionalDir(selftestDir(), selftestMarkerPath(), provisional)
+    throw new Error(`self-test seed failed (${err instanceof Error ? err.message : String(err)}); quarantined to ${q}`)
+  }
+}
+
+export type SelfTestResult = {
+  seeded: SelfTestMarker
+  conversations: number | null
+  firing: number
+  dispatch: { to?: string; subject?: string; dry_run?: boolean; sent: boolean; error?: string; email_id?: string }
+}
+
+/**
+ * Run the ONE live self-test. Sends exactly one real email to the allowlisted
+ * recipient via the injected sender (defaults to the Resend-backed sendNotification).
+ * Every guard must pass; any failure throws before dispatch.
+ */
+export async function runLiveSelfTest(opts: {
+  recipient: string
+  confirm: string
+  now?: number
+  sender?: AlertSender
+}): Promise<SelfTestResult> {
+  const now = opts.now ?? Date.now()
+  fixtureRoot()
+  if (opts.confirm !== SELFTEST_CONFIRM) {
+    throw new Error(`refusing: LIVE_SELF_TEST_CONFIRM must equal "${SELFTEST_CONFIRM}".`)
+  }
+  if (!SELFTEST_ALLOWED_RECIPIENTS.includes(opts.recipient)) {
+    throw new Error(`refusing: recipient not allowlisted: ${opts.recipient}`)
+  }
+  for (const v of TICK_ENV) {
+    if (process.env[v]) throw new Error(`refusing: ${v} is set — ticks/outbound must be off for the self-test.`)
+  }
+  if (fs.existsSync(selftestSentPath())) {
+    throw new Error('refusing: a self-test sent-marker already exists (idempotency).')
+  }
+
+  const seeded = seedSelfTest(opts.recipient, now)
+  // Evaluate the window AFTER seeding so the just-created thread is in-window.
+  const evalNow = Date.now()
+  const values = resolveMetricValues(SELFTEST_PROFILE, WINDOW_DAYS, evalNow)
+  const conversations = values.has(METRIC_ID) ? (values.get(METRIC_ID) ?? null) : null
+  const decisions = evaluateProfileAlerts(SELFTEST_PROFILE, { values, now: evalNow })
+  const firing = decisions.filter((d) => d.decision.fires)
+  if (firing.length !== 1) {
+    throw new Error(`refusing: expected exactly 1 firing alert, got ${firing.length}.`)
+  }
+  if (firing[0].alert.email !== opts.recipient) {
+    throw new Error('refusing: firing alert recipient does not match the allowlisted recipient.')
+  }
+
+  // Wrap the sender to capture the provider email_id (dispatch does not surface it).
+  const base = opts.sender ?? sendNotification
+  let emailId: string | undefined
+  const sender: AlertSender = async (input) => {
+    const res = await base(input)
+    if (res.ok) emailId = res.email_id
+    return res
+  }
+
+  const results = await dispatchFiringAlerts(SELFTEST_PROFILE, decisions, {
+    now: evalNow,
+    send: true, // the ONE authorized live send
+    sender,
+    dealer: SELFTEST_PROFILE,
+  })
+  const r = results[0]
+  if (r?.sent) {
+    fs.writeFileSync(
+      selftestSentPath(),
+      JSON.stringify({ to: r.to, subject: r.subject, email_id: emailId ?? null, at: evalNow, runId: seeded.runId }, null, 2),
+    )
+  }
+  return {
+    seeded,
+    conversations,
+    firing: firing.length,
+    dispatch: { to: r?.to, subject: r?.subject, dry_run: r?.dry_run, sent: !!r?.sent, error: r?.error, email_id: emailId },
+  }
+}
+
+/** Precise cleanup of the self-test profile (requires a valid ready marker). */
+export function cleanupSelfTest(): FixtureCleanup {
+  const root = fixtureRoot()
+  const dir = selftestDir()
+  let marker: FixtureMarker
+  try {
+    marker = JSON.parse(fs.readFileSync(selftestMarkerPath(), 'utf8')) as FixtureMarker
+  } catch {
+    throw new Error(`refusing cleanup: missing/unreadable self-test marker at ${selftestMarkerPath()}.`)
+  }
+  const ownershipOk =
+    marker.tag === SELFTEST_TAG &&
+    marker.profile === SELFTEST_PROFILE &&
+    SELFTEST_ALLOWED_RECIPIENTS.includes(marker.recipient) &&
+    marker.phase === 'ready' &&
+    typeof marker.runId === 'string' && marker.runId.length > 0 &&
+    typeof marker.alertId === 'string' && marker.alertId.length > 0 &&
+    typeof marker.threadId === 'string' && marker.threadId.length > 0
+  if (!ownershipOk) {
+    throw new Error('refusing cleanup: self-test marker failed ownership validation.')
+  }
+  const alertId = marker.alertId as string
+  const threadId = marker.threadId as string
+  const before = listNotifications(SELFTEST_PROFILE)
+  let deletedNotifications = 0
+  for (const n of before.filter((n) => n.id === alertId)) {
+    if (deleteNotification(SELFTEST_PROFILE, n.id)) deletedNotifications++
+  }
+  const deletedThreads = deleteThread(SELFTEST_PROFILE, threadId) ? 1 : 0
+  const residualNotifications = listNotifications(SELFTEST_PROFILE).length
+  let removedDir = false
+  if (
+    deletedNotifications === 1 &&
+    deletedThreads === 1 &&
+    residualNotifications === 0 &&
+    path.basename(dir) === SELFTEST_PROFILE &&
+    canonical(path.dirname(dir)) === canonical(root) &&
+    fs.existsSync(selftestMarkerPath()) &&
+    fs.existsSync(dir)
+  ) {
+    fs.rmSync(dir, { recursive: true, force: true })
+    removedDir = true
+  }
+  return { deletedNotifications, deletedThreads, residualNotifications, removedDir }
+}
+
+export function selfTestStatus() {
+  fixtureRoot()
+  const dirExists = fs.existsSync(selftestDir())
+  return {
+    profile: SELFTEST_PROFILE,
+    dirExists,
+    sentMarker: dirExists && fs.existsSync(selftestSentPath()),
+    ticksOff: TICK_ENV.every((v) => !process.env[v]),
+    governed: governedHashes(),
+  }
+}
+
+function argValue(flag: string): string {
+  const hit = process.argv.find((a) => a.startsWith(`${flag}=`))
+  return hit ? hit.slice(flag.length + 1) : ''
+}
+
 async function main(): Promise<void> {
   const cmd = process.argv[2]
   fixtureRoot() // fail-closed guard before anything
@@ -541,8 +797,21 @@ async function main(): Promise<void> {
     console.log(JSON.stringify({ ok: true, cmd, ...res }, null, 2))
   } else if (cmd === 'status') {
     console.log(JSON.stringify({ ok: true, cmd, ...fixtureStatus() }, null, 2))
+  } else if (cmd === 'live-self-test') {
+    const governedBefore = governedHashes()
+    const result = await runLiveSelfTest({
+      recipient: argValue('--recipient'),
+      confirm: process.env.LIVE_SELF_TEST_CONFIRM ?? '',
+    })
+    console.log(JSON.stringify({ ok: true, cmd, result, governedBefore, governedAfter: governedHashes() }, null, 2))
+  } else if (cmd === 'cleanup-self-test') {
+    const governedBefore = governedHashes()
+    const cleanup = cleanupSelfTest()
+    console.log(JSON.stringify({ ok: true, cmd, cleanup, governedBefore, governedAfter: governedHashes() }, null, 2))
+  } else if (cmd === 'selftest-status') {
+    console.log(JSON.stringify({ ok: true, cmd, ...selfTestStatus() }, null, 2))
   } else {
-    console.error('usage: watchdog-fixture <seed|prove|cleanup|quarantine|status>')
+    console.error('usage: watchdog-fixture <seed|prove|cleanup|quarantine|status|live-self-test|cleanup-self-test|selftest-status>')
     process.exit(2)
   }
 }
