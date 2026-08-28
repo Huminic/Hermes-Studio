@@ -536,6 +536,8 @@ export const SELFTEST_TAG = 'WATCHDOG-SELFTEST'
 export const SELFTEST_ALLOWED_RECIPIENTS = ['duanekwells@gmail.com']
 const SELFTEST_CONTACT = 'wd-selftest+seed@fixture.invalid'
 const SELFTEST_CONFIRM = 'SEND-ONE'
+/** The exact approved subject a self-test email carries (query_name-derived). */
+export const SELFTEST_SUBJECT = 'Watchdog alert: WATCHDOG-SELFTEST conversations low'
 const TICK_ENV = ['OUTBOUND_LIVE_ENABLED', 'COMMS_TICK_ENABLED', 'SENTINEL_TICK_ENABLED']
 
 function selftestDir(): string {
@@ -560,6 +562,7 @@ function writeSelftestReceipt(rec: {
   email_id: string | null
   runId: string
   at: number
+  transport?: string
 }): string {
   const p = selftestReceiptPath()
   if (path.basename(p) !== SELFTEST_RECEIPT_NAME || canonical(path.dirname(p)) !== canonical(fixtureRoot())) {
@@ -757,6 +760,49 @@ export async function runLiveSelfTest(opts: {
   }
 }
 
+/**
+ * Record the durable receipt for a self-test email that was already sent by an
+ * EXTERNAL transport (e.g. governed Central MCP Resend). Writes only the same
+ * non-secret 0600 receipt outside the profile dir — touches NO DB and NO profile,
+ * makes no provider call. Same gates as the live send: confirm token, allowlisted
+ * recipient, exact approved subject, non-empty email_id, and refuses if a receipt
+ * already exists (one-time).
+ */
+export function recordExternalSelftestReceipt(opts: {
+  confirm: string
+  recipient: string
+  subject: string
+  email_id: string
+  transport?: string
+}): { receiptPath: string; wrote: boolean; runId: string } {
+  fixtureRoot()
+  if (opts.confirm !== SELFTEST_CONFIRM) {
+    throw new Error(`refusing: LIVE_SELF_TEST_CONFIRM must equal "${SELFTEST_CONFIRM}".`)
+  }
+  if (!SELFTEST_ALLOWED_RECIPIENTS.includes(opts.recipient)) {
+    throw new Error(`refusing: recipient not allowlisted: ${opts.recipient}`)
+  }
+  if (opts.subject !== SELFTEST_SUBJECT) {
+    throw new Error('refusing: subject does not match the approved self-test subject.')
+  }
+  if (typeof opts.email_id !== 'string' || opts.email_id.trim() === '') {
+    throw new Error('refusing: email_id must be a non-empty string.')
+  }
+  if (fs.existsSync(selftestReceiptPath())) {
+    throw new Error('refusing: a durable self-test sent receipt already exists (one-time send used).')
+  }
+  const runId = crypto.randomUUID()
+  const receiptPath = writeSelftestReceipt({
+    to: opts.recipient,
+    subject: opts.subject,
+    email_id: opts.email_id.trim(),
+    runId,
+    at: Date.now(),
+    transport: opts.transport ?? 'central-mcp-resend',
+  })
+  return { receiptPath, wrote: true, runId }
+}
+
 /** Precise cleanup of the self-test profile (requires a valid ready marker). */
 export function cleanupSelfTest(): FixtureCleanup {
   const root = fixtureRoot()
@@ -846,6 +892,16 @@ async function main(): Promise<void> {
       confirm: process.env.LIVE_SELF_TEST_CONFIRM ?? '',
     })
     console.log(JSON.stringify({ ok: true, cmd, result, governedBefore, governedAfter: governedHashes() }, null, 2))
+  } else if (cmd === 'record-external-selftest-receipt') {
+    const governedBefore = governedHashes()
+    const res = recordExternalSelftestReceipt({
+      confirm: process.env.LIVE_SELF_TEST_CONFIRM ?? '',
+      recipient: argValue('--recipient'),
+      subject: argValue('--subject'),
+      email_id: argValue('--email-id'),
+      transport: 'central-mcp-resend',
+    })
+    console.log(JSON.stringify({ ok: true, cmd, ...res, ...selfTestStatus(), governedBefore, governedAfter: governedHashes() }, null, 2))
   } else if (cmd === 'cleanup-self-test') {
     const governedBefore = governedHashes()
     const cleanup = cleanupSelfTest()
@@ -853,7 +909,7 @@ async function main(): Promise<void> {
   } else if (cmd === 'selftest-status') {
     console.log(JSON.stringify({ ok: true, cmd, ...selfTestStatus() }, null, 2))
   } else {
-    console.error('usage: watchdog-fixture <seed|prove|cleanup|quarantine|status|live-self-test|cleanup-self-test|selftest-status>')
+    console.error('usage: watchdog-fixture <seed|prove|cleanup|quarantine|status|live-self-test|record-external-selftest-receipt|cleanup-self-test|selftest-status>')
     process.exit(2)
   }
 }

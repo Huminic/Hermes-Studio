@@ -22,7 +22,9 @@ for (const v of ['OUTBOUND_LIVE_ENABLED', 'COMMS_TICK_ENABLED', 'SENTINEL_TICK_E
 import {
   SELFTEST_ALLOWED_RECIPIENTS,
   SELFTEST_PROFILE,
+  SELFTEST_SUBJECT,
   cleanupSelfTest,
+  recordExternalSelftestReceipt,
   runLiveSelfTest,
 } from '../../scripts/watchdog-fixture'
 import { createNotification, listNotifications } from '../server/watchdog/notifications-store'
@@ -198,5 +200,51 @@ describe('watchdog live self-test (isolated, fake sender — no real send)', () 
     // Governed sibling untouched (robust file-set hash incl. WAL/SHM).
     expect(govHash('governed-store')).toBe(ghBefore)
     expect(listNotifications('governed-store').length).toBe(1)
+  })
+
+  // ── record-external-selftest-receipt (external transport already sent) ──────
+  it('record-external: exact success writes a durable 0600 receipt, no profile/DB touch', () => {
+    const res = recordExternalSelftestReceipt({
+      confirm: 'SEND-ONE',
+      recipient: RECIPIENT,
+      subject: SELFTEST_SUBJECT,
+      email_id: '6aba7036-d6e9-4083-a47a-636b5c8e975e',
+    })
+    expect(res.wrote).toBe(true)
+    expect(res.runId).toBeTruthy()
+
+    expect(fs.existsSync(RECEIPT)).toBe(true)
+    expect(fs.statSync(RECEIPT).mode & 0o777).toBe(0o600)
+    const receipt = JSON.parse(fs.readFileSync(RECEIPT, 'utf8'))
+    expect(receipt.to).toBe(RECIPIENT)
+    expect(receipt.subject).toBe(SELFTEST_SUBJECT)
+    expect(receipt.email_id).toBe('6aba7036-d6e9-4083-a47a-636b5c8e975e')
+    expect(receipt.transport).toBe('central-mcp-resend')
+    expect(JSON.stringify(receipt)).not.toContain('token')
+
+    // No profile/DB was created.
+    expect(fs.existsSync(path.join(ROOT, SELFTEST_PROFILE))).toBe(false)
+  })
+
+  it('record-external: refuses on mismatched fields, writing nothing', () => {
+    const good = { confirm: 'SEND-ONE', recipient: RECIPIENT, subject: SELFTEST_SUBJECT, email_id: 'evt_x' }
+    expect(() => recordExternalSelftestReceipt({ ...good, confirm: 'nope' })).toThrow(/LIVE_SELF_TEST_CONFIRM/)
+    expect(() => recordExternalSelftestReceipt({ ...good, recipient: 'someone-else@example.com' })).toThrow(/not allowlisted/)
+    expect(() => recordExternalSelftestReceipt({ ...good, subject: 'Wrong subject' })).toThrow(/subject does not match/)
+    expect(() => recordExternalSelftestReceipt({ ...good, email_id: '' })).toThrow(/non-empty/)
+    expect(() => recordExternalSelftestReceipt({ ...good, email_id: '   ' })).toThrow(/non-empty/)
+    expect(fs.existsSync(RECEIPT)).toBe(false)
+  })
+
+  it('record-external: refuses an existing receipt and never overwrites (one-time)', () => {
+    recordExternalSelftestReceipt({ confirm: 'SEND-ONE', recipient: RECIPIENT, subject: SELFTEST_SUBJECT, email_id: 'evt_first' })
+    expect(fs.existsSync(RECEIPT)).toBe(true)
+
+    expect(() =>
+      recordExternalSelftestReceipt({ confirm: 'SEND-ONE', recipient: RECIPIENT, subject: SELFTEST_SUBJECT, email_id: 'evt_second' }),
+    ).toThrow(/durable self-test sent receipt/)
+
+    const receipt = JSON.parse(fs.readFileSync(RECEIPT, 'utf8'))
+    expect(receipt.email_id).toBe('evt_first') // not overwritten
   })
 })
