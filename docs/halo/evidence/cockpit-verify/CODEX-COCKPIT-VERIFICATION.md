@@ -48,19 +48,34 @@
 - The isolated `:3730` process has no outbound, scheduler-tick, watcher, or notification-dispatch enable flag set.
 - No notification, email, text, routing rule, alert, or other external action was created or sent by Codex.
 
-## Open browser defects sent to Claude
+## Browser defects and corrections
 
-1. Marketing is disabled in the sidebar for all three stores although the direct route works.
-2. The mobile Landing Power Pack status text/grid overflows at 390px (`honda-landing-mobile.png`).
+1. Marketing was disabled in the sidebar for all three stores although the direct route worked. **Fixed and independently verified** in `6f50c6688d18bc1e08c579f149803fbf88f046ca`.
+2. The mobile Landing Power Pack status text/grid overflowed at 390px (`honda-landing-mobile.png`). The first correction contained it but caused text/status overlap (`ford-mobile-power-packs-first-corrective-overlap.png`). The final correction stacks status on its own line. **Fixed and independently verified** (`ford-mobile-power-packs-accepted.png`).
 
 The apparent desktop clipping in the first full-page capture and the blank full-page mobile Sales capture were screenshot artifacts from the fixed shell, not reproducible product defects. A normal 1280px viewport capture (`ford-landing-desktop-viewport.png`) is fully contained, and the Sales DOM/render is present at 390px. They are not acceptance blockers.
 
-Claude owns corrections. Codex will re-test after an isolated rebuild/restart.
+Claude owned the corrections; Codex independently re-tested the rebuilt isolated instance.
+
+### First corrective re-test
+
+- Marketing navigation: **PASS** — enabled links with the correct per-store `/campaigns` route for Honda, Nissan, and Ford.
+- 390px Power Pack geometry: contained within the viewport.
+- 390px Power Pack readability after first correction: **FAIL** — long status labels overlapped names/descriptions (`ford-mobile-power-packs-first-corrective-overlap.png`).
+
+### Final corrective re-test
+
+- Fixed commit: `6f50c6688d18bc1e08c579f149803fbf88f046ca`.
+- Independent tests: 14/14 Marketing-nav/Power-Pack regressions passed; earlier 83/83 cockpit/watchdog and 68/68 Halo grounding suites also passed.
+- Live Ford 390px check: 15 rows; document width 379 within viewport 390; zero rendered text/status intersections.
+- Visual: status is readable on its own line beneath each name/description (`ford-mobile-power-packs-accepted.png`).
+- Shared navigation: Marketing enabled with the correct profile-scoped route for all three governed stores.
+- Final responsive/navigation gate: **PASS**.
 
 ## Per-store acceptance
 
 | Store | Landing | AI Activity | Pipeline | Leads | Sales | Marketing | Issues | Notifications | Responsive | Verdict |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Serra Honda | render; Power Pack mobile fail | pass | pass/unavailable | pass/unavailable | data pass | direct-route pass; nav fail | pass | pass/no-send evidence | fail | rejected pending fix |
-| Serra Nissan | render; shared mobile risk | pass | pass/unavailable | pass/unavailable | data pass | direct-route pass; nav fail | pass | pass/no-send guard | pending after shared fix | rejected pending fix |
-| Tony Serra Ford | render; shared mobile risk | pass | pass/unavailable | pass/unavailable | correct withheld state | direct-route pass; nav fail | pass | pass/no-send guard | pending after shared fix | rejected pending fix |
+| Serra Honda | pass | pass | pass/unavailable | pass/unavailable | data pass | pass | pass | pass/no-send evidence | pass/shared fix | **ACCEPT** |
+| Serra Nissan | pass | pass | pass/unavailable | pass/unavailable | data pass | pass | pass | pass/no-send guard | pass/shared fix | **ACCEPT** |
+| Tony Serra Ford | pass | pass | pass/unavailable | pass/unavailable | correct withheld state | pass | pass | pass/no-send guard | pass/live 390px | **ACCEPT** |
