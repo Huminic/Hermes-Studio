@@ -16,6 +16,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react'
 import type { IconSvgElement } from '@hugeicons/react'
 import { defaultStudioConfig, type StudioConfig } from '@/lib/studio-config'
+import { isTabEnabled } from '@/lib/cockpit-tabs'
 import { getRenderer } from '@/lib/console-renderers'
 import { HelpButton } from '@/components/customer-console/help-modal'
 
@@ -47,15 +48,6 @@ const TAB_TO_RENDERER: Record<string, string> = {
 
 function normalizeActiveTab(tab: string): string {
   return tab === 'knowledge' || tab === 'data' ? 'infostore' : tab
-}
-
-function isMenuEnabled(config: StudioConfig, id: string): boolean {
-  if (id === 'infostore') {
-    return (
-      config.menu.infostore ?? config.menu.knowledge ?? config.menu.data ?? true
-    )
-  }
-  return config.menu[id as keyof StudioConfig['menu']] ?? true
 }
 
 type StudioConfigResponse = {
@@ -268,7 +260,7 @@ function StorefrontTabRoute() {
           Menu
         </div>
         {tabsList.map((item) => {
-          const enabled = isMenuEnabled(config, item.id)
+          const enabled = isTabEnabled(config, item.id)
           const active = item.id === activeTab
           return (
             <Link
