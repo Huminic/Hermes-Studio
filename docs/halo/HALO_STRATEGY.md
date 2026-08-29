@@ -1,8 +1,10 @@
 # Halo Reports — Strategy, Milestones & Permanent Boundaries
 
 **Status:** Authoritative planning direction (Duane-confirmed, 2026-08-28, America/New_York). Recorded for the
-Claude-owned Studio project. No deploy/merge/production/schedule/customer-outbound changes made
-by memorializing this. M2–M4 are NOT authorized to start.
+Claude-owned Studio project. **Per Duane's 2026-08-29 authorization, M2–M4 may proceed in ISOLATED / DEV
+planning and implementation**, under the separately-gated boundaries below (see `docs/halo/MILESTONES.md`).
+Still separately gated (NOT covered by this authorization): production deployment, customer outbound,
+autonomous actions, channel activation, ad-account mutation, and any Service/Parts commingling.
 
 ## What Halo is
 Halo Reports is a diagnostic "report card" — a useful loss-leader and a backbone of business
@@ -38,10 +40,15 @@ Paid advertising (where access exists), organic social, AI presence, SEO presenc
   benchmarks**. Surface **evidence-backed conversation weaknesses with limitations**. Prove **one
   internal threshold alert** plus **explicitly allowlisted external test channels** with
   **receipts/idempotency**. **No customer outbound or autonomous action.**
-- **M2 — LATER, NOT AUTHORIZED TO START.** Run the Halo Data report card for all three Serra
-  stores with an AI narrative.
-- **M3 — LATER.** Define and pilot Halo Presence.
-- **M4 — LATER.** Separately-approved monthly production circuit.
+- **M2 — AUTHORIZED (isolated/dev planning + implementation, 2026-08-29).** Build and independently verify
+  the Halo Data report card for all three Serra stores with an AI narrative. Production deploy / customer
+  outbound / autonomous action remain separately gated.
+- **M3 — AUTHORIZED (isolated/dev, 2026-08-29).** Define and validate Halo Presence (advertising where
+  accessible, organic social, AI presence, SEO). Ad-account mutation remains separately gated.
+- **M4 — AUTHORIZED to prepare + verify (isolated/dev, 2026-08-29).** Prepare the governed monthly
+  Data+Presence circuit; the production monthly run stays separately gated.
+
+See `docs/halo/MILESTONES.md` for the authoritative execution roadmap.
 
 ## Permanent boundary — SALES ONLY
 Service and Parts stay in the **separate combined Serra Service workspace** and **never** enter
