@@ -10,7 +10,7 @@ Produce, verify, and send to `duanekwells@gmail.com` one polished Halo Data test
 - `docs/halo/MILESTONES.md`
 - `docs/halo/M1_VALIDATION_MATRIX.md`
 - `docs/halo/evidence/cockpit-verify/CODEX-COCKPIT-VERIFICATION.md`
-- `/home/ubuntu/hs-watchdog/docs/watchdog-platform/SCHEMA_CONTRACT.md`
+- `/home/ubuntu/hs-ingest-dev/docs/watchdog-platform/SCHEMA_CONTRACT.md`
 - `src/server/watchdog/metric-catalog.ts`
 - `src/server/watchdog/halo-support-manifest.ts`
 - `src/server/watchdog/metric-values.ts`
