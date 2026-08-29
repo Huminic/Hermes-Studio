@@ -112,6 +112,36 @@ describe('HaloReportCardPanel', () => {
     expect(base).not.toMatch(/within/i)
   })
 
+  it('deterministic fallback: surfaces the fallback reason and the mode badge', async () => {
+    const report = {
+      ...REPORT.report,
+      narrative_mode: 'deterministic_grounded',
+      narrative_provider: 'none',
+      narrative_fallback_reason: 'provider_unconfigured',
+    }
+    stubFetch({ ok: true, report })
+    render(<HaloReportCardPanel profile="serra-honda" />)
+    await waitFor(() => expect(screen.getByTestId('halo-report')).toBeTruthy())
+    const fb = screen.getByTestId('halo-narrative-fallback').textContent ?? ''
+    expect(fb).toMatch(/AI narration unavailable/i)
+    expect(fb).toMatch(/provider_unconfigured/i)
+    expect(screen.getByTestId('halo-narrative-provider').textContent).toMatch(/deterministic_grounded/i)
+  })
+
+  it('ai_grounded: shows the AI-grounded provider badge and NO fallback line', async () => {
+    const report = {
+      ...REPORT.report,
+      narrative_mode: 'ai_grounded',
+      narrative_provider: 'hermes',
+      narrative_fallback_reason: null,
+    }
+    stubFetch({ ok: true, report })
+    render(<HaloReportCardPanel profile="serra-honda" />)
+    await waitFor(() => expect(screen.getByTestId('halo-report')).toBeTruthy())
+    expect(screen.getByTestId('halo-narrative-provider').textContent).toMatch(/AI-grounded · hermes/i)
+    expect(screen.queryByTestId('halo-narrative-fallback')).toBeNull()
+  })
+
   it('shows the Sales-domain gate message on a 400 (never a blank/zeroed report)', async () => {
     stubFetch({ ok: false, error: 'Halo report is available only for governed Sales profiles (serra-honda, serra-nissan, tony-serra-ford).' }, 400)
     render(<HaloReportCardPanel profile="serra-service" />)

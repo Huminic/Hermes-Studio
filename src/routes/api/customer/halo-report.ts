@@ -10,7 +10,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import {
-  buildHaloReportCard,
+  buildHaloReportCardWithNarrative,
   normalizeHaloWindowDays,
 } from '../../../server/reports/halo-report-card'
 import { isHaloSalesProfile } from '../../../server/watchdog/halo-support-manifest'
@@ -41,7 +41,9 @@ export const Route = createFileRoute('/api/customer/halo-report')({
         }
         const windowDays = normalizeHaloWindowDays(url.searchParams.get('window_days'))
         try {
-          return json({ ok: true, report: buildHaloReportCard(profile, windowDays) })
+          // Attempts evidence-constrained AI narration; always fails closed to the
+          // deterministic grounded narrative (never a blank/error-only report).
+          return json({ ok: true, report: await buildHaloReportCardWithNarrative(profile, windowDays) })
         } catch (error) {
           return json(
             {

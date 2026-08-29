@@ -27,6 +27,7 @@ import {
 } from './halo-three-layer'
 import { readAppointments, readDealershipPerformance } from '../ingest-native-metrics'
 import { buildHaloNarrative } from './halo-narrative'
+import { withAiNarration, type NarrationDeps } from './halo-ai-narrative'
 
 const SERVICE_PARTS_RE = /service|parts/i
 
@@ -82,10 +83,15 @@ export type HaloReportCard = {
   sales_only: true
   manifest_version: string
   window_days: number
-  /** This slice ships a DETERMINISTIC, evidence-grounded narrative — NOT final M2
-   *  AI-narrative acceptance. Injectable evidence-constrained AI narration is the
-   *  next M2 increment (layers on top; grounding guarantees preserved). */
-  narrative_mode: 'deterministic_grounded'
+  /** `deterministic_grounded` from the sync assembler; upgraded to `ai_grounded`
+   *  only when evidence-constrained AI narration validates (see halo-ai-narrative). */
+  narrative_mode: 'deterministic_grounded' | 'ai_grounded'
+  /** Provider label only ('hermes' | 'openai-direct' | 'none'); never a credential. */
+  narrative_provider: string
+  /** Null unless AI narration was attempted and fell back; a concise, safe reason. */
+  narrative_fallback_reason: string | null
+  /** Evidence-referenced claims on ai_grounded; null otherwise. */
+  narrative_claims: Array<{ text: string; evidence: string[] }> | null
   cards: HaloCard[]
   coverage: HaloCoverage
   limitations: string[]
@@ -182,9 +188,27 @@ export function buildHaloReportCard(
     manifest_version: HALO_SUPPORT_MANIFEST_VERSION,
     window_days: wd,
     narrative_mode: 'deterministic_grounded',
+    narrative_provider: 'none',
+    narrative_fallback_reason: null,
+    narrative_claims: null,
     cards,
     coverage,
     limitations,
     narrative,
   }
+}
+
+/**
+ * Async convenience: build the deterministic card, then attempt evidence-constrained
+ * AI narration on top (fails closed to the deterministic narrative). This is the
+ * entry point the API route uses so the report's narrative_mode / fallback state is
+ * always accurate. Optional deps let tests inject a fake completion.
+ */
+export async function buildHaloReportCardWithNarrative(
+  profile: string,
+  windowDays: number,
+  opts: { now?: number; historyBySlug?: Map<string, ReadonlyArray<number>>; narration?: NarrationDeps } = {},
+): Promise<HaloReportCard> {
+  const card = buildHaloReportCard(profile, windowDays, opts.now, opts.historyBySlug)
+  return withAiNarration(card, opts.narration)
 }

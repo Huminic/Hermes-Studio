@@ -54,6 +54,9 @@ type HaloReport = {
   manifest_version: string
   window_days: number
   narrative_mode: string
+  narrative_provider?: string
+  narrative_fallback_reason?: string | null
+  narrative_claims?: Array<{ text: string; evidence: string[] }> | null
   cards: HaloCard[]
   coverage: { total: number; current_value: number; no_current_data: number; withheld: number }
   limitations: string[]
@@ -179,11 +182,29 @@ export function HaloReportCardPanel({ profile }: { profile: string }) {
         </dl>
       </div>
 
-      {/* Deterministic grounded narrative */}
+      {/* Narrative — deterministic-grounded by default, upgraded to AI-grounded only
+          when evidence-constrained narration validates. Mode + fallback are visible. */}
       <div className="min-w-0 rounded-lg border border-slate-200 bg-white p-4">
-        <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
-          Narrative <span className="ml-1 rounded bg-slate-100 px-1.5 py-0.5 font-normal normal-case text-slate-500">{report.narrative_mode}</span>
+        <div className="mb-1 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <span>Narrative</span>
+          <span
+            className={
+              report.narrative_mode === 'ai_grounded'
+                ? 'rounded bg-sky-50 px-1.5 py-0.5 font-normal normal-case text-sky-700'
+                : 'rounded bg-slate-100 px-1.5 py-0.5 font-normal normal-case text-slate-500'
+            }
+            data-testid="halo-narrative-provider"
+          >
+            {report.narrative_mode === 'ai_grounded'
+              ? `AI-grounded · ${report.narrative_provider ?? 'provider'}`
+              : report.narrative_mode}
+          </span>
         </div>
+        {report.narrative_fallback_reason && (
+          <div className="mb-1 text-[11px] font-normal normal-case text-amber-700" data-testid="halo-narrative-fallback">
+            AI narration unavailable — {report.narrative_fallback_reason}; showing the deterministic grounded summary.
+          </div>
+        )}
         <p className="whitespace-pre-wrap text-sm text-slate-700" data-testid="halo-narrative">{report.narrative}</p>
       </div>
 

@@ -11,9 +11,12 @@ function mockDeps(opts: { authorized: boolean }) {
     isAuthorizedForProfile: () => opts.authorized,
   }))
   vi.doMock('@/server/reports/halo-report-card', () => ({
-    // echo the window it received so normalization is observable
-    buildHaloReportCard: vi.fn((profile: string, windowDays: number) => ({
-      profile, sales_only: true, window_days: windowDays, narrative_mode: 'deterministic_grounded',
+    // echo the window it received so normalization is observable; the route now uses
+    // the async narration entry point, which fails closed to deterministic in dev.
+    buildHaloReportCardWithNarrative: vi.fn(async (profile: string, windowDays: number) => ({
+      profile, sales_only: true, window_days: windowDays,
+      narrative_mode: 'deterministic_grounded', narrative_provider: 'none',
+      narrative_fallback_reason: 'provider_unconfigured', narrative_claims: null,
       cards: [], coverage: { total: 19, current_value: 0, no_current_data: 0, withheld: 0 }, limitations: [], narrative: '',
     })),
     normalizeHaloWindowDays: (raw: unknown) => ([7, 30, 90] as number[]).includes(Number(raw)) ? Number(raw) : 30,
@@ -57,14 +60,21 @@ describe('/api/customer/halo-report', () => {
     }
   })
 
-  it('200 for a governed Sales profile; narrative_mode is deterministic_grounded', async () => {
+  it('200 for a governed Sales profile; narrative mode + fallback state are surfaced', async () => {
     mockDeps({ authorized: true })
     const res = await call('serra-honda')
     expect(res.status).toBe(200)
-    const body = (await res.json()) as { ok: boolean; report: { sales_only: boolean; narrative_mode: string } }
+    const body = (await res.json()) as {
+      ok: boolean
+      report: { sales_only: boolean; narrative_mode: string; narrative_provider: string; narrative_fallback_reason: string | null }
+    }
     expect(body.ok).toBe(true)
     expect(body.report.sales_only).toBe(true)
+    // Read-only report always resolves; in dev the provider is unconfigured, so the
+    // mode/fallback are honestly visible on the wire.
     expect(body.report.narrative_mode).toBe('deterministic_grounded')
+    expect(body.report.narrative_provider).toBe('none')
+    expect(body.report.narrative_fallback_reason).toBe('provider_unconfigured')
   })
 
   it('normalizes window_days (invalid → 30; valid 7/90 preserved)', async () => {
