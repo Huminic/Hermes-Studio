@@ -90,31 +90,47 @@ function numericTokens(s: string): string[] {
 }
 
 /**
- * The set of numeric tokens the model is ALLOWED to emit — derived ONLY from the
- * structured facts: coverage counts, the window, each metric display value, each
- * native period date, and each baseline detail (periods/needed/mean/stddev).
+ * The numeric tokens + exact provenance dates a claim may emit, derived ONLY from
+ * the facts of the metric slug(s) THAT CLAIM cites — never card-global. This closes
+ * the cross-evidence laundering gap: a claim citing appt.show_rate cannot borrow the
+ * gross value, and a provenance date is honoured only as an EXACT whole string (its
+ * fragments — 2026, 08, 17 — are never whitelisted).
+ *
+ * Per cited metric:
+ *   - current display numbers ONLY when the current state is an actual value,
+ *   - baseline numbers ONLY when a band is computable (band: mean/stddev/periods;
+ *     zero_variance: mean/periods). `insufficient_history` yields NO number, so a
+ *     withheld / no-current metric with no computable baseline lends nothing.
+ *   - exact provenance period date strings (start/end) — matched whole, not tokenized.
  */
-export function allowedNumbersFor(card: HaloReportCard): Set<string> {
-  const facts: string[] = [
-    String(card.window_days),
-    String(card.coverage.total),
-    String(card.coverage.current_value),
-    String(card.coverage.no_current_data),
-    String(card.coverage.withheld),
-  ]
-  for (const c of card.cards) {
-    if (c.display) facts.push(c.display)
-    const p = c.provenance?.period
-    if (p?.start) facts.push(p.start)
-    if (p?.end) facts.push(p.end)
-    const b = c.baseline
-    if (b.state === 'insufficient_history') facts.push(String(b.periods_available), String(b.needed))
-    if (b.state === 'zero_variance') facts.push(String(b.periods_available), String(b.mean))
-    if (b.state === 'band') facts.push(String(b.periods_available), String(b.mean), String(b.stddev))
+export function allowedForClaim(
+  card: HaloReportCard,
+  slugs: ReadonlyArray<string>,
+): { numbers: Set<string>; dates: string[] } {
+  const numbers = new Set<string>()
+  const dates: string[] = []
+  const add = (s: string | number) => {
+    for (const t of numericTokens(String(s))) numbers.add(t)
   }
-  const set = new Set<string>()
-  for (const f of facts) for (const t of numericTokens(f)) set.add(t)
-  return set
+  for (const slug of slugs) {
+    const c = card.cards.find((x) => x.slug === slug)
+    if (!c) continue
+    if (c.current.state === 'value' && c.display) add(c.display)
+    const b = c.baseline
+    if (b.state === 'band') {
+      add(b.mean)
+      add(b.stddev)
+      add(b.periods_available)
+    } else if (b.state === 'zero_variance') {
+      add(b.mean)
+      add(b.periods_available)
+    }
+    // insufficient_history: no computable baseline number → nothing added.
+    const p = c.provenance?.period
+    if (p?.start) dates.push(p.start)
+    if (p?.end) dates.push(p.end)
+  }
+  return { numbers, dates }
 }
 
 const ALLOWED_SLUGS = (card: HaloReportCard) => new Set(card.cards.map((c) => c.slug))
@@ -161,27 +177,35 @@ export function validateAiNarrative(parsed: unknown, card: HaloReportCard): Vali
   }
 
   const allowedSlugs = ALLOWED_SLUGS(card)
-  const allowedNums = allowedNumbersFor(card)
 
-  // Evidence references must all be real card slugs.
+  // The summary carries NO numbers — every numeric statement must live in a claim
+  // that cites the metric it rests on. This removes the "summary states a global
+  // number with no evidence" path entirely.
+  if (numericTokens(obj.summary).length > 0) return { ok: false, reason: 'numeric_summary' }
+
   for (const cl of claims) {
+    // Evidence references must all be real card slugs.
     for (const ev of cl.evidence) {
       if (!allowedSlugs.has(ev)) return { ok: false, reason: `unknown_evidence:${ev}` }
     }
-  }
-  // A factual (numeric-bearing) claim MUST carry at least one evidence slug.
-  for (const cl of claims) {
-    if (numericTokens(cl.text).length > 0 && cl.evidence.length === 0) {
-      return { ok: false, reason: 'unreferenced_numeric_claim' }
+    // A numeric claim with no evidence cannot be grounded — reject before scanning.
+    if (cl.evidence.length === 0) {
+      if (numericTokens(cl.text).length > 0) return { ok: false, reason: 'unreferenced_numeric_claim' }
+      continue
+    }
+    // Per-claim grounding: numbers are validated ONLY against the cited metrics'
+    // facts. Exact provenance dates are removed as whole strings first, so their
+    // fragments can never be reused as a rate/value.
+    const { numbers, dates } = allowedForClaim(card, cl.evidence)
+    let scan = cl.text
+    for (const d of dates) scan = scan.split(d).join(' ')
+    for (const tok of numericTokens(scan)) {
+      if (!numbers.has(tok)) return { ok: false, reason: `hallucinated_number:${tok}` }
     }
   }
 
   const narrative = renderNarrative(obj.summary, claims)
 
-  // Numeric grounding: every numeric token must exist in the allowed facts.
-  for (const tok of numericTokens(narrative)) {
-    if (!allowedNums.has(tok)) return { ok: false, reason: `hallucinated_number:${tok}` }
-  }
   // Strip the explicitly-allowed "non-scoring" phrase before the benchmark scan so
   // it is never flagged, then reject any benchmark/scoring/ranking language.
   const benchScan = narrative.replace(/non-?scoring/gi, '').replace(/non-?scored/gi, '')
@@ -196,10 +220,15 @@ const SYSTEM_PROMPT = [
   'ALREADY-COMPUTED report card. You have NO analytics engine and NO data beyond the JSON facts given.',
   '',
   'HARD RULES:',
-  '- Use ONLY the provided facts. Never invent, estimate, or infer a number, rate, dollar amount, or date.',
-  '- The only numbers you may write are ones that appear verbatim in the facts (coverage counts, a metric',
-  '  display value, a native period date, or a baseline periods/mean/stddev).',
-  '- Missing is NOT zero. If a metric is withheld or has no current value, say so plainly — never write 0.',
+  '- The "summary" MUST contain NO digits at all. Keep it qualitative (e.g. "several measures have a',
+  '  current value; the rest are withheld or awaiting data"). Every number goes in a claim.',
+  '- In a claim, the ONLY numbers you may write are those attached to a metric slug you cite in that',
+  '  claim.evidence: that metric\'s own display value, its own baseline number, or its own exact native',
+  '  period date (write dates whole, exactly as given). Never reuse one metric\'s number for another.',
+  '- Never invent, estimate, infer, round, or re-split a number or date. Do not pull a piece out of a',
+  '  date (e.g. a year) to use as a rate or count.',
+  '- A withheld or no-current metric has NO number — say it is withheld / has no current value in words.',
+  '  Missing is NOT zero; never write 0 for a missing value.',
   '- No benchmarks, targets, scores, grades, rankings, percentiles, or "above/below average" language.',
   '  Industry references are directional and NON-SCORING; describe them in words only.',
   '- No causal or attribution claims (no "because", "due to", "driven by", "leads to", "reflects strong…").',
@@ -208,7 +237,8 @@ const SYSTEM_PROMPT = [
   'OUTPUT: return STRICT JSON ONLY, no prose around it, of the exact shape:',
   '{ "summary": string, "claims": [ { "text": string, "evidence": string[] } ] }',
   'Each claim.text is one factual sentence; claim.evidence lists the metric slug(s) it rests on',
-  '(slugs must come from the facts). Put any sentence that states a number in claims with evidence.',
+  '(slugs must come from the facts). Any sentence that states a number MUST be a claim that cites the',
+  'exact metric whose number it uses.',
 ].join('\n')
 
 function parseJsonLoose(text: string): unknown {

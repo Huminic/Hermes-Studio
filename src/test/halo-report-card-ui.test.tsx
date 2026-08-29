@@ -122,9 +122,13 @@ describe('HaloReportCardPanel', () => {
     stubFetch({ ok: true, report })
     render(<HaloReportCardPanel profile="serra-honda" />)
     await waitFor(() => expect(screen.getByTestId('halo-report')).toBeTruthy())
-    const fb = screen.getByTestId('halo-narrative-fallback').textContent ?? ''
-    expect(fb).toMatch(/AI narration unavailable/i)
-    expect(fb).toMatch(/provider_unconfigured/i)
+    const el = screen.getByTestId('halo-narrative-fallback')
+    const fb = el.textContent ?? ''
+    // Humanized, not a raw token; the machine code is retained only in the title attr.
+    expect(fb).toMatch(/AI summary unavailable/i)
+    expect(fb).toMatch(/isn.t set up for this workspace/i)
+    expect(fb).not.toMatch(/provider_unconfigured/i)
+    expect(el.getAttribute('title')).toBe('provider_unconfigured')
     expect(screen.getByTestId('halo-narrative-provider').textContent).toMatch(/deterministic_grounded/i)
   })
 

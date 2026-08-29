@@ -5,7 +5,7 @@ import type { HaloReportCard } from '@/server/reports/halo-report-card'
 import {
   narrateHaloReportCard,
   validateAiNarrative,
-  allowedNumbersFor,
+  allowedForClaim,
   buildHaloAiFacts,
   type CompletionFn,
 } from '@/server/reports/halo-ai-narrative'
@@ -103,19 +103,25 @@ describe('Halo AI narration — facts + allowed numbers', () => {
     expect(JSON.stringify(facts)).not.toMatch(/phone|email|customer_name|message_body/i)
   })
 
-  it('allowedNumbersFor derives ONLY from facts (displays, coverage, window, periods, baseline)', () => {
-    const nums = allowedNumbersFor(hondaCard())
-    for (const t of ['30', '4', '2', '1', '12240.78', '66.7', '0', '3', '2026', '08', '17', '23']) {
-      expect(nums.has(t)).toBe(true)
-    }
-    expect(nums.has('99999')).toBe(false)
+  it('allowedForClaim is PER cited metric — no cross-metric numbers, dates are whole strings', () => {
+    // A claim citing only appt.show_rate may use 66.7 and its own period dates,
+    // but NOT the gross value and NOT a bare date fragment.
+    const show = allowedForClaim(hondaCard(), ['appt.show_rate'])
+    expect(show.numbers.has('66.7')).toBe(true)
+    expect(show.numbers.has('12240.78')).toBe(false) // gross cannot be laundered in
+    expect(show.numbers.has('2026')).toBe(false) // date fragments are never whitelisted
+    expect(show.dates).toContain('2026-08-17')
+    // A withheld metric (roi.total_leads) lends NO number and NO date.
+    const withheld = allowedForClaim(hondaCard(), ['roi.total_leads'])
+    expect(withheld.numbers.size).toBe(0)
+    expect(withheld.dates).toEqual([])
   })
 })
 
 describe('Halo AI narration — success path', () => {
-  it('validates a grounded, evidence-referenced narrative → ai_grounded', async () => {
+  it('validates a grounded, evidence-referenced narrative → ai_grounded (non-numeric summary)', async () => {
     const complete = fakeComplete({
-      summary: '2 of 4 catalog measures have a current governed value; missing measures are withheld or awaiting data.',
+      summary: 'Several catalog measures have a current governed value; the rest are withheld or awaiting data.',
       claims: [
         { text: 'Total gross for the native period is $12,240.78.', evidence: ['gross.total_sum'] },
         { text: 'Appointment show rate is 66.7% for the shown period.', evidence: ['appt.show_rate'] },
@@ -202,24 +208,57 @@ describe('Halo AI narration — provider unavailable / timeout', () => {
 describe('Halo AI narration — all-withheld Ford stays honest', () => {
   it('a compliant coverage-only narrative is accepted and invents no numbers', async () => {
     const complete = fakeComplete({
-      summary: 'No catalog measure has a current governed value; 0 of 19 measures are reported this period.',
+      summary: 'No catalog measure has a current governed value; every measure is withheld or awaiting data.',
       claims: [],
     })
     const n = await narrateHaloReportCard(fordCard(), { complete })
     expect(n.narrative_mode).toBe('ai_grounded')
-    // nothing fabricated: no currency/percent tokens exist for an all-withheld store
-    expect(n.narrative).not.toMatch(/\$[\d,]+\.\d{2}|\d+(?:\.\d+)?%/)
+    // nothing fabricated: no digits at all for an all-withheld store
+    expect(n.narrative).not.toMatch(/\d/)
   })
 
-  it('an invented finding is rejected → deterministic "no current value" is preserved', async () => {
+  it('an invented finding on a withheld metric is rejected → deterministic "no current value" preserved', async () => {
     const complete = fakeComplete({
-      summary: 'Total gross reached $5,000.00 this period.',
+      summary: 'The gross figure is reported for this period.',
       claims: [{ text: 'Total gross is $5,000.00.', evidence: ['gross.total_sum'] }],
     })
     const n = await narrateHaloReportCard(fordCard(), { complete })
     expect(n.narrative_mode).toBe('deterministic_grounded')
     expect(n.narrative_fallback_reason).toMatch(/^hallucinated_number:/)
     expect(n.narrative).toMatch(/No catalog measure has a current governed value/i)
+  })
+})
+
+describe('Halo AI narration — cross-evidence laundering (Codex QC regression on 0d9f7a637)', () => {
+  const reject = (parsed: unknown) => validateAiNarrative(parsed, hondaCard())
+
+  it('rejects the gross value attached only to appt.show_rate (no cross-metric borrow)', () => {
+    const r = reject({ summary: 'Appointments overview.', claims: [{ text: 'Appointment show rate came in at $12,240.78.', evidence: ['appt.show_rate'] }] })
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.reason).toBe('hallucinated_number:12240.78')
+  })
+
+  it('rejects a native-date fragment reused as a rate (dates are whole strings only)', () => {
+    const r = reject({ summary: 'Appointments overview.', claims: [{ text: 'Appointment show rate is 2026 percent.', evidence: ['appt.show_rate'] }] })
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.reason).toBe('hallucinated_number:2026')
+  })
+
+  it('rejects a numeric summary even when it uses an otherwise-allowed number', () => {
+    const r = reject({ summary: 'This store reported 4 measures with a current value.', claims: [] })
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.reason).toBe('numeric_summary')
+  })
+
+  it('rejects a number attached to a withheld metric (no display/baseline value)', () => {
+    const r = reject({ summary: 'Leads overview.', claims: [{ text: 'Total leads is 12240.78.', evidence: ['roi.total_leads'] }] })
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.reason).toBe('hallucinated_number:12240.78')
+  })
+
+  it('accepts a claim that cites its OWN metric and uses its OWN exact native date', () => {
+    const r = reject({ summary: 'Gross overview.', claims: [{ text: 'Total gross for 2026-08-17 to 2026-08-23 is $12,240.78.', evidence: ['gross.total_sum'] }] })
+    expect(r.ok).toBe(true)
   })
 })
 

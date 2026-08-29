@@ -90,6 +90,37 @@ function round3(n: number): string {
   return Number.isInteger(n) ? String(n) : String(Math.round(n * 1000) / 1000)
 }
 
+/**
+ * Humanize a machine fallback code for display. The raw code is still carried on
+ * the wire (report.narrative_fallback_reason) and kept in a title attribute for
+ * support; customers see plain language rather than tokens like "provider_unconfigured".
+ */
+function humanizeFallback(code: string): string {
+  const prefix = code.split(':')[0]
+  switch (prefix) {
+    case 'provider_unconfigured':
+      return 'the AI writer isn’t set up for this workspace yet'
+    case 'provider_timeout':
+      return 'the AI writer didn’t respond in time'
+    case 'provider_error':
+      return 'the AI writer was unavailable'
+    case 'model_output_malformed':
+      return 'the AI draft could not be read'
+    case 'numeric_summary':
+    case 'unreferenced_numeric_claim':
+    case 'hallucinated_number':
+      return 'the AI draft included a figure we couldn’t verify against the data'
+    case 'unknown_evidence':
+      return 'the AI draft referenced a measure that isn’t on this card'
+    case 'unsupported_benchmark_language':
+      return 'the AI draft used benchmark/score wording we don’t support'
+    case 'unsupported_causal_language':
+      return 'the AI draft made a cause-and-effect claim we can’t back'
+    default:
+      return 'the AI draft did not pass our grounding checks'
+  }
+}
+
 function BaselineLine({ b }: { b: BaselineLayer }) {
   // The evaluator supplies mean/stddev/history count only — it does NOT classify the
   // current value as inside/outside the band. So never say "within"; state neutrally.
@@ -201,8 +232,12 @@ export function HaloReportCardPanel({ profile }: { profile: string }) {
           </span>
         </div>
         {report.narrative_fallback_reason && (
-          <div className="mb-1 text-[11px] font-normal normal-case text-amber-700" data-testid="halo-narrative-fallback">
-            AI narration unavailable — {report.narrative_fallback_reason}; showing the deterministic grounded summary.
+          <div
+            className="mb-1 text-[11px] font-normal normal-case text-amber-700"
+            data-testid="halo-narrative-fallback"
+            title={report.narrative_fallback_reason}
+          >
+            AI summary unavailable — {humanizeFallback(report.narrative_fallback_reason)}; showing the grounded summary below.
           </div>
         )}
         <p className="whitespace-pre-wrap text-sm text-slate-700" data-testid="halo-narrative">{report.narrative}</p>
