@@ -14,15 +14,16 @@ afterEach(() => {
 })
 
 describe('resolveMetricValues', () => {
-  it('is availability-safe for a store with no hub data — honest values, no throw', () => {
+  it('is availability-safe for a store with no source data — withholds everything, no throw', () => {
     const v = resolveMetricValues('nonexistent-store', 30, 1_700_000_000_000)
-    // hub metrics present
-    expect(v.has('engagement.conversations')).toBe(true)
-    expect(v.get('engagement.conversations')).toBe(0) // no threads → 0 replied (a real zero)
-    expect(v.get('engagement.reply_rate')).toBeNull() // no touched → null, never a fabricated 0
-    expect(v.get('engagement.resurrections')).toBe(0)
+    // Missing-not-zero: no hub source (0 threads) → engagement.* WITHHELD (absent), not 0.
+    expect(v.has('engagement.conversations')).toBe(false)
+    expect(v.has('engagement.reply_rate')).toBe(false)
+    expect(v.has('engagement.resurrections')).toBe(false)
     // VinSolutions-report metrics are absent on this branch (availability-gated)
     expect(v.has('appt.show_rate')).toBe(false)
     expect(v.has('roi.total_leads')).toBe(false)
+    // Nothing fabricated → empty map.
+    expect(v.size).toBe(0)
   })
 })
