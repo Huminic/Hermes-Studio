@@ -1,0 +1,16 @@
+{
+  "run": "M2B fail-closed weekly promotion (promoteHeldToAnalytics)",
+  "authorization": "Duane D1 + Codex, isolated/dev analytics only; sales_comm_log excluded; /tmp/halo-m2b-fresh untouched",
+  "hold_root": "/srv/ingest-dev/hold",
+  "dev_analytics_root": "/srv/ingest-dev/analytics",
+  "period": "2026-08-17/2026-08-23",
+  "result_summary": "0 promoted, 0 duplicate, 5 self-rejected (fail-closed). No analytics write occurred.",
+  "outcomes": [
+    { "profile": "serra-honda",     "family": "lead_source_roi", "period": "2026-08-17/2026-08-23", "source_sha256": "2ed4cb6859b12de097d15c12c39b667ca2055db0460c3fc5dbc532e375ee5b92", "outcome": "self_rejected", "accepted_rows": 0, "reason": "non-sales-lead-type: Filters positively select Service/Parts ([Parts, Service])" },
+    { "profile": "serra-nissan",    "family": "lead_source_roi", "period": "2026-08-17/2026-08-23", "source_sha256": "50ad05028e0705696c1f565afd956b9007c75e510f1163ae3da702d881e31779", "outcome": "self_rejected", "accepted_rows": 0, "reason": "non-sales-lead-type: Filters positively select Service/Parts ([Parts, Service])" },
+    { "profile": "serra-nissan",    "family": "cage_kpi",        "period": "2026-08-17/2026-08-23", "source_sha256": "59b012f07429d3975b5abe3d45c57e74593d076be33c0f4759cb3d0e45fa7f6d", "outcome": "self_rejected", "accepted_rows": 0, "reason": "non-sales-lead-type: Filters positively select Service/Parts ([Parts, Service])" },
+    { "profile": "tony-serra-ford", "family": "lead_source_roi", "period": "2026-08-17/2026-08-23", "source_sha256": "22694a140af39977aa0002045a6196b3b136c71441ce990385414310dcaf0890", "outcome": "self_rejected", "accepted_rows": 0, "reason": "non-sales-lead-type: Filters positively select Service/Parts ([Parts, Service])" },
+    { "profile": "tony-serra-ford", "family": "cage_kpi",        "period": "2026-08-17/2026-08-23", "source_sha256": "f344bb684019a7fe1e714908b35608ab2c5bf0a85642cede98a0e54a7ac74c05", "outcome": "self_rejected", "accepted_rows": 0, "reason": "non-sales-lead-type: Filters positively select Service/Parts ([Parts, Service])" }
+  ],
+  "conclusion": "The Service/Parts Lead-Intent contamination is systemic across the VinSolutions scheduled ROI, CAGE, and daily Sales Communication reports. roi.* / cage.* / comm.* remain WITHHELD. Defensible accepted weekly data = Honda dealership_performance + appointments, Nissan dealership_performance (already promoted); Ford has no clean family. Schedule correction awaits separate Duane approval."
+}

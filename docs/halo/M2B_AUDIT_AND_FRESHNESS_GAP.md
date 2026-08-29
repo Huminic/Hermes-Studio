@@ -88,5 +88,27 @@ present metrics — never from withheld/quarantined data.
   baselines stay `insufficient_history`** (one period). Honest, explicit — not a defect.
 - **G2 (comm/diagnosis).** Freshest comm source quarantined (§3) ⇒ comm.* + conversation‑evidence diagnosis
   withheld; schedule fix awaits Duane.
-- **D1 (promotion of shared store).** Recommend running the fail‑closed weekly promotion (step 5.1). It mutates
-  `/srv/ingest-dev/analytics`, which Codex reconciles against — **surfaced for acknowledgment before I run it.**
+- **D1 (promotion of shared store).** Authorized (Duane D1 + Codex) and **executed** — see §7.
+
+## 7. PROMOTION RESULT (executed 2026‑08‑29, isolated/dev, fail‑closed)
+
+Ran `promoteHeldToAnalytics` (read‑only on hold, isolated `DEV_ANALYTICS_ROOT=/srv/ingest-dev/analytics`) for
+the 5 not‑yet‑present clean‑candidate weekly families (ROI ×3, CAGE ×2; `sales_comm_log` excluded;
+`/tmp/halo-m2b-fresh` untouched). **Outcome: 0 promoted, 0 duplicate, 5 SELF‑REJECTED.** Every ROI/CAGE
+delivery re‑evaluated to `non-sales-lead-type: Filters positively select Service/Parts ([Parts, Service])`
+and aborted **before any write**. Analytics store verified **unmutated** (Honda 2, Nissan 1, Ford 0). Full
+per‑delivery record (profile, family, period, source SHA, accepted rows) in
+`docs/halo/evidence/m2b/promotion-outcomes.json`.
+
+**Conclusion:** the Service/Parts Lead‑Intent contamination is **systemic** across the VinSolutions ROI, CAGE,
+and daily Sales Communication scheduled reports — not just the fresh comm dailies. ⇒ `roi.*`, `cage.*`,
+`comm.*` all remain **WITHHELD**. **Final defensible accepted weekly data (08‑17…08‑23):**
+
+| store | accepted families | current‑value metrics |
+|---|---|---|
+| serra-honda | dealership_performance, appointments | `gross.total_sum` + native dp summary; `appt.show/no_show/confirmed/cancel_rate` |
+| serra-nissan | dealership_performance | `gross.total_sum` + native dp summary |
+| tony-serra-ford | **none** | fully withheld / no‑current (honest) |
+
+Baselines remain `insufficient_history` (one period). Schedule correction (remove Service/Parts from the
+Lead‑Intent selection) **awaits separate explicit Duane approval**; out of scope here.
