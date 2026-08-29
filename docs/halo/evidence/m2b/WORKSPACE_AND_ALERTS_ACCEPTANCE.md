@@ -51,10 +51,23 @@ checker (`validateAiNarrative` / `withAiNarration`) via an injected completion l
 - Exact prompt + facts + authored output + validated claims are preserved per store in
   `docs/halo/evidence/m2b/artifacts/ai-narrative-evidence-<profile>.json`.
 
-## 4. Remaining Codex-owned QA / gated steps
+## 4. Completed independent QA (Codex)
 
-- Independent reconciliation of every metric/provenance/period/citation (data spot-checks already match:
-  Honda 3184.50 + 9056.28 = 12240.78; rates 12/18, 4/18, 6/18, 2/18; Nissan -1300.85 + 6564.45 = 5263.60).
-- Per-page PDF -> PNG visual QA (page numbers, headers/footers, no clip/overlap/box glyphs).
-- The three allowlisted TEST emails to `duanekwells@gmail.com` (one PDF per store). **Studio does not send.**
+- **Manifest integrity:** bytes and SHA-256 matched for **all 9 HTML/PDF/JSON artifacts** in the set inspected.
+- **Reconciliation:** every metric/provenance/period/citation reconciled - Honda 3184.50 + 9056.28 = 12240.78 and
+  rates 12/18 = 66.7%, 4/18 = 22.2%, 6/18 = 33.3%, 2/18 = 11.1%; Nissan -1300.85 + 6564.45 = 5263.60;
+  Ford 0/19 explicit missing/withheld.
+- **PDF -> PNG visual QA:** all three PDFs open, unencrypted, A4; **22 pages total** (Honda 8, Nissan 7, Ford 7)
+  rendered at 120 dpi and visually inspected; **no clipping, overlap, blank pages, box glyphs, or PII**; page
+  numbers + running headers/footers present; the Sales-only boundary is explicit on every report.
+
+  *Post-QA metadata fix:* Ford's document/PDF `/Title` was subsequently corrected to drop a trailing hyphen
+  (coverage end is null) - a **metadata-only** change; rendered pages and content are unchanged. The three Ford
+  artifacts were regenerated (Honda/Nissan byte-identical); current hashes are in `manifest-index.json`. The
+  visual-QA outcome above is unaffected by this metadata-only re-render.
+
+## 5. Remaining (Codex-owned external delivery + separately gated)
+
+- The three allowlisted TEST emails to `duanekwells@gmail.com` (one PDF per store) are the **only** remaining
+  external delivery step. **Studio does not send.**
 - Live automatic narration and live metric evaluation/dispatch remain separately gated and unauthorized here.
