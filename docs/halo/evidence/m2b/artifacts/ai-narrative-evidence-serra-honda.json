@@ -1,0 +1,363 @@
+{
+  "profile": "serra-honda",
+  "provider": "claude-code-offline",
+  "live_provider_status": "unconfigured (no live inference provider in the isolated instance)",
+  "narrative_mode": "ai_grounded",
+  "ai_narrative_acceptance": "met",
+  "fallback_reason": null,
+  "system_prompt": "You are a dealership Sales report-card narrator. You write a short, plain-language summary of an\nALREADY-COMPUTED report card. You have NO analytics engine and NO data beyond the JSON facts given.\n\nHARD RULES:\n- The \"summary\" MUST contain NO digits at all. Keep it qualitative (e.g. \"several measures have a\n  current value; the rest are withheld or awaiting data\"). Every number goes in a claim.\n- In a claim, the ONLY numbers you may write are those attached to a metric slug you cite in that\n  claim.evidence: that metric's own display value, its own baseline number, or its own exact native\n  period date (write dates whole, exactly as given). Never reuse one metric's number for another.\n- Write each value EXACTLY as its display shows it — same currency \"$\", same \"%\", same sign. Do not\n  change the unit (never write \"$66.7\" for a \"66.7%\" rate) and never flip the sign.\n- Never invent, estimate, infer, round, or re-split a number or date. Do not pull a piece out of a\n  date (e.g. a year) to use as a rate or count.\n- A withheld or no-current metric has NO number — say it is withheld / has no current value in words.\n  Missing is NOT zero; never write 0 for a missing value.\n- No benchmarks, targets, scores, grades, rankings, percentiles, or \"above/below average\" language.\n  Industry references are directional and NON-SCORING; describe them in words only.\n- No causal or attribution claims (no \"because\", \"due to\", \"driven by\", \"leads to\", \"reflects strong…\").\n- Do not name any CRM/vendor. Do not mention Service or Parts (this is a Sales-only card).\n\nOUTPUT: return STRICT JSON ONLY, no prose around it, of the exact shape:\n{ \"summary\": string, \"claims\": [ { \"text\": string, \"evidence\": string[] } ] }\nEach claim.text is one factual sentence; claim.evidence lists the metric slug(s) it rests on\n(slugs must come from the facts). Any sentence that states a number MUST be a claim that cites the\nexact metric whose number it uses.",
+  "facts": {
+    "profile": "serra-honda",
+    "sales_only": true,
+    "window_days": 30,
+    "coverage": {
+      "total": 19,
+      "current_value": 5,
+      "no_current_data": 3,
+      "withheld": 11
+    },
+    "metrics": [
+      {
+        "slug": "appt.show_rate",
+        "label": "Appointment show rate",
+        "category": "Appointments",
+        "unit": "ratio_0_1",
+        "display": "66.7%",
+        "current_state": "value",
+        "provenance_source": "appointments",
+        "native_period": {
+          "start": "2026-08-17",
+          "end": "2026-08-23"
+        },
+        "industry_state": "directional_non_scoring",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "appt.no_show_rate",
+        "label": "Appointment no-show rate",
+        "category": "Appointments",
+        "unit": "ratio_0_1",
+        "display": "22.2%",
+        "current_state": "value",
+        "provenance_source": "appointments",
+        "native_period": {
+          "start": "2026-08-17",
+          "end": "2026-08-23"
+        },
+        "industry_state": "directional_non_scoring",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "appt.confirmed_rate",
+        "label": "Appointment confirmed rate",
+        "category": "Appointments",
+        "unit": "ratio_0_1",
+        "display": "33.3%",
+        "current_state": "value",
+        "provenance_source": "appointments",
+        "native_period": {
+          "start": "2026-08-17",
+          "end": "2026-08-23"
+        },
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "appt.cancel_rate",
+        "label": "Appointment cancel rate",
+        "category": "Appointments",
+        "unit": "ratio_0_1",
+        "display": "11.1%",
+        "current_state": "value",
+        "provenance_source": "appointments",
+        "native_period": {
+          "start": "2026-08-17",
+          "end": "2026-08-23"
+        },
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "roi.total_leads",
+        "label": "Total leads (all sources)",
+        "category": "Leads & ROI",
+        "unit": "count",
+        "display": null,
+        "current_state": "withheld",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "roi.sold_from_leads",
+        "label": "Sold from leads",
+        "category": "Leads & ROI",
+        "unit": "count",
+        "display": null,
+        "current_state": "withheld",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "roi.duplicate_rate",
+        "label": "Duplicate-lead rate",
+        "category": "Leads & ROI",
+        "unit": "ratio_0_1",
+        "display": null,
+        "current_state": "withheld",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "gross.total_sum",
+        "label": "Total gross",
+        "category": "Gross",
+        "unit": "currency_usd",
+        "display": "$12,240.78",
+        "current_state": "value",
+        "provenance_source": "dealership_performance",
+        "native_period": {
+          "start": "2026-08-17",
+          "end": "2026-08-23"
+        },
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "gross.reconciliation_mismatches",
+        "label": "Gross reconciliation mismatches",
+        "category": "Gross",
+        "unit": "count",
+        "display": null,
+        "current_state": "withheld",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "cage.total_comms",
+        "label": "Total rep communications",
+        "category": "Team",
+        "unit": "count",
+        "display": null,
+        "current_state": "withheld",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "cage.deals_from_leads",
+        "label": "Deals from leads",
+        "category": "Team",
+        "unit": "count",
+        "display": null,
+        "current_state": "withheld",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "cage.rep_count",
+        "label": "Active reps",
+        "category": "Team",
+        "unit": "count",
+        "display": null,
+        "current_state": "withheld",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "comm.escalation_keyword_screen",
+        "label": "Escalation-keyword messages",
+        "category": "Communications",
+        "unit": "count",
+        "display": null,
+        "current_state": "withheld",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "comm.template_overuse",
+        "label": "Template overuse",
+        "category": "Communications",
+        "unit": "count",
+        "display": null,
+        "current_state": "withheld",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "comm.inbound_high_intent_keywords",
+        "label": "Inbound high-intent messages",
+        "category": "Communications",
+        "unit": "count",
+        "display": null,
+        "current_state": "withheld",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "comm.multi_rep_within_24h",
+        "label": "Customers worked by multiple reps (24h)",
+        "category": "Communications",
+        "unit": "count",
+        "display": null,
+        "current_state": "withheld",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "engagement.reply_rate",
+        "label": "SMS reply rate",
+        "category": "Engagement",
+        "unit": "ratio_0_1",
+        "display": null,
+        "current_state": "no_current_data",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "engagement.conversations",
+        "label": "Conversations held",
+        "category": "Engagement",
+        "unit": "count",
+        "display": null,
+        "current_state": "no_current_data",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      },
+      {
+        "slug": "engagement.resurrections",
+        "label": "Safety-net resurrections",
+        "category": "Engagement",
+        "unit": "count",
+        "display": null,
+        "current_state": "no_current_data",
+        "provenance_source": null,
+        "native_period": null,
+        "industry_state": "no_benchmark",
+        "baseline_state": "insufficient_history"
+      }
+    ],
+    "limitations": [
+      "Sales-only: Service and Parts are excluded (they belong only to the separate combined Serra Service workspace).",
+      "11 measure(s) withheld pending governed readers (ROI → Lead Source ROI; comm.* → Vin Sales Communication Log; cage.* → Enterprise Performance/CAGE; gross.reconciliation_mismatches → per-deal CRM Sales Gross).",
+      "3 measure(s) have no current value this period (empty/absent governed source).",
+      "Industry references are directional and NON-SCORING where no definition-compatible standard exists; benchmarks are never scored.",
+      "Dealer baseline: insufficient history (fewer than 3 governed periods) — non-scoring."
+    ]
+  },
+  "authored_output": {
+    "summary": "Serra Honda has governed current values this week for its appointment rates and its total gross, while leads and ROI, team communications, and messaging engagement are withheld or not yet connected; the picture is partial, and every gap is stated plainly rather than filled with a zero.",
+    "claims": [
+      {
+        "text": "Total gross for the governed week is $12,240.78.",
+        "evidence": [
+          "gross.total_sum"
+        ]
+      },
+      {
+        "text": "The appointment show rate is 66.7% for the accepted appointments source.",
+        "evidence": [
+          "appt.show_rate"
+        ]
+      },
+      {
+        "text": "The appointment no-show rate is 22.2%.",
+        "evidence": [
+          "appt.no_show_rate"
+        ]
+      },
+      {
+        "text": "The appointment confirmed rate is 33.3%.",
+        "evidence": [
+          "appt.confirmed_rate"
+        ]
+      },
+      {
+        "text": "The appointment cancel rate is 11.1%.",
+        "evidence": [
+          "appt.cancel_rate"
+        ]
+      },
+      {
+        "text": "Leads and ROI are withheld this period under the Sales-only data contract, and are shown explicitly rather than as a zero.",
+        "evidence": [
+          "roi.total_leads"
+        ]
+      },
+      {
+        "text": "Messaging engagement has no current value this period; the store has no governed messaging source yet.",
+        "evidence": [
+          "engagement.conversations"
+        ]
+      }
+    ]
+  },
+  "validated_claims": [
+    {
+      "text": "Total gross for the governed week is $12,240.78.",
+      "evidence": [
+        "gross.total_sum"
+      ]
+    },
+    {
+      "text": "The appointment show rate is 66.7% for the accepted appointments source.",
+      "evidence": [
+        "appt.show_rate"
+      ]
+    },
+    {
+      "text": "The appointment no-show rate is 22.2%.",
+      "evidence": [
+        "appt.no_show_rate"
+      ]
+    },
+    {
+      "text": "The appointment confirmed rate is 33.3%.",
+      "evidence": [
+        "appt.confirmed_rate"
+      ]
+    },
+    {
+      "text": "The appointment cancel rate is 11.1%.",
+      "evidence": [
+        "appt.cancel_rate"
+      ]
+    },
+    {
+      "text": "Leads and ROI are withheld this period under the Sales-only data contract, and are shown explicitly rather than as a zero.",
+      "evidence": [
+        "roi.total_leads"
+      ]
+    },
+    {
+      "text": "Messaging engagement has no current value this period; the store has no governed messaging source yet.",
+      "evidence": [
+        "engagement.conversations"
+      ]
+    }
+  ]
+}

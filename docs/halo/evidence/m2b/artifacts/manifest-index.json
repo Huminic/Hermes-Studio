@@ -1,0 +1,110 @@
+{
+  "generated_at_iso": "2026-08-29T22:02:14.144Z",
+  "artifacts": [
+    {
+      "profile": "serra-honda",
+      "dealer_name": "Serra Honda",
+      "coverage_period": {
+        "start": "2026-08-17",
+        "end": "2026-08-23"
+      },
+      "coverage_counts": {
+        "total": 19,
+        "supported": 5,
+        "missing": 3,
+        "withheld": 11,
+        "unsupported": 0
+      },
+      "narrative_mode": "ai_grounded",
+      "narrative_provider": "claude-code-offline",
+      "ai_narrative_acceptance": "met",
+      "files": {
+        "html": {
+          "path": "docs/halo/evidence/m2b/artifacts/halo-serra-honda-2026-08-17_2026-08-23.html",
+          "bytes": 35012,
+          "sha256": "f61b8245200ad25e0a158524deed2d377bbbac1f30c30cc3d8dfa45e218c9dc7"
+        },
+        "pdf": {
+          "path": "docs/halo/evidence/m2b/artifacts/halo-serra-honda-2026-08-17_2026-08-23.pdf",
+          "bytes": 124431,
+          "sha256": "8e0b7dc715b8332b53da670f79b6e0cc1382de3fcafeed89d7ecd83bb44ddd62"
+        },
+        "json": {
+          "path": "docs/halo/evidence/m2b/artifacts/halo-serra-honda-2026-08-17_2026-08-23.json",
+          "bytes": 40787,
+          "sha256": "00668544fe8064dbb11ae004d40d16316603117a8c2c29a5ffddd8e7a3b0754f"
+        }
+      }
+    },
+    {
+      "profile": "serra-nissan",
+      "dealer_name": "Serra Nissan",
+      "coverage_period": {
+        "start": "2026-08-17",
+        "end": "2026-08-23"
+      },
+      "coverage_counts": {
+        "total": 19,
+        "supported": 1,
+        "missing": 7,
+        "withheld": 11,
+        "unsupported": 0
+      },
+      "narrative_mode": "ai_grounded",
+      "narrative_provider": "claude-code-offline",
+      "ai_narrative_acceptance": "met",
+      "files": {
+        "html": {
+          "path": "docs/halo/evidence/m2b/artifacts/halo-serra-nissan-2026-08-17_2026-08-23.html",
+          "bytes": 32740,
+          "sha256": "a0fbd08b5946dc0495f389d3300e2e19ce86f06d9a13b097c50d728623493a1a"
+        },
+        "pdf": {
+          "path": "docs/halo/evidence/m2b/artifacts/halo-serra-nissan-2026-08-17_2026-08-23.pdf",
+          "bytes": 118476,
+          "sha256": "be7410a9a546aba2cde804241a84ec6cd920d6b9ac58ddd2c721761c4b9cca73"
+        },
+        "json": {
+          "path": "docs/halo/evidence/m2b/artifacts/halo-serra-nissan-2026-08-17_2026-08-23.json",
+          "bytes": 37611,
+          "sha256": "1c24dc68e24c59d83d420a9b92dee29f92a20a5e7d6186edc9fe9d0f52f26d33"
+        }
+      }
+    },
+    {
+      "profile": "tony-serra-ford",
+      "dealer_name": "Tony Serra Ford",
+      "coverage_period": {
+        "start": null,
+        "end": null
+      },
+      "coverage_counts": {
+        "total": 19,
+        "supported": 0,
+        "missing": 8,
+        "withheld": 11,
+        "unsupported": 0
+      },
+      "narrative_mode": "ai_grounded",
+      "narrative_provider": "claude-code-offline",
+      "ai_narrative_acceptance": "met",
+      "files": {
+        "html": {
+          "path": "docs/halo/evidence/m2b/artifacts/halo-tony-serra-ford-2026-08-17_2026-08-23.html",
+          "bytes": 31999,
+          "sha256": "adeb136076f14cc17a67c992d759ba8f5b180e75263095424a7307f543f49788"
+        },
+        "pdf": {
+          "path": "docs/halo/evidence/m2b/artifacts/halo-tony-serra-ford-2026-08-17_2026-08-23.pdf",
+          "bytes": 111739,
+          "sha256": "d225a877548a756ae31945df3622dfce2250bc7a44542f4c72a94b35befd1a27"
+        },
+        "json": {
+          "path": "docs/halo/evidence/m2b/artifacts/halo-tony-serra-ford-2026-08-17_2026-08-23.json",
+          "bytes": 36278,
+          "sha256": "cd56321aed452bdd86c9cb65087fa0e0b8eaa10d498ad29ec9a7b0f2ffd8b554"
+        }
+      }
+    }
+  ]
+}

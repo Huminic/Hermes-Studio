@@ -56,7 +56,16 @@ export type HaloAiFacts = {
   limitations: string[]
 }
 
-export type NarrationDeps = { complete?: CompletionFn; timeoutMs?: number }
+export type NarrationDeps = {
+  complete?: CompletionFn
+  timeoutMs?: number
+  /**
+   * Honest display label for the narrative provider, overriding the transport
+   * `via`. Used by the M2B offline-authoring path (label `claude-code-offline`)
+   * so we never mislabel an injected completion as Hermes/OpenAI. Display only.
+   */
+  providerLabel?: string
+}
 
 const DEFAULT_TIMEOUT_MS = 20_000
 
@@ -263,6 +272,9 @@ const SYSTEM_PROMPT = [
   'exact metric whose number it uses.',
 ].join('\n')
 
+/** Exported for evidence capture (M2B offline authoring records the exact prompt). */
+export const HALO_AI_SYSTEM_PROMPT: string = SYSTEM_PROMPT
+
 function parseJsonLoose(text: string): unknown {
   const trimmed = text.trim()
   try {
@@ -341,7 +353,7 @@ export async function narrateHaloReportCard(
     return deterministic('provider_error')
   }
 
-  const provider = result.via
+  const provider = deps.providerLabel ?? result.via
   const parsed = parseJsonLoose(result.text)
   const validated = validateAiNarrative(parsed, card)
   if (!validated.ok) return deterministic(validated.reason, provider)

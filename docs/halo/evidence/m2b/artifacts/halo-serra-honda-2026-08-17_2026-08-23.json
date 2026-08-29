@@ -1,0 +1,1097 @@
+{
+  "schema_version": "1.0.0",
+  "profile": "serra-honda",
+  "dealer_name": "Serra Honda",
+  "dealer_id": "21043",
+  "sales_only": true,
+  "generated_at_iso": "2026-08-29T22:02:14.144Z",
+  "window_days": 30,
+  "coverage_period": {
+    "start": "2026-08-17",
+    "end": "2026-08-23"
+  },
+  "overall_freshness": {
+    "newest_period_end": "2026-08-23",
+    "age_days": 5,
+    "freshness": "fresh"
+  },
+  "freshness": [
+    {
+      "family": "dealership_performance",
+      "period_start": "2026-08-17",
+      "period_end": "2026-08-23",
+      "age_days": 5,
+      "freshness": "fresh",
+      "checksum": "39560ef12549554cb27f8883451ab5326b196ae66bd554b285014f94b18257ee",
+      "parser_version": "vin-xlsx-1",
+      "accepted_rows": 40
+    },
+    {
+      "family": "appointments",
+      "period_start": "2026-08-17",
+      "period_end": "2026-08-23",
+      "age_days": 5,
+      "freshness": "fresh",
+      "checksum": "b189a92034930603c28439eeac159c6f3f41410d143d21cc037f92534407f5e5",
+      "parser_version": "vin-xlsx-1",
+      "accepted_rows": 18
+    }
+  ],
+  "coverage_counts": {
+    "total": 19,
+    "supported": 5,
+    "missing": 3,
+    "withheld": 11,
+    "unsupported": 0
+  },
+  "ledger": [
+    {
+      "slug": "appt.show_rate",
+      "label": "Appointment show rate",
+      "category": "Appointments",
+      "unit": "ratio_0_1",
+      "state": "supported",
+      "display": "66.7%",
+      "reason": null,
+      "industry": {
+        "state": "directional_non_scoring",
+        "scoring": false,
+        "range": "50–65% (vendor-directional; source explicitly says no universal benchmark)",
+        "source_url": "https://www.demandlocal.com/blog/appointment-setting-show-rate-statistics/",
+        "source_type": "vendor blog (directional)",
+        "confidence": "low",
+        "source_published_or_updated": "2026-06-04",
+        "verified_on": "2026-08-28",
+        "definition_compatibility": "incompatible",
+        "note": "Demand Local (updated 2026-06-04) explicitly states there is no single universal show-rate benchmark. Foureyes defines Appointment Show Rate = shows ÷ appointments SET (support.foureyes.io, 2025-03-14); Studio computes shows ÷ appointment ROWS — different denominator. The Foureyes 2025-05-06 page is a SET-rate study (40% internet / 75% phone), NOT a show-rate target. Do NOT cite Foureyes for a 50% target and do NOT score."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 1
+    },
+    {
+      "slug": "appt.no_show_rate",
+      "label": "Appointment no-show rate",
+      "category": "Appointments",
+      "unit": "ratio_0_1",
+      "state": "supported",
+      "display": "22.2%",
+      "reason": null,
+      "industry": {
+        "state": "directional_non_scoring",
+        "scoring": false,
+        "range": "~35–50% (DERIVED from the show-rate range; not a published sales no-show)",
+        "source_url": "https://www.demandlocal.com/blog/appointment-setting-show-rate-statistics/",
+        "source_type": "derived estimate",
+        "confidence": "low",
+        "source_published_or_updated": "2026-06-04",
+        "verified_on": "2026-08-28",
+        "definition_compatibility": "incompatible",
+        "note": "Derived from the show-rate range; the ~20% figure that circulates is a SERVICE number and must not be applied to sales. Non-scoring."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 1
+    },
+    {
+      "slug": "appt.confirmed_rate",
+      "label": "Appointment confirmed rate",
+      "category": "Appointments",
+      "unit": "ratio_0_1",
+      "state": "supported",
+      "display": "33.3%",
+      "reason": null,
+      "industry": {
+        "state": "no_benchmark",
+        "note": "Confirmation cadence is cited as a lever, but no sourced numeric confirmed-rate benchmark exists."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 1
+    },
+    {
+      "slug": "appt.cancel_rate",
+      "label": "Appointment cancel rate",
+      "category": "Appointments",
+      "unit": "ratio_0_1",
+      "state": "supported",
+      "display": "11.1%",
+      "reason": null,
+      "industry": {
+        "state": "no_benchmark",
+        "note": "Unsourced — needs a benchmark (no public sales cancel-rate figure)."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 1
+    },
+    {
+      "slug": "roi.total_leads",
+      "label": "Total leads (all sources)",
+      "category": "Leads & ROI",
+      "unit": "count",
+      "state": "withheld",
+      "display": null,
+      "reason": "Dashboard vs Lead Source ROI definitions diverge for the same period (e.g. Honda 89 leads/8 sold vs ROI 110/5); needs a governed Lead Source ROI native reader.",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    },
+    {
+      "slug": "roi.sold_from_leads",
+      "label": "Sold from leads",
+      "category": "Leads & ROI",
+      "unit": "count",
+      "state": "withheld",
+      "display": null,
+      "reason": "Dashboard vs Lead Source ROI definitions diverge for the same period (e.g. Honda 89 leads/8 sold vs ROI 110/5); needs a governed Lead Source ROI native reader.",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    },
+    {
+      "slug": "roi.duplicate_rate",
+      "label": "Duplicate-lead rate",
+      "category": "Leads & ROI",
+      "unit": "ratio_0_1",
+      "state": "withheld",
+      "display": null,
+      "reason": "needs Lead Source ROI dedup fields (no governed reader yet).",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    },
+    {
+      "slug": "gross.total_sum",
+      "label": "Total gross",
+      "category": "Gross",
+      "unit": "currency_usd",
+      "state": "supported",
+      "display": "$12,240.78",
+      "reason": null,
+      "industry": {
+        "state": "no_benchmark",
+        "note": "Industry gross is a PER-UNIT figure (Haig ~$3,298 front PVR, Q4 2024); Studio gross.total_sum is a TOTAL SUM across deals — incompatible grain/denominator. No scoring benchmark."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 1
+    },
+    {
+      "slug": "gross.reconciliation_mismatches",
+      "label": "Gross reconciliation mismatches",
+      "category": "Gross",
+      "unit": "count",
+      "state": "withheld",
+      "display": null,
+      "reason": "needs per-deal CRM Sales Gross rows (front+back vs total) — no governed reader yet.",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    },
+    {
+      "slug": "cage.total_comms",
+      "label": "Total rep communications",
+      "category": "Team",
+      "unit": "count",
+      "state": "withheld",
+      "display": null,
+      "reason": "needs a governed Enterprise Performance / CAGE native reader (report not ingested here).",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    },
+    {
+      "slug": "cage.deals_from_leads",
+      "label": "Deals from leads",
+      "category": "Team",
+      "unit": "count",
+      "state": "withheld",
+      "display": null,
+      "reason": "needs a governed Enterprise Performance / CAGE native reader (report not ingested here).",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    },
+    {
+      "slug": "cage.rep_count",
+      "label": "Active reps",
+      "category": "Team",
+      "unit": "count",
+      "state": "withheld",
+      "display": null,
+      "reason": "needs a governed Enterprise Performance / CAGE native reader (report not ingested here).",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    },
+    {
+      "slug": "comm.escalation_keyword_screen",
+      "label": "Escalation-keyword messages",
+      "category": "Communications",
+      "unit": "count",
+      "state": "withheld",
+      "display": null,
+      "reason": "needs a governed Vin Sales Communication Log reader — prior Honda exploration lacks stable IDs and is not a 3-store daily feed.",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    },
+    {
+      "slug": "comm.template_overuse",
+      "label": "Template overuse",
+      "category": "Communications",
+      "unit": "count",
+      "state": "withheld",
+      "display": null,
+      "reason": "needs a governed Vin Sales Communication Log reader — prior Honda exploration lacks stable IDs and is not a 3-store daily feed.",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    },
+    {
+      "slug": "comm.inbound_high_intent_keywords",
+      "label": "Inbound high-intent messages",
+      "category": "Communications",
+      "unit": "count",
+      "state": "withheld",
+      "display": null,
+      "reason": "needs a governed Vin Sales Communication Log reader — prior Honda exploration lacks stable IDs and is not a 3-store daily feed.",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    },
+    {
+      "slug": "comm.multi_rep_within_24h",
+      "label": "Customers worked by multiple reps (24h)",
+      "category": "Communications",
+      "unit": "count",
+      "state": "withheld",
+      "display": null,
+      "reason": "needs a governed Vin Sales Communication Log reader — prior Honda exploration lacks stable IDs and is not a 3-store daily feed.",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    },
+    {
+      "slug": "engagement.reply_rate",
+      "label": "SMS reply rate",
+      "category": "Engagement",
+      "unit": "ratio_0_1",
+      "state": "missing",
+      "display": null,
+      "reason": "hub reader exists but the three isolated stores hold no conversation data (0 threads) → no current value.",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    },
+    {
+      "slug": "engagement.conversations",
+      "label": "Conversations held",
+      "category": "Engagement",
+      "unit": "count",
+      "state": "missing",
+      "display": null,
+      "reason": "hub reader exists but the three isolated stores hold no conversation data (0 threads) → no current value.",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    },
+    {
+      "slug": "engagement.resurrections",
+      "label": "Safety-net resurrections",
+      "category": "Engagement",
+      "unit": "count",
+      "state": "missing",
+      "display": null,
+      "reason": "hub reader exists but the three isolated stores hold no conversation data (0 threads) → no current value.",
+      "industry": {
+        "state": "no_benchmark",
+        "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+      },
+      "baseline": {
+        "state": "insufficient_history",
+        "periods_available": 0,
+        "needed": 3
+      },
+      "periods_on_file": 0
+    }
+  ],
+  "scorecards": [
+    {
+      "category": "Appointments",
+      "rows": [
+        {
+          "slug": "appt.show_rate",
+          "label": "Appointment show rate",
+          "category": "Appointments",
+          "unit": "ratio_0_1",
+          "state": "supported",
+          "display": "66.7%",
+          "reason": null,
+          "industry": {
+            "state": "directional_non_scoring",
+            "scoring": false,
+            "range": "50–65% (vendor-directional; source explicitly says no universal benchmark)",
+            "source_url": "https://www.demandlocal.com/blog/appointment-setting-show-rate-statistics/",
+            "source_type": "vendor blog (directional)",
+            "confidence": "low",
+            "source_published_or_updated": "2026-06-04",
+            "verified_on": "2026-08-28",
+            "definition_compatibility": "incompatible",
+            "note": "Demand Local (updated 2026-06-04) explicitly states there is no single universal show-rate benchmark. Foureyes defines Appointment Show Rate = shows ÷ appointments SET (support.foureyes.io, 2025-03-14); Studio computes shows ÷ appointment ROWS — different denominator. The Foureyes 2025-05-06 page is a SET-rate study (40% internet / 75% phone), NOT a show-rate target. Do NOT cite Foureyes for a 50% target and do NOT score."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 1
+        },
+        {
+          "slug": "appt.no_show_rate",
+          "label": "Appointment no-show rate",
+          "category": "Appointments",
+          "unit": "ratio_0_1",
+          "state": "supported",
+          "display": "22.2%",
+          "reason": null,
+          "industry": {
+            "state": "directional_non_scoring",
+            "scoring": false,
+            "range": "~35–50% (DERIVED from the show-rate range; not a published sales no-show)",
+            "source_url": "https://www.demandlocal.com/blog/appointment-setting-show-rate-statistics/",
+            "source_type": "derived estimate",
+            "confidence": "low",
+            "source_published_or_updated": "2026-06-04",
+            "verified_on": "2026-08-28",
+            "definition_compatibility": "incompatible",
+            "note": "Derived from the show-rate range; the ~20% figure that circulates is a SERVICE number and must not be applied to sales. Non-scoring."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 1
+        },
+        {
+          "slug": "appt.confirmed_rate",
+          "label": "Appointment confirmed rate",
+          "category": "Appointments",
+          "unit": "ratio_0_1",
+          "state": "supported",
+          "display": "33.3%",
+          "reason": null,
+          "industry": {
+            "state": "no_benchmark",
+            "note": "Confirmation cadence is cited as a lever, but no sourced numeric confirmed-rate benchmark exists."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 1
+        },
+        {
+          "slug": "appt.cancel_rate",
+          "label": "Appointment cancel rate",
+          "category": "Appointments",
+          "unit": "ratio_0_1",
+          "state": "supported",
+          "display": "11.1%",
+          "reason": null,
+          "industry": {
+            "state": "no_benchmark",
+            "note": "Unsourced — needs a benchmark (no public sales cancel-rate figure)."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 1
+        }
+      ]
+    },
+    {
+      "category": "Leads & ROI",
+      "rows": [
+        {
+          "slug": "roi.total_leads",
+          "label": "Total leads (all sources)",
+          "category": "Leads & ROI",
+          "unit": "count",
+          "state": "withheld",
+          "display": null,
+          "reason": "Dashboard vs Lead Source ROI definitions diverge for the same period (e.g. Honda 89 leads/8 sold vs ROI 110/5); needs a governed Lead Source ROI native reader.",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        },
+        {
+          "slug": "roi.sold_from_leads",
+          "label": "Sold from leads",
+          "category": "Leads & ROI",
+          "unit": "count",
+          "state": "withheld",
+          "display": null,
+          "reason": "Dashboard vs Lead Source ROI definitions diverge for the same period (e.g. Honda 89 leads/8 sold vs ROI 110/5); needs a governed Lead Source ROI native reader.",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        },
+        {
+          "slug": "roi.duplicate_rate",
+          "label": "Duplicate-lead rate",
+          "category": "Leads & ROI",
+          "unit": "ratio_0_1",
+          "state": "withheld",
+          "display": null,
+          "reason": "needs Lead Source ROI dedup fields (no governed reader yet).",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        }
+      ]
+    },
+    {
+      "category": "Gross",
+      "rows": [
+        {
+          "slug": "gross.total_sum",
+          "label": "Total gross",
+          "category": "Gross",
+          "unit": "currency_usd",
+          "state": "supported",
+          "display": "$12,240.78",
+          "reason": null,
+          "industry": {
+            "state": "no_benchmark",
+            "note": "Industry gross is a PER-UNIT figure (Haig ~$3,298 front PVR, Q4 2024); Studio gross.total_sum is a TOTAL SUM across deals — incompatible grain/denominator. No scoring benchmark."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 1
+        },
+        {
+          "slug": "gross.reconciliation_mismatches",
+          "label": "Gross reconciliation mismatches",
+          "category": "Gross",
+          "unit": "count",
+          "state": "withheld",
+          "display": null,
+          "reason": "needs per-deal CRM Sales Gross rows (front+back vs total) — no governed reader yet.",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        }
+      ]
+    },
+    {
+      "category": "Team",
+      "rows": [
+        {
+          "slug": "cage.total_comms",
+          "label": "Total rep communications",
+          "category": "Team",
+          "unit": "count",
+          "state": "withheld",
+          "display": null,
+          "reason": "needs a governed Enterprise Performance / CAGE native reader (report not ingested here).",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        },
+        {
+          "slug": "cage.deals_from_leads",
+          "label": "Deals from leads",
+          "category": "Team",
+          "unit": "count",
+          "state": "withheld",
+          "display": null,
+          "reason": "needs a governed Enterprise Performance / CAGE native reader (report not ingested here).",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        },
+        {
+          "slug": "cage.rep_count",
+          "label": "Active reps",
+          "category": "Team",
+          "unit": "count",
+          "state": "withheld",
+          "display": null,
+          "reason": "needs a governed Enterprise Performance / CAGE native reader (report not ingested here).",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        }
+      ]
+    },
+    {
+      "category": "Communications",
+      "rows": [
+        {
+          "slug": "comm.escalation_keyword_screen",
+          "label": "Escalation-keyword messages",
+          "category": "Communications",
+          "unit": "count",
+          "state": "withheld",
+          "display": null,
+          "reason": "needs a governed Vin Sales Communication Log reader — prior Honda exploration lacks stable IDs and is not a 3-store daily feed.",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        },
+        {
+          "slug": "comm.template_overuse",
+          "label": "Template overuse",
+          "category": "Communications",
+          "unit": "count",
+          "state": "withheld",
+          "display": null,
+          "reason": "needs a governed Vin Sales Communication Log reader — prior Honda exploration lacks stable IDs and is not a 3-store daily feed.",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        },
+        {
+          "slug": "comm.inbound_high_intent_keywords",
+          "label": "Inbound high-intent messages",
+          "category": "Communications",
+          "unit": "count",
+          "state": "withheld",
+          "display": null,
+          "reason": "needs a governed Vin Sales Communication Log reader — prior Honda exploration lacks stable IDs and is not a 3-store daily feed.",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        },
+        {
+          "slug": "comm.multi_rep_within_24h",
+          "label": "Customers worked by multiple reps (24h)",
+          "category": "Communications",
+          "unit": "count",
+          "state": "withheld",
+          "display": null,
+          "reason": "needs a governed Vin Sales Communication Log reader — prior Honda exploration lacks stable IDs and is not a 3-store daily feed.",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        }
+      ]
+    },
+    {
+      "category": "Engagement",
+      "rows": [
+        {
+          "slug": "engagement.reply_rate",
+          "label": "SMS reply rate",
+          "category": "Engagement",
+          "unit": "ratio_0_1",
+          "state": "missing",
+          "display": null,
+          "reason": "hub reader exists but the three isolated stores hold no conversation data (0 threads) → no current value.",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        },
+        {
+          "slug": "engagement.conversations",
+          "label": "Conversations held",
+          "category": "Engagement",
+          "unit": "count",
+          "state": "missing",
+          "display": null,
+          "reason": "hub reader exists but the three isolated stores hold no conversation data (0 threads) → no current value.",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        },
+        {
+          "slug": "engagement.resurrections",
+          "label": "Safety-net resurrections",
+          "category": "Engagement",
+          "unit": "count",
+          "state": "missing",
+          "display": null,
+          "reason": "hub reader exists but the three isolated stores hold no conversation data (0 threads) → no current value.",
+          "industry": {
+            "state": "no_benchmark",
+            "note": "No neutral, definition-compatible external benchmark; judge against the dealer’s own trend."
+          },
+          "baseline": {
+            "state": "insufficient_history",
+            "periods_available": 0,
+            "needed": 3
+          },
+          "periods_on_file": 0
+        }
+      ]
+    }
+  ],
+  "native_performance": {
+    "dealership_performance": {
+      "available": true,
+      "summary": {
+        "leads": 96,
+        "apptsSet": 18,
+        "apptsShow": 12,
+        "totalVisits": 31,
+        "visitsSold": 3,
+        "soldInPeriod": 5,
+        "frontGross": 3184.5,
+        "backGross": 9056.28,
+        "totalGross": 12240.78,
+        "avgTotalGross": 2448.156
+      },
+      "reconciliation": {
+        "front": 3184.5,
+        "back": 9056.28,
+        "total": 12240.78,
+        "computed_total": 12240.78,
+        "delta": 0,
+        "reconciles": true
+      },
+      "provenance": {
+        "family": "dealership_performance",
+        "delivery_id": "e921dbc8-8b72-44f7-a71c-15f8dbebd673",
+        "checksum": "39560ef12549554cb27f8883451ab5326b196ae66bd554b285014f94b18257ee",
+        "parser_version": "vin-xlsx-1",
+        "period": {
+          "start": "2026-08-17",
+          "end": "2026-08-23"
+        },
+        "accepted_rows": 40
+      }
+    },
+    "appointments": {
+      "available": true,
+      "counts": {
+        "total": 18,
+        "completed": 12,
+        "confirmed": 6,
+        "show": 12,
+        "noShow": 4,
+        "cancelled": 2,
+        "rescheduled": 4
+      },
+      "byStatus": {
+        "Cancelled": 2,
+        "Completed": 12,
+        "Missed": 4
+      },
+      "provenance": {
+        "family": "appointments",
+        "delivery_id": "e6e2f481-adc3-44c2-b443-5d20cd1b081a",
+        "checksum": "b189a92034930603c28439eeac159c6f3f41410d143d21cc037f92534407f5e5",
+        "parser_version": "vin-xlsx-1",
+        "period": {
+          "start": "2026-08-17",
+          "end": "2026-08-23"
+        },
+        "accepted_rows": 18
+      }
+    }
+  },
+  "opportunities": [
+    {
+      "rank": 1,
+      "title": "Correct the VinSolutions Sales schedule Lead-Intent selection to Sales-only",
+      "owner": "GM",
+      "type": "coverage_gap",
+      "trigger": "The ROI, CAGE, and daily Sales Communication scheduled reports positively select Service/Parts Lead-Intents (Parts, Service), so every delivery is quarantined whole under the Sales-only data contract.",
+      "recipient": "General Manager / VinSolutions scheduling administrator",
+      "action": "In VinSolutions report scheduling, set Lead-Intent to Sales-only (remove Acquisition, Parts, Service, Unknown), then re-deliver the affected weekly and daily periods so ROI, CAGE, and Communication metrics can land accepted.",
+      "prerequisites": "VinSolutions report-scheduling access for each rooftop.",
+      "safety_limits": "Huminic makes no schedule change; this is a recommendation only. No customer or CRM action.",
+      "approval_needed": "Explicit Duane approval before any VinSolutions schedule change.",
+      "evidence_refs": [
+        "roi.total_leads",
+        "roi.sold_from_leads",
+        "cage.total_comms",
+        "comm.escalation_keyword_screen"
+      ],
+      "confidence": 0.95,
+      "expected_impact": 5,
+      "rationale": "Unlocks the largest block of currently withheld metrics (Leads and ROI, Team/CAGE, Communications) across all three rooftops.",
+      "score": 4.75
+    },
+    {
+      "rank": 2,
+      "title": "Activate Huminic messaging and SMS engagement",
+      "owner": "GM",
+      "type": "huminic_opportunity",
+      "trigger": "Engagement metrics (reply rate, conversations, safety-net resurrections) have no governed source; the messaging hub has zero threads for this rooftop.",
+      "recipient": "General Manager",
+      "action": "Onboard the rooftop to the Huminic messaging hub so reply rate, conversations held, and after-hours resurrections become measurable and coachable.",
+      "prerequisites": "Standard Huminic workspace onboarding.",
+      "safety_limits": "No outbound messaging is activated in this test; onboarding only.",
+      "approval_needed": "Standard onboarding approval; no automation is enabled here.",
+      "evidence_refs": [
+        "engagement.reply_rate",
+        "engagement.conversations",
+        "engagement.resurrections"
+      ],
+      "confidence": 0.8,
+      "expected_impact": 4,
+      "rationale": "Turns an unmeasured channel into a governed, coachable one and creates a Huminic expansion path.",
+      "score": 3.2
+    },
+    {
+      "rank": 3,
+      "title": "Stand up a same-day appointment no-show follow-up alert",
+      "owner": "Sales Manager",
+      "type": "notification",
+      "trigger": "Observed appointments this week: 18 total, 12 shown, 4 no-show, 6 confirmed (counts, not a benchmark score).",
+      "recipient": "Sales Manager (internal alert only)",
+      "action": "Enable an internal alert to the sales manager when a Sales appointment is a no-show, so the rep re-engages the same day. A future automation could offer a reschedule text, but it is NOT activated in this test.",
+      "prerequisites": "Accepted Appointments feed (present for this rooftop).",
+      "safety_limits": "Dispatch disabled; internal recipient only; no customer contact in this test.",
+      "approval_needed": "Automation activation (customer-facing reschedule text) requires separate explicit approval.",
+      "evidence_refs": [
+        "appt.no_show_rate",
+        "appt.show_rate",
+        "appt.confirmed_rate"
+      ],
+      "confidence": 0.65,
+      "expected_impact": 3,
+      "rationale": "No-show recovery is a same-day, low-cost lever the manager can own immediately.",
+      "score": 1.95
+    },
+    {
+      "rank": 4,
+      "title": "Manager review of the lead-to-sold funnel",
+      "owner": "Sales Manager",
+      "type": "coaching",
+      "trigger": "Observed this week: 96 leads, 18 appts set, 12 appts shown, 5 sold (counts only; dealer baseline is insufficient, so no scoring).",
+      "recipient": "Sales Manager",
+      "action": "Walk the funnel stages (leads -> appts set -> shown -> sold) in the weekly meeting to find the largest drop-off; treat as directional context, not a graded benchmark.",
+      "prerequisites": "Accepted Dealership Performance feed (present).",
+      "safety_limits": "No industry benchmark is scored; comparisons are non-scoring until >= 3 dealer periods exist.",
+      "approval_needed": "None (internal coaching).",
+      "evidence_refs": [
+        "gross.total_sum"
+      ],
+      "confidence": 0.6,
+      "expected_impact": 3,
+      "rationale": "Uses the one governed weekly source to focus coaching without over-claiming.",
+      "score": 1.8
+    },
+    {
+      "rank": 5,
+      "title": "Accumulate at least 3 governed weekly periods to unlock the dealer baseline",
+      "owner": "GM",
+      "type": "coverage_gap",
+      "trigger": "Only one accepted weekly period exists, so a dealer-baseline trend and z-score band cannot be computed yet.",
+      "recipient": "General Manager / Huminic",
+      "action": "Keep the weekly Sales-only deliveries flowing; the dealer baseline unlocks once three governed periods are accepted.",
+      "prerequisites": "Continued accepted weekly deliveries.",
+      "safety_limits": "None; measurement only.",
+      "approval_needed": "None.",
+      "evidence_refs": [],
+      "confidence": 0.9,
+      "expected_impact": 2,
+      "rationale": "Cheap, time-based unlock for trend-based diagnostics.",
+      "score": 1.8
+    }
+  ],
+  "narrative": "Serra Honda has governed current values this week for its appointment rates and its total gross, while leads and ROI, team communications, and messaging engagement are withheld or not yet connected; the picture is partial, and every gap is stated plainly rather than filled with a zero.\n• Total gross for the governed week is $12,240.78.\n• The appointment show rate is 66.7% for the accepted appointments source.\n• The appointment no-show rate is 22.2%.\n• The appointment confirmed rate is 33.3%.\n• The appointment cancel rate is 11.1%.\n• Leads and ROI are withheld this period under the Sales-only data contract, and are shown explicitly rather than as a zero.\n• Messaging engagement has no current value this period; the store has no governed messaging source yet.",
+  "narrative_mode": "ai_grounded",
+  "narrative_provider": "claude-code-offline",
+  "narrative_fallback_reason": null,
+  "narrative_claims": [
+    {
+      "text": "Total gross for the governed week is $12,240.78.",
+      "evidence": [
+        "gross.total_sum"
+      ]
+    },
+    {
+      "text": "The appointment show rate is 66.7% for the accepted appointments source.",
+      "evidence": [
+        "appt.show_rate"
+      ]
+    },
+    {
+      "text": "The appointment no-show rate is 22.2%.",
+      "evidence": [
+        "appt.no_show_rate"
+      ]
+    },
+    {
+      "text": "The appointment confirmed rate is 33.3%.",
+      "evidence": [
+        "appt.confirmed_rate"
+      ]
+    },
+    {
+      "text": "The appointment cancel rate is 11.1%.",
+      "evidence": [
+        "appt.cancel_rate"
+      ]
+    },
+    {
+      "text": "Leads and ROI are withheld this period under the Sales-only data contract, and are shown explicitly rather than as a zero.",
+      "evidence": [
+        "roi.total_leads"
+      ]
+    },
+    {
+      "text": "Messaging engagement has no current value this period; the store has no governed messaging source yet.",
+      "evidence": [
+        "engagement.conversations"
+      ]
+    }
+  ],
+  "ai_narrative_acceptance": "met",
+  "evidence_manifest": {
+    "sources": [
+      {
+        "family": "dealership_performance",
+        "delivery_id": "e921dbc8-8b72-44f7-a71c-15f8dbebd673",
+        "checksum": "39560ef12549554cb27f8883451ab5326b196ae66bd554b285014f94b18257ee",
+        "parser_version": "vin-xlsx-1",
+        "period": {
+          "start": "2026-08-17",
+          "end": "2026-08-23"
+        },
+        "accepted_rows": 40
+      },
+      {
+        "family": "appointments",
+        "delivery_id": "e6e2f481-adc3-44c2-b443-5d20cd1b081a",
+        "checksum": "b189a92034930603c28439eeac159c6f3f41410d143d21cc037f92534407f5e5",
+        "parser_version": "vin-xlsx-1",
+        "period": {
+          "start": "2026-08-17",
+          "end": "2026-08-23"
+        },
+        "accepted_rows": 18
+      }
+    ],
+    "withheld_families": [
+      "Lead Source ROI (native — absent)",
+      "per-deal CRM Sales Gross (native — absent)",
+      "Enterprise Performance / CAGE (native — absent)",
+      "Vin Sales Communication Log (native — absent)"
+    ],
+    "coverage_counts": {
+      "total": 19,
+      "supported": 5,
+      "missing": 3,
+      "withheld": 11,
+      "unsupported": 0
+    },
+    "generated_at_iso": "2026-08-29T22:02:14.144Z"
+  },
+  "limitations": [
+    "Sales-only: Service and Parts are excluded (they belong only to the separate combined Serra Service workspace).",
+    "11 measure(s) withheld pending governed readers (ROI → Lead Source ROI; comm.* → Vin Sales Communication Log; cage.* → Enterprise Performance/CAGE; gross.reconciliation_mismatches → per-deal CRM Sales Gross).",
+    "3 measure(s) have no current value this period (empty/absent governed source).",
+    "Industry references are directional and NON-SCORING where no definition-compatible standard exists; benchmarks are never scored.",
+    "Dealer baseline: insufficient history (fewer than 3 governed periods) — non-scoring."
+  ]
+}
