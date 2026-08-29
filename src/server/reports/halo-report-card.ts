@@ -11,8 +11,10 @@
  */
 import { METRIC_CATALOG, type CatalogMetric } from '../watchdog/metric-catalog'
 import {
+  HALO_SALES_PROFILES,
   HALO_SUPPORT_MANIFEST,
   HALO_SUPPORT_MANIFEST_VERSION,
+  isHaloSalesProfile,
   type MetricUnit,
 } from '../watchdog/halo-support-manifest'
 import type { MetricValues } from '../watchdog/alert-engine'
@@ -27,6 +29,21 @@ import { readAppointments, readDealershipPerformance } from '../ingest-native-me
 import { buildHaloNarrative } from './halo-narrative'
 
 const SERVICE_PARTS_RE = /service|parts/i
+
+/** Studio convention (matches /api/customer/dashboard): window_days ∈ {7,30,90}, else 30. */
+export const HALO_ALLOWED_WINDOWS = [7, 30, 90] as const
+export function normalizeHaloWindowDays(raw: unknown): number {
+  const n = typeof raw === 'number' ? raw : Number(raw)
+  return (HALO_ALLOWED_WINDOWS as ReadonlyArray<number>).includes(n) ? n : 30
+}
+
+/** Thrown when a non-governed-Sales profile is requested (fail-closed). */
+export class HaloProfileNotAllowedError extends Error {
+  constructor(profile: string) {
+    super(`Halo is Sales-only: "${profile}" is not one of the governed Sales profiles [${HALO_SALES_PROFILES.join(', ')}].`)
+    this.name = 'HaloProfileNotAllowedError'
+  }
+}
 
 function formatValue(v: number, unit: MetricUnit): string {
   if (unit === 'currency_usd') {
@@ -65,7 +82,10 @@ export type HaloReportCard = {
   sales_only: true
   manifest_version: string
   window_days: number
-  generated: 'deterministic'
+  /** This slice ships a DETERMINISTIC, evidence-grounded narrative — NOT final M2
+   *  AI-narrative acceptance. Injectable evidence-constrained AI narration is the
+   *  next M2 increment (layers on top; grounding guarantees preserved). */
+  narrative_mode: 'deterministic_grounded'
   cards: HaloCard[]
   coverage: HaloCoverage
   limitations: string[]
@@ -97,7 +117,12 @@ export function buildHaloReportCard(
   now: number = Date.now(),
   historyBySlug?: Map<string, ReadonlyArray<number>>,
 ): HaloReportCard {
-  const values: MetricValues = resolveMetricValues(profile, windowDays, now)
+  // FAIL-CLOSED Sales-domain gate — before any data is read. Rejects service,
+  // unknown, and traversal-like profiles so no report can be labeled sales_only.
+  if (!isHaloSalesProfile(profile)) throw new HaloProfileNotAllowedError(profile)
+  const wd = normalizeHaloWindowDays(windowDays)
+
+  const values: MetricValues = resolveMetricValues(profile, wd, now)
   const layers = evaluateThreeLayers({ values, historyBySlug })
 
   // Provenance sources (availability-safe readers; per-profile / tenant-isolated).
@@ -149,14 +174,14 @@ export function buildHaloReportCard(
   }
 
   const limitations = buildLimitations(cards, coverage)
-  const narrative = buildHaloNarrative({ profile, windowDays, cards, coverage, limitations })
+  const narrative = buildHaloNarrative({ profile, windowDays: wd, cards, coverage, limitations })
 
   return {
     profile,
     sales_only: true,
     manifest_version: HALO_SUPPORT_MANIFEST_VERSION,
-    window_days: windowDays,
-    generated: 'deterministic',
+    window_days: wd,
+    narrative_mode: 'deterministic_grounded',
     cards,
     coverage,
     limitations,

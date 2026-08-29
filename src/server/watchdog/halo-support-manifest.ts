@@ -18,6 +18,19 @@
 import { METRIC_CATALOG } from './metric-catalog'
 
 export const HALO_SUPPORT_MANIFEST_VERSION = '1.1.0'
+
+/**
+ * The ONLY profiles Halo may ever report on — the three governed Serra SALES
+ * profiles. Permanent Sales-only boundary: Service/Parts live only in the separate
+ * combined Serra Service workspace and must never be reachable here. Exact-match
+ * allowlist (fail-closed) — rejects service, unknown, and traversal-like inputs.
+ */
+export const HALO_SALES_PROFILES = ['serra-honda', 'serra-nissan', 'tony-serra-ford'] as const
+export type HaloSalesProfile = (typeof HALO_SALES_PROFILES)[number]
+export function isHaloSalesProfile(profile: string): profile is HaloSalesProfile {
+  return (HALO_SALES_PROFILES as ReadonlyArray<string>).includes(profile)
+}
+
 export const CATALOG_295_SOURCE =
   'outputs/semantic-watchdog-crm-feasibility-2026-08-20/semantic-watchdog-feasibility-matrix.json (governance-supplied; not present in this worktree)'
 

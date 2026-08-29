@@ -2,7 +2,12 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import fs from 'node:fs'
 import { METRIC_CATALOG } from '@/server/watchdog/metric-catalog'
-import { buildHaloReportCard, type HaloCard } from '@/server/reports/halo-report-card'
+import {
+  HaloProfileNotAllowedError,
+  buildHaloReportCard,
+  normalizeHaloWindowDays,
+  type HaloCard,
+} from '@/server/reports/halo-report-card'
 import { buildHaloNarrative, type NarrativeCard } from '@/server/reports/halo-narrative'
 
 const REAL_ROOT = '/srv/ingest-dev/analytics'
@@ -22,6 +27,18 @@ describe('Halo Data report card — pure (no /srv): catalog, Sales-only, narrati
       expect(/service|parts/i.test(m.category)).toBe(false)
       expect(/service|parts/i.test(m.id)).toBe(false)
     }
+  })
+
+  it('assembler FAILS CLOSED for non-Sales profiles (service, unknown, traversal-like)', () => {
+    for (const bad of ['serra-service', 'unknown-store', 'serra-honda/../serra-service', '../../etc/passwd', '']) {
+      expect(() => buildHaloReportCard(bad, 30)).toThrow(HaloProfileNotAllowedError)
+    }
+  })
+
+  it('window_days is normalized to the Studio convention {7,30,90} else 30', () => {
+    for (const v of [7, 30, 90]) expect(normalizeHaloWindowDays(v)).toBe(v)
+    for (const bad of [NaN, -5, 0, Infinity, -Infinity, 99999, 45, 'abc', null, undefined, '30x'])
+      expect(normalizeHaloWindowDays(bad as unknown)).toBe(30)
   })
 
   it('narrative is grounded: every $/% token is a card display; states limitations; no scoring', () => {

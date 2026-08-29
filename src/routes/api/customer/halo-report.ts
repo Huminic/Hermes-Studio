@@ -9,7 +9,11 @@
  */
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { buildHaloReportCard } from '../../../server/reports/halo-report-card'
+import {
+  buildHaloReportCard,
+  normalizeHaloWindowDays,
+} from '../../../server/reports/halo-report-card'
+import { isHaloSalesProfile } from '../../../server/watchdog/halo-support-manifest'
 import {
   isAuthorizedForProfile,
   resolveSession,
@@ -28,7 +32,14 @@ export const Route = createFileRoute('/api/customer/halo-report')({
         if (!isAuthorizedForProfile(session, profile)) {
           return json({ ok: false, error: 'Unauthorized for this profile.' }, { status: 403 })
         }
-        const windowDays = Number(url.searchParams.get('window_days') ?? '30') || 30
+        // Sales-domain gate (fail-closed): only the governed Sales profiles.
+        if (!isHaloSalesProfile(profile)) {
+          return json(
+            { ok: false, error: 'Halo report is available only for governed Sales profiles (serra-honda, serra-nissan, tony-serra-ford).' },
+            { status: 400 },
+          )
+        }
+        const windowDays = normalizeHaloWindowDays(url.searchParams.get('window_days'))
         try {
           return json({ ok: true, report: buildHaloReportCard(profile, windowDays) })
         } catch (error) {
