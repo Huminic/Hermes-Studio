@@ -83,13 +83,19 @@ function IndustryLine({ ind }: { ind: IndustryLayer }) {
   )
 }
 
+function round3(n: number): string {
+  return Number.isInteger(n) ? String(n) : String(Math.round(n * 1000) / 1000)
+}
+
 function BaselineLine({ b }: { b: BaselineLayer }) {
+  // The evaluator supplies mean/stddev/history count only — it does NOT classify the
+  // current value as inside/outside the band. So never say "within"; state neutrally.
   const text =
     b.state === 'insufficient_history'
       ? `insufficient history (${b.periods_available}/${b.needed} governed periods)`
       : b.state === 'zero_variance'
-        ? 'zero variance — non-scoring'
-        : 'within the dealer’s own trend'
+        ? `zero variance across ${b.periods_available} periods — non-scoring`
+        : `historical band available (${b.periods_available} periods; mean ${round3(b.mean)}, sd ${round3(b.stddev)}) — non-scoring`
   return (
     <div className="text-xs text-slate-500" data-testid="halo-baseline">
       <span className="font-medium text-slate-600">Dealer baseline:</span> {text}
@@ -160,7 +166,9 @@ export function HaloReportCardPanel({ profile }: { profile: string }) {
             <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-700" data-testid="halo-narrative-mode">
               narrative: {report.narrative_mode}
             </span>
-            <span className="text-slate-400">last {report.window_days} days · manifest {report.manifest_version}</span>
+            <span className="text-slate-400" data-testid="halo-window-note">
+              requested activity window: {report.window_days} days · native source periods shown per metric · manifest {report.manifest_version}
+            </span>
           </div>
         </header>
         <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4" data-testid="halo-coverage">

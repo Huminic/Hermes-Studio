@@ -49,6 +49,12 @@ describe('HaloReportCardPanel', () => {
     // Coverage
     expect(screen.getByTestId('halo-coverage').textContent).toContain('5 / 19')
 
+    // Window wording is NEUTRAL — does not imply every metric covers the window.
+    const win = screen.getByTestId('halo-window-note').textContent ?? ''
+    expect(win).toMatch(/requested activity window: 30 days/i)
+    expect(win).toMatch(/native source periods shown per metric/i)
+    expect(win).not.toMatch(/^last 30 days/i)
+
     // Current VALUE + provenance/period
     expect(screen.getByTestId('halo-current-gross.total_sum').textContent).toContain('$12,240.78')
     expect(screen.getByTestId('halo-prov-gross.total_sum').textContent).toMatch(/dealership_performance.*2026-08-17.*2026-08-23/)
@@ -74,6 +80,36 @@ describe('HaloReportCardPanel', () => {
     expect(lim).toMatch(/withheld/i)
     expect(lim).toMatch(/non-scoring/i)
     expect(lim).toMatch(/Service and Parts/i)
+  })
+
+  it('baseline state=band renders a NEUTRAL "historical band available" (never claims "within")', async () => {
+    const report = {
+      ok: true,
+      report: {
+        profile: 'serra-honda', sales_only: true, manifest_version: '1.1.0', window_days: 30,
+        narrative_mode: 'deterministic_grounded',
+        coverage: { total: 1, current_value: 1, no_current_data: 0, withheld: 0 },
+        limitations: ['Sales-only.'],
+        narrative: 'n/a',
+        cards: [
+          {
+            slug: 'appt.show_rate', label: 'Appointment show rate', category: 'Appointments', unit: 'ratio_0_1',
+            display: '66.7%', current: { state: 'value', value: 0.6667, unit: 'ratio_0_1' },
+            industry: { state: 'no_benchmark', note: '' },
+            baseline: { state: 'band', mean: 0.5, stddev: 0.1, periods_available: 4 },
+            provenance: { source: 'appointments', period: { start: '2026-08-17', end: '2026-08-23' } },
+          },
+        ],
+      },
+    }
+    stubFetch(report)
+    render(<HaloReportCardPanel profile="serra-honda" />)
+    await waitFor(() => expect(screen.getByTestId('halo-report')).toBeTruthy())
+    const base = within(screen.getByTestId('halo-card-appt.show_rate')).getByTestId('halo-baseline').textContent ?? ''
+    expect(base).toMatch(/historical band available/i)
+    expect(base).toMatch(/4 periods/i)
+    expect(base).toMatch(/non-scoring/i)
+    expect(base).not.toMatch(/within/i)
   })
 
   it('shows the Sales-domain gate message on a 400 (never a blank/zeroed report)', async () => {
