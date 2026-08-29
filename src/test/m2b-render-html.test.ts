@@ -75,6 +75,15 @@ describe.runIf(HAVE_DATA)('M2B HTML rendering', () => {
     expect(html).not.toMatch(/n\/a to n\/a/)
   })
 
+  it('document <title> (-> PDF metadata Title) has no trailing hyphen when coverage end is null', async () => {
+    const fordTitle = renderM2BHtml(await modelFor('tony-serra-ford')).match(/<title>([^<]*)<\/title>/)![1]
+    expect(fordTitle).toBe('Halo Data Report Card - Tony Serra Ford')
+    expect(fordTitle).not.toMatch(/-\s*$/) // no trailing hyphen/space
+    // A store WITH an accepted period keeps the period in the title.
+    const hondaTitle = renderM2BHtml(await modelFor('serra-honda')).match(/<title>([^<]*)<\/title>/)![1]
+    expect(hondaTitle).toBe('Halo Data Report Card - Serra Honda - 2026-08-23')
+  })
+
   it('Sales-only + contamination provenance are stated on the report', async () => {
     const html = renderM2BHtml(await modelFor('serra-nissan'))
     expect(html).toContain('Sales only')

@@ -45,10 +45,17 @@ async function main() {
   const outDir = path.resolve(arg('out', 'docs/halo/evidence/m2b/artifacts'))
   fs.mkdirSync(outDir, { recursive: true })
   const now = Date.now()
+  // --only=<csv> regenerates just those profiles; the manifest-index MERGES so the
+  // other stores' committed artifacts/entries stay byte-identical.
+  const only = arg('only', '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  const targets = only.length ? PROFILES.filter((p) => only.includes(p)) : [...PROFILES]
   const browser = await chromium.launch({ headless: true })
   const index: Array<Record<string, unknown>> = []
   try {
-    for (const profile of PROFILES) {
+    for (const profile of targets) {
       // Offline-authored, evidence-constrained AI narration (live provider unconfigured).
       const model = await buildM2BReportModel(profile, { now, narration: offlineNarrationDeps(profile) })
 
@@ -122,7 +129,20 @@ async function main() {
     await browser.close()
   }
   const indexPath = path.join(outDir, 'manifest-index.json')
-  fs.writeFileSync(indexPath, JSON.stringify({ generated_at_iso: new Date(now).toISOString(), artifacts: index }, null, 2), 'utf8')
+  // Merge: keep entries for stores we did NOT regenerate; replace those we did.
+  let merged = index
+  if (only.length && fs.existsSync(indexPath)) {
+    try {
+      const prev = JSON.parse(fs.readFileSync(indexPath, 'utf8')) as { artifacts?: Array<Record<string, unknown>> }
+      const regenerated = new Set(index.map((r) => r.profile))
+      const kept = (prev.artifacts ?? []).filter((r) => !regenerated.has(r.profile as string))
+      const order = PROFILES as ReadonlyArray<string>
+      merged = [...kept, ...index].sort((a, b) => order.indexOf(a.profile as string) - order.indexOf(b.profile as string))
+    } catch {
+      merged = index
+    }
+  }
+  fs.writeFileSync(indexPath, JSON.stringify({ generated_at_iso: new Date(now).toISOString(), artifacts: merged }, null, 2), 'utf8')
   console.log(`\nindex: ${path.relative(process.cwd(), indexPath)}`)
   console.log(JSON.stringify(index.map((r) => ({ profile: r.profile, files: r.files })), null, 2))
 }

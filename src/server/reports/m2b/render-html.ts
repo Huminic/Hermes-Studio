@@ -267,8 +267,12 @@ export function renderM2BHtml(m: M2BReportModel): string {
     ? `<ul>${refItems.join('')}</ul>`
     : `<p class="missing">No definition-compatible external benchmark exists for any supported metric; all industry context is non-scoring.</p>`
 
+  // Title omits the period segment when there is no accepted end (no trailing hyphen).
+  const docTitle = m.coverage_period.end
+    ? `Halo Data Report Card - ${m.dealer_name} - ${m.coverage_period.end}`
+    : `Halo Data Report Card - ${m.dealer_name}`
   return `<!doctype html><html lang="en"><head><meta charset="utf-8">
-<title>Halo Data Report Card - ${esc(m.dealer_name)} - ${esc(m.coverage_period.end ?? '')}</title>
+<title>${esc(docTitle)}</title>
 <style>${CSS}</style></head>
 <body><div class="wrap">
   <div class="head">

@@ -1,5 +1,5 @@
 {
-  "generated_at_iso": "2026-08-29T22:02:14.144Z",
+  "generated_at_iso": "2026-08-29T22:14:26.797Z",
   "artifacts": [
     {
       "profile": "serra-honda",
@@ -91,18 +91,18 @@
       "files": {
         "html": {
           "path": "docs/halo/evidence/m2b/artifacts/halo-tony-serra-ford-2026-08-17_2026-08-23.html",
-          "bytes": 31999,
-          "sha256": "adeb136076f14cc17a67c992d759ba8f5b180e75263095424a7307f543f49788"
+          "bytes": 31996,
+          "sha256": "478f64da95e4a72aff447daf2573659c6e4b032ff05787255d5a1fc84fad3bcf"
         },
         "pdf": {
           "path": "docs/halo/evidence/m2b/artifacts/halo-tony-serra-ford-2026-08-17_2026-08-23.pdf",
-          "bytes": 111739,
-          "sha256": "d225a877548a756ae31945df3622dfce2250bc7a44542f4c72a94b35befd1a27"
+          "bytes": 111738,
+          "sha256": "b96bf6efc189329ef2a24d5a32496513bf3cf39b286c82b2857872965fc43235"
         },
         "json": {
           "path": "docs/halo/evidence/m2b/artifacts/halo-tony-serra-ford-2026-08-17_2026-08-23.json",
           "bytes": 36278,
-          "sha256": "cd56321aed452bdd86c9cb65087fa0e0b8eaa10d498ad29ec9a7b0f2ffd8b554"
+          "sha256": "4ca3e3a4a23038bff6a4e3fdcc75fb9437523f5c5def2f70d25fee341cb957f2"
         }
       }
     }
