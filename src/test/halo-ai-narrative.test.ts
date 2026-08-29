@@ -103,17 +103,24 @@ describe('Halo AI narration — facts + allowed numbers', () => {
     expect(JSON.stringify(facts)).not.toMatch(/phone|email|customer_name|message_body/i)
   })
 
-  it('allowedForClaim is PER cited metric — no cross-metric numbers, dates are whole strings', () => {
-    // A claim citing only appt.show_rate may use 66.7 and its own period dates,
-    // but NOT the gross value and NOT a bare date fragment.
+  it('allowedForClaim is PER cited metric, unit+sign bound — no cross-metric / bare-number leak', () => {
+    // A claim citing only appt.show_rate may use its canonical "66.7%" (WITH unit),
+    // but NOT the bare "66.7", NOT "$66.7", NOT the gross value, NOT a date fragment.
     const show = allowedForClaim(hondaCard(), ['appt.show_rate'])
-    expect(show.numbers.has('66.7')).toBe(true)
-    expect(show.numbers.has('12240.78')).toBe(false) // gross cannot be laundered in
-    expect(show.numbers.has('2026')).toBe(false) // date fragments are never whitelisted
+    expect(show.values.has('66.7%')).toBe(true)
+    expect(show.values.has('66.7')).toBe(false) // unit is part of the key
+    expect(show.values.has('$66.7')).toBe(false) // wrong unit is not allowed
+    expect(show.values.has('$12240.78')).toBe(false) // gross cannot be laundered in
+    expect(show.values.has('2026')).toBe(false) // date fragments are never whitelisted
     expect(show.dates).toContain('2026-08-17')
-    // A withheld metric (roi.total_leads) lends NO number and NO date.
+    // Gross's canonical form carries the "$" and no sign flip.
+    const gross = allowedForClaim(hondaCard(), ['gross.total_sum'])
+    expect(gross.values.has('$12240.78')).toBe(true)
+    expect(gross.values.has('-$12240.78')).toBe(false)
+    expect(gross.values.has('12240.78')).toBe(false)
+    // A withheld metric (roi.total_leads) lends NO value and NO date.
     const withheld = allowedForClaim(hondaCard(), ['roi.total_leads'])
-    expect(withheld.numbers.size).toBe(0)
+    expect(withheld.values.size).toBe(0)
     expect(withheld.dates).toEqual([])
   })
 })
@@ -235,7 +242,26 @@ describe('Halo AI narration — cross-evidence laundering (Codex QC regression o
   it('rejects the gross value attached only to appt.show_rate (no cross-metric borrow)', () => {
     const r = reject({ summary: 'Appointments overview.', claims: [{ text: 'Appointment show rate came in at $12,240.78.', evidence: ['appt.show_rate'] }] })
     expect(r.ok).toBe(false)
-    if (!r.ok) expect(r.reason).toBe('hallucinated_number:12240.78')
+    if (!r.ok) expect(r.reason).toBe('hallucinated_number:$12240.78')
+  })
+
+  it('rejects a WRONG UNIT — "$66.7" for the 66.7% ratio metric', () => {
+    const r = reject({ summary: 'Appointments overview.', claims: [{ text: 'Appointment show rate is $66.7.', evidence: ['appt.show_rate'] }] })
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.reason).toBe('hallucinated_number:$66.7')
+  })
+
+  it('rejects a WRONG SIGN — "-$12,240.78" for the positive gross value', () => {
+    const r = reject({ summary: 'Gross overview.', claims: [{ text: 'Total gross is -$12,240.78.', evidence: ['gross.total_sum'] }] })
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.reason).toBe('hallucinated_number:-$12240.78')
+  })
+
+  it('accepts the EXACT own canonical display (unit + sign) for each cited metric', () => {
+    const gross = reject({ summary: 'Gross overview.', claims: [{ text: 'Total gross is $12,240.78.', evidence: ['gross.total_sum'] }] })
+    expect(gross.ok).toBe(true)
+    const show = reject({ summary: 'Appointments overview.', claims: [{ text: 'Appointment show rate is 66.7%.', evidence: ['appt.show_rate'] }] })
+    expect(show.ok).toBe(true)
   })
 
   it('rejects a native-date fragment reused as a rate (dates are whole strings only)', () => {

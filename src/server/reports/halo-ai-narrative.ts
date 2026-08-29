@@ -83,34 +83,52 @@ export function buildHaloAiFacts(card: HaloReportCard): HaloAiFacts {
   }
 }
 
-/** Numeric tokens (commas stripped) contained in a string. */
-function numericTokens(s: string): string[] {
-  const raw = s.match(/\d[\d,]*(?:\.\d+)?/g) ?? []
-  return raw.map((t) => t.replace(/,/g, ''))
+/** Whether a string contains any digit (used for the non-numeric-summary gate). */
+function hasDigit(s: string): boolean {
+  return /\d/.test(s)
 }
 
 /**
- * The numeric tokens + exact provenance dates a claim may emit, derived ONLY from
- * the facts of the metric slug(s) THAT CLAIM cites — never card-global. This closes
- * the cross-evidence laundering gap: a claim citing appt.show_rate cannot borrow the
- * gross value, and a provenance date is honoured only as an EXACT whole string (its
- * fragments — 2026, 08, 17 — are never whitelisted).
+ * Numeric VALUE EXPRESSIONS in a string — each captured WITH its sign, currency
+ * marker, and percent marker, then commas stripped. So "$66.7", "-$12,240.78",
+ * "66.7%" and "42" are distinct canonical forms. This is what grounding binds
+ * against, so a bare digit-match can no longer launder a wrong unit or wrong sign.
+ */
+const VALUE_EXPR_RE = /-?\$?\d[\d,]*(?:\.\d+)?%?/g
+function valueExpressions(s: string): string[] {
+  return (s.match(VALUE_EXPR_RE) ?? []).map(canonExpr)
+}
+/** Canonical comparable form of a value expression: drop commas, keep -,$,%. */
+function canonExpr(s: string): string {
+  return s.trim().replace(/,/g, '')
+}
+
+/**
+ * The canonical value EXPRESSIONS + exact provenance dates a claim may emit,
+ * derived ONLY from the facts of the metric slug(s) THAT CLAIM cites — never
+ * card-global. This closes cross-metric laundering AND unit/sign laundering: a
+ * claim citing appt.show_rate cannot borrow the gross value, cannot restate the
+ * ratio as "$66.7", and cannot flip a sign; a provenance date is honoured only as
+ * an EXACT whole string (its fragments — 2026, 08, 17 — are never whitelisted).
  *
  * Per cited metric:
- *   - current display numbers ONLY when the current state is an actual value,
+ *   - the metric's own canonical DISPLAY expression (with unit + sign) ONLY when
+ *     the current state is an actual value,
  *   - baseline numbers ONLY when a band is computable (band: mean/stddev/periods;
- *     zero_variance: mean/periods). `insufficient_history` yields NO number, so a
+ *     zero_variance: mean/periods). `insufficient_history` yields NOTHING, so a
  *     withheld / no-current metric with no computable baseline lends nothing.
- *   - exact provenance period date strings (start/end) — matched whole, not tokenized.
+ *   - exact provenance period date strings (start/end) — matched whole.
  */
 export function allowedForClaim(
   card: HaloReportCard,
   slugs: ReadonlyArray<string>,
-): { numbers: Set<string>; dates: string[] } {
-  const numbers = new Set<string>()
+): { values: Set<string>; dates: string[] } {
+  const values = new Set<string>()
   const dates: string[] = []
   const add = (s: string | number) => {
-    for (const t of numericTokens(String(s))) numbers.add(t)
+    // Normalize a display/baseline value through the SAME expression grammar the
+    // claim scanner uses, so unit and sign are part of the compared key.
+    for (const e of valueExpressions(String(s))) values.add(e)
   }
   for (const slug of slugs) {
     const c = card.cards.find((x) => x.slug === slug)
@@ -130,7 +148,7 @@ export function allowedForClaim(
     if (p?.start) dates.push(p.start)
     if (p?.end) dates.push(p.end)
   }
-  return { numbers, dates }
+  return { values, dates }
 }
 
 const ALLOWED_SLUGS = (card: HaloReportCard) => new Set(card.cards.map((c) => c.slug))
@@ -178,10 +196,10 @@ export function validateAiNarrative(parsed: unknown, card: HaloReportCard): Vali
 
   const allowedSlugs = ALLOWED_SLUGS(card)
 
-  // The summary carries NO numbers — every numeric statement must live in a claim
+  // The summary carries NO digits — every numeric statement must live in a claim
   // that cites the metric it rests on. This removes the "summary states a global
   // number with no evidence" path entirely.
-  if (numericTokens(obj.summary).length > 0) return { ok: false, reason: 'numeric_summary' }
+  if (hasDigit(obj.summary)) return { ok: false, reason: 'numeric_summary' }
 
   for (const cl of claims) {
     // Evidence references must all be real card slugs.
@@ -190,17 +208,19 @@ export function validateAiNarrative(parsed: unknown, card: HaloReportCard): Vali
     }
     // A numeric claim with no evidence cannot be grounded — reject before scanning.
     if (cl.evidence.length === 0) {
-      if (numericTokens(cl.text).length > 0) return { ok: false, reason: 'unreferenced_numeric_claim' }
+      if (hasDigit(cl.text)) return { ok: false, reason: 'unreferenced_numeric_claim' }
       continue
     }
-    // Per-claim grounding: numbers are validated ONLY against the cited metrics'
-    // facts. Exact provenance dates are removed as whole strings first, so their
-    // fragments can never be reused as a rate/value.
-    const { numbers, dates } = allowedForClaim(card, cl.evidence)
+    // Per-claim grounding: value EXPRESSIONS (with unit + sign) are validated ONLY
+    // against the cited metrics' own canonical display/baseline expressions. Exact
+    // provenance dates are removed as whole strings first, so their fragments can
+    // never be reused as a rate/value; a wrong unit ($66.7 for a ratio) or wrong
+    // sign (-$12,240.78) no longer matches the metric's canonical form.
+    const { values, dates } = allowedForClaim(card, cl.evidence)
     let scan = cl.text
     for (const d of dates) scan = scan.split(d).join(' ')
-    for (const tok of numericTokens(scan)) {
-      if (!numbers.has(tok)) return { ok: false, reason: `hallucinated_number:${tok}` }
+    for (const expr of valueExpressions(scan)) {
+      if (!values.has(expr)) return { ok: false, reason: `hallucinated_number:${expr}` }
     }
   }
 
@@ -225,6 +245,8 @@ const SYSTEM_PROMPT = [
   '- In a claim, the ONLY numbers you may write are those attached to a metric slug you cite in that',
   '  claim.evidence: that metric\'s own display value, its own baseline number, or its own exact native',
   '  period date (write dates whole, exactly as given). Never reuse one metric\'s number for another.',
+  '- Write each value EXACTLY as its display shows it — same currency "$", same "%", same sign. Do not',
+  '  change the unit (never write "$66.7" for a "66.7%" rate) and never flip the sign.',
   '- Never invent, estimate, infer, round, or re-split a number or date. Do not pull a piece out of a',
   '  date (e.g. a year) to use as a rate or count.',
   '- A withheld or no-current metric has NO number — say it is withheld / has no current value in words.',
