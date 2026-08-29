@@ -30,6 +30,7 @@ import { CustomerNotificationsRenderer } from '../components/customer-console/no
 import { CustomerActivityRenderer } from '../components/customer-console/activity-renderer'
 import { ConsultPanel } from '../components/customer-console/consult-panel'
 import { NativePerformancePanel } from '../components/customer-console/native-performance-panel'
+import { HaloReportCardPanel } from '../components/customer-console/halo-report-card'
 import { DashboardLanding } from '../components/customer-console/cockpit/DashboardLanding'
 import { IssuesTab } from '../components/customer-console/cockpit/IssuesTab'
 
@@ -484,6 +485,15 @@ function SalesRenderer(props: ConsoleRendererProps) {
   )
 }
 
+/** Halo Data report card (read-only) — GET /api/customer/halo-report only. */
+function HaloRenderer(props: ConsoleRendererProps) {
+  return (
+    <div className="min-w-0">
+      <HaloReportCardPanel profile={props.profile} />
+    </div>
+  )
+}
+
 function CommsRenderer(props: ConsoleRendererProps) {
   return <CustomerCommsRenderer profile={props.profile} config={props.config} />
 }
@@ -550,6 +560,7 @@ export const consoleRenderers: Record<string, ConsoleRenderer> = {
   'customer-console.pipeline': PipelineRenderer,
   'customer-console.leads': LeadsRenderer,
   'customer-console.sales': SalesRenderer,
+  'customer-console.halo': HaloRenderer,
   'customer-console.custom': CustomRenderer,
   'customer-console.chat': ChatRenderer,
   'customer-console.agents': AgentsRenderer,

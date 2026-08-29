@@ -36,6 +36,7 @@ const TAB_TO_RENDERER: Record<string, string> = {
   pipeline: 'customer-console.pipeline',
   leads: 'customer-console.leads',
   sales: 'customer-console.sales',
+  halo: 'customer-console.halo',
   custom: 'customer-console.custom',
   dashboard: 'customer-console.performance',
   comms: 'customer-console.comms',
@@ -247,6 +248,7 @@ function StorefrontTabRoute() {
     { id: 'pipeline', label: 'Pipeline', icon: Chart01Icon },
     { id: 'leads', label: 'Leads', icon: Message01Icon },
     { id: 'sales', label: 'Sales', icon: Chart01Icon },
+    { id: 'halo', label: 'Halo', icon: Chart01Icon },
     { id: 'campaigns', label: 'Marketing', icon: Megaphone01Icon },
     { id: 'custom', label: 'Custom', icon: GridIcon },
     // … then the retained workspace surfaces (nothing lost).

@@ -19,6 +19,7 @@ const EXPECTED_KEYS = [
   'customer-console.pipeline',
   'customer-console.leads',
   'customer-console.sales',
+  'customer-console.halo',
   'customer-console.custom',
   'customer-console.chat',
   'customer-console.agents',
