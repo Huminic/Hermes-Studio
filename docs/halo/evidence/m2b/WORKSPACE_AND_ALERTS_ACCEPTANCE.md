@@ -66,8 +66,18 @@ checker (`validateAiNarrative` / `withAiNarration`) via an injected completion l
   artifacts were regenerated (Honda/Nissan byte-identical); current hashes are in `manifest-index.json`. The
   visual-QA outcome above is unaffected by this metadata-only re-render.
 
-## 5. Remaining (Codex-owned external delivery + separately gated)
+## 5. Email delivery - COMPLETED (Codex-owned send)
 
-- The three allowlisted TEST emails to `duanekwells@gmail.com` (one PDF per store) are the **only** remaining
-  external delivery step. **Studio does not send.**
+- The three allowlisted TEST emails to `duanekwells@gmail.com` (one report PDF per store) were **delivered**
+  (provider-confirmed) - Serra Honda `4b0f67be-5a08-4d47-91b4-8eeaf8715874`, Serra Nissan
+  `337c136a-794e-41a8-887c-af943c4397ad`, Tony Serra Ford `615c5fc5-8852-4223-80f5-48d768d7a514`; sender
+  `Huminic Studio <notifications@huminic.ai>`; execution completed 2026-08-29T23:27:23.354Z with errors empty.
+  Honda was recovered/verified (not resent); the continuation made exactly two new send calls (Nissan, Ford);
+  no other recipient, no retry. Full record: `docs/halo/evidence/m2b/HALO_M2B_EMAIL_DELIVERY.md`.
+- **Studio did not send** these emails (Codex-owned step); this doc records the completed delivery only.
+
+## 6. Remaining (separately gated)
+
 - Live automatic narration and live metric evaluation/dispatch remain separately gated and unauthorized here.
+- Newer daily files through 2026-08-28 remain quarantined (saved filters positively select Parts/Service); any
+  VinSolutions schedule correction awaits separate explicit Duane approval.
