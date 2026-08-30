@@ -62,8 +62,9 @@ approximate/ordering only:
 Each reopen filename time is **later** (to minute precision) than its definition's save time. **"No
 Done/Save was clicked" during the capture session is a safety property** — the capture session made no
 new mutation — **not** evidence of a pre-save state. The captures are read-only reopen views of the
-saved definitions. This chronology is **not** presented as a completed proof; the controlling
-disposition is the §3B FAIL, and only a genuinely fresh auditor may accept the limited claim.
+saved definitions. This chronology and these captures remain **limited** and do **not** promote Gate 3;
+the §3C fresh Shadow's limited evidence-integrity PASS resolves only the repaired evidence-integrity
+question, and global Gate 3 remains HOLD/PENDING on Custom families + Gate 4.
 
 ## 3. Disclosures — original Shadow recusal and clean-room INDETERMINATE
 
@@ -238,8 +239,9 @@ both radio groups visible at once: **Lead Sources = Exclude; Users = Include**, 
 sources checked. The ROI Exclude assertion now rests on §4B, not on the ambiguous `83756dfd`.
 
 **Still strictly limited; no PASS.** §4B evidences only the **two SN21044 Version definitions** and does
-not accept the claim: the controlling disposition remains the §3B FAIL pending a genuinely fresh auditor.
-It does not touch any Custom family, other store, cell, or delivery.
+not promote Gate 3: the §3C fresh Shadow's limited evidence-integrity PASS resolves only the repaired
+evidence-integrity question, and global Gate 3 remains HOLD/PENDING on Custom families + Gate 4. It does
+not touch any Custom family, other store, cell, or delivery.
 
 ## 5. Evidence-completeness notes and carried-forward known items
 
