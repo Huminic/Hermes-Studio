@@ -18,6 +18,20 @@ Related: [[GATE3_CUSTOM_GATE4_CURRENT_2026-08-30]], [[GATE3_HIDDEN_LEAD_INTENT_B
   adaptation to this clone's storage/reader shape and its ratified contract, plus new tests here. Do not
   assume any isolated function can be moved unchanged.
 
+## 0A. Shadow audit result — FAIL (evidence integrity only)
+A Shadow audit of the prior revision (`2aae7cbb`) returned **FAIL — evidence integrity**, on four
+corrections now applied: (1) §2 selection semantics conflated Halo `selectDelivery` (newest-wins) with
+isolated `listActiveRows` (no newest-wins; safe only via explicit period); (2) §3 `crm_sales_gross`
+mislabeled **PARTIAL** — it is **MISSING** (the existing `gross.total_sum` is a Dashboard-family value),
+plus a source-precedence/reconciliation note was owed; (3) §5 catalog inventory omitted
+`comm.multi_rep_within_24h`, which **is** present in this clone's catalog; (4) §4 conflated held-store
+artifacts with gate4-inbox harness-classified files and over-used "golden" for unpinned files.
+- **Shadow limits (preserved):** prior read-only branch exposure; **same-system functional separation,
+  not institutional/external independence**; Shadow holds **no authorship, no mutation, and no approval**
+  authority. This is an **evidence-integrity** finding only — **no gate acceptance, no readiness impact**.
+- **This revision is the corrected follow-up, pending Shadow re-verification — NOT a self-PASS.** Global
+  Gate 3/4 remain HOLD/PENDING; all 18 readiness stay `false`.
+
 ## 1. Two code planes + exact recoverable ref
 - **Halo/Studio plane (this clone)** — the report path that must eventually consume accepted deliveries.
   Reader: `src/server/ingest-native-metrics.ts`; wiring: `src/server/watchdog/metric-values.ts` (imports
@@ -37,10 +51,16 @@ Per-profile `brain.db` under `BRAIN_PROFILES_ROOT` (live M1R store `/srv/ingest-
   accepted_row_count, header_json, revision, validation_evidence, status, quarantine_reason,
   superseded_by, created_at)`
 - `ingest_row(delivery_id, row_index, row_json[JSON array])`
-- **Newest accepted / non-superseded selection:** `WHERE profile=? AND report_kind=? AND
-  status='accepted' AND superseded_by IS NULL ORDER BY period_end DESC, revision DESC LIMIT 1`
-  (Halo `selectDelivery`; isolated `listActiveRows` by report_kind + period). Row-count integrity:
-  parsed rows must equal `accepted_row_count`.
+- **Selection semantics differ — do NOT conflate:**
+  - **Halo `selectDelivery`** explicitly chooses the **single newest accepted, non-superseded** delivery:
+    `WHERE profile=? AND report_kind=? AND status='accepted' AND superseded_by IS NULL ORDER BY
+    period_end DESC, revision DESC LIMIT 1`.
+  - **Isolated `listActiveRows`** does **NOT** choose newest. Without period arguments it returns rows
+    from **every** accepted, non-superseded matching delivery for that `report_kind`. The current
+    promotion/analytics flow is safe **only because `runVinWatchdog` is invoked with an explicit period**
+    that narrows to one delivery — the store call itself has no newest-wins guard. Any later Halo port
+    must supply the Halo `selectDelivery` newest-wins selection, not rely on `listActiveRows` alone.
+- **Row-count integrity (both):** parsed rows must equal `accepted_row_count`.
 
 ## 3. Six-family reader status + exact current/reusable paths
 | Family | Classifier (isolated `vin-contracts.ts`) | Halo reader (this clone) | Reusable reference impl (isolated `vin-metrics.ts`) |
@@ -50,28 +70,45 @@ Per-profile `brain.db` under `BRAIN_PROFILES_ROOT` (live M1R store `/srv/ingest-
 | lead_source_roi | FAMILIES (`Base Report Name`=Lead Source ROI, governed-eight) | **MISSING** (metric-values.ts note: withheld until native ROI reader exists) | `roiMetrics` — roi.total_leads, roi.sold_from_leads, roi.duplicate_rate (roi.actual_roi **withheld**, cost=0) |
 | cage_kpi | FAMILIES (`Base Report Name`=Enterprise Performance, three-sales; narrow last-row TOTAL exemption) | **MISSING** (metric-values.ts note: no governed native source) | `cageMetrics` — cage.rep_count, cage.total_comms, cage.deals_from_leads |
 | sales_comm_log | FAMILIES (daily; domainFields Lead Type/Status/Source; Message Content hashed) | **MISSING** | `commMetrics` — template_overuse, escalation_keyword_screen, inbound_high_intent_keywords, multi_rep_within_24h (+ outbound_link_only, catalog gap §5) — all `provisional` |
-| crm_sales_gross | FAMILIES (Sheet1 per-deal) | **PARTIAL** — Halo derives only `gross.total_sum` from Dashboard TOTAL; **per-deal reconciliation MISSING** | `grossMetrics` — gross.total_sum + gross.reconciliation_mismatches (within-row Front+Back≠Total) |
+| crm_sales_gross | FAMILIES (Sheet1 per-deal) | **MISSING** — there is **no** crm_sales_gross Halo reader. The existing `gross.total_sum` is derived from the **dealership_performance** Dashboard TOTAL (a *different* family), not from CRM Sales Gross. | `grossMetrics` — gross.total_sum + gross.reconciliation_mismatches (within-row Front+Back≠Total) |
 
-## 4. Goldens / fixtures
-- **Positive real-file goldens available now = 3 cells only** (live accepted store `/srv/ingest-dev/analytics`):
+**Source-precedence / reconciliation decision (deferred — future gate, business rule NOT chosen here).**
+A CRM Sales Gross per-deal reader (`grossMetrics`) would emit the **same** `gross.total_sum` slug that
+`dealership_performance` already produces from the Dashboard TOTAL. Later implementation therefore **must
+not mix, double-count, or silently substitute** the two sources. Recommended technical shape: for the
+same period, **reconcile both sources** and expose the governed **chosen** source under an **explicit
+precedence rule**, surfacing any Dashboard-vs-CRM mismatch rather than hiding it. The choice of *which*
+source is authoritative is a **business rule** and is **not decided here**.
+
+## 4. Available real-file artifacts (candidate goldens — NOT pinned goldens)
+"Golden" is used only for a file **pinned in a test harness**. None are pinned yet, so the items below are
+**candidate artifacts**, separated by provenance.
+- **Positive candidate artifacts = 3 cells only** (live accepted store `/srv/ingest-dev/analytics`):
   Honda appointments `b189a920…` (18 rows, Sales-only), Honda dealership_performance `39560ef1…`,
-  Nissan dealership_performance `6123ef87…` (all period 2026-08-17..23).
-- **Negative / quarantine goldens** (`/srv/ingest-dev/hold/...`): ROI×3 (`2ed4cb68/50ad0502/22694a14`),
-  CAGE Nissan/Ford (`59b012f0/f344bb68`), comm-log×3, CSVs; plus current SN21044 ROI `b7977c07…` and
-  CAGE `2884e56e…` as hidden-Lead-Intent contamination negatives.
+  Nissan dealership_performance `6123ef87…` (all period 2026-08-17..23). Eligible to become the
+  per-cell positive golden once pinned in a reader test.
+- **Available negative/quarantine artifacts — HELD store** (`/srv/ingest-dev/hold/<profile>/quarantine/`):
+  ROI×3 (`2ed4cb68/50ad0502/22694a14`), CAGE Nissan/Ford (`59b012f0/f344bb68`), comm-log×3, CSVs.
+- **Available negative artifacts — GATE4-INBOX (separate; NOT in hold):** current SN21044 ROI
+  `b7977c07…` and CAGE `2884e56e…` are controller-downloaded files in
+  `~/filestore/serra-reports/gate4-inbox/`, classified `quarantined non-sales-lead-type` via a **temp
+  read-only harness** ([[GATE3_HIDDEN_LEAD_INTENT_BLOCKER_2026-08-30]]). They were **not** landed to the
+  hold store and must not be conflated with the held artifacts above.
 - **In-repo fixtures:** none usable — `src/test/fixtures/` holds only `reconciliation/README.md`; **no
-  committed real-file XLSX golden.**
-- **15 of 18 positive per-cell real-file goldens remain UNAVAILABLE** (require clean accepted deliveries;
-  no quarantined file may substitute).
+  committed real-file XLSX artifact.**
+- **15 of 18 positive per-cell artifacts remain UNAVAILABLE** (require clean accepted deliveries; **no
+  quarantined file may substitute or be promoted**).
 
 ## 5. Catalog-alignment gaps (VERIFIED against this clone's `metric-catalog.ts`)
 The isolated readers compute slugs that are **NOT present** in this clone's catalog (grep = 0 hits each):
 `comm.outbound_link_only`, `dashboard.section_markers`, `appt.reschedule_rate`, and `roi.actual_roi`
 (the last is emitted **withheld** in the isolated impl). This clone's catalog contains: appt.{cancel,
 confirmed,no_show,show}_rate; cage.{deals_from_leads,rep_count,total_comms}; comm.{escalation_keyword_
-screen,inbound_high_intent_keywords,template_overuse}; gross.{reconciliation_mismatches,total_sum};
-roi.{duplicate_rate,sold_from_leads,total_leads} (plus engagement.* hub slugs). **Implication:** a port
-must not surface those four isolated slugs through the Halo catalog until/unless the catalog is separately
+screen,inbound_high_intent_keywords,**multi_rep_within_24h**,template_overuse}; gross.{reconciliation_
+mismatches,total_sum}; roi.{duplicate_rate,sold_from_leads,total_leads} (plus engagement.* hub slugs).
+(**Correction:** `comm.multi_rep_within_24h` **is** in this clone's catalog and is listed above; the four
+named gaps remain absent.) **Implication:** a port must not surface those four isolated slugs through the
+Halo catalog until/unless the catalog is separately
 extended under its own change; doing so now would emit an unlisted metric.
 
 ## 6. Missing tests per the ratified 18-cell contract (9 required per cell)
