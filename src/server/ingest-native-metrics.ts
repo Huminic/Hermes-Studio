@@ -69,6 +69,17 @@ export type AppointmentsMetrics = {
   byStatus: Record<string, number>
 }
 
+export type CrmSalesGross = {
+  available: true
+  source: 'crm_sales_gross'
+  provenance: Provenance
+  rowCount: number
+  frontSum: number | null
+  backSum: number | null
+  totalSum: number | null
+  reconciliationMismatches: number | null
+}
+
 export type ResponseTimeReadback = {
   available: true
   source: 'response_times_readback'
@@ -333,6 +344,94 @@ export function readAppointments(profile: string): AppointmentsMetrics | Unavail
     }
   } catch (e) {
     return { available: false, reason: `appointments query failed: ${(e as Error).message}` }
+  } finally {
+    db.close()
+  }
+}
+
+/**
+ * CRM Sales Gross — per-deal reader. AUTHORITATIVE source of `gross.total_sum` and the
+ * ONLY source of `gross.reconciliation_mismatches` (within-row Front+Back vs Total).
+ * Dealer / governed Dealer ID / coverage period / schema are already enforced fail-closed
+ * at land + promotion time; this reader adds row-count integrity and missing-not-zero:
+ * any absent required column or unparseable gross value WITHHOLDS the whole metric (never 0).
+ */
+export function readCrmSalesGross(profile: string): CrmSalesGross | Unavailable {
+  const db = openBrainReadonly(profile)
+  if (!db) return { available: false, reason: 'no brain.db for profile' }
+  try {
+    const delivery = selectDelivery(db, profile, 'crm_sales_gross')
+    if (!delivery) return { available: false, reason: 'no accepted crm_sales_gross delivery' }
+    let headers: string[] = []
+    try {
+      headers = JSON.parse(delivery.header_json || '[]')
+    } catch {
+      headers = []
+    }
+    if (!headers.length) return { available: false, reason: 'crm_sales_gross header_json missing' }
+    const h = (name: string) => headers.indexOf(name)
+    const iFront = h('Front Gross')
+    const iBack = h('Back Gross')
+    const iTotal = h('Total Gross')
+    const missing = Object.entries({ 'Front Gross': iFront, 'Back Gross': iBack, 'Total Gross': iTotal })
+      .filter(([, i]) => i < 0)
+      .map(([name]) => name)
+    if (missing.length) {
+      return { available: false, reason: `crm_sales_gross missing required columns: ${missing.join(', ')}` }
+    }
+
+    const rows = deliveryRows(db, delivery.id)
+    if (rows.length !== delivery.accepted_row_count) {
+      return {
+        available: false,
+        reason: `row count mismatch: parsed ${rows.length} != accepted_row_count ${delivery.accepted_row_count}`,
+      }
+    }
+
+    // Parse a gross cell the way the governed gross contract does (parity with the
+    // reference grossMetrics): a BLANK cell is an explicit zero (a deal with no gross),
+    // NOT missing; currency/percent/thousands formatting is stripped; only genuine
+    // non-numeric junk withholds the whole metric (never a fabricated zero).
+    const grossNum = (v: string | undefined): number | null => {
+      const s = (v ?? '').trim()
+      if (s === '') return 0
+      const n = Number(s.replace(/[$,%\s]/g, ''))
+      return Number.isFinite(n) ? n : null
+    }
+    let frontSum = 0
+    let backSum = 0
+    let totalSum = 0
+    let reconciliationMismatches = 0
+    for (const r of rows) {
+      const f = grossNum(r[iFront])
+      const b = grossNum(r[iBack])
+      const t = grossNum(r[iTotal])
+      if (f === null || b === null || t === null) {
+        return {
+          available: false,
+          reason: 'crm_sales_gross: non-numeric Front/Back/Total gross value (withheld, never zero)',
+        }
+      }
+      frontSum += f
+      backSum += b
+      totalSum += t
+      // Within-row reconciliation, dollar tolerance (parity with reference grossMetrics).
+      if (Math.abs(f + b - t) > 0.5) reconciliationMismatches++
+    }
+
+    const round2 = (n: number) => Math.round(n * 100) / 100
+    return {
+      available: true,
+      source: 'crm_sales_gross',
+      provenance: provenanceOf(delivery, 'crm_sales_gross'),
+      rowCount: rows.length,
+      frontSum: round2(frontSum),
+      backSum: round2(backSum),
+      totalSum: round2(totalSum),
+      reconciliationMismatches,
+    }
+  } catch (e) {
+    return { available: false, reason: `crm_sales_gross query failed: ${(e as Error).message}` }
   } finally {
     db.close()
   }

@@ -18,7 +18,7 @@ import { computeCockpitWindow, type BusinessHours } from '../cockpit/cockpit-win
 import { readStudioConfig } from '../studio-config'
 import { parseBusinessHours } from '../cockpit/cockpit-data'
 import { resolveHubMetricValues, type MetricValues } from './alert-engine'
-import { readAppointments, readDealershipPerformance } from '../ingest-native-metrics'
+import { readAppointments, readCrmSalesGross, readDealershipPerformance } from '../ingest-native-metrics'
 
 const DEFAULT_BH: BusinessHours = { tz: 'America/New_York', openH: 8, closeH: 21, closedDays: [] }
 
@@ -41,15 +41,28 @@ const DEFAULT_BH: BusinessHours = { tz: 'America/New_York', openH: 8, closeH: 21
 export function resolveNativeMetricValues(profile: string): MetricValues {
   const v: MetricValues = new Map()
 
-  // gross.total_sum from the accepted dealership_performance TOTAL — provenance-backed
-  // (available:true implies a governed, accepted, non-superseded delivery with lineage).
+  // gross.* SOURCE PRECEDENCE — never double-count Dashboard TOTAL and per-deal CRM gross:
+  //   1. CRM Sales Gross (per-deal) is AUTHORITATIVE for gross.total_sum and is the ONLY
+  //      source of gross.reconciliation_mismatches (within-row Front+Back vs Total).
+  //   2. The Dealership Dashboard TOTAL is a FALLBACK for gross.total_sum ONLY when CRM
+  //      Sales Gross is absent/unavailable.
+  //   3. The two sources are NEVER summed. Missing-not-zero: absent → the slug is withheld.
   try {
-    const dp = readDealershipPerformance(profile)
-    if (dp.available && dp.provenance && dp.summary.totalGross != null) {
-      v.set('gross.total_sum', dp.summary.totalGross)
+    const crm = readCrmSalesGross(profile)
+    if (crm.available && crm.totalSum != null) {
+      v.set('gross.total_sum', crm.totalSum)
+      if (crm.reconciliationMismatches != null) {
+        v.set('gross.reconciliation_mismatches', crm.reconciliationMismatches)
+      }
+    } else {
+      const dp = readDealershipPerformance(profile)
+      if (dp.available && dp.provenance && dp.summary.totalGross != null) {
+        // Dashboard fallback: total only (no per-deal reconciliation from a summary).
+        v.set('gross.total_sum', dp.summary.totalGross)
+      }
     }
   } catch {
-    /* dealership_performance unreadable → withheld */
+    /* gross sources unreadable → withheld (never zero) */
   }
 
   // ALL FOUR appointment rates come from the SAME accepted appointments family and the

@@ -23,13 +23,22 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 vi.mock('@/server/ingest-native-metrics', () => ({
   readDealershipPerformance: vi.fn(),
   readAppointments: vi.fn(),
+  readCrmSalesGross: vi.fn(),
 }))
 
-import { readAppointments, readDealershipPerformance } from '@/server/ingest-native-metrics'
+import { readAppointments, readCrmSalesGross, readDealershipPerformance } from '@/server/ingest-native-metrics'
 import { resolveNativeMetricValues } from '@/server/watchdog/metric-values'
 
 const dp = vi.mocked(readDealershipPerformance)
 const ap = vi.mocked(readAppointments)
+const crm = vi.mocked(readCrmSalesGross)
+
+const CRM = (totalSum: number, reconciliationMismatches = 0) =>
+  ({
+    available: true, source: 'crm_sales_gross', provenance: { reportKind: 'crm_sales_gross' },
+    rowCount: 1, frontSum: 0, backSum: 0, totalSum, reconciliationMismatches,
+  }) as never
+const CRM_NA = { available: false, reason: 'withheld' } as never
 
 const DP = (summary: Record<string, number | null>) =>
   ({
@@ -56,6 +65,29 @@ describe('resolveNativeMetricValues — corrected metric contract (missing-not-z
   beforeEach(() => {
     dp.mockReset()
     ap.mockReset()
+    crm.mockReset()
+    // Default: no CRM Sales Gross → Dashboard-fallback contract remains testable.
+    crm.mockReturnValue(CRM_NA)
+  })
+
+  it('gross SOURCE PRECEDENCE: CRM per-deal wins over Dashboard TOTAL, never summed', () => {
+    // Both sources available with DIFFERENT totals — CRM must win, no double-count.
+    crm.mockReturnValue(CRM(14185.2, 0))
+    dp.mockReturnValue(DP({ totalGross: 99999.99 }))
+    ap.mockReturnValue(AP_NA)
+    const v = resolveNativeMetricValues('serra-honda')
+    expect(v.get('gross.total_sum')).toBeCloseTo(14185.2, 2) // CRM, not DP, not the sum
+    // reconciliation_mismatches is sourced ONLY from CRM per-deal rows.
+    expect(v.get('gross.reconciliation_mismatches')).toBe(0)
+  })
+
+  it('gross reconciliation_mismatches comes only from CRM; Dashboard fallback never emits it', () => {
+    crm.mockReturnValue(CRM_NA)
+    dp.mockReturnValue(DP({ totalGross: 5000 }))
+    ap.mockReturnValue(AP_NA)
+    const v = resolveNativeMetricValues('serra-nissan')
+    expect(v.get('gross.total_sum')).toBe(5000) // Dashboard fallback (CRM absent)
+    expect(v.has('gross.reconciliation_mismatches')).toBe(false) // never from Dashboard
   })
 
   it('Honda-like: gross from DP + all four appt.* rates from the appointments family', () => {

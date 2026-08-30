@@ -5,6 +5,7 @@ import path from 'node:path'
 import { createRequire } from 'node:module'
 import {
   readAppointments,
+  readCrmSalesGross,
   readDealershipPerformance,
   readResponseTimes,
 } from '../server/ingest-native-metrics'
@@ -298,6 +299,79 @@ describe('ingest-native-metrics (deterministic fixtures)', () => {
     const r = readResponseTimes('fixt-rt-none')
     expect(r.available).toBe(false)
   })
+
+  // ── CRM Sales Gross reader — deterministic fixtures (negatives + blank=0) ──
+  const GROSS_HEADER = JSON.stringify(['Dealer', 'Dealer ID', 'Front Gross', 'Back Gross', 'Total Gross'])
+  const grossRow = (f: string, b: string, t: string) => ['Serra Honda of Sylacauga', '21043', f, b, t]
+
+  it('CRM gross: sums Total, blank Front/Back = 0 (not missing), reconciles clean', () => {
+    const db = brainFor('fixt-gross-ok')
+    addDelivery(db, {
+      id: 'g-ok', profile: 'fixt-gross-ok', reportKind: 'crm_sales_gross', periodEnd: '2026-08-30',
+      headerJson: GROSS_HEADER,
+      rows: [grossRow('100.5', '50.25', '150.75'), grossRow('', '', '0'), grossRow('1,000', '0', '1000')],
+    })
+    db.close()
+    const g = readCrmSalesGross('fixt-gross-ok')
+    expect(g.available).toBe(true)
+    if (!g.available) return
+    expect(g.rowCount).toBe(3)
+    expect(g.totalSum).toBeCloseTo(1150.75, 2) // 150.75 + 0 + 1000 (comma stripped)
+    expect(g.reconciliationMismatches).toBe(0)
+  })
+
+  it('CRM gross: within-row Front+Back != Total counts as a reconciliation mismatch', () => {
+    const db = brainFor('fixt-gross-mism')
+    addDelivery(db, {
+      id: 'g-mism', profile: 'fixt-gross-mism', reportKind: 'crm_sales_gross', periodEnd: '2026-08-30',
+      headerJson: GROSS_HEADER, rows: [grossRow('100', '50', '999')],
+    })
+    db.close()
+    const g = readCrmSalesGross('fixt-gross-mism')
+    expect(g.available).toBe(true)
+    if (!g.available) return
+    expect(g.reconciliationMismatches).toBe(1)
+  })
+
+  it('CRM gross: NON-numeric gross value withholds the whole metric (never zero)', () => {
+    const db = brainFor('fixt-gross-junk')
+    addDelivery(db, {
+      id: 'g-junk', profile: 'fixt-gross-junk', reportKind: 'crm_sales_gross', periodEnd: '2026-08-30',
+      headerJson: GROSS_HEADER, rows: [grossRow('100', 'N/A', '150')],
+    })
+    db.close()
+    const g = readCrmSalesGross('fixt-gross-junk')
+    expect(g.available).toBe(false)
+  })
+
+  it('CRM gross: missing Total Gross column -> withheld (schema negative)', () => {
+    const db = brainFor('fixt-gross-schema')
+    addDelivery(db, {
+      id: 'g-schema', profile: 'fixt-gross-schema', reportKind: 'crm_sales_gross', periodEnd: '2026-08-30',
+      headerJson: JSON.stringify(['Dealer', 'Dealer ID', 'Front Gross', 'Back Gross']),
+      rows: [['Serra Honda of Sylacauga', '21043', '1', '2']],
+    })
+    db.close()
+    const g = readCrmSalesGross('fixt-gross-schema')
+    expect(g.available).toBe(false)
+  })
+
+  it('CRM gross: parsed row count != accepted_row_count -> withheld (integrity)', () => {
+    const db = brainFor('fixt-gross-count')
+    addDelivery(db, {
+      id: 'g-count', profile: 'fixt-gross-count', reportKind: 'crm_sales_gross', periodEnd: '2026-08-30',
+      headerJson: GROSS_HEADER, acceptedRowCount: 99, rows: [grossRow('1', '2', '3')],
+    })
+    db.close()
+    const g = readCrmSalesGross('fixt-gross-count')
+    expect(g.available).toBe(false)
+  })
+
+  it('CRM gross: no accepted delivery -> withheld, never zero', () => {
+    brainFor('fixt-gross-absent').close()
+    const g = readCrmSalesGross('fixt-gross-absent')
+    expect(g.available).toBe(false)
+  })
 })
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -317,23 +391,24 @@ describe.runIf(HAVE_DATA)('ingest-native-metrics (isolated store)', () => {
     else process.env.BRAIN_PROFILES_ROOT = saved
   })
 
-  it('Honda dealership_performance: accepted TOTAL row parsed from embedded summary', () => {
+  it('Honda dealership_performance: accepted TOTAL row parsed from embedded summary (fresh 2026-08-24/30)', () => {
     const r = readDealershipPerformance('serra-honda')
     expect(r.available).toBe(true)
     if (!r.available) return
-    expect(r.summary.leads).toBe(96)
-    expect(r.summary.apptsSet).toBe(18)
-    expect(r.summary.apptsShow).toBe(12)
-    expect(r.summary.totalVisits).toBe(31)
-    expect(r.summary.visitsSold).toBe(3)
+    // newest-wins selection returns the fresh 2026-08-24..30 delivery (40 rows).
+    expect(r.summary.leads).toBe(86)
+    expect(r.summary.apptsSet).toBe(10)
+    expect(r.summary.apptsShow).toBe(8)
+    expect(r.summary.totalVisits).toBe(26)
+    expect(r.summary.visitsSold).toBe(4)
     expect(r.summary.soldInPeriod).toBe(5)
-    expect(r.summary.frontGross).toBeCloseTo(3184.5, 2)
-    expect(r.summary.backGross).toBeCloseTo(9056.28, 2)
-    expect(r.summary.totalGross).toBeCloseTo(12240.78, 2) // 3184.5 + 9056.28
-    expect(r.summary.avgTotalGross).toBeCloseTo(2448.156, 2)
+    expect(r.summary.frontGross).toBeCloseTo(11534.31, 2)
+    expect(r.summary.backGross).toBeCloseTo(2650.89, 2)
+    expect(r.summary.totalGross).toBeCloseTo(14185.2, 2) // 11534.31 + 2650.89
+    expect(r.summary.avgTotalGross).toBeCloseTo(2837.04, 2)
     expect(r.provenance.reportKind).toBe('dealership_performance')
-    expect(r.provenance.period.start).toBe('2026-08-17')
-    expect(r.provenance.period.end).toBe('2026-08-23')
+    expect(r.provenance.period.start).toBe('2026-08-24')
+    expect(r.provenance.period.end).toBe('2026-08-30')
     expect(r.provenance.checksum).toBeTruthy()
     // New / Used / Unknown inventory types (not lead sources)
     expect(r.byInventoryType.length).toBeGreaterThanOrEqual(3)
@@ -342,15 +417,18 @@ describe.runIf(HAVE_DATA)('ingest-native-metrics (isolated store)', () => {
     )
   })
 
-  it('Honda appointments: header_json-driven, 18 accepted rows, rescheduled counted', () => {
+  it('Honda appointments: header_json-driven, 14 accepted rows (fresh), one shared denominator', () => {
     const r = readAppointments('serra-honda')
     expect(r.available).toBe(true)
     if (!r.available) return
-    expect(r.total).toBe(18)
+    expect(r.total).toBe(14)
+    expect(r.provenance.period.end).toBe('2026-08-30')
     expect(r.provenance.reportKind).toBe('appointments')
     expect(typeof r.rescheduled).toBe('number')
+    // Every appt.* rate shares this single denominator (r.total).
     const sum = Object.values(r.byStatus).reduce((a, b) => a + b, 0)
-    expect(sum).toBe(18)
+    expect(sum).toBe(14)
+    expect(r.show + r.noShow).toBeLessThanOrEqual(r.total)
   })
 
   it('Honda response-times: standalone accepted+reconciling readback, minutes', () => {
@@ -365,19 +443,43 @@ describe.runIf(HAVE_DATA)('ingest-native-metrics (isolated store)', () => {
     expect(r.provenance).toHaveProperty('profile', 'serra-honda')
   })
 
-  it('Nissan dealership_performance: accepted and available', () => {
+  it('Nissan dealership_performance: accepted and available (fresh 2026-08-24/30)', () => {
     const r = readDealershipPerformance('serra-nissan')
     expect(r.available).toBe(true)
     if (!r.available) return
     expect(typeof r.summary.leads === 'number' || r.summary.leads === null).toBe(true)
-    expect(r.summary.totalGross).toBeCloseTo(5263.6, 2) // -1300.85 + 6564.45
-    expect(r.provenance.period.end).toBe('2026-08-23')
+    expect(r.summary.totalGross).toBeCloseTo(13224, 2) // 10063.67 + 3160.33
+    expect(r.provenance.period.end).toBe('2026-08-30')
   })
 
-  it('Ford: no accepted native families -> withheld, never zero', () => {
+  it('Ford: now has accepted native families (fresh 2026-08-24/30), each available', () => {
     const dp = readDealershipPerformance('tony-serra-ford')
-    expect(dp.available).toBe(false)
+    expect(dp.available).toBe(true)
+    if (dp.available) expect(dp.provenance.period.end).toBe('2026-08-30')
     const ap = readAppointments('tony-serra-ford')
-    expect(ap.available).toBe(false)
+    expect(ap.available).toBe(true)
+    if (ap.available) expect(ap.total).toBe(7)
+    const g = readCrmSalesGross('tony-serra-ford')
+    expect(g.available).toBe(true)
+  })
+
+  it('CRM Sales Gross real-file goldens: authoritative per-deal gross.total_sum + reconciliation, all three stores', () => {
+    const expected: Record<string, { rows: number; total: number }> = {
+      'serra-honda': { rows: 5, total: 14185.2 },
+      'serra-nissan': { rows: 6, total: 13224.0 },
+      'tony-serra-ford': { rows: 7, total: 1600.99 },
+    }
+    for (const [profile, exp] of Object.entries(expected)) {
+      const g = readCrmSalesGross(profile)
+      expect(g.available).toBe(true)
+      if (!g.available) continue
+      expect(g.rowCount).toBe(exp.rows)
+      expect(g.totalSum).toBeCloseTo(exp.total, 2)
+      // clean deliveries: every row Front+Back == Total (blank gross = 0, not missing)
+      expect(g.reconciliationMismatches).toBe(0)
+      expect(g.provenance.reportKind).toBe('crm_sales_gross')
+      expect(g.provenance.period.end).toBe('2026-08-30')
+      expect(g.provenance.checksum).toBeTruthy()
+    }
   })
 })
