@@ -18,18 +18,23 @@ Related: [[GATE3_CUSTOM_GATE4_CURRENT_2026-08-30]], [[GATE3_HIDDEN_LEAD_INTENT_B
   adaptation to this clone's storage/reader shape and its ratified contract, plus new tests here. Do not
   assume any isolated function can be moved unchanged.
 
-## 0A. Shadow audit result — FAIL (evidence integrity only)
-A Shadow audit of the prior revision (`2aae7cbb`) returned **FAIL — evidence integrity**, on four
+## 0A. Shadow audit result — limited PASS on corrected evidence integrity (prior FAIL historical)
+**Current result:** the same conflict-screened Shadow re-audited the corrected revision
+(`fec05dd03bf525b23d84d75f17b7658d6cbcac89`) and returned **PASS — corrected evidence integrity only**.
+**Historical:** the prior revision (`2aae7cbb`) received a Shadow **FAIL — evidence integrity** (preserved
+below as history) on four
 corrections now applied: (1) §2 selection semantics conflated Halo `selectDelivery` (newest-wins) with
 isolated `listActiveRows` (no newest-wins; safe only via explicit period); (2) §3 `crm_sales_gross`
 mislabeled **PARTIAL** — it is **MISSING** (the existing `gross.total_sum` is a Dashboard-family value),
 plus a source-precedence/reconciliation note was owed; (3) §5 catalog inventory omitted
 `comm.multi_rep_within_24h`, which **is** present in this clone's catalog; (4) §4 conflated held-store
 artifacts with gate4-inbox harness-classified files and over-used "golden" for unpinned files.
-- **Shadow limits (preserved):** prior read-only branch exposure; **same-system functional separation,
-  not institutional/external independence**; Shadow holds **no authorship, no mutation, and no approval**
-  authority. This is an **evidence-integrity** finding only — **no gate acceptance, no readiness impact**.
-- **This revision is the corrected follow-up, pending Shadow re-verification — NOT a self-PASS.** Global
+- **Shadow limits (preserved, unchanged by the PASS):** prior read-only branch exposure; **same-system
+  functional separation, not institutional/external independence**; Shadow holds **no authorship, no
+  mutation, and no approval** authority, and **no gate or readiness authority**. Both the FAIL and this
+  PASS are **evidence-integrity only** — the PASS confirms the four corrections are faithfully recorded
+  and implies **no Gate 3 or Gate 4 acceptance and no readiness advancement**.
+- **This revision's corrections are now Shadow-verified (limited PASS), not self-PASS.** Global
   Gate 3/4 remain HOLD/PENDING; all 18 readiness stay `false`.
 
 ## 1. Two code planes + exact recoverable ref
