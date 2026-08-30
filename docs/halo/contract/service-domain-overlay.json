@@ -1,0 +1,67 @@
+{
+  "artifact": "service-domain-overlay",
+  "overlay_version": "1.0.0",
+  "ratified_by": "Codex (M1R Gate 2B)",
+  "date": "2026-08-30",
+  "timezone": "America/New_York",
+  "source_matrix": "semantic-watchdog-feasibility-matrix-295.json",
+  "source_matrix_sha256": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+  "classification_summary": "semantic-watchdog-classification-summary.json",
+  "classification_summary_sha256": "e41f5a28021f19a7f9146622c7afaeefcfc546941ce4aed196ccf0e406fee3aa",
+  "total_conditions": 295,
+  "preservation": "The original 295 rows and their historical acquisition_class values are preserved byte-for-byte in the source matrix. This overlay is ADDITIVE current-scope routing metadata only. The historical acquisition_class is NOT current Sales authority.",
+  "service_domain": {
+    "count": 18,
+    "ids": ["SW-079", "SW-081", "SW-083", "SW-115", "SW-118", "SW-199", "SW-222", "SW-223", "SW-224", "SW-225", "SW-226", "SW-227", "SW-228", "SW-229", "SW-263", "SW-270", "SW-279", "SW-294"],
+    "routing": "Route ONLY to the separately governed combined Serra Service workspace. UNAVAILABLE to all three Sales profiles (serra-honda, serra-nissan, tony-serra-ford). The Serra Service workspace is out of scope for this contract.",
+    "historical_origins": {
+      "Scheduled source plus downstream calculation/NLP": ["SW-083", "SW-118", "SW-223", "SW-224", "SW-225", "SW-226", "SW-263", "SW-270"],
+      "Separate external source required": ["SW-079", "SW-115"],
+      "Outside governed boundary": ["SW-081", "SW-199", "SW-222", "SW-227", "SW-228", "SW-229", "SW-279", "SW-294"]
+    },
+    "historical_origin_counts": {
+      "Scheduled source plus downstream calculation/NLP": 8,
+      "Separate external source required": 2,
+      "Outside governed boundary": 8
+    }
+  },
+  "false_positive_exclusions": {
+    "ids": ["SW-176", "SW-274"],
+    "reason": "Figurative use of the word 'service' (SW-176 'mood-driven service'; SW-274 'service radius') — not the Service department domain. Excluded from the overlay; remain in their historical Sales-eligible/other classes."
+  },
+  "unresolved_withheld_from_sales": {
+    "ids": ["SW-082", "SW-218"],
+    "reason": "Warranty-expiration signals (VSC/CPO). Ambiguous Sales-vs-Service dependency. Withheld from Sales supported/available sets until a source contract proves no Service dependency. Not counted in the 18 Service-domain overlay; remain in historical 'Outside governed boundary'."
+  },
+  "historical_seven_class_counts": {
+    "Vin-native scheduled": 20,
+    "Scheduled source plus downstream calculation/NLP": 162,
+    "Separate external source required": 56,
+    "Native manual export": 7,
+    "Unavailable or retention-limited": 8,
+    "Manual CRM inspection": 7,
+    "Outside governed boundary": 35
+  },
+  "current_overlay_eight_class_counts": {
+    "Vin-native scheduled": 20,
+    "Scheduled source plus downstream calculation/NLP": 154,
+    "Separate external source required": 54,
+    "Native manual export": 7,
+    "Unavailable or retention-limited": 8,
+    "Manual CRM inspection": 7,
+    "Outside governed boundary (other)": 27,
+    "Service-domain separate/out-of-Sales": 18
+  },
+  "reconciliation": {
+    "historical_seven_class_total": 295,
+    "current_overlay_eight_class_total": 295,
+    "moves_to_service": {
+      "from_Scheduled source plus downstream calculation/NLP": 8,
+      "from_Separate external source required": 2,
+      "from_Outside governed boundary": 8,
+      "total": 18
+    }
+  },
+  "method": "Manual per-condition domain review (Shadow) independently verified against the matrix acquisition_class field (Claude, Gate 2A). Keyword-only counting was rejected as unsafe (it over-matched to 29, including figurative false positives).",
+  "uncertainty": "SW-082 and SW-218 remain unresolved (see unresolved_withheld_from_sales). Final overlay membership is encoded here and validated by scripts/validate-m1r-coverage-contract.mjs; changes require Codex re-ratification."
+}

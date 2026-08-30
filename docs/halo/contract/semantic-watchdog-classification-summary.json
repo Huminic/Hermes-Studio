@@ -1,0 +1,21 @@
+{
+  "total_conditions": 295,
+  "counts": {
+    "Vin-native scheduled": 20,
+    "Scheduled source plus downstream calculation/NLP": 162,
+    "Separate external source required": 56,
+    "Native manual export": 7,
+    "Unavailable or retention-limited": 8,
+    "Manual CRM inspection": 7,
+    "Outside governed boundary": 35
+  },
+  "percentages": {
+    "Vin-native scheduled": 6.78,
+    "Scheduled source plus downstream calculation/NLP": 54.92,
+    "Separate external source required": 18.98,
+    "Native manual export": 2.37,
+    "Unavailable or retention-limited": 2.71,
+    "Manual CRM inspection": 2.37,
+    "Outside governed boundary": 11.86
+  }
+}
