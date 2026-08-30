@@ -49,6 +49,21 @@ At each gate—or after 45 minutes of work, whichever comes first—Codex report
 
 No gate may be silently widened, redefined, scope-corrected, or passed with caveats. A failed gate stops downstream work. Duane alone may approve a changed business requirement or an external/production mutation.
 
+## Ongoing approval model (Duane clarification, 2026-08-30)
+
+Explicitly acknowledged governance clarification from Duane on the standing approval model. This section refines *when* Duane approval is required; it does not weaken any safety or external-mutation boundary above.
+
+- **Independent check is neutral, not an approval proxy.** Shadow (the independent neutral control check) verifies that work is on track and free of drift. Shadow does not grant approval and cannot substitute for a Duane decision where one is required.
+- **In-scope work may proceed on controller plus independent check.** Routine technical choices and in-scope corrections that *restore the ratified outcome* may proceed when the controller and the independent check both show the work is on track — no separate Duane approval needed for these.
+- **Duane approval is required** only when a choice does any of the following:
+  - changes the intended outcome or functionality;
+  - expands scope or authority;
+  - accepts missing, unreadable, skipped, stale, or quarantined data;
+  - weakens acceptance criteria;
+  - creates customer, legal, financial, production, or external commitments;
+  - makes another consequential deviation.
+- **Boundaries unchanged.** All existing safety and external-mutation boundaries in this directive remain in force. External/production mutation (including any VinSolutions schedule/filter change) still requires explicit Duane approval regardless of the above.
+
 ## Immediate stop conditions
 
 Stop and report before continuing if any of the following occurs: production target detected; Service/Parts selected or present; wrong dealer; stale/ambiguous period; unknown provenance; schema drift; unexpected dirty-file delta; concurrent writer; failing/regressed test; credential request; external send; schedule change lacking approval; proposed merge/deploy; or more than one gate being worked at once.
