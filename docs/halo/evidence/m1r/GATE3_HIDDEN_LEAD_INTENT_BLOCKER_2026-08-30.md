@@ -89,6 +89,31 @@ observation/inference split — nothing more.
   dataset was found** to emit a Sales-only Lead Intent at the required weekly grain. It does **NOT** prove
   Cox has no administrative/support path; that remains unexplored and unproven.
 
+## 5A. Controller read-only official Help Center review (CONTROLLER — UI/doc facts, see §3A limits)
+Authenticated VinSolutions Help Center, read-only. Browser discipline: Help tab closed; Vinconnect
+restored; **no report opened/saved/scheduled/run; no CRM/settings/customer mutation.**
+
+- **OBSERVED — Knowledge searches returned zero results:**
+  - `"Lead Intent"` → 0 Knowledge results
+    (`https://casfx.my.site.com/vinsolutions/s/global-search/Lead%20Intent`).
+  - `"report filter Lead Intent"` → 0 Knowledge results
+    (`https://casfx.my.site.com/vinsolutions/s/global-search/report%20filter%20Lead%20Intent`).
+  - **Bound:** zero search results is **not** proof that no Cox administrative/support remedy exists.
+- **OBSERVED — Article 000001221 "VS Insights - Create a New Report" (dated 2026-05-04,**
+  `…/s/article/Insights-Creating-a-New-Report-1762074166`**):** states Custom Reporting **Allow Access**
+  and **Allow Edit** are prerequisites; Create Report uses a chosen dataset, selected columns/additional
+  datasets, and user-added filters via **Filter Column / Comparison / Value**. It does **not** mention
+  Lead Intent or any native Version-report hidden-filter repair.
+- **OBSERVED — Article 000001223 "VS Insights Filters"**
+  (`…/s/article/Insights-Using-Filters-1839442491`)**:** concerns the Insights left-side
+  report/dashboard **navigation** filters, **not** row/data filters; provides **no** Lead Intent control.
+- **INTERPRETATION (bounded):** official guidance supports custom-report filtering **in principle when the
+  dataset exposes the necessary column**, but does **not** cure the already-observed fact (§5) that the
+  Leads dataset exposed **no Lead Intent** and no equivalent weekly CAGE / 41-column ROI dataset was
+  found. The smallest current resolution remains **Cox/Vin admin/support or a rebuilt source definition**.
+  This evidence **strengthens the precise support question** but **does not authorize contacting support
+  or changing schedules**.
+
 ## 6. Smallest technically valid resolutions (permanent Sales-only + original-byte contract)
 1. **Source fix (recommended):** correct the VinSolutions report definition's positive **Lead Intent** and
    re-deliver, via **Cox/VinSolutions admin/support** or a **rebuilt source definition**. Origin bytes
