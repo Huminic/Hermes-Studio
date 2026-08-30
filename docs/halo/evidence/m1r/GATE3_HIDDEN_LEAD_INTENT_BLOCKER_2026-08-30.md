@@ -53,12 +53,31 @@ report must select only Sales Lead Types and Lead Intents."*
   Intent selections and recognizes a *Lead-Sources-Excluded* row as proof, but there is no Lead-Intent
   *exclusion* form emitted by this export and no code path treats a positive Lead Intent as cured.
 
-## 4. Consumer defect vs VinSolutions export limitation
-- **Not a consumer defect.** `evaluateDelivery` behaves correctly under the permanent Sales-only
-  contract: a Filters tab that positively selects Service/Parts contaminates the schedule definition
-  itself (a later run may pull Service/Parts), so clean rows in one delivery do not cure it.
+## 3A. Fresh Shadow evidence-integrity PASS (limited) + provenance limits
+A fresh conflict-screened Shadow reviewed this checkpoint and returned **PASS — evidence integrity
+only**. **Disclosed:** prior branch exposure; same-system functional-separation limitation (not
+institutional/external independence). **No approval; no readiness advancement; not a Gate 3 pass.** It
+verifies that this record faithfully represents the hashes, the executed classification, and the
+observation/inference split — nothing more.
+
+**Shadow-preserved limits (recorded, not diminished):**
+- **UI claims are controller-reported.** "Edit Parameters exposes no Lead Intent control", the Create
+  Report exploration (§5), and the hidden nature of the field are **controller read-only Computer Use**
+  facts; the repo files/code do not independently establish them.
+- **Files/code do not prove causation.** The evidence proves *what* the classifier does with the
+  workbook Filters; it does **not** prove *why* VinSolutions emits `Parts, Sales, Service, Unknown` in
+  Lead Intent, nor that **Cox lacks an administrative fix** (§5 inference bound).
+- **Hash provenance.** This writer's SHA256 verifies the files **as they are now**; "matched exactly on
+  receipt" is **controller-supplied provenance**, not independently reconstructed by the writer.
+
+## 4. Classifier behavior vs VinSolutions export limitation
+- **Not a classifier defect under the ratified Sales-only contract.** `evaluateDelivery` behaves as
+  specified: a Filters tab that positively selects Service/Parts contaminates the schedule definition
+  itself (a later run may pull Service/Parts), so clean rows in one delivery do not cure it. (This is a
+  statement about the classifier's conformance to the ratified contract, not an independent judgment that
+  the contract is optimal.)
 - **VinSolutions export/definition limitation.** The contaminant is a hidden Lead Intent dimension baked
-  into the report definition, not editable via Edit Parameters.
+  into the report definition, not editable via Edit Parameters (UI fact is controller-reported; see §3A).
 
 ## 5. Controller read-only Computer Use exploration (VinSolutions Create Report)
 - **OBSERVED (controller):** Vin **Create Report** is present; **Data Retrieval was paused before dataset
@@ -71,11 +90,18 @@ report must select only Sales Lead Types and Lead Intents."*
   Cox has no administrative/support path; that remains unexplored and unproven.
 
 ## 6. Smallest technically valid resolutions (permanent Sales-only + original-byte contract)
-1. **Source fix (recommended):** correct the VinSolutions report definition's **Lead Intent to Sales-only**
-   (remove Acquisition/Parts/Service/Unknown) and re-deliver, via **Cox/VinSolutions admin/support** or a
-   **rebuilt source definition** that can emit Sales-only Lead Intent. Origin bytes clean; no consumer
-   change; no contract weakening. → **material Duane business approval required** (external
-   report-definition/schedule mutation); Cox support likely required. **Not assumed.**
+1. **Source fix (recommended):** correct the VinSolutions report definition's positive **Lead Intent** and
+   re-deliver, via **Cox/VinSolutions admin/support** or a **rebuilt source definition**. Origin bytes
+   clean; no classifier change; no contract weakening. → **material Duane business approval required**
+   (external report-definition/schedule mutation); Cox support likely required. **Not assumed.**
+   - **Observed values (both files):** Lead Intents = **Parts, Sales, Service, Unknown**. *Acquisition is
+     NOT observed* in these two workbooks.
+   - **Mandatory current-contract cure:** **remove/exclude Parts and Service** from the positive Lead
+     Intent selection (those two are what `SERVICE_PARTS_RE` flags). That alone clears the
+     `non-sales-lead-type` quarantine under the current classifier.
+   - **`Unknown` is NOT flagged** by the current classifier and is not a required removal.
+   - Selecting **only Sales** (dropping Unknown too) would be a **stricter business choice, not a proven
+     current-contract requirement**; adopt only on explicit business direction.
 2. **Forward-compat parser support (routine dev; does not unblock today):** recognize a Lead-Intent
    *exclusion* row as proof IF VIN ever emits one — mirrors existing Lead-Sources-Excluded handling.
    Contingent on the export changing; no acceptance today.
