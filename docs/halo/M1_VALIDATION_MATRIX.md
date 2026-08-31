@@ -1,5 +1,15 @@
 # Halo M1 — Validation Matrix & Smallest Closure Plan
 
+> **ACTIVE-M1R SUPERSESSION NOTICE (additive; history preserved, not rewritten):** The "M1 CLOSED
+> (2026-08-28)" record below is a **HISTORICAL snapshot** and is **superseded for VALUES and COVERAGE by
+> the active M1R objective** — six native families × three stores must eventually be accepted,
+> reader-backed, and calculation-tested. **Current governed state: 9 accepted / 9 quarantined** —
+> Dashboard, Appointments, and CRM Sales Gross accepted for all three stores (period **2026-08-24..30**);
+> **Lead Source ROI, CAGE KPI, and Sales Communication remain QUARANTINED (zero accepted metrics).**
+> **Gate 3 is HOLD** on the hidden Lead-Intent question — see
+> `docs/halo/evidence/m1r/GATE3_HIDDEN_LEAD_INTENT_BLOCKER_2026-08-30.md`. This notice does **not** imply
+> M1R is closed and does not alter the historical record that follows.
+
 **STATUS: M1 CLOSED in isolated dev (2026-08-28) — independent Codex QC ↔ Studio sign-off ACCEPTED
 (15 focused files / 98 tests passed; three profiles independently read). Follow-ons (Lead Source ROI
 reader; three-layer UI in M2) remain, but are NOT M1 gates.**

@@ -1,5 +1,15 @@
 # Halo — Execution Roadmap (Authoritative)
 
+> **ACTIVE-M1R SUPERSESSION NOTICE (additive; history preserved, not rewritten):** The "M1 CLOSED"
+> status in this document is a **HISTORICAL 2026-08-28 snapshot**, **superseded for VALUES and COVERAGE
+> by the active M1R objective** (six native families × three stores accepted, reader-backed,
+> calculation-tested). **Current governed state: 9 accepted / 9 quarantined** — Dashboard, Appointments,
+> and CRM Sales Gross accepted for all three stores (period **2026-08-24..30**); **Lead Source ROI, CAGE
+> KPI, and Sales Communication remain QUARANTINED (zero accepted metrics).** **Gate 3 is HOLD** on the
+> hidden Lead-Intent question — see `docs/halo/evidence/m1r/GATE3_HIDDEN_LEAD_INTENT_BLOCKER_2026-08-30.md`.
+> The **M2–M4 authorization history below is unchanged**; this notice does not rewrite history and does
+> **not** imply M1R is closed.
+
 **Authorization:** Duane authorized (2026-08-29, America/New_York) continuation through the Halo
 milestones after the M1 backup. **M2–M4 may proceed in ISOLATED / DEV planning and implementation**
 under the separately-gated boundaries in this document. This is the authoritative execution roadmap;
