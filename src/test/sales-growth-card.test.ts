@@ -36,9 +36,9 @@ describe('sales-growth-card (builder, positive external + separate internal)', (
   it('external carries the visible data-through label and no internal vocabulary', () => {
     const { external, internal } = buildSalesGrowthCard('serra-honda', 'Serra Honda',
       { dp: DP({ soldInPeriod: 5, apptsSet: 10, apptsShow: 8, totalVisits: 26, visitsSold: 4 }), appt: AP({ total: 14, show: 8, noShow: 5, confirmed: 7 }), gross: GROSS(14185.2, 5) }, fresh)
-    expect(external.title).toBe('Serra Honda Sales Performance and Growth Report')
-    expect(external.dataThrough).toBe('Data through Aug 30, 2026 · updated yesterday')
     expect(external).not.toBeNull()
+    expect(external!.title).toBe('Serra Honda Sales Performance and Growth Report')
+    expect(external!.dataThrough).toBe('Data through Aug 30, 2026 · updated yesterday')
     expect(externalForbiddenHits(external!)).toEqual([])
     // supported metrics surfaced; appointments framed as historical ("recorded this week")
     const flat = JSON.stringify(external)
@@ -92,11 +92,12 @@ describe.runIf(HAVE)('sales-growth-card rendered presentation (isolated store)',
   it('all three profiles render a visible "Data through Aug 30, 2026" with a plain age and no internal words', () => {
     for (const [profile, dealer] of [['serra-honda', 'Serra Honda'], ['serra-nissan', 'Serra Nissan'], ['tony-serra-ford', 'Tony Serra Ford']]) {
       const { external } = resolveSalesGrowthCard(profile, NOW)
-      const html = renderExternalCardHtml(external)
+      expect(external).not.toBeNull()
+      const html = renderExternalCardHtml(external!)
       expect(html).toContain(`${dealer} Sales Performance and Growth Report`)
       expect(html).toContain('Data through Aug 30, 2026')
       expect(html).toMatch(/updated (today|yesterday|\d+ days ago)/)
-      expect(externalForbiddenHits(external)).toEqual([])
+      expect(externalForbiddenHits(external!)).toEqual([])
     }
   })
 })
