@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tony Serra Ford Sales Performance and Growth Report — Internal Prototype — Not Strict M1R Acceptance</title>
+  <style>
+  :root{--ink:#0f172a;--muted:#5b6b7f;--line:#e6ebf1;--brand:#0b5cab;--brand2:#0a7d55;--warn:#b45309;--bg:#f6f8fb;--card:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{max-width:860px;margin:0 auto;padding:28px 26px;position:relative}
+  .wm-banner{background:repeating-linear-gradient(45deg,#fff7ed,#fff7ed 14px,#ffedd5 14px,#ffedd5 28px);border:1px solid #fdba74;color:var(--warn);font-weight:800;letter-spacing:.04em;text-transform:uppercase;font-size:12.5px;text-align:center;padding:9px 12px;border-radius:8px;margin-bottom:18px}
+  .wm-ghost{position:fixed;inset:0;pointer-events:none;z-index:0;display:flex;align-items:center;justify-content:center;opacity:.06;transform:rotate(-24deg);font-size:64px;font-weight:900;color:#b45309;white-space:nowrap}
+  header.masthead{border-bottom:3px solid var(--brand);padding-bottom:14px;margin-bottom:18px;position:relative;z-index:1}
+  .eyebrow{letter-spacing:.14em;text-transform:uppercase;font-size:11px;color:var(--brand);font-weight:700;margin:0 0 6px}
+  h1{font-size:25px;line-height:1.2;margin:0 0 8px;font-weight:800}
+  .data-through{display:inline-block;background:#eef4fb;color:var(--brand);font-weight:600;font-size:13px;padding:5px 12px;border-radius:999px;margin:0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;position:relative;z-index:1}
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(16,24,40,.04);break-inside:avoid}
+  section.card h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:700}
+  section.full{grid-column:1 / -1}
+  ul{margin:0;padding:0;list-style:none}
+  li{position:relative;padding:6px 0 6px 20px;border-bottom:1px solid #f1f4f8;font-size:14.5px}
+  li:last-child{border-bottom:0}
+  li::before{content:"";position:absolute;left:2px;top:13px;width:8px;height:8px;border-radius:50%;background:var(--brand2)}
+  sup.fn{color:var(--brand);font-weight:700;font-size:10px;padding-left:2px}
+  .rec{display:flex;gap:8px;align-items:baseline}
+  .rec .aud{font-weight:700;color:var(--ink);min-width:110px}
+  .rec .st{color:var(--warn);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+  ol.endnotes{margin:8px 0 0;padding-left:26px;color:var(--muted);font-size:12.5px}
+  ol.endnotes li{border:0;padding:3px 0 3px 4px}
+  ol.endnotes li::before{content:none;display:none}
+  table.prov{width:100%;border-collapse:collapse;font-size:11.5px;color:var(--muted)}
+  table.prov th,table.prov td{border:1px solid var(--line);padding:5px 7px;text-align:left}
+  footer{margin-top:22px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;position:relative;z-index:1;background:var(--bg)}
+  @media (max-width:640px){.grid{grid-template-columns:1fr}}
+  @media print{body{background:#fff}.page{max-width:100%;padding:0}section.card{box-shadow:none}}
+</style>
+</head>
+<body>
+  <div class="wm-ghost">Internal Prototype — Not Strict M1R Acceptance</div>
+  <div class="page">
+    <div class="wm-banner">Internal Prototype — Not Strict M1R Acceptance</div>
+    <header class="masthead">
+      <p class="eyebrow">Weekly Sales Performance &amp; Growth · Interim Prototype</p>
+      <h1>Tony Serra Ford Sales Performance and Growth Report</h1>
+      <p class="data-through">Data through Aug 30, 2026 · updated yesterday</p>
+    </header>
+    <div class="grid">
+      <section class="card full">
+        <h2>Executive Snapshot</h2>
+        <ul>
+          <li>7 vehicles delivered this week</li>
+          <li>$1,601 in total gross</li>
+          <li>7 sales appointments recorded this week</li>
+          <li>43% appointment show rate</li>
+        </ul>
+      </section>
+      <section class="card">
+        <h2>Revenue &amp; Customer Journey</h2>
+        <ul>
+          <li>$1,601 total gross across 7 delivered deals</li>
+          <li>$229 average gross per delivered deal</li>
+          <li>Dashboard lead funnel: 37 leads → 6 appointments set → 2 shown</li>
+        </ul>
+      </section>
+      <section class="card">
+        <h2>Lead Source Performance</h2>
+        <ul>
+          <li>42 leads worked across sources<sup class="fn">1,2,3</sup></li>
+          <li>1 sold from those leads<sup class="fn">1,2,3</sup></li>
+          <li>$1,601 total gross attributed across sources<sup class="fn">1,2,3</sup></li>
+          <li>12% duplicate-lead rate — a source-hygiene signal<sup class="fn">1,2,3</sup></li>
+          <li>Sales-only sources isolated (0 excluded in this delivery)<sup class="fn">4</sup></li>
+        </ul>
+      </section>
+      <section class="card">
+        <h2>Team Activity &amp; Engagement</h2>
+        <ul>
+          <li>12 sales reps active this week<sup class="fn">1,2,3</sup></li>
+          <li>42 leads worked by the team<sup class="fn">1,2,3</sup></li>
+          <li>6 appointments set, 2 shown<sup class="fn">1,2,3</sup></li>
+          <li>Sales-only rep activity isolated (0 excluded in this delivery)<sup class="fn">4</sup></li>
+        </ul>
+      </section>
+      <section class="card">
+        <h2>Customer Communication</h2>
+        <ul>
+          <li>34 Sales communications logged (0 excluded)<sup class="fn">5,6,3</sup></li>
+          <li>29 outbound rep messages, 5 inbound customer replies<sup class="fn">5,7,3</sup></li>
+        </ul>
+      </section>
+      <section class="card full">
+        <h2>High-Impact Growth Opportunities</h2>
+        <ul>
+          <li>Priority 1 — Recover 4 no-show appointments with a same-week reminder cadence</li>
+          <li>Priority 2 — Confirm the 4 unconfirmed appointments to lift show rate</li>
+          <li>Priority 3 — Reduce duplicate leads (12%) by tightening source routing<sup class="fn">1,2,3</sup></li>
+          <li>Priority 4 — Balance a high outbound-to-inbound ratio (29:5) with faster first-reply handling<sup class="fn">5,3</sup></li>
+        </ul>
+      </section>
+      <section class="card full">
+        <h2>Suggested Notifications &amp; Automations</h2>
+        <ul>
+          <li class="rec"><span class="aud">Manager</span><span>Weekly digest: delivered vehicles, total gross, and appointment show rate</span> <span class="st">INERT — recommendation only; not activated, scheduled, or sent</span></li>
+          <li class="rec"><span class="aud">Sales Manager</span><span>Alert when unconfirmed appointments exceed a set threshold before the weekend</span> <span class="st">INERT — recommendation only; not activated, scheduled, or sent</span></li>
+          <li class="rec"><span class="aud">Salesperson</span><span>Nudge to re-engage this week’s no-shows within 24 hours</span> <span class="st">INERT — recommendation only; not activated, scheduled, or sent</span></li>
+        </ul>
+      </section>
+      <section class="card full">
+        <h2>Endnotes</h2>
+        <ol class="endnotes">
+          <li value="1">VinSolutions hidden Lead Intent metadata includes Parts/Service and cannot be separated after aggregation, so this figure is directional and not strict Sales-only proof.</li>
+          <li value="2">Single accepted period; no multi-week trend is asserted.</li>
+          <li value="3">Counts are descriptive, not attributed causation.</li>
+          <li value="4">Service/Parts-coded rows were detected and excluded before calculation. (0 excluded in this delivery)</li>
+          <li value="5">Row-level Sales filters and service-source exclusion were applied before counting; residual hidden Lead-Intent metadata may remain, so this figure is directional.</li>
+          <li value="6">Service/Parts-coded rows were detected and excluded before calculation. (0 excluded)</li>
+          <li value="7">Service/Parts-coded rows were detected and excluded before calculation.</li>
+        </ol>
+      </section>
+      <section class="card full">
+        <h2>Provenance (aggregate; filenames &amp; checksums only)</h2>
+        <table class="prov"><thead><tr><th>family</th><th>tier</th><th>period</th><th>rows</th><th>svc excl.</th><th>reconciles</th><th>checksum</th><th>status</th></tr></thead><tbody><tr><td>dealership_performance</td><td>strict-accepted</td><td>2026-08-24..2026-08-30</td><td>41</td><td>—</td><td>—</td><td><code>2ae6dbbe4402</code></td><td>accepted</td></tr><tr><td>appointments</td><td>strict-accepted</td><td>2026-08-24..2026-08-30</td><td>7</td><td>—</td><td>—</td><td><code>1d52c108925f</code></td><td>accepted</td></tr><tr><td>crm_sales_gross</td><td>strict-accepted</td><td>2026-08-24..2026-08-30</td><td>7</td><td>—</td><td>—</td><td><code>98bac42071f7</code></td><td>accepted</td></tr><tr><td>lead_source_roi</td><td>provisional-quarantined</td><td>2026-08-24..2026-08-30</td><td>24</td><td>0</td><td>yes</td><td><code>3ad37ebf1c10</code></td><td>quarantined · provisional</td></tr><tr><td>cage_kpi</td><td>provisional-quarantined</td><td>2026-08-24..2026-08-30</td><td>32</td><td>0</td><td>yes</td><td><code>0815e544cc41</code></td><td>quarantined · provisional</td></tr><tr><td>sales_comm_log</td><td>provisional-quarantined</td><td>2026-08-29..2026-08-29</td><td>34</td><td>0</td><td>yes</td><td><code>cfcc30f85df3</code></td><td>quarantined · provisional</td></tr></tbody></table>
+      </section>
+    </div>
+    <footer>Internal Prototype — Not Strict M1R Acceptance · Provisional families remain strict-quarantined (zero accepted metrics); figures are directional and separate from strict M1R acceptance.</footer>
+  </div>
+</body>
+</html>

@@ -547,3 +547,27 @@ Read-only audit of the running production system (container image `2b805de3c`). 
 - **Official Help Center review (CONTROLLER read-only; checkpoint §5A):** Knowledge searches `"Lead Intent"` and `"report filter Lead Intent"` returned **zero** results (not proof no Cox remedy exists). Article 000001221 "Create a New Report" (2026-05-04) = Custom Reporting Allow Access/Edit prerequisites + dataset/columns/user filters (Filter Column/Comparison/Value); **no Lead Intent / no hidden-filter repair**. Article 000001223 "VS Insights Filters" = left-side navigation filters, **not** row/data filters; no Lead Intent control. **Interpretation:** supports custom-report filtering only when the dataset exposes the column; does **not** cure the observed no-Lead-Intent Leads dataset / no weekly CAGE/41-col ROI equivalent. Strengthens the precise support question; **does not authorize contacting support or changing schedules.** Browser discipline: Help closed, Vinconnect restored, nothing opened/saved/scheduled/run.
 - **Sequencing:** Monday 08:00 EDT 18-cell validator remains authoritative; Monday originals (Aug24–30) establish cross-store scope **before Duane is asked**.
 - **Status:** OPEN — HOLD/PENDING; no code/contract/schedule/Vin change.
+
+### [M1R/M2R Interim Internal Prototype — OPEN 2026-08-31] Non-promoting provisional ROI/CAGE/Sales-Communication adapter + prototype cards
+- **Checkpoint:** `docs/halo/evidence/m1r/PROVISIONAL_INTERNAL_PROTOTYPE_2026-08-31.md`. Built under Duane's
+  interim-internal-prototype authorization. **Strict classifier, strict contract, accepted/quarantined
+  ledgers, readiness (18 false), production DB, schedules, customer channels, deployment: UNCHANGED.**
+  State remains **9 strict-accepted / 9 strict-quarantined**; the nine ROI/CAGE/comm families stay
+  strict-quarantined (zero accepted metrics). Gate 3 still HOLD on the hidden Lead-Intent question.
+- **Scope (additive only):** `src/server/reports/provisional/` (vendored zero-dep xlsx-reader,
+  `provisional-adapter.ts`, `provisional-prototype-card.ts`), `scripts/render-provisional-cards.ts`,
+  `scripts/render-provisional-pdfs.sh`, two test files (19 tests), three HTML + three PDF cards under
+  `docs/halo/evidence/m1r/provisional-cards/`, `.gitignore` (+`.local-fixtures/`).
+- **Debt recorded:**
+  1. **Vendored XLSX reader duplication** — `provisional/xlsx-reader.ts` is a copy of the strict engine's
+     reader; **drift risk** if the strict reader changes. Impact: low (parse-only, pinned copy).
+     Follow-up: if the provisional path is ever promoted, de-duplicate against a shared package.
+  2. **Directional-only aggregate metrics** — ROI/CAGE values are NOT strict Sales-only proof (hidden Lead
+     Intent inseparable post-aggregation). **Must not be promoted, published to customers, or treated as
+     acceptance** without the §10.6 Cox answer + material Duane approval + contract/classifier work.
+  3. **PDFs non-reproducible** — Chromium embeds a creation timestamp/doc-id; re-render changes the hash.
+     Committed hashes recorded in the checkpoint §5; HTML is deterministic.
+- **Privacy:** aggregate values + filenames/checksums/exclusion-counts only; no PII; `.local-fixtures/`
+  git-ignored and removed after render (raw XLSX never committed).
+- **Owner:** Codex; promotion/publication/activation = Duane only. **Next action:** none required; prototype
+  is inert. **Status:** OPEN — prototype delivered; strict state unchanged; no promotion.

@@ -4,6 +4,11 @@ node_modules
 .pnp
 .pnp.js
 
+# Local-only, privacy-sensitive Vin XLSX fixtures — NEVER commit (raw source workbooks
+# may contain PII: names, emails, phones, message bodies, lead IDs). Analysis outputs
+# carry aggregates + filenames/checksums/exclusion-counts only; the fixtures stay local.
+.local-fixtures/
+
 # Build outputs
 dist
 dist-ssr
