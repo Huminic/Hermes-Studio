@@ -20,7 +20,7 @@ internal prototype — never touching the governed store, ledgers, contract, or 
 | `src/server/reports/provisional/provisional-prototype-card.ts` | Pure card builder + watermarked, print-friendly HTML renderer |
 | `scripts/render-provisional-cards.ts` | One-time render (strict store read-only + local fixtures) → HTML |
 | `scripts/render-provisional-pdfs.sh` | Headless-Chromium print-to-PDF from the committed HTML |
-| `src/test/provisional-adapter.test.ts` | 13 unit tests (synthetic sheets; no fixtures, no PII) |
+| `src/test/provisional-adapter.test.ts` | 14 unit tests (synthetic sheets; no fixtures, no PII) |
 | `src/test/provisional-prototype-card.test.ts` | 6 unit tests (watermark, footnotes, inert recs, provenance, PII-absence) |
 | `docs/halo/evidence/m1r/provisional-cards/*.html`, `*.pdf` | Three prototype cards (HTML + print-quality PDF) |
 
@@ -86,7 +86,7 @@ no clipping, overlaps, bad page breaks, black boxes, unreadable footnotes, or PI
   metric-values-native, metric-values-missing-not-zero, metric-values, data-freshness, sales-growth-card,
   m1r-notification-examples, m1r-notification-paused-path, alert-display-model, AlertsPanel.render,
   metric-source-freshness, watchdog-metric-catalog`.
-- **New focused tests: 19/19 passed** (`provisional-adapter` 13, `provisional-prototype-card` 6).
+- **New focused tests: 20/20 passed** (`provisional-adapter` 14, `provisional-prototype-card` 6).
 - **Touched-file typecheck:** clean (0 errors in the new files; repo baseline pre-existing errors unrelated).
 
 ## 7. Caveats (carried, not hidden)

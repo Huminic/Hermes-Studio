@@ -556,7 +556,7 @@ Read-only audit of the running production system (container image `2b805de3c`). 
   strict-quarantined (zero accepted metrics). Gate 3 still HOLD on the hidden Lead-Intent question.
 - **Scope (additive only):** `src/server/reports/provisional/` (vendored zero-dep xlsx-reader,
   `provisional-adapter.ts`, `provisional-prototype-card.ts`), `scripts/render-provisional-cards.ts`,
-  `scripts/render-provisional-pdfs.sh`, two test files (19 tests), three HTML + three PDF cards under
+  `scripts/render-provisional-pdfs.sh`, two test files (20 tests: adapter 14, card 6), three HTML + three PDF cards under
   `docs/halo/evidence/m1r/provisional-cards/`, `.gitignore` (+`.local-fixtures/`).
 - **Debt recorded:**
   1. **Vendored XLSX reader duplication** — `provisional/xlsx-reader.ts` is a copy of the strict engine's
