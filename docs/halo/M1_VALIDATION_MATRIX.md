@@ -148,3 +148,73 @@ gross 5263.6 only; Ford empty/withheld). **M1 is CLOSED in isolated dev.**
 
 **Not in M1:** M2 report-card + AI narrative; M3 Halo Presence; M4 monthly production circuit — all deferred/
 not authorized. No deploy/merge/schedule/service change/production/dealer-data mutation.
+
+---
+
+## Appendix — M1R Real-Data E2E through the governed hold path (2026-08-31, additive)
+
+Additive evidence record for the bounded real-data E2E work package. **Does NOT change scope or
+definitions.** Strict coverage stays **9 accepted / 9 quarantined**; **M1R readiness = FALSE** for all 18
+cells; the three quarantined families are **not promoted**. Repo `hs-m1r-isolated-20260830`, branch
+`codex/m1r-gate3-schedule-audit`. Artifacts: `docs/halo/evidence/m1r/e2e/real-data-e2e-receipt.json`
+(18 cells), `docs/halo/evidence/m1r/e2e/cards/*.{html,pdf}` (3 cards), `.../INTERNAL_EVIDENCE_COMPANION.md`,
+identity manifest `docs/halo/contract/vin18-source-identity.json`.
+
+### Planned vs actual
+
+| Planned | Actual |
+|---|---|
+| Exercise the exact 18 real workbooks through the closest honest dev pipeline | Drove `hs-ingest-dev`'s own `landDelivery → promoteHeldToAnalytics → runVinWatchdog` **read-only** into isolated `mkdtemp` roots (Control decision: Option A) |
+| 9 strict Sales-only families accepted through the governed gate | 9 **held → promoted** into an isolated `brain.db`; this repo's readers + watchdog reconcile (18/18 technical pass) |
+| 9 quarantined families non-promoting, directional preview only | 9 **quarantined** (`non-sales-lead-type`, hidden Lead Intent); promote **attempted ⇒ aborted**; provisional adapter supplies directional preview |
+| Prove non-promotion | Hard assertion: **0 provisional deliveries / 0 provisional rows** in every isolated `brain.db` |
+| Bind to the exact preserved source set | **All 18 bound** (filename + SHA-256 + size + family/dealer/status) to the operator-staged authoritative ledger; fail-before-hold gate |
+| Pin the mutable consumer | `hs-ingest-dev` HEAD `4c41df11dc48`, 5 module hashes pinned; fail-before-hold on mismatch/dirty-consumer |
+| 3 polished customer-style cards; truth in footnotes/companion | Subtle "Draft Preview · Internal Review" cards + this companion; all 9 PDF pages inspected |
+
+### Proof Delta A (scope/state)
+Branch `codex/m1r-gate3-schedule-audit`. New files: `src/server/reports/e2e/`, `scripts/m1r-e2e/`,
+`docs/halo/evidence/m1r/e2e/`, `docs/halo/contract/vin18-source-identity.json`, two new tests
+(`m1r-real-data-e2e`, `m1r-cage-comm-reconciliation`). Modified (additive, in-scope per the metric-coverage
+correction): `src/server/reports/provisional/provisional-adapter.ts` (added CAGE native-header leaf sums +
+component reconciliations, Comm channel counts; existing metrics/ids unchanged — provisional 28/28 still green)
+and `docs/halo/M1_VALIDATION_MATRIX.md` (this additive appendix). **Full-suite failure count unchanged at 14**
+(the same pre-existing `m2b-*` / `halo-report-card` / `halo-manifest-and-layers` files — not caused by this
+work; they reproduce with the new files removed). Raw XLSX/PII remain git-ignored under `.local-fixtures/`
+and are removed before commit.
+
+### Proof Delta B (outcome/validation)
+18-cell receipt: held=9, quarantined=9, promoted=9, provisional=9, disagreements=0, **technical_pass=18/18**;
+non-promotion assertion PASS. Extended provisional CAGE (25 native-header leaf sums + comms component/direction/
+grand-total identities) and Sales-Comm channel breakdown reconcile to independent totals (CAGE total_comms
+Honda 1473 / Nissan 726 / Ford 510; Comm channels Honda 8/33/28/0, Nissan 51/95/100/0, Ford 3/16/15/0).
+Per-profile `cross_family_reconciliation` (no winner; exact values preserved): Honda 5==5, Nissan 6==6 reconcile;
+**Ford surfaces a delivered-count data-quality discrepancy — 7 CRM Sales Gross delivered-sale rows vs 6 Dashboard
+sold (same $1,600.99); shown unreconciled, neither authoritative** (card qualifies the count + footnotes it).
+Gates: focused **43/43** (incl. exact-required-component-name, service-leaf, external-card, and external-footer negatives),
+CAGE/Comm reconciliation **10/10** (fixture-gated numerical + hand-built service-leaf isolation), prior 13-file
+control **82/82**, provisional **28/28**; PII scan clean; **all 15 PDF pages re-inspected (9 internal + 6
+external)**. CAGE published leaf sums are computed from SALES leaves only (a Service leaf cannot leak into a
+published figure); the full-leaf → grand TOTAL reconciliation is kept explicit and separate.
+
+### Follow-up corrections (2026-08-31, additive)
+- **External customer samples:** a separate per-dealer external card (`cards/external/*-halo-external.{html,pdf}`)
+  is generated alongside the internal audit card — no provenance/slugs/lanes/checksums/M1R language; provisional
+  caveats in plain customer words; the Ford 7-vs-6 gap retained plainly; coverage as Recommended pilot / Available
+  next step. Internal companion records the inert status.
+- **Receipt timestamp:** `executed_at` is now the REAL wall-clock (`new Date().toISOString()`); the pinned data
+  clock is recorded separately as `data_reference_day` + `data_period` (period stays pinned).
+- **Governed-path audit (honest):** the `/srv` analytics **aggregate digest CHANGED** (before
+  `f939fb2d29eb…30e8e` → current `592b29e446ed…a865`); the **three durable per-profile `brain.db` hashes MATCH
+  the pre-run values** (Honda `1a3e3bd3…`, Nissan `da8d8034…`, Ford `69e01c0e…`), and the **hold digest
+  `d6b809f1…ac3fe`** and **hs-ingest-dev maxdepth-2 `1731800645a4…fdd8`** MATCH before. Current SQLite
+  `-shm`/`-wal` sidecar mtimes are **consistent with and explain** the analytics delta (the **test suite** opens
+  `/srv` read-only; the E2E runner uses isolated `/tmp`). The examined per-profile `brain.db-wal` files were
+  0 bytes (not generalized — `messaging-hub.db-wal` were nonzero). **No prior per-file manifest existed, so no
+  other per-file change can be ruled in or out; byte-for-byte directory-unchanged is NOT claimed** — companion §8d.
+
+### Recorded truth deviation (not compensated)
+`coverage-matrix-18cell.json` v1.1.0 is an **earlier** snapshot (period 2026-08-17/23; 3 accepted / 8
+present-invalid / 7 absent) whose `evidence_sha256` values do not match this newer Aug 24–30 set. The
+ratified matrix was **not** altered; identity was bound by the committed identity manifest instead. Current
+truth remains **9 accepted / 9 quarantined**, readiness FALSE.

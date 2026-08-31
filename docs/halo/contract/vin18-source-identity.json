@@ -1,0 +1,157 @@
+{
+  "artifact": "vin18-source-identity",
+  "version": "1.0.0",
+  "purpose": "Aggregate-only expected identity (filename, SHA-256, size, family, dealer, ledger status) binding the M1R real-data E2E run to the EXACT preserved 18-workbook source set. Derived from the operator-staged authoritative Mac validation ledger. Contains NO file paths, NO Filters values, NO row-level content, NO PII.",
+  "derived_from": "operator-staged authoritative Mac validation ledger (.local-fixtures/vin18-20260830/validation.json, git-ignored/temp)",
+  "ledger_generated_at": "2026-08-30T19:30:00-04:00",
+  "shadow_reconciliation": "Shadow independently reproduced the authoritative hashes; that result is kept SEPARATE for final reconciliation and is not this artifact.",
+  "expected_files": 18,
+  "accepted": 9,
+  "quarantined": 9,
+  "files": [
+    {
+      "filename": "01_VIN_Tony_Serra_Ford_21047_Appointments_Weekly_Report-1821.xlsx",
+      "family_slug": "appointments",
+      "dealer_id": "21047",
+      "sha256": "1d52c108925f2ccb8b4faa2e87c5262614bce373eedb8e3c3b875f496e1a16ff",
+      "size_bytes": 8984,
+      "ledger_status": "ACCEPT"
+    },
+    {
+      "filename": "02_VIN_Tony_Serra_Ford_21047_CRM_Sales_Gross_Weekly_Report-8172.xlsx",
+      "family_slug": "crm_sales_gross",
+      "dealer_id": "21047",
+      "sha256": "98bac42071f70ee0ca86aade3a9c564b108853d4aa56e883fab16b965b3b7689",
+      "size_bytes": 8825,
+      "ledger_status": "ACCEPT"
+    },
+    {
+      "filename": "03_VIN_Tony_Serra_Ford_21047_Sales_Communication_Log_Daily_Report-3112.xlsx",
+      "family_slug": "sales_comm_log",
+      "dealer_id": "21047",
+      "sha256": "cfcc30f85df319a9369dca314b700c6ad0cb3d2522dc383d4a1b289da25d2f74",
+      "size_bytes": 15829,
+      "ledger_status": "QUARANTINE"
+    },
+    {
+      "filename": "04_VIN_Tony_Serra_Ford_21047_CAGE_KPI_Weekly_Report-5643.xlsx",
+      "family_slug": "cage_kpi",
+      "dealer_id": "21047",
+      "sha256": "0815e544cc4116d581515effeef078daa49f7908541c9c00100194ae4d41fb93",
+      "size_bytes": 15998,
+      "ledger_status": "QUARANTINE"
+    },
+    {
+      "filename": "05_VIN_Tony_Serra_Ford_21047_Lead_Source_ROI_Weekly_Report-1999.xlsx",
+      "family_slug": "lead_source_roi",
+      "dealer_id": "21047",
+      "sha256": "3ad37ebf1c103c67eb6d5812ec5de20e5bc68a1eb39f5e1b10b51abd5866db91",
+      "size_bytes": 16163,
+      "ledger_status": "QUARANTINE"
+    },
+    {
+      "filename": "06_VIN_Tony_Serra_Ford_21047_Dealer_Dashboard_Weekly_Report-415.xlsx",
+      "family_slug": "dealership_performance",
+      "dealer_id": "21047",
+      "sha256": "2ae6dbbe44027bdf7f63512f10e41ac5cf72a85187a07a31335384b8185584d6",
+      "size_bytes": 27178,
+      "ledger_status": "ACCEPT"
+    },
+    {
+      "filename": "07_VIN_Serra_Honda_21043_Appointments_Weekly_Report-3239.xlsx",
+      "family_slug": "appointments",
+      "dealer_id": "21043",
+      "sha256": "e64a5208a2848f1f8738a1ba84272d0c3d5ec31cb39d6d4a38950c59acf757c6",
+      "size_bytes": 10217,
+      "ledger_status": "ACCEPT"
+    },
+    {
+      "filename": "08_VIN_Serra_Honda_21043_CRM_Sales_Gross_Weekly_Report-729.xlsx",
+      "family_slug": "crm_sales_gross",
+      "dealer_id": "21043",
+      "sha256": "8178807561f6b0e50238d923af7f8db1d4ae0c030b9f9073ae3b31a3d2970d9c",
+      "size_bytes": 8474,
+      "ledger_status": "ACCEPT"
+    },
+    {
+      "filename": "09_VIN_Serra_Honda_21043_CAGE_KPI_Weekly_Report-4371.xlsx",
+      "family_slug": "cage_kpi",
+      "dealer_id": "21043",
+      "sha256": "c6c1f49f95287c145262863f2041e0149324db49c199573beb17f4e404083cc4",
+      "size_bytes": 17162,
+      "ledger_status": "QUARANTINE"
+    },
+    {
+      "filename": "10_VIN_Serra_Honda_21043_Sales_Communication_Log_Daily_Report-8860.xlsx",
+      "family_slug": "sales_comm_log",
+      "dealer_id": "21043",
+      "sha256": "188a6ba8250b739a7a16a3201440aa76cddb75d7ed8eed4523c61bd6f25a5d0d",
+      "size_bytes": 20166,
+      "ledger_status": "QUARANTINE"
+    },
+    {
+      "filename": "11_VIN_Serra_Honda_21043_Lead_Source_ROI_Weekly_Report-2381.xlsx",
+      "family_slug": "lead_source_roi",
+      "dealer_id": "21043",
+      "sha256": "9f1ae8f154a9bccf181ad2dbdcc18096c2c20f74bc209a2d26f100a9b407fbd6",
+      "size_bytes": 16483,
+      "ledger_status": "QUARANTINE"
+    },
+    {
+      "filename": "12_VIN_Serra_Honda_21043_Dealer_Dashboard_Weekly_Report-6358.xlsx",
+      "family_slug": "dealership_performance",
+      "dealer_id": "21043",
+      "sha256": "9613643d5870e44c7acfd297dcfd885cc34f5653479cd30ed3ee21212f6407c9",
+      "size_bytes": 27068,
+      "ledger_status": "ACCEPT"
+    },
+    {
+      "filename": "13_VIN_Serra_Nissan_21044_Appointments_Weekly_Report-808.xlsx",
+      "family_slug": "appointments",
+      "dealer_id": "21044",
+      "sha256": "a73f4e379945257e56d7b05e2b340e58fac16b058e79294a0bddbf374ef423bc",
+      "size_bytes": 8773,
+      "ledger_status": "ACCEPT"
+    },
+    {
+      "filename": "14_VIN_Serra_Nissan_21044_CRM_Sales_Gross_Weekly_Report-533.xlsx",
+      "family_slug": "crm_sales_gross",
+      "dealer_id": "21044",
+      "sha256": "7a31cee49f220d481292e6ec846d78c95bcd661082f9c3abca9844d466c2e15f",
+      "size_bytes": 8704,
+      "ledger_status": "ACCEPT"
+    },
+    {
+      "filename": "15_VIN_Serra_Nissan_21044_Sales_Communication_Log_Daily_Report-5886.xlsx",
+      "family_slug": "sales_comm_log",
+      "dealer_id": "21044",
+      "sha256": "6cde7ae9bee658fc84d6b1150bcb0ffc441e6a8bde6cf6d4c60b9e598b95239a",
+      "size_bytes": 37104,
+      "ledger_status": "QUARANTINE"
+    },
+    {
+      "filename": "16_VIN_Serra_Nissan_21044_CAGE_KPI_Weekly_Report-7529.xlsx",
+      "family_slug": "cage_kpi",
+      "dealer_id": "21044",
+      "sha256": "7a5baac09adf27afe3a183fdbe85d3b0cfd88a0bc5c144c39dd9f7ab1df1a2d9",
+      "size_bytes": 17258,
+      "ledger_status": "QUARANTINE"
+    },
+    {
+      "filename": "17_VIN_Serra_Nissan_21044_Lead_Source_ROI_Weekly_Report-2068.xlsx",
+      "family_slug": "lead_source_roi",
+      "dealer_id": "21044",
+      "sha256": "28e2e59726ba7a7e8208c568d0f5bacd03021b8a5fd6b32dd1ded924d9ba03b6",
+      "size_bytes": 16976,
+      "ledger_status": "QUARANTINE"
+    },
+    {
+      "filename": "18_VIN_Serra_Nissan_21044_Dealer_Dashboard_Weekly_Report-3629.xlsx",
+      "family_slug": "dealership_performance",
+      "dealer_id": "21044",
+      "sha256": "969ff03d65554d1ab0fe62d1c7b6262375c31b7a7f6b5e2e4f77dfd55ffc7328",
+      "size_bytes": 27267,
+      "ledger_status": "ACCEPT"
+    }
+  ]
+}

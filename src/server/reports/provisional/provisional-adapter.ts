@@ -77,6 +77,9 @@ export type ProvisionalResult =
       salesRowsIncluded: number
       /** Internal arithmetic self-check (per-row sum vs the report's own TOTAL row). */
       reconciliation: { checked: boolean; reconciles: boolean | null; detail: string }
+      /** Additional component identity self-checks (CAGE comms components/direction/grand-total;
+       *  Sales-Comm channel-sum vs included rows). Present only where components are computed. */
+      componentReconciliations?: Array<{ name: string; checked: boolean; reconciles: boolean | null; detail: string }>
       metrics: ProvisionalMetric[]
     }
 
@@ -286,7 +289,7 @@ function commResult(
   // row must be the target rooftop (Filters dealer alone is insufficient).
   const dealerViolation = rowDealerViolation(dataRows, m.get('Dealer'), expectedDealer)
   if (dealerViolation) return fail('WRONG_DEALER', dealerViolation, dealer, period)
-  const ltC = m.get('Lead Type'), ctC = m.get('Comm Type'), lsC = m.get('Lead Source'), dirC = m.get('Direction')
+  const ltC = m.get('Lead Type'), ctC = m.get('Comm Type'), lsC = m.get('Lead Source'), dirC = m.get('Direction'), chC = m.get('Comm Channel')
   // Detect a service/parts row via any of Lead Type / Comm Type / Lead Source (named service source).
   const isServiceRow = (r: string[]) => [ltC, ctC, lsC].some((c) => c != null && isServiceParts(r[c]))
   const service = dataRows.filter(isServiceRow)
@@ -295,11 +298,24 @@ function commResult(
   const isOutbound = (v: string) => /^(out|outbound|sent|outgoing)$/i.test((v ?? '').trim())
   const basis = `${sales.length} Sales communication rows (${service.length} service/parts rows excluded)`
   const codes: LimitationCode[] = ['HIDDEN_LEAD_INTENT_ROWLEVEL_RESIDUAL', 'SERVICE_ROWS_EXCLUDED', 'NO_CAUSALITY']
+  // Exact Comm Channel breakdown over the INCLUDED sales rows. Missing column → null (never 0).
+  const channelCount = (label: string) => (chC == null ? null : sales.filter((r) => (r[chC] ?? '').trim() === label).length)
+  const email = channelCount('Email'), loggedCall = channelCount('Logged Call'), text = channelCount('Text'), facebook = channelCount('Facebook')
   const metrics: ProvisionalMetric[] = [
     { id: 'comm.sales_communications', label: 'Sales communications logged', value: sales.length, unit: 'count', basis, footnoteCodes: codes },
     { id: 'comm.inbound', label: 'Inbound customer messages', value: dirC == null ? null : sales.filter((r) => isInbound(r[dirC])).length, unit: 'count', basis, footnoteCodes: codes },
     { id: 'comm.outbound', label: 'Outbound rep messages', value: dirC == null ? null : sales.filter((r) => isOutbound(r[dirC])).length, unit: 'count', basis, footnoteCodes: codes },
+    { id: 'comm.email', label: 'Email communications', value: email, unit: 'count', basis, footnoteCodes: codes },
+    { id: 'comm.logged_call', label: 'Logged Call communications', value: loggedCall, unit: 'count', basis, footnoteCodes: codes },
+    { id: 'comm.text', label: 'Text communications', value: text, unit: 'count', basis, footnoteCodes: codes },
+    { id: 'comm.facebook', label: 'Facebook communications', value: facebook, unit: 'count', basis, footnoteCodes: codes },
     { id: 'comm.service_rows_excluded', label: 'Service/Parts rows excluded before calculation', value: service.length, unit: 'count', basis, footnoteCodes: ['SERVICE_ROWS_EXCLUDED'] },
+  ]
+  // Channel component identity: the four known channels sum to the included sales rows (a nonzero
+  // residual means an unlisted channel exists — surfaced, never hidden).
+  const knownChannelSum = [email, loggedCall, text, facebook].every((v) => v != null) ? (email! + loggedCall! + text! + facebook!) : null
+  const componentReconciliations = [
+    { name: 'comm.channel_sum', checked: knownChannelSum != null, reconciles: knownChannelSum != null ? knownChannelSum === sales.length : null, detail: `email+call+text+facebook=${knownChannelSum} vs included sales rows=${sales.length}` },
   ]
   return {
     available: true,
@@ -308,6 +324,7 @@ function commResult(
     serviceRowsExcluded: service.length,
     salesRowsIncluded: sales.length,
     reconciliation: { checked: true, reconciles: service.length + sales.length === dataRows.length, detail: `${service.length} excluded + ${sales.length} included = ${dataRows.length} observed` },
+    componentReconciliations,
     metrics,
   }
 }
@@ -411,6 +428,30 @@ function cageResult(
 
   const codes: LimitationCode[] = ['HIDDEN_LEAD_INTENT_AGGREGATE', 'SINGLE_PERIOD_BASELINE', 'NO_CAUSALITY']
   const basis = `${reps.size} reps over ${sales.length} leaf rows${service.length ? ` (${service.length} service excluded)` : ''}`
+  // Published leaf sums for the exact native CAGE headers come from SALES leaves ONLY (any visible
+  // Service/Parts leaf is excluded first) so a future Service leaf can never leak into a published
+  // figure. The separate FULL-leaf → grand-TOTAL reconciliation below stays explicit. These remain
+  // directional (hidden Lead Intent inseparable). Missing/non-numeric columns → null (never 0).
+  const salesBasis = `${sales.length} sales leaf rows${service.length ? ` (${service.length} service excluded)` : ''} (directional aggregate; hidden Lead Intent inseparable)`
+  const CAGE_LEAF_HEADERS: Array<[string, string, ProvisionalMetric['unit']]> = [
+    ['cage.good_leads', 'Good Leads', 'count'], ['cage.bad_leads', 'Bad Leads', 'count'],
+    ['cage.sold_in_time_frame', 'Sold in Time Frame', 'count'],
+    ['cage.internet_leads', 'Internet Leads', 'count'], ['cage.internet_attempted_contact', 'Internet Attempted Contact', 'count'],
+    ['cage.internet_actual_contact', 'Internet Actual Contact', 'count'],
+    ['cage.appts_scheduled', 'Appts Scheduled', 'count'], ['cage.appts_scheduled_sold', 'Appts Scheduled Sold', 'count'],
+    ['cage.appts_confirmed', 'Appts Confirmed', 'count'],
+    ['cage.visits', 'Visits', 'count'], ['cage.visits_sold', 'Visits Sold', 'count'],
+    ['cage.initial_visits', 'Initial Visits', 'count'], ['cage.be_back_visits', 'Be Back Visits', 'count'],
+    ['cage.total_calls', 'Total Calls', 'count'], ['cage.total_emails', 'Total Emails', 'count'],
+    ['cage.total_texts', 'Total Texts', 'count'], ['cage.total_facebook', 'Total Facebook', 'count'],
+    ['cage.total_comms_in', 'Total Comms In', 'count'], ['cage.total_comms_out', 'Total Comms Out', 'count'],
+    ['cage.total_comms', 'Total Comms', 'count'],
+    ['cage.active_tasks', 'Active Tasks', 'count'], ['cage.completed_tasks', 'Completed Tasks', 'count'],
+    ['cage.dismissed_tasks', 'Dismissed Tasks', 'count'], ['cage.inactive_tasks', 'Inactive Tasks', 'count'],
+    ['cage.missed_tasks', 'Missed Tasks', 'count'],
+  ]
+  const salesSum = (header: string) => sumCol(sales, m.get(header)) // PUBLISHED basis: sales leaves only
+  const fullSum = (header: string) => sumCol(leaves, m.get(header)) // full-source basis (grand-TOTAL reconciliation)
   const metrics: ProvisionalMetric[] = [
     { id: 'cage.rep_count', label: 'Active sales reps in period', value: reps.size, unit: 'count', basis, footnoteCodes: codes },
     { id: 'cage.total_leads', label: 'Total leads worked', value: totalLeads, unit: 'count', basis, footnoteCodes: codes },
@@ -418,11 +459,25 @@ function cageResult(
     { id: 'cage.appts_set', label: 'Appointments set', value: apptsSet, unit: 'count', basis, footnoteCodes: codes },
     { id: 'cage.appts_shown', label: 'Appointments shown', value: apptsShown, unit: 'count', basis, footnoteCodes: codes },
     { id: 'cage.total_gross', label: 'Total gross (rep-reported)', value: gross, unit: 'usd', basis, footnoteCodes: codes },
+    ...CAGE_LEAF_HEADERS.map(([id, header, unit]) => ({ id, label: header, value: salesSum(header), unit, basis: salesBasis, footnoteCodes: codes })),
   ]
   // Reconcile the FULL leaf population (service included) vs the grand TOTAL row — a source
   // arithmetic self-check independent of the Sales-only exclusion on the published metrics.
-  const leafTotalLeads = sumCol(leaves, tlC)
+  const leafTotalLeads = fullSum('Total Leads')
   const gtLeads = grandTotal ? cellNum(grandTotal, tlC) : null
+  // Comms component identities (comms_components / comms_direction) are over the PUBLISHED sales leaves;
+  // comms_grand_total is a SEPARATE full-source check (full-leaf Σ vs grand TOTAL row).
+  const sCalls = salesSum('Total Calls'), sEmails = salesSum('Total Emails'), sTexts = salesSum('Total Texts'), sFb = salesSum('Total Facebook')
+  const sIn = salesSum('Total Comms In'), sOut = salesSum('Total Comms Out'), sTotal = salesSum('Total Comms')
+  const fullComms = fullSum('Total Comms')
+  const gtComms = grandTotal ? cellNum(grandTotal, m.get('Total Comms')) : null
+  const salesComponentSum = [sCalls, sEmails, sTexts, sFb].every((v) => v != null) ? (sCalls! + sEmails! + sTexts! + sFb!) : null
+  const salesDirectionSum = sIn != null && sOut != null ? sIn + sOut : null
+  const componentReconciliations = [
+    { name: 'cage.comms_components', checked: salesComponentSum != null && sTotal != null, reconciles: salesComponentSum != null && sTotal != null ? salesComponentSum === sTotal : null, detail: `sales-leaf calls+emails+texts+facebook=${salesComponentSum} vs sales-leaf Total Comms=${sTotal}` },
+    { name: 'cage.comms_direction', checked: salesDirectionSum != null && sTotal != null, reconciles: salesDirectionSum != null && sTotal != null ? salesDirectionSum === sTotal : null, detail: `sales-leaf in+out=${salesDirectionSum} vs sales-leaf Total Comms=${sTotal}` },
+    { name: 'cage.comms_grand_total', checked: gtComms != null && fullComms != null, reconciles: gtComms != null && fullComms != null ? fullComms === gtComms : null, detail: `Σ FULL-leaf Total Comms=${fullComms} vs grand TOTAL row=${gtComms} (full source; published metrics exclude ${service.length} service rows)` },
+  ]
   return {
     available: true,
     provenance: provFor(codes),
@@ -434,6 +489,7 @@ function cageResult(
       reconciles: grandTotal != null && gtLeads != null ? leafTotalLeads === gtLeads : null,
       detail: grandTotal != null ? `Σ all-leaf Total Leads=${leafTotalLeads} vs grand TOTAL row=${gtLeads} (published metrics exclude ${service.length} service rows)` : 'no grand-TOTAL row present to reconcile against',
     },
+    componentReconciliations,
     metrics,
   }
 }

@@ -1,0 +1,4558 @@
+{
+  "artifact": "m1r-real-data-e2e-receipt",
+  "version": "1.0.0",
+  "executed_at": "2026-08-31T10:32:34.786Z",
+  "data_reference_day": "2026-08-31",
+  "data_period": {
+    "weekly": {
+      "start": "2026-08-24",
+      "end": "2026-08-30"
+    },
+    "daily_comm": {
+      "start": "2026-08-29",
+      "end": "2026-08-29"
+    }
+  },
+  "scope": "DEV-ONLY isolated real-data E2E. 18 exact real VinSolutions workbooks (bytes+SHA-256 are the real files). Strict families exercised through the governed hs-ingest-dev hold→promote→watchdog path into an isolated temp store; ROI/CAGE/Sales-Comm quarantined by the governed gate and shown via a NON-PROMOTING provisional preview. No promotion of quarantined families; strict M1 readiness remains false.",
+  "isolated_roots": {
+    "base": "/tmp/claude-1001/m1r-e2e-<mkdtemp>",
+    "hold_leaf": "ingest-hold",
+    "analytics_leaf": "dev-analytics",
+    "note": "unique fs.mkdtempSync dir per run; never committed; removed after the run unless E2E_KEEP_TMP=1. Per-cell hold_path/analytics_db are recorded relative to this base."
+  },
+  "hs_ingest_dev_root": "/home/ubuntu/hs-ingest-dev",
+  "consumer_pin": {
+    "root": "/home/ubuntu/hs-ingest-dev",
+    "head": "4c41df11dc48c3bc954ffdd45cdf125b2d67c2d5",
+    "expected_head_prefix": "4c41df11d",
+    "head_matches_expected": true,
+    "branch": "dev/ingest-endpoint",
+    "dirty_file_count": 1,
+    "dirty_files": [
+      " M src/routeTree.gen.ts"
+    ],
+    "dirty_status_digest": "0ddb2612620206188a6fc6224051fbc274a2b2cb9431b79c0cb6317319a0332a",
+    "dirty_touches_consumer": false,
+    "consumer_file_sha256": {
+      "src/server/ingest/hold-store.ts": "5b44e1862837763c2a5cd34d8d50af07171946966d3362f022cf88ea039d05b3",
+      "src/server/ingest/vin-contracts.ts": "ea89dfb416f8fdff3624469c5b5bd4f78bbdd78a047e84c8935e7a1d6724cd43",
+      "src/server/ingest/xlsx-reader.ts": "d290fc69c0badbb8b50b3a0c4d098406e454389dcd0ecbe8cc0254620315df32",
+      "src/server/analytics/promote-held-to-analytics.ts": "40e30ec7b5b323b111849227b87c628e8044d177b58a79bd908dfd379e04b8c5",
+      "src/server/watchdog/vin-metrics.ts": "c876e862524288b9d76ace04dc29227b1318eb295dc999e4ab10ea1d8780e3bc"
+    },
+    "missing_consumer_files": [],
+    "fatal_reasons": []
+  },
+  "fixtures_dir": ".local-fixtures/vin18-20260830",
+  "source_identity": {
+    "bound_to": "docs/halo/contract/vin18-source-identity.json",
+    "derived_from": "operator-staged authoritative Mac validation ledger (git-ignored/temp)",
+    "ledger_generated_at": "2026-08-30T19:30:00-04:00",
+    "all_18_bound": true,
+    "shadow_reconciliation": "Shadow independently reproduced the authoritative hashes; kept SEPARATE for final reconciliation."
+  },
+  "non_promotion_assertion": {
+    "passed": true,
+    "per_profile": [
+      {
+        "profile": "serra-honda",
+        "db_exists": true,
+        "provisional_deliveries": 0,
+        "provisional_rows": 0,
+        "strict_deliveries": 3
+      },
+      {
+        "profile": "serra-nissan",
+        "db_exists": true,
+        "provisional_deliveries": 0,
+        "provisional_rows": 0,
+        "strict_deliveries": 3
+      },
+      {
+        "profile": "tony-serra-ford",
+        "db_exists": true,
+        "provisional_deliveries": 0,
+        "provisional_rows": 0,
+        "strict_deliveries": 3
+      }
+    ]
+  },
+  "cross_family_reconciliation": {
+    "serra-honda": {
+      "profile": "serra-honda",
+      "checks": [
+        {
+          "name": "gross_total_vs_dashboard_gross",
+          "a": {
+            "source": "crm_sales_gross.gross.total_sum",
+            "value": 14185.2
+          },
+          "b": {
+            "source": "dealership_performance.dp.total_gross",
+            "value": 14185.199999999999
+          },
+          "reconciles": true,
+          "tolerance": 0.01,
+          "directional": false,
+          "caveat": null
+        },
+        {
+          "name": "delivered_rows_vs_dashboard_sold",
+          "a": {
+            "source": "crm_sales_gross.gross.row_count",
+            "value": 5
+          },
+          "b": {
+            "source": "dealership_performance.dp.sold_in_period",
+            "value": 5
+          },
+          "reconciles": true,
+          "tolerance": 0,
+          "directional": false,
+          "caveat": null
+        },
+        {
+          "name": "cage_provisional_gross_vs_strict_gross",
+          "a": {
+            "source": "cage_kpi.cage.total_gross (provisional/directional)",
+            "value": 14185.2
+          },
+          "b": {
+            "source": "crm_sales_gross.gross.total_sum",
+            "value": 14185.2
+          },
+          "reconciles": true,
+          "tolerance": 0.01,
+          "directional": true,
+          "caveat": null
+        }
+      ],
+      "strict_ok": true
+    },
+    "serra-nissan": {
+      "profile": "serra-nissan",
+      "checks": [
+        {
+          "name": "gross_total_vs_dashboard_gross",
+          "a": {
+            "source": "crm_sales_gross.gross.total_sum",
+            "value": 13224
+          },
+          "b": {
+            "source": "dealership_performance.dp.total_gross",
+            "value": 13224
+          },
+          "reconciles": true,
+          "tolerance": 0.01,
+          "directional": false,
+          "caveat": null
+        },
+        {
+          "name": "delivered_rows_vs_dashboard_sold",
+          "a": {
+            "source": "crm_sales_gross.gross.row_count",
+            "value": 6
+          },
+          "b": {
+            "source": "dealership_performance.dp.sold_in_period",
+            "value": 6
+          },
+          "reconciles": true,
+          "tolerance": 0,
+          "directional": false,
+          "caveat": null
+        },
+        {
+          "name": "cage_provisional_gross_vs_strict_gross",
+          "a": {
+            "source": "cage_kpi.cage.total_gross (provisional/directional)",
+            "value": 13224
+          },
+          "b": {
+            "source": "crm_sales_gross.gross.total_sum",
+            "value": 13224
+          },
+          "reconciles": true,
+          "tolerance": 0.01,
+          "directional": true,
+          "caveat": null
+        }
+      ],
+      "strict_ok": true
+    },
+    "tony-serra-ford": {
+      "profile": "tony-serra-ford",
+      "checks": [
+        {
+          "name": "gross_total_vs_dashboard_gross",
+          "a": {
+            "source": "crm_sales_gross.gross.total_sum",
+            "value": 1600.99
+          },
+          "b": {
+            "source": "dealership_performance.dp.total_gross",
+            "value": 1600.9900000000002
+          },
+          "reconciles": true,
+          "tolerance": 0.01,
+          "directional": false,
+          "caveat": null
+        },
+        {
+          "name": "delivered_rows_vs_dashboard_sold",
+          "a": {
+            "source": "crm_sales_gross.gross.row_count",
+            "value": 7
+          },
+          "b": {
+            "source": "dealership_performance.dp.sold_in_period",
+            "value": 6
+          },
+          "reconciles": false,
+          "tolerance": 0,
+          "directional": false,
+          "caveat": "7 CRM Sales Gross delivered-sale rows vs 6 Dashboard sold for the same week — shown unreconciled; neither treated as authoritative"
+        },
+        {
+          "name": "cage_provisional_gross_vs_strict_gross",
+          "a": {
+            "source": "cage_kpi.cage.total_gross (provisional/directional)",
+            "value": 1600.99
+          },
+          "b": {
+            "source": "crm_sales_gross.gross.total_sum",
+            "value": 1600.99
+          },
+          "reconciles": true,
+          "tolerance": 0.01,
+          "directional": true,
+          "caveat": null
+        }
+      ],
+      "strict_ok": false
+    }
+  },
+  "strict_contract": {
+    "accepted": 9,
+    "quarantined": 9,
+    "readiness": false
+  },
+  "cells": [
+    {
+      "profile": "tony-serra-ford",
+      "dealer": "Tony Serra Ford",
+      "dealer_id": "21047",
+      "family": "appointments",
+      "cadence": "weekly",
+      "source": {
+        "filename": "01_VIN_Tony_Serra_Ford_21047_Appointments_Weekly_Report-1821.xlsx",
+        "path": ".local-fixtures/vin18-20260830/01_VIN_Tony_Serra_Ford_21047_Appointments_Weekly_Report-1821.xlsx",
+        "sha256": "1d52c108925f2ccb8b4faa2e87c5262614bce373eedb8e3c3b875f496e1a16ff",
+        "size_bytes": 8984
+      },
+      "identity": {
+        "expected_sha256": "1d52c108925f2ccb8b4faa2e87c5262614bce373eedb8e3c3b875f496e1a16ff",
+        "expected_size": 8984,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "ACCEPT"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "accepted",
+        "lane": "strict-governed"
+      },
+      "hold": {
+        "outcome": "held",
+        "validation_state": "held",
+        "report_kind": "appointments",
+        "dealer": "Tony Serra Ford",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "quarantine_reason": null,
+        "detail": null,
+        "receipt_id": "hold_1d52c108925f2ccb",
+        "hold_path": "ingest-hold/tony-serra-ford/held/appointments/2026-08-24_2026-08-30/1d52c108925f2ccb8b4faa2e87c5262614bce373eedb8e3c3b875f496e1a16ff",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "promoted",
+        "delivery_id": "047f8397-8617-4a63-884b-2059cdc31cfc",
+        "accepted_rows": 7,
+        "analytics_db": "dev-analytics/tony-serra-ford/brain/brain.db",
+        "abort_reason": null,
+        "watchdog": {
+          "profile": "tony-serra-ford",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "metrics": [
+            {
+              "metric_id": "appt.cancel_rate",
+              "value": 0,
+              "count": 0,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.confirmed_rate",
+              "value": 0.429,
+              "count": 3,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.no_show_rate",
+              "value": 0.571,
+              "count": 4,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.reschedule_rate",
+              "value": 0.286,
+              "count": 2,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.show_rate",
+              "value": 0.429,
+              "count": 3,
+              "provisional": false
+            }
+          ],
+          "withheld": [
+            {
+              "metric_id": "cage.deals_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.rep_count",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.total_comms",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.escalation_keyword_screen",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.inbound_high_intent_keywords",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.multi_rep_within_24h",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.outbound_link_only",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.template_overuse",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "dashboard.section_markers",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "dealership_performance"
+              ],
+              "reason": "no active accepted dealership_performance delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "gross.reconciliation_mismatches",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "crm_sales_gross"
+              ],
+              "reason": "no active accepted crm_sales_gross delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "gross.total_sum",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "crm_sales_gross"
+              ],
+              "reason": "no active accepted crm_sales_gross delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.actual_roi",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.duplicate_rate",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.sold_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.total_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            }
+          ]
+        }
+      },
+      "strict_state": "accepted",
+      "preview_lane": "strict-governed",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "strict lane: held + accepted + report_kind/dealer/period bound + promoted + all required metrics present + watchdog reconciled",
+      "reader_used": "readAppointments",
+      "watchdog_reconciliation": {
+        "checked": true,
+        "ok": true,
+        "detail": "watchdog reconciles with strict reader + accepted rows",
+        "checks": [
+          {
+            "name": "watchdog.profile matches cell",
+            "ok": true,
+            "detail": "tony-serra-ford vs tony-serra-ford"
+          },
+          {
+            "name": "watchdog.period matches window",
+            "ok": true,
+            "detail": "2026-08-24..2026-08-30 vs 2026-08-24..2026-08-30"
+          },
+          {
+            "name": "appt.show_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0.429 count=3 vs reader appt.show=3/7"
+          },
+          {
+            "name": "appt.no_show_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0.571 count=4 vs reader appt.no_show=4/7"
+          },
+          {
+            "name": "appt.confirmed_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0.429 count=3 vs reader appt.confirmed=3/7"
+          },
+          {
+            "name": "appt.cancel_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0 count=0 vs reader appt.cancelled=0/7"
+          },
+          {
+            "name": "appt.reschedule_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0.286 count=2 vs reader appt.rescheduled=2/7"
+          },
+          {
+            "name": "appointment rate metrics present",
+            "ok": true,
+            "detail": "5/5 rate metrics present"
+          }
+        ]
+      },
+      "rows": {
+        "observed": 7,
+        "accepted": 7
+      },
+      "service_parts_excluded": null,
+      "metrics_emitted": {
+        "appt.total": 7,
+        "appt.show": 3,
+        "appt.no_show": 4,
+        "appt.confirmed": 3,
+        "appt.completed": 3,
+        "appt.cancelled": 0,
+        "appt.rescheduled": 2
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": false,
+        "reconciles": null,
+        "detail": "strict lane: governed acceptance is the reconciliation authority"
+      },
+      "component_reconciliations": null,
+      "output_artifact": "tony-serra-ford-halo-preview.html",
+      "notes": []
+    },
+    {
+      "profile": "tony-serra-ford",
+      "dealer": "Tony Serra Ford",
+      "dealer_id": "21047",
+      "family": "crm_sales_gross",
+      "cadence": "weekly",
+      "source": {
+        "filename": "02_VIN_Tony_Serra_Ford_21047_CRM_Sales_Gross_Weekly_Report-8172.xlsx",
+        "path": ".local-fixtures/vin18-20260830/02_VIN_Tony_Serra_Ford_21047_CRM_Sales_Gross_Weekly_Report-8172.xlsx",
+        "sha256": "98bac42071f70ee0ca86aade3a9c564b108853d4aa56e883fab16b965b3b7689",
+        "size_bytes": 8825
+      },
+      "identity": {
+        "expected_sha256": "98bac42071f70ee0ca86aade3a9c564b108853d4aa56e883fab16b965b3b7689",
+        "expected_size": 8825,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "ACCEPT"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "accepted",
+        "lane": "strict-governed"
+      },
+      "hold": {
+        "outcome": "held",
+        "validation_state": "held",
+        "report_kind": "crm_sales_gross",
+        "dealer": "Tony Serra Ford",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "quarantine_reason": null,
+        "detail": null,
+        "receipt_id": "hold_98bac42071f70ee0",
+        "hold_path": "ingest-hold/tony-serra-ford/held/crm_sales_gross/2026-08-24_2026-08-30/98bac42071f70ee0ca86aade3a9c564b108853d4aa56e883fab16b965b3b7689",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "promoted",
+        "delivery_id": "80ad8978-d913-4d9d-bb30-48804e506a4c",
+        "accepted_rows": 7,
+        "analytics_db": "dev-analytics/tony-serra-ford/brain/brain.db",
+        "abort_reason": null,
+        "watchdog": {
+          "profile": "tony-serra-ford",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "metrics": [
+            {
+              "metric_id": "appt.cancel_rate",
+              "value": 0,
+              "count": 0,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.confirmed_rate",
+              "value": 0.429,
+              "count": 3,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.no_show_rate",
+              "value": 0.571,
+              "count": 4,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.reschedule_rate",
+              "value": 0.286,
+              "count": 2,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.show_rate",
+              "value": 0.429,
+              "count": 3,
+              "provisional": false
+            },
+            {
+              "metric_id": "gross.reconciliation_mismatches",
+              "value": 0,
+              "count": 7,
+              "provisional": false
+            },
+            {
+              "metric_id": "gross.total_sum",
+              "value": 1600.99,
+              "count": 7,
+              "provisional": false
+            }
+          ],
+          "withheld": [
+            {
+              "metric_id": "cage.deals_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.rep_count",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.total_comms",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.escalation_keyword_screen",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.inbound_high_intent_keywords",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.multi_rep_within_24h",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.outbound_link_only",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.template_overuse",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "dashboard.section_markers",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "dealership_performance"
+              ],
+              "reason": "no active accepted dealership_performance delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.actual_roi",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.duplicate_rate",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.sold_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.total_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            }
+          ]
+        }
+      },
+      "strict_state": "accepted",
+      "preview_lane": "strict-governed",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "strict lane: held + accepted + report_kind/dealer/period bound + promoted + all required metrics present + watchdog reconciled",
+      "reader_used": "readCrmSalesGross",
+      "watchdog_reconciliation": {
+        "checked": true,
+        "ok": true,
+        "detail": "watchdog reconciles with strict reader + accepted rows",
+        "checks": [
+          {
+            "name": "watchdog.profile matches cell",
+            "ok": true,
+            "detail": "tony-serra-ford vs tony-serra-ford"
+          },
+          {
+            "name": "watchdog.period matches window",
+            "ok": true,
+            "detail": "2026-08-24..2026-08-30 vs 2026-08-24..2026-08-30"
+          },
+          {
+            "name": "gross.total_sum present",
+            "ok": true,
+            "detail": "=1600.99"
+          },
+          {
+            "name": "gross.total_sum == reader",
+            "ok": true,
+            "detail": "1600.99 vs 1600.99"
+          },
+          {
+            "name": "gross count == reader row_count",
+            "ok": true,
+            "detail": "7 vs 7"
+          },
+          {
+            "name": "gross.reconciliation_mismatches present",
+            "ok": true,
+            "detail": "=0"
+          },
+          {
+            "name": "gross.reconciliation_mismatches == reader",
+            "ok": true,
+            "detail": "0 vs 0"
+          }
+        ]
+      },
+      "rows": {
+        "observed": 7,
+        "accepted": 7
+      },
+      "service_parts_excluded": null,
+      "metrics_emitted": {
+        "gross.row_count": 7,
+        "gross.total_sum": 1600.99,
+        "gross.front_sum": -2267.16,
+        "gross.back_sum": 3868.15,
+        "gross.reconciliation_mismatches": 0
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": false,
+        "reconciles": null,
+        "detail": "strict lane: governed acceptance is the reconciliation authority"
+      },
+      "component_reconciliations": null,
+      "output_artifact": "tony-serra-ford-halo-preview.html",
+      "notes": []
+    },
+    {
+      "profile": "tony-serra-ford",
+      "dealer": "Tony Serra Ford",
+      "dealer_id": "21047",
+      "family": "sales_comm_log",
+      "cadence": "daily",
+      "source": {
+        "filename": "03_VIN_Tony_Serra_Ford_21047_Sales_Communication_Log_Daily_Report-3112.xlsx",
+        "path": ".local-fixtures/vin18-20260830/03_VIN_Tony_Serra_Ford_21047_Sales_Communication_Log_Daily_Report-3112.xlsx",
+        "sha256": "cfcc30f85df319a9369dca314b700c6ad0cb3d2522dc383d4a1b289da25d2f74",
+        "size_bytes": 15829
+      },
+      "identity": {
+        "expected_sha256": "cfcc30f85df319a9369dca314b700c6ad0cb3d2522dc383d4a1b289da25d2f74",
+        "expected_size": 15829,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "QUARANTINE"
+      },
+      "period_hint": "2026-08-29",
+      "expected": {
+        "strict_state": "quarantined",
+        "lane": "provisional-preview"
+      },
+      "hold": {
+        "outcome": "quarantined",
+        "validation_state": "quarantined",
+        "report_kind": "sales_comm_log",
+        "dealer": "Tony Serra Ford",
+        "period": {
+          "start": null,
+          "end": null
+        },
+        "quarantine_reason": "non-sales-lead-type",
+        "detail": "Filters positively select Service/Parts ([Parts, Service]); a Sales-only scheduled report must select only Sales Lead Types and Lead Intents",
+        "receipt_id": "hold_cfcc30f85df319a9",
+        "hold_path": "ingest-hold/tony-serra-ford/quarantine/cfcc30f85df319a9369dca314b700c6ad0cb3d2522dc383d4a1b289da25d2f74",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "aborted",
+        "delivery_id": null,
+        "accepted_rows": null,
+        "analytics_db": null,
+        "abort_reason": "no held delivery cfcc30f85df319a9369dca314b700c6ad0cb3d2522dc383d4a1b289da25d2f74 for profile tony-serra-ford under /tmp/claude-1001/m1r-e2e-FdxAHD/ingest-hold/tony-serra-ford/held (quarantine namespace is never promoted)",
+        "watchdog": null
+      },
+      "strict_state": "quarantined",
+      "preview_lane": "provisional-preview",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "preview lane: quarantined + report_kind/dealer bound + promote attempted & aborted + adapter available + reconciliation & all component reconciliations checked & reconcile",
+      "reader_used": "provisional-adapter (non-promoting)",
+      "watchdog_reconciliation": null,
+      "rows": {
+        "observed": 34,
+        "accepted": null
+      },
+      "service_parts_excluded": 0,
+      "metrics_emitted": {
+        "comm.sales_communications": 34,
+        "comm.inbound": 5,
+        "comm.outbound": 29,
+        "comm.email": 3,
+        "comm.logged_call": 16,
+        "comm.text": 15,
+        "comm.facebook": 0,
+        "comm.service_rows_excluded": 0
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": true,
+        "reconciles": true,
+        "detail": "0 excluded + 34 included = 34 observed"
+      },
+      "component_reconciliations": [
+        {
+          "name": "comm.channel_sum",
+          "checked": true,
+          "reconciles": true,
+          "detail": "email+call+text+facebook=34 vs included sales rows=34"
+        }
+      ],
+      "output_artifact": "tony-serra-ford-halo-preview.html",
+      "notes": [
+        "PROVISIONAL / directional — NOT strict M1R acceptance; the governed gate quarantined this family (hidden Lead Intent)."
+      ]
+    },
+    {
+      "profile": "tony-serra-ford",
+      "dealer": "Tony Serra Ford",
+      "dealer_id": "21047",
+      "family": "cage_kpi",
+      "cadence": "weekly",
+      "source": {
+        "filename": "04_VIN_Tony_Serra_Ford_21047_CAGE_KPI_Weekly_Report-5643.xlsx",
+        "path": ".local-fixtures/vin18-20260830/04_VIN_Tony_Serra_Ford_21047_CAGE_KPI_Weekly_Report-5643.xlsx",
+        "sha256": "0815e544cc4116d581515effeef078daa49f7908541c9c00100194ae4d41fb93",
+        "size_bytes": 15998
+      },
+      "identity": {
+        "expected_sha256": "0815e544cc4116d581515effeef078daa49f7908541c9c00100194ae4d41fb93",
+        "expected_size": 15998,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "QUARANTINE"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "quarantined",
+        "lane": "provisional-preview"
+      },
+      "hold": {
+        "outcome": "quarantined",
+        "validation_state": "quarantined",
+        "report_kind": "cage_kpi",
+        "dealer": "Tony Serra Ford",
+        "period": {
+          "start": null,
+          "end": null
+        },
+        "quarantine_reason": "non-sales-lead-type",
+        "detail": "Filters positively select Service/Parts ([Parts, Service]); a Sales-only scheduled report must select only Sales Lead Types and Lead Intents",
+        "receipt_id": "hold_0815e544cc4116d5",
+        "hold_path": "ingest-hold/tony-serra-ford/quarantine/0815e544cc4116d581515effeef078daa49f7908541c9c00100194ae4d41fb93",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "aborted",
+        "delivery_id": null,
+        "accepted_rows": null,
+        "analytics_db": null,
+        "abort_reason": "no held delivery 0815e544cc4116d581515effeef078daa49f7908541c9c00100194ae4d41fb93 for profile tony-serra-ford under /tmp/claude-1001/m1r-e2e-FdxAHD/ingest-hold/tony-serra-ford/held (quarantine namespace is never promoted)",
+        "watchdog": null
+      },
+      "strict_state": "quarantined",
+      "preview_lane": "provisional-preview",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "preview lane: quarantined + report_kind/dealer bound + promote attempted & aborted + adapter available + reconciliation & all component reconciliations checked & reconcile",
+      "reader_used": "provisional-adapter (non-promoting)",
+      "watchdog_reconciliation": null,
+      "rows": {
+        "observed": 32,
+        "accepted": null
+      },
+      "service_parts_excluded": 0,
+      "metrics_emitted": {
+        "cage.rep_count": 12,
+        "cage.total_leads": 42,
+        "cage.sold_from_leads": 1,
+        "cage.appts_set": 6,
+        "cage.appts_shown": 2,
+        "cage.total_gross": 1600.99,
+        "cage.good_leads": 37,
+        "cage.bad_leads": 5,
+        "cage.sold_in_time_frame": 6,
+        "cage.internet_leads": 18,
+        "cage.internet_attempted_contact": 16,
+        "cage.internet_actual_contact": 7,
+        "cage.appts_scheduled": 5,
+        "cage.appts_scheduled_sold": 1,
+        "cage.appts_confirmed": 2,
+        "cage.visits": 14,
+        "cage.visits_sold": 3,
+        "cage.initial_visits": 11,
+        "cage.be_back_visits": 3,
+        "cage.total_calls": 219,
+        "cage.total_emails": 89,
+        "cage.total_texts": 202,
+        "cage.total_facebook": 0,
+        "cage.total_comms_in": 57,
+        "cage.total_comms_out": 453,
+        "cage.total_comms": 510,
+        "cage.active_tasks": 71,
+        "cage.completed_tasks": 56,
+        "cage.dismissed_tasks": 45,
+        "cage.inactive_tasks": 4,
+        "cage.missed_tasks": 38
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": true,
+        "reconciles": true,
+        "detail": "Σ all-leaf Total Leads=42 vs grand TOTAL row=42 (published metrics exclude 0 service rows)"
+      },
+      "component_reconciliations": [
+        {
+          "name": "cage.comms_components",
+          "checked": true,
+          "reconciles": true,
+          "detail": "sales-leaf calls+emails+texts+facebook=510 vs sales-leaf Total Comms=510"
+        },
+        {
+          "name": "cage.comms_direction",
+          "checked": true,
+          "reconciles": true,
+          "detail": "sales-leaf in+out=510 vs sales-leaf Total Comms=510"
+        },
+        {
+          "name": "cage.comms_grand_total",
+          "checked": true,
+          "reconciles": true,
+          "detail": "Σ FULL-leaf Total Comms=510 vs grand TOTAL row=510 (full source; published metrics exclude 0 service rows)"
+        }
+      ],
+      "output_artifact": "tony-serra-ford-halo-preview.html",
+      "notes": [
+        "PROVISIONAL / directional — NOT strict M1R acceptance; the governed gate quarantined this family (hidden Lead Intent)."
+      ]
+    },
+    {
+      "profile": "tony-serra-ford",
+      "dealer": "Tony Serra Ford",
+      "dealer_id": "21047",
+      "family": "lead_source_roi",
+      "cadence": "weekly",
+      "source": {
+        "filename": "05_VIN_Tony_Serra_Ford_21047_Lead_Source_ROI_Weekly_Report-1999.xlsx",
+        "path": ".local-fixtures/vin18-20260830/05_VIN_Tony_Serra_Ford_21047_Lead_Source_ROI_Weekly_Report-1999.xlsx",
+        "sha256": "3ad37ebf1c103c67eb6d5812ec5de20e5bc68a1eb39f5e1b10b51abd5866db91",
+        "size_bytes": 16163
+      },
+      "identity": {
+        "expected_sha256": "3ad37ebf1c103c67eb6d5812ec5de20e5bc68a1eb39f5e1b10b51abd5866db91",
+        "expected_size": 16163,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "QUARANTINE"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "quarantined",
+        "lane": "provisional-preview"
+      },
+      "hold": {
+        "outcome": "quarantined",
+        "validation_state": "quarantined",
+        "report_kind": "lead_source_roi",
+        "dealer": "Tony Serra Ford",
+        "period": {
+          "start": null,
+          "end": null
+        },
+        "quarantine_reason": "non-sales-lead-type",
+        "detail": "Filters positively select Service/Parts ([Parts, Service]); a Sales-only scheduled report must select only Sales Lead Types and Lead Intents",
+        "receipt_id": "hold_3ad37ebf1c103c67",
+        "hold_path": "ingest-hold/tony-serra-ford/quarantine/3ad37ebf1c103c67eb6d5812ec5de20e5bc68a1eb39f5e1b10b51abd5866db91",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "aborted",
+        "delivery_id": null,
+        "accepted_rows": null,
+        "analytics_db": null,
+        "abort_reason": "no held delivery 3ad37ebf1c103c67eb6d5812ec5de20e5bc68a1eb39f5e1b10b51abd5866db91 for profile tony-serra-ford under /tmp/claude-1001/m1r-e2e-FdxAHD/ingest-hold/tony-serra-ford/held (quarantine namespace is never promoted)",
+        "watchdog": null
+      },
+      "strict_state": "quarantined",
+      "preview_lane": "provisional-preview",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "preview lane: quarantined + report_kind/dealer bound + promote attempted & aborted + adapter available + reconciliation & all component reconciliations checked & reconcile",
+      "reader_used": "provisional-adapter (non-promoting)",
+      "watchdog_reconciliation": null,
+      "rows": {
+        "observed": 24,
+        "accepted": null
+      },
+      "service_parts_excluded": 0,
+      "metrics_emitted": {
+        "roi.total_leads": 42,
+        "roi.sold_from_leads": 1,
+        "roi.duplicate_rate": 0.119,
+        "roi.total_gross": 1600.99,
+        "roi.actual_roi": null
+      },
+      "metrics_withheld": [
+        "roi.actual_roi"
+      ],
+      "reconciliation": {
+        "checked": true,
+        "reconciles": true,
+        "detail": "Σ all-leaf Total Leads=42 vs report TOTAL row=42 (published metrics exclude 0 service rows)"
+      },
+      "component_reconciliations": null,
+      "output_artifact": "tony-serra-ford-halo-preview.html",
+      "notes": [
+        "PROVISIONAL / directional — NOT strict M1R acceptance; the governed gate quarantined this family (hidden Lead Intent)."
+      ]
+    },
+    {
+      "profile": "tony-serra-ford",
+      "dealer": "Tony Serra Ford",
+      "dealer_id": "21047",
+      "family": "dealership_performance",
+      "cadence": "weekly",
+      "source": {
+        "filename": "06_VIN_Tony_Serra_Ford_21047_Dealer_Dashboard_Weekly_Report-415.xlsx",
+        "path": ".local-fixtures/vin18-20260830/06_VIN_Tony_Serra_Ford_21047_Dealer_Dashboard_Weekly_Report-415.xlsx",
+        "sha256": "2ae6dbbe44027bdf7f63512f10e41ac5cf72a85187a07a31335384b8185584d6",
+        "size_bytes": 27178
+      },
+      "identity": {
+        "expected_sha256": "2ae6dbbe44027bdf7f63512f10e41ac5cf72a85187a07a31335384b8185584d6",
+        "expected_size": 27178,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "ACCEPT"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "accepted",
+        "lane": "strict-governed"
+      },
+      "hold": {
+        "outcome": "held",
+        "validation_state": "held",
+        "report_kind": "dealership_performance",
+        "dealer": "Tony Serra Ford",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "quarantine_reason": null,
+        "detail": null,
+        "receipt_id": "hold_2ae6dbbe44027bdf",
+        "hold_path": "ingest-hold/tony-serra-ford/held/dealership_performance/2026-08-24_2026-08-30/2ae6dbbe44027bdf7f63512f10e41ac5cf72a85187a07a31335384b8185584d6",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "promoted",
+        "delivery_id": "019681aa-1edd-42e9-9eba-8ba1af3d6658",
+        "accepted_rows": 41,
+        "analytics_db": "dev-analytics/tony-serra-ford/brain/brain.db",
+        "abort_reason": null,
+        "watchdog": {
+          "profile": "tony-serra-ford",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "metrics": [
+            {
+              "metric_id": "appt.cancel_rate",
+              "value": 0,
+              "count": 0,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.confirmed_rate",
+              "value": 0.429,
+              "count": 3,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.no_show_rate",
+              "value": 0.571,
+              "count": 4,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.reschedule_rate",
+              "value": 0.286,
+              "count": 2,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.show_rate",
+              "value": 0.429,
+              "count": 3,
+              "provisional": false
+            },
+            {
+              "metric_id": "dashboard.section_markers",
+              "value": 11,
+              "count": 41,
+              "provisional": false
+            },
+            {
+              "metric_id": "gross.reconciliation_mismatches",
+              "value": 0,
+              "count": 7,
+              "provisional": false
+            },
+            {
+              "metric_id": "gross.total_sum",
+              "value": 1600.99,
+              "count": 7,
+              "provisional": false
+            }
+          ],
+          "withheld": [
+            {
+              "metric_id": "cage.deals_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.rep_count",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.total_comms",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.escalation_keyword_screen",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.inbound_high_intent_keywords",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.multi_rep_within_24h",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.outbound_link_only",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.template_overuse",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.actual_roi",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.duplicate_rate",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.sold_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.total_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "tony-serra-ford",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            }
+          ]
+        }
+      },
+      "strict_state": "accepted",
+      "preview_lane": "strict-governed",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "strict lane: held + accepted + report_kind/dealer/period bound + promoted + all required metrics present + watchdog reconciled",
+      "reader_used": "readDealershipPerformance",
+      "watchdog_reconciliation": {
+        "checked": true,
+        "ok": true,
+        "detail": "watchdog reconciles with strict reader + accepted rows",
+        "checks": [
+          {
+            "name": "watchdog.profile matches cell",
+            "ok": true,
+            "detail": "tony-serra-ford vs tony-serra-ford"
+          },
+          {
+            "name": "watchdog.period matches window",
+            "ok": true,
+            "detail": "2026-08-24..2026-08-30 vs 2026-08-24..2026-08-30"
+          },
+          {
+            "name": "dashboard.section_markers present",
+            "ok": true,
+            "detail": "=11 count=41"
+          },
+          {
+            "name": "section_markers >= 1",
+            "ok": true,
+            "detail": "11"
+          },
+          {
+            "name": "dashboard count == accepted rows",
+            "ok": true,
+            "detail": "count=41 vs accepted=41"
+          },
+          {
+            "name": "section_markers <= rows",
+            "ok": true,
+            "detail": "11 <= 41"
+          }
+        ]
+      },
+      "rows": {
+        "observed": 41,
+        "accepted": 41
+      },
+      "service_parts_excluded": null,
+      "metrics_emitted": {
+        "dp.leads": 37,
+        "dp.appts_set": 6,
+        "dp.appts_show": 2,
+        "dp.sold_in_period": 6,
+        "dp.total_gross": 1600.9900000000002,
+        "dp.avg_total_gross": 266.831666666667
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": false,
+        "reconciles": null,
+        "detail": "strict lane: governed acceptance is the reconciliation authority"
+      },
+      "component_reconciliations": null,
+      "output_artifact": "tony-serra-ford-halo-preview.html",
+      "notes": []
+    },
+    {
+      "profile": "serra-honda",
+      "dealer": "Serra Honda",
+      "dealer_id": "21043",
+      "family": "appointments",
+      "cadence": "weekly",
+      "source": {
+        "filename": "07_VIN_Serra_Honda_21043_Appointments_Weekly_Report-3239.xlsx",
+        "path": ".local-fixtures/vin18-20260830/07_VIN_Serra_Honda_21043_Appointments_Weekly_Report-3239.xlsx",
+        "sha256": "e64a5208a2848f1f8738a1ba84272d0c3d5ec31cb39d6d4a38950c59acf757c6",
+        "size_bytes": 10217
+      },
+      "identity": {
+        "expected_sha256": "e64a5208a2848f1f8738a1ba84272d0c3d5ec31cb39d6d4a38950c59acf757c6",
+        "expected_size": 10217,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "ACCEPT"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "accepted",
+        "lane": "strict-governed"
+      },
+      "hold": {
+        "outcome": "held",
+        "validation_state": "held",
+        "report_kind": "appointments",
+        "dealer": "Serra Honda",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "quarantine_reason": null,
+        "detail": null,
+        "receipt_id": "hold_e64a5208a2848f1f",
+        "hold_path": "ingest-hold/serra-honda/held/appointments/2026-08-24_2026-08-30/e64a5208a2848f1f8738a1ba84272d0c3d5ec31cb39d6d4a38950c59acf757c6",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "promoted",
+        "delivery_id": "d8d50b0b-b74e-4af0-b4cf-cde98cf66ee5",
+        "accepted_rows": 14,
+        "analytics_db": "dev-analytics/serra-honda/brain/brain.db",
+        "abort_reason": null,
+        "watchdog": {
+          "profile": "serra-honda",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "metrics": [
+            {
+              "metric_id": "appt.cancel_rate",
+              "value": 0.071,
+              "count": 1,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.confirmed_rate",
+              "value": 0.5,
+              "count": 7,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.no_show_rate",
+              "value": 0.357,
+              "count": 5,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.reschedule_rate",
+              "value": 0.143,
+              "count": 2,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.show_rate",
+              "value": 0.571,
+              "count": 8,
+              "provisional": false
+            }
+          ],
+          "withheld": [
+            {
+              "metric_id": "cage.deals_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.rep_count",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.total_comms",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.escalation_keyword_screen",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.inbound_high_intent_keywords",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.multi_rep_within_24h",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.outbound_link_only",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.template_overuse",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "dashboard.section_markers",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "dealership_performance"
+              ],
+              "reason": "no active accepted dealership_performance delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "gross.reconciliation_mismatches",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "crm_sales_gross"
+              ],
+              "reason": "no active accepted crm_sales_gross delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "gross.total_sum",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "crm_sales_gross"
+              ],
+              "reason": "no active accepted crm_sales_gross delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.actual_roi",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.duplicate_rate",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.sold_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.total_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            }
+          ]
+        }
+      },
+      "strict_state": "accepted",
+      "preview_lane": "strict-governed",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "strict lane: held + accepted + report_kind/dealer/period bound + promoted + all required metrics present + watchdog reconciled",
+      "reader_used": "readAppointments",
+      "watchdog_reconciliation": {
+        "checked": true,
+        "ok": true,
+        "detail": "watchdog reconciles with strict reader + accepted rows",
+        "checks": [
+          {
+            "name": "watchdog.profile matches cell",
+            "ok": true,
+            "detail": "serra-honda vs serra-honda"
+          },
+          {
+            "name": "watchdog.period matches window",
+            "ok": true,
+            "detail": "2026-08-24..2026-08-30 vs 2026-08-24..2026-08-30"
+          },
+          {
+            "name": "appt.show_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0.571 count=8 vs reader appt.show=8/14"
+          },
+          {
+            "name": "appt.no_show_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0.357 count=5 vs reader appt.no_show=5/14"
+          },
+          {
+            "name": "appt.confirmed_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0.5 count=7 vs reader appt.confirmed=7/14"
+          },
+          {
+            "name": "appt.cancel_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0.071 count=1 vs reader appt.cancelled=1/14"
+          },
+          {
+            "name": "appt.reschedule_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0.143 count=2 vs reader appt.rescheduled=2/14"
+          },
+          {
+            "name": "appointment rate metrics present",
+            "ok": true,
+            "detail": "5/5 rate metrics present"
+          }
+        ]
+      },
+      "rows": {
+        "observed": 14,
+        "accepted": 14
+      },
+      "service_parts_excluded": null,
+      "metrics_emitted": {
+        "appt.total": 14,
+        "appt.show": 8,
+        "appt.no_show": 5,
+        "appt.confirmed": 7,
+        "appt.completed": 8,
+        "appt.cancelled": 1,
+        "appt.rescheduled": 2
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": false,
+        "reconciles": null,
+        "detail": "strict lane: governed acceptance is the reconciliation authority"
+      },
+      "component_reconciliations": null,
+      "output_artifact": "serra-honda-halo-preview.html",
+      "notes": []
+    },
+    {
+      "profile": "serra-honda",
+      "dealer": "Serra Honda",
+      "dealer_id": "21043",
+      "family": "crm_sales_gross",
+      "cadence": "weekly",
+      "source": {
+        "filename": "08_VIN_Serra_Honda_21043_CRM_Sales_Gross_Weekly_Report-729.xlsx",
+        "path": ".local-fixtures/vin18-20260830/08_VIN_Serra_Honda_21043_CRM_Sales_Gross_Weekly_Report-729.xlsx",
+        "sha256": "8178807561f6b0e50238d923af7f8db1d4ae0c030b9f9073ae3b31a3d2970d9c",
+        "size_bytes": 8474
+      },
+      "identity": {
+        "expected_sha256": "8178807561f6b0e50238d923af7f8db1d4ae0c030b9f9073ae3b31a3d2970d9c",
+        "expected_size": 8474,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "ACCEPT"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "accepted",
+        "lane": "strict-governed"
+      },
+      "hold": {
+        "outcome": "held",
+        "validation_state": "held",
+        "report_kind": "crm_sales_gross",
+        "dealer": "Serra Honda",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "quarantine_reason": null,
+        "detail": null,
+        "receipt_id": "hold_8178807561f6b0e5",
+        "hold_path": "ingest-hold/serra-honda/held/crm_sales_gross/2026-08-24_2026-08-30/8178807561f6b0e50238d923af7f8db1d4ae0c030b9f9073ae3b31a3d2970d9c",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "promoted",
+        "delivery_id": "c4fc8304-4d55-482e-960e-48f66d2f3d94",
+        "accepted_rows": 5,
+        "analytics_db": "dev-analytics/serra-honda/brain/brain.db",
+        "abort_reason": null,
+        "watchdog": {
+          "profile": "serra-honda",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "metrics": [
+            {
+              "metric_id": "appt.cancel_rate",
+              "value": 0.071,
+              "count": 1,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.confirmed_rate",
+              "value": 0.5,
+              "count": 7,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.no_show_rate",
+              "value": 0.357,
+              "count": 5,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.reschedule_rate",
+              "value": 0.143,
+              "count": 2,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.show_rate",
+              "value": 0.571,
+              "count": 8,
+              "provisional": false
+            },
+            {
+              "metric_id": "gross.reconciliation_mismatches",
+              "value": 0,
+              "count": 5,
+              "provisional": false
+            },
+            {
+              "metric_id": "gross.total_sum",
+              "value": 14185.2,
+              "count": 5,
+              "provisional": false
+            }
+          ],
+          "withheld": [
+            {
+              "metric_id": "cage.deals_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.rep_count",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.total_comms",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.escalation_keyword_screen",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.inbound_high_intent_keywords",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.multi_rep_within_24h",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.outbound_link_only",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.template_overuse",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "dashboard.section_markers",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "dealership_performance"
+              ],
+              "reason": "no active accepted dealership_performance delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.actual_roi",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.duplicate_rate",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.sold_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.total_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            }
+          ]
+        }
+      },
+      "strict_state": "accepted",
+      "preview_lane": "strict-governed",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "strict lane: held + accepted + report_kind/dealer/period bound + promoted + all required metrics present + watchdog reconciled",
+      "reader_used": "readCrmSalesGross",
+      "watchdog_reconciliation": {
+        "checked": true,
+        "ok": true,
+        "detail": "watchdog reconciles with strict reader + accepted rows",
+        "checks": [
+          {
+            "name": "watchdog.profile matches cell",
+            "ok": true,
+            "detail": "serra-honda vs serra-honda"
+          },
+          {
+            "name": "watchdog.period matches window",
+            "ok": true,
+            "detail": "2026-08-24..2026-08-30 vs 2026-08-24..2026-08-30"
+          },
+          {
+            "name": "gross.total_sum present",
+            "ok": true,
+            "detail": "=14185.2"
+          },
+          {
+            "name": "gross.total_sum == reader",
+            "ok": true,
+            "detail": "14185.2 vs 14185.2"
+          },
+          {
+            "name": "gross count == reader row_count",
+            "ok": true,
+            "detail": "5 vs 5"
+          },
+          {
+            "name": "gross.reconciliation_mismatches present",
+            "ok": true,
+            "detail": "=0"
+          },
+          {
+            "name": "gross.reconciliation_mismatches == reader",
+            "ok": true,
+            "detail": "0 vs 0"
+          }
+        ]
+      },
+      "rows": {
+        "observed": 5,
+        "accepted": 5
+      },
+      "service_parts_excluded": null,
+      "metrics_emitted": {
+        "gross.row_count": 5,
+        "gross.total_sum": 14185.2,
+        "gross.front_sum": 11534.31,
+        "gross.back_sum": 2650.89,
+        "gross.reconciliation_mismatches": 0
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": false,
+        "reconciles": null,
+        "detail": "strict lane: governed acceptance is the reconciliation authority"
+      },
+      "component_reconciliations": null,
+      "output_artifact": "serra-honda-halo-preview.html",
+      "notes": []
+    },
+    {
+      "profile": "serra-honda",
+      "dealer": "Serra Honda",
+      "dealer_id": "21043",
+      "family": "cage_kpi",
+      "cadence": "weekly",
+      "source": {
+        "filename": "09_VIN_Serra_Honda_21043_CAGE_KPI_Weekly_Report-4371.xlsx",
+        "path": ".local-fixtures/vin18-20260830/09_VIN_Serra_Honda_21043_CAGE_KPI_Weekly_Report-4371.xlsx",
+        "sha256": "c6c1f49f95287c145262863f2041e0149324db49c199573beb17f4e404083cc4",
+        "size_bytes": 17162
+      },
+      "identity": {
+        "expected_sha256": "c6c1f49f95287c145262863f2041e0149324db49c199573beb17f4e404083cc4",
+        "expected_size": 17162,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "QUARANTINE"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "quarantined",
+        "lane": "provisional-preview"
+      },
+      "hold": {
+        "outcome": "quarantined",
+        "validation_state": "quarantined",
+        "report_kind": "cage_kpi",
+        "dealer": "Serra Honda",
+        "period": {
+          "start": null,
+          "end": null
+        },
+        "quarantine_reason": "non-sales-lead-type",
+        "detail": "Filters positively select Service/Parts ([Parts, Service]); a Sales-only scheduled report must select only Sales Lead Types and Lead Intents",
+        "receipt_id": "hold_c6c1f49f95287c14",
+        "hold_path": "ingest-hold/serra-honda/quarantine/c6c1f49f95287c145262863f2041e0149324db49c199573beb17f4e404083cc4",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "aborted",
+        "delivery_id": null,
+        "accepted_rows": null,
+        "analytics_db": null,
+        "abort_reason": "no held delivery c6c1f49f95287c145262863f2041e0149324db49c199573beb17f4e404083cc4 for profile serra-honda under /tmp/claude-1001/m1r-e2e-FdxAHD/ingest-hold/serra-honda/held (quarantine namespace is never promoted)",
+        "watchdog": null
+      },
+      "strict_state": "quarantined",
+      "preview_lane": "provisional-preview",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "preview lane: quarantined + report_kind/dealer bound + promote attempted & aborted + adapter available + reconciliation & all component reconciliations checked & reconcile",
+      "reader_used": "provisional-adapter (non-promoting)",
+      "watchdog_reconciliation": null,
+      "rows": {
+        "observed": 40,
+        "accepted": null
+      },
+      "service_parts_excluded": 0,
+      "metrics_emitted": {
+        "cage.rep_count": 14,
+        "cage.total_leads": 113,
+        "cage.sold_from_leads": 3,
+        "cage.appts_set": 10,
+        "cage.appts_shown": 8,
+        "cage.total_gross": 14185.2,
+        "cage.good_leads": 86,
+        "cage.bad_leads": 27,
+        "cage.sold_in_time_frame": 5,
+        "cage.internet_leads": 50,
+        "cage.internet_attempted_contact": 45,
+        "cage.internet_actual_contact": 10,
+        "cage.appts_scheduled": 13,
+        "cage.appts_scheduled_sold": 2,
+        "cage.appts_confirmed": 7,
+        "cage.visits": 26,
+        "cage.visits_sold": 4,
+        "cage.initial_visits": 24,
+        "cage.be_back_visits": 2,
+        "cage.total_calls": 509,
+        "cage.total_emails": 232,
+        "cage.total_texts": 732,
+        "cage.total_facebook": 0,
+        "cage.total_comms_in": 188,
+        "cage.total_comms_out": 1285,
+        "cage.total_comms": 1473,
+        "cage.active_tasks": 129,
+        "cage.completed_tasks": 127,
+        "cage.dismissed_tasks": 22,
+        "cage.inactive_tasks": 22,
+        "cage.missed_tasks": 95
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": true,
+        "reconciles": true,
+        "detail": "Σ all-leaf Total Leads=113 vs grand TOTAL row=113 (published metrics exclude 0 service rows)"
+      },
+      "component_reconciliations": [
+        {
+          "name": "cage.comms_components",
+          "checked": true,
+          "reconciles": true,
+          "detail": "sales-leaf calls+emails+texts+facebook=1473 vs sales-leaf Total Comms=1473"
+        },
+        {
+          "name": "cage.comms_direction",
+          "checked": true,
+          "reconciles": true,
+          "detail": "sales-leaf in+out=1473 vs sales-leaf Total Comms=1473"
+        },
+        {
+          "name": "cage.comms_grand_total",
+          "checked": true,
+          "reconciles": true,
+          "detail": "Σ FULL-leaf Total Comms=1473 vs grand TOTAL row=1473 (full source; published metrics exclude 0 service rows)"
+        }
+      ],
+      "output_artifact": "serra-honda-halo-preview.html",
+      "notes": [
+        "PROVISIONAL / directional — NOT strict M1R acceptance; the governed gate quarantined this family (hidden Lead Intent)."
+      ]
+    },
+    {
+      "profile": "serra-honda",
+      "dealer": "Serra Honda",
+      "dealer_id": "21043",
+      "family": "sales_comm_log",
+      "cadence": "daily",
+      "source": {
+        "filename": "10_VIN_Serra_Honda_21043_Sales_Communication_Log_Daily_Report-8860.xlsx",
+        "path": ".local-fixtures/vin18-20260830/10_VIN_Serra_Honda_21043_Sales_Communication_Log_Daily_Report-8860.xlsx",
+        "sha256": "188a6ba8250b739a7a16a3201440aa76cddb75d7ed8eed4523c61bd6f25a5d0d",
+        "size_bytes": 20166
+      },
+      "identity": {
+        "expected_sha256": "188a6ba8250b739a7a16a3201440aa76cddb75d7ed8eed4523c61bd6f25a5d0d",
+        "expected_size": 20166,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "QUARANTINE"
+      },
+      "period_hint": "2026-08-29",
+      "expected": {
+        "strict_state": "quarantined",
+        "lane": "provisional-preview"
+      },
+      "hold": {
+        "outcome": "quarantined",
+        "validation_state": "quarantined",
+        "report_kind": "sales_comm_log",
+        "dealer": "Serra Honda",
+        "period": {
+          "start": null,
+          "end": null
+        },
+        "quarantine_reason": "non-sales-lead-type",
+        "detail": "Filters positively select Service/Parts ([Parts, Service]); a Sales-only scheduled report must select only Sales Lead Types and Lead Intents",
+        "receipt_id": "hold_188a6ba8250b739a",
+        "hold_path": "ingest-hold/serra-honda/quarantine/188a6ba8250b739a7a16a3201440aa76cddb75d7ed8eed4523c61bd6f25a5d0d",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "aborted",
+        "delivery_id": null,
+        "accepted_rows": null,
+        "analytics_db": null,
+        "abort_reason": "no held delivery 188a6ba8250b739a7a16a3201440aa76cddb75d7ed8eed4523c61bd6f25a5d0d for profile serra-honda under /tmp/claude-1001/m1r-e2e-FdxAHD/ingest-hold/serra-honda/held (quarantine namespace is never promoted)",
+        "watchdog": null
+      },
+      "strict_state": "quarantined",
+      "preview_lane": "provisional-preview",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "preview lane: quarantined + report_kind/dealer bound + promote attempted & aborted + adapter available + reconciliation & all component reconciliations checked & reconcile",
+      "reader_used": "provisional-adapter (non-promoting)",
+      "watchdog_reconciliation": null,
+      "rows": {
+        "observed": 69,
+        "accepted": null
+      },
+      "service_parts_excluded": 0,
+      "metrics_emitted": {
+        "comm.sales_communications": 69,
+        "comm.inbound": 5,
+        "comm.outbound": 64,
+        "comm.email": 8,
+        "comm.logged_call": 33,
+        "comm.text": 28,
+        "comm.facebook": 0,
+        "comm.service_rows_excluded": 0
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": true,
+        "reconciles": true,
+        "detail": "0 excluded + 69 included = 69 observed"
+      },
+      "component_reconciliations": [
+        {
+          "name": "comm.channel_sum",
+          "checked": true,
+          "reconciles": true,
+          "detail": "email+call+text+facebook=69 vs included sales rows=69"
+        }
+      ],
+      "output_artifact": "serra-honda-halo-preview.html",
+      "notes": [
+        "PROVISIONAL / directional — NOT strict M1R acceptance; the governed gate quarantined this family (hidden Lead Intent)."
+      ]
+    },
+    {
+      "profile": "serra-honda",
+      "dealer": "Serra Honda",
+      "dealer_id": "21043",
+      "family": "lead_source_roi",
+      "cadence": "weekly",
+      "source": {
+        "filename": "11_VIN_Serra_Honda_21043_Lead_Source_ROI_Weekly_Report-2381.xlsx",
+        "path": ".local-fixtures/vin18-20260830/11_VIN_Serra_Honda_21043_Lead_Source_ROI_Weekly_Report-2381.xlsx",
+        "sha256": "9f1ae8f154a9bccf181ad2dbdcc18096c2c20f74bc209a2d26f100a9b407fbd6",
+        "size_bytes": 16483
+      },
+      "identity": {
+        "expected_sha256": "9f1ae8f154a9bccf181ad2dbdcc18096c2c20f74bc209a2d26f100a9b407fbd6",
+        "expected_size": 16483,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "QUARANTINE"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "quarantined",
+        "lane": "provisional-preview"
+      },
+      "hold": {
+        "outcome": "quarantined",
+        "validation_state": "quarantined",
+        "report_kind": "lead_source_roi",
+        "dealer": "Serra Honda",
+        "period": {
+          "start": null,
+          "end": null
+        },
+        "quarantine_reason": "non-sales-lead-type",
+        "detail": "Filters positively select Service/Parts ([Parts, Service]); a Sales-only scheduled report must select only Sales Lead Types and Lead Intents",
+        "receipt_id": "hold_9f1ae8f154a9bccf",
+        "hold_path": "ingest-hold/serra-honda/quarantine/9f1ae8f154a9bccf181ad2dbdcc18096c2c20f74bc209a2d26f100a9b407fbd6",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "aborted",
+        "delivery_id": null,
+        "accepted_rows": null,
+        "analytics_db": null,
+        "abort_reason": "no held delivery 9f1ae8f154a9bccf181ad2dbdcc18096c2c20f74bc209a2d26f100a9b407fbd6 for profile serra-honda under /tmp/claude-1001/m1r-e2e-FdxAHD/ingest-hold/serra-honda/held (quarantine namespace is never promoted)",
+        "watchdog": null
+      },
+      "strict_state": "quarantined",
+      "preview_lane": "provisional-preview",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "preview lane: quarantined + report_kind/dealer bound + promote attempted & aborted + adapter available + reconciliation & all component reconciliations checked & reconcile",
+      "reader_used": "provisional-adapter (non-promoting)",
+      "watchdog_reconciliation": null,
+      "rows": {
+        "observed": 25,
+        "accepted": null
+      },
+      "service_parts_excluded": 0,
+      "metrics_emitted": {
+        "roi.total_leads": 113,
+        "roi.sold_from_leads": 3,
+        "roi.duplicate_rate": 0.23,
+        "roi.total_gross": 14185.2,
+        "roi.actual_roi": null
+      },
+      "metrics_withheld": [
+        "roi.actual_roi"
+      ],
+      "reconciliation": {
+        "checked": true,
+        "reconciles": true,
+        "detail": "Σ all-leaf Total Leads=113 vs report TOTAL row=113 (published metrics exclude 0 service rows)"
+      },
+      "component_reconciliations": null,
+      "output_artifact": "serra-honda-halo-preview.html",
+      "notes": [
+        "PROVISIONAL / directional — NOT strict M1R acceptance; the governed gate quarantined this family (hidden Lead Intent)."
+      ]
+    },
+    {
+      "profile": "serra-honda",
+      "dealer": "Serra Honda",
+      "dealer_id": "21043",
+      "family": "dealership_performance",
+      "cadence": "weekly",
+      "source": {
+        "filename": "12_VIN_Serra_Honda_21043_Dealer_Dashboard_Weekly_Report-6358.xlsx",
+        "path": ".local-fixtures/vin18-20260830/12_VIN_Serra_Honda_21043_Dealer_Dashboard_Weekly_Report-6358.xlsx",
+        "sha256": "9613643d5870e44c7acfd297dcfd885cc34f5653479cd30ed3ee21212f6407c9",
+        "size_bytes": 27068
+      },
+      "identity": {
+        "expected_sha256": "9613643d5870e44c7acfd297dcfd885cc34f5653479cd30ed3ee21212f6407c9",
+        "expected_size": 27068,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "ACCEPT"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "accepted",
+        "lane": "strict-governed"
+      },
+      "hold": {
+        "outcome": "held",
+        "validation_state": "held",
+        "report_kind": "dealership_performance",
+        "dealer": "Serra Honda",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "quarantine_reason": null,
+        "detail": null,
+        "receipt_id": "hold_9613643d5870e44c",
+        "hold_path": "ingest-hold/serra-honda/held/dealership_performance/2026-08-24_2026-08-30/9613643d5870e44c7acfd297dcfd885cc34f5653479cd30ed3ee21212f6407c9",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "promoted",
+        "delivery_id": "5d3c81c7-63b5-4603-9a51-4600b729f091",
+        "accepted_rows": 40,
+        "analytics_db": "dev-analytics/serra-honda/brain/brain.db",
+        "abort_reason": null,
+        "watchdog": {
+          "profile": "serra-honda",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "metrics": [
+            {
+              "metric_id": "appt.cancel_rate",
+              "value": 0.071,
+              "count": 1,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.confirmed_rate",
+              "value": 0.5,
+              "count": 7,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.no_show_rate",
+              "value": 0.357,
+              "count": 5,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.reschedule_rate",
+              "value": 0.143,
+              "count": 2,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.show_rate",
+              "value": 0.571,
+              "count": 8,
+              "provisional": false
+            },
+            {
+              "metric_id": "dashboard.section_markers",
+              "value": 11,
+              "count": 40,
+              "provisional": false
+            },
+            {
+              "metric_id": "gross.reconciliation_mismatches",
+              "value": 0,
+              "count": 5,
+              "provisional": false
+            },
+            {
+              "metric_id": "gross.total_sum",
+              "value": 14185.2,
+              "count": 5,
+              "provisional": false
+            }
+          ],
+          "withheld": [
+            {
+              "metric_id": "cage.deals_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.rep_count",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.total_comms",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.escalation_keyword_screen",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.inbound_high_intent_keywords",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.multi_rep_within_24h",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.outbound_link_only",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.template_overuse",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.actual_roi",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.duplicate_rate",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.sold_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.total_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-honda",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            }
+          ]
+        }
+      },
+      "strict_state": "accepted",
+      "preview_lane": "strict-governed",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "strict lane: held + accepted + report_kind/dealer/period bound + promoted + all required metrics present + watchdog reconciled",
+      "reader_used": "readDealershipPerformance",
+      "watchdog_reconciliation": {
+        "checked": true,
+        "ok": true,
+        "detail": "watchdog reconciles with strict reader + accepted rows",
+        "checks": [
+          {
+            "name": "watchdog.profile matches cell",
+            "ok": true,
+            "detail": "serra-honda vs serra-honda"
+          },
+          {
+            "name": "watchdog.period matches window",
+            "ok": true,
+            "detail": "2026-08-24..2026-08-30 vs 2026-08-24..2026-08-30"
+          },
+          {
+            "name": "dashboard.section_markers present",
+            "ok": true,
+            "detail": "=11 count=40"
+          },
+          {
+            "name": "section_markers >= 1",
+            "ok": true,
+            "detail": "11"
+          },
+          {
+            "name": "dashboard count == accepted rows",
+            "ok": true,
+            "detail": "count=40 vs accepted=40"
+          },
+          {
+            "name": "section_markers <= rows",
+            "ok": true,
+            "detail": "11 <= 40"
+          }
+        ]
+      },
+      "rows": {
+        "observed": 40,
+        "accepted": 40
+      },
+      "service_parts_excluded": null,
+      "metrics_emitted": {
+        "dp.leads": 86,
+        "dp.appts_set": 10,
+        "dp.appts_show": 8,
+        "dp.sold_in_period": 5,
+        "dp.total_gross": 14185.199999999999,
+        "dp.avg_total_gross": 2837.04
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": false,
+        "reconciles": null,
+        "detail": "strict lane: governed acceptance is the reconciliation authority"
+      },
+      "component_reconciliations": null,
+      "output_artifact": "serra-honda-halo-preview.html",
+      "notes": []
+    },
+    {
+      "profile": "serra-nissan",
+      "dealer": "Serra Nissan",
+      "dealer_id": "21044",
+      "family": "appointments",
+      "cadence": "weekly",
+      "source": {
+        "filename": "13_VIN_Serra_Nissan_21044_Appointments_Weekly_Report-808.xlsx",
+        "path": ".local-fixtures/vin18-20260830/13_VIN_Serra_Nissan_21044_Appointments_Weekly_Report-808.xlsx",
+        "sha256": "a73f4e379945257e56d7b05e2b340e58fac16b058e79294a0bddbf374ef423bc",
+        "size_bytes": 8773
+      },
+      "identity": {
+        "expected_sha256": "a73f4e379945257e56d7b05e2b340e58fac16b058e79294a0bddbf374ef423bc",
+        "expected_size": 8773,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "ACCEPT"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "accepted",
+        "lane": "strict-governed"
+      },
+      "hold": {
+        "outcome": "held",
+        "validation_state": "held",
+        "report_kind": "appointments",
+        "dealer": "Serra Nissan",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "quarantine_reason": null,
+        "detail": null,
+        "receipt_id": "hold_a73f4e379945257e",
+        "hold_path": "ingest-hold/serra-nissan/held/appointments/2026-08-24_2026-08-30/a73f4e379945257e56d7b05e2b340e58fac16b058e79294a0bddbf374ef423bc",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "promoted",
+        "delivery_id": "7c6bb9f4-8acd-487a-901a-af4f7b62b0ca",
+        "accepted_rows": 6,
+        "analytics_db": "dev-analytics/serra-nissan/brain/brain.db",
+        "abort_reason": null,
+        "watchdog": {
+          "profile": "serra-nissan",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "metrics": [
+            {
+              "metric_id": "appt.cancel_rate",
+              "value": 0.167,
+              "count": 1,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.confirmed_rate",
+              "value": 0.5,
+              "count": 3,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.no_show_rate",
+              "value": 0.5,
+              "count": 3,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.reschedule_rate",
+              "value": 0,
+              "count": 0,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.show_rate",
+              "value": 0.333,
+              "count": 2,
+              "provisional": false
+            }
+          ],
+          "withheld": [
+            {
+              "metric_id": "cage.deals_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.rep_count",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.total_comms",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.escalation_keyword_screen",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.inbound_high_intent_keywords",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.multi_rep_within_24h",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.outbound_link_only",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.template_overuse",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "dashboard.section_markers",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "dealership_performance"
+              ],
+              "reason": "no active accepted dealership_performance delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "gross.reconciliation_mismatches",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "crm_sales_gross"
+              ],
+              "reason": "no active accepted crm_sales_gross delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "gross.total_sum",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "crm_sales_gross"
+              ],
+              "reason": "no active accepted crm_sales_gross delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.actual_roi",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.duplicate_rate",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.sold_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.total_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            }
+          ]
+        }
+      },
+      "strict_state": "accepted",
+      "preview_lane": "strict-governed",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "strict lane: held + accepted + report_kind/dealer/period bound + promoted + all required metrics present + watchdog reconciled",
+      "reader_used": "readAppointments",
+      "watchdog_reconciliation": {
+        "checked": true,
+        "ok": true,
+        "detail": "watchdog reconciles with strict reader + accepted rows",
+        "checks": [
+          {
+            "name": "watchdog.profile matches cell",
+            "ok": true,
+            "detail": "serra-nissan vs serra-nissan"
+          },
+          {
+            "name": "watchdog.period matches window",
+            "ok": true,
+            "detail": "2026-08-24..2026-08-30 vs 2026-08-24..2026-08-30"
+          },
+          {
+            "name": "appt.show_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0.333 count=2 vs reader appt.show=2/6"
+          },
+          {
+            "name": "appt.no_show_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0.5 count=3 vs reader appt.no_show=3/6"
+          },
+          {
+            "name": "appt.confirmed_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0.5 count=3 vs reader appt.confirmed=3/6"
+          },
+          {
+            "name": "appt.cancel_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0.167 count=1 vs reader appt.cancelled=1/6"
+          },
+          {
+            "name": "appt.reschedule_rate reconciles",
+            "ok": true,
+            "detail": "wd value=0 count=0 vs reader appt.rescheduled=0/6"
+          },
+          {
+            "name": "appointment rate metrics present",
+            "ok": true,
+            "detail": "5/5 rate metrics present"
+          }
+        ]
+      },
+      "rows": {
+        "observed": 6,
+        "accepted": 6
+      },
+      "service_parts_excluded": null,
+      "metrics_emitted": {
+        "appt.total": 6,
+        "appt.show": 2,
+        "appt.no_show": 3,
+        "appt.confirmed": 3,
+        "appt.completed": 2,
+        "appt.cancelled": 1,
+        "appt.rescheduled": 0
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": false,
+        "reconciles": null,
+        "detail": "strict lane: governed acceptance is the reconciliation authority"
+      },
+      "component_reconciliations": null,
+      "output_artifact": "serra-nissan-halo-preview.html",
+      "notes": []
+    },
+    {
+      "profile": "serra-nissan",
+      "dealer": "Serra Nissan",
+      "dealer_id": "21044",
+      "family": "crm_sales_gross",
+      "cadence": "weekly",
+      "source": {
+        "filename": "14_VIN_Serra_Nissan_21044_CRM_Sales_Gross_Weekly_Report-533.xlsx",
+        "path": ".local-fixtures/vin18-20260830/14_VIN_Serra_Nissan_21044_CRM_Sales_Gross_Weekly_Report-533.xlsx",
+        "sha256": "7a31cee49f220d481292e6ec846d78c95bcd661082f9c3abca9844d466c2e15f",
+        "size_bytes": 8704
+      },
+      "identity": {
+        "expected_sha256": "7a31cee49f220d481292e6ec846d78c95bcd661082f9c3abca9844d466c2e15f",
+        "expected_size": 8704,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "ACCEPT"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "accepted",
+        "lane": "strict-governed"
+      },
+      "hold": {
+        "outcome": "held",
+        "validation_state": "held",
+        "report_kind": "crm_sales_gross",
+        "dealer": "Serra Nissan",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "quarantine_reason": null,
+        "detail": null,
+        "receipt_id": "hold_7a31cee49f220d48",
+        "hold_path": "ingest-hold/serra-nissan/held/crm_sales_gross/2026-08-24_2026-08-30/7a31cee49f220d481292e6ec846d78c95bcd661082f9c3abca9844d466c2e15f",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "promoted",
+        "delivery_id": "8fff6708-fc73-47a2-aeed-ae54b8530fcd",
+        "accepted_rows": 6,
+        "analytics_db": "dev-analytics/serra-nissan/brain/brain.db",
+        "abort_reason": null,
+        "watchdog": {
+          "profile": "serra-nissan",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "metrics": [
+            {
+              "metric_id": "appt.cancel_rate",
+              "value": 0.167,
+              "count": 1,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.confirmed_rate",
+              "value": 0.5,
+              "count": 3,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.no_show_rate",
+              "value": 0.5,
+              "count": 3,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.reschedule_rate",
+              "value": 0,
+              "count": 0,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.show_rate",
+              "value": 0.333,
+              "count": 2,
+              "provisional": false
+            },
+            {
+              "metric_id": "gross.reconciliation_mismatches",
+              "value": 0,
+              "count": 6,
+              "provisional": false
+            },
+            {
+              "metric_id": "gross.total_sum",
+              "value": 13224,
+              "count": 6,
+              "provisional": false
+            }
+          ],
+          "withheld": [
+            {
+              "metric_id": "cage.deals_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.rep_count",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.total_comms",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.escalation_keyword_screen",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.inbound_high_intent_keywords",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.multi_rep_within_24h",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.outbound_link_only",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.template_overuse",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "dashboard.section_markers",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "dealership_performance"
+              ],
+              "reason": "no active accepted dealership_performance delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.actual_roi",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.duplicate_rate",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.sold_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.total_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            }
+          ]
+        }
+      },
+      "strict_state": "accepted",
+      "preview_lane": "strict-governed",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "strict lane: held + accepted + report_kind/dealer/period bound + promoted + all required metrics present + watchdog reconciled",
+      "reader_used": "readCrmSalesGross",
+      "watchdog_reconciliation": {
+        "checked": true,
+        "ok": true,
+        "detail": "watchdog reconciles with strict reader + accepted rows",
+        "checks": [
+          {
+            "name": "watchdog.profile matches cell",
+            "ok": true,
+            "detail": "serra-nissan vs serra-nissan"
+          },
+          {
+            "name": "watchdog.period matches window",
+            "ok": true,
+            "detail": "2026-08-24..2026-08-30 vs 2026-08-24..2026-08-30"
+          },
+          {
+            "name": "gross.total_sum present",
+            "ok": true,
+            "detail": "=13224"
+          },
+          {
+            "name": "gross.total_sum == reader",
+            "ok": true,
+            "detail": "13224 vs 13224"
+          },
+          {
+            "name": "gross count == reader row_count",
+            "ok": true,
+            "detail": "6 vs 6"
+          },
+          {
+            "name": "gross.reconciliation_mismatches present",
+            "ok": true,
+            "detail": "=0"
+          },
+          {
+            "name": "gross.reconciliation_mismatches == reader",
+            "ok": true,
+            "detail": "0 vs 0"
+          }
+        ]
+      },
+      "rows": {
+        "observed": 6,
+        "accepted": 6
+      },
+      "service_parts_excluded": null,
+      "metrics_emitted": {
+        "gross.row_count": 6,
+        "gross.total_sum": 13224,
+        "gross.front_sum": 10063.67,
+        "gross.back_sum": 3160.33,
+        "gross.reconciliation_mismatches": 0
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": false,
+        "reconciles": null,
+        "detail": "strict lane: governed acceptance is the reconciliation authority"
+      },
+      "component_reconciliations": null,
+      "output_artifact": "serra-nissan-halo-preview.html",
+      "notes": []
+    },
+    {
+      "profile": "serra-nissan",
+      "dealer": "Serra Nissan",
+      "dealer_id": "21044",
+      "family": "sales_comm_log",
+      "cadence": "daily",
+      "source": {
+        "filename": "15_VIN_Serra_Nissan_21044_Sales_Communication_Log_Daily_Report-5886.xlsx",
+        "path": ".local-fixtures/vin18-20260830/15_VIN_Serra_Nissan_21044_Sales_Communication_Log_Daily_Report-5886.xlsx",
+        "sha256": "6cde7ae9bee658fc84d6b1150bcb0ffc441e6a8bde6cf6d4c60b9e598b95239a",
+        "size_bytes": 37104
+      },
+      "identity": {
+        "expected_sha256": "6cde7ae9bee658fc84d6b1150bcb0ffc441e6a8bde6cf6d4c60b9e598b95239a",
+        "expected_size": 37104,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "QUARANTINE"
+      },
+      "period_hint": "2026-08-29",
+      "expected": {
+        "strict_state": "quarantined",
+        "lane": "provisional-preview"
+      },
+      "hold": {
+        "outcome": "quarantined",
+        "validation_state": "quarantined",
+        "report_kind": "sales_comm_log",
+        "dealer": "Serra Nissan",
+        "period": {
+          "start": null,
+          "end": null
+        },
+        "quarantine_reason": "non-sales-lead-type",
+        "detail": "Filters positively select Service/Parts ([Parts, Service]); a Sales-only scheduled report must select only Sales Lead Types and Lead Intents",
+        "receipt_id": "hold_6cde7ae9bee658fc",
+        "hold_path": "ingest-hold/serra-nissan/quarantine/6cde7ae9bee658fc84d6b1150bcb0ffc441e6a8bde6cf6d4c60b9e598b95239a",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "aborted",
+        "delivery_id": null,
+        "accepted_rows": null,
+        "analytics_db": null,
+        "abort_reason": "no held delivery 6cde7ae9bee658fc84d6b1150bcb0ffc441e6a8bde6cf6d4c60b9e598b95239a for profile serra-nissan under /tmp/claude-1001/m1r-e2e-FdxAHD/ingest-hold/serra-nissan/held (quarantine namespace is never promoted)",
+        "watchdog": null
+      },
+      "strict_state": "quarantined",
+      "preview_lane": "provisional-preview",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "preview lane: quarantined + report_kind/dealer bound + promote attempted & aborted + adapter available + reconciliation & all component reconciliations checked & reconcile",
+      "reader_used": "provisional-adapter (non-promoting)",
+      "watchdog_reconciliation": null,
+      "rows": {
+        "observed": 246,
+        "accepted": null
+      },
+      "service_parts_excluded": 0,
+      "metrics_emitted": {
+        "comm.sales_communications": 246,
+        "comm.inbound": 28,
+        "comm.outbound": 218,
+        "comm.email": 51,
+        "comm.logged_call": 95,
+        "comm.text": 100,
+        "comm.facebook": 0,
+        "comm.service_rows_excluded": 0
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": true,
+        "reconciles": true,
+        "detail": "0 excluded + 246 included = 246 observed"
+      },
+      "component_reconciliations": [
+        {
+          "name": "comm.channel_sum",
+          "checked": true,
+          "reconciles": true,
+          "detail": "email+call+text+facebook=246 vs included sales rows=246"
+        }
+      ],
+      "output_artifact": "serra-nissan-halo-preview.html",
+      "notes": [
+        "PROVISIONAL / directional — NOT strict M1R acceptance; the governed gate quarantined this family (hidden Lead Intent)."
+      ]
+    },
+    {
+      "profile": "serra-nissan",
+      "dealer": "Serra Nissan",
+      "dealer_id": "21044",
+      "family": "cage_kpi",
+      "cadence": "weekly",
+      "source": {
+        "filename": "16_VIN_Serra_Nissan_21044_CAGE_KPI_Weekly_Report-7529.xlsx",
+        "path": ".local-fixtures/vin18-20260830/16_VIN_Serra_Nissan_21044_CAGE_KPI_Weekly_Report-7529.xlsx",
+        "sha256": "7a5baac09adf27afe3a183fdbe85d3b0cfd88a0bc5c144c39dd9f7ab1df1a2d9",
+        "size_bytes": 17258
+      },
+      "identity": {
+        "expected_sha256": "7a5baac09adf27afe3a183fdbe85d3b0cfd88a0bc5c144c39dd9f7ab1df1a2d9",
+        "expected_size": 17258,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "QUARANTINE"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "quarantined",
+        "lane": "provisional-preview"
+      },
+      "hold": {
+        "outcome": "quarantined",
+        "validation_state": "quarantined",
+        "report_kind": "cage_kpi",
+        "dealer": "Serra Nissan",
+        "period": {
+          "start": null,
+          "end": null
+        },
+        "quarantine_reason": "non-sales-lead-type",
+        "detail": "Filters positively select Service/Parts ([Parts, Service]); a Sales-only scheduled report must select only Sales Lead Types and Lead Intents",
+        "receipt_id": "hold_7a5baac09adf27af",
+        "hold_path": "ingest-hold/serra-nissan/quarantine/7a5baac09adf27afe3a183fdbe85d3b0cfd88a0bc5c144c39dd9f7ab1df1a2d9",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "aborted",
+        "delivery_id": null,
+        "accepted_rows": null,
+        "analytics_db": null,
+        "abort_reason": "no held delivery 7a5baac09adf27afe3a183fdbe85d3b0cfd88a0bc5c144c39dd9f7ab1df1a2d9 for profile serra-nissan under /tmp/claude-1001/m1r-e2e-FdxAHD/ingest-hold/serra-nissan/held (quarantine namespace is never promoted)",
+        "watchdog": null
+      },
+      "strict_state": "quarantined",
+      "preview_lane": "provisional-preview",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "preview lane: quarantined + report_kind/dealer bound + promote attempted & aborted + adapter available + reconciliation & all component reconciliations checked & reconcile",
+      "reader_used": "provisional-adapter (non-promoting)",
+      "watchdog_reconciliation": null,
+      "rows": {
+        "observed": 42,
+        "accepted": null
+      },
+      "service_parts_excluded": 0,
+      "metrics_emitted": {
+        "cage.rep_count": 17,
+        "cage.total_leads": 67,
+        "cage.sold_from_leads": 4,
+        "cage.appts_set": 9,
+        "cage.appts_shown": 2,
+        "cage.total_gross": 13224,
+        "cage.good_leads": 57,
+        "cage.bad_leads": 10,
+        "cage.sold_in_time_frame": 6,
+        "cage.internet_leads": 22,
+        "cage.internet_attempted_contact": 19,
+        "cage.internet_actual_contact": 8,
+        "cage.appts_scheduled": 5,
+        "cage.appts_scheduled_sold": 0,
+        "cage.appts_confirmed": 3,
+        "cage.visits": 17,
+        "cage.visits_sold": 4,
+        "cage.initial_visits": 17,
+        "cage.be_back_visits": 0,
+        "cage.total_calls": 319,
+        "cage.total_emails": 144,
+        "cage.total_texts": 263,
+        "cage.total_facebook": 0,
+        "cage.total_comms_in": 57,
+        "cage.total_comms_out": 669,
+        "cage.total_comms": 726,
+        "cage.active_tasks": 69,
+        "cage.completed_tasks": 55,
+        "cage.dismissed_tasks": 42,
+        "cage.inactive_tasks": 2,
+        "cage.missed_tasks": 48
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": true,
+        "reconciles": true,
+        "detail": "Σ all-leaf Total Leads=67 vs grand TOTAL row=67 (published metrics exclude 0 service rows)"
+      },
+      "component_reconciliations": [
+        {
+          "name": "cage.comms_components",
+          "checked": true,
+          "reconciles": true,
+          "detail": "sales-leaf calls+emails+texts+facebook=726 vs sales-leaf Total Comms=726"
+        },
+        {
+          "name": "cage.comms_direction",
+          "checked": true,
+          "reconciles": true,
+          "detail": "sales-leaf in+out=726 vs sales-leaf Total Comms=726"
+        },
+        {
+          "name": "cage.comms_grand_total",
+          "checked": true,
+          "reconciles": true,
+          "detail": "Σ FULL-leaf Total Comms=726 vs grand TOTAL row=726 (full source; published metrics exclude 0 service rows)"
+        }
+      ],
+      "output_artifact": "serra-nissan-halo-preview.html",
+      "notes": [
+        "PROVISIONAL / directional — NOT strict M1R acceptance; the governed gate quarantined this family (hidden Lead Intent)."
+      ]
+    },
+    {
+      "profile": "serra-nissan",
+      "dealer": "Serra Nissan",
+      "dealer_id": "21044",
+      "family": "lead_source_roi",
+      "cadence": "weekly",
+      "source": {
+        "filename": "17_VIN_Serra_Nissan_21044_Lead_Source_ROI_Weekly_Report-2068.xlsx",
+        "path": ".local-fixtures/vin18-20260830/17_VIN_Serra_Nissan_21044_Lead_Source_ROI_Weekly_Report-2068.xlsx",
+        "sha256": "28e2e59726ba7a7e8208c568d0f5bacd03021b8a5fd6b32dd1ded924d9ba03b6",
+        "size_bytes": 16976
+      },
+      "identity": {
+        "expected_sha256": "28e2e59726ba7a7e8208c568d0f5bacd03021b8a5fd6b32dd1ded924d9ba03b6",
+        "expected_size": 16976,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "QUARANTINE"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "quarantined",
+        "lane": "provisional-preview"
+      },
+      "hold": {
+        "outcome": "quarantined",
+        "validation_state": "quarantined",
+        "report_kind": "lead_source_roi",
+        "dealer": "Serra Nissan",
+        "period": {
+          "start": null,
+          "end": null
+        },
+        "quarantine_reason": "non-sales-lead-type",
+        "detail": "Filters positively select Service/Parts ([Parts, Service]); a Sales-only scheduled report must select only Sales Lead Types and Lead Intents",
+        "receipt_id": "hold_28e2e59726ba7a7e",
+        "hold_path": "ingest-hold/serra-nissan/quarantine/28e2e59726ba7a7e8208c568d0f5bacd03021b8a5fd6b32dd1ded924d9ba03b6",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "aborted",
+        "delivery_id": null,
+        "accepted_rows": null,
+        "analytics_db": null,
+        "abort_reason": "no held delivery 28e2e59726ba7a7e8208c568d0f5bacd03021b8a5fd6b32dd1ded924d9ba03b6 for profile serra-nissan under /tmp/claude-1001/m1r-e2e-FdxAHD/ingest-hold/serra-nissan/held (quarantine namespace is never promoted)",
+        "watchdog": null
+      },
+      "strict_state": "quarantined",
+      "preview_lane": "provisional-preview",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "preview lane: quarantined + report_kind/dealer bound + promote attempted & aborted + adapter available + reconciliation & all component reconciliations checked & reconcile",
+      "reader_used": "provisional-adapter (non-promoting)",
+      "watchdog_reconciliation": null,
+      "rows": {
+        "observed": 28,
+        "accepted": null
+      },
+      "service_parts_excluded": 0,
+      "metrics_emitted": {
+        "roi.total_leads": 67,
+        "roi.sold_from_leads": 4,
+        "roi.duplicate_rate": 0.104,
+        "roi.total_gross": 13224,
+        "roi.actual_roi": null
+      },
+      "metrics_withheld": [
+        "roi.actual_roi"
+      ],
+      "reconciliation": {
+        "checked": true,
+        "reconciles": true,
+        "detail": "Σ all-leaf Total Leads=67 vs report TOTAL row=67 (published metrics exclude 0 service rows)"
+      },
+      "component_reconciliations": null,
+      "output_artifact": "serra-nissan-halo-preview.html",
+      "notes": [
+        "PROVISIONAL / directional — NOT strict M1R acceptance; the governed gate quarantined this family (hidden Lead Intent)."
+      ]
+    },
+    {
+      "profile": "serra-nissan",
+      "dealer": "Serra Nissan",
+      "dealer_id": "21044",
+      "family": "dealership_performance",
+      "cadence": "weekly",
+      "source": {
+        "filename": "18_VIN_Serra_Nissan_21044_Dealer_Dashboard_Weekly_Report-3629.xlsx",
+        "path": ".local-fixtures/vin18-20260830/18_VIN_Serra_Nissan_21044_Dealer_Dashboard_Weekly_Report-3629.xlsx",
+        "sha256": "969ff03d65554d1ab0fe62d1c7b6262375c31b7a7f6b5e2e4f77dfd55ffc7328",
+        "size_bytes": 27267
+      },
+      "identity": {
+        "expected_sha256": "969ff03d65554d1ab0fe62d1c7b6262375c31b7a7f6b5e2e4f77dfd55ffc7328",
+        "expected_size": 27267,
+        "sha256_match": true,
+        "size_match": true,
+        "ledger_status": "ACCEPT"
+      },
+      "period_hint": "2026-08-24/2026-08-30",
+      "expected": {
+        "strict_state": "accepted",
+        "lane": "strict-governed"
+      },
+      "hold": {
+        "outcome": "held",
+        "validation_state": "held",
+        "report_kind": "dealership_performance",
+        "dealer": "Serra Nissan",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "quarantine_reason": null,
+        "detail": null,
+        "receipt_id": "hold_969ff03d65554d1a",
+        "hold_path": "ingest-hold/serra-nissan/held/dealership_performance/2026-08-24_2026-08-30/969ff03d65554d1ab0fe62d1c7b6262375c31b7a7f6b5e2e4f77dfd55ffc7328",
+        "provenance_envelope": "dev-test provenance metadata: workbook BYTES + SHA-256 are the EXACT real VinSolutions files; only the Gmail transport fields (sender/subject/gmail_message_id) are dev-test placeholders so the governed hold gate can run"
+      },
+      "promote": {
+        "outcome": "promoted",
+        "delivery_id": "a26b35ed-c2c2-412b-b7df-d8fd5e186ec9",
+        "accepted_rows": 41,
+        "analytics_db": "dev-analytics/serra-nissan/brain/brain.db",
+        "abort_reason": null,
+        "watchdog": {
+          "profile": "serra-nissan",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "metrics": [
+            {
+              "metric_id": "appt.cancel_rate",
+              "value": 0.167,
+              "count": 1,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.confirmed_rate",
+              "value": 0.5,
+              "count": 3,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.no_show_rate",
+              "value": 0.5,
+              "count": 3,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.reschedule_rate",
+              "value": 0,
+              "count": 0,
+              "provisional": false
+            },
+            {
+              "metric_id": "appt.show_rate",
+              "value": 0.333,
+              "count": 2,
+              "provisional": false
+            },
+            {
+              "metric_id": "dashboard.section_markers",
+              "value": 11,
+              "count": 41,
+              "provisional": false
+            },
+            {
+              "metric_id": "gross.reconciliation_mismatches",
+              "value": 0,
+              "count": 6,
+              "provisional": false
+            },
+            {
+              "metric_id": "gross.total_sum",
+              "value": 13224,
+              "count": 6,
+              "provisional": false
+            }
+          ],
+          "withheld": [
+            {
+              "metric_id": "cage.deals_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.rep_count",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "cage.total_comms",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "cage_kpi"
+              ],
+              "reason": "no active accepted cage_kpi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.escalation_keyword_screen",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.inbound_high_intent_keywords",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.multi_rep_within_24h",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.outbound_link_only",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "comm.template_overuse",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "sales_comm_log"
+              ],
+              "reason": "no active accepted sales_comm_log delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.actual_roi",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.duplicate_rate",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.sold_from_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            },
+            {
+              "metric_id": "roi.total_leads",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "profile": "serra-nissan",
+              "status": "withheld",
+              "source_kinds": [
+                "lead_source_roi"
+              ],
+              "reason": "no active accepted lead_source_roi delivery for the period (quarantined, superseded, or absent)",
+              "limitations": [
+                "Withheld to avoid computing from contaminated or absent data."
+              ]
+            }
+          ]
+        }
+      },
+      "strict_state": "accepted",
+      "preview_lane": "strict-governed",
+      "agrees": true,
+      "technical_pass": true,
+      "technical_pass_detail": "strict lane: held + accepted + report_kind/dealer/period bound + promoted + all required metrics present + watchdog reconciled",
+      "reader_used": "readDealershipPerformance",
+      "watchdog_reconciliation": {
+        "checked": true,
+        "ok": true,
+        "detail": "watchdog reconciles with strict reader + accepted rows",
+        "checks": [
+          {
+            "name": "watchdog.profile matches cell",
+            "ok": true,
+            "detail": "serra-nissan vs serra-nissan"
+          },
+          {
+            "name": "watchdog.period matches window",
+            "ok": true,
+            "detail": "2026-08-24..2026-08-30 vs 2026-08-24..2026-08-30"
+          },
+          {
+            "name": "dashboard.section_markers present",
+            "ok": true,
+            "detail": "=11 count=41"
+          },
+          {
+            "name": "section_markers >= 1",
+            "ok": true,
+            "detail": "11"
+          },
+          {
+            "name": "dashboard count == accepted rows",
+            "ok": true,
+            "detail": "count=41 vs accepted=41"
+          },
+          {
+            "name": "section_markers <= rows",
+            "ok": true,
+            "detail": "11 <= 41"
+          }
+        ]
+      },
+      "rows": {
+        "observed": 41,
+        "accepted": 41
+      },
+      "service_parts_excluded": null,
+      "metrics_emitted": {
+        "dp.leads": 57,
+        "dp.appts_set": 9,
+        "dp.appts_show": 2,
+        "dp.sold_in_period": 6,
+        "dp.total_gross": 13224,
+        "dp.avg_total_gross": 2204
+      },
+      "metrics_withheld": [],
+      "reconciliation": {
+        "checked": false,
+        "reconciles": null,
+        "detail": "strict lane: governed acceptance is the reconciliation authority"
+      },
+      "component_reconciliations": null,
+      "output_artifact": "serra-nissan-halo-preview.html",
+      "notes": []
+    }
+  ],
+  "summary": {
+    "total": 18,
+    "held": 9,
+    "quarantined": 9,
+    "promoted": 9,
+    "provisional_available": 9,
+    "disagreements": 0,
+    "technical_pass": 18,
+    "technical_failures": 0,
+    "technical_failure_details": []
+  }
+}
