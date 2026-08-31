@@ -154,3 +154,78 @@ restored; **no report opened/saved/scheduled/run; no CRM/settings/customer mutat
 - **Amended (minimal):** `issues.md` — one linked entry.
 - **Unchanged:** all protected contract/matrix/18-cell docs, code, tests, DB, schedules, Gmail,
   VinSolutions, production, LifePath.
+
+## 10. Addendum — Nissan read-only UI evidence, Help Center, and material decision (2026-08-31)
+
+**STATUS: still HOLD on the hidden Lead-Intent question. NOT complete. Documentation-only addendum;
+no contract, classifier, code, test, schedule, data, readiness, or production change. 9 accept / 9
+quarantine unchanged; the 9 CAGE/ROI/Sales-Communication families remain quarantined (zero accepted
+metrics). No consumer relaxation is adopted here.**
+
+### 10.1 Read-only VinSolutions UI findings (CONTROLLER — Nissan SN21044; no save/run)
+Across the ROI, CAGE, and Sales Communication native editors and **Custom Reporting → Leads**, every
+**exposed** control is Sales-only:
+- source mode **Exclude** with the **six service-source exclusions**;
+- Lead Types: **Parts Order OFF, Service OFF**;
+- CAGE: Lead Types **Internet / Walk-in / Phone**, **Sales Rep** role, **Sales Appointment**;
+- Sales Communication: **Communication Type = Sales only** (Service and Unknown OFF).
+- **Lead Intent is NOT exposed** in any of the three native editors, and **Custom Reporting Leads exposes
+  NO Lead Intent field or filter.**
+- Fresh delivered XLSX rows: **zero** Service/Parts/service-source/wrong-dealer (OBSERVED, prior sections).
+
+### 10.2 State unchanged: 9 accept / 9 quarantine
+No promotion, no classifier/contract change. The hidden Filters `Lead Intent = [Parts, Sales, Service,
+Unknown]` still trips the ratified fail-closed rule (§0) → the **9 CAGE/ROI/Sales-Communication families
+stay quarantined**; the 9 accepted families (Dashboard/Appointments/CRM Sales Gross ×3) are unchanged.
+
+### 10.3 Official Help Center evidence (CONTROLLER read-only) — precise, limited interpretation
+- `https://casfx.my.site.com/vinsolutions/s/article/Lead-Source-Filter-Why-do-the-counts-change`
+  — supports that **UI / report-selection DISPLAY differences can exist for Lead Source**.
+- `https://casfx.my.site.com/vinsolutions/s/article/35093`
+  — supports that **custom filters require exposed dataset fields**.
+- **INTERPRETATION (bounded):** these establish (a) Lead-Source display can differ by selection and
+  (b) a custom filter needs an exposed field. **Neither article proves the hidden Lead Intent is
+  non-operative** (i.e., a display-only, non-filtering artifact). The non-operative claim remains
+  **UNPROVEN**.
+
+### 10.4 Independent Shadow HOLD vs Studio analysis — recorded disagreement
+- **Shadow: HOLD.** Fail-closed stands — a positive Service/Parts Lead Intent quarantines the whole
+  delivery; clean rows and correct other controls do **not** cure it; no consumer relaxation without
+  proof and explicit authorization.
+- **Studio analysis (this consumer, in-pane review):** a narrow consumer exception is **technically
+  possible IF Duane authorizes** — bounded to the Lead-Intent-in-Filters signal, gated by
+  all-other-controls-correct + zero row-level hits, flagged temporary pending Cox. Studio did **not**
+  recommend adopting it without Duane approval and independent verification.
+- **They disagree on whether to relax; they AGREE the state stays quarantined absent explicit
+  authorization.** No relaxation is adopted in this checkpoint.
+
+### 10.5 Exact material decision required (Duane only)
+- **(A) Keep quarantine** (no change; 9 families withheld; await Cox) — zero Service/Parts leakage risk; or
+- **(B) Authorize a narrow Lead-Intent-metadata consumer exception** — **MATERIAL**: it weakens a ratified
+  fail-closed acceptance criterion (§0) and accepts currently-quarantined data. It would require a
+  contract amendment (`SCHEMA_CONTRACT` + coverage-matrix), a classifier change in `hs-ingest-dev` under
+  its own gate, the per-delivery proof gates (Lead Type clean; Lead Intent ⊆ pinned fixed set; six
+  source exclusions; family controls; zero row-level Service/Parts; one tenant; correct period;
+  provenance; a regression negative-golden proving Lead **Type** or row Service/Parts still quarantines),
+  and **independent verification**.
+- Per the control directive (weakening acceptance / accepting quarantined data → **Duane approval**), this
+  is a **material contract decision**, not a routine technical choice.
+
+### 10.6 Cox support question (follow-up, non-blocking)
+Ask Cox / VinSolutions authoritatively: **is Filters `Lead Intent = [Parts, Sales, Service, Unknown]` a
+fixed, non-operative display/metadata artifact, or an active inclusion filter that can pull Service/Parts
+leads into the dataset?** A confirmed "non-operative" answer would convert the current inference to proof
+and could retire any need for a consumer exception; a "filtering" answer confirms the quarantine is
+correct.
+
+### 10.7 Owner and next action
+- **Owner:** Codex (outcome controller). Decision authority for (B) or any contract/classifier change:
+  **Duane only.** Independent verification: Shadow / fresh clean-room.
+- **Next action:** surface the §10.5 material decision and §10.6 Cox question to Duane. Do **not** relax
+  the classifier, promote, or amend the contract without explicit authorization. Gate 3 remains **HOLD**
+  on the Lead-Intent question — **not complete**.
+
+### 10.8 Changed paths (this addendum; docs-only)
+- **Amended:** this file only (additive §10).
+- **Unchanged:** contract, classifier, code, tests, schedules, data, readiness, production; the committed
+  HOLD `a2b4f5c1f` and all protected artifacts remain byte-intact.
