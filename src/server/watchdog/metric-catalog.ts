@@ -43,6 +43,9 @@ export const METRIC_CATALOG: ReadonlyArray<CatalogMetric> = [
   { id: 'gross.total_sum', label: 'Total gross', description: 'Sum of total gross across sold deals in the period.', category: 'Gross', format: 'currency', concerning: 'below', source: 'vin-report' },
   { id: 'gross.reconciliation_mismatches', label: 'Gross reconciliation mismatches', description: 'Deals where front + back gross does not equal total gross.', category: 'Gross', format: 'count', concerning: 'above', source: 'vin-report' },
 
+  // ── Responsiveness (VinSolutions Dealership Performance — embedded Response Time) ──
+  { id: 'dashboard.response_time_actual_avg_min', label: 'Avg response time (actual, min)', description: 'Average actual response time in minutes, from the accepted Dealership Performance Response Time section.', category: 'Responsiveness', format: 'count', concerning: 'above', source: 'vin-report' },
+
   // ── Team (CAGE / Enterprise Performance) ──
   { id: 'cage.total_comms', label: 'Total rep communications', description: 'Total communications logged by reps in the period.', category: 'Team', format: 'count', concerning: 'below', source: 'vin-report' },
   { id: 'cage.deals_from_leads', label: 'Deals from leads', description: 'Deals attributed to leads (rep-reported).', category: 'Team', format: 'count', concerning: 'below', source: 'vin-report' },

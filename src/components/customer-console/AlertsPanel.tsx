@@ -20,10 +20,29 @@ type Alert = {
   metric_id?: string | null
 }
 
+// Shared display read-model (same shape the alerts GET returns).
+type Display = {
+  id: string
+  kind: 'metric' | 'manual'
+  status: 'active' | 'paused'
+  query_name: string
+  description: string
+  email: string
+  metric_label: string | null
+  direction: 'above' | 'below' | null
+  threshold: number | null
+  recipientRole: string | null
+  currentValue: number | null
+  currentValueResolved: boolean
+  dataThroughLabel: string | null
+  ageLabel: string | null
+}
+
 type Mode = 'metric' | 'manual'
 
 export function AlertsPanel({ profile }: { profile: string }) {
   const [alerts, setAlerts] = useState<Array<Alert>>([])
+  const [display, setDisplay] = useState<Array<Display>>([])
   const [adding, setAdding] = useState(false)
   const [mode, setMode] = useState<Mode>('metric')
   const [email, setEmail] = useState('duanekwells@gmail.com')
@@ -35,7 +54,10 @@ export function AlertsPanel({ profile }: { profile: string }) {
   const load = useCallback(() => {
     fetch(`/api/customer/alerts?profile=${encodeURIComponent(profile)}`, { credentials: 'include' })
       .then((r) => r.json())
-      .then((j: { ok: boolean; alerts?: Array<Alert> }) => setAlerts(j.alerts ?? []))
+      .then((j: { ok: boolean; alerts?: Array<Alert>; display?: Array<Display> }) => {
+        setAlerts(j.alerts ?? [])
+        setDisplay(j.display ?? [])
+      })
       .catch(() => {})
   }, [profile])
   useEffect(load, [load])
@@ -120,19 +142,31 @@ export function AlertsPanel({ profile }: { profile: string }) {
         </div>
       )}
 
-      {alerts.length === 0 ? (
+      {display.length === 0 ? (
         <p className="text-xs text-slate-400">No alerts yet.</p>
       ) : (
         <ul className="divide-y divide-slate-100">
-          {alerts.map((a) => (
+          {display.map((a) => (
             <li key={a.id} className="flex items-start justify-between gap-3 py-2">
               <div className="min-w-0">
-                <div className="text-sm font-medium text-slate-800">
+                <div className="flex flex-wrap items-center gap-2 text-sm font-medium text-slate-800">
                   {a.query_name}
-                  {a.metric_id && <span className="ml-2 rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-normal text-slate-500">metric</span>}
+                  {a.kind === 'metric' && <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-normal text-slate-500">metric</span>}
+                  <span className={`rounded px-1.5 py-0.5 text-[10px] font-normal ${a.status === 'paused' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                    {a.status === 'paused' ? 'paused (inactive)' : 'active'}
+                  </span>
                 </div>
                 <div className="truncate text-xs text-slate-500">{a.description}</div>
-                <div className="text-xs text-slate-400">→ {a.email}</div>
+                {a.kind === 'metric' && (
+                  <div className="mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-slate-500">
+                    {a.metric_label && <span>Metric: <span className="text-slate-700">{a.metric_label}</span></span>}
+                    {a.threshold != null && <span>Threshold: {a.direction === 'above' ? '>' : '<'} {a.threshold}</span>}
+                    <span>Current: {a.currentValueResolved ? a.currentValue : '—'}</span>
+                    {a.recipientRole && <span>To: {a.recipientRole}</span>}
+                    {a.ageLabel && <span className="text-slate-400">{a.ageLabel}</span>}
+                  </div>
+                )}
+                <div className="text-xs text-slate-400">{a.email ? `→ ${a.email}` : '→ (no recipient — inactive)'}</div>
               </div>
               <button type="button" className="shrink-0 text-xs text-slate-400 hover:text-red-600" onClick={() => remove(a.id)}>
                 Remove

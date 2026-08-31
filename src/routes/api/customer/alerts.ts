@@ -17,11 +17,13 @@ import {
 import {
   createMetricAlert,
   createNotification,
+  createPausedMetricAlert,
   deleteNotification,
   listNotifications,
   type AlertDirection,
   type AlertRuleType,
 } from '../../../server/watchdog/notifications-store'
+import { buildAlertDisplay } from '../../../server/watchdog/alert-display-model'
 import { catalogByCategory, getCatalogMetric } from '../../../server/watchdog/metric-catalog'
 
 const num = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null)
@@ -43,8 +45,16 @@ export const Route = createFileRoute('/api/customer/alerts')({
         } catch {
           alerts = []
         }
+        // Shared display read-model (status, metric, threshold, current value when
+        // resolvable, recipient role, source data-through age) — same model AlertsPanel renders.
+        let display: ReturnType<typeof buildAlertDisplay> = []
+        try {
+          display = buildAlertDisplay(profile, alerts, new Date())
+        } catch {
+          display = []
+        }
         // The metric catalog powers the wizard's metric picker (per-profile identical today).
-        return json({ ok: true, alerts, catalog: catalogByCategory() })
+        return json({ ok: true, alerts, display, catalog: catalogByCategory() })
       },
 
       POST: async ({ request }) => {
@@ -63,20 +73,24 @@ export const Route = createFileRoute('/api/customer/alerts')({
           if (!metric) return json({ ok: false, error: 'Unknown metric.' }, { status: 400 })
           const rule_type = body.rule_type === 'baseline' ? 'baseline' : 'threshold'
           const direction: AlertDirection = body.direction === 'above' ? 'above' : 'below'
-          const r = createMetricAlert(
-            {
-              profile,
-              email,
-              metric_id: metric.id,
-              metric_label: metric.label,
-              rule_type: rule_type as AlertRuleType,
-              direction,
-              threshold: num(body.threshold),
-              baseline_sigma: num(body.baseline_sigma),
-            },
-            Date.now(),
-          )
-          return r.ok ? json({ ok: true, id: r.id }) : json({ ok: false, error: r.error }, { status: 400 })
+          const input = {
+            profile,
+            email,
+            metric_id: metric.id,
+            metric_label: metric.label,
+            rule_type: rule_type as AlertRuleType,
+            direction,
+            threshold: num(body.threshold),
+            baseline_sigma: num(body.baseline_sigma),
+            recipient_role: typeof body.recipient_role === 'string' ? body.recipient_role : undefined,
+          }
+          // Default behavior is UNCHANGED (active). Only an explicit paused/draft status
+          // routes through the inactive creation path.
+          const wantsPaused = body.status === 'paused' || body.status === 'draft'
+          const r = wantsPaused
+            ? createPausedMetricAlert(input, Date.now())
+            : createMetricAlert(input, Date.now())
+          return r.ok ? json({ ok: true, id: r.id, status: wantsPaused ? 'paused' : 'active' }) : json({ ok: false, error: r.error }, { status: 400 })
         }
 
         const r = createNotification(

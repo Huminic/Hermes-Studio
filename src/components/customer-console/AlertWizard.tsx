@@ -84,7 +84,7 @@ export function AlertWizard({
     return `Email ${email || '…'} when ${metric.label} is ${side} for this dealer (beyond ${sigma}σ of its recent baseline).`
   }, [metric, direction, ruleType, threshold, sigma, email])
 
-  const create = useCallback(async () => {
+  const create = useCallback(async (status?: 'paused') => {
     if (!metric) { setErr('Pick a metric.'); return }
     setBusy(true)
     setErr(null)
@@ -93,6 +93,8 @@ export function AlertWizard({
       const body = {
         profile, email, metric_id: metric.id, rule_type: ruleType, direction,
         ...(ruleType === 'threshold' ? { threshold: thr } : { baseline_sigma: Number(sigma) }),
+        // Only sent when the user explicitly chooses "Save as paused draft" — default is active.
+        ...(status === 'paused' ? { status: 'paused' } : {}),
       }
       const res = await fetch('/api/customer/alerts', {
         method: 'POST', credentials: 'include',
@@ -173,9 +175,13 @@ export function AlertWizard({
       {err && <div className="text-xs text-amber-700 sm:col-span-2">{err}</div>}
       {done && <div className="text-xs text-emerald-700 sm:col-span-2">Alert created.</div>}
 
-      <div className="sm:col-span-2">
-        <button type="button" disabled={busy} className="rounded-md bg-slate-800 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-60" onClick={create}>
+      <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
+        <button type="button" disabled={busy} className="rounded-md bg-slate-800 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-60" onClick={() => create()}>
           {busy ? 'Creating…' : 'Create alert'}
+        </button>
+        {/* Additive, never default-on: creates the rule INACTIVE (paused) — no evaluation, no send. */}
+        <button type="button" disabled={busy} className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 disabled:opacity-60" onClick={() => create('paused')}>
+          Save as paused draft
         </button>
       </div>
     </div>

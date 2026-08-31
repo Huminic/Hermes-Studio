@@ -67,6 +67,7 @@ export function toPausedMetricAlertInput(e: M1rNotificationExample): (MetricAler
     threshold: e.threshold,
     query_name: `${e.metric_label} ${e.direction} threshold`,
     description: e.description,
+    recipient_role: e.recipientRole,
     status: 'paused',
   }
 }

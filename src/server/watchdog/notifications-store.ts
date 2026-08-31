@@ -42,6 +42,8 @@ export type NotificationRecord = {
   baseline_sigma: number | null
   /** Epoch ms of the last time this alert fired (24h dedup); null if never. */
   last_fired_at: number | null
+  /** Optional additive metadata: recipient role (e.g. 'Sales Manager'); null for legacy alerts. */
+  recipient_role: string | null
 }
 
 type Handle = ReturnType<typeof openBrain>
@@ -55,6 +57,7 @@ const RULE_COLUMNS: Array<[string, string]> = [
   ['threshold', 'REAL'],
   ['baseline_sigma', 'REAL'],
   ['last_fired_at', 'INTEGER'],
+  ['recipient_role', 'TEXT'],
 ]
 
 function ensure(profile: string, profileRoot?: string): Handle {
@@ -136,6 +139,8 @@ export type MetricAlertInput = {
   /** Optional human query name; defaults from the metric label + rule. */
   query_name?: string
   description?: string
+  /** Optional additive metadata: recipient role (e.g. 'Sales Manager'). */
+  recipient_role?: string | null
 }
 
 /** Human, non-technical sentence describing what a metric alert watches. */
@@ -187,12 +192,13 @@ export function createMetricAlert(
   h.run(
     `INSERT INTO notification
        (id, profile, email, query_name, description, source, status, created_at,
-        metric_id, metric_label, rule_type, direction, threshold, baseline_sigma, last_fired_at)
-     VALUES (?, ?, ?, ?, ?, 'metric-alert', 'active', ?, ?, ?, ?, ?, ?, ?, NULL)`,
+        metric_id, metric_label, rule_type, direction, threshold, baseline_sigma, last_fired_at, recipient_role)
+     VALUES (?, ?, ?, ?, ?, 'metric-alert', 'active', ?, ?, ?, ?, ?, ?, ?, NULL, ?)`,
     id, input.profile, rec.emails.join(', '), query_name, description, now,
     input.metric_id.trim(), input.metric_label.trim(), input.rule_type, input.direction,
     input.rule_type === 'threshold' ? input.threshold : null,
     input.rule_type === 'baseline' ? input.baseline_sigma : null,
+    input.recipient_role?.trim() || null,
   )
   return { ok: true, id }
 }
@@ -239,12 +245,13 @@ export function createPausedMetricAlert(
   h.run(
     `INSERT INTO notification
        (id, profile, email, query_name, description, source, status, created_at,
-        metric_id, metric_label, rule_type, direction, threshold, baseline_sigma, last_fired_at)
-     VALUES (?, ?, ?, ?, ?, 'metric-alert', 'paused', ?, ?, ?, ?, ?, ?, ?, NULL)`,
+        metric_id, metric_label, rule_type, direction, threshold, baseline_sigma, last_fired_at, recipient_role)
+     VALUES (?, ?, ?, ?, ?, 'metric-alert', 'paused', ?, ?, ?, ?, ?, ?, ?, NULL, ?)`,
     id, input.profile, email, query_name, description, now,
     input.metric_id.trim(), input.metric_label.trim(), input.rule_type, input.direction,
     input.rule_type === 'threshold' ? input.threshold : null,
     input.rule_type === 'baseline' ? input.baseline_sigma : null,
+    input.recipient_role?.trim() || null,
   )
   return { ok: true, id }
 }

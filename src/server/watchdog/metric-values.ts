@@ -65,6 +65,17 @@ export function resolveNativeMetricValues(profile: string): MetricValues {
     /* gross sources unreadable → withheld (never zero) */
   }
 
+  // dashboard.response_time_actual_avg_min — ONLY from the accepted Dealership Performance
+  // "Response Time" section. Missing → withheld (never zero).
+  try {
+    const dp = readDealershipPerformance(profile)
+    if (dp.available && dp.summary.responseTimeActualAvgMin != null) {
+      v.set('dashboard.response_time_actual_avg_min', dp.summary.responseTimeActualAvgMin)
+    }
+  } catch {
+    /* dealership_performance unreadable → withheld */
+  }
+
   // ALL FOUR appointment rates come from the SAME accepted appointments family and the
   // SAME denominator (ap.total > 0). Never mix Dashboard apptsSet with appointment rows.
   try {
