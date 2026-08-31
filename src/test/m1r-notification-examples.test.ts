@@ -29,14 +29,20 @@ describe.runIf(HAVE)('M1R inactive notification examples (real accepted store, 3
     }
   })
 
-  it('freshness (data-through + age) is visible on every definition for the dashboard', () => {
+  it('freshness is per-metric-source: BOUND defs show their source Aug-30; UNBOUND #3 fails closed to missing (no borrowed date)', () => {
     for (const p of PROFILES) {
-      for (const d of m1rNotificationExamples(p, NOW)) {
+      const [d1, d2, d3, d4] = m1rNotificationExamples(p, NOW)
+      for (const d of [d1, d2, d4]) {
+        // each of these has an accepted source family (appointments / dashboard / CRM gross)
         expect(d.dataThroughLabel).toBe('Aug 30, 2026')
         expect(d.ageLabel).toContain('Data through Aug 30, 2026')
-        expect(d.ageLabel).toMatch(/updated (today|yesterday|\d+ days ago)/)
         expect(['current', 'aging']).toContain(d.freshnessState)
       }
+      // #3 (comm, quarantined) has NO accepted source → missing, never a borrowed 08-30 date
+      expect(d3.freshnessState).toBe('missing')
+      expect(d3.dataThrough).toBeNull()
+      expect(d3.dataThroughLabel).toBeNull()
+      expect(d3.ageLabel).toBe('Data not yet available')
     }
   })
 

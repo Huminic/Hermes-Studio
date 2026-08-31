@@ -75,6 +75,52 @@ export function isFreshEnoughToPublish(f: DataFreshness): boolean {
  * Freshness for a profile from ACCEPTED native provenance only (Dashboard, Appointments,
  * CRM Sales Gross). Unavailable families contribute nothing (missing is not zero).
  */
+export type MetricSourceFamily =
+  | 'appointments'
+  | 'crm_sales_gross'
+  | 'dealership_performance'
+  | 'gross_total' // CRM Sales Gross if present, else Dealership Performance fallback
+  | null
+
+/** Map a metric slug to the accepted native family that is its ACTUAL source. */
+export function metricSourceFamily(metricId: string | null | undefined): MetricSourceFamily {
+  if (!metricId) return null
+  if (metricId.startsWith('appt.')) return 'appointments'
+  if (metricId === 'gross.reconciliation_mismatches') return 'crm_sales_gross'
+  if (metricId === 'gross.total_sum') return 'gross_total'
+  if (metricId.startsWith('dashboard.')) return 'dealership_performance'
+  return null // unknown / quarantined-only (e.g. comm.*, roi.*, cage.*) → no accepted source
+}
+
+/**
+ * Freshness for a SINGLE metric, computed ONLY from that metric's actual source family
+ * provenance — never a cross-family max-date. Fail-closed: an unknown source, or a source
+ * family with no accepted delivery, yields state `missing` (no borrowed date).
+ */
+export function resolveMetricSourceFreshness(
+  profile: string,
+  metricId: string | null | undefined,
+  now: Date,
+): DataFreshness {
+  const endOf = (r: { available: boolean; provenance?: { period?: { end?: string | null } } }): string | null =>
+    r.available && r.provenance?.period?.end ? r.provenance.period.end : null
+  let end: string | null = null
+  try {
+    const fam = metricSourceFamily(metricId)
+    if (fam === 'appointments') end = endOf(readAppointments(profile))
+    else if (fam === 'crm_sales_gross') end = endOf(readCrmSalesGross(profile))
+    else if (fam === 'dealership_performance') end = endOf(readDealershipPerformance(profile))
+    else if (fam === 'gross_total') {
+      const crm = readCrmSalesGross(profile)
+      end = crm.available ? endOf(crm) : endOf(readDealershipPerformance(profile))
+    }
+    // fam === null → unknown/quarantined-only → end stays null (missing)
+  } catch {
+    end = null
+  }
+  return computeDataFreshness(end ? [end] : [], now)
+}
+
 export function resolveReportFreshness(profile: string, now: Date): DataFreshness {
   const ends: Array<string | null | undefined> = []
   for (const read of [readDealershipPerformance, readAppointments, readCrmSalesGross]) {

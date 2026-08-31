@@ -20,7 +20,7 @@ import {
   readCrmSalesGross,
   readDealershipPerformance,
 } from '../ingest-native-metrics'
-import { resolveReportFreshness } from '../reports/data-freshness'
+import { resolveMetricSourceFreshness } from '../reports/data-freshness'
 
 export type RecipientRole = 'Sales Manager' | 'Manager' | 'Salesperson or Manager' | 'Internal Analyst'
 
@@ -74,16 +74,17 @@ export function toPausedMetricAlertInput(e: M1rNotificationExample): (MetricAler
 
 export function m1rNotificationExamples(profile: string, now: Date): M1rNotificationExample[] {
   const dealer = DEALER[profile] ?? profile
-  const f = resolveReportFreshness(profile, now)
   const base = {
     profile,
     dealer,
     status: 'paused' as const,
-    dataThrough: f.dataThrough,
-    dataThroughLabel: f.dataThroughLabel,
-    ageLabel: f.ageLabel,
-    freshnessState: f.state,
     sendState: 'never — inactive dev example (no send, no activation)' as const,
+  }
+  // Per-definition freshness = ONLY that metric's own source family (no cross-family bleed;
+  // fail-closed to 'missing' for an unbound/quarantined source).
+  const freshFor = (metricId: string | null) => {
+    const fr = resolveMetricSourceFreshness(profile, metricId, now)
+    return { dataThrough: fr.dataThrough, dataThroughLabel: fr.dataThroughLabel, ageLabel: fr.ageLabel, freshnessState: fr.state }
   }
 
   // 1) Appointment show rate below a configurable threshold → Sales Manager.
@@ -91,6 +92,7 @@ export function m1rNotificationExamples(profile: string, now: Date): M1rNotifica
   const apBound = ap.available && ap.total > 0
   const def1: M1rNotificationExample = {
     ...base,
+    ...freshFor('appt.show_rate'),
     recipientRole: 'Sales Manager',
     metric_id: 'appt.show_rate',
     metric_label: 'Appointment show rate',
@@ -111,6 +113,7 @@ export function m1rNotificationExamples(profile: string, now: Date): M1rNotifica
   const rtVal = dp.available ? dp.summary.responseTimeActualAvgMin : null
   const def2: M1rNotificationExample = {
     ...base,
+    ...freshFor('dashboard.response_time_actual_avg_min'),
     recipientRole: 'Manager',
     metric_id: rtVal != null ? 'dashboard.response_time_actual_avg_min' : null,
     metric_label: 'Average response time (actual minutes)',
@@ -128,6 +131,7 @@ export function m1rNotificationExamples(profile: string, now: Date): M1rNotifica
   //    Sales Communication is QUARANTINED → explicitly UNBOUND + inactive, no value.
   const def3: M1rNotificationExample = {
     ...base,
+    ...freshFor(null),
     recipientRole: 'Salesperson or Manager',
     metric_id: null,
     metric_label: 'High-intent inbound without timely follow-up',
@@ -147,6 +151,7 @@ export function m1rNotificationExamples(profile: string, now: Date): M1rNotifica
   const grBound = gr.available && gr.reconciliationMismatches != null
   const def4: M1rNotificationExample = {
     ...base,
+    ...freshFor('gross.reconciliation_mismatches'),
     recipientRole: 'Internal Analyst',
     metric_id: 'gross.reconciliation_mismatches',
     metric_label: 'Gross reconciliation mismatches (Front+Back ≠ Total)',

@@ -9,7 +9,7 @@
  */
 import type { AlertDirection, AlertRuleType, NotificationRecord } from './notifications-store'
 import { resolveNativeMetricValues } from './metric-values'
-import { resolveReportFreshness } from '../reports/data-freshness'
+import { resolveMetricSourceFreshness } from '../reports/data-freshness'
 
 export type AlertDisplay = {
   id: string
@@ -42,7 +42,6 @@ export function buildAlertDisplay(
   } catch {
     values = new Map()
   }
-  const fresh = resolveReportFreshness(profile, now)
 
   return records.map((r) => {
     const isMetric = r.metric_id != null && r.rule_type != null
@@ -56,6 +55,9 @@ export function buildAlertDisplay(
       }
       // v === null → withheld: stays absent (never a fabricated zero).
     }
+    // Metric-SOURCE-specific freshness — only from THIS metric's actual source family
+    // (no cross-family max-date bleed). Non-metric records carry no data-through.
+    const fresh = isMetric ? resolveMetricSourceFreshness(profile, r.metric_id, now) : null
     return {
       id: r.id,
       kind: isMetric ? 'metric' : 'manual',
@@ -71,9 +73,9 @@ export function buildAlertDisplay(
       recipientRole: r.recipient_role ?? null,
       currentValue,
       currentValueResolved,
-      // Source data-through age applies to metric alerts (accepted native sources).
-      dataThroughLabel: isMetric ? fresh.dataThroughLabel : null,
-      ageLabel: isMetric ? fresh.ageLabel : null,
+      // Source data-through age = THIS metric's own source family only (fail-closed).
+      dataThroughLabel: fresh ? fresh.dataThroughLabel : null,
+      ageLabel: fresh ? fresh.ageLabel : null,
     }
   })
 }

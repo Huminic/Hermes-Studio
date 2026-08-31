@@ -86,10 +86,15 @@ describe.runIf(HAVE)('M1R paused notification path — real store + real notific
         expect(d.dealer.length).toBeGreaterThan(0)
         expect(d.recipientRole.length).toBeGreaterThan(0)
         expect(d.status).toBe('paused')
-        expect(d.dataThroughLabel).toBe('Aug 30, 2026')
-        expect(d.ageLabel).toMatch(/Data through Aug 30, 2026 · updated (today|yesterday|\d+ days ago)/)
         expect(d.sendState).toMatch(/never/)
       }
+      // BOUND defs show their own source family's Aug-30 date; UNBOUND #3 is missing (no bleed)
+      for (const d of [d1, d2, d4]) {
+        expect(d.dataThroughLabel).toBe('Aug 30, 2026')
+        expect(d.ageLabel).toMatch(/Data through Aug 30, 2026 · updated (today|yesterday|\d+ days ago)/)
+      }
+      expect(d3.freshnessState).toBe('missing')
+      expect(d3.dataThroughLabel).toBeNull()
       // bound examples carry a real current value + threshold
       expect(d1.currentValue).not.toBeNull(); expect(d1.threshold).toBe(0.5)
       expect(d2.currentValue).toBe(RT_ACTUAL[profile]); expect(d2.metric_id).toBe('dashboard.response_time_actual_avg_min')
