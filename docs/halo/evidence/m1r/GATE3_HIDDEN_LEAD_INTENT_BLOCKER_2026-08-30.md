@@ -5,6 +5,12 @@ delivery-readiness cells remain `false`. No code, contract, matrix, readiness, D
 VinSolutions, production, deploy, merge, or LifePath was mutated. No delivery was landed and no manifest
 was written. Whole-delivery quarantine is code-authoritative; zero metrics accepted.**
 
+> **HISTORICAL-STATUS LABEL (additive; no history rewritten):** Earlier status/next-action statements in
+> this record dated 2026-08-30 — e.g. "await Monday", "no delivery landed", "zero accepted" — describe the
+> state **at that time** and are **HISTORICAL / SUPERSEDED by §10 (2026-08-31)**: the current state is
+> **9 accept / 9 quarantine** (the 9 CAGE/ROI/Sales-Communication families remain quarantined; the
+> Lead-Intent HOLD question is unchanged). The prior wording and evidence are preserved as-is.
+
 Date: 2026-08-30 (America/New_York)
 Controller / outcome owner: Codex (reports to Duane)
 Bounded writer (sole Andromeda repo writer): Claude Code in isolated clone
