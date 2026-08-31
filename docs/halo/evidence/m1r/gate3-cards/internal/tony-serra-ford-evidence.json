@@ -1,0 +1,56 @@
+{
+  "profile": "tony-serra-ford",
+  "dealer": "Tony Serra Ford",
+  "dataThrough": "2026-08-30",
+  "freshnessState": "current",
+  "ageDays": 1,
+  "acceptedFamilies": [
+    {
+      "family": "dealership_performance",
+      "period": "2026-08-24..2026-08-30",
+      "rows": 41,
+      "checksum": "2ae6dbbe44027bdf7f63512f10e41ac5cf72a85187a07a31335384b8185584d6"
+    },
+    {
+      "family": "appointments",
+      "period": "2026-08-24..2026-08-30",
+      "rows": 7,
+      "checksum": "1d52c108925f2ccb8b4faa2e87c5262614bce373eedb8e3c3b875f496e1a16ff"
+    },
+    {
+      "family": "crm_sales_gross",
+      "period": "2026-08-24..2026-08-30",
+      "rows": 7,
+      "checksum": "98bac42071f70ee0ca86aade3a9c564b108853d4aa56e883fab16b965b3b7689"
+    }
+  ],
+  "heldFamilies": [
+    {
+      "family": "cage_kpi",
+      "reason": "Filters positively select Service/Parts Lead-Intent (Parts, Service); whole-delivery quarantine under the Sales-only contract — zero metrics accepted."
+    },
+    {
+      "family": "lead_source_roi",
+      "reason": "Filters positively select Service/Parts Lead-Intent (Parts, Service); whole-delivery quarantine under the Sales-only contract — zero metrics accepted."
+    },
+    {
+      "family": "sales_comm_log",
+      "reason": "Filters positively select Service/Parts Lead-Intent (Parts, Service); whole-delivery quarantine under the Sales-only contract — zero metrics accepted."
+    }
+  ],
+  "grossSourcePrecedence": "gross.total_sum sourced from CRM Sales Gross (per-deal, AUTHORITATIVE); Dashboard TOTAL is a cross-check only and is never summed; gross.reconciliation_mismatches only from CRM.",
+  "metrics": {
+    "sold_in_period": 6,
+    "total_gross": 1600.99,
+    "gross_reconciliation_mismatches": 0,
+    "appt_total": 7,
+    "appt_show": 3,
+    "appt_no_show": 4,
+    "appt_confirmed": 3,
+    "dashboard_appts_set": 6
+  },
+  "notes": [
+    "Appointment rates use the appointments family denominator only (never Dashboard apptsSet).",
+    "CAGE / Lead Source ROI / Sales Communication remain quarantined; comm-derived metrics are not surfaced."
+  ]
+}
