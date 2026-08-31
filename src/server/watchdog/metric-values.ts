@@ -32,8 +32,9 @@ const DEFAULT_BH: BusinessHours = { tz: 'America/New_York', openH: 8, closeH: 21
  *     definitions DIVERGE for the same period (e.g. Honda 89 leads/8 sold vs ROI
  *     110/5), so deriving these from dealership_performance would be a semantic
  *     defect. Withheld until a governed Lead Source ROI native reader exists.
- *   - gross.reconciliation_mismatches — withheld until per-deal CRM Sales Gross rows.
  *   - cage.* / comm.* — no governed native source here.
+ * Emitted from ACCEPTED sources (part of NATIVE7): gross.reconciliation_mismatches (per-deal
+ *   CRM Sales Gross rows) and dashboard.response_time_actual_avg_min (Dashboard Avg Actual (Min)).
  *   - Response-Times — stays a separate labeled source, never a catalog slug.
  *
  * Never throws (reader is availability-safe).

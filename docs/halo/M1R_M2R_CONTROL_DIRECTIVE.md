@@ -67,3 +67,39 @@ Explicitly acknowledged governance clarification from Duane on the standing appr
 ## Immediate stop conditions
 
 Stop and report before continuing if any of the following occurs: production target detected; Service/Parts selected or present; wrong dealer; stale/ambiguous period; unknown provenance; schema drift; unexpected dirty-file delta; concurrent writer; failing/regressed test; credential request; external send; schedule change lacking approval; proposed merge/deploy; or more than one gate being worked at once.
+
+## Semantic Watchdog goal extension (Duane, 2026-08-31; additive)
+
+Duane expanded the active M1R/M2R goal to the **complete authoritative Semantic Watchdog catalog**:
+`docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json` — **295 unique conditions SW-001..SW-295**
+(the earlier "246" was shorthand, not a narrowing; the catalog SHA-256 is `29c7ac06…`). This extension is
+**additive** and does not weaken any safety/external-mutation boundary above.
+
+- **Full 295 accounting.** Every one of the 295 conditions is accounted **per dealer** (Serra Honda, Serra
+  Nissan, Tony Serra Ford = 885 rows). **All 885** preserve the **verbatim** catalog source prose (condition,
+  rule, source fields, source, cadence, grain, acquisition_class), a disposition, and a **primary
+  (first-match) blocker** with a reason. **Exact structured** threshold, unit, period, freshness, and
+  numerator/denominator operands exist **ONLY for the six runnable rows** (SW-032/SW-041 × 3 dealers); the
+  other **879 rows are intentionally `null`** on those structured fields (not proved). Nothing is silently
+  dropped; **missing is never zero**.
+- **Two depths.** "**Mile-wide, inch-deep**": all 295 accounted at shallow depth (state + reason) so coverage
+  is complete. "**Mile-deep, inch-wide**": the few accepted-runnable conditions are computed to full
+  lineage/numerator/denominator depth.
+- **Cross-metric automotive-consulting synthesis.** Metrics are grouped into consultant **clusters** with
+  **cross-cluster diagnostic rules** gated by compatibility controls (same dealer, accepted source,
+  compatible population/period/grain/unit/denominator; insufficient history blocks trends; unstable comm
+  IDs block ordered/causal claims; source disagreement blocks composites). The AI behaves like an elite
+  automotive **Sales consultant**, not a dashboard narrator.
+- **Priority lenses.** Findings prioritize **expense reduction, sales/gross lift, training, handoff/process,
+  and prospect/customer friction**.
+- **Real data only for dealer evidence.** Dealer evidence uses the exact 18 real workbooks + governed Huminic
+  data; synthetic is allowed ONLY for negative/control tests, never as dealer evidence.
+- **Two artifacts.** A **customer-facing sales document** (no provenance/lanes/checksums/internal language)
+  and a **separate internal evidence** artifact.
+- **Governance.** Sales-only and dev/isolated only; **ROI/CAGE/Sales-Communication remain quarantined /
+  provisional and can NEVER power an accepted Sales alert, score, or customer narrative**; Service-domain
+  (18 IDs) and unresolved (SW-082/SW-218) stay out of Sales. Each phase (R1 inventory → R2 resolvers →
+  R3 clusters → R4 cards → R5 verify) is a bounded control gate with dual proof deltas and **shadow
+  acceptance**; no production/outbound/autonomous/ad-mutation/Message-Content-read without separate Duane
+  authorization. As of R1 the only accepted-runnable conditions from current data are **SW-032 and SW-041**
+  (Appointments strict) — every other condition is explicitly withheld/blocked/provisional with a reason.

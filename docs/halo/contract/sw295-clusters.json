@@ -1,0 +1,150 @@
+{
+  "artifact": "sw295-clusters",
+  "version": "1.0.0",
+  "generated_by": "scripts/m2r-sw295/build-sw295-inventory.mjs",
+  "clusters": [
+    {
+      "id": "lead_source_health",
+      "name": "Lead & Source Health",
+      "sales": true
+    },
+    {
+      "id": "responsiveness_comms_behavior",
+      "name": "Responsiveness & Communication Behavior",
+      "sales": true
+    },
+    {
+      "id": "appointments_showroom",
+      "name": "Appointments & Showroom",
+      "sales": true
+    },
+    {
+      "id": "funnel_sold",
+      "name": "Funnel & Sold",
+      "sales": true
+    },
+    {
+      "id": "gross_economics",
+      "name": "Gross & Economics",
+      "sales": true
+    },
+    {
+      "id": "rep_manager_execution",
+      "name": "Rep & Manager Execution",
+      "sales": true
+    },
+    {
+      "id": "crm_hygiene_compliance",
+      "name": "CRM Hygiene & Compliance",
+      "sales": true
+    },
+    {
+      "id": "opportunity_reactivation",
+      "name": "Opportunity & Reactivation Semantics",
+      "sales": true
+    },
+    {
+      "id": "cross_cluster_diagnoses",
+      "name": "Cross-Cluster Diagnoses",
+      "sales": true
+    },
+    {
+      "id": "external_presence_dependencies",
+      "name": "External / Presence Dependencies",
+      "sales": true
+    },
+    {
+      "id": "service_domain_out_of_sales",
+      "name": "Service Domain (OUT OF SALES)",
+      "sales": false
+    }
+  ],
+  "design": {
+    "mile_wide_inch_deep": "All 295 conditions accounted per dealer at shallow depth (state + reason), so nothing is silently dropped.",
+    "mile_deep_inch_wide": "The few accepted-runnable conditions (SW-032/SW-041) are computed to full lineage/numerator/denominator depth.",
+    "consultant_synthesis": "Cross-cluster rules join clusters into automotive-sales-consultant diagnoses, gated by compatibility controls; not a per-metric dashboard narration."
+  },
+  "compatibility_controls": {
+    "same_dealer": "Both operands must be the SAME dealer/rooftop.",
+    "accepted_source_only": "A composite may combine ONLY accepted (non-quarantined) sources; a quarantined ROI/CAGE/Comm operand makes the composite provisional/blocked, never accepted.",
+    "compatible_population_period_grain_unit_denominator": "Operands must share compatible population, period, grain, unit, and denominator; mismatched denominators/periods block the composite.",
+    "insufficient_history_blocks_trends": "Any trend/WoW/trailing operand is blocked until ≥2–4 governed periods accrue.",
+    "unstable_ids_block_ordered_causal_comm": "Sales-Communication lacks stable thread IDs; ordered/causal comm claims are blocked.",
+    "source_disagreement_blocks_composites": "If two sources disagree for the same measure (e.g. Ford CRM gross 7 rows vs Dashboard 6 sold), the composite is blocked and both values are shown unreconciled.",
+    "never_zero": "Missing / stale / quarantined / zero-denominator is NEVER treated as zero."
+  },
+  "cross_cluster_rules": [
+    {
+      "id": "XR-01",
+      "name": "Intake-to-response leak",
+      "clusters": [
+        "lead_source_health",
+        "responsiveness_comms_behavior",
+        "funnel_sold"
+      ],
+      "hypothesis": "High lead volume + slow/absent first response + low appointment-set ⇒ intake→response process leak.",
+      "status": "blocked_pending_accepted_sources",
+      "blocking_controls": [
+        "accepted_source_only",
+        "insufficient_history_blocks_trends"
+      ]
+    },
+    {
+      "id": "XR-02",
+      "name": "Throughput vs pricing",
+      "clusters": [
+        "gross_economics",
+        "funnel_sold"
+      ],
+      "hypothesis": "High gross/deal + low sold-volume ⇒ desking/throughput tradeoff.",
+      "status": "partially_observable",
+      "blocking_controls": [
+        "accepted_source_only"
+      ]
+    },
+    {
+      "id": "XR-03",
+      "name": "Template relevance",
+      "clusters": [
+        "responsiveness_comms_behavior",
+        "appointments_showroom"
+      ],
+      "hypothesis": "High outbound + low inbound + low appointment ⇒ messaging relevance problem.",
+      "status": "blocked_quarantined_and_nlp",
+      "blocking_controls": [
+        "accepted_source_only",
+        "unstable_ids_block_ordered_causal_comm"
+      ]
+    },
+    {
+      "id": "XR-04",
+      "name": "Appointment execution",
+      "clusters": [
+        "appointments_showroom",
+        "funnel_sold"
+      ],
+      "hypothesis": "Low show rate + high no-show ⇒ appointment execution gap (SW-032/SW-041 accepted).",
+      "status": "runnable",
+      "blocking_controls": [],
+      "accepted_metrics": [
+        "SW-032",
+        "SW-041"
+      ]
+    },
+    {
+      "id": "XR-05",
+      "name": "Source-hygiene expense waste",
+      "clusters": [
+        "lead_source_health",
+        "gross_economics"
+      ],
+      "hypothesis": "High duplicate-lead rate + unknown spend ⇒ source-hygiene + expense-reduction flag.",
+      "status": "blocked_external_and_quarantined",
+      "blocking_controls": [
+        "accepted_source_only",
+        "source_disagreement_blocks_composites"
+      ]
+    }
+  ],
+  "service_note": "Service is NOT a Sales cluster; service_domain_out_of_sales routes ONLY to the separate Serra Service workspace."
+}

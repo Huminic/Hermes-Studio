@@ -8,22 +8,41 @@ import {
 } from '@/server/watchdog/halo-support-manifest'
 import { evaluateThreeLayers } from '@/server/reports/halo-three-layer'
 
-const SUPPORTED_NATIVE = ['gross.total_sum', 'appt.show_rate', 'appt.no_show_rate', 'appt.confirmed_rate', 'appt.cancel_rate']
+// M2R R1 correction 2: the ratified runtime NATIVE7 (halo-m1-proof) resolves these 7 native slugs; the
+// manifest supported set must match runtime truth (gross.reconciliation_mismatches + response-time are
+// resolved from accepted strict families, NOT withheld).
+const SUPPORTED_NATIVE = ['gross.total_sum', 'gross.reconciliation_mismatches', 'dashboard.response_time_actual_avg_min', 'appt.show_rate', 'appt.no_show_rate', 'appt.confirmed_rate', 'appt.cancel_rate']
 const HUB = ['engagement.reply_rate', 'engagement.conversations', 'engagement.resurrections']
 
 describe('Halo support manifest', () => {
-  it('is versioned and covers all 19 catalog slugs exactly once', () => {
+  it('is versioned and covers all 20 catalog slugs exactly once', () => {
+    // M2R R1 truth reconciliation: catalog is 20 slugs; the manifest now covers all 20 (the previously
+    // omitted dashboard.response_time_actual_avg_min was added; it is SUPPORTED — part of NATIVE7).
     expect(HALO_SUPPORT_MANIFEST_VERSION).toMatch(/^\d+\.\d+\.\d+$/)
-    expect(METRIC_CATALOG.length).toBe(19)
+    expect(METRIC_CATALOG.length).toBe(20)
     for (const m of METRIC_CATALOG) expect(HALO_SUPPORT_MANIFEST[m.id]).toBeTruthy()
-    expect(listSlugSupport().length).toBe(19)
+    expect(listSlugSupport().length).toBe(20)
   })
 
-  it('has exactly 5 supported (native), 3 supported-but-no-current-data (hub), 11 withheld', () => {
+  it('has exactly 7 supported (native), 3 supported-but-no-current-data (hub), 10 withheld', () => {
     const by = (s: string) => listSlugSupport().filter((e) => e.state === s).map((e) => e.slug)
     expect(new Set(by('supported'))).toEqual(new Set(SUPPORTED_NATIVE))
     expect(new Set(by('supported-but-no-current-data'))).toEqual(new Set(HUB))
-    expect(by('withheld').length).toBe(11)
+    expect(by('withheld').length).toBe(10) // R1 correction 2: recon-mismatches + response-time are supported, not withheld
+  })
+
+  it('R1 correction 2: manifest matches runtime — recon-mismatches + response-time are SUPPORTED, not withheld', () => {
+    // These two resolve to real current values (halo-m1-proof NATIVE7); currentLayer surfaces resolved
+    // values before any withheld state, so a "withheld" claim would be untrue.
+    expect(HALO_SUPPORT_MANIFEST['gross.reconciliation_mismatches'].state).toBe('supported')
+    expect(HALO_SUPPORT_MANIFEST['dashboard.response_time_actual_avg_min'].state).toBe('supported')
+    // three-layer returns a VALUE (not withheld) when the resolver emits — characterization of the gate order.
+    const values = new Map<string, number | null>([['gross.reconciliation_mismatches', 0], ['dashboard.response_time_actual_avg_min', 210]])
+    const rows = evaluateThreeLayers({ values })
+    expect(rows.find((r) => r.slug === 'gross.reconciliation_mismatches')!.current.state).toBe('value')
+    expect(rows.find((r) => r.slug === 'dashboard.response_time_actual_avg_min')!.current.state).toBe('value')
+    // NEGATIVE control: a genuinely-withheld slug with NO resolved value stays withheld.
+    expect(rows.find((r) => r.slug === 'roi.total_leads')!.current.state).toBe('withheld')
   })
 
   it('appointment entries each name a SINGLE numerator flag', () => {
@@ -60,7 +79,7 @@ describe('Halo three-layer evaluator', () => {
 
   it('separates current / industry / baseline; industry is NEVER a scoring benchmark', () => {
     const rows = evaluateThreeLayers({ values })
-    expect(rows.length).toBe(19)
+    expect(rows.length).toBe(20)
     for (const r of rows) {
       // No scoring verdicts anywhere in M1.
       expect(['no_benchmark', 'directional_non_scoring']).toContain(r.industry.state)
