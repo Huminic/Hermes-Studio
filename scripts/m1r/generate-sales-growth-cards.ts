@@ -8,7 +8,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { resolveSalesGrowthCard, renderExternalCardHtml, renderInternalEvidenceMarkdown, externalForbiddenHits } from '../../src/server/reports/sales-growth-card'
 
-const NOW = new Date(process.env.NOW_ISO || '2026-08-31T12:00:00Z')
+const NOW = process.env.NOW_ISO ? new Date(process.env.NOW_ISO) : new Date()
 const OUT = path.resolve('docs/halo/evidence/m1r/gate3-cards')
 const profiles = ['serra-honda', 'serra-nissan', 'tony-serra-ford']
 let published = 0

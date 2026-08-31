@@ -1,7 +1,7 @@
 # INTERNAL EVIDENCE — Serra Honda (serra-honda) — NOT customer-facing
 
 - data_through: 2026-08-30
-- freshness_state: **current** · age_days: 1
+- freshness_state: **current** · age_days: 0
 - gross source precedence: gross.total_sum sourced from CRM Sales Gross (per-deal, AUTHORITATIVE); Dashboard TOTAL is a cross-check only and is never summed; gross.reconciliation_mismatches only from CRM.
 
 ## Accepted families (provenance)

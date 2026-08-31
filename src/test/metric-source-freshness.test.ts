@@ -139,3 +139,25 @@ describe.runIf(fs.existsSync('/srv/ingest-dev/analytics/serra-honda/brain/brain.
     })
   },
 )
+
+describe.runIf(fs.existsSync('/srv/ingest-dev/analytics/serra-honda/brain/brain.db'))(
+  'resolveMetricSourceFreshness — timezone boundary on the REAL store (Serra = America/Chicago)',
+  () => {
+    const saved = process.env.BRAIN_PROFILES_ROOT
+    beforeAll(() => { process.env.BRAIN_PROFILES_ROOT = '/srv/ingest-dev/analytics' })
+    afterAll(() => { if (saved === undefined) delete process.env.BRAIN_PROFILES_ROOT; else process.env.BRAIN_PROFILES_ROOT = saved })
+    it('2026-08-31T01:10Z (still Aug 30 CDT) → Aug-30 data renders "updated today" for all three', () => {
+      const boundary = new Date('2026-08-31T01:10:00Z')
+      for (const p of ['serra-honda', 'serra-nissan', 'tony-serra-ford']) {
+        const f = resolveMetricSourceFreshness(p, 'appt.show_rate', boundary)
+        expect(f.dataThroughLabel).toBe('Aug 30, 2026')
+        expect(f.ageLabel).toBe('Data through Aug 30, 2026 · updated today')
+        expect(f.state).toBe('current')
+      }
+    })
+    it('2026-08-31T18:00Z (Aug 31 CDT) → Aug-30 data renders "updated yesterday"', () => {
+      const f = resolveMetricSourceFreshness('serra-honda', 'gross.reconciliation_mismatches', new Date('2026-08-31T18:00:00Z'))
+      expect(f.ageLabel).toBe('Data through Aug 30, 2026 · updated yesterday')
+    })
+  },
+)

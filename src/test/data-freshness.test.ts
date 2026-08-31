@@ -80,3 +80,28 @@ describe.runIf(HAVE)('data-freshness from accepted provenance (isolated store)',
     }
   })
 })
+
+import { resolveProfileTimeZone } from '../server/reports/data-freshness'
+describe('timezone-aware visible age (dealership LOCAL calendar day, not UTC)', () => {
+  it('resolveProfileTimeZone: 3 Serra profiles = America/Chicago; unrelated = UTC (conservative)', () => {
+    expect(resolveProfileTimeZone('serra-honda')).toBe('America/Chicago')
+    expect(resolveProfileTimeZone('serra-nissan')).toBe('America/Chicago')
+    expect(resolveProfileTimeZone('tony-serra-ford')).toBe('America/Chicago')
+    expect(resolveProfileTimeZone('some-other-store')).toBe('UTC') // never silently shifted
+  })
+  it('UTC-midnight boundary: 2026-08-31T01:10Z is still Aug 30 in America/Chicago → updated today', () => {
+    const f = computeDataFreshness(['2026-08-30'], new Date('2026-08-31T01:10:00Z'), 8, 'America/Chicago')
+    expect(f.ageDays).toBe(0)
+    expect(f.state).toBe('current')
+    expect(f.ageLabel).toBe('Data through Aug 30, 2026 · updated today')
+  })
+  it('a TRUE local Aug 31 (2026-08-31T18:00Z = 13:00 CDT) → updated yesterday', () => {
+    const f = computeDataFreshness(['2026-08-30'], new Date('2026-08-31T18:00:00Z'), 8, 'America/Chicago')
+    expect(f.ageDays).toBe(1)
+    expect(f.ageLabel).toBe('Data through Aug 30, 2026 · updated yesterday')
+  })
+  it('default UTC path unchanged: same 01:10Z instant renders yesterday (unrelated profiles preserved)', () => {
+    const f = computeDataFreshness(['2026-08-30'], new Date('2026-08-31T01:10:00Z')) // default UTC
+    expect(f.ageLabel).toBe('Data through Aug 30, 2026 · updated yesterday')
+  })
+})

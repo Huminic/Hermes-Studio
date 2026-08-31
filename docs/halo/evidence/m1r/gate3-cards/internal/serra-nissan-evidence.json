@@ -3,7 +3,7 @@
   "dealer": "Serra Nissan",
   "dataThrough": "2026-08-30",
   "freshnessState": "current",
-  "ageDays": 1,
+  "ageDays": 0,
   "acceptedFamilies": [
     {
       "family": "dealership_performance",

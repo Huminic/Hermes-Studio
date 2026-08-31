@@ -36,22 +36,49 @@ export function plainAge(ageDays: number): string {
   return `updated ${Math.round(ageDays / 7)} weeks ago`
 }
 
-/** Whole calendar days between the `dataThrough` date and `now`'s date. */
-function ageInDays(dataThrough: string, now: Date): number {
+/** `now`'s calendar date (YYYY-MM-DD) in the given IANA timezone (en-CA → YYYY-MM-DD). */
+function localDateISO(now: Date, timeZone: string): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(now)
+}
+
+/** Whole calendar days between the `dataThrough` date and `now`'s LOCAL date in `timeZone`. */
+function ageInDays(dataThrough: string, now: Date, timeZone: string): number {
   const end = Date.parse(`${dataThrough}T00:00:00Z`)
-  const today = Date.parse(`${now.toISOString().slice(0, 10)}T00:00:00Z`)
+  const today = Date.parse(`${localDateISO(now, timeZone)}T00:00:00Z`)
   return Math.floor((today - end) / 86_400_000)
+}
+
+const GOVERNED_PROFILE_TZ: Record<string, string> = {
+  'serra-honda': 'America/Chicago',
+  'serra-nissan': 'America/Chicago',
+  'tony-serra-ford': 'America/Chicago',
+}
+
+/**
+ * Dealership local timezone for visible freshness. The three governed Serra profiles are
+ * America/Chicago. Conservative fallback: any unrelated profile keeps prior UTC behavior —
+ * this never silently shifts another profile's dates.
+ */
+export function resolveProfileTimeZone(profile: string): string {
+  return GOVERNED_PROFILE_TZ[profile] ?? 'UTC'
 }
 
 /**
  * @param periodEnds accepted-delivery period_end values (ISO). Absent/invalid ignored.
  * @param now injected clock.
  * @param weeklyMaxAgeDays fail-closed staleness threshold (contract: period-end age <= 8).
+ * @param timeZone IANA timezone for the visible calendar day (default UTC for pure callers).
  */
 export function computeDataFreshness(
   periodEnds: Array<string | null | undefined>,
   now: Date,
   weeklyMaxAgeDays = 8,
+  timeZone = 'UTC',
 ): DataFreshness {
   const valid = periodEnds.filter((d): d is string => !!d && ISO_DATE.test(d))
   if (valid.length === 0) {
@@ -59,7 +86,7 @@ export function computeDataFreshness(
     return { dataThrough: null, dataThroughLabel: null, ageDays: null, ageLabel: 'Data not yet available', state: 'missing' }
   }
   const dataThrough = valid.slice().sort().at(-1) as string
-  const ageDays = ageInDays(dataThrough, now)
+  const ageDays = ageInDays(dataThrough, now, timeZone)
   const state: FreshnessState =
     ageDays <= 7 ? 'current' : ageDays <= weeklyMaxAgeDays ? 'aging' : 'stale'
   const ageLabel = `Data through ${formatDataThrough(dataThrough)} · ${plainAge(Math.max(0, ageDays))}`
@@ -118,7 +145,7 @@ export function resolveMetricSourceFreshness(
   } catch {
     end = null
   }
-  return computeDataFreshness(end ? [end] : [], now)
+  return computeDataFreshness(end ? [end] : [], now, 8, resolveProfileTimeZone(profile))
 }
 
 export function resolveReportFreshness(profile: string, now: Date): DataFreshness {
@@ -131,5 +158,5 @@ export function resolveReportFreshness(profile: string, now: Date): DataFreshnes
       /* unreadable family contributes nothing (fail-closed) */
     }
   }
-  return computeDataFreshness(ends, now)
+  return computeDataFreshness(ends, now, 8, resolveProfileTimeZone(profile))
 }
