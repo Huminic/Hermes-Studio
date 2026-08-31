@@ -161,12 +161,20 @@ const cellNum = (r: string[], col: number | undefined): number | null => {
   const v = (r[col] ?? '').replace(/[$,%\s]/g, '')
   return v !== '' && Number.isFinite(Number(v)) ? Number(v) : null
 }
-/** Sum a column across rows; null-safe. Returns null only if the column is absent. */
+/**
+ * Sum a column across rows. Missing is NOT zero: returns null when the column is absent OR
+ * when NO cell holds a genuine numeric observation (all blank/non-numeric). Sums to 0 only
+ * when at least one real numeric value (including a genuine 0) is present.
+ */
 function sumCol(rows: string[][], col: number | undefined): number | null {
   if (col == null) return null
   let sum = 0
-  for (const r of rows) { const n = cellNum(r, col); if (n != null) sum += n }
-  return Math.round(sum * 100) / 100
+  let observations = 0
+  for (const r of rows) {
+    const n = cellNum(r, col)
+    if (n != null) { sum += n; observations++ }
+  }
+  return observations === 0 ? null : Math.round(sum * 100) / 100
 }
 
 export function sha256(buf: Buffer): string {
@@ -230,9 +238,29 @@ export function computeProvisional(
     ...baseProv, dealer, period: filters.period, limitationCodes: ['NOT_STRICT_ACCEPTANCE', ...codes],
   })
 
-  if (family === 'sales_comm_log') return commResult(dataRows, hm.map, provFor)
-  if (family === 'lead_source_roi') return roiResult(dataRows, hm.map, provFor, fail, dealer, filters.period)
-  return cageResult(dataRows, hm.map, provFor, fail, dealer, filters.period)
+  const expectedDealer = expectedDealerFor(opts.profile)
+  if (family === 'sales_comm_log') return commResult(dataRows, hm.map, provFor, fail, dealer, filters.period, expectedDealer)
+  if (family === 'lead_source_roi') return roiResult(dataRows, hm.map, provFor, fail, dealer, filters.period, expectedDealer)
+  return cageResult(dataRows, hm.map, provFor, fail, dealer, filters.period, expectedDealer)
+}
+
+/**
+ * Row-level tenant gate for native families that carry a `Dealer` column: EVERY non-total
+ * data/leaf row's dealer must match the target rooftop. Wrong / blank / ambiguous (>1 distinct)
+ * → fail closed WRONG_DEALER. Families that natively lack a Dealer column pass `dealerCol=undefined`
+ * and rely on the Filters gate (we do NOT invent a column that the source lacks).
+ */
+function rowDealerViolation(rows: string[][], dealerCol: number | undefined, expectedDealer: string): string | null {
+  if (dealerCol == null) return null
+  const seen = new Set<string>()
+  for (const r of rows) {
+    const d = (r[dealerCol] ?? '').trim()
+    if (!d) return 'a leaf row has a blank Dealer'
+    if (!dealerMatches(expectedDealer, d)) return `leaf row Dealer "${d}" ≠ ${expectedDealer}`
+    seen.add(normDealer(d))
+  }
+  if (seen.size > 1) return `leaf rows span ${seen.size} distinct dealers`
+  return null
 }
 
 // ── Sales Communication (row-level; service rows excluded + counted) ─────────
@@ -240,8 +268,12 @@ function commResult(
   dataRows: string[][],
   m: Map<string, number>,
   provFor: (c: LimitationCode[]) => ProvisionalProvenance,
+  fail: (c: LimitationCode, r: string, d: string | null, p: Filters['period']) => ProvisionalResult,
+  dealer: string | null,
+  period: Filters['period'],
+  expectedDealer: string,
 ): ProvisionalResult {
-  const required = ['Direction', 'Lead Type', 'Comm Type', 'Lead Source']
+  const required = ['Dealer', 'Direction', 'Lead Type', 'Comm Type', 'Lead Source']
   const missing = required.filter((c) => !m.has(c))
   if (missing.length) {
     return { available: false, provenance: provFor(['SCHEMA_MISMATCH']), reason: `missing columns: ${missing.join(', ')}`, failClosed: 'SCHEMA_MISMATCH' }
@@ -250,6 +282,10 @@ function commResult(
   if (dataRows.length === 0) {
     return { available: false, provenance: provFor(['SCHEMA_MISMATCH']), reason: 'no communication rows (missing is not zero)', failClosed: 'SCHEMA_MISMATCH' }
   }
+  // Row-level tenant gate: the Sales Communication log has a per-row Dealer column, so every
+  // row must be the target rooftop (Filters dealer alone is insufficient).
+  const dealerViolation = rowDealerViolation(dataRows, m.get('Dealer'), expectedDealer)
+  if (dealerViolation) return fail('WRONG_DEALER', dealerViolation, dealer, period)
   const ltC = m.get('Lead Type'), ctC = m.get('Comm Type'), lsC = m.get('Lead Source'), dirC = m.get('Direction')
   // Detect a service/parts row via any of Lead Type / Comm Type / Lead Source (named service source).
   const isServiceRow = (r: string[]) => [ltC, ctC, lsC].some((c) => c != null && isServiceParts(r[c]))
@@ -284,6 +320,7 @@ function roiResult(
   fail: (c: LimitationCode, r: string, d: string | null, p: Filters['period']) => ProvisionalResult,
   dealer: string | null,
   period: Filters['period'],
+  expectedDealer: string,
 ): ProvisionalResult {
   const lsC = m.get('Lead Source')
   const tlC = m.get('Total Leads')
@@ -292,6 +329,10 @@ function roiResult(
   const isTotal = (r: string[]) => /^total(s)?$/i.test((r[lsC] ?? '').trim())
   const totalRow = dataRows.find(isTotal) ?? null
   const leaves = dataRows.filter((r) => !isTotal(r))
+  // ROI natively carries NO per-row Dealer column (tenant lives in Filters, already gated).
+  // Defensive only: if a delivery ever includes one, enforce it — never invent one.
+  const roiDealerViolation = rowDealerViolation(leaves, m.get('Dealer'), expectedDealer)
+  if (roiDealerViolation) return fail('WRONG_DEALER', roiDealerViolation, dealer, period)
   // Service source rows excluded + counted before calculation.
   const service = leaves.filter((r) => isServiceParts(r[lsC]))
   const sources = leaves.filter((r) => !isServiceParts(r[lsC]))
@@ -345,6 +386,7 @@ function cageResult(
   fail: (c: LimitationCode, r: string, d: string | null, p: Filters['period']) => ProvisionalResult,
   dealer: string | null,
   period: Filters['period'],
+  expectedDealer: string,
 ): ProvisionalResult {
   const dealerC = m.get('Dealer'), ltC = m.get('Lead Type'), userC = m.get('User'), tlC = m.get('Total Leads')
   if (dealerC == null || userC == null || tlC == null) return { available: false, provenance: provFor(['SCHEMA_MISMATCH']), reason: 'missing Dealer / User / Total Leads column', failClosed: 'SCHEMA_MISMATCH' }
@@ -352,6 +394,10 @@ function cageResult(
   const grandTotal = dataRows.find((r) => (r[dealerC] ?? '').trim().toUpperCase() === 'TOTAL') ?? null
   const leaves = dataRows.filter((r) => (r[userC] ?? '').trim() !== '' && (r[dealerC] ?? '').trim().toUpperCase() !== 'TOTAL')
   if (leaves.length === 0) return fail('SCHEMA_MISMATCH', 'no per-rep leaf rows', dealer, period)
+  // Row-level tenant gate: CAGE carries a per-row Dealer column, so every non-total leaf must
+  // be the target rooftop. Filters dealer alone is insufficient (a leaf could carry a stray dealer).
+  const cageDealerViolation = rowDealerViolation(leaves, dealerC, expectedDealer)
+  if (cageDealerViolation) return fail('WRONG_DEALER', cageDealerViolation, dealer, period)
   // Any service/parts-coded Lead Type on a leaf row is excluded + counted.
   const service = ltC != null ? leaves.filter((r) => isServiceParts(r[ltC])) : []
   const sales = ltC != null ? leaves.filter((r) => !isServiceParts(r[ltC])) : leaves
@@ -393,7 +439,19 @@ function cageResult(
 }
 
 // ── File wrapper (used by the one-time render script + the runIf real-fixture check) ──
-const WEEKLY_PERIOD = { start: '2026-08-24', end: '2026-08-30' }
+/** Pinned expected windows for the current delivery cycle (fixture manifest). */
+export const WEEKLY_PERIOD = { start: '2026-08-24', end: '2026-08-30' }
+/** The Sales Communication log is a DAILY export; the current cycle's day is 2026-08-29. */
+export const DAILY_COMM_PERIOD = { start: '2026-08-29', end: '2026-08-29' }
+
+/**
+ * The exact expected period a family must equal for this cycle. Every family is pinned —
+ * weekly families to Aug 24–30, the daily comm log to its exact current day — so a
+ * wrong-but-parseable period (e.g. Aug 28) fails closed WRONG_PERIOD.
+ */
+export function expectedPeriodFor(family: ProvisionalFamily): { start: string; end: string } {
+  return family === 'sales_comm_log' ? DAILY_COMM_PERIOD : WEEKLY_PERIOD
+}
 
 /** Read a local fixture file, hash its bytes, parse, and compute. NON-PROMOTING. */
 export function readProvisionalFamilyFile(
@@ -405,7 +463,5 @@ export function readProvisionalFamilyFile(
   const checksumSha256 = sha256(buf)
   const sourceFilename = path.basename(filePath)
   const { sheets } = readXlsx(buf)
-  // Weekly families pin the Aug 24–30 window; the daily comm log records its own day.
-  const expectedPeriod = family === 'sales_comm_log' ? undefined : WEEKLY_PERIOD
-  return computeProvisional(family, sheets, { profile, sourceFilename, checksumSha256, expectedPeriod })
+  return computeProvisional(family, sheets, { profile, sourceFilename, checksumSha256, expectedPeriod: expectedPeriodFor(family) })
 }

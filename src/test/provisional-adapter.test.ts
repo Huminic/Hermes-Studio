@@ -9,8 +9,10 @@
 import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
-import { computeProvisional, type ProvisionalFamily } from '../server/reports/provisional/provisional-adapter'
+import { computeProvisional, expectedPeriodFor, type ProvisionalFamily } from '../server/reports/provisional/provisional-adapter'
 import type { XlsxSheet } from '../server/reports/provisional/xlsx-reader'
+
+const DAILY = { start: '2026-08-29', end: '2026-08-29' }
 
 // ── helpers ──────────────────────────────────────────────────────────────
 const filtersSheet = (o: { dealer?: string; begin?: string; end?: string; intents?: string } = {}): XlsxSheet => ({
@@ -98,6 +100,72 @@ describe('provisional adapter — missing is never zero', () => {
     expect(r.available).toBe(false)
     if (r.available) return
     expect(r.failClosed).toBe('SCHEMA_MISMATCH')
+  })
+})
+
+describe('provisional adapter — row-level tenant gate (shadow bug 1)', () => {
+  it('CAGE: a leaf row with a WRONG Dealer fails closed WRONG_DEALER even when the Filters dealer is correct', () => {
+    const rows = [
+      ['Serra Honda', 'Internet', 'RepA', '6', '1', '2', '1', '600'],
+      ['Serra Nissan', 'Phone', 'RepB', '4', '1', '1', '1', '400'], // stray wrong-dealer leaf
+      ['TOTAL', '', '', '10', '2', '3', '2', '1000'],
+    ]
+    const r = computeProvisional('cage_kpi', [report(CAGE_HEADER, rows), filtersSheet()], opts('cage_kpi'))
+    expect(r.available).toBe(false)
+    if (r.available) return
+    expect(r.failClosed).toBe('WRONG_DEALER')
+  })
+  it('CAGE: a BLANK leaf Dealer fails closed WRONG_DEALER', () => {
+    const rows = [['', 'Internet', 'RepA', '6', '1', '2', '1', '600'], ['TOTAL', '', '', '6', '1', '2', '1', '600']]
+    const r = computeProvisional('cage_kpi', [report(CAGE_HEADER, rows), filtersSheet()], opts('cage_kpi'))
+    expect(r.available).toBe(false)
+    if (r.available) return
+    expect(r.failClosed).toBe('WRONG_DEALER')
+  })
+  it('Sales Comm: a row with a WRONG Dealer fails closed WRONG_DEALER', () => {
+    const rows = [commRow({ dir: 'Outbound' }), ['Serra Nissan', 'RepY', 'Inbound', 'Sales', 'Internet', 'Internet', 'DO-NOT-READ-NAME', 'DO-NOT-READ-BODY']]
+    const r = computeProvisional('sales_comm_log', [report(COMM_HEADER, rows), filtersSheet()], opts('sales_comm_log'))
+    expect(r.available).toBe(false)
+    if (r.available) return
+    expect(r.failClosed).toBe('WRONG_DEALER')
+  })
+})
+
+describe('provisional adapter — pinned daily period (shadow bug 2)', () => {
+  it('expectedPeriodFor pins comm to the daily window and weekly families to Aug 24–30', () => {
+    expect(expectedPeriodFor('sales_comm_log')).toEqual({ start: '2026-08-29', end: '2026-08-29' })
+    expect(expectedPeriodFor('cage_kpi')).toEqual({ start: '2026-08-24', end: '2026-08-30' })
+    expect(expectedPeriodFor('lead_source_roi')).toEqual({ start: '2026-08-24', end: '2026-08-30' })
+  })
+  it('Sales Comm: a wrong-but-parseable day (Aug 28) fails closed WRONG_PERIOD against the pinned daily window', () => {
+    const r = computeProvisional('sales_comm_log', [report(COMM_HEADER, [commRow({ dir: 'Outbound' })]), filtersSheet({ begin: 'Aug 28 2026 12:00AM', end: 'Aug 28 2026 11:59PM' })], opts('sales_comm_log', { expectedPeriod: DAILY }))
+    expect(r.available).toBe(false)
+    if (r.available) return
+    expect(r.failClosed).toBe('WRONG_PERIOD')
+  })
+  it('Sales Comm: the exact pinned daily window (Aug 29) passes the period gate', () => {
+    const r = computeProvisional('sales_comm_log', [report(COMM_HEADER, [commRow({ dir: 'Outbound' })]), filtersSheet({ begin: 'Aug 29 2026 12:00AM', end: 'Aug 29 2026 11:59PM' })], opts('sales_comm_log', { expectedPeriod: DAILY }))
+    expect(r.available).toBe(true)
+  })
+})
+
+describe('provisional adapter — present-but-all-blank column is null, not zero (shadow bug 3)', () => {
+  it('ROI: a present Sold-from-Leads column with every leaf blank yields null (missing ≠ zero)', () => {
+    const rows = [
+      ['Internet', '10', '9', '1', '1', '', '1000', '0', '1000'], // Sold from Leads (col 5) blank
+      ['Phone', '7', '6', '1', '0', '', '500', '0', '500'],
+      ['Total', '17', '15', '2', '1', '', '1500', '0', '1500'],
+    ]
+    const r = computeProvisional('lead_source_roi', [report(ROI_HEADER, rows), filtersSheet()], opts('lead_source_roi'))
+    if (!r.available) throw new Error('expected available')
+    expect(r.metrics.find((m) => m.id === 'roi.sold_from_leads')!.value).toBeNull() // NOT 0
+    expect(r.metrics.find((m) => m.id === 'roi.total_leads')!.value).toBe(17) // real observations still sum
+  })
+  it('CAGE: genuine numeric zeros (at least one 0 present) sum to 0, not null', () => {
+    const rows = [['Serra Honda', 'Internet', 'RepA', '0', '0', '0', '0', '0'], ['TOTAL', '', '', '0', '0', '0', '0', '0']]
+    const r = computeProvisional('cage_kpi', [report(CAGE_HEADER, rows), filtersSheet()], opts('cage_kpi'))
+    if (!r.available) throw new Error('expected available')
+    expect(r.metrics.find((m) => m.id === 'cage.total_leads')!.value).toBe(0) // genuine measured zero
   })
 })
 

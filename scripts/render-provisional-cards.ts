@@ -16,7 +16,14 @@ import { renderPrototypeCardHtml, resolvePrototypeCard } from '../src/server/rep
 // Strict-accepted families are read (read-only) from the governed dev store. Never written.
 process.env.BRAIN_PROFILES_ROOT ??= '/srv/ingest-dev/analytics'
 
-const FIXTURES = path.resolve('.local-fixtures/m1r-provisional-2026-08-30')
+// Local-only fixtures (git-ignored, never committed). Accept an explicit override, else the
+// first known staging directory that exists.
+const FIXTURE_CANDIDATES = [
+  process.env.PROVISIONAL_FIXTURES_DIR,
+  '.local-fixtures/vin18-20260830',
+  '.local-fixtures/m1r-provisional-2026-08-30',
+].filter(Boolean) as string[]
+const FIXTURES = path.resolve(FIXTURE_CANDIDATES.find((d) => fs.existsSync(path.resolve(d))) ?? FIXTURE_CANDIDATES[FIXTURE_CANDIDATES.length - 1])
 const OUT = path.resolve('docs/halo/evidence/m1r/provisional-cards')
 // Deterministic clock so committed artifacts are stable (data through 2026-08-30).
 const NOW = new Date('2026-08-31T12:00:00Z')

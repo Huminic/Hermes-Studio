@@ -556,7 +556,7 @@ Read-only audit of the running production system (container image `2b805de3c`). 
   strict-quarantined (zero accepted metrics). Gate 3 still HOLD on the hidden Lead-Intent question.
 - **Scope (additive only):** `src/server/reports/provisional/` (vendored zero-dep xlsx-reader,
   `provisional-adapter.ts`, `provisional-prototype-card.ts`), `scripts/render-provisional-cards.ts`,
-  `scripts/render-provisional-pdfs.sh`, two test files (20 tests: adapter 14, card 6), three HTML + three PDF cards under
+  `scripts/render-provisional-pdfs.sh`, two test files (28 tests: adapter 22, card 6), three HTML + three PDF cards under
   `docs/halo/evidence/m1r/provisional-cards/`, `.gitignore` (+`.local-fixtures/`).
 - **Debt recorded:**
   1. **Vendored XLSX reader duplication** — `provisional/xlsx-reader.ts` is a copy of the strict engine's
@@ -571,3 +571,13 @@ Read-only audit of the running production system (container image `2b805de3c`). 
   git-ignored and removed after render (raw XLSX never committed).
 - **Owner:** Codex; promotion/publication/activation = Duane only. **Next action:** none required; prototype
   is inert. **Status:** OPEN — prototype delivered; strict state unchanged; no promotion.
+- **Update 2026-08-31 (three shadow fail-closed fixes, provisional lane only):** (1) **row-level tenant
+  gate** — CAGE leaf rows and Sales-Communication rows now require every non-total row's `Dealer` to match
+  the target rooftop (wrong/blank/ambiguous → fail closed `WRONG_DEALER`); ROI keeps its Filters-only gate
+  (no native row Dealer column; not invented). (2) **Pinned daily period** — the daily Sales-Communication
+  log is pinned to 2026-08-29..2026-08-29 via `expectedPeriodFor`; a wrong-but-parseable day fails closed
+  `WRONG_PERIOD`. (3) **Column-level missing≠zero** — `sumCol` returns null when a present column has no
+  genuine numeric observation (all blank), summing to 0 only when a real value is present. Regression tests
+  added (focused suite 20→**28**). HTML artifacts byte-unchanged (valid data passes all new gates); PDF
+  hashes changed (timestamp) and are updated in the checkpoint §5. Strict classifier/contract/ledgers/
+  readiness/DB/schedules/Gmail/alerts/automations unchanged.

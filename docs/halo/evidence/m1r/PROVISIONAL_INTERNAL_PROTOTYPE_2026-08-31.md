@@ -20,7 +20,7 @@ internal prototype — never touching the governed store, ledgers, contract, or 
 | `src/server/reports/provisional/provisional-prototype-card.ts` | Pure card builder + watermarked, print-friendly HTML renderer |
 | `scripts/render-provisional-cards.ts` | One-time render (strict store read-only + local fixtures) → HTML |
 | `scripts/render-provisional-pdfs.sh` | Headless-Chromium print-to-PDF from the committed HTML |
-| `src/test/provisional-adapter.test.ts` | 14 unit tests (synthetic sheets; no fixtures, no PII) |
+| `src/test/provisional-adapter.test.ts` | 22 unit tests (synthetic sheets; no fixtures, no PII) |
 | `src/test/provisional-prototype-card.test.ts` | 6 unit tests (watermark, footnotes, inert recs, provenance, PII-absence) |
 | `docs/halo/evidence/m1r/provisional-cards/*.html`, `*.pdf` | Three prototype cards (HTML + print-quality PDF) |
 
@@ -41,8 +41,19 @@ internal prototype — never touching the governed store, ledgers, contract, or 
   the footnote: **VinSolutions hidden Lead Intent metadata includes Parts/Service and cannot be separated
   after aggregation, so values are directional and not strict Sales-only proof.** ROI attributed-ROI is
   **withheld** (cost/profit present but zero) — missing is not zero.
-- **Fail closed** on wrong dealer / wrong period (weekly families pinned to 2026-08-24..30) / schema
-  mismatch / zero data rows → `available:false` with a limitation code (never zeroed metrics).
+- **Fail closed** on wrong dealer / wrong period / schema mismatch / zero data rows → `available:false`
+  with a limitation code (never zeroed metrics). Hardened (shadow findings, 2026-08-31):
+  - **Row-level tenant gate:** for families that carry a per-row `Dealer` column (CAGE leaf rows; Sales
+    Communication rows), **every** non-total row's dealer must match the target rooftop — a wrong/blank/
+    ambiguous row dealer fails closed `WRONG_DEALER` even when the Filters dealer is correct. ROI natively
+    has no row `Dealer` column, so it relies on the Filters gate (a column is never invented; a defensive
+    check applies only if one is ever present).
+  - **Pinned period per family:** weekly families pinned to 2026-08-24..30 and the daily Sales
+    Communication log pinned to **2026-08-29..2026-08-29** (`expectedPeriodFor`); a wrong-but-parseable
+    day (e.g. Aug 28) fails closed `WRONG_PERIOD`.
+  - **Missing is not zero at the column level:** a summed metric column that is present but has **no
+    genuine numeric observation** (all blank/non-numeric) returns **null**, not 0; a sum reaches 0 only
+    when at least one real numeric value (including a genuine 0) is present.
 - **Reconciliation:** a SOURCE arithmetic self-check over the **full leaf population** (service rows
   included) vs each report's own grand-TOTAL row — independent of the Sales-only exclusion applied to the
   published metrics, so excluding service rows never spuriously fails reconciliation. All nine reconcile.
@@ -73,20 +84,24 @@ provenance table by their accepted checksums (Honda `9613643d…`/`e64a5208…`/
 | serra-honda-internal-prototype.html | `c461a7400bd1213f64a0f389fc05d3852e1cafeed31edf32597dd72712067cd7` |
 | serra-nissan-internal-prototype.html | `79ab976ab09c6d790772ba1f6edda856967397d8f8f6f58a7b62e7f93775d58b` |
 | tony-serra-ford-internal-prototype.html | `c7d6e85ba757ca654489a48e1e7faaa1dd3e3ce0c974a5e01898321e5aea4b4d` |
-| serra-honda-internal-prototype.pdf | `585a338c3781599334ecdad6d9c869eee24e6b4a96248a7a76873af2edd159be` |
-| serra-nissan-internal-prototype.pdf | `dd981ddfd41ddde311e97c9b231cf55de771e8f99deccc6cc194aed9ac69b609` |
-| tony-serra-ford-internal-prototype.pdf | `9d59825aa87aeda8edffcad8b8edbea3ecd550231d3d6a9d16c03a24e9e29a03` |
+| serra-honda-internal-prototype.pdf | `418ca7784011815fb4c34c1972a44a78608ba9b18e2229c2923dbd524e11e949` |
+| serra-nissan-internal-prototype.pdf | `3be598f65356e7bfa1c91005b9441db03540eb60bf77af2a0b9572a25416b80c` |
+| tony-serra-ford-internal-prototype.pdf | `f3a4c5ae61f5c9d7791f7420fc0a4971c9d18815f15a05a8a9722a590eca7940` |
 
 HTML is deterministic; PDFs embed a Chromium creation timestamp/document-id and are therefore not
 byte-reproducible (re-rendering yields a new hash). All 9 PDF pages were rasterized and visually inspected:
-no clipping, overlaps, bad page breaks, black boxes, unreadable footnotes, or PII.
+no clipping, overlaps, bad page breaks, black boxes, unreadable footnotes, or PII. **The three HTML hashes
+are byte-unchanged from the prior render after the 2026-08-31 fail-closed hardening — confirming those
+changes add only rejection paths and change no valid-data output; only the PDF hashes changed (timestamp).**
 
 ## 6. Verification
 - **Control gate (exact 13 files): 82/82 passed.** `halo-m1-proof, ingest-native-metrics,
   metric-values-native, metric-values-missing-not-zero, metric-values, data-freshness, sales-growth-card,
   m1r-notification-examples, m1r-notification-paused-path, alert-display-model, AlertsPanel.render,
   metric-source-freshness, watchdog-metric-catalog`.
-- **New focused tests: 20/20 passed** (`provisional-adapter` 14, `provisional-prototype-card` 6).
+- **New focused tests: 28/28 passed** (`provisional-adapter` 22, `provisional-prototype-card` 6) — includes
+  regression tests for all three 2026-08-31 shadow findings (row-level dealer, pinned daily period,
+  present-but-blank-column ≠ zero).
 - **Touched-file typecheck:** clean (0 errors in the new files; repo baseline pre-existing errors unrelated).
 
 ## 7. Caveats (carried, not hidden)
