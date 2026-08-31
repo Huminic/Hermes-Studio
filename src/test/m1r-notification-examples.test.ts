@@ -55,10 +55,13 @@ describe.runIf(HAVE)('M1R inactive notification examples (real accepted store, 3
       expect(d4.metric_id).toBe('gross.reconciliation_mismatches')
       expect(d4.bound).toBe(true)
       expect(d4.currentValue).toBe(0)
-      // 2: Manager, response time — bound only if the accepted RT field exists
+      // 2: Manager, response time — bound to the FRESH Dashboard Response Time section
+      const RT_ACTUAL: Record<string, number> = { 'serra-honda': 210, 'serra-nissan': 238, 'tony-serra-ford': 317 }
       expect(d2.recipientRole).toBe('Manager')
-      if (d2.bound) expect(typeof d2.currentValue).toBe('number')
-      else { expect(d2.currentValue).toBeNull(); expect(d2.metric_id).toBeNull() }
+      expect(d2.metric_id).toBe('dashboard.response_time_actual_avg_min')
+      expect(d2.bound).toBe(true)
+      expect(d2.currentValue).toBe(RT_ACTUAL[p])
+      expect(d2.dataThroughLabel).toBe('Aug 30, 2026') // fresh, not the Aug 17-23 readback
       void d3
     }
   })

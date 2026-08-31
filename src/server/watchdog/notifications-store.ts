@@ -197,6 +197,58 @@ export function createMetricAlert(
   return { ok: true, id }
 }
 
+/**
+ * Create a metric alert as an INACTIVE (paused) record. Additive + safe: existing
+ * createMetricAlert is unchanged (still inserts 'active'). A paused rule is excluded from
+ * listMetricAlerts, so the Watchdog engine never evaluates it and dispatch never sends.
+ * Because it can never send, a recipient is OPTIONAL here (empty email allowed). Only a
+ * BOUND rule (metric_id + valid threshold/baseline) is registrable.
+ */
+export function createPausedMetricAlert(
+  input: MetricAlertInput,
+  now: number,
+  opts: { profileRoot?: string } = {},
+): { ok: true; id: string } | { ok: false; error: string } {
+  if (!input.metric_id.trim()) return { ok: false, error: 'A metric is required.' }
+  if (input.rule_type === 'threshold') {
+    if (input.threshold == null || !Number.isFinite(input.threshold)) {
+      return { ok: false, error: 'A numeric threshold is required.' }
+    }
+  } else if (input.rule_type === 'baseline') {
+    const sig = input.baseline_sigma
+    if (sig == null || !Number.isFinite(sig) || sig <= 0) {
+      return { ok: false, error: 'A positive baseline band (σ) is required.' }
+    }
+  } else {
+    return { ok: false, error: 'Unknown rule type.' }
+  }
+  // Recipient optional (paused never sends). If provided, it must still be valid.
+  let email = ''
+  if (input.email && input.email.trim()) {
+    const rec = parseRecipients(input.email)
+    if (!rec.ok) return rec
+    email = rec.emails.join(', ')
+  }
+  const query_name = (input.query_name ?? `${input.metric_label} ${input.direction === 'above' ? 'high' : 'low'}`).trim()
+  const description = (input.description ?? describeMetricAlert({
+    metric_label: input.metric_label, rule_type: input.rule_type, direction: input.direction,
+    threshold: input.threshold, baseline_sigma: input.baseline_sigma,
+  })).trim()
+  const h = ensure(input.profile, opts.profileRoot)
+  const id = uuid()
+  h.run(
+    `INSERT INTO notification
+       (id, profile, email, query_name, description, source, status, created_at,
+        metric_id, metric_label, rule_type, direction, threshold, baseline_sigma, last_fired_at)
+     VALUES (?, ?, ?, ?, ?, 'metric-alert', 'paused', ?, ?, ?, ?, ?, ?, ?, NULL)`,
+    id, input.profile, email, query_name, description, now,
+    input.metric_id.trim(), input.metric_label.trim(), input.rule_type, input.direction,
+    input.rule_type === 'threshold' ? input.threshold : null,
+    input.rule_type === 'baseline' ? input.baseline_sigma : null,
+  )
+  return { ok: true, id }
+}
+
 export function listNotifications(
   profile: string,
   opts: { limit?: number; profileRoot?: string } = {},

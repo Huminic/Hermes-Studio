@@ -49,6 +49,10 @@ export type DealershipPerformance = {
     backGross: number | null
     totalGross: number | null
     avgTotalGross: number | null
+    // Embedded "Response Time" section (label-bound; minutes). Same accepted delivery /
+    // provenance / period as the rest of the Dashboard — NOT the standalone readback.
+    responseTimeAdjustedAvgMin: number | null
+    responseTimeActualAvgMin: number | null
   }
   // New / Used / Unknown are INVENTORY types (from the "Lead Type & Inventory
   // Type Summary" section), not lead sources — do not conflate the two.
@@ -235,6 +239,27 @@ export function readDealershipPerformance(profile: string): DealershipPerformanc
     const totalGross =
       frontGross !== null && backGross !== null ? frontGross + backGross : null
 
+    // Embedded "Response Time" section: a single-cell header row `["Response Time"]`
+    // followed by a row whose cells are label-bound, e.g. "88Avg Adjusted (Min)" and
+    // "210Avg Actual (Min)". Parse the LEADING integer bound to each label. Absent →
+    // null (missing is not zero). Same delivery/provenance/period as the Dashboard.
+    const rtLeading = (label: RegExp): number | null => {
+      const rtIdx = rows.findIndex((r) => r.length === 1 && (r[0] || '').trim() === 'Response Time')
+      if (rtIdx < 0) return null
+      for (let i = rtIdx + 1; i < rows.length && i <= rtIdx + 3; i++) {
+        for (const cell of rows[i]) {
+          const m = (cell || '').match(label)
+          if (m) {
+            const n = Number(m[1])
+            return Number.isFinite(n) ? n : null
+          }
+        }
+      }
+      return null
+    }
+    const responseTimeAdjustedAvgMin = rtLeading(/^(\d+(?:\.\d+)?)\s*Avg Adjusted \(Min\)/i)
+    const responseTimeActualAvgMin = rtLeading(/^(\d+(?:\.\d+)?)\s*Avg Actual \(Min\)/i)
+
     return {
       available: true,
       source: 'dealership_performance',
@@ -250,6 +275,8 @@ export function readDealershipPerformance(profile: string): DealershipPerformanc
         backGross,
         totalGross,
         avgTotalGross: num(totalRow[idxAvg]),
+        responseTimeAdjustedAvgMin,
+        responseTimeActualAvgMin,
       },
       byInventoryType,
     }

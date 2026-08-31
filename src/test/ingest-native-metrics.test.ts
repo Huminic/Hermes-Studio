@@ -415,6 +415,26 @@ describe.runIf(HAVE_DATA)('ingest-native-metrics (isolated store)', () => {
     expect(r.byInventoryType.map((b) => b.label)).toEqual(
       expect.arrayContaining(['New', 'Used', 'Unknown']),
     )
+    // Fresh embedded Response Time section (same delivery/provenance/period).
+    expect(r.summary.responseTimeAdjustedAvgMin).toBe(88)
+    expect(r.summary.responseTimeActualAvgMin).toBe(210)
+  })
+
+  it('Response Time section golden — all three stores parse label-bound minutes from the FRESH dashboard', () => {
+    const expected: Record<string, { adjusted: number; actual: number }> = {
+      'serra-honda': { adjusted: 88, actual: 210 },
+      'serra-nissan': { adjusted: 66, actual: 238 },
+      'tony-serra-ford': { adjusted: 216, actual: 317 },
+    }
+    for (const [profile, exp] of Object.entries(expected)) {
+      const r = readDealershipPerformance(profile)
+      expect(r.available).toBe(true)
+      if (!r.available) continue
+      expect(r.summary.responseTimeAdjustedAvgMin).toBe(exp.adjusted)
+      expect(r.summary.responseTimeActualAvgMin).toBe(exp.actual)
+      // Source-specific freshness: it is the CURRENT 2026-08-24..30 dashboard, not the standalone readback.
+      expect(r.provenance.period.end).toBe('2026-08-30')
+    }
   })
 
   it('Honda appointments: header_json-driven, 14 accepted rows (fresh), one shared denominator', () => {

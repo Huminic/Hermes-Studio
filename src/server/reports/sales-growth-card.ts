@@ -82,10 +82,15 @@ export function buildSalesGrowthCard(
   const grOk = gross.available ? gross : null
 
   // ── EXTERNAL sections (supported metrics only; omit absent cleanly) ──
+  // AUTHORITATIVE "delivered deals" count = CRM Sales Gross rowCount (one row per deal).
+  // Dashboard "Sold in Period" is a DIFFERENT lead-attributed conversion measure and is
+  // never used as the delivered-deal count. The Appointments FAMILY and the Dashboard
+  // lead funnel are distinct denominators and are never juxtaposed as one funnel.
+  const deliveredDeals = grOk ? grOk.rowCount : null
   const sections: CardSection[] = []
 
   const snapshot: string[] = []
-  if (dpOk && dpOk.summary.soldInPeriod != null) snapshot.push(`${dpOk.summary.soldInPeriod} vehicles delivered this week`)
+  if (deliveredDeals != null) snapshot.push(`${deliveredDeals} vehicles delivered this week`)
   if (grOk && grOk.totalSum != null) snapshot.push(`${money(grOk.totalSum)} in total gross`)
   if (apOk) snapshot.push(`${apOk.total} sales appointments recorded this week`)
   if (apOk && apOk.total > 0) snapshot.push(`${pct(apOk.show, apOk.total)} appointment show rate`)
@@ -93,10 +98,10 @@ export function buildSalesGrowthCard(
 
   const momentum: string[] = []
   if (apOk && apOk.total > 0) {
-    momentum.push(`${apOk.total} appointments set — ${apOk.show} shown, ${apOk.confirmed} confirmed`)
-    momentum.push(`${pct(apOk.confirmed, apOk.total)} of appointments confirmed ahead of time`)
+    momentum.push(`${apOk.total} sales appointments recorded — ${apOk.show} shown, ${apOk.confirmed} confirmed`)
+    momentum.push(`${pct(apOk.confirmed, apOk.total)} of those appointments confirmed ahead of time`)
   }
-  if (dpOk && dpOk.summary.soldInPeriod != null) momentum.push(`${dpOk.summary.soldInPeriod} deliveries closed in the period`)
+  if (deliveredDeals != null) momentum.push(`${deliveredDeals} vehicles delivered`)
   if (momentum.length) sections.push({ heading: "This Week's Momentum", items: momentum })
 
   const revenue: string[] = []
@@ -107,26 +112,29 @@ export function buildSalesGrowthCard(
   }
   if (revenue.length) sections.push({ heading: 'Revenue Contribution', items: revenue })
 
+  // Customer Journey = the Dashboard LEAD FUNNEL, explicitly labeled as a distinct
+  // Dashboard measure (its appointment count is NOT the Appointments-family total above).
   const journey: string[] = []
-  if (dpOk && dpOk.summary.apptsSet != null && dpOk.summary.apptsShow != null) {
-    journey.push(`${dpOk.summary.apptsSet} appointments set → ${dpOk.summary.apptsShow} shown`)
+  if (dpOk && dpOk.summary.leads != null && dpOk.summary.apptsSet != null && dpOk.summary.apptsShow != null) {
+    journey.push(`Dashboard lead funnel: ${dpOk.summary.leads} leads → ${dpOk.summary.apptsSet} appointments set → ${dpOk.summary.apptsShow} shown`)
   }
   if (dpOk && dpOk.summary.totalVisits != null && dpOk.summary.visitsSold != null) {
-    journey.push(`${dpOk.summary.totalVisits} showroom visits → ${dpOk.summary.visitsSold} sold`)
+    journey.push(`${dpOk.summary.visitsSold} of ${dpOk.summary.totalVisits} showroom visits resulted in a sale`)
   }
   if (journey.length) sections.push({ heading: 'Customer Journey', items: journey })
 
-  // Growth opportunities framed positively (opportunity, not a problem).
-  const growth: string[] = []
+  // Growth opportunities RANKED Priority 1/2/3 by likely operational impact (highest first).
+  const growthRanked: string[] = []
   if (apOk && apOk.total > 0 && apOk.noShow > 0) {
-    growth.push(`${apOk.noShow} of this week's booked appointments didn't convert to a visit — a reminder cadence can lift next week's show rate`)
+    growthRanked.push(`${apOk.noShow} of this week's booked appointments didn't convert to a visit — a same-week reminder cadence can recover them`)
   }
   if (apOk && apOk.total > 0 && apOk.confirmed < apOk.total) {
-    growth.push(`${apOk.total - apOk.confirmed} of this week's appointments went unconfirmed — a confirmation step can raise show rate going forward`)
+    growthRanked.push(`${apOk.total - apOk.confirmed} of this week's appointments went unconfirmed — a confirmation step can raise show rate`)
   }
   if (grOk && grOk.rowCount > 0 && grOk.backSum != null && grOk.backSum >= 0) {
-    growth.push('Back-end product attach is contributing gross — room to grow per-deal with F&I menu focus')
+    growthRanked.push('Back-end product attach is contributing gross — an F&I menu focus can grow per-deal profit')
   }
+  const growth = growthRanked.map((g, i) => `Priority ${i + 1} — ${g}`)
   if (growth.length) sections.push({ heading: 'High-Impact Growth Opportunities', items: growth })
 
   const moves: string[] = []

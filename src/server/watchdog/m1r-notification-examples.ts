@@ -18,7 +18,7 @@ import {
 import {
   readAppointments,
   readCrmSalesGross,
-  readResponseTimes,
+  readDealershipPerformance,
 } from '../ingest-native-metrics'
 import { resolveReportFreshness } from '../reports/data-freshness'
 
@@ -104,25 +104,23 @@ export function m1rNotificationExamples(profile: string, now: Date): M1rNotifica
   }
 
   // 2) Response time above a configurable threshold → Manager. Sourced ONLY from the
-  //    accepted Response Times readback field; otherwise UNBOUND.
-  const rt = readResponseTimes(profile)
-  const rtVal =
-    rt.available && typeof (rt as { metrics?: Record<string, unknown> }).metrics?.response_time_actual_avg_min === 'number'
-      ? ((rt as { metrics: Record<string, number> }).metrics.response_time_actual_avg_min)
-      : null
+  //    FRESH accepted Dealership Performance "Response Time" section (same 2026-08-24..30
+  //    delivery/provenance) — NOT the older standalone readback. Otherwise UNBOUND.
+  const dp = readDealershipPerformance(profile)
+  const rtVal = dp.available ? dp.summary.responseTimeActualAvgMin : null
   const def2: M1rNotificationExample = {
     ...base,
     recipientRole: 'Manager',
-    metric_id: rtVal != null ? 'response.actual_avg_min' : null,
-    metric_label: 'Average response time (minutes)',
+    metric_id: rtVal != null ? 'dashboard.response_time_actual_avg_min' : null,
+    metric_label: 'Average response time (actual minutes)',
     rule_type: 'threshold',
     direction: 'above',
     threshold: 30,
     bound: rtVal != null,
     currentValue: rtVal,
-    unboundReason: rtVal != null ? null : 'no accepted Response Times readback field',
-    description: describeMetricAlert({ metric_label: 'Average response time (minutes)', rule_type: 'threshold', direction: 'above', threshold: 30 }),
-    source: 'metric-alert (M1R dev example, inactive)',
+    unboundReason: rtVal != null ? null : 'no Response Time section in the accepted Dealership Performance delivery',
+    description: describeMetricAlert({ metric_label: 'Average response time (actual minutes)', rule_type: 'threshold', direction: 'above', threshold: 30 }),
+    source: 'metric-alert (M1R dev example, inactive; fresh Dashboard Response Time section)',
   }
 
   // 3) High-intent inbound without timely follow-up → Salesperson or Manager.

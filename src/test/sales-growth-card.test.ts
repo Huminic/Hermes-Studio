@@ -35,7 +35,7 @@ const NA = { available: false, reason: 'x' } as never
 describe('sales-growth-card (builder, positive external + separate internal)', () => {
   it('external carries the visible data-through label and no internal vocabulary', () => {
     const { external, internal } = buildSalesGrowthCard('serra-honda', 'Serra Honda',
-      { dp: DP({ soldInPeriod: 5, apptsSet: 10, apptsShow: 8, totalVisits: 26, visitsSold: 4 }), appt: AP({ total: 14, show: 8, noShow: 5, confirmed: 7 }), gross: GROSS(14185.2, 5) }, fresh)
+      { dp: DP({ leads: 86, soldInPeriod: 5, apptsSet: 10, apptsShow: 8, totalVisits: 26, visitsSold: 4 }), appt: AP({ total: 14, show: 8, noShow: 5, confirmed: 7 }), gross: GROSS(14185.2, 5) }, fresh)
     expect(external).not.toBeNull()
     expect(external!.title).toBe('Serra Honda Sales Performance and Growth Report')
     expect(external!.dataThrough).toBe('Data through Aug 30, 2026 · updated yesterday')
@@ -46,10 +46,35 @@ describe('sales-growth-card (builder, positive external + separate internal)', (
     expect(flat).toContain('vehicles delivered')
     expect(flat).toContain('recorded this week')
     expect(flat).not.toMatch(/on the board|upcoming appointment/i)
+    // delivered-deal count is the CRM gross rowCount (5), not Dashboard soldInPeriod
+    expect(flat).toContain('5 vehicles delivered')
+    // Dashboard funnel is explicitly labeled distinct; visits→sold reads as conversion
+    expect(flat).toContain('Dashboard lead funnel')
+    expect(flat).toContain('resulted in a sale')
+    expect(flat).not.toMatch(/showroom visits →/)
+    // growth opportunities are ranked
+    expect(flat).toContain('Priority 1 —')
     // internal holds provenance + held families + precedence (NOT in external)
     expect(internal.acceptedFamilies.map((f) => f.family).sort()).toEqual(['appointments', 'crm_sales_gross', 'dealership_performance'])
     expect(internal.heldFamilies.map((f) => f.family).sort()).toEqual(['cage_kpi', 'lead_source_roi', 'sales_comm_log'])
     expect(internal.grossSourcePrecedence).toMatch(/CRM Sales Gross \(per-deal, AUTHORITATIVE\)/)
+  })
+
+  it('CROSS-SOURCE COUNT: uses CRM gross rowCount as delivered deals; never juxtaposes it with Dashboard soldInPeriod (Ford-like 6 vs 7)', () => {
+    // Dashboard soldInPeriod=6 but 7 delivered deals in CRM Sales Gross — must not contradict.
+    const { external } = buildSalesGrowthCard('tony-serra-ford', 'Tony Serra Ford',
+      { dp: DP({ soldInPeriod: 6, leads: 37, apptsSet: 6, apptsShow: 2, totalVisits: 14, visitsSold: 3 }), appt: AP({ total: 7, show: 3, noShow: 4, confirmed: 3 }), gross: GROSS(1600.99, 7) }, fresh)
+    expect(external).not.toBeNull()
+    const flat = JSON.stringify(external)
+    // authoritative delivered-deal count = 7 (gross rowCount); the Dashboard 6 never appears as "delivered"
+    expect(flat).toContain('7 vehicles delivered')
+    expect(flat).toContain('across 7 delivered deals')
+    expect(flat).not.toMatch(/6 vehicles delivered|6 deliveries|6 delivered deals/)
+    // Appointments-family total (7) is not conflated with Dashboard apptsSet (6)
+    expect(flat).toContain('7 sales appointments recorded')
+    expect(flat).toContain('Dashboard lead funnel: 37 leads → 6 appointments set → 2 shown')
+    expect(flat).not.toMatch(/6 sales appointments recorded|7 appointments set/)
+    expect(externalForbiddenHits(external!)).toEqual([])
   })
 
   it('OMITS unsupported metrics cleanly (absent gross/appointments → no gross/appt items, no zeros)', () => {
