@@ -85,7 +85,7 @@ notification block with `KeepTogether`, so no heading orphans and no table fragm
 | ------------------------------------------------------ | ------------------ |
 | `scripts/halo-report-card/build_report_cards.py`       | `3a4b692ed63550f7` |
 | `scripts/halo-report-card/qa_report_cards.py`          | `38266ebf7c789789` |
-| `docs/halo/evidence/m1r/gate6/gate6-pdf-manifest.json` | `d18b37b23aa4aeb3` |
+| `docs/halo/evidence/m1r/gate6/gate6-pdf-manifest.json` | `5c1e373a00e4087a` |
 
 ## 6. Residual risk
 

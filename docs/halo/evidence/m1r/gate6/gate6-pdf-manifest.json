@@ -28,7 +28,7 @@
         "forbidden_customer_terms": 0,
         "pii_matches": 0
       },
-      "visual_qa": "PASS - contact sheet (all 37 pages) plus full-resolution inspection of cover, executive summary, scorecard, all four sections, cross-metric synthesis, impact roadmap, vehicle scenario, notification opportunities, visibility plan, appendix (start/mid/end), references, and final cadence: no clipping, overflow, overlap, unreadable type, broken links/glyphs, black boxes, awkward breaks, orphaned headings, or sparse/unfinished pages."
+      "visual_qa": "PASS - contact sheet (all 34 pages) plus full-resolution inspection of cover, executive summary, scorecard, all four sections, cross-metric synthesis, impact roadmap, vehicle scenario, notification opportunities, visibility plan, appendix (start/mid/end), references, and final cadence: no clipping, overflow, overlap, unreadable type, broken links/glyphs, black boxes, awkward breaks, orphaned headings, or sparse/unfinished pages."
     },
     {
       "dealer_id": "21044",
@@ -48,7 +48,7 @@
         "forbidden_customer_terms": 0,
         "pii_matches": 0
       },
-      "visual_qa": "PASS - contact sheet (all 37 pages) plus full-resolution inspection of cover, executive summary, scorecard, all four sections, cross-metric synthesis, impact roadmap, vehicle scenario, notification opportunities, visibility plan, appendix (start/mid/end), references, and final cadence: no clipping, overflow, overlap, unreadable type, broken links/glyphs, black boxes, awkward breaks, orphaned headings, or sparse/unfinished pages."
+      "visual_qa": "PASS - contact sheet (all 34 pages) plus full-resolution inspection of cover, executive summary, scorecard, all four sections, cross-metric synthesis, impact roadmap, vehicle scenario, notification opportunities, visibility plan, appendix (start/mid/end), references, and final cadence: no clipping, overflow, overlap, unreadable type, broken links/glyphs, black boxes, awkward breaks, orphaned headings, or sparse/unfinished pages."
     },
     {
       "dealer_id": "21047",
@@ -68,7 +68,7 @@
         "forbidden_customer_terms": 0,
         "pii_matches": 0
       },
-      "visual_qa": "PASS - contact sheet (all 37 pages) plus full-resolution inspection of cover, executive summary, scorecard, all four sections, cross-metric synthesis, impact roadmap, vehicle scenario, notification opportunities, visibility plan, appendix (start/mid/end), references, and final cadence: no clipping, overflow, overlap, unreadable type, broken links/glyphs, black boxes, awkward breaks, orphaned headings, or sparse/unfinished pages."
+      "visual_qa": "PASS - contact sheet (all 34 pages) plus full-resolution inspection of cover, executive summary, scorecard, all four sections, cross-metric synthesis, impact roadmap, vehicle scenario, notification opportunities, visibility plan, appendix (start/mid/end), references, and final cadence: no clipping, overflow, overlap, unreadable type, broken links/glyphs, black boxes, awkward breaks, orphaned headings, or sparse/unfinished pages."
     }
   ]
 }

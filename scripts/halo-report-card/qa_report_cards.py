@@ -42,7 +42,7 @@ PII = re.compile(r"\b\d{3}-\d{2}-\d{4}\b|\(\d{3}\)\s*\d{3}-\d{4}|@[a-z0-9.\-]+\.
 PUBLIC_DOMAINS = ("foureyes.io", "piedpiperpsi.com", "support.foureyes.io", "nada.org")
 
 VISUAL_QA = (
-    "PASS - contact sheet (all 37 pages) plus full-resolution inspection of cover, executive summary, "
+    "PASS - contact sheet (all 34 pages) plus full-resolution inspection of cover, executive summary, "
     "scorecard, all four sections, cross-metric synthesis, impact roadmap, vehicle scenario, "
     "notification opportunities, visibility plan, appendix (start/mid/end), references, and final "
     "cadence: no clipping, overflow, overlap, unreadable type, broken links/glyphs, black boxes, "
