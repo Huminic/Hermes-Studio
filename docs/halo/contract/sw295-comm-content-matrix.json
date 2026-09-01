@@ -1,0 +1,2453 @@
+{
+  "artifact": "gate4e-comm-content-matrix",
+  "revision": "comm-content-disposition-v1 (definition-exact deterministic only; no proxies)",
+  "family": "enhanced_sales_communication_log_weekly",
+  "formula_version": "comm-content-metric-v1",
+  "catalog_ref": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json",
+  "capability_delta_ref": "docs/halo/contract/sw295-comm-capability-delta.json",
+  "candidate_set": "nlp_content_capable_pending (75)",
+  "provider_verdict": "no in-boundary governed semantic provider is approved to classify this tenant’s restricted communication content; the only AI paths transmit customer text to an external provider (out of boundary). No live model call is made in Gate 4E; semantic conditions are HELD, not proxied.",
+  "totals": {
+    "candidates": 75,
+    "promoted": 5,
+    "held": 70,
+    "rooftop_cells": 225,
+    "evaluated_cells": 15
+  },
+  "category_tally": {
+    "definition_exact_deterministic_now": 5,
+    "definition_exact_via_governed_semantic_provider": 63,
+    "outside_accepted_evidence": 3,
+    "requires_ratified_semantic_definition_or_threshold": 4
+  },
+  "promoted_ids": ["SW-021", "SW-142", "SW-145", "SW-149", "SW-150"],
+  "held_ids": [
+    "SW-014",
+    "SW-029",
+    "SW-030",
+    "SW-070",
+    "SW-071",
+    "SW-072",
+    "SW-073",
+    "SW-074",
+    "SW-075",
+    "SW-077",
+    "SW-078",
+    "SW-131",
+    "SW-135",
+    "SW-136",
+    "SW-139",
+    "SW-141",
+    "SW-143",
+    "SW-144",
+    "SW-146",
+    "SW-147",
+    "SW-148",
+    "SW-151",
+    "SW-152",
+    "SW-153",
+    "SW-154",
+    "SW-155",
+    "SW-156",
+    "SW-157",
+    "SW-158",
+    "SW-159",
+    "SW-160",
+    "SW-161",
+    "SW-162",
+    "SW-163",
+    "SW-164",
+    "SW-165",
+    "SW-166",
+    "SW-168",
+    "SW-169",
+    "SW-170",
+    "SW-171",
+    "SW-172",
+    "SW-173",
+    "SW-174",
+    "SW-175",
+    "SW-176",
+    "SW-177",
+    "SW-178",
+    "SW-179",
+    "SW-181",
+    "SW-183",
+    "SW-185",
+    "SW-193",
+    "SW-194",
+    "SW-195",
+    "SW-196",
+    "SW-197",
+    "SW-200",
+    "SW-201",
+    "SW-202",
+    "SW-203",
+    "SW-204",
+    "SW-205",
+    "SW-206",
+    "SW-239",
+    "SW-256",
+    "SW-285",
+    "SW-286",
+    "SW-287",
+    "SW-289"
+  ],
+  "promotion_statement": "Promotes exactly SW-021/SW-142/SW-145/SW-149/SW-150 (definition-exact deterministic); 70 of 75 HELD (semantic model / external source / ratified definition — no in-boundary governed provider). 15 evaluated cells across 3 rooftops.",
+  "rows": [
+    {
+      "metric_id": "SW-021",
+      "condition": "Rep sends identical templated message to >70% of leads (no personalization).",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "definition_exact_deterministic_now",
+      "disposition": "PROMOTE",
+      "spec": {
+        "metric_id": "SW-021",
+        "title": "Rep sends identical templated message to >70% of leads (no personalization)",
+        "population": "reps with at least one distinct lead that received an eligible written message this week (literal population; NO minimum-lead floor)",
+        "numerator": "reps whose single most-frequent identical (trim-normalized) body was sent across >70% of that rep’s distinct leads",
+        "denominator": "reps with >=1 eligible written lead",
+        "detection_threshold": ">70% of the rep’s distinct leads (literal)",
+        "window": "one governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "unresolved (missing is not zero)",
+        "source_fields": ["rep_token", "thread_token", "body_identity_hash"],
+        "baseline_basis": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "rank_direction": "lower_is_better",
+        "false_positive_controls": "exact trim-normalized body equality (not a similarity proxy); \"identical\" is literal",
+        "false_negative_controls": "a near-identical body differing by one character is (correctly, literally) NOT identical and not flagged",
+        "limitations": "DEGENERATE FOR LOW LEAD COUNTS: a rep with 1–2 distinct leads trivially reaches >70% (100%/50%); such flags are disclosed as low-confidence, never excluded (no invented floor). Interpret low-lead flags as low-sample."
+      },
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "evaluated",
+          "numerator": 2,
+          "denominator": 11,
+          "value": 0.18181818181818182,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21044",
+          "status": "evaluated",
+          "numerator": 2,
+          "denominator": 9,
+          "value": 0.2222222222222222,
+          "rank": 3
+        },
+        {
+          "dealer_id": "21047",
+          "status": "evaluated",
+          "numerator": 1,
+          "denominator": 8,
+          "value": 0.125,
+          "rank": 1
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-142",
+      "condition": "Rep uses generic template with unfilled merge tags (\"Hi {{FirstName}}\").",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "definition_exact_deterministic_now",
+      "disposition": "PROMOTE",
+      "spec": {
+        "metric_id": "SW-142",
+        "title": "Rep uses generic template with unfilled merge tags ('Hi {{FirstName}}')",
+        "population": "outbound rep messages on a written channel (Comm Channel Text or Email) with non-blank Message Content; Logged Call notes are excluded (a call is not a written message)",
+        "numerator": "eligible written messages containing an UNFILLED merge-tag delimiter of an enumerated syntax",
+        "denominator": "eligible written messages",
+        "detection_threshold": "presence of an unfilled merge-tag delimiter ∈ {{{ field }}, { field }, [[ field ]], << field >>, %% field %%, % field %, $ field $} (literal)",
+        "window": "one governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "unresolved (missing is not zero)",
+        "source_fields": ["has_unfilled_merge_tag"],
+        "baseline_basis": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "rank_direction": "lower_is_better",
+        "false_positive_controls": "delimiter+field-token regex per enumerated syntax; a FILLED value (no delimiters) never matches",
+        "false_negative_controls": "detection is exact for the enumerated syntaxes; a novel delimiter outside the set is a DISCLOSED recall limitation (not silently treated as impossible)",
+        "limitations": "recall bounded to the enumerated merge-tag syntaxes; a zero result means \"no enumerated unfilled delimiter\", with eligibility (message population) proved"
+      },
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "evaluated",
+          "numerator": 0,
+          "denominator": 800,
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21044",
+          "status": "evaluated",
+          "numerator": 0,
+          "denominator": 386,
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21047",
+          "status": "evaluated",
+          "numerator": 0,
+          "denominator": 250,
+          "value": 0,
+          "rank": 1
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-145",
+      "condition": "Same message body sent to >5 customers in a day (copy-paste factory).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "definition_exact_deterministic_now",
+      "disposition": "PROMOTE",
+      "spec": {
+        "metric_id": "SW-145",
+        "title": "Same message body sent to >5 customers in a day (copy-paste factory)",
+        "population": "distinct (trim-normalized body, calendar day) groups among eligible written messages",
+        "numerator": "distinct (body, day) groups delivered to >5 DISTINCT customers (person_token) that day",
+        "denominator": "distinct (body, day) groups",
+        "detection_threshold": ">5 distinct customers for one identical body in one day (literal)",
+        "window": "one governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "unresolved (missing is not zero)",
+        "source_fields": [
+          "body_identity_hash",
+          "activity_date",
+          "person_token"
+        ],
+        "baseline_basis": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "rank_direction": "lower_is_better",
+        "false_positive_controls": "distinct customers counted by person_token (a repeat to the same customer is one customer); exact identical body",
+        "false_negative_controls": "identical bodies split across two calendar days are (literally) two day-groups; conservative, never over-counts a single day",
+        "limitations": "LITERAL over-capture disclosed: a short generic acknowledgement (\"Thank you!\") or an automated outbound identical body sent to >5 customers in a day counts, because the condition is body-identity + reach (not substance). No minimum-length/rep-scoping is invented."
+      },
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "evaluated",
+          "numerator": 3,
+          "denominator": 731,
+          "value": 0.004103967168262654,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21044",
+          "status": "evaluated",
+          "numerator": 1,
+          "denominator": 360,
+          "value": 0.002777777777777778,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21047",
+          "status": "evaluated",
+          "numerator": 1,
+          "denominator": 232,
+          "value": 0.004310344827586207,
+          "rank": 3
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-149",
+      "condition": "Rep's messages average <15 words (low-effort replies).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "definition_exact_deterministic_now",
+      "disposition": "PROMOTE",
+      "spec": {
+        "metric_id": "SW-149",
+        "title": "Rep's messages average <15 words (low-effort replies)",
+        "population": "reps with at least one eligible written message this week (literal population; NO minimum-message floor)",
+        "numerator": "reps whose mean word count over eligible written messages is < 15",
+        "denominator": "reps with >=1 eligible written message",
+        "detection_threshold": "< 15 words mean (literal)",
+        "window": "one governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "unresolved (missing is not zero)",
+        "source_fields": ["rep_token", "word_count"],
+        "baseline_basis": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "rank_direction": "lower_is_better",
+        "false_positive_controls": "word = whitespace token containing a Unicode letter/number (bare punctuation/emoji do not count as words)",
+        "false_negative_controls": "mean over all eligible written messages (not a truncated sample)",
+        "limitations": "small per-rep message counts yield a low-confidence mean; disclosed as confidence, never excluded (no invented floor)."
+      },
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "evaluated",
+          "numerator": 2,
+          "denominator": 11,
+          "value": 0.18181818181818182,
+          "rank": 3
+        },
+        {
+          "dealer_id": "21044",
+          "status": "evaluated",
+          "numerator": 1,
+          "denominator": 9,
+          "value": 0.1111111111111111,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21047",
+          "status": "evaluated",
+          "numerator": 0,
+          "denominator": 8,
+          "value": 0,
+          "rank": 1
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-150",
+      "condition": "Rep only sends links, no conversational context.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "definition_exact_deterministic_now",
+      "disposition": "PROMOTE",
+      "spec": {
+        "metric_id": "SW-150",
+        "title": "Rep only sends links, no conversational context",
+        "population": "reps with at least one eligible written message this week (literal population; NO minimum-message floor)",
+        "numerator": "reps for whom EVERY eligible written message is link-only (>=1 URL and no other letters/numbers)",
+        "denominator": "reps with >=1 eligible written message",
+        "detection_threshold": "every eligible written message is link-only (literal \"only\")",
+        "window": "one governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "unresolved (missing is not zero)",
+        "source_fields": ["rep_token", "is_link_only"],
+        "baseline_basis": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "rank_direction": "lower_is_better",
+        "false_positive_controls": "a single message carrying any conversational word alongside a link is NOT link-only, so the rep is not flagged",
+        "false_negative_controls": "link detection covers http(s):// and www. URLs; \"only\" is evaluated over ALL eligible written messages",
+        "limitations": "a rep with a single eligible written message that is link-only satisfies \"only sends links\" literally; disclosed as low-confidence, never excluded (no invented floor)."
+      },
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "evaluated",
+          "numerator": 0,
+          "denominator": 11,
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21044",
+          "status": "evaluated",
+          "numerator": 0,
+          "denominator": 9,
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21047",
+          "status": "evaluated",
+          "numerator": 0,
+          "denominator": 8,
+          "value": 0,
+          "rank": 1
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-014",
+      "condition": "First response is auto-reply only (no human touch within 2 hours).",
+      "section": "2. Speed-to-Lead & First Response",
+      "subsection": "",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (auto-reply vs human classification of the first response); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "auto-reply vs human classification of the first response",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (auto-reply vs human classification of the first response); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (auto-reply vs human classification of the first response); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (auto-reply vs human classification of the first response); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-029",
+      "condition": "Sentiment on rep's outbound messages trends negative/pushy (NLP flag).",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (outbound sentiment (negative/pushy) trend); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "outbound sentiment (negative/pushy) trend",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (outbound sentiment (negative/pushy) trend); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (outbound sentiment (negative/pushy) trend); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (outbound sentiment (negative/pushy) trend); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-030",
+      "condition": "Rep is called out by name in customer complaint or negative CSI verbatim.",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "outside_accepted_evidence",
+      "disposition": "HOLD",
+      "hold_reason": "requires a customer complaint / CSI verbatim source and a named-rep match — neither is in the accepted Sales communication log.",
+      "missing_item": "external complaint/CSI verbatim source + rep-name attribution",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "outside_accepted_evidence",
+          "reason": "requires a customer complaint / CSI verbatim source and a named-rep match — neither is in the accepted Sales communication log."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "outside_accepted_evidence",
+          "reason": "requires a customer complaint / CSI verbatim source and a named-rep match — neither is in the accepted Sales communication log."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "outside_accepted_evidence",
+          "reason": "requires a customer complaint / CSI verbatim source and a named-rep match — neither is in the accepted Sales communication log."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-070",
+      "condition": "Negative sentiment spike in inbound customer messages (NLP >2σ).",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (inbound customer sentiment (spike detection)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "inbound customer sentiment (spike detection)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (inbound customer sentiment (spike detection)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (inbound customer sentiment (spike detection)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (inbound customer sentiment (spike detection)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-071",
+      "condition": "Customer uses churn/competitor language (\"just looking elsewhere\", \"cancel\").",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (churn/competitor language in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "churn/competitor language in customer text",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (churn/competitor language in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (churn/competitor language in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (churn/competitor language in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-072",
+      "condition": "Price/payment objection appears in first 2 messages (early friction).",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (price/payment objection detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "price/payment objection detection",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (price/payment objection detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (price/payment objection detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (price/payment objection detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-073",
+      "condition": "Customer requests manager escalation and no manager note logged.",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "outside_accepted_evidence",
+      "disposition": "HOLD",
+      "hold_reason": "requires detecting a manager-escalation request (semantic) AND a manager note logged in the CRM — the CRM manager note is outside the accepted communication log.",
+      "missing_item": "CRM manager-note source + escalation-request semantics",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "outside_accepted_evidence",
+          "reason": "requires detecting a manager-escalation request (semantic) AND a manager note logged in the CRM — the CRM manager note is outside the accepted communication log."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "outside_accepted_evidence",
+          "reason": "requires detecting a manager-escalation request (semantic) AND a manager note logged in the CRM — the CRM manager note is outside the accepted communication log."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "outside_accepted_evidence",
+          "reason": "requires detecting a manager-escalation request (semantic) AND a manager note logged in the CRM — the CRM manager note is outside the accepted communication log."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-074",
+      "condition": "Profanity or complaint keywords in customer thread without escalation flag.",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (profanity/complaint keyword MEANING and an escalation flag); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "profanity/complaint keyword MEANING and an escalation flag",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (profanity/complaint keyword MEANING and an escalation flag); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (profanity/complaint keyword MEANING and an escalation flag); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (profanity/complaint keyword MEANING and an escalation flag); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-075",
+      "condition": "Repeated question from customer (same ask 3+ times) — indicates rep not answering.",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (repeated-question equivalence (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "repeated-question equivalence (same ask 3+ times)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (repeated-question equivalence (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (repeated-question equivalence (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (repeated-question equivalence (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-077",
+      "condition": "Customer thread goes silent >5 days after high-intent message.",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (\"high-intent message\" classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "\"high-intent message\" classification that triggers the silence window",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (\"high-intent message\" classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (\"high-intent message\" classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (\"high-intent message\" classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-078",
+      "condition": "Language mismatch (customer writes Spanish, rep replies English only).",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (language detection of customer vs rep messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "language detection of customer vs rep messages",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (language detection of customer vs rep messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (language detection of customer vs rep messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (language detection of customer vs rep messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-131",
+      "condition": "Semantic layer: NLP over notes/messages to catch things structured fields miss (sentiment, objections, churn language, escalations).",
+      "section": "16. Anomaly & Statistical Triggers (engine-level rules)",
+      "subsection": "Suggested Watchdog Architecture Notes",
+      "category": "requires_ratified_semantic_definition_or_threshold",
+      "disposition": "HOLD",
+      "hold_reason": "architecture note (\"semantic layer: NLP over notes/messages\"), not a single ratified metric with a numerator/population/threshold.",
+      "missing_item": "a ratified concrete metric definition",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "requires_ratified_semantic_definition_or_threshold",
+          "reason": "architecture note (\"semantic layer: NLP over notes/messages\"), not a single ratified metric with a numerator/population/threshold."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "requires_ratified_semantic_definition_or_threshold",
+          "reason": "architecture note (\"semantic layer: NLP over notes/messages\"), not a single ratified metric with a numerator/population/threshold."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "requires_ratified_semantic_definition_or_threshold",
+          "reason": "architecture note (\"semantic layer: NLP over notes/messages\"), not a single ratified metric with a numerator/population/threshold."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-135",
+      "condition": "Rep's reply arrives after customer's stated deadline (\"I need to decide by Friday\").",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (extracting a customer-stated deadline and comparing reply timing to it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "extracting a customer-stated deadline and comparing reply timing to it",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (extracting a customer-stated deadline and comparing reply timing to it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (extracting a customer-stated deadline and comparing reply timing to it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (extracting a customer-stated deadline and comparing reply timing to it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-136",
+      "condition": "Message thread goes silent >72h after a \"hot\" signal (payment, financing, delivery question).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (\"hot\" signal (payment/financing/delivery) classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "\"hot\" signal (payment/financing/delivery) classification that triggers the silence window",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (\"hot\" signal (payment/financing/delivery) classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (\"hot\" signal (payment/financing/delivery) classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (\"hot\" signal (payment/financing/delivery) classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-139",
+      "condition": "Rep sends follow-up before customer's stated callback time (\"call me after 5\" ignored).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (extracting a customer-stated callback time); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "extracting a customer-stated callback time",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (extracting a customer-stated callback time); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (extracting a customer-stated callback time); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (extracting a customer-stated callback time); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-141",
+      "condition": "Weekend/evening message from customer with high intent, no response until 2+ days later.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (\"high intent\" classification of the weekend/evening inbound message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "\"high intent\" classification of the weekend/evening inbound message",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (\"high intent\" classification of the weekend/evening inbound message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (\"high intent\" classification of the weekend/evening inbound message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (\"high intent\" classification of the weekend/evening inbound message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-143",
+      "condition": "Reply doesn't answer the specific question asked (semantic mismatch).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (whether a reply answers the specific question asked (Q-A alignment)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "whether a reply answers the specific question asked (Q-A alignment)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (whether a reply answers the specific question asked (Q-A alignment)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (whether a reply answers the specific question asked (Q-A alignment)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (whether a reply answers the specific question asked (Q-A alignment)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-144",
+      "condition": "Rep's message ignores information the customer already provided (asking for name/vehicle already stated).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (whether a reply ignores information the customer already provided); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "whether a reply ignores information the customer already provided",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (whether a reply ignores information the customer already provided); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (whether a reply ignores information the customer already provided); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (whether a reply ignores information the customer already provided); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-146",
+      "condition": "Zero questions asked by rep across entire thread (no discovery).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (whether the rep asked a question (a \"?\" count is a proxy, not the concept \"question\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "whether the rep asked a question (a \"?\" count is a proxy, not the concept \"question\")",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (whether the rep asked a question (a \"?\" count is a proxy, not the concept \"question\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (whether the rep asked a question (a \"?\" count is a proxy, not the concept \"question\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (whether the rep asked a question (a \"?\" count is a proxy, not the concept \"question\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-147",
+      "condition": "Rep never mentions customer's stated vehicle of interest by name/trim.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (the customer’s stated vehicle of interest and whether the rep mentions it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "the customer’s stated vehicle of interest and whether the rep mentions it",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (the customer’s stated vehicle of interest and whether the rep mentions it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (the customer’s stated vehicle of interest and whether the rep mentions it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (the customer’s stated vehicle of interest and whether the rep mentions it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-148",
+      "condition": "No pricing, payment, or next-step CTA in any rep message across 5+ exchanges.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (pricing/payment/next-step CTA presence in a message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "pricing/payment/next-step CTA presence in a message",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (pricing/payment/next-step CTA presence in a message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (pricing/payment/next-step CTA presence in a message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (pricing/payment/next-step CTA presence in a message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-151",
+      "condition": "Missing greeting/sign-off patterns typical of the store's top performers.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (greeting/sign-off style vs the store’s top performers (peer style model)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "greeting/sign-off style vs the store’s top performers (peer style model)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (greeting/sign-off style vs the store’s top performers (peer style model)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (greeting/sign-off style vs the store’s top performers (peer style model)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (greeting/sign-off style vs the store’s top performers (peer style model)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-152",
+      "condition": "Customer mentions price/payment concern and rep doesn't address it in reply.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a customer price/payment concern and whether the reply addresses it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a customer price/payment concern and whether the reply addresses it",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a customer price/payment concern and whether the reply addresses it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a customer price/payment concern and whether the reply addresses it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a customer price/payment concern and whether the reply addresses it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-153",
+      "condition": "Customer asks about financing/credit and rep pivots away without answering.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a financing/credit question and whether the rep pivots away); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a financing/credit question and whether the rep pivots away",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a financing/credit question and whether the rep pivots away); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a financing/credit question and whether the rep pivots away); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a financing/credit question and whether the rep pivots away); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-154",
+      "condition": "Customer says \"I'm ready\" / \"let's do it\" / \"when can I come in\" — no appointment set within 1h.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (buying-signal phrases (\"I’m ready\") and an appointment-set join within 1h); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "buying-signal phrases (\"I’m ready\") and an appointment-set join within 1h",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (buying-signal phrases (\"I’m ready\") and an appointment-set join within 1h); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (buying-signal phrases (\"I’m ready\") and an appointment-set join within 1h); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (buying-signal phrases (\"I’m ready\") and an appointment-set join within 1h); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-155",
+      "condition": "Customer provides trade info voluntarily, no trade appraisal offer follows.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (voluntary trade info and a trade-appraisal offer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "voluntary trade info and a trade-appraisal offer",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (voluntary trade info and a trade-appraisal offer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (voluntary trade info and a trade-appraisal offer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (voluntary trade info and a trade-appraisal offer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-156",
+      "condition": "Customer asks for out-the-door price 2+ times without receiving one.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (an out-the-door price ask repeated without an answer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an out-the-door price ask repeated without an answer",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an out-the-door price ask repeated without an answer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an out-the-door price ask repeated without an answer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an out-the-door price ask repeated without an answer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-157",
+      "condition": "Rep responds to \"how much\" with only \"come in and let's talk\" (evasion pattern).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (an evasion pattern (\"come in and let’s talk\" answering \"how much\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an evasion pattern (\"come in and let’s talk\" answering \"how much\")",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an evasion pattern (\"come in and let’s talk\" answering \"how much\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an evasion pattern (\"come in and let’s talk\" answering \"how much\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an evasion pattern (\"come in and let’s talk\" answering \"how much\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-158",
+      "condition": "Customer mentions credit challenge — no special finance handoff.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a credit-challenge mention and a special-finance handoff); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a credit-challenge mention and a special-finance handoff",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a credit-challenge mention and a special-finance handoff); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a credit-challenge mention and a special-finance handoff); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a credit-challenge mention and a special-finance handoff); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-159",
+      "condition": "Customer expresses urgency (\"this weekend\", \"before month-end\") with no urgency mirrored back.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (customer urgency and whether the rep mirrors it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "customer urgency and whether the rep mirrors it",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (customer urgency and whether the rep mirrors it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (customer urgency and whether the rep mirrors it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (customer urgency and whether the rep mirrors it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-160",
+      "condition": "Rep offers discount before customer objects on price (leaving gross on the table).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a discount offered before the customer objects on price); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a discount offered before the customer objects on price",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a discount offered before the customer objects on price); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a discount offered before the customer objects on price); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a discount offered before the customer objects on price); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-161",
+      "condition": "Customer mentions competitor dealer/brand by name.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a competitor dealer/brand named in customer text (entity recognition)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a competitor dealer/brand named in customer text (entity recognition)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a competitor dealer/brand named in customer text (entity recognition)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a competitor dealer/brand named in customer text (entity recognition)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a competitor dealer/brand named in customer text (entity recognition)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-162",
+      "condition": "Phrases like \"shopping around\", \"getting other quotes\", \"still looking\".",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (shopping-around phrases in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "shopping-around phrases in customer text",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (shopping-around phrases in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (shopping-around phrases in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (shopping-around phrases in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-163",
+      "condition": "\"Never mind\", \"not interested anymore\", \"take me off your list\".",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (exit-intent phrases (\"not interested\", \"take me off your list\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "exit-intent phrases (\"not interested\", \"take me off your list\")",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (exit-intent phrases (\"not interested\", \"take me off your list\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (exit-intent phrases (\"not interested\", \"take me off your list\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (exit-intent phrases (\"not interested\", \"take me off your list\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-164",
+      "condition": "Customer references a specific competing offer (\"[other dealer] offered me X\").",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a specific competing offer referenced by the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a specific competing offer referenced by the customer",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a specific competing offer referenced by the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a specific competing offer referenced by the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a specific competing offer referenced by the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-165",
+      "condition": "Customer asks for OTD/final number after previously being warm (comparison-shopping mode).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (an OTD/final-number ask after previously-warm intent (state + semantics)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an OTD/final-number ask after previously-warm intent (state + semantics)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an OTD/final-number ask after previously-warm intent (state + semantics)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an OTD/final-number ask after previously-warm intent (state + semantics)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an OTD/final-number ask after previously-warm intent (state + semantics)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-166",
+      "condition": "Customer's tone shifts from questions to short replies (\"k\", \"ok\", \"maybe\").",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a tone shift from questions to short replies); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a tone shift from questions to short replies",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a tone shift from questions to short replies); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a tone shift from questions to short replies); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a tone shift from questions to short replies); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-168",
+      "condition": "Customer asks to \"pause\", \"think about it\", or \"revisit next month\".",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (pause/defer phrases (\"think about it\", \"revisit next month\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "pause/defer phrases (\"think about it\", \"revisit next month\")",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (pause/defer phrases (\"think about it\", \"revisit next month\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (pause/defer phrases (\"think about it\", \"revisit next month\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (pause/defer phrases (\"think about it\", \"revisit next month\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-169",
+      "condition": "Mentions of life event that delays purchase (job change, move, medical).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a life event that delays purchase (job change, move, medical)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a life event that delays purchase (job change, move, medical)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a life event that delays purchase (job change, move, medical)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a life event that delays purchase (job change, move, medical)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a life event that delays purchase (job change, move, medical)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-170",
+      "condition": "Negative sentiment score on customer's last 2 messages (NLP flag).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (negative sentiment on the customer’s last messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "negative sentiment on the customer’s last messages",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (negative sentiment on the customer’s last messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (negative sentiment on the customer’s last messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (negative sentiment on the customer’s last messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-171",
+      "condition": "Escalating punctuation (!!!, ???, ALL CAPS) from customer.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "requires_ratified_semantic_definition_or_threshold",
+      "disposition": "HOLD",
+      "hold_reason": "repeated !!!/??? are deterministic, but the disjunct \"ALL CAPS\" cannot be separated from auto-domain acronyms (SUV, VIN, AWD, MSRP, APR) without a ratified caps rule; promoting only the punctuation part would drop a named disjunct and change the condition.",
+      "missing_item": "a ratified ALL-CAPS rule that excludes domain acronyms",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "requires_ratified_semantic_definition_or_threshold",
+          "reason": "repeated !!!/??? are deterministic, but the disjunct \"ALL CAPS\" cannot be separated from auto-domain acronyms (SUV, VIN, AWD, MSRP, APR) without a ratified caps rule; promoting only the punctuation part would drop a named disjunct and change the condition."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "requires_ratified_semantic_definition_or_threshold",
+          "reason": "repeated !!!/??? are deterministic, but the disjunct \"ALL CAPS\" cannot be separated from auto-domain acronyms (SUV, VIN, AWD, MSRP, APR) without a ratified caps rule; promoting only the punctuation part would drop a named disjunct and change the condition."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "requires_ratified_semantic_definition_or_threshold",
+          "reason": "repeated !!!/??? are deterministic, but the disjunct \"ALL CAPS\" cannot be separated from auto-domain acronyms (SUV, VIN, AWD, MSRP, APR) without a ratified caps rule; promoting only the punctuation part would drop a named disjunct and change the condition."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-172",
+      "condition": "Profanity, slurs, or complaint keywords in either direction.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (profanity/slurs/complaint keyword MEANING (either direction)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "profanity/slurs/complaint keyword MEANING (either direction)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (profanity/slurs/complaint keyword MEANING (either direction)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (profanity/slurs/complaint keyword MEANING (either direction)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (profanity/slurs/complaint keyword MEANING (either direction)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-173",
+      "condition": "Rep tone flagged as pushy/aggressive by sentiment model.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (rep tone flagged pushy/aggressive by a sentiment model); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "rep tone flagged pushy/aggressive by a sentiment model",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (rep tone flagged pushy/aggressive by a sentiment model); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (rep tone flagged pushy/aggressive by a sentiment model); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (rep tone flagged pushy/aggressive by a sentiment model); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-174",
+      "condition": "Customer uses words like \"frustrated\", \"disappointed\", \"unprofessional\", \"misled\".",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (emotion words (\"frustrated\", \"misled\") as customer sentiment, not literal substrings); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "emotion words (\"frustrated\", \"misled\") as customer sentiment, not literal substrings",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (emotion words (\"frustrated\", \"misled\") as customer sentiment, not literal substrings); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (emotion words (\"frustrated\", \"misled\") as customer sentiment, not literal substrings); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (emotion words (\"frustrated\", \"misled\") as customer sentiment, not literal substrings); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-175",
+      "condition": "Sarcasm or passive-aggressive patterns detected in customer replies.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (sarcasm / passive-aggression detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "sarcasm / passive-aggression detection",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (sarcasm / passive-aggression detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (sarcasm / passive-aggression detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (sarcasm / passive-aggression detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-176",
+      "condition": "Rep sentiment inconsistent — polite then curt (mood-driven service).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (rep sentiment consistency (polite then curt) across a thread); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "rep sentiment consistency (polite then curt) across a thread",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (rep sentiment consistency (polite then curt) across a thread); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (rep sentiment consistency (polite then curt) across a thread); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (rep sentiment consistency (polite then curt) across a thread); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-177",
+      "condition": "Customer requests to speak to a manager or \"someone else\".",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a request to speak to a manager / \"someone else\"); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a request to speak to a manager / \"someone else\"",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a request to speak to a manager / \"someone else\"); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a request to speak to a manager / \"someone else\"); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a request to speak to a manager / \"someone else\"); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-178",
+      "condition": "Apology count from rep >2 in single thread (something went wrong).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (apology detection (\"apology\" is a meaning, not a fixed keyword list)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "apology detection (\"apology\" is a meaning, not a fixed keyword list)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (apology detection (\"apology\" is a meaning, not a fixed keyword list)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (apology detection (\"apology\" is a meaning, not a fixed keyword list)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (apology detection (\"apology\" is a meaning, not a fixed keyword list)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-179",
+      "condition": "Rep quotes different price/payment in successive messages without explanation.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "F. Trust & Transparency Breakdowns",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (quoted prices/payments across messages and whether they differ without explanation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "quoted prices/payments across messages and whether they differ without explanation",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (quoted prices/payments across messages and whether they differ without explanation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (quoted prices/payments across messages and whether they differ without explanation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (quoted prices/payments across messages and whether they differ without explanation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-181",
+      "condition": "Promise made (\"I'll call you at 3\") with no follow-through logged.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "F. Trust & Transparency Breakdowns",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (an explicit promise (\"I’ll call at 3\") and a follow-through join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an explicit promise (\"I’ll call at 3\") and a follow-through join",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an explicit promise (\"I’ll call at 3\") and a follow-through join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an explicit promise (\"I’ll call at 3\") and a follow-through join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an explicit promise (\"I’ll call at 3\") and a follow-through join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-183",
+      "condition": "Rep says \"manager approved\" with no manager note in CRM to back it.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "F. Trust & Transparency Breakdowns",
+      "category": "outside_accepted_evidence",
+      "disposition": "HOLD",
+      "hold_reason": "requires detecting a \"manager approved\" claim (semantic) AND a backing manager note in the CRM — the CRM note is outside the accepted communication log.",
+      "missing_item": "CRM manager-note source + claim semantics",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "outside_accepted_evidence",
+          "reason": "requires detecting a \"manager approved\" claim (semantic) AND a backing manager note in the CRM — the CRM note is outside the accepted communication log."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "outside_accepted_evidence",
+          "reason": "requires detecting a \"manager approved\" claim (semantic) AND a backing manager note in the CRM — the CRM note is outside the accepted communication log."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "outside_accepted_evidence",
+          "reason": "requires detecting a \"manager approved\" claim (semantic) AND a backing manager note in the CRM — the CRM note is outside the accepted communication log."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-185",
+      "condition": "Rep asks customer for the same info twice (didn't read prior messages).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "F. Trust & Transparency Breakdowns",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (the rep asking for the same info twice (semantic equivalence)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "the rep asking for the same info twice (semantic equivalence)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (the rep asking for the same info twice (semantic equivalence)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (the rep asking for the same info twice (semantic equivalence)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (the rep asking for the same info twice (semantic equivalence)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-193",
+      "condition": "Rep makes promise CRM can't substantiate (\"guaranteed approval\", \"lowest price in the state\").",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "G. Compliance & Legal Red Flags in Comms",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (an unsubstantiable compliance promise (\"guaranteed approval\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an unsubstantiable compliance promise (\"guaranteed approval\")",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an unsubstantiable compliance promise (\"guaranteed approval\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an unsubstantiable compliance promise (\"guaranteed approval\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an unsubstantiable compliance promise (\"guaranteed approval\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-194",
+      "condition": "Two reps message same customer within 24h with conflicting info.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "H. Handoff & Team Coordination Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (two reps giving CONFLICTING info within 24h (the conflict is semantic)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "two reps giving CONFLICTING info within 24h (the conflict is semantic)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (two reps giving CONFLICTING info within 24h (the conflict is semantic)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (two reps giving CONFLICTING info within 24h (the conflict is semantic)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (two reps giving CONFLICTING info within 24h (the conflict is semantic)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-195",
+      "condition": "BDC sets appointment, floor rep never introduces themselves before visit.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "H. Handoff & Team Coordination Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a floor-rep self-introduction and a BDC-appointment/role join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a floor-rep self-introduction and a BDC-appointment/role join",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a floor-rep self-introduction and a BDC-appointment/role join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a floor-rep self-introduction and a BDC-appointment/role join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a floor-rep self-introduction and a BDC-appointment/role join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-196",
+      "condition": "Manager takes over thread with no context recap to customer.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "H. Handoff & Team Coordination Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a manager takeover with no context recap to the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a manager takeover with no context recap to the customer",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a manager takeover with no context recap to the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a manager takeover with no context recap to the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a manager takeover with no context recap to the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-197",
+      "condition": "Lead reassigned, new rep doesn't acknowledge prior conversation.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "H. Handoff & Team Coordination Failures",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a reassigned rep failing to acknowledge the prior conversation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a reassigned rep failing to acknowledge the prior conversation",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a reassigned rep failing to acknowledge the prior conversation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a reassigned rep failing to acknowledge the prior conversation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a reassigned rep failing to acknowledge the prior conversation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-200",
+      "condition": "Customer's stated vehicle interest changes 3+ times in a thread (unclear discovery).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (the customer’s stated vehicle interest changing 3+ times); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "the customer’s stated vehicle interest changing 3+ times",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (the customer’s stated vehicle interest changing 3+ times); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (the customer’s stated vehicle interest changing 3+ times); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (the customer’s stated vehicle interest changing 3+ times); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-201",
+      "condition": "Rep never confirms customer's actual need (family size, use case, budget).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (whether the rep confirms the customer’s actual need (family size, use, budget)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "whether the rep confirms the customer’s actual need (family size, use, budget)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (whether the rep confirms the customer’s actual need (family size, use, budget)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (whether the rep confirms the customer’s actual need (family size, use, budget)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (whether the rep confirms the customer’s actual need (family size, use, budget)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-202",
+      "condition": "Language mismatch — customer writes in Spanish/other, rep replies in English only.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (language detection (customer writes Spanish, rep replies English only)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "language detection (customer writes Spanish, rep replies English only)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (language detection (customer writes Spanish, rep replies English only)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (language detection (customer writes Spanish, rep replies English only)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (language detection (customer writes Spanish, rep replies English only)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-203",
+      "condition": "Reading level of rep's messages far above/below customer's (mismatch).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "requires_ratified_semantic_definition_or_threshold",
+      "disposition": "HOLD",
+      "hold_reason": "reading-level is computable, but \"far above/below the customer (mismatch)\" has no ratified threshold or comparison basis.",
+      "missing_item": "a ratified reading-level mismatch threshold",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "requires_ratified_semantic_definition_or_threshold",
+          "reason": "reading-level is computable, but \"far above/below the customer (mismatch)\" has no ratified threshold or comparison basis."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "requires_ratified_semantic_definition_or_threshold",
+          "reason": "reading-level is computable, but \"far above/below the customer (mismatch)\" has no ratified threshold or comparison basis."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "requires_ratified_semantic_definition_or_threshold",
+          "reason": "reading-level is computable, but \"far above/below the customer (mismatch)\" has no ratified threshold or comparison basis."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-204",
+      "condition": "Customer asks about a feature/model the rep clearly doesn't know (competence gap).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a competence gap (rep clearly doesn’t know a feature/model the customer asks about)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a competence gap (rep clearly doesn’t know a feature/model the customer asks about)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a competence gap (rep clearly doesn’t know a feature/model the customer asks about)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a competence gap (rep clearly doesn’t know a feature/model the customer asks about)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a competence gap (rep clearly doesn’t know a feature/model the customer asks about)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-205",
+      "condition": "Emotional escalation curve — sentiment worsens across each message.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (an emotional-escalation curve (sentiment worsening across messages)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an emotional-escalation curve (sentiment worsening across messages)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an emotional-escalation curve (sentiment worsening across messages)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an emotional-escalation curve (sentiment worsening across messages)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an emotional-escalation curve (sentiment worsening across messages)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-206",
+      "condition": "Repeated question (customer asks same thing 3+ times) — rep is dodging.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a repeated customer question (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a repeated customer question (same ask 3+ times)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a repeated customer question (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a repeated customer question (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a repeated customer question (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-239",
+      "condition": "Customers who mentioned family/friend interest in past communications (NLP dig).",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "E. Referral & Loyalty Mining",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a past mention of family/friend interest (referral mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a past mention of family/friend interest (referral mining)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a past mention of family/friend interest (referral mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a past mention of family/friend interest (referral mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a past mention of family/friend interest (referral mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-256",
+      "condition": "Customers who mentioned baby/marriage/move/new job in past comms — lifecycle pitch.",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "H. Life-Event & Trigger Marketing",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a past mention of baby/marriage/move/new job (life-event mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a past mention of baby/marriage/move/new job (life-event mining)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a past mention of baby/marriage/move/new job (life-event mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a past mention of baby/marriage/move/new job (life-event mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a past mention of baby/marriage/move/new job (life-event mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-285",
+      "condition": "Intent classifier: buying-signal, information-seeking, objection, complaint, exit.",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Communication-Specific Models to Deploy",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (an intent classifier (buying-signal/info/objection/complaint/exit)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an intent classifier (buying-signal/info/objection/complaint/exit)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an intent classifier (buying-signal/info/objection/complaint/exit)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an intent classifier (buying-signal/info/objection/complaint/exit)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (an intent classifier (buying-signal/info/objection/complaint/exit)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-286",
+      "condition": "Sentiment tracker: per-message and thread-trend deltas.",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Communication-Specific Models to Deploy",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (a sentiment tracker (per-message + thread-trend deltas)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a sentiment tracker (per-message + thread-trend deltas)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a sentiment tracker (per-message + thread-trend deltas)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a sentiment tracker (per-message + thread-trend deltas)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (a sentiment tracker (per-message + thread-trend deltas)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-287",
+      "condition": "Question-answer alignment: did rep's reply address customer's actual question?",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Communication-Specific Models to Deploy",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "HOLD",
+      "hold_reason": "requires semantic understanding of message meaning (question-answer alignment (did the reply address the question?)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "question-answer alignment (did the reply address the question?)",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (question-answer alignment (did the reply address the question?)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (question-answer alignment (did the reply address the question?)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "definition_exact_via_governed_semantic_provider",
+          "reason": "requires semantic understanding of message meaning (question-answer alignment (did the reply address the question?)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords."
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-289",
+      "condition": "Personalization score: template detection vs custom content ratio.",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Communication-Specific Models to Deploy",
+      "category": "requires_ratified_semantic_definition_or_threshold",
+      "disposition": "HOLD",
+      "hold_reason": "a \"personalization score\" (template-vs-custom ratio) is an unratified composite; its deterministic components (identical body / merge tags) are promoted separately as SW-021/SW-142/SW-145, but the score formula/threshold is not ratified.",
+      "missing_item": "a ratified personalization-score formula + threshold",
+      "rooftop_disposition": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "category": "requires_ratified_semantic_definition_or_threshold",
+          "reason": "a \"personalization score\" (template-vs-custom ratio) is an unratified composite; its deterministic components (identical body / merge tags) are promoted separately as SW-021/SW-142/SW-145, but the score formula/threshold is not ratified."
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "category": "requires_ratified_semantic_definition_or_threshold",
+          "reason": "a \"personalization score\" (template-vs-custom ratio) is an unratified composite; its deterministic components (identical body / merge tags) are promoted separately as SW-021/SW-142/SW-145, but the score formula/threshold is not ratified."
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "category": "requires_ratified_semantic_definition_or_threshold",
+          "reason": "a \"personalization score\" (template-vs-custom ratio) is an unratified composite; its deterministic components (identical body / merge tags) are promoted separately as SW-021/SW-142/SW-145, but the score formula/threshold is not ratified."
+        }
+      ]
+    }
+  ]
+}

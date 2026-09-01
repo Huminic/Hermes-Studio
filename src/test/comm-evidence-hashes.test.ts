@@ -19,6 +19,14 @@ const PROOF_D = new URL(
   '../../docs/halo/evidence/m1r/structured/PROOF_DELTA_D_structured_audit.md',
   import.meta.url,
 )
+const PROOF_E1 = new URL(
+  '../../docs/halo/evidence/m1r/comms/PROOF_DELTA_E1_comm_content_audit.md',
+  import.meta.url,
+)
+const PROOF_E2 = new URL(
+  '../../docs/halo/evidence/m1r/comms/PROOF_DELTA_E2_comm_content_evaluation.md',
+  import.meta.url,
+)
 const HASH16 = /^[0-9a-f]{16}$/
 const PATHISH = /\.(ts|json|md)$/
 
@@ -84,6 +92,59 @@ describe('Gate 4D structured-audit proof delta recorded artifact hashes', () => 
       'docs/halo/contract/sw295-structured-candidate-matrix.json',
       'docs/halo/evidence/m1r/structured/structured-portfolio-reconciliation.json',
       'src/test/structured-candidate-audit.test.ts',
+    ])
+      expect(
+        recorded.some((r) => r.file === req),
+        `must record ${req}`,
+      ).toBe(true)
+  })
+
+  it('every recorded first-16 SHA-256 matches the current file bytes', () => {
+    for (const r of recorded)
+      expect(first16(new URL(r.file, ROOT)), `${r.file} hash drift`).toBe(
+        r.hash,
+      )
+  })
+})
+
+describe('Gate 4E comm-content audit proof delta (E1) recorded artifact hashes', () => {
+  const md = fs.readFileSync(PROOF_E1, 'utf8')
+  const recorded = parseRecordedHashes(md)
+
+  it('parses the full Gate 4E E1 artifact set (3 modules + 1 contract = 4)', () => {
+    expect(recorded.length).toBe(4)
+    for (const req of [
+      'src/server/reports/comms/comm-content-features.ts',
+      'src/server/reports/comms/comm-content-reader.ts',
+      'src/server/reports/comms/comm-content-metrics.ts',
+      'docs/halo/contract/sw295-comm-content-matrix.json',
+    ])
+      expect(
+        recorded.some((r) => r.file === req),
+        `must record ${req}`,
+      ).toBe(true)
+  })
+
+  it('every recorded first-16 SHA-256 matches the current file bytes', () => {
+    for (const r of recorded)
+      expect(first16(new URL(r.file, ROOT)), `${r.file} hash drift`).toBe(
+        r.hash,
+      )
+  })
+})
+
+describe('Gate 4E comm-content evaluation proof delta (E2) recorded artifact hashes', () => {
+  const md = fs.readFileSync(PROOF_E2, 'utf8')
+  const recorded = parseRecordedHashes(md)
+
+  it('parses the full Gate 4E E2 artifact set (1 generator + 2 evidence + 2 tests = 5)', () => {
+    expect(recorded.length).toBe(5)
+    for (const req of [
+      'scripts/m1r-comms/build-comm-content-evaluation.ts',
+      'docs/halo/evidence/m1r/comms/comm-content-evaluation-ledger.json',
+      'docs/halo/evidence/m1r/comms/comm-content-portfolio-reconciliation.json',
+      'src/test/comm-content-features.test.ts',
+      'src/test/comm-content-audit.test.ts',
     ])
       expect(
         recorded.some((r) => r.file === req),

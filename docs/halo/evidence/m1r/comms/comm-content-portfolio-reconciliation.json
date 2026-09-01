@@ -1,0 +1,45 @@
+{
+  "artifact": "gate4e-comm-content-portfolio-reconciliation",
+  "required_cells": 885,
+  "conditions": 295,
+  "rooftops": 3,
+  "spine_evaluated": 30,
+  "comm_overlay_evaluated": 6,
+  "content_evaluated": 15,
+  "content_per_rooftop": 5,
+  "content_promoted_ids": ["SW-021", "SW-142", "SW-145", "SW-149", "SW-150"],
+  "content_composition": "15 content cells = SW-021 + SW-142 + SW-145 + SW-149 + SW-150 x 3 rooftops (5/rooftop, all-three)",
+  "prior_evaluated": 36,
+  "evaluated": 51,
+  "unresolved": 834,
+  "candidate_partition": {
+    "candidates_75": 75,
+    "prior_evaluated_per_rooftop": 12,
+    "residual": 208,
+    "reconciles_to": 295
+  },
+  "by_dealer": {
+    "21043": {
+      "spine_evaluated": 10,
+      "comm_evaluated": 2,
+      "content_evaluated": 5,
+      "evaluated": 17,
+      "unresolved": 278
+    },
+    "21044": {
+      "spine_evaluated": 10,
+      "comm_evaluated": 2,
+      "content_evaluated": 5,
+      "evaluated": 17,
+      "unresolved": 278
+    },
+    "21047": {
+      "spine_evaluated": 10,
+      "comm_evaluated": 2,
+      "content_evaluated": 5,
+      "evaluated": 17,
+      "unresolved": 278
+    }
+  },
+  "note": "Atomic union of the untouched core spine (30) + Gate 4C2 comm overlay (6) + the Gate 4E deterministic content overlay (15 content cells = SW-021 + SW-142 + SW-145 + SW-149 + SW-150 x 3 rooftops (5/rooftop, all-three)). Per rooftop: 10 spine + 2 comm + 5 content = 17 evaluated / 278 unresolved. Derived from the committed 4C2 reconciliation, fail-closed; no prior cell changed."
+}

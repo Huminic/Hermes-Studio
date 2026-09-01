@@ -1,0 +1,1661 @@
+{
+  "artifact": "gate4e-comm-content-evaluation-ledger",
+  "family": "enhanced_sales_communication_log_weekly",
+  "formula_version": "comm-content-metric-v1",
+  "reporting_period": {
+    "preset": "Previous Week (Mon-Sun)",
+    "start": "2026-08-24",
+    "end": "2026-08-30",
+    "timezone": "America/New_York"
+  },
+  "provider_verdict": "no in-boundary governed semantic provider is approved to classify this tenant’s restricted communication content; the only AI paths transmit customer text to an external provider (out of boundary). No live model call is made in Gate 4E; semantic conditions are HELD, not proxied.",
+  "evaluated_ids": ["SW-021", "SW-142", "SW-145", "SW-149", "SW-150"],
+  "evaluated_cells": 15,
+  "held_ids": [
+    "SW-014",
+    "SW-029",
+    "SW-030",
+    "SW-070",
+    "SW-071",
+    "SW-072",
+    "SW-073",
+    "SW-074",
+    "SW-075",
+    "SW-077",
+    "SW-078",
+    "SW-131",
+    "SW-135",
+    "SW-136",
+    "SW-139",
+    "SW-141",
+    "SW-143",
+    "SW-144",
+    "SW-146",
+    "SW-147",
+    "SW-148",
+    "SW-151",
+    "SW-152",
+    "SW-153",
+    "SW-154",
+    "SW-155",
+    "SW-156",
+    "SW-157",
+    "SW-158",
+    "SW-159",
+    "SW-160",
+    "SW-161",
+    "SW-162",
+    "SW-163",
+    "SW-164",
+    "SW-165",
+    "SW-166",
+    "SW-168",
+    "SW-169",
+    "SW-170",
+    "SW-171",
+    "SW-172",
+    "SW-173",
+    "SW-174",
+    "SW-175",
+    "SW-176",
+    "SW-177",
+    "SW-178",
+    "SW-179",
+    "SW-181",
+    "SW-183",
+    "SW-185",
+    "SW-193",
+    "SW-194",
+    "SW-195",
+    "SW-196",
+    "SW-197",
+    "SW-200",
+    "SW-201",
+    "SW-202",
+    "SW-203",
+    "SW-204",
+    "SW-205",
+    "SW-206",
+    "SW-239",
+    "SW-256",
+    "SW-285",
+    "SW-286",
+    "SW-287",
+    "SW-289"
+  ],
+  "note": "NON-PII deterministic content overlay. Aggregate integer numerator/denominator + derived rate only; no name, customer, rep/thread token, or message content. Separate from the 4-family core spine AND the Gate 4C2 comm overlay; the prior 36 evaluated cells are unchanged. Detection thresholds are LITERAL from the SW conditions; low sample is disclosed as confidence, never excluded (no invented floor).",
+  "cells": [
+    {
+      "metric_id": "SW-021",
+      "dealer_id": "21043",
+      "profile": "serra-honda",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["rep_token", "thread_token", "body_identity_hash"],
+      "formula": "reps whose modal identical (trim-normalized) body covers > 70% of distinct leads / reps with >=1 written lead",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0.18181818181818182,
+      "unit": "ratio",
+      "numerator": 2,
+      "denominator": 11,
+      "detection_threshold": ">70% of the rep’s distinct leads (literal)",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-021-red-flag-target-0",
+        "label": "Rep sends identical templated message to >70% of leads (no personalization) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0.18181818181818182,
+      "rating": "breach",
+      "rank": 2,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "denominator reps with >=1 eligible written lead=11; 2 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "reps with >=1 eligible written lead",
+        "low_sample_flagged": 2,
+        "disclosure": "2 of 11 reps sent one identical body to > 70% of their distinct leads; 2 flagged rep(s) had < 5 leads (degenerate low sample — disclosed, not excluded)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:36:18-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21043",
+        "raw_sha256": "25ac45f9e27c72efede545e218682b9fd7d6cb20800967a31061293e68c15adc",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "DEGENERATE FOR LOW LEAD COUNTS: a rep with 1–2 distinct leads trivially reaches >70% (100%/50%); such flags are disclosed as low-confidence, never excluded (no invented floor). Interpret low-lead flags as low-sample."
+    },
+    {
+      "metric_id": "SW-021",
+      "dealer_id": "21044",
+      "profile": "serra-nissan",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["rep_token", "thread_token", "body_identity_hash"],
+      "formula": "reps whose modal identical (trim-normalized) body covers > 70% of distinct leads / reps with >=1 written lead",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0.2222222222222222,
+      "unit": "ratio",
+      "numerator": 2,
+      "denominator": 9,
+      "detection_threshold": ">70% of the rep’s distinct leads (literal)",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-021-red-flag-target-0",
+        "label": "Rep sends identical templated message to >70% of leads (no personalization) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0.2222222222222222,
+      "rating": "breach",
+      "rank": 3,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "denominator reps with >=1 eligible written lead=9; 2 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "reps with >=1 eligible written lead",
+        "low_sample_flagged": 2,
+        "disclosure": "2 of 9 reps sent one identical body to > 70% of their distinct leads; 2 flagged rep(s) had < 5 leads (degenerate low sample — disclosed, not excluded)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:27:58-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21044",
+        "raw_sha256": "26adece2cb6c385cff1bddb9dd9b7b611dc04c883d709c57ae1f1a2a6f6ba0a5",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "DEGENERATE FOR LOW LEAD COUNTS: a rep with 1–2 distinct leads trivially reaches >70% (100%/50%); such flags are disclosed as low-confidence, never excluded (no invented floor). Interpret low-lead flags as low-sample."
+    },
+    {
+      "metric_id": "SW-021",
+      "dealer_id": "21047",
+      "profile": "tony-serra-ford",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["rep_token", "thread_token", "body_identity_hash"],
+      "formula": "reps whose modal identical (trim-normalized) body covers > 70% of distinct leads / reps with >=1 written lead",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0.125,
+      "unit": "ratio",
+      "numerator": 1,
+      "denominator": 8,
+      "detection_threshold": ">70% of the rep’s distinct leads (literal)",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-021-red-flag-target-0",
+        "label": "Rep sends identical templated message to >70% of leads (no personalization) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0.125,
+      "rating": "breach",
+      "rank": 1,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "denominator reps with >=1 eligible written lead=8; 1 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "reps with >=1 eligible written lead",
+        "low_sample_flagged": 1,
+        "disclosure": "1 of 8 reps sent one identical body to > 70% of their distinct leads; 1 flagged rep(s) had < 5 leads (degenerate low sample — disclosed, not excluded)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:40:56-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21047",
+        "raw_sha256": "0d96f848df86abbee1129e9d2cf9fa5655a1321b25afc153c3b04e1c8afea467",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "DEGENERATE FOR LOW LEAD COUNTS: a rep with 1–2 distinct leads trivially reaches >70% (100%/50%); such flags are disclosed as low-confidence, never excluded (no invented floor). Interpret low-lead flags as low-sample."
+    },
+    {
+      "metric_id": "SW-142",
+      "dealer_id": "21043",
+      "profile": "serra-honda",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["has_unfilled_merge_tag"],
+      "formula": "eligible written messages with an unfilled merge-tag delimiter / eligible written messages",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0,
+      "unit": "ratio",
+      "numerator": 0,
+      "denominator": 800,
+      "detection_threshold": "presence of an unfilled merge-tag delimiter ∈ {{{ field }}, { field }, [[ field ]], << field >>, %% field %%, % field %, $ field $} (literal)",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-142-red-flag-target-0",
+        "label": "Rep uses generic template with unfilled merge tags ('Hi {{FirstName}}') — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0,
+      "rating": "healthy",
+      "rank": 1,
+      "evaluation_confidence": {
+        "label": "high",
+        "basis": "denominator eligible written messages=800; 0 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "eligible written messages",
+        "low_sample_flagged": 0,
+        "disclosure": "0 of 800 eligible written messages carried an unfilled merge-tag delimiter (7 enumerated syntaxes)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:36:18-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21043",
+        "raw_sha256": "25ac45f9e27c72efede545e218682b9fd7d6cb20800967a31061293e68c15adc",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "recall bounded to the enumerated merge-tag syntaxes; a zero result means \"no enumerated unfilled delimiter\", with eligibility (message population) proved"
+    },
+    {
+      "metric_id": "SW-142",
+      "dealer_id": "21044",
+      "profile": "serra-nissan",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["has_unfilled_merge_tag"],
+      "formula": "eligible written messages with an unfilled merge-tag delimiter / eligible written messages",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0,
+      "unit": "ratio",
+      "numerator": 0,
+      "denominator": 386,
+      "detection_threshold": "presence of an unfilled merge-tag delimiter ∈ {{{ field }}, { field }, [[ field ]], << field >>, %% field %%, % field %, $ field $} (literal)",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-142-red-flag-target-0",
+        "label": "Rep uses generic template with unfilled merge tags ('Hi {{FirstName}}') — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0,
+      "rating": "healthy",
+      "rank": 1,
+      "evaluation_confidence": {
+        "label": "high",
+        "basis": "denominator eligible written messages=386; 0 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "eligible written messages",
+        "low_sample_flagged": 0,
+        "disclosure": "0 of 386 eligible written messages carried an unfilled merge-tag delimiter (7 enumerated syntaxes)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:27:58-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21044",
+        "raw_sha256": "26adece2cb6c385cff1bddb9dd9b7b611dc04c883d709c57ae1f1a2a6f6ba0a5",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "recall bounded to the enumerated merge-tag syntaxes; a zero result means \"no enumerated unfilled delimiter\", with eligibility (message population) proved"
+    },
+    {
+      "metric_id": "SW-142",
+      "dealer_id": "21047",
+      "profile": "tony-serra-ford",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["has_unfilled_merge_tag"],
+      "formula": "eligible written messages with an unfilled merge-tag delimiter / eligible written messages",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0,
+      "unit": "ratio",
+      "numerator": 0,
+      "denominator": 250,
+      "detection_threshold": "presence of an unfilled merge-tag delimiter ∈ {{{ field }}, { field }, [[ field ]], << field >>, %% field %%, % field %, $ field $} (literal)",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-142-red-flag-target-0",
+        "label": "Rep uses generic template with unfilled merge tags ('Hi {{FirstName}}') — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0,
+      "rating": "healthy",
+      "rank": 1,
+      "evaluation_confidence": {
+        "label": "high",
+        "basis": "denominator eligible written messages=250; 0 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "eligible written messages",
+        "low_sample_flagged": 0,
+        "disclosure": "0 of 250 eligible written messages carried an unfilled merge-tag delimiter (7 enumerated syntaxes)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:40:56-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21047",
+        "raw_sha256": "0d96f848df86abbee1129e9d2cf9fa5655a1321b25afc153c3b04e1c8afea467",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "recall bounded to the enumerated merge-tag syntaxes; a zero result means \"no enumerated unfilled delimiter\", with eligibility (message population) proved"
+    },
+    {
+      "metric_id": "SW-145",
+      "dealer_id": "21043",
+      "profile": "serra-honda",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["body_identity_hash", "activity_date", "person_token"],
+      "formula": "distinct (identical body, day) groups delivered to > 5 distinct customers / distinct (body, day) groups",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0.004103967168262654,
+      "unit": "ratio",
+      "numerator": 3,
+      "denominator": 731,
+      "detection_threshold": ">5 distinct customers for one identical body in one day (literal)",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-145-red-flag-target-0",
+        "label": "Same message body sent to >5 customers in a day (copy-paste factory) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0.004103967168262654,
+      "rating": "breach",
+      "rank": 2,
+      "evaluation_confidence": {
+        "label": "high",
+        "basis": "denominator distinct (body, day) groups=731; 0 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "distinct (body, day) groups",
+        "low_sample_flagged": 0,
+        "disclosure": "3 of 731 distinct (body, day) groups reached > 5 distinct customers."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:36:18-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21043",
+        "raw_sha256": "25ac45f9e27c72efede545e218682b9fd7d6cb20800967a31061293e68c15adc",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "LITERAL over-capture disclosed: a short generic acknowledgement (\"Thank you!\") or an automated outbound identical body sent to >5 customers in a day counts, because the condition is body-identity + reach (not substance). No minimum-length/rep-scoping is invented."
+    },
+    {
+      "metric_id": "SW-145",
+      "dealer_id": "21044",
+      "profile": "serra-nissan",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["body_identity_hash", "activity_date", "person_token"],
+      "formula": "distinct (identical body, day) groups delivered to > 5 distinct customers / distinct (body, day) groups",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0.002777777777777778,
+      "unit": "ratio",
+      "numerator": 1,
+      "denominator": 360,
+      "detection_threshold": ">5 distinct customers for one identical body in one day (literal)",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-145-red-flag-target-0",
+        "label": "Same message body sent to >5 customers in a day (copy-paste factory) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0.002777777777777778,
+      "rating": "breach",
+      "rank": 1,
+      "evaluation_confidence": {
+        "label": "high",
+        "basis": "denominator distinct (body, day) groups=360; 0 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "distinct (body, day) groups",
+        "low_sample_flagged": 0,
+        "disclosure": "1 of 360 distinct (body, day) groups reached > 5 distinct customers."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:27:58-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21044",
+        "raw_sha256": "26adece2cb6c385cff1bddb9dd9b7b611dc04c883d709c57ae1f1a2a6f6ba0a5",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "LITERAL over-capture disclosed: a short generic acknowledgement (\"Thank you!\") or an automated outbound identical body sent to >5 customers in a day counts, because the condition is body-identity + reach (not substance). No minimum-length/rep-scoping is invented."
+    },
+    {
+      "metric_id": "SW-145",
+      "dealer_id": "21047",
+      "profile": "tony-serra-ford",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["body_identity_hash", "activity_date", "person_token"],
+      "formula": "distinct (identical body, day) groups delivered to > 5 distinct customers / distinct (body, day) groups",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0.004310344827586207,
+      "unit": "ratio",
+      "numerator": 1,
+      "denominator": 232,
+      "detection_threshold": ">5 distinct customers for one identical body in one day (literal)",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-145-red-flag-target-0",
+        "label": "Same message body sent to >5 customers in a day (copy-paste factory) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0.004310344827586207,
+      "rating": "breach",
+      "rank": 3,
+      "evaluation_confidence": {
+        "label": "high",
+        "basis": "denominator distinct (body, day) groups=232; 0 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "distinct (body, day) groups",
+        "low_sample_flagged": 0,
+        "disclosure": "1 of 232 distinct (body, day) groups reached > 5 distinct customers."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:40:56-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21047",
+        "raw_sha256": "0d96f848df86abbee1129e9d2cf9fa5655a1321b25afc153c3b04e1c8afea467",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "LITERAL over-capture disclosed: a short generic acknowledgement (\"Thank you!\") or an automated outbound identical body sent to >5 customers in a day counts, because the condition is body-identity + reach (not substance). No minimum-length/rep-scoping is invented."
+    },
+    {
+      "metric_id": "SW-149",
+      "dealer_id": "21043",
+      "profile": "serra-honda",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["rep_token", "word_count"],
+      "formula": "reps whose mean written word count < 15 / reps with >=1 written message",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0.18181818181818182,
+      "unit": "ratio",
+      "numerator": 2,
+      "denominator": 11,
+      "detection_threshold": "< 15 words mean (literal)",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-149-red-flag-target-0",
+        "label": "Rep's messages average <15 words (low-effort replies) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0.18181818181818182,
+      "rating": "breach",
+      "rank": 3,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "denominator reps with >=1 eligible written message=11; 1 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "reps with >=1 eligible written message",
+        "low_sample_flagged": 1,
+        "disclosure": "2 of 11 reps averaged < 15 words; 1 flagged rep(s) had < 5 messages (low sample — disclosed, not excluded)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:36:18-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21043",
+        "raw_sha256": "25ac45f9e27c72efede545e218682b9fd7d6cb20800967a31061293e68c15adc",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "small per-rep message counts yield a low-confidence mean; disclosed as confidence, never excluded (no invented floor)."
+    },
+    {
+      "metric_id": "SW-149",
+      "dealer_id": "21044",
+      "profile": "serra-nissan",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["rep_token", "word_count"],
+      "formula": "reps whose mean written word count < 15 / reps with >=1 written message",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0.1111111111111111,
+      "unit": "ratio",
+      "numerator": 1,
+      "denominator": 9,
+      "detection_threshold": "< 15 words mean (literal)",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-149-red-flag-target-0",
+        "label": "Rep's messages average <15 words (low-effort replies) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0.1111111111111111,
+      "rating": "breach",
+      "rank": 2,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "denominator reps with >=1 eligible written message=9; 1 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "reps with >=1 eligible written message",
+        "low_sample_flagged": 1,
+        "disclosure": "1 of 9 reps averaged < 15 words; 1 flagged rep(s) had < 5 messages (low sample — disclosed, not excluded)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:27:58-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21044",
+        "raw_sha256": "26adece2cb6c385cff1bddb9dd9b7b611dc04c883d709c57ae1f1a2a6f6ba0a5",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "small per-rep message counts yield a low-confidence mean; disclosed as confidence, never excluded (no invented floor)."
+    },
+    {
+      "metric_id": "SW-149",
+      "dealer_id": "21047",
+      "profile": "tony-serra-ford",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["rep_token", "word_count"],
+      "formula": "reps whose mean written word count < 15 / reps with >=1 written message",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0,
+      "unit": "ratio",
+      "numerator": 0,
+      "denominator": 8,
+      "detection_threshold": "< 15 words mean (literal)",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-149-red-flag-target-0",
+        "label": "Rep's messages average <15 words (low-effort replies) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0,
+      "rating": "healthy",
+      "rank": 1,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "denominator reps with >=1 eligible written message=8; 0 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "reps with >=1 eligible written message",
+        "low_sample_flagged": 0,
+        "disclosure": "0 of 8 reps averaged < 15 words; 0 flagged rep(s) had < 5 messages (low sample — disclosed, not excluded)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:40:56-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21047",
+        "raw_sha256": "0d96f848df86abbee1129e9d2cf9fa5655a1321b25afc153c3b04e1c8afea467",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "small per-rep message counts yield a low-confidence mean; disclosed as confidence, never excluded (no invented floor)."
+    },
+    {
+      "metric_id": "SW-150",
+      "dealer_id": "21043",
+      "profile": "serra-honda",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["rep_token", "is_link_only"],
+      "formula": "reps for whom every eligible written message is link-only / reps with >=1 written message",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0,
+      "unit": "ratio",
+      "numerator": 0,
+      "denominator": 11,
+      "detection_threshold": "every eligible written message is link-only (literal \"only\")",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-150-red-flag-target-0",
+        "label": "Rep only sends links, no conversational context — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0,
+      "rating": "healthy",
+      "rank": 1,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "denominator reps with >=1 eligible written message=11; 0 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "reps with >=1 eligible written message",
+        "low_sample_flagged": 0,
+        "disclosure": "0 of 11 reps sent only link-only messages; 0 flagged rep(s) had < 5 messages (low sample — disclosed, not excluded)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:36:18-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21043",
+        "raw_sha256": "25ac45f9e27c72efede545e218682b9fd7d6cb20800967a31061293e68c15adc",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "a rep with a single eligible written message that is link-only satisfies \"only sends links\" literally; disclosed as low-confidence, never excluded (no invented floor)."
+    },
+    {
+      "metric_id": "SW-150",
+      "dealer_id": "21044",
+      "profile": "serra-nissan",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["rep_token", "is_link_only"],
+      "formula": "reps for whom every eligible written message is link-only / reps with >=1 written message",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0,
+      "unit": "ratio",
+      "numerator": 0,
+      "denominator": 9,
+      "detection_threshold": "every eligible written message is link-only (literal \"only\")",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-150-red-flag-target-0",
+        "label": "Rep only sends links, no conversational context — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0,
+      "rating": "healthy",
+      "rank": 1,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "denominator reps with >=1 eligible written message=9; 0 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "reps with >=1 eligible written message",
+        "low_sample_flagged": 0,
+        "disclosure": "0 of 9 reps sent only link-only messages; 0 flagged rep(s) had < 5 messages (low sample — disclosed, not excluded)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:27:58-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21044",
+        "raw_sha256": "26adece2cb6c385cff1bddb9dd9b7b611dc04c883d709c57ae1f1a2a6f6ba0a5",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "a rep with a single eligible written message that is link-only satisfies \"only sends links\" literally; disclosed as low-confidence, never excluded (no invented floor)."
+    },
+    {
+      "metric_id": "SW-150",
+      "dealer_id": "21047",
+      "profile": "tony-serra-ford",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["rep_token", "is_link_only"],
+      "formula": "reps for whom every eligible written message is link-only / reps with >=1 written message",
+      "formula_version": "comm-content-metric-v1",
+      "value": 0,
+      "unit": "ratio",
+      "numerator": 0,
+      "denominator": 8,
+      "detection_threshold": "every eligible written message is link-only (literal \"only\")",
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-content-SW-150-red-flag-target-0",
+        "label": "Rep only sends links, no conversational context — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0. The DETECTION threshold inside the numerator (<15 words, >5 customers, >70% of leads, merge-tag present, link-only) is LITERAL from the SW condition; this baseline is the rate target, not an industry benchmark."
+      },
+      "variance": 0,
+      "rating": "healthy",
+      "rank": 1,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "denominator reps with >=1 eligible written message=8; 0 flagged unit(s) below a 5-observation low-sample line (disclosed, never excluded)"
+      },
+      "evaluation_detail": {
+        "population_grain": "reps with >=1 eligible written message",
+        "low_sample_flagged": 0,
+        "disclosure": "0 of 8 reps sent only link-only messages; 0 flagged rep(s) had < 5 messages (low sample — disclosed, not excluded)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:40:56-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21047",
+        "raw_sha256": "0d96f848df86abbee1129e9d2cf9fa5655a1321b25afc153c3b04e1c8afea467",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "a rep with a single eligible written message that is link-only satisfies \"only sends links\" literally; disclosed as low-confidence, never excluded (no invented floor)."
+    }
+  ],
+  "held": [
+    {
+      "metric_id": "SW-014",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (auto-reply vs human classification of the first response); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "auto-reply vs human classification of the first response",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-029",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (outbound sentiment (negative/pushy) trend); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "outbound sentiment (negative/pushy) trend",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-030",
+      "category": "outside_accepted_evidence",
+      "disposition": "hold",
+      "hold_reason": "requires a customer complaint / CSI verbatim source and a named-rep match — neither is in the accepted Sales communication log.",
+      "missing_item": "external complaint/CSI verbatim source + rep-name attribution",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "admit and govern the required external source; then re-evaluate all three rooftops"
+    },
+    {
+      "metric_id": "SW-070",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (inbound customer sentiment (spike detection)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "inbound customer sentiment (spike detection)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-071",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (churn/competitor language in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "churn/competitor language in customer text",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-072",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (price/payment objection detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "price/payment objection detection",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-073",
+      "category": "outside_accepted_evidence",
+      "disposition": "hold",
+      "hold_reason": "requires detecting a manager-escalation request (semantic) AND a manager note logged in the CRM — the CRM manager note is outside the accepted communication log.",
+      "missing_item": "CRM manager-note source + escalation-request semantics",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "admit and govern the required external source; then re-evaluate all three rooftops"
+    },
+    {
+      "metric_id": "SW-074",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (profanity/complaint keyword MEANING and an escalation flag); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "profanity/complaint keyword MEANING and an escalation flag",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-075",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (repeated-question equivalence (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "repeated-question equivalence (same ask 3+ times)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-077",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (\"high-intent message\" classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "\"high-intent message\" classification that triggers the silence window",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-078",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (language detection of customer vs rep messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "language detection of customer vs rep messages",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-131",
+      "category": "requires_ratified_semantic_definition_or_threshold",
+      "disposition": "hold",
+      "hold_reason": "architecture note (\"semantic layer: NLP over notes/messages\"), not a single ratified metric with a numerator/population/threshold.",
+      "missing_item": "a ratified concrete metric definition",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "ratify the concrete metric definition/threshold; do not promote until all three rooftop cells meet acceptance"
+    },
+    {
+      "metric_id": "SW-135",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (extracting a customer-stated deadline and comparing reply timing to it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "extracting a customer-stated deadline and comparing reply timing to it",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-136",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (\"hot\" signal (payment/financing/delivery) classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "\"hot\" signal (payment/financing/delivery) classification that triggers the silence window",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-139",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (extracting a customer-stated callback time); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "extracting a customer-stated callback time",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-141",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (\"high intent\" classification of the weekend/evening inbound message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "\"high intent\" classification of the weekend/evening inbound message",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-143",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (whether a reply answers the specific question asked (Q-A alignment)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "whether a reply answers the specific question asked (Q-A alignment)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-144",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (whether a reply ignores information the customer already provided); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "whether a reply ignores information the customer already provided",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-146",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (whether the rep asked a question (a \"?\" count is a proxy, not the concept \"question\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "whether the rep asked a question (a \"?\" count is a proxy, not the concept \"question\")",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-147",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (the customer’s stated vehicle of interest and whether the rep mentions it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "the customer’s stated vehicle of interest and whether the rep mentions it",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-148",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (pricing/payment/next-step CTA presence in a message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "pricing/payment/next-step CTA presence in a message",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-151",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (greeting/sign-off style vs the store’s top performers (peer style model)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "greeting/sign-off style vs the store’s top performers (peer style model)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-152",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a customer price/payment concern and whether the reply addresses it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a customer price/payment concern and whether the reply addresses it",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-153",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a financing/credit question and whether the rep pivots away); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a financing/credit question and whether the rep pivots away",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-154",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (buying-signal phrases (\"I’m ready\") and an appointment-set join within 1h); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "buying-signal phrases (\"I’m ready\") and an appointment-set join within 1h",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-155",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (voluntary trade info and a trade-appraisal offer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "voluntary trade info and a trade-appraisal offer",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-156",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (an out-the-door price ask repeated without an answer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an out-the-door price ask repeated without an answer",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-157",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (an evasion pattern (\"come in and let’s talk\" answering \"how much\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an evasion pattern (\"come in and let’s talk\" answering \"how much\")",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-158",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a credit-challenge mention and a special-finance handoff); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a credit-challenge mention and a special-finance handoff",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-159",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (customer urgency and whether the rep mirrors it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "customer urgency and whether the rep mirrors it",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-160",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a discount offered before the customer objects on price); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a discount offered before the customer objects on price",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-161",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a competitor dealer/brand named in customer text (entity recognition)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a competitor dealer/brand named in customer text (entity recognition)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-162",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (shopping-around phrases in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "shopping-around phrases in customer text",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-163",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (exit-intent phrases (\"not interested\", \"take me off your list\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "exit-intent phrases (\"not interested\", \"take me off your list\")",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-164",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a specific competing offer referenced by the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a specific competing offer referenced by the customer",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-165",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (an OTD/final-number ask after previously-warm intent (state + semantics)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an OTD/final-number ask after previously-warm intent (state + semantics)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-166",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a tone shift from questions to short replies); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a tone shift from questions to short replies",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-168",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (pause/defer phrases (\"think about it\", \"revisit next month\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "pause/defer phrases (\"think about it\", \"revisit next month\")",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-169",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a life event that delays purchase (job change, move, medical)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a life event that delays purchase (job change, move, medical)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-170",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (negative sentiment on the customer’s last messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "negative sentiment on the customer’s last messages",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-171",
+      "category": "requires_ratified_semantic_definition_or_threshold",
+      "disposition": "hold",
+      "hold_reason": "repeated !!!/??? are deterministic, but the disjunct \"ALL CAPS\" cannot be separated from auto-domain acronyms (SUV, VIN, AWD, MSRP, APR) without a ratified caps rule; promoting only the punctuation part would drop a named disjunct and change the condition.",
+      "missing_item": "a ratified ALL-CAPS rule that excludes domain acronyms",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "ratify the concrete metric definition/threshold; do not promote until all three rooftop cells meet acceptance"
+    },
+    {
+      "metric_id": "SW-172",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (profanity/slurs/complaint keyword MEANING (either direction)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "profanity/slurs/complaint keyword MEANING (either direction)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-173",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (rep tone flagged pushy/aggressive by a sentiment model); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "rep tone flagged pushy/aggressive by a sentiment model",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-174",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (emotion words (\"frustrated\", \"misled\") as customer sentiment, not literal substrings); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "emotion words (\"frustrated\", \"misled\") as customer sentiment, not literal substrings",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-175",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (sarcasm / passive-aggression detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "sarcasm / passive-aggression detection",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-176",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (rep sentiment consistency (polite then curt) across a thread); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "rep sentiment consistency (polite then curt) across a thread",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-177",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a request to speak to a manager / \"someone else\"); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a request to speak to a manager / \"someone else\"",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-178",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (apology detection (\"apology\" is a meaning, not a fixed keyword list)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "apology detection (\"apology\" is a meaning, not a fixed keyword list)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-179",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (quoted prices/payments across messages and whether they differ without explanation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "quoted prices/payments across messages and whether they differ without explanation",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-181",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (an explicit promise (\"I’ll call at 3\") and a follow-through join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an explicit promise (\"I’ll call at 3\") and a follow-through join",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-183",
+      "category": "outside_accepted_evidence",
+      "disposition": "hold",
+      "hold_reason": "requires detecting a \"manager approved\" claim (semantic) AND a backing manager note in the CRM — the CRM note is outside the accepted communication log.",
+      "missing_item": "CRM manager-note source + claim semantics",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "admit and govern the required external source; then re-evaluate all three rooftops"
+    },
+    {
+      "metric_id": "SW-185",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (the rep asking for the same info twice (semantic equivalence)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "the rep asking for the same info twice (semantic equivalence)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-193",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (an unsubstantiable compliance promise (\"guaranteed approval\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an unsubstantiable compliance promise (\"guaranteed approval\")",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-194",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (two reps giving CONFLICTING info within 24h (the conflict is semantic)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "two reps giving CONFLICTING info within 24h (the conflict is semantic)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-195",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a floor-rep self-introduction and a BDC-appointment/role join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a floor-rep self-introduction and a BDC-appointment/role join",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-196",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a manager takeover with no context recap to the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a manager takeover with no context recap to the customer",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-197",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a reassigned rep failing to acknowledge the prior conversation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a reassigned rep failing to acknowledge the prior conversation",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-200",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (the customer’s stated vehicle interest changing 3+ times); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "the customer’s stated vehicle interest changing 3+ times",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-201",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (whether the rep confirms the customer’s actual need (family size, use, budget)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "whether the rep confirms the customer’s actual need (family size, use, budget)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-202",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (language detection (customer writes Spanish, rep replies English only)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "language detection (customer writes Spanish, rep replies English only)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-203",
+      "category": "requires_ratified_semantic_definition_or_threshold",
+      "disposition": "hold",
+      "hold_reason": "reading-level is computable, but \"far above/below the customer (mismatch)\" has no ratified threshold or comparison basis.",
+      "missing_item": "a ratified reading-level mismatch threshold",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "ratify the concrete metric definition/threshold; do not promote until all three rooftop cells meet acceptance"
+    },
+    {
+      "metric_id": "SW-204",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a competence gap (rep clearly doesn’t know a feature/model the customer asks about)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a competence gap (rep clearly doesn’t know a feature/model the customer asks about)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-205",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (an emotional-escalation curve (sentiment worsening across messages)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an emotional-escalation curve (sentiment worsening across messages)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-206",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a repeated customer question (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a repeated customer question (same ask 3+ times)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-239",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a past mention of family/friend interest (referral mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a past mention of family/friend interest (referral mining)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-256",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a past mention of baby/marriage/move/new job (life-event mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a past mention of baby/marriage/move/new job (life-event mining)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-285",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (an intent classifier (buying-signal/info/objection/complaint/exit)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "an intent classifier (buying-signal/info/objection/complaint/exit)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-286",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (a sentiment tracker (per-message + thread-trend deltas)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "a sentiment tracker (per-message + thread-trend deltas)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-287",
+      "category": "definition_exact_via_governed_semantic_provider",
+      "disposition": "hold",
+      "hold_reason": "requires semantic understanding of message meaning (question-answer alignment (did the reply address the question?)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
+      "missing_item": "question-answer alignment (did the reply address the question?)",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "stand up a governed, in-boundary semantic provider (no external transmission of customer text) or ratify an exact deterministic definition; do not proxy meaning as keywords"
+    },
+    {
+      "metric_id": "SW-289",
+      "category": "requires_ratified_semantic_definition_or_threshold",
+      "disposition": "hold",
+      "hold_reason": "a \"personalization score\" (template-vs-custom ratio) is an unratified composite; its deterministic components (identical body / merge tags) are promoted separately as SW-021/SW-142/SW-145, but the score formula/threshold is not ratified.",
+      "missing_item": "a ratified personalization-score formula + threshold",
+      "status": "held_unresolved",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "ratify the concrete metric definition/threshold; do not promote until all three rooftop cells meet acceptance"
+    }
+  ]
+}
