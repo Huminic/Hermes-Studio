@@ -601,5 +601,206 @@
       "route_proof_state": "candidate_unproved",
       "note": "candidate coverage only; each dataset must still prove exact fields, period, Sales-only filters, and row-level validation before it closes any cell"
     }
-  ]
+  ],
+  "data_minimization": {
+    "policy": "For every read-only VinSolutions browser capture or unsaved export, select and retain ONLY the fields strictly required to calculate the named SW metric(s). Exclude customer names, emails, phones, addresses, VINs, credit/payment attributes, free-text notes, and all other unnecessary PII unless Duane separately authorizes the specific compliance/PII condition and governed handling route. IDs are retained only when technically necessary for deterministic de-dup/join, minimized/pseudonymized when possible, and never placed in customer PDFs. Do not query, display, copy, export, log, or commit unrelated fields merely because a dataset exposes them.",
+    "is_new_approval_gate": false,
+    "prohibited_fields": [
+      "customer name",
+      "email address",
+      "phone number",
+      "street address",
+      "VIN",
+      "stock number",
+      "credit/payment attributes",
+      "free-text notes / memo",
+      "message content",
+      "CoBuyer / co-buyer",
+      "trade-in details",
+      "SSN / DOB / driver license"
+    ],
+    "id_field_rule": "IDs are retained ONLY when technically necessary for deterministic de-dup/join, minimized/pseudonymized when possible, and never placed in customer PDFs.",
+    "observed_vs_allowed_note": "dataset_evidence.observed_field_notes = observed CAPABILITY (what a dataset exposes). data_minimization.allowed_export_field_selection = what may actually be SELECTED and retained (minimal, PII-free). These are distinct.",
+    "allowed_export_field_selection": [
+      {
+        "acquisition_route": "new_readonly_vinsolutions_export",
+        "dataset": "Leads",
+        "closes_candidate_metric_examples": ["SW-001", "SW-004", "SW-006"],
+        "minimal_fields": [
+          "Dealer ID",
+          "Lead Source",
+          "Lead Type",
+          "Lead Source Group",
+          "Lead Status Type",
+          "Actual Response Time (Min)",
+          "Adjusted Response Time (Min)",
+          "Actionable Response Datetime",
+          "Contacted Indicator",
+          "Originated After Hours",
+          "Lead Origination Date",
+          "Sold Datetime"
+        ],
+        "join_keys": [
+          {
+            "field": "Lead ID",
+            "purpose": "dedup_join",
+            "pseudonymize": true,
+            "in_customer_pdf": false
+          }
+        ],
+        "excluded_pii": [
+          "Customer",
+          "VIN",
+          "Stock Number",
+          "CoBuyer Full Name",
+          "Vehicle Memo",
+          "Trade 1/2 fields",
+          "Last Attempted Phone/Email Contact"
+        ],
+        "note": "response/source/funnel measures only; no customer identity, no vehicle identity."
+      },
+      {
+        "acquisition_route": "readonly_browser_capture",
+        "dataset": "Leads",
+        "closes_candidate_metric_examples": ["SW-011", "SW-015"],
+        "minimal_fields": [
+          "Dealer ID",
+          "Actual Response Time (Min)",
+          "Adjusted Response Time (Min)",
+          "Actionable Response Datetime",
+          "Originated After Hours",
+          "Lead Origination Date"
+        ],
+        "join_keys": [
+          {
+            "field": "Lead ID",
+            "purpose": "dedup_join",
+            "pseudonymize": true,
+            "in_customer_pdf": false
+          }
+        ],
+        "excluded_pii": [
+          "Customer",
+          "VIN",
+          "CoBuyer Full Name",
+          "Trade 1/2 fields"
+        ],
+        "note": "per-lead response timing + business-hours flag only."
+      },
+      {
+        "acquisition_route": "new_readonly_vinsolutions_export",
+        "dataset": "Appointments",
+        "closes_candidate_metric_examples": ["SW-008", "SW-042"],
+        "minimal_fields": [
+          "Dealer ID",
+          "Appt Reason",
+          "Appointment Status",
+          "Is Show",
+          "Is No Show",
+          "Is Confirmed",
+          "Is Completed",
+          "Is Cancelled",
+          "Appointment Start Date",
+          "Appointment Start DateTime",
+          "Confirmed Date",
+          "Completed Date",
+          "Assigned User - User Group"
+        ],
+        "join_keys": [
+          {
+            "field": "Appointment ID",
+            "purpose": "dedup_join",
+            "pseudonymize": true,
+            "in_customer_pdf": false
+          }
+        ],
+        "excluded_pii": [
+          "Customer",
+          "Assigned User (name)",
+          "Confirmed User (name)"
+        ],
+        "note": "appointment status/timing + user ROLE only; not user names."
+      },
+      {
+        "acquisition_route": "new_readonly_vinsolutions_export",
+        "dataset": "CRM Sales",
+        "closes_candidate_metric_examples": ["SW-034", "SW-049"],
+        "minimal_fields": [
+          "Dealer ID",
+          "Inventory Type",
+          "Front Gross",
+          "Back Gross",
+          "Total Gross",
+          "Sold Date",
+          "Days To Sell From Lead Creation",
+          "Days To Sell From First Contact"
+        ],
+        "join_keys": [
+          {
+            "field": "Deal Number",
+            "purpose": "dedup_join",
+            "pseudonymize": true,
+            "in_customer_pdf": false
+          },
+          {
+            "field": "Sale ID",
+            "purpose": "dedup_join",
+            "pseudonymize": true,
+            "in_customer_pdf": false
+          }
+        ],
+        "excluded_pii": [
+          "Customer",
+          "VIN",
+          "Stock Number",
+          "Sales Representative (name)"
+        ],
+        "note": "gross/timing measures only; no customer or vehicle identity."
+      },
+      {
+        "acquisition_route": "readonly_browser_capture",
+        "dataset": "Customer Contact",
+        "closes_candidate_metric_examples": ["SW-025", "SW-096"],
+        "minimal_fields": [
+          "Dealer",
+          "CRM User - User Group",
+          "Contact Date",
+          "Last Attempted Contact Date",
+          "Last Actual Contact Date"
+        ],
+        "join_keys": [],
+        "excluded_pii": [
+          "Customer (name)",
+          "phone",
+          "email",
+          "message content"
+        ],
+        "note": "contact dates + user ROLE only; no customer identity or message content."
+      },
+      {
+        "acquisition_route": "new_readonly_vinsolutions_export",
+        "dataset": "Daily Communication Summary By User",
+        "closes_candidate_metric_examples": ["SW-002", "SW-021"],
+        "minimal_fields": [
+          "Dealer",
+          "User - User Group",
+          "Date",
+          "Sales Inbound Calls",
+          "Sales Outbound Calls",
+          "Sales Total Calls"
+        ],
+        "join_keys": [],
+        "excluded_pii": [
+          "SERVICE call-count columns (Sales-only)",
+          "Customer",
+          "message content"
+        ],
+        "note": "SALES call-count columns ONLY; Service columns never selected."
+      }
+    ],
+    "validation": {
+      "ok": true,
+      "violations": []
+    }
+  }
 }

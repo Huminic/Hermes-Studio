@@ -44,8 +44,8 @@ describe('Gate 3 Proof Delta A recorded artifact hashes', () => {
   const recorded = parseRecordedHashes(md)
 
   it('parses the full Gate 3 artifact set (parser did not silently under-match)', () => {
-    // 3 modules + 2 scripts + 2 contract + 4 evidence = 11 recorded artifacts.
-    expect(recorded.length).toBe(11)
+    // 4 modules + 2 scripts + 2 contract + 4 evidence = 12 recorded artifacts.
+    expect(recorded.length).toBe(12)
     for (const req of [
       'src/server/reports/evaluator/pipeline.ts',
       'docs/halo/evidence/m1r/evaluator/closure-registry.json',

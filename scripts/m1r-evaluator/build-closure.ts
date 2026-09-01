@@ -16,6 +16,12 @@ import {
   loadCatalogDetail,
 } from '@/server/reports/evaluator/closure'
 import { probeConditions } from '@/server/reports/evaluator/promotion-probe'
+import {
+  ALLOWED_EXPORT_FIELD_SELECTION,
+  DATA_MINIMIZATION_POLICY,
+  PROHIBITED_FIELDS_LIST,
+  validateAllSelections,
+} from '@/server/reports/evaluator/data-minimization'
 
 const REPO = process.cwd()
 const OUT = path.join(REPO, 'docs/halo/evidence/m1r/evaluator')
@@ -275,6 +281,17 @@ async function main(): Promise<void> {
     groups,
     quarantined_reconstruction,
     browser_passes,
+    data_minimization: {
+      policy: DATA_MINIMIZATION_POLICY,
+      is_new_approval_gate: false,
+      prohibited_fields: PROHIBITED_FIELDS_LIST,
+      id_field_rule:
+        'IDs are retained ONLY when technically necessary for deterministic de-dup/join, minimized/pseudonymized when possible, and never placed in customer PDFs.',
+      observed_vs_allowed_note:
+        'dataset_evidence.observed_field_notes = observed CAPABILITY (what a dataset exposes). data_minimization.allowed_export_field_selection = what may actually be SELECTED and retained (minimal, PII-free). These are distinct.',
+      allowed_export_field_selection: ALLOWED_EXPORT_FIELD_SELECTION,
+      validation: validateAllSelections(ALLOWED_EXPORT_FIELD_SELECTION),
+    },
   }
 
   fs.mkdirSync(OUT, { recursive: true })

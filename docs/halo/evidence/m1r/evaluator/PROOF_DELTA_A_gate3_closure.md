@@ -35,6 +35,15 @@ Service Appointments permanently excluded) at `reporting-vinsolutions.app.coxaut
    28 datasets + observed fields + the caveat that presence proves a candidate route only.
    Every route is `route_proof_state=candidate_unproved`; fewest honest browser passes are one
    read-only session per dealer, none claimed to "close" a cell.
+5. **Data-minimization control (addendum).** Every read-only capture / unsaved export selects
+   and retains ONLY the fields strictly required for the named metric(s); customer names,
+   emails, phones, addresses, VINs, stock numbers, credit/payment, free-text notes, message
+   content, co-buyer, trade, SSN/DOB/DL# are prohibited unless a compliance/PII condition is
+   separately authorized. IDs are join/de-dup keys only (pseudonymized, never in customer
+   PDFs). `data_minimization.allowed_export_field_selection` (what may be selected) is DISTINCT
+   from `dataset_evidence.observed_field_notes` (capability). Not a new approval gate;
+   `data_minimization.validation.ok=true`. Invariants preserved: 295/885/9/876, routes
+   603/273, domain split, all candidate_unproved.
 
 ## 1. Executable 876-cell closure registry
 
@@ -106,11 +115,12 @@ The Gate 2 ledger (`spine-ledger.json` `c028e227…`) is unchanged.
 | ---------------------------------------------------------- | ------------------ |
 | `src/server/reports/evaluator/closure.ts`                  | `c20efda9df964b49` |
 | `src/server/reports/evaluator/promotion-probe.ts`          | `4628026ce75541b4` |
+| `src/server/reports/evaluator/data-minimization.ts`        | `21a85b8c1f5462c0` |
 | `src/server/reports/evaluator/pipeline.ts`                 | `3d7a9be96753d67e` |
-| `scripts/m1r-evaluator/build-closure.ts`                   | `859ae8a04215ed89` |
+| `scripts/m1r-evaluator/build-closure.ts`                   | `f3b0aa10d0b4d3e3` |
 | `scripts/m1r-evaluator/run-pipeline.ts`                    | `981e29548e2d6e6e` |
-| `docs/halo/contract/acquisition-contract.json`             | `4c3059380fdb88c2` |
-| `docs/halo/contract/acquisition-contract.md`               | `63f8c2eec7c5e100` |
+| `docs/halo/contract/acquisition-contract.json`             | `e138a9a21d13cd09` |
+| `docs/halo/contract/acquisition-contract.md`               | `0d7016b44e7d353c` |
 | `docs/halo/evidence/m1r/evaluator/closure-registry.json`   | `27060deada9e7076` |
 | `docs/halo/evidence/m1r/evaluator/closure-views.json`      | `c6a83c25164d7508` |
 | `docs/halo/evidence/m1r/evaluator/promotion-probe.json`    | `3a9d1b4ca677f7f8` |

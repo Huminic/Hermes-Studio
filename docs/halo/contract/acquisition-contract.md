@@ -58,3 +58,20 @@ that dealer's candidate datasets (Leads, Appointments, CRM Sales, Customer Conta
 Communication Summary By User [Sales cols]). Candidate coverage only — each dataset must still
 prove exact fields, period, Sales-only filters, and row-level validation before it closes any
 cell. No pass is claimed to "close" cells at this gate.
+
+## Data-minimization control (addendum)
+
+For every read-only capture / unsaved export, select and retain **only the fields strictly
+required** to calculate the named SW metric(s). **Prohibited unless Duane authorizes the
+specific compliance/PII condition + governed route:** customer names, emails, phones, street
+addresses, VINs, stock numbers, credit/payment attributes, free-text notes/memos, message
+content, co-buyer, trade-in details, SSN/DOB/DL#. **IDs** (Lead ID, Appointment ID, Deal
+Number, Sale ID) are kept **only** as join/de-dup keys — pseudonymized where possible and
+**never placed in customer PDFs**. This is a data-minimization control, **not a new approval
+gate** for already-authorized read-only Sales-only passes.
+
+`observed capability` (what a dataset exposes; see `dataset_evidence.observed_field_notes`)
+is **distinct** from the **allowed export field selection** (`data_minimization
+.allowed_export_field_selection` in the JSON) — the minimal, PII-free set that may actually be
+selected. `evaluator-data-minimization.test.ts` fails if any read-only selection includes a
+prohibited field without a compliance-authorization route.

@@ -47,11 +47,19 @@ workspace; compliance/cross-rooftop/enrichment → their own routes; boundary sp
 **non-overclaiming dataset presence** (every route `candidate_unproved`; Service datasets never
 mapped; the 510 quarantined block is 3 families × 3 dealers, never "one pass closes 510").
 
+## Data-minimization addendum
+
+`evaluator-data-minimization.test.ts` (6 cases): every committed allowed field selection is
+PII-minimal (no prohibited field; join keys pseudonymized + never in customer PDFs); a
+regression test fails a read-only selection that includes a prohibited field without a
+compliance route; a compliance route MAY retain PII with authorization; observed capability
+is distinct from allowed selection; invariants (routes 603/273, domains 27/48/9/21, all
+candidate_unproved) preserved. `data_minimization.validation.ok=true`. Not a new approval gate.
+
 ## Validation summary
 
-- Gate 3 focused suite **23/23** (closure 9 incl 3 correction tests, promotion-probe 6,
-  pipeline 8) + Gate 2 + Gate 1 + consumer regressions green.
+- Gate 3 focused suite **29/29** (closure 9, promotion-probe 6, pipeline 8, data-minimization 6) + Gate 2 + Gate 1 + consumer regressions green.
 - Typecheck **498 == baseline** (zero new Gate 3 errors); lint clean; **actual Prettier check
   clean** over every Gate 3 file incl generated JSON; deterministic byte-identical rerun.
 - No `/srv` write; no raw file / PII / secret committed; Gate 2 ledger unchanged
-  (`c028e227…`); evidence-hash guard recomputes all 11 Gate 3 artifact hashes.
+  (`c028e227…`); evidence-hash guard recomputes all 12 Gate 3 artifact hashes.
