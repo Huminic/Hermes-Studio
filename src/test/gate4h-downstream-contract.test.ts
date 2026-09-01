@@ -287,7 +287,7 @@ describe('Gate 4H-R1 — implementation jargon is rewritten and guarded', () => 
   // The R0 next_action fields carried implementation jargon from committed next-action passthrough.
   // The guard must now catch every term the shadow named, across ALL customer fields.
   const NAMED_JARGON =
-    /source-native|privacy-safe|fail-closed|\bSLA\b|business-calendar|stable-key|downstream|supported key|supported bridge|CRM family|\bNLP\b|\bKPI\b|semantics?|\bdedupe?\b|composite|cohort|baseline|funnels?|attribution|latency|classifier|\bCAGE\b/i
+    /source-native|privacy-safe|fail-closed|\bSLA\b|business-calendar|stable-key|downstream|shared key|supported key|supported bridge|CRM family|\bNLP\b|\bKPI\b|semantics?|\bdedupe?\b|composite|cohort|baseline|funnels?|attribution|latency|classifier|\bCAGE\b/i
 
   it('no customer field (any of the seven) contains a shadow-named jargon term', () => {
     for (const cr of customer.rows)
@@ -307,6 +307,7 @@ describe('Gate 4H-R1 — implementation jargon is rewritten and guarded', () => 
       'business-calendar window',
       'stable-key extracts',
       'the downstream PDF',
+      'a reliable shared key',
       'supported keys only',
       'a supported bridge',
       'the CRM family',
@@ -336,6 +337,47 @@ describe('Gate 4H-R1 — implementation jargon is rewritten and guarded', () => 
     expect(INTERNAL_JARGON.test(plainify('trailing KPI + hard SLA'))).toBe(
       false,
     )
+  })
+})
+
+describe('Gate 4H-R2 — no undefined "shared key" implementation language reaches the customer', () => {
+  it('ZERO customer-facing field contains "shared key" (or bare "key") in any of the 242 rows', () => {
+    for (const cr of customer.rows)
+      for (const [field, value] of Object.entries(cr.customer)) {
+        expect(/shared key/i.test(value), `${cr.metric_id}.${field}`).toBe(
+          false,
+        )
+        expect(/\bkeys?\b/i.test(value), `${cr.metric_id}.${field}`).toBe(false)
+      }
+  })
+
+  it('the guard fails closed on "shared key" (regression)', () => {
+    expect(INTERNAL_JARGON.test('a reliable shared key')).toBe(true)
+    expect(INTERNAL_JARGON.test('shared key')).toBe(true)
+  })
+
+  it('the 122 other_source_or_join rows state the common field must be confirmed, no row-level key claim', () => {
+    const join = customer.rows.filter(
+      (r) =>
+        r.domain === 'sales' &&
+        /Read the required Sales reports together/.test(
+          r.customer.how_to_unlock,
+        ),
+    )
+    expect(join.length).toBe(122)
+    for (const cr of join) {
+      // Honest: the common field must be CONFIRMED before matching (no invented identifier).
+      expect(cr.customer.how_to_unlock).toMatch(
+        /exact field the two reports have in common must be confirmed/i,
+      )
+      // Source-period aggregates: compare totals for the same source/period, no row-level match.
+      expect(cr.customer.how_to_unlock).toMatch(
+        /compare the totals for that same source and reporting period/i,
+      )
+      expect(cr.customer.next_action).toMatch(
+        /exact field they have in common before their records can be matched/i,
+      )
+    }
   })
 })
 

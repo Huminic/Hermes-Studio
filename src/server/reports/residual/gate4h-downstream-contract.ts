@@ -235,7 +235,7 @@ export const HOW_BASE_BY_BLOCKER: Record<string, string> = {
   unsupported_field:
     'Add the specific field this needs to the accepted weekly Sales data feed.',
   other_source_or_join:
-    'Bring the required Sales reports together with a reliable shared key, then evaluate.',
+    'Read the required Sales reports together. The exact field the two reports have in common must be confirmed before their records can be matched; where they share only a source and reporting period, compare the totals for that same source and reporting period instead. Then evaluate.',
   insufficient_history:
     'Collect more than one week of accepted Sales history, then evaluate the trend.',
   semantic_definition_pending:
@@ -249,7 +249,7 @@ export const NEXT_BY_BLOCKER: Record<string, string> = {
   unsupported_field:
     'Confirm the missing field can be added to the accepted weekly Sales export.',
   other_source_or_join:
-    'Confirm the reports and a reliable shared key needed to combine them.',
+    'Confirm which reports are needed and the exact field they have in common before their records can be matched.',
   insufficient_history:
     'Keep accepting the weekly Sales export so history accumulates.',
   semantic_definition_pending:
@@ -349,9 +349,9 @@ export function ownerRole(
 /**
  * Tokens that must NEVER appear in customer-facing copy. Three groups:
  *   1. internal governance vocabulary (blocker classes, gate/cage codenames, partition terms);
- *   2. implementation jargon the shadow flagged in Gate 4H-R0 (source-native, privacy-safe joins,
- *      fail-closed, SLA, business-calendar, stable-key extracts, downstream, supported keys/bridge,
- *      CRM family); and
+ *   2. implementation jargon the shadow flagged in Gate 4H-R0/R2 (source-native, privacy-safe joins,
+ *      fail-closed, SLA, business-calendar, stable-key extracts, downstream, "shared key",
+ *      supported keys/bridge, CRM family); and
  *   3. data-pipeline / modeling jargon a dealership manager would not use (NLP, KPI, semantics,
  *      dedup, composite, cohort, baseline, funnel, attribution, latency, classifier, adjacency, ANI).
  * Every one of these is rewritten to plain language by {@link plainify}; the guard exists so that any
@@ -361,7 +361,7 @@ export function ownerRole(
  * are intentionally NOT here — only Service/Parts DATA phrases are (see {@link SERVICE_PARTS_DATA}).
  */
 export const INTERNAL_JARGON =
-  /\b(blocker_class|other_source_or_join|unsupported_field|insufficient_history|semantic_definition_pending|nlp_content_capable_pending|capability[_ ]delta|frozen_e1|contract\s*2|acquisition class|quarantin|cage|huminic|gate\s*4[a-h]|cell partition|denominator|source-native|privacy-safe|fail-closed|stable-key|business-calendar|downstream|supported keys?|supported bridge|CRM family|\bSLA\b|\bKPI\b|\bNLP\b|semantics?|\bdedupe?\b|composite|cohort|baseline|funnels?|attribution|latency|classifier|adjacency|\bANI\b|\bdedupe?\b)\b/i
+  /\b(blocker_class|other_source_or_join|unsupported_field|insufficient_history|semantic_definition_pending|nlp_content_capable_pending|capability[_ ]delta|frozen_e1|contract\s*2|acquisition class|quarantin|cage|huminic|gate\s*4[a-h]|cell partition|denominator|source-native|privacy-safe|fail-closed|stable-key|business-calendar|downstream|shared key|supported keys?|supported bridge|CRM family|\bSLA\b|\bKPI\b|\bNLP\b|semantics?|\bdedupe?\b|composite|cohort|baseline|funnels?|attribution|latency|classifier|adjacency|\bANI\b|\bdedupe?\b)\b/i
 
 /**
  * Rewrite committed technical strings (classification fields, missing-input notes, condition text)

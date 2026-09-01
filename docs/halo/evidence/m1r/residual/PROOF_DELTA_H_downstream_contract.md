@@ -1,6 +1,18 @@
 # PROOF DELTA H — Downstream customer contract (all 295, no new evaluations)
 
-**Gate:** 4H (downstream) · **Revision:** H1 (R1 corrective) · **Accepted week:** 2026-08-24..2026-08-30 (America/New_York)
+**Gate:** 4H (downstream) · **Revision:** H1 (R2 corrective) · **Accepted week:** 2026-08-24..2026-08-30 (America/New_York)
+
+> **R2 corrective pass (one usability delta).** The shadow's final R1 verdict flagged one item: the
+> 122 `other_source_or_join` Sales rows still said "reliable shared key" in customer `how_to_unlock`
+> and `next_action` — undefined implementation language, not a real customer method. R2 removes all
+> "shared key" phrasing from every customer field and replaces it with plain, honest language: the
+> exact field the two reports have in common must be CONFIRMED before their records can be matched
+> (no invented identifier, no row-level match claim); and for source-period aggregate metrics such as
+> SW-009, the customer compares the totals for the same source and reporting period. "shared key" is
+> added to the customer-language guard and a regression test. Scope and accounting are unchanged
+> (17/278, 242/36, identical domains, overrides, and CRM seeds; zero new evaluations); the internal
+> ledger and CRM-check artifacts remain byte-identical to R0/R1 — only the customer contract, module,
+> proof, and tests change.
 
 > **R1 corrective pass (customer usability only).** R0 (commit `4e683cf`) passed accounting, safety,
 > determinism, tests, and no-PII, but the impartial shadow held it on customer usability. R1 repairs
@@ -142,14 +154,17 @@ verified from available sources"**, never as zero. Aggregate-only, Sales-only, n
 
 ## 5. Controls
 
-- **Focused tests** (`src/test/gate4h-downstream-contract.test.ts`): 26/26 — coverage 295 (17/278),
+- **Focused tests** (`src/test/gate4h-downstream-contract.test.ts`): 29/29 — coverage 295 (17/278),
   eligibility 242/36, zero Service/Parts or compliance customer-eligible, SW-270 override, SW-079/080
   not_applicable→service, incidental-word non-ineligibility, no jargon, no Service/Parts data, never
   zero, primary-blocker fidelity, CRM fail-closed, claim-layer contract, pure-classifier unit tests,
   **plus R1**: all 233 Sales rows carry a metric-specific `this needs:` unlock (≥150 distinct;
   SW-009 names ad spend + gross + unit sales), `what_this_watches` is `metric_definition` on every
   eligible row, the expanded guard rejects every shadow-named term, and `plainify` is deterministic
-  and preserves vehicle "model" senses.
+  and preserves vehicle "model" senses; **plus R2**: zero customer field contains "shared key" (or a
+  bare "key"), the guard fails closed on "shared key", and all 122 `other_source_or_join` rows state
+  the exact common field must be confirmed before records can be matched (source-period aggregates
+  compare totals for the same source/period — no row-level key claim).
 - **Hash guard** (`src/test/gate4h-evidence-hashes.test.ts`): recomputes every SHA-256 below from the
   committed bytes.
 - Deterministic (byte-identical rerun); Prettier + ESLint clean; changed-file tsc adds no new errors.
@@ -158,12 +173,12 @@ verified from available sources"**, never as zero. Aggregate-only, Sales-only, n
 
 | File                                                                         | sha256:16          |
 | ---------------------------------------------------------------------------- | ------------------ |
-| `src/server/reports/residual/gate4h-downstream-contract.ts`                  | `7742823fa58c4810` |
+| `src/server/reports/residual/gate4h-downstream-contract.ts`                  | `5b266b01f01e4dd1` |
 | `scripts/m1r-residual/build-gate4h-downstream-contract.ts`                   | `c8e9237360086251` |
 | `docs/halo/evidence/m1r/residual/gate4h-internal-accountability-ledger.json` | `7d4d5d09a49dcf15` |
-| `docs/halo/evidence/m1r/residual/gate4h-downstream-customer-contract.json`   | `8e71d9ef2790874e` |
+| `docs/halo/evidence/m1r/residual/gate4h-downstream-customer-contract.json`   | `c6e1db25ffa349ef` |
 | `docs/halo/evidence/m1r/residual/gate4h-crm-devils-advocate-ledger.json`     | `e39ba84038a616f6` |
-| `src/test/gate4h-downstream-contract.test.ts`                                | `f2ac97a84d8c87a0` |
+| `src/test/gate4h-downstream-contract.test.ts`                                | `015be19ccbf84395` |
 
 Each `sha256:16` is recomputed from the current committed bytes by
 `src/test/gate4h-evidence-hashes.test.ts`.
