@@ -101,15 +101,48 @@
     "values": ["healthy", "watch", "breach"],
     "watch_band_fraction_of_threshold": 0.1
   },
+  "delivery_envelope": {
+    "note": "SCHEMA_CONTRACT §1 — scheduled lineage MUST carry + validate these; message ids are never fabricated; gmail_attachment_id absence is encoded as 'unavailable'.",
+    "source_type": "gmail_scheduler",
+    "expected_sender": "reportscheduler@motosnap.com",
+    "required_fields": [
+      "source_type",
+      "sender",
+      "subject",
+      "gmail_message_id",
+      "filename",
+      "sha256",
+      "period_hint"
+    ],
+    "period_binding": "reporting_period is derived + validated from the committed period_hint (YYYY-MM-DD/YYYY-MM-DD), never hardcoded"
+  },
+  "semantic_validation": {
+    "note": "Every evaluated row is validated by RECOMPUTING value/numerator/denominator/source_fields/formula/baseline/variance/rating/rank/confidence from the accepted held bundle + cohort + registry + canonical spec, and by BINDING every lineage field to the admitted delivery envelope. Presence alone is insufficient.",
+    "rejects": [
+      "value inconsistent with numerator/denominator or with the recomputed candidate",
+      "wrong source_fields / unit / formula / source_family",
+      "baseline id/basis/value/unit/comparator/direction mismatch, blank definition, or unverified benchmark",
+      "incorrect variance / rating / rank / confidence",
+      "lineage sha / filename / dealer / period / sender / subject / message-id / period_hint mismatch",
+      "falsified sales_only_proof"
+    ]
+  },
   "evaluable_conditions": {
     "SW-031": {
       "source_family": "dealership_performance",
       "metric_slug": "dashboard.lead_to_appt_set_rate",
-      "formula": "appts_set_total / leads_total (Dealership Performance Dashboard summary TOTAL row)",
+      "formula": "appts_set_total / leads_total",
+      "source_fields": [
+        "Leads (TOTAL)",
+        "Appts Set (TOTAL)",
+        "Appts Set % (TOTAL)"
+      ],
       "numerator_field": "Appts Set (TOTAL)",
       "denominator_field": "Leads (TOTAL)",
       "unit": "ratio_0_1",
       "baseline_id": "OT-SW-031",
+      "baseline_basis": "operational_target",
+      "comparator": "<",
       "reconciliation": "computed rate must equal the source 'Appts Set %' TOTAL cell within 1e-6",
       "direction": "higher_is_better"
     },
@@ -117,10 +150,13 @@
       "source_family": "appointments",
       "metric_slug": "appt.show_rate",
       "formula": "count(Is Show=Yes) / count(appointment rows)",
+      "source_fields": ["Is Show", "appointment rows (total)"],
       "numerator_field": "Is Show=Yes",
       "denominator_field": "appointment rows (total)",
       "unit": "ratio_0_1",
       "baseline_id": "OT-SW-032",
+      "baseline_basis": "operational_target",
+      "comparator": "<",
       "reconciliation": "matches RATIFIED R2 appt.show_rate definition",
       "direction": "higher_is_better"
     },
@@ -128,10 +164,13 @@
       "source_family": "appointments",
       "metric_slug": "appt.no_show_rate",
       "formula": "count(Is No Show=Yes) / count(appointment rows)",
+      "source_fields": ["Is No Show", "appointment rows (total)"],
       "numerator_field": "Is No Show=Yes",
       "denominator_field": "appointment rows (total)",
       "unit": "ratio_0_1",
       "baseline_id": "OT-SW-041",
+      "baseline_basis": "operational_target",
+      "comparator": ">",
       "reconciliation": "matches RATIFIED R2 appt.no_show_rate definition",
       "direction": "lower_is_better"
     }

@@ -5,6 +5,8 @@
  *
  * Reads ONLY the nine HELD deliveries by exact filename+full-sha256 allowlist derived
  * from the committed native-scheduled-evidence.json. Never reads the quarantined nine.
+ * The reporting period is derived + validated from each delivery's committed period_hint
+ * (never hardcoded); provenance is validated fail-closed per SCHEMA_CONTRACT §1.
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -16,8 +18,20 @@ import {
   readCrmHeld,
   readDashboardHeld,
 } from './held-inputs'
+import { buildEnvelope } from './provenance'
 import { buildSpine } from './spine'
+import type { Period } from './held-inputs'
+import type { DeliveryEnvelope } from './provenance'
+import type { BaselineRegistry } from './baseline-registry'
+import type { CatalogCondition } from './catalog'
 import type { DealerInput, Spine } from './spine'
+
+export type Gate2Inputs = {
+  catalog: Array<CatalogCondition>
+  dealers: Array<DealerInput>
+  registry: BaselineRegistry
+  evaluableBaselineIds: Record<string, string>
+}
 
 const DEALERS = [
   {
@@ -36,20 +50,33 @@ const DEALERS = [
     dealer_name: 'Tony Serra Ford',
   },
 ]
-const PERIOD = {
-  start: '2026-08-24',
-  end: '2026-08-30',
-  timezone: 'America/New_York',
-}
-const WINDOW = {
-  beginLabel: 'Aug 24 2026 12:00AM',
-  endLabel: 'Aug 30 2026 11:59PM',
-}
+const TIMEZONE = 'America/New_York'
 const HELD_FAMILIES = [
   'appointments',
   'crm_sales_gross',
   'dealership_performance',
 ]
+const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+]
+
+/** ISO 'YYYY-MM-DD' -> VinSolutions Filters label, e.g. 'Aug 24 2026 12:00AM'. */
+function dashboardLabel(iso: string, kind: 'begin' | 'end'): string {
+  const [y, m, d] = iso.split('-').map((x) => Number(x))
+  const time = kind === 'begin' ? '12:00AM' : '11:59PM'
+  return `${MONTHS[m - 1]} ${d} ${y} ${time}`
+}
 
 type Delivery = {
   filename: string
@@ -58,6 +85,12 @@ type Delivery = {
   family: string
   validation_state: string
   received_at: string
+  source_type: string
+  sender: string
+  subject: string
+  gmail_message_id: string
+  gmail_attachment_id: string
+  period_hint: string
 }
 
 const sha256 = (b: Buffer) => createHash('sha256').update(b).digest('hex')
@@ -70,6 +103,14 @@ export function buildSpineFromFresh(opts: {
   freshDir: string
   repoRoot: string
 }): Spine {
+  const inputs = assembleGate2Inputs(opts)
+  return buildSpine(inputs)
+}
+
+export function assembleGate2Inputs(opts: {
+  freshDir: string
+  repoRoot: string
+}): Gate2Inputs {
   const { freshDir, repoRoot } = opts
   const catalog = loadCatalog(
     readJson(
@@ -84,9 +125,7 @@ export function buildSpineFromFresh(opts: {
   )
   const contract = readJson(
     path.join(repoRoot, 'docs/halo/contract/gate2-evaluator-contract.json'),
-  ) as {
-    evaluable_conditions: Record<string, { baseline_id: string }>
-  }
+  ) as { evaluable_conditions: Record<string, { baseline_id: string }> }
   const evaluableBaselineIds: Record<string, string> = {}
   for (const [id, spec] of Object.entries(contract.evaluable_conditions)) {
     evaluableBaselineIds[id] = spec.baseline_id
@@ -97,9 +136,7 @@ export function buildSpineFromFresh(opts: {
       repoRoot,
       'docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json',
     ),
-  ) as {
-    deliveries: Array<Delivery>
-  }
+  ) as { deliveries: Array<Delivery> }
   const held = evidence.deliveries.filter(
     (d) => d.validation_state === 'held' && HELD_FAMILIES.includes(d.family),
   )
@@ -108,58 +145,76 @@ export function buildSpineFromFresh(opts: {
     if (!d) throw new Error(`no HELD delivery for ${profile}/${family}`)
     return d
   }
-  const load = (d: Delivery): Buffer => {
-    const buf = fs.readFileSync(path.join(freshDir, d.filename))
+  // Envelope (fail-closed provenance + period_hint) then sha-verified bytes.
+  const envelopeOf = (d: Delivery): DeliveryEnvelope => buildEnvelope(d)
+  const load = (env: DeliveryEnvelope): Buffer => {
+    const buf = fs.readFileSync(path.join(freshDir, env.filename))
     const got = sha256(buf)
-    if (got !== d.sha256)
+    if (got !== env.sha256) {
       throw new Error(
-        `sha mismatch for ${d.filename}: ${got} != allowlist ${d.sha256}`,
+        `sha mismatch for ${env.filename}: ${got} != allowlist ${env.sha256}`,
       )
+    }
     return buf
   }
 
   const dealers: Array<DealerInput> = DEALERS.map((dl) => {
-    const appD = pick(dl.profile, 'appointments')
-    const crmD = pick(dl.profile, 'crm_sales_gross')
-    const dashD = pick(dl.profile, 'dealership_performance')
-    const appointments = readAppointmentsHeld(load(appD), dl.dealer_id)
-    const crm = readCrmHeld(load(crmD), dl.dealer_id)
-    const dashboard = readDashboardHeld(load(dashD), {
+    const appEnv = envelopeOf(pick(dl.profile, 'appointments'))
+    const crmEnv = envelopeOf(pick(dl.profile, 'crm_sales_gross'))
+    const dashEnv = envelopeOf(pick(dl.profile, 'dealership_performance'))
+    // Period derived from committed period_hint; must agree across the dealer's families.
+    if (
+      appEnv.period_hint !== crmEnv.period_hint ||
+      appEnv.period_hint !== dashEnv.period_hint
+    ) {
+      throw new Error(`period_hint disagreement for ${dl.profile}`)
+    }
+    const period: Period = {
+      start: appEnv.period_start,
+      end: appEnv.period_end,
+    }
+
+    const appointments = readAppointmentsHeld(
+      load(appEnv),
+      dl.dealer_id,
+      period,
+    )
+    const crm = readCrmHeld(load(crmEnv), dl.dealer_id, period)
+    const dashboard = readDashboardHeld(load(dashEnv), {
       dealerName: dl.dealer_name,
-      periodBeginLabel: WINDOW.beginLabel,
-      periodEndLabel: WINDOW.endLabel,
+      periodBeginLabel: dashboardLabel(period.start, 'begin'),
+      periodEndLabel: dashboardLabel(period.end, 'end'),
     })
+
     return {
       dealer_id: dl.dealer_id,
       profile: dl.profile,
       dealer_name: dl.dealer_name,
-      reporting_period: PERIOD,
-      captured_at: dashD.received_at,
+      reporting_period: {
+        start: period.start,
+        end: period.end,
+        timezone: TIMEZONE,
+      },
       bundle: { appointments, crm, dashboard },
       lineage: {
         appointments: {
-          filename: appD.filename,
-          sha256: appD.sha256,
-          captured_at: appD.received_at,
-          sales_only_proof:
-            'one-rooftop Dealer ID; Appt Reason=Sales Appointment; zero Service/Parts tokens in data rows',
+          envelope: appEnv,
+          sales_only_proof: appointments.salesOnlyProof,
+          observed_date_range: appointments.observed,
         },
         crm_sales_gross: {
-          filename: crmD.filename,
-          sha256: crmD.sha256,
-          captured_at: crmD.received_at,
-          sales_only_proof:
-            'one-rooftop Dealer ID; Sales user groups; zero Service/Parts tokens in data rows',
+          envelope: crmEnv,
+          sales_only_proof: crm.salesOnlyProof,
+          observed_date_range: crm.observed,
         },
         dealership_performance: {
-          filename: dashD.filename,
-          sha256: dashD.sha256,
-          captured_at: dashD.received_at,
+          envelope: dashEnv,
           sales_only_proof: dashboard.salesOnlyProof,
+          observed_date_range: null,
         },
       },
     }
   })
 
-  return buildSpine({ catalog, dealers, registry, evaluableBaselineIds })
+  return { catalog, dealers, registry, evaluableBaselineIds }
 }

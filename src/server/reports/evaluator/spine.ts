@@ -2,10 +2,12 @@
  * Gate 2 — the exact 885-cell evaluator spine.
  *
  * buildSpine maps exactly SW-001..SW-295 x {21043,21044,21047} to 885 unique
- * dealer-metric rows. A row is 'evaluated' ONLY when its evaluator produces a value
- * from a HELD family AND the strict predicate passes; every other row is 'unresolved'
- * with a precise reason/owner/next-action. Unresolved rows stay in the ledger but do
- * NOT count toward completion. Deterministic + pure (no I/O, no clock, no randomness).
+ * dealer-metric rows. A row is 'evaluated' ONLY when its evaluator produces a value from
+ * a HELD family AND both the structural strict predicate AND the SEMANTIC validator pass
+ * (the latter recomputes every value/derived field and binds lineage to the admitted
+ * delivery envelope). Every other row is 'unresolved' with a precise reason/owner/next
+ * action. Unresolved rows stay in the ledger but do NOT count toward completion.
+ * Deterministic + pure (no I/O, no clock, no randomness).
  */
 import { EVALUABLE_IDS, EVALUATORS } from './evaluators'
 import {
@@ -15,16 +17,17 @@ import {
   signedVariance,
 } from './metrics'
 import { evaluateStrictPredicate } from './strict-predicate'
+import { validateEvaluatedRow } from './semantic-validator'
 import type { EvaluableId, HeldBundle } from './evaluators'
 import type { BaselineRegistry } from './baseline-registry'
 import type { CatalogCondition } from './catalog'
+import type { DeliveryEnvelope } from './provenance'
 import type { EvalRow, SourceLineage } from './types'
 
 export type FamilyLineage = {
-  filename: string
-  sha256: string
-  captured_at: string
+  envelope: DeliveryEnvelope
   sales_only_proof: string
+  observed_date_range: { start: string; end: string } | null
 }
 
 export type DealerInput = {
@@ -32,7 +35,6 @@ export type DealerInput = {
   profile: string
   dealer_name: string
   reporting_period: { start: string; end: string; timezone: string }
-  captured_at: string
   bundle: HeldBundle
   lineage: {
     appointments: FamilyLineage
@@ -79,7 +81,7 @@ const TREND_HINTS = [
   /\bWoW\b/,
 ]
 
-function familyOf(
+function familyLineage(
   input: DealerInput,
   family: keyof DealerInput['lineage'],
 ): FamilyLineage {
@@ -92,16 +94,24 @@ function lineageFor(input: DealerInput, family: string): SourceLineage | null {
     family === 'crm_sales_gross' ||
     family === 'dealership_performance'
   ) {
-    const fl = familyOf(input, family)
+    const fl = familyLineage(input, family)
+    const env = fl.envelope
     return {
       family,
-      artifact_filename: fl.filename,
-      artifact_sha256: fl.sha256,
-      captured_at: fl.captured_at,
+      artifact_filename: env.filename,
+      artifact_sha256: env.sha256,
+      captured_at: env.received_at,
       reporting_period: input.reporting_period,
       dealer_id: input.dealer_id,
       dealer_name: input.dealer_name,
       sales_only_proof: fl.sales_only_proof,
+      source_type: env.source_type,
+      sender: env.sender,
+      subject: env.subject,
+      gmail_message_id: env.gmail_message_id,
+      gmail_attachment_id: env.gmail_attachment_id,
+      period_hint: env.period_hint,
+      observed_date_range: fl.observed_date_range,
     }
   }
   return null
@@ -176,17 +186,10 @@ function evaluableSiblingsBySection(
 export function buildSpine(input: SpineInput): Spine {
   const { catalog, dealers, registry, evaluableBaselineIds } = input
   const siblings = evaluableSiblingsBySection(catalog)
-
-  // Pass 1: candidate values per evaluable id per dealer (for cross-dealer ranking).
-  const candByIdDealer = new Map<string, Map<string, number>>()
-  for (const id of EVALUABLE_IDS) {
-    const m = new Map<string, number>()
-    for (const d of dealers) {
-      const res = EVALUATORS[id](d.bundle)
-      if (res.ok) m.set(d.dealer_id, res.value)
-    }
-    candByIdDealer.set(id, m)
-  }
+  const cohort = dealers.map((d) => ({
+    dealer_id: d.dealer_id,
+    bundle: d.bundle,
+  }))
 
   const rows: Array<EvalRow> = []
   for (const c of catalog) {
@@ -195,14 +198,7 @@ export function buildSpine(input: SpineInput): Spine {
     )
     for (const d of dealers) {
       rows.push(
-        buildRow(
-          c,
-          d,
-          sectionSiblings,
-          registry,
-          evaluableBaselineIds,
-          candByIdDealer,
-        ),
+        buildRow(c, d, sectionSiblings, registry, evaluableBaselineIds, cohort),
       )
     }
   }
@@ -216,7 +212,7 @@ function buildRow(
   sectionSiblings: Array<string>,
   registry: BaselineRegistry,
   evaluableBaselineIds: Record<string, string>,
-  candByIdDealer: Map<string, Map<string, number>>,
+  cohort: Array<{ dealer_id: string; bundle: HeldBundle }>,
 ): EvalRow {
   const base: EvalRow = {
     metric_id: c.metric_id,
@@ -257,63 +253,86 @@ function buildRow(
   const isEvaluable = (EVALUABLE_IDS as ReadonlyArray<string>).includes(
     c.metric_id,
   )
-  if (isEvaluable) {
-    const res = EVALUATORS[c.metric_id as EvaluableId](d.bundle)
-    if (res.ok) {
-      const baselineId = evaluableBaselineIds[c.metric_id] ?? ''
-      const baseline = registry.resolve(baselineId)
-      const lineage = lineageFor(d, res.source_family)
-      const dir = baseline?.direction ?? 'higher_is_better'
-      const peers = [...(candByIdDealer.get(c.metric_id)?.entries() ?? [])]
-        .filter(([dealerId]) => dealerId !== d.dealer_id)
-        .map(([, v]) => v)
-      const candidate: EvalRow = {
-        ...base,
-        source_family: res.source_family,
-        source_lineage: lineage,
-        source_fields: res.source_fields,
-        formula: res.formula,
-        value: res.value,
-        unit: res.unit,
-        numerator: res.numerator,
-        denominator: res.denominator,
-        reporting_period: d.reporting_period,
-        captured_at: lineage?.captured_at ?? d.captured_at,
-        baseline,
-        variance: baseline ? signedVariance(res.value, baseline) : null,
-        rating: baseline ? rating(res.value, baseline) : null,
-        rank: rankByDirection(res.value, peers, dir),
-        evaluation_confidence: {
-          label: confidenceLabel(res.denominator),
-          basis: 'denominator sample size',
-        },
-        evidence_or_inference: 'evidence',
-        notification_or_automation_candidate:
-          baseline && rating(res.value, baseline) === 'breach'
-            ? 'alert_candidate'
-            : 'monitor_only',
-      }
-      const verdict = evaluateStrictPredicate(candidate)
-      if (verdict.ok) {
-        return { ...candidate, status: 'evaluated' }
-      }
-      return toUnresolved(
-        base,
-        c,
-        d,
-        `strict predicate failed: ${verdict.failed.join(', ')}`,
-      )
-    }
-    return toUnresolved(base, c, d, res.reason)
+  if (!isEvaluable) {
+    return toUnresolved(base, c, unresolvedReason(c, d))
   }
 
-  return toUnresolved(base, c, d, unresolvedReason(c, d))
+  const id = c.metric_id as EvaluableId
+  const res = EVALUATORS[id](d.bundle)
+  if (!res.ok) {
+    return toUnresolved(base, c, res.reason)
+  }
+
+  const baselineId = evaluableBaselineIds[c.metric_id] ?? ''
+  const baseline = registry.resolve(baselineId)
+  const lineage = lineageFor(d, res.source_family)
+  const dir = baseline?.direction ?? 'higher_is_better'
+  const peers = cohort
+    .filter((x) => x.dealer_id !== d.dealer_id)
+    .flatMap((x) => {
+      const r = EVALUATORS[id](x.bundle)
+      return r.ok ? [r.value] : []
+    })
+  const candidate: EvalRow = {
+    ...base,
+    source_family: res.source_family,
+    source_lineage: lineage,
+    source_fields: res.source_fields,
+    formula: res.formula,
+    value: res.value,
+    unit: res.unit,
+    numerator: res.numerator,
+    denominator: res.denominator,
+    reporting_period: d.reporting_period,
+    captured_at: lineage?.captured_at ?? null,
+    baseline,
+    variance: baseline ? signedVariance(res.value, baseline) : null,
+    rating: baseline ? rating(res.value, baseline) : null,
+    rank: rankByDirection(res.value, peers, dir),
+    evaluation_confidence: {
+      label: confidenceLabel(res.denominator),
+      basis: 'denominator sample size',
+    },
+    evidence_or_inference: 'evidence',
+    notification_or_automation_candidate:
+      baseline && rating(res.value, baseline) === 'breach'
+        ? 'alert_candidate'
+        : 'monitor_only',
+  }
+
+  // Both gates must pass: structural presence AND semantic recomputation/binding.
+  const structural = evaluateStrictPredicate(candidate)
+  if (!structural.ok) {
+    return toUnresolved(
+      base,
+      c,
+      `strict predicate failed: ${structural.failed.join(', ')}`,
+    )
+  }
+  const fl = familyLineage(d, res.source_family as keyof DealerInput['lineage'])
+  const semantic = validateEvaluatedRow(candidate, {
+    bundle: d.bundle,
+    cohort,
+    dealerId: d.dealer_id,
+    dealerName: d.dealer_name,
+    period: d.reporting_period,
+    envelope: fl.envelope,
+    expectedProof: fl.sales_only_proof,
+    registry,
+  })
+  if (!semantic.ok) {
+    return toUnresolved(
+      base,
+      c,
+      `semantic validation failed: ${semantic.failed.join(', ')}`,
+    )
+  }
+  return { ...candidate, status: 'evaluated' }
 }
 
 function toUnresolved(
   base: EvalRow,
   c: CatalogCondition,
-  d: DealerInput,
   reason: string,
 ): EvalRow {
   return {

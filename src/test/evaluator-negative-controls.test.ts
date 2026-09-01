@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest'
 import { makeXlsx, makeXlsxSheets } from './helpers/make-xlsx'
 import type { EvalRow } from '@/server/reports/evaluator/types'
 import type { HeldBundle } from '@/server/reports/evaluator/evaluators'
+import type { Period } from '@/server/reports/evaluator/held-inputs'
 import {
   HeldInputError,
   readAppointmentsHeld,
@@ -15,6 +16,7 @@ import { evalSW031, evalSW032 } from '@/server/reports/evaluator/evaluators'
 import { QUARANTINED_FAMILIES } from '@/server/reports/evaluator/families'
 
 const REPO = path.resolve(__dirname, '..', '..')
+const PERIOD: Period = { start: '2026-08-24', end: '2026-08-30' }
 const LEDGER = JSON.parse(
   fs.readFileSync(
     path.join(REPO, 'docs/halo/evidence/m1r/evaluator/spine-ledger.json'),
@@ -24,8 +26,12 @@ const LEDGER = JSON.parse(
 
 const APPT_HEADER = [
   'Appointment ID',
+  'Dealer',
   'Dealer ID',
   'Appt Reason',
+  'Appointment Start Date',
+  'Appointment Start DateTime',
+  'Appointment Status',
   'Is Show',
   'Is No Show',
   'Is Confirmed',
@@ -37,7 +43,32 @@ const apptRow = (
   reason: string,
   show: string,
   noShow: string,
-) => ['1', dealer, reason, show, noShow, 'Yes', 'Yes', 'No']
+) => [
+  '1',
+  'Serra Nissan',
+  dealer,
+  reason,
+  '46258',
+  '46258',
+  'Completed',
+  show,
+  noShow,
+  'Yes',
+  'Yes',
+  'No',
+]
+
+const CRM_HEADER = [
+  'Dealer',
+  'Dealer ID',
+  'Sold Date',
+  'Sale ID',
+  'Deal Number',
+  'Inventory Type',
+  'Front Gross',
+  'Back Gross',
+  'Total Gross',
+]
 
 function dashboard(opts: {
   dealer: string
@@ -52,6 +83,7 @@ function dashboard(opts: {
         ['', 'Leads', 'Appts Set', 'Appts Set %', 'Sold in Period'],
         ['New', '10', '1', '0.1', '0'],
         ['TOTAL', '20', '5', '0.25', '2'],
+        ['Lead Type & Inventory Type Summary'],
       ],
     },
     {
@@ -82,12 +114,26 @@ describe('Fail-closed on Service/Parts token in DATA rows (req 6)', () => {
       APPT_HEADER,
       apptRow('21044', 'Service Appointment', 'Yes', 'No'),
     ])
-    expect(() => readAppointmentsHeld(buf, '21044')).toThrow(HeldInputError)
+    expect(() => readAppointmentsHeld(buf, '21044', PERIOD)).toThrow(
+      HeldInputError,
+    )
   })
   it('crm data row with a Parts token throws', () => {
-    const header = ['Dealer ID', 'Inventory Type', 'Front Gross', 'Model']
-    const buf = makeXlsx([header, ['21044', 'New', '100', 'Parts Special']])
-    expect(() => readCrmHeld(buf, '21044')).toThrow(HeldInputError)
+    const buf = makeXlsx([
+      CRM_HEADER,
+      [
+        'Serra Nissan',
+        '21044',
+        '46259',
+        'S1',
+        'Parts D1',
+        'New',
+        '100',
+        '50',
+        '150',
+      ],
+    ])
+    expect(() => readCrmHeld(buf, '21044', PERIOD)).toThrow(HeldInputError)
   })
   it('dashboard summary data row with a Service token throws', () => {
     const buf = makeXlsxSheets([
@@ -98,6 +144,7 @@ describe('Fail-closed on Service/Parts token in DATA rows (req 6)', () => {
           ['', 'Leads', 'Appts Set', 'Appts Set %', 'Sold in Period'],
           ['Service', '10', '1', '0.1', '0'],
           ['TOTAL', '20', '5', '0.25', '2'],
+          ['Lead Type & Inventory Type Summary'],
         ],
       },
       {
@@ -148,11 +195,11 @@ describe('Dashboard Filters must AFFIRMATIVELY prove Sales-only (req 6)', () => 
         dashboard({
           dealer: WINDOW.dealerName,
           excluded: 'Service, Service Dept',
-          leadTypes: 'Internet, Service',
+          leadTypes: 'Internet, Phone, Walk-in, Service',
         }),
         WINDOW,
       ),
-    ).toThrow(/fail closed/)
+    ).toThrow(HeldInputError)
   })
 })
 
@@ -162,11 +209,13 @@ describe('One-rooftop identity + magic bytes (req 6)', () => {
       APPT_HEADER,
       apptRow('99999', 'Sales Appointment', 'Yes', 'No'),
     ])
-    expect(() => readAppointmentsHeld(buf, '21044')).toThrow(/dealer identity/)
+    expect(() => readAppointmentsHeld(buf, '21044', PERIOD)).toThrow(
+      /dealer identity/,
+    )
   })
   it('non-XLSX bytes throw (bad magic)', () => {
     expect(() =>
-      readAppointmentsHeld(Buffer.from('not a zip file'), '21044'),
+      readAppointmentsHeld(Buffer.from('not a zip file'), '21044', PERIOD),
     ).toThrow(/magic/)
   })
 })
@@ -183,12 +232,13 @@ describe('Missing is not zero -> NotEvaluable (req 4)', () => {
         completed: 0,
         cancelled: 0,
         dealerIds: ['21044'],
+        observed: { start: '', end: '' },
+        salesOnlyProof: '',
       },
       crm: null,
       dashboard: null,
     }
-    const r = evalSW032(b)
-    expect(r.ok).toBe(false)
+    expect(evalSW032(b).ok).toBe(false)
   })
   it('dashboard leads 0 or null -> SW-031 not evaluable', () => {
     const base = {

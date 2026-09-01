@@ -3173,7 +3173,14 @@
         },
         "dealer_id": "21043",
         "dealer_name": "Serra Honda of Sylacauga",
-        "sales_only_proof": "Lead Sources Excluded=\"Service, Service Appraisal, Service Dept, Service Referral, SERVICE TO SALES APPT CONFIRMATION\"; Appointment Reasons=\"Sales Appointment\""
+        "sales_only_proof": "Lead Sources Excluded includes Service; Appointment Reasons=\"Sales Appointment\"; Lead Types={Internet,Phone,Walk-in}; one dealer=\"Serra Honda of Sylacauga\"; window Aug 24 2026 12:00AM..Aug 30 2026 11:59PM; zero Service/Parts in summary data",
+        "source_type": "gmail_scheduler",
+        "sender": "reportscheduler@motosnap.com",
+        "subject": "VIN | Serra Honda 21043 | Dealer Dashboard | Weekly",
+        "gmail_message_id": "1a0579216741ebed",
+        "gmail_attachment_id": "unavailable",
+        "period_hint": "2026-08-24/2026-08-30",
+        "observed_date_range": null
       },
       "source_fields": [
         "Leads (TOTAL)",
@@ -3247,7 +3254,14 @@
         },
         "dealer_id": "21044",
         "dealer_name": "Serra Nissan of Sylacauga",
-        "sales_only_proof": "Lead Sources Excluded=\"Oil Change Service - Sealer.Com Website, Service, Service Appraisal, Service Dept, Service Referral, SERVICE TO SALES APPT CONFIRMATION\"; Appointment Reasons=\"Sales Appointment\""
+        "sales_only_proof": "Lead Sources Excluded includes Service; Appointment Reasons=\"Sales Appointment\"; Lead Types={Internet,Phone,Walk-in}; one dealer=\"Serra Nissan of Sylacauga\"; window Aug 24 2026 12:00AM..Aug 30 2026 11:59PM; zero Service/Parts in summary data",
+        "source_type": "gmail_scheduler",
+        "sender": "reportscheduler@motosnap.com",
+        "subject": "VIN | Serra Nissan 21044 | Dealer Dashboard | Weekly",
+        "gmail_message_id": "1a0578470731bfe6",
+        "gmail_attachment_id": "unavailable",
+        "period_hint": "2026-08-24/2026-08-30",
+        "observed_date_range": null
       },
       "source_fields": [
         "Leads (TOTAL)",
@@ -3321,7 +3335,14 @@
         },
         "dealer_id": "21047",
         "dealer_name": "Tony Serra Ford",
-        "sales_only_proof": "Lead Sources Excluded=\"Service, Service Appraisal, Service Dept, Service Referral, SERVICE TO SALES APPT CONFIRMATION\"; Appointment Reasons=\"Sales Appointment\""
+        "sales_only_proof": "Lead Sources Excluded includes Service; Appointment Reasons=\"Sales Appointment\"; Lead Types={Internet,Phone,Walk-in}; one dealer=\"Tony Serra Ford\"; window Aug 24 2026 12:00AM..Aug 30 2026 11:59PM; zero Service/Parts in summary data",
+        "source_type": "gmail_scheduler",
+        "sender": "reportscheduler@motosnap.com",
+        "subject": "VIN | Tony Serra Ford 21047 | Dealer Dashboard | Weekly",
+        "gmail_message_id": "1a05787abcba038b",
+        "gmail_attachment_id": "unavailable",
+        "period_hint": "2026-08-24/2026-08-30",
+        "observed_date_range": null
       },
       "source_fields": [
         "Leads (TOTAL)",
@@ -3395,7 +3416,17 @@
         },
         "dealer_id": "21043",
         "dealer_name": "Serra Honda of Sylacauga",
-        "sales_only_proof": "one-rooftop Dealer ID; Appt Reason=Sales Appointment; zero Service/Parts tokens in data rows"
+        "sales_only_proof": "14 rows: every Appt Reason=\"Sales Appointment\"; all Dealer ID=21043 (one rooftop); 14 unique Appointment IDs; all Start Date+DateTime within 2026-08-24..2026-08-30; zero Service/Parts tokens",
+        "source_type": "gmail_scheduler",
+        "sender": "reportscheduler@motosnap.com",
+        "subject": "VIN | Serra Honda 21043 | Appointments | Weekly",
+        "gmail_message_id": "1a0579b8c54db3ee",
+        "gmail_attachment_id": "unavailable",
+        "period_hint": "2026-08-24/2026-08-30",
+        "observed_date_range": {
+          "start": "2026-08-24",
+          "end": "2026-08-29"
+        }
       },
       "source_fields": [
         "Is Show",
@@ -3468,7 +3499,17 @@
         },
         "dealer_id": "21044",
         "dealer_name": "Serra Nissan of Sylacauga",
-        "sales_only_proof": "one-rooftop Dealer ID; Appt Reason=Sales Appointment; zero Service/Parts tokens in data rows"
+        "sales_only_proof": "6 rows: every Appt Reason=\"Sales Appointment\"; all Dealer ID=21044 (one rooftop); 6 unique Appointment IDs; all Start Date+DateTime within 2026-08-24..2026-08-30; zero Service/Parts tokens",
+        "source_type": "gmail_scheduler",
+        "sender": "reportscheduler@motosnap.com",
+        "subject": "VIN | Serra Nissan 21044 | Appointments | Weekly",
+        "gmail_message_id": "1a0579be92f703ca",
+        "gmail_attachment_id": "unavailable",
+        "period_hint": "2026-08-24/2026-08-30",
+        "observed_date_range": {
+          "start": "2026-08-24",
+          "end": "2026-08-29"
+        }
       },
       "source_fields": [
         "Is Show",
@@ -3541,7 +3582,17 @@
         },
         "dealer_id": "21047",
         "dealer_name": "Tony Serra Ford",
-        "sales_only_proof": "one-rooftop Dealer ID; Appt Reason=Sales Appointment; zero Service/Parts tokens in data rows"
+        "sales_only_proof": "7 rows: every Appt Reason=\"Sales Appointment\"; all Dealer ID=21047 (one rooftop); 7 unique Appointment IDs; all Start Date+DateTime within 2026-08-24..2026-08-30; zero Service/Parts tokens",
+        "source_type": "gmail_scheduler",
+        "sender": "reportscheduler@motosnap.com",
+        "subject": "VIN | Tony Serra Ford 21047 | Appointments | Weekly",
+        "gmail_message_id": "1a0579f466d863b7",
+        "gmail_attachment_id": "unavailable",
+        "period_hint": "2026-08-24/2026-08-30",
+        "observed_date_range": {
+          "start": "2026-08-24",
+          "end": "2026-08-29"
+        }
       },
       "source_fields": [
         "Is Show",
@@ -4526,7 +4577,17 @@
         },
         "dealer_id": "21043",
         "dealer_name": "Serra Honda of Sylacauga",
-        "sales_only_proof": "one-rooftop Dealer ID; Appt Reason=Sales Appointment; zero Service/Parts tokens in data rows"
+        "sales_only_proof": "14 rows: every Appt Reason=\"Sales Appointment\"; all Dealer ID=21043 (one rooftop); 14 unique Appointment IDs; all Start Date+DateTime within 2026-08-24..2026-08-30; zero Service/Parts tokens",
+        "source_type": "gmail_scheduler",
+        "sender": "reportscheduler@motosnap.com",
+        "subject": "VIN | Serra Honda 21043 | Appointments | Weekly",
+        "gmail_message_id": "1a0579b8c54db3ee",
+        "gmail_attachment_id": "unavailable",
+        "period_hint": "2026-08-24/2026-08-30",
+        "observed_date_range": {
+          "start": "2026-08-24",
+          "end": "2026-08-29"
+        }
       },
       "source_fields": [
         "Is No Show",
@@ -4597,7 +4658,17 @@
         },
         "dealer_id": "21044",
         "dealer_name": "Serra Nissan of Sylacauga",
-        "sales_only_proof": "one-rooftop Dealer ID; Appt Reason=Sales Appointment; zero Service/Parts tokens in data rows"
+        "sales_only_proof": "6 rows: every Appt Reason=\"Sales Appointment\"; all Dealer ID=21044 (one rooftop); 6 unique Appointment IDs; all Start Date+DateTime within 2026-08-24..2026-08-30; zero Service/Parts tokens",
+        "source_type": "gmail_scheduler",
+        "sender": "reportscheduler@motosnap.com",
+        "subject": "VIN | Serra Nissan 21044 | Appointments | Weekly",
+        "gmail_message_id": "1a0579be92f703ca",
+        "gmail_attachment_id": "unavailable",
+        "period_hint": "2026-08-24/2026-08-30",
+        "observed_date_range": {
+          "start": "2026-08-24",
+          "end": "2026-08-29"
+        }
       },
       "source_fields": [
         "Is No Show",
@@ -4668,7 +4739,17 @@
         },
         "dealer_id": "21047",
         "dealer_name": "Tony Serra Ford",
-        "sales_only_proof": "one-rooftop Dealer ID; Appt Reason=Sales Appointment; zero Service/Parts tokens in data rows"
+        "sales_only_proof": "7 rows: every Appt Reason=\"Sales Appointment\"; all Dealer ID=21047 (one rooftop); 7 unique Appointment IDs; all Start Date+DateTime within 2026-08-24..2026-08-30; zero Service/Parts tokens",
+        "source_type": "gmail_scheduler",
+        "sender": "reportscheduler@motosnap.com",
+        "subject": "VIN | Tony Serra Ford 21047 | Appointments | Weekly",
+        "gmail_message_id": "1a0579f466d863b7",
+        "gmail_attachment_id": "unavailable",
+        "period_hint": "2026-08-24/2026-08-30",
+        "observed_date_range": {
+          "start": "2026-08-24",
+          "end": "2026-08-29"
+        }
       },
       "source_fields": [
         "Is No Show",

@@ -3,17 +3,18 @@
  *
  * Consumes ONLY the three HELD families per dealer (Appointments, CRM Sales Gross,
  * Dealership Performance Dashboard) from the fresh capture directory, by an exact
- * filename+sha allowlist — never the nine quarantined ROI/CAGE/Sales-Communication
- * workbooks. Every reader:
- *   - checks the XLSX magic bytes,
- *   - fails closed on any Service/Parts token in the DATA rows (Sales-only rule),
- *   - proves one-rooftop dealer identity, and
- *   - treats blank as null (missing is not zero).
+ * filename+full-sha256 allowlist — never the nine quarantined ROI/CAGE/Comm workbooks.
  *
- * The Dashboard "Filters" sheet is provenance metadata, not data: it must AFFIRMATIVELY
- * prove Sales-only (service lead sources in the Excluded list, Appointment Reasons =
- * Sales Appointment) and match the reporting window. Pure compute — I/O lives in the
- * generator/tests.
+ * Each reader ENFORCES the governed SCHEMA_CONTRACT gates (not string claims):
+ *   - XLSX magic bytes + exact header signature;
+ *   - fail-closed on any Service/Parts token in DATA rows;
+ *   - one-rooftop dealer identity (governed Dealer ID on every row);
+ *   - period binding — every authoritative date parses and falls inside the contracted
+ *     window (Appointment Start Date + Start DateTime; CRM Sold Date; Dashboard Filters);
+ *   - Appointments: Appt Reason = "Sales Appointment" on every row + unique Appointment ID;
+ *   - Dashboard: affirmative Service-source exclusion + Lead Types = {Internet,Phone,Walk-in}.
+ * Each returns a `salesOnlyProof` PRODUCED FROM the checks it actually executed — never a
+ * hardcoded assertion. Blank is null (missing is not zero). Pure compute.
  */
 import { createHash } from 'node:crypto'
 import { SERVICE_PARTS_TOKEN, XLSX_MAGIC } from '../leads/leads-family-contract'
@@ -30,6 +31,8 @@ export type AllowlistEntry = {
   family: HeldFamily
   profile: string
 }
+
+export type Period = { start: string; end: string }
 
 export class HeldInputError extends Error {}
 
@@ -70,6 +73,19 @@ function num(v: string): number | null {
   return Number.isFinite(n) ? n : null
 }
 
+/** Excel serial (1900 system) -> calendar date (business-local, integer day). */
+export function excelSerialToDate(v: string): string | null {
+  const n = Number(v)
+  if (!Number.isFinite(n)) return null
+  const day = Math.trunc(n)
+  const ms = Date.UTC(1899, 11, 30) + day * 86400000
+  return new Date(ms).toISOString().slice(0, 10)
+}
+
+function inWindow(date: string, period: Period): boolean {
+  return date >= period.start && date <= period.end
+}
+
 function assertNoServiceParts(cells: Array<string>, where: string): void {
   for (const c of cells) {
     if (SERVICE_PARTS_TOKEN.test(c)) {
@@ -77,6 +93,19 @@ function assertNoServiceParts(cells: Array<string>, where: string): void {
         `Service/Parts token in ${where}: "${c.slice(0, 60)}" — fail closed`,
       )
     }
+  }
+}
+
+function requireHeaders(
+  header: Array<string>,
+  names: Array<string>,
+  family: string,
+): void {
+  const missing = names.filter((n) => header.indexOf(n) < 0)
+  if (missing.length) {
+    throw new HeldInputError(
+      `${family} missing signature headers: ${missing.join(', ')}`,
+    )
   }
 }
 
@@ -93,54 +122,89 @@ export type AppointmentsHeld = {
   completed: number
   cancelled: number
   dealerIds: Array<string>
+  observed: Period
+  salesOnlyProof: string
 }
 
 export function readAppointmentsHeld(
   buf: Buffer,
   expectedDealerId: string,
+  period: Period,
 ): AppointmentsHeld {
   if (!hasXlsxMagic(buf))
     throw new HeldInputError('appointments: bad XLSX magic bytes')
   const { sheets } = readXlsx(buf, {}, { rawDates: true })
-  const sheet = sheets[0]
-  const rows = sheet.rows
+  const rows = sheets[0].rows
   const header = rows[0] ?? []
+  requireHeaders(
+    header,
+    [
+      'Appointment ID',
+      'Dealer',
+      'Dealer ID',
+      'Appt Reason',
+      'Appointment Start Date',
+      'Appointment Start DateTime',
+      'Appointment Status',
+      'Is Show',
+      'Is No Show',
+      'Is Confirmed',
+      'Is Completed',
+      'Is Cancelled',
+    ],
+    'appointments',
+  )
   const h = (name: string) => header.indexOf(name)
+  const iId = h('Appointment ID')
   const iDealerId = h('Dealer ID')
   const iReason = h('Appt Reason')
+  const iStartDate = h('Appointment Start Date')
+  const iStartDT = h('Appointment Start DateTime')
   const iShow = h('Is Show')
   const iNoShow = h('Is No Show')
   const iConfirmed = h('Is Confirmed')
   const iCompleted = h('Is Completed')
   const iCancelled = h('Is Cancelled')
-  const required: Record<string, number> = {
-    'Dealer ID': iDealerId,
-    'Appt Reason': iReason,
-    'Is Show': iShow,
-    'Is No Show': iNoShow,
-    'Is Confirmed': iConfirmed,
-    'Is Completed': iCompleted,
-    'Is Cancelled': iCancelled,
-  }
-  const missing = Object.entries(required)
-    .filter(([, i]) => i < 0)
-    .map(([k]) => k)
-  if (missing.length)
-    throw new HeldInputError(
-      `appointments missing headers: ${missing.join(', ')}`,
-    )
 
   const data = dataRows(rows)
   const yes = (v: string) => v.trim().toLowerCase() === 'yes'
   const dealerIds = new Set<string>()
+  const seenIds = new Set<string>()
   let show = 0,
     noShow = 0,
     confirmed = 0,
     completed = 0,
     cancelled = 0
+  let obsStart = '',
+    obsEnd = ''
   for (const r of data) {
     assertNoServiceParts(r, 'appointments data row')
+    const id = (r[iId] ?? '').trim()
+    if (id.length === 0)
+      throw new HeldInputError('appointments: blank Appointment ID')
+    if (seenIds.has(id))
+      throw new HeldInputError(`appointments: duplicate Appointment ID ${id}`)
+    seenIds.add(id)
+    if ((r[iReason] ?? '').trim() !== 'Sales Appointment') {
+      throw new HeldInputError(
+        `appointments: non-sales-appointment-reason "${(r[iReason] ?? '').trim()}"`,
+      )
+    }
     dealerIds.add((r[iDealerId] ?? '').trim())
+    const sd = excelSerialToDate(r[iStartDate] ?? '')
+    const sdt = excelSerialToDate(r[iStartDT] ?? '')
+    if (sd === null || sdt === null) {
+      throw new HeldInputError(
+        'appointments: Appointment Start Date/DateTime does not parse',
+      )
+    }
+    if (!inWindow(sd, period) || !inWindow(sdt, period)) {
+      throw new HeldInputError(
+        `appointments: Start Date/DateTime ${sd}/${sdt} outside period ${period.start}..${period.end}`,
+      )
+    }
+    if (obsStart === '' || sd < obsStart) obsStart = sd
+    if (obsEnd === '' || sd > obsEnd) obsEnd = sd
     if (yes(r[iShow] ?? '')) show++
     if (yes(r[iNoShow] ?? '')) noShow++
     if (yes(r[iConfirmed] ?? '')) confirmed++
@@ -162,6 +226,11 @@ export function readAppointmentsHeld(
     completed,
     cancelled,
     dealerIds: ids,
+    observed: { start: obsStart, end: obsEnd },
+    salesOnlyProof:
+      `${data.length} rows: every Appt Reason="Sales Appointment"; ` +
+      `all Dealer ID=${expectedDealerId} (one rooftop); ${seenIds.size} unique Appointment IDs; ` +
+      `all Start Date+DateTime within ${period.start}..${period.end}; zero Service/Parts tokens`,
   }
 }
 
@@ -172,39 +241,61 @@ export type CrmHeld = {
   newNegativeFront: number
   newFrontBlank: number
   dealerIds: Array<string>
+  observed: Period
+  salesOnlyProof: string
 }
 
-export function readCrmHeld(buf: Buffer, expectedDealerId: string): CrmHeld {
+export function readCrmHeld(
+  buf: Buffer,
+  expectedDealerId: string,
+  period: Period,
+): CrmHeld {
   if (!hasXlsxMagic(buf))
     throw new HeldInputError('crm_sales_gross: bad XLSX magic bytes')
   const { sheets } = readXlsx(buf, {}, { rawDates: true })
   const rows = sheets[0].rows
   const header = rows[0] ?? []
+  requireHeaders(
+    header,
+    [
+      'Dealer',
+      'Dealer ID',
+      'Sold Date',
+      'Sale ID',
+      'Deal Number',
+      'Inventory Type',
+      'Front Gross',
+      'Back Gross',
+      'Total Gross',
+    ],
+    'crm_sales_gross',
+  )
   const h = (name: string) => header.indexOf(name)
   const iDealerId = h('Dealer ID')
+  const iSold = h('Sold Date')
   const iInv = h('Inventory Type')
   const iFront = h('Front Gross')
-  const required: Record<string, number> = {
-    'Dealer ID': iDealerId,
-    'Inventory Type': iInv,
-    'Front Gross': iFront,
-  }
-  const missing = Object.entries(required)
-    .filter(([, i]) => i < 0)
-    .map(([k]) => k)
-  if (missing.length)
-    throw new HeldInputError(
-      `crm_sales_gross missing headers: ${missing.join(', ')}`,
-    )
 
   const data = dataRows(rows)
   const dealerIds = new Set<string>()
   let newDeals = 0,
     newNegativeFront = 0,
     newFrontBlank = 0
+  let obsStart = '',
+    obsEnd = ''
   for (const r of data) {
     assertNoServiceParts(r, 'crm_sales_gross data row')
     dealerIds.add((r[iDealerId] ?? '').trim())
+    const sd = excelSerialToDate(r[iSold] ?? '')
+    if (sd === null)
+      throw new HeldInputError('crm_sales_gross: Sold Date does not parse')
+    if (!inWindow(sd, period)) {
+      throw new HeldInputError(
+        `crm_sales_gross: Sold Date ${sd} outside coverage window ${period.start}..${period.end}`,
+      )
+    }
+    if (obsStart === '' || sd < obsStart) obsStart = sd
+    if (obsEnd === '' || sd > obsEnd) obsEnd = sd
     if ((r[iInv] ?? '').trim().toLowerCase() === 'new') {
       newDeals++
       const fg = num(r[iFront] ?? '')
@@ -225,8 +316,15 @@ export function readCrmHeld(buf: Buffer, expectedDealerId: string): CrmHeld {
     newNegativeFront,
     newFrontBlank,
     dealerIds: ids,
+    observed: { start: obsStart, end: obsEnd },
+    salesOnlyProof:
+      `${data.length} rows: all Dealer ID=${expectedDealerId} (one rooftop); ` +
+      `all Sold Date within coverage ${period.start}..${period.end} (observed ${obsStart}..${obsEnd}); ` +
+      `zero Service/Parts tokens`,
   }
 }
+
+const DASHBOARD_LEAD_TYPES = ['Internet', 'Phone', 'Walk-in']
 
 export type DashboardHeld = {
   family: 'dealership_performance'
@@ -256,7 +354,20 @@ export function readDashboardHeld(
   if (!report) throw new HeldInputError('dashboard: Report sheet not found')
   if (!filters) throw new HeldInputError('dashboard: Filters sheet not found')
 
-  // Filters is provenance metadata; it must AFFIRMATIVELY prove Sales-only + window.
+  // Recognition (SCHEMA_CONTRACT §3.6): title OR both section markers.
+  const flat = report.rows.map((r) => r.join(''))
+  const hasTitle = flat.some((s) =>
+    s.includes('Dealership Performance Dashboard'),
+  )
+  const hasMarkers =
+    report.rows.some((r) => r.length === 1 && r[0] === 'Dealership Summary') &&
+    flat.some((s) => s.includes('Lead Type & Inventory Type Summary'))
+  if (!hasTitle && !hasMarkers) {
+    throw new HeldInputError(
+      'dashboard: neither title nor both section markers present',
+    )
+  }
+
   const filterVal = (name: string): string => {
     const row = filters.rows.find((r) => (r[0] ?? '').trim() === name)
     return row ? (row[2] ?? '').trim() : ''
@@ -286,7 +397,18 @@ export function readDashboardHeld(
       `dashboard Filters Appointment Reasons="${apptReasons}" is not Sales Appointment`,
     )
   }
-  // Any Service/Parts token in an INCLUSION filter (Lead Types / Inventory Types) fails closed.
+  // Lead Types must be EXACTLY {Internet, Phone, Walk-in} (SCHEMA_CONTRACT §3.6).
+  const leadTypes = filterVal('Lead Types')
+    .split(/[;,]/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0)
+    .sort()
+  const expectedLeadTypes = [...DASHBOARD_LEAD_TYPES].sort()
+  if (JSON.stringify(leadTypes) !== JSON.stringify(expectedLeadTypes)) {
+    throw new HeldInputError(
+      `dashboard Filters Lead Types=${JSON.stringify(leadTypes)} != ${JSON.stringify(expectedLeadTypes)}`,
+    )
+  }
   for (const name of ['Lead Types', 'Inventory Types', 'Lead Status Types']) {
     if (SERVICE_PARTS_TOKEN.test(filterVal(name))) {
       throw new HeldInputError(
@@ -295,7 +417,6 @@ export function readDashboardHeld(
     }
   }
 
-  // Data: the "Dealership Summary" TOTAL row. Scan its data rows for Service/Parts.
   const rows = report.rows
   const secIdx = rows.findIndex(
     (r) => r.length === 1 && r[0] === 'Dealership Summary',
@@ -340,7 +461,10 @@ export function readDashboardHeld(
     apptsSet: num(totalRow[iApptsSet] ?? ''),
     apptsSetPct: num(totalRow[iApptsSetPct] ?? ''),
     soldInPeriod: num(totalRow[iSold] ?? ''),
-    salesOnlyProof: `Lead Sources Excluded="${excluded}"; Appointment Reasons="${apptReasons}"`,
+    salesOnlyProof:
+      `Lead Sources Excluded includes Service; Appointment Reasons="${apptReasons}"; ` +
+      `Lead Types={Internet,Phone,Walk-in}; one dealer="${dealer}"; ` +
+      `window ${begin}..${end}; zero Service/Parts in summary data`,
     dealerName: dealer,
     periodBegin: begin,
     periodEnd: end,

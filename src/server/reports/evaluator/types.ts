@@ -36,6 +36,14 @@ export type SourceLineage = {
   dealer_id: string
   dealer_name: string
   sales_only_proof: string
+  // Governed delivery envelope (SCHEMA_CONTRACT §1) — bound + validated, never hardcoded.
+  source_type: string
+  sender: string
+  subject: string
+  gmail_message_id: string
+  gmail_attachment_id: string
+  period_hint: string
+  observed_date_range: { start: string; end: string } | null
 }
 
 export type EvalRow = {
