@@ -1,0 +1,1987 @@
+{
+  "artifact": "gate5a-evaluated-cell-comparison-ledger",
+  "revision": "K1",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "accounting": {
+    "conditions": 295,
+    "evaluated": 17,
+    "unresolved": 278,
+    "evaluated_cells": 51,
+    "unresolved_cells": 834,
+    "total_cells": 885,
+    "change_from_this_gate": "none — Gate 5A verifies the committed corpus; it promotes nothing"
+  },
+  "records": [
+    {
+      "metric_id": "SW-011",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Median time-to-first-touch exceeds 10 minutes during business hours.",
+      "value": 6,
+      "unit": "minutes",
+      "comparison_basis": {
+        "id": "OT-SW-011",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Median time-to-first-touch ceiling (business hours)",
+        "threshold": 10,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance)",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": {
+        "benchmark_id": "IB-PIEDPIPER-ILE-2026",
+        "benchmark_metric_key": "composite",
+        "benchmark_value": 71,
+        "usage": "reference_only",
+        "compatible": false,
+        "reason": "SW-011 is the median of business-hours Actual Response Time (minutes). Pied Piper ILE is a response-effectiveness composite (24h answer presence/speed/quality) — not a median and not business-hours filtered. Incompatible; reference-only, NOT mapped."
+      },
+      "native_variance": -4,
+      "display_variance": "-4 min",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "vinsolutions_custom_reporting_leads",
+        "formula": "median(Actual Response Time (Min) where Originated After Hours=No, numeric only)",
+        "numerator": 27,
+        "denominator": 76
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-011",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Median time-to-first-touch exceeds 10 minutes during business hours.",
+      "value": 4,
+      "unit": "minutes",
+      "comparison_basis": {
+        "id": "OT-SW-011",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Median time-to-first-touch ceiling (business hours)",
+        "threshold": 10,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance)",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": {
+        "benchmark_id": "IB-PIEDPIPER-ILE-2026",
+        "benchmark_metric_key": "composite",
+        "benchmark_value": 71,
+        "usage": "reference_only",
+        "compatible": false,
+        "reason": "SW-011 is the median of business-hours Actual Response Time (minutes). Pied Piper ILE is a response-effectiveness composite (24h answer presence/speed/quality) — not a median and not business-hours filtered. Incompatible; reference-only, NOT mapped."
+      },
+      "native_variance": -6,
+      "display_variance": "-6 min",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "vinsolutions_custom_reporting_leads",
+        "formula": "median(Actual Response Time (Min) where Originated After Hours=No, numeric only)",
+        "numerator": 12,
+        "denominator": 51
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-011",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Median time-to-first-touch exceeds 10 minutes during business hours.",
+      "value": 4.5,
+      "unit": "minutes",
+      "comparison_basis": {
+        "id": "OT-SW-011",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Median time-to-first-touch ceiling (business hours)",
+        "threshold": 10,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance)",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": {
+        "benchmark_id": "IB-PIEDPIPER-ILE-2026",
+        "benchmark_metric_key": "composite",
+        "benchmark_value": 71,
+        "usage": "reference_only",
+        "compatible": false,
+        "reason": "SW-011 is the median of business-hours Actual Response Time (minutes). Pied Piper ILE is a response-effectiveness composite (24h answer presence/speed/quality) — not a median and not business-hours filtered. Incompatible; reference-only, NOT mapped."
+      },
+      "native_variance": -5.5,
+      "display_variance": "-5.5 min",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "vinsolutions_custom_reporting_leads",
+        "formula": "median(Actual Response Time (Min) where Originated After Hours=No, numeric only)",
+        "numerator": 12,
+        "denominator": 32
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-012",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Any lead untouched >30 minutes during staffed hours triggers escalation.",
+      "value": 0.19736842105263158,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-012",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Strict-untouched business-hours leads — zero tolerance",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (trigger any count > 0)",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.19736842105263158,
+      "display_variance": "+19.7 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "vinsolutions_custom_reporting_leads",
+        "formula": "count(First Contact Attempt blank AND First Customer Contact blank AND Actual Response Time blank where Originated After Hours=No) / business_hours_population",
+        "numerator": 15,
+        "denominator": 76
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-012",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Any lead untouched >30 minutes during staffed hours triggers escalation.",
+      "value": 0.13725490196078433,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-012",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Strict-untouched business-hours leads — zero tolerance",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (trigger any count > 0)",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.13725490196078433,
+      "display_variance": "+13.7 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "vinsolutions_custom_reporting_leads",
+        "formula": "count(First Contact Attempt blank AND First Customer Contact blank AND Actual Response Time blank where Originated After Hours=No) / business_hours_population",
+        "numerator": 7,
+        "denominator": 51
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-012",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Any lead untouched >30 minutes during staffed hours triggers escalation.",
+      "value": 0.03125,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-012",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Strict-untouched business-hours leads — zero tolerance",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (trigger any count > 0)",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.03125,
+      "display_variance": "+3.1 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "vinsolutions_custom_reporting_leads",
+        "formula": "count(First Contact Attempt blank AND First Customer Contact blank AND Actual Response Time blank where Originated After Hours=No) / business_hours_population",
+        "numerator": 1,
+        "denominator": 32
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-015",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Sales rep's average first-response time is 2x the store median.",
+      "value": 0.5,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-015",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep first-response >= 2x store median — zero tolerance",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (trigger any rep >= 2x)",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.5,
+      "display_variance": "+50 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "vinsolutions_custom_reporting_leads",
+        "formula": "count(rep mean Actual Response Time >= 2 x store median) / reps_with_numeric_response",
+        "numerator": 2,
+        "denominator": 4
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-015",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Sales rep's average first-response time is 2x the store median.",
+      "value": 0.75,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-015",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep first-response >= 2x store median — zero tolerance",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (trigger any rep >= 2x)",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.75,
+      "display_variance": "+75 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "vinsolutions_custom_reporting_leads",
+        "formula": "count(rep mean Actual Response Time >= 2 x store median) / reps_with_numeric_response",
+        "numerator": 3,
+        "denominator": 4
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-015",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Sales rep's average first-response time is 2x the store median.",
+      "value": 0.6666666666666666,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-015",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep first-response >= 2x store median — zero tolerance",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (trigger any rep >= 2x)",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.6666666666666666,
+      "display_variance": "+66.7 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "vinsolutions_custom_reporting_leads",
+        "formula": "count(rep mean Actual Response Time >= 2 x store median) / reps_with_numeric_response",
+        "numerator": 2,
+        "denominator": 3
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-021",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Rep sends identical templated message to >70% of leads (no personalization).",
+      "value": 0.18181818181818182,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-021-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep sends identical templated message to >70% of leads (no personalization) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.18181818181818182,
+      "display_variance": "+18.2 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "reps whose modal identical (trim-normalized) body covers > 70% of distinct leads / reps with >=1 written lead",
+        "numerator": 2,
+        "denominator": 11
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-021",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Rep sends identical templated message to >70% of leads (no personalization).",
+      "value": 0.2222222222222222,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-021-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep sends identical templated message to >70% of leads (no personalization) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.2222222222222222,
+      "display_variance": "+22.2 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "reps whose modal identical (trim-normalized) body covers > 70% of distinct leads / reps with >=1 written lead",
+        "numerator": 2,
+        "denominator": 9
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-021",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Rep sends identical templated message to >70% of leads (no personalization).",
+      "value": 0.125,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-021-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep sends identical templated message to >70% of leads (no personalization) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.125,
+      "display_variance": "+12.5 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "reps whose modal identical (trim-normalized) body covers > 70% of distinct leads / reps with >=1 written lead",
+        "numerator": 1,
+        "denominator": 8
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-022",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Rep's text-to-call ratio exceeds 5:1 (avoiding voice contact).",
+      "value": 0.1,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-SW-022-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep's outbound text-to-call ratio exceeds 5:1 (avoiding voice) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.1,
+      "display_variance": "+10 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "flagged_reps / eligible_reps; rep flagged if outbound_calls==0&outbound_texts>0 OR outbound_texts>5*outbound_calls",
+        "numerator": 1,
+        "denominator": 10
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-022",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Rep's text-to-call ratio exceeds 5:1 (avoiding voice contact).",
+      "value": 0.3333333333333333,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-SW-022-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep's outbound text-to-call ratio exceeds 5:1 (avoiding voice) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.3333333333333333,
+      "display_variance": "+33.3 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "flagged_reps / eligible_reps; rep flagged if outbound_calls==0&outbound_texts>0 OR outbound_texts>5*outbound_calls",
+        "numerator": 3,
+        "denominator": 9
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-022",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Rep's text-to-call ratio exceeds 5:1 (avoiding voice contact).",
+      "value": 0.2857142857142857,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-SW-022-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep's outbound text-to-call ratio exceeds 5:1 (avoiding voice) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.2857142857142857,
+      "display_variance": "+28.6 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "flagged_reps / eligible_reps; rep flagged if outbound_calls==0&outbound_texts>0 OR outbound_texts>5*outbound_calls",
+        "numerator": 2,
+        "denominator": 7
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-031",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Lead-to-appointment set rate falls below 25%.",
+      "value": 0.10869565217391304,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-031",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Lead-to-appointment set rate floor",
+        "threshold": 0.25,
+        "comparator": "<",
+        "direction": "higher_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance)",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": {
+        "benchmark_id": "IB-FOUREYES-FUNNEL-Q1-2026",
+        "benchmark_metric_key": "appointment_set",
+        "benchmark_value": 0.4,
+        "usage": "reference_only",
+        "compatible": false,
+        "reason": "SW-031 denominator is leads_total (appointments set / leads, store aggregate). Foureyes appointment-set = appointments set / opportunities with established CONTACT. Denominator differs (leads vs contacted opportunities); reference-only, NOT mapped."
+      },
+      "native_variance": -0.14130434782608697,
+      "display_variance": "-14.1 pp",
+      "directionality": "higher_is_better",
+      "rating": "breach",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "dealership_performance",
+        "formula": "appts_set_total / leads_total",
+        "numerator": 10,
+        "denominator": 92
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-031",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Lead-to-appointment set rate falls below 25%.",
+      "value": 0.15517241379310345,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-031",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Lead-to-appointment set rate floor",
+        "threshold": 0.25,
+        "comparator": "<",
+        "direction": "higher_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance)",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": {
+        "benchmark_id": "IB-FOUREYES-FUNNEL-Q1-2026",
+        "benchmark_metric_key": "appointment_set",
+        "benchmark_value": 0.4,
+        "usage": "reference_only",
+        "compatible": false,
+        "reason": "SW-031 denominator is leads_total (appointments set / leads, store aggregate). Foureyes appointment-set = appointments set / opportunities with established CONTACT. Denominator differs (leads vs contacted opportunities); reference-only, NOT mapped."
+      },
+      "native_variance": -0.09482758620689655,
+      "display_variance": "-9.5 pp",
+      "directionality": "higher_is_better",
+      "rating": "breach",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "dealership_performance",
+        "formula": "appts_set_total / leads_total",
+        "numerator": 9,
+        "denominator": 58
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-031",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Lead-to-appointment set rate falls below 25%.",
+      "value": 0.15789473684210525,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-031",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Lead-to-appointment set rate floor",
+        "threshold": 0.25,
+        "comparator": "<",
+        "direction": "higher_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance)",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": {
+        "benchmark_id": "IB-FOUREYES-FUNNEL-Q1-2026",
+        "benchmark_metric_key": "appointment_set",
+        "benchmark_value": 0.4,
+        "usage": "reference_only",
+        "compatible": false,
+        "reason": "SW-031 denominator is leads_total (appointments set / leads, store aggregate). Foureyes appointment-set = appointments set / opportunities with established CONTACT. Denominator differs (leads vs contacted opportunities); reference-only, NOT mapped."
+      },
+      "native_variance": -0.09210526315789475,
+      "display_variance": "-9.2 pp",
+      "directionality": "higher_is_better",
+      "rating": "breach",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "dealership_performance",
+        "formula": "appts_set_total / leads_total",
+        "numerator": 6,
+        "denominator": 38
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-032",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Appointment show rate drops below 55%.",
+      "value": 0.5714285714285714,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-032",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Appointment show rate floor",
+        "threshold": 0.55,
+        "comparator": "<",
+        "direction": "higher_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); ratified in R2 accepted-facts",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": {
+        "benchmark_id": "IB-FOUREYES-FUNNEL-Q1-2026",
+        "benchmark_metric_key": "appointment_show",
+        "benchmark_value": 0.59,
+        "usage": "reference_only",
+        "compatible": false,
+        "reason": "SW-032 denominator is \"total appointment rows in period\", which the committed supporting data proves includes cancelled (4) and rescheduled (7) appointments (23 appointments: 14 confirmed, 13 shown, 6 no-show, 4 cancelled, 7 rescheduled). Foureyes show = appointment shows / appointments SET. The denominators are not the same population, so the mapping is reference-only and NOT used as a variance basis."
+      },
+      "native_variance": 0.021428571428571352,
+      "display_variance": "+2.1 pp",
+      "directionality": "higher_is_better",
+      "rating": "watch",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "appointments",
+        "formula": "count(Is Show=Yes) / count(appointment rows)",
+        "numerator": 8,
+        "denominator": 14
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-032",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Appointment show rate drops below 55%.",
+      "value": 0.3333333333333333,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-032",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Appointment show rate floor",
+        "threshold": 0.55,
+        "comparator": "<",
+        "direction": "higher_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); ratified in R2 accepted-facts",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": {
+        "benchmark_id": "IB-FOUREYES-FUNNEL-Q1-2026",
+        "benchmark_metric_key": "appointment_show",
+        "benchmark_value": 0.59,
+        "usage": "reference_only",
+        "compatible": false,
+        "reason": "SW-032 denominator is \"total appointment rows in period\", which the committed supporting data proves includes cancelled (4) and rescheduled (7) appointments (23 appointments: 14 confirmed, 13 shown, 6 no-show, 4 cancelled, 7 rescheduled). Foureyes show = appointment shows / appointments SET. The denominators are not the same population, so the mapping is reference-only and NOT used as a variance basis."
+      },
+      "native_variance": -0.21666666666666673,
+      "display_variance": "-21.7 pp",
+      "directionality": "higher_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "appointments",
+        "formula": "count(Is Show=Yes) / count(appointment rows)",
+        "numerator": 2,
+        "denominator": 6
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-032",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Appointment show rate drops below 55%.",
+      "value": 0.42857142857142855,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-032",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Appointment show rate floor",
+        "threshold": 0.55,
+        "comparator": "<",
+        "direction": "higher_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); ratified in R2 accepted-facts",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": {
+        "benchmark_id": "IB-FOUREYES-FUNNEL-Q1-2026",
+        "benchmark_metric_key": "appointment_show",
+        "benchmark_value": 0.59,
+        "usage": "reference_only",
+        "compatible": false,
+        "reason": "SW-032 denominator is \"total appointment rows in period\", which the committed supporting data proves includes cancelled (4) and rescheduled (7) appointments (23 appointments: 14 confirmed, 13 shown, 6 no-show, 4 cancelled, 7 rescheduled). Foureyes show = appointment shows / appointments SET. The denominators are not the same population, so the mapping is reference-only and NOT used as a variance basis."
+      },
+      "native_variance": -0.1214285714285715,
+      "display_variance": "-12.1 pp",
+      "directionality": "higher_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "appointments",
+        "formula": "count(Is Show=Yes) / count(appointment rows)",
+        "numerator": 3,
+        "denominator": 7
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-033",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Show-to-write rate below 60%.",
+      "value": 0,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-033",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Show-to-write rate floor",
+        "threshold": 0.6,
+        "comparator": "<",
+        "direction": "higher_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": -0.6,
+      "display_variance": "-60 pp",
+      "directionality": "higher_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "dealership_performance",
+        "formula": "writeup / appts_show",
+        "numerator": 0,
+        "denominator": 8
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-033",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Show-to-write rate below 60%.",
+      "value": 0,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-033",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Show-to-write rate floor",
+        "threshold": 0.6,
+        "comparator": "<",
+        "direction": "higher_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": -0.6,
+      "display_variance": "-60 pp",
+      "directionality": "higher_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "dealership_performance",
+        "formula": "writeup / appts_show",
+        "numerator": 0,
+        "denominator": 2
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-033",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Show-to-write rate below 60%.",
+      "value": 0,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-033",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Show-to-write rate floor",
+        "threshold": 0.6,
+        "comparator": "<",
+        "direction": "higher_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": -0.6,
+      "display_variance": "-60 pp",
+      "directionality": "higher_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "dealership_performance",
+        "formula": "writeup / appts_show",
+        "numerator": 0,
+        "denominator": 2
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-041",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Appointment no-show rate exceeds 45%.",
+      "value": 0.35714285714285715,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-041",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Appointment no-show rate ceiling",
+        "threshold": 0.45,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); ratified in R2 accepted-facts",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": -0.09285714285714286,
+      "display_variance": "-9.3 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "appointments",
+        "formula": "count(Is No Show=Yes) / count(appointment rows)",
+        "numerator": 5,
+        "denominator": 14
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-041",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Appointment no-show rate exceeds 45%.",
+      "value": 0.5,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-041",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Appointment no-show rate ceiling",
+        "threshold": 0.45,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); ratified in R2 accepted-facts",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.04999999999999999,
+      "display_variance": "+5 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "appointments",
+        "formula": "count(Is No Show=Yes) / count(appointment rows)",
+        "numerator": 3,
+        "denominator": 6
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-041",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Appointment no-show rate exceeds 45%.",
+      "value": 0.5714285714285714,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-041",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Appointment no-show rate ceiling",
+        "threshold": 0.45,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); ratified in R2 accepted-facts",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.12142857142857139,
+      "display_variance": "+12.1 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "appointments",
+        "formula": "count(Is No Show=Yes) / count(appointment rows)",
+        "numerator": 4,
+        "denominator": 7
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-045",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Ratio of \"be-backs\" to fresh ups inverted (retention symptom).",
+      "value": 0.08333333333333333,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "OT-SW-045",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Be-backs to fresh-ups ratio — inverted when > 1.0",
+        "threshold": 1,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": -0.9166666666666666,
+      "display_variance": "-91.7 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "dealership_performance",
+        "formula": "be_backs / initial_visits",
+        "numerator": 2,
+        "denominator": 24
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-045",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Ratio of \"be-backs\" to fresh ups inverted (retention symptom).",
+      "value": 0,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "OT-SW-045",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Be-backs to fresh-ups ratio — inverted when > 1.0",
+        "threshold": 1,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": -1,
+      "display_variance": "-100 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "dealership_performance",
+        "formula": "be_backs / initial_visits",
+        "numerator": 0,
+        "denominator": 17
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-045",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Ratio of \"be-backs\" to fresh ups inverted (retention symptom).",
+      "value": 0.2727272727272727,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "OT-SW-045",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Be-backs to fresh-ups ratio — inverted when > 1.0",
+        "threshold": 1,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": -0.7272727272727273,
+      "display_variance": "-72.7 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "dealership_performance",
+        "formula": "be_backs / initial_visits",
+        "numerator": 3,
+        "denominator": 11
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-046",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Test drive completion rate <50% of showroom visits.",
+      "value": 0,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-046",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Test-drive completion rate floor",
+        "threshold": 0.5,
+        "comparator": "<",
+        "direction": "higher_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": -0.5,
+      "display_variance": "-50 pp",
+      "directionality": "higher_is_better",
+      "rating": "breach",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "dealership_performance",
+        "formula": "demo / total_visits",
+        "numerator": 0,
+        "denominator": 26
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-046",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Test drive completion rate <50% of showroom visits.",
+      "value": 0.23529411764705882,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-046",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Test-drive completion rate floor",
+        "threshold": 0.5,
+        "comparator": "<",
+        "direction": "higher_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": -0.2647058823529412,
+      "display_variance": "-26.5 pp",
+      "directionality": "higher_is_better",
+      "rating": "breach",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "dealership_performance",
+        "formula": "demo / total_visits",
+        "numerator": 4,
+        "denominator": 17
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-046",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Test drive completion rate <50% of showroom visits.",
+      "value": 0,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-046",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Test-drive completion rate floor",
+        "threshold": 0.5,
+        "comparator": "<",
+        "direction": "higher_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": -0.5,
+      "display_variance": "-50 pp",
+      "directionality": "higher_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "dealership_performance",
+        "formula": "demo / total_visits",
+        "numerator": 0,
+        "denominator": 14
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-090",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Lead has no assigned salesperson >2 hours after creation.",
+      "value": 0,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-090",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Unassigned-salesperson leads — zero tolerance",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (trigger any unassigned lead); Gate 4B ratified Leads substitution",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0,
+      "display_variance": "0 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "high",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "vinsolutions_custom_reporting_leads",
+        "formula": "count(Sales Rep blank AND unassigned >2h after creation) / total_accepted_leads_rows",
+        "numerator": 0,
+        "denominator": 119
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-090",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Lead has no assigned salesperson >2 hours after creation.",
+      "value": 0,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-090",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Unassigned-salesperson leads — zero tolerance",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (trigger any unassigned lead); Gate 4B ratified Leads substitution",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0,
+      "display_variance": "0 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "vinsolutions_custom_reporting_leads",
+        "formula": "count(Sales Rep blank AND unassigned >2h after creation) / total_accepted_leads_rows",
+        "numerator": 0,
+        "denominator": 68
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-090",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Lead has no assigned salesperson >2 hours after creation.",
+      "value": 0,
+      "unit": "ratio_0_1",
+      "comparison_basis": {
+        "id": "OT-SW-090",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Unassigned-salesperson leads — zero tolerance",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (trigger any unassigned lead); Gate 4B ratified Leads substitution",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0,
+      "display_variance": "0 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "medium",
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "vinsolutions_custom_reporting_leads",
+        "formula": "count(Sales Rep blank AND unassigned >2h after creation) / total_accepted_leads_rows",
+        "numerator": 0,
+        "denominator": 43
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-133",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Rep replies after customer has sent 2+ consecutive messages (customer chasing rep).",
+      "value": 0.03571428571428571,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-SW-133-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep replies after customer sent 2+ consecutive messages (customer chasing rep) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.03571428571428571,
+      "display_variance": "+3.6 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "high",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "threads with a reply preceded by >=2 inbound since the rep’s previous outbound (timestamp-value rule, tie-order-invariant) / threads_with(>=2 messages)",
+        "numerator": 10,
+        "denominator": 280
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-133",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Rep replies after customer has sent 2+ consecutive messages (customer chasing rep).",
+      "value": 0.023076923076923078,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-SW-133-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep replies after customer sent 2+ consecutive messages (customer chasing rep) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.023076923076923078,
+      "display_variance": "+2.3 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "high",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "threads with a reply preceded by >=2 inbound since the rep’s previous outbound (timestamp-value rule, tie-order-invariant) / threads_with(>=2 messages)",
+        "numerator": 3,
+        "denominator": 130
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-133",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Rep replies after customer has sent 2+ consecutive messages (customer chasing rep).",
+      "value": 0.01694915254237288,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-SW-133-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep replies after customer sent 2+ consecutive messages (customer chasing rep) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.01694915254237288,
+      "display_variance": "+1.7 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "high",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "threads with a reply preceded by >=2 inbound since the rep’s previous outbound (timestamp-value rule, tie-order-invariant) / threads_with(>=2 messages)",
+        "numerator": 2,
+        "denominator": 118
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-142",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Rep uses generic template with unfilled merge tags (\"Hi {{FirstName}}\").",
+      "value": 0,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-142-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep uses generic template with unfilled merge tags ('Hi {{FirstName}}') — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0,
+      "display_variance": "0 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "high",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "eligible written messages with an unfilled merge-tag delimiter / eligible written messages",
+        "numerator": 0,
+        "denominator": 800
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-142",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Rep uses generic template with unfilled merge tags (\"Hi {{FirstName}}\").",
+      "value": 0,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-142-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep uses generic template with unfilled merge tags ('Hi {{FirstName}}') — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0,
+      "display_variance": "0 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "high",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "eligible written messages with an unfilled merge-tag delimiter / eligible written messages",
+        "numerator": 0,
+        "denominator": 386
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-142",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Rep uses generic template with unfilled merge tags (\"Hi {{FirstName}}\").",
+      "value": 0,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-142-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep uses generic template with unfilled merge tags ('Hi {{FirstName}}') — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0,
+      "display_variance": "0 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "high",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "eligible written messages with an unfilled merge-tag delimiter / eligible written messages",
+        "numerator": 0,
+        "denominator": 250
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-145",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Same message body sent to >5 customers in a day (copy-paste factory).",
+      "value": 0.004103967168262654,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-145-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Same message body sent to >5 customers in a day (copy-paste factory) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.004103967168262654,
+      "display_variance": "+0.4 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "high",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "distinct (identical body, day) groups delivered to > 5 distinct customers / distinct (body, day) groups",
+        "numerator": 3,
+        "denominator": 731
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-145",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Same message body sent to >5 customers in a day (copy-paste factory).",
+      "value": 0.002777777777777778,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-145-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Same message body sent to >5 customers in a day (copy-paste factory) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.002777777777777778,
+      "display_variance": "+0.3 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "high",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "distinct (identical body, day) groups delivered to > 5 distinct customers / distinct (body, day) groups",
+        "numerator": 1,
+        "denominator": 360
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-145",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Same message body sent to >5 customers in a day (copy-paste factory).",
+      "value": 0.004310344827586207,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-145-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Same message body sent to >5 customers in a day (copy-paste factory) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.004310344827586207,
+      "display_variance": "+0.4 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "high",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "distinct (identical body, day) groups delivered to > 5 distinct customers / distinct (body, day) groups",
+        "numerator": 1,
+        "denominator": 232
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-149",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Rep's messages average <15 words (low-effort replies).",
+      "value": 0.18181818181818182,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-149-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep's messages average <15 words (low-effort replies) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.18181818181818182,
+      "display_variance": "+18.2 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "reps whose mean written word count < 15 / reps with >=1 written message",
+        "numerator": 2,
+        "denominator": 11
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-149",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Rep's messages average <15 words (low-effort replies).",
+      "value": 0.1111111111111111,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-149-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep's messages average <15 words (low-effort replies) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0.1111111111111111,
+      "display_variance": "+11.1 pp",
+      "directionality": "lower_is_better",
+      "rating": "breach",
+      "confidence": "low",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "reps whose mean written word count < 15 / reps with >=1 written message",
+        "numerator": 1,
+        "denominator": 9
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-149",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Rep's messages average <15 words (low-effort replies).",
+      "value": 0,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-149-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep's messages average <15 words (low-effort replies) — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0,
+      "display_variance": "0 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "low",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "reps whose mean written word count < 15 / reps with >=1 written message",
+        "numerator": 0,
+        "denominator": 8
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-150",
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "condition": "Rep only sends links, no conversational context.",
+      "value": 0,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-150-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep only sends links, no conversational context — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0,
+      "display_variance": "0 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "low",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "reps for whom every eligible written message is link-only / reps with >=1 written message",
+        "numerator": 0,
+        "denominator": 11
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-150",
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "condition": "Rep only sends links, no conversational context.",
+      "value": 0,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-150-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep only sends links, no conversational context — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0,
+      "display_variance": "0 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "low",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "reps for whom every eligible written message is link-only / reps with >=1 written message",
+        "numerator": 0,
+        "denominator": 9
+      },
+      "independent_recompute_ok": true
+    },
+    {
+      "metric_id": "SW-150",
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "condition": "Rep only sends links, no conversational context.",
+      "value": 0,
+      "unit": "ratio",
+      "comparison_basis": {
+        "id": "comm-content-SW-150-red-flag-target-0",
+        "kind": "operational_target",
+        "is_operational_target": true,
+        "label": "Rep only sends links, no conversational context — operational target 0",
+        "threshold": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "verified_date": "2026-09-01"
+      },
+      "industry_reference": null,
+      "native_variance": 0,
+      "display_variance": "0 pp",
+      "directionality": "lower_is_better",
+      "rating": "healthy",
+      "confidence": "low",
+      "period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "evidence_lineage": {
+        "source_family": "enhanced_sales_communication_log_weekly",
+        "formula": "reps for whom every eligible written message is link-only / reps with >=1 written message",
+        "numerator": 0,
+        "denominator": 8
+      },
+      "independent_recompute_ok": true
+    }
+  ]
+}

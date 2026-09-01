@@ -28,15 +28,28 @@ describe('Baseline registry — definition-first, no fabricated numbers', () => 
       expect(['<', '>']).toContain(o.comparator)
     }
   })
-  it('industry benchmark VALUES are null + unverified (no fabricated figures)', () => {
+  it('industry benchmark top-level VALUES stay null (fabrication guard), verified or not', () => {
     for (const b of RAW.industry_benchmarks) {
       expect(b.basis).toBe('industry_benchmark')
+      // The top-level value is the fabrication guard: it stays null so no benchmark number can be
+      // pulled into a variance computation, whether or not the benchmark's figures are verified.
       expect(b.value).toBeNull()
-      expect(b.value_status).toBe('unverified_pending_operator_transcription')
+      expect([
+        'verified_reference_only',
+        'unverified_pending_operator_transcription',
+      ]).toContain(b.value_status)
       expect(String(b.url)).toMatch(/^https?:\/\//)
       // definition-first: publisher/definition/compatibility recorded
       expect(b.exact_definition.length).toBeGreaterThan(0)
       expect(b.compatibility_constraints.length).toBeGreaterThan(0)
+      // A VERIFIED benchmark carries a verified_date + machine-readable verified_metrics and stays
+      // reference-only (mapped_to null) so no verified figure becomes a variance basis.
+      if (b.value_status === 'verified_reference_only') {
+        expect(b.verified_date).toBe('2026-09-01')
+        expect(Array.isArray(b.verified_metrics)).toBe(true)
+        expect(b.compatibility).toBe('reference_only')
+        expect(b.mapped_to).toBeNull()
+      }
     }
   })
 })
@@ -50,7 +63,7 @@ describe('Baseline registry resolver', () => {
     expect(reg.resolve('OT-SW-032')?.basis).toBe('operational_target')
   })
   it('industry benchmarks resolve with value=null (never a forced number)', () => {
-    const ib = reg.resolve('IB-FOUREYES-APPTSET-BYTYPE')
+    const ib = reg.resolve('IB-FOUREYES-APPT-H2-2023')
     expect(ib?.basis).toBe('industry_benchmark')
     expect(ib?.value).toBeNull()
   })

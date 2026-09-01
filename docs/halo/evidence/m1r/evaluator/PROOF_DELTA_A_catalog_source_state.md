@@ -141,7 +141,7 @@ the committed non-PII golden); the nine quarantined files are never read.
 | `src/server/reports/evaluator/build-from-fresh.ts`    | `d39a2978a56e6162` |
 | `scripts/m1r-evaluator/build-spine.ts`                | `39991844404e267b` |
 | `scripts/m1r-evaluator/serialize.ts`                  | `9c5eff5124a2f242` |
-| `docs/halo/contract/baseline-registry.json`           | `82f08105ba78287c` |
+| `docs/halo/contract/baseline-registry.json`           | `86de75c499465571` |
 | `docs/halo/contract/gate2-evaluator-contract.json`    | `9bdc266438befe56` |
 | `docs/halo/evidence/m1r/evaluator/spine-ledger.json`  | `c3f859fa408d12a4` |
 | `docs/halo/evidence/m1r/evaluator/spine-summary.json` | `a3fbaba4362e9bd6` |

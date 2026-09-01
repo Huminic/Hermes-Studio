@@ -1,0 +1,398 @@
+{
+  "artifact": "gate5a-baseline-compatibility-ledger",
+  "revision": "K1",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "verified_date": "2026-09-01",
+  "principle": "Definition-first. A benchmark may be a variance basis only when its exact definition, unit, population, and period grain match the metric AND its value is verified. Operational targets (Duane-supplied) are valid comparison bases but are labeled operational_target and are NEVER industry benchmarks. No verified benchmark is definition-compatible this gate, so none is a variance basis and no benchmark number enters an evaluation.",
+  "verified_benchmarks": [
+    {
+      "id": "IB-FOUREYES-FUNNEL-Q1-2026",
+      "publisher": "Foureyes",
+      "title": "Q1 2026 dealership close-rate / funnel study",
+      "url": "https://www.foureyes.io/blog/dealership-close-rates-by-metro",
+      "support_url": "https://support.foureyes.io/en/articles/8504360-keep-your-eyes-on-the-prize-with-sales-process-performance",
+      "publication_date": "2026",
+      "observed_period": "Q1 2026",
+      "sample": "2.6M leads; 1,150+ dealers; 48 markets",
+      "population": "US dealers across 48 metros",
+      "verified_date": "2026-09-01",
+      "usage": "reference_only",
+      "metrics": [
+        {
+          "key": "close",
+          "label": "Overall close rate",
+          "value": 0.185,
+          "unit": "ratio_0_1",
+          "range": [0.145, 0.301],
+          "definition": "Lead-to-sale close rate."
+        },
+        {
+          "key": "contact",
+          "label": "Contact rate",
+          "value": 0.69,
+          "unit": "ratio_0_1",
+          "range": [0.47, 0.79],
+          "definition": "Contacted opportunities / total opportunities."
+        },
+        {
+          "key": "appointment_set",
+          "label": "Appointment-set rate",
+          "value": 0.4,
+          "unit": "ratio_0_1",
+          "range": [0.3, 0.59],
+          "definition": "Appointments set / opportunities with established contact."
+        },
+        {
+          "key": "appointment_show",
+          "label": "Appointment-show rate",
+          "value": 0.59,
+          "unit": "ratio_0_1",
+          "range": [0.41, 0.74],
+          "definition": "Appointment shows / appointments set."
+        }
+      ],
+      "note": "show-to-sale is defined by the publisher as sales-from-appointment / appointment-shows; no single headline value is transcribed here. All figures reference-only."
+    },
+    {
+      "id": "IB-FOUREYES-APPT-H2-2023",
+      "publisher": "Foureyes",
+      "title": "H2 2023 dealership appointment-rate study",
+      "url": "https://www.foureyes.io/blog/dealership-data-study-appointment-rates",
+      "publication_date": "2023",
+      "observed_period": "H2 2023",
+      "sample": "~700 US dealers",
+      "population": "US dealers, by lead type / vehicle condition",
+      "verified_date": "2026-09-01",
+      "usage": "reference_only",
+      "metrics": [
+        {
+          "key": "internet_phone_new_contact",
+          "label": "Internet+Phone new — contact",
+          "value": 0.63,
+          "unit": "ratio_0_1",
+          "definition": "Contacted opportunities / total (Internet+Phone, new)."
+        },
+        {
+          "key": "internet_phone_new_set",
+          "label": "Internet+Phone new — set",
+          "value": 0.42,
+          "unit": "ratio_0_1",
+          "definition": "Appointments set / contacted opportunities (Internet+Phone, new)."
+        },
+        {
+          "key": "internet_phone_new_show",
+          "label": "Internet+Phone new — show",
+          "value": 0.58,
+          "unit": "ratio_0_1",
+          "definition": "Shows / appointments set (Internet+Phone, new)."
+        },
+        {
+          "key": "internet_phone_new_show_to_sale",
+          "label": "Internet+Phone new — show-to-sale",
+          "value": 0.41,
+          "unit": "ratio_0_1",
+          "definition": "Sales-from-appointment / shows (Internet+Phone, new)."
+        },
+        {
+          "key": "used_contact",
+          "label": "Used — contact",
+          "value": 0.67,
+          "unit": "ratio_0_1",
+          "definition": "Contacted opportunities / total (Used)."
+        },
+        {
+          "key": "used_set",
+          "label": "Used — set",
+          "value": 0.48,
+          "unit": "ratio_0_1",
+          "definition": "Appointments set / contacted opportunities (Used)."
+        },
+        {
+          "key": "used_show",
+          "label": "Used — show",
+          "value": 0.54,
+          "unit": "ratio_0_1",
+          "definition": "Shows / appointments set (Used)."
+        },
+        {
+          "key": "used_show_to_sale",
+          "label": "Used — show-to-sale",
+          "value": 0.4,
+          "unit": "ratio_0_1",
+          "definition": "Sales-from-appointment / shows (Used)."
+        }
+      ],
+      "note": "Dated secondary reference. Use ONLY when exact compatibility (lead type, vehicle condition, denominator) is proven. Not mapped."
+    },
+    {
+      "id": "IB-FOUREYES-BENCH-2026",
+      "publisher": "Foureyes",
+      "title": "2026 Automotive Dealer Benchmarks Report",
+      "url": "https://www.foureyes.io/blog/2026-automotive-dealer-benchmarks-report",
+      "publication_date": "2026",
+      "observed_period": "2025",
+      "sample": "22,900+ dealer sites (non-sales/service filtered)",
+      "population": "US franchise + independent dealers",
+      "verified_date": "2026-09-01",
+      "usage": "reference_only",
+      "metrics": [
+        {
+          "key": "qualified_leads_mishandled",
+          "label": "Qualified leads mishandled",
+          "value": 0.427,
+          "unit": "ratio_0_1",
+          "definition": "Share of qualified leads mishandled."
+        },
+        {
+          "key": "never_logged_to_crm",
+          "label": "Leads never logged to CRM",
+          "value": 0.152,
+          "unit": "ratio_0_1",
+          "definition": "Share of leads never logged to the CRM."
+        },
+        {
+          "key": "returning_sales_leads_not_answered_24h",
+          "label": "Returning sales leads not answered within 24h",
+          "value": 0.628,
+          "unit": "ratio_0_1",
+          "definition": "Share of returning sales leads not answered within 24 hours."
+        },
+        {
+          "key": "buying_leads_closed_within_3d",
+          "label": "Buying leads closed within 3 days",
+          "value": 0.612,
+          "unit": "ratio_0_1",
+          "definition": "Share of buying leads that closed within 3 days."
+        },
+        {
+          "key": "sales_leads_eventually_bought",
+          "label": "Sales leads that eventually bought",
+          "value": 0.117,
+          "unit": "ratio_0_1",
+          "definition": "Share of sales leads that eventually bought."
+        }
+      ],
+      "note": "Reference-only unless an exact definition match is proven. Not mapped."
+    },
+    {
+      "id": "IB-PIEDPIPER-ILE-2026",
+      "publisher": "Pied Piper",
+      "title": "2026 Internet Lead Effectiveness (ILE) study",
+      "url": "https://www.piedpiperpsi.com/press/press-release-infiniti-dealers-rank-highest-in-2026-web-lead-response-study-ai-and-automation-drive-industry-improvement-512.htm",
+      "publication_date": "2026",
+      "observed_period": "2026",
+      "sample": "3,290 dealer sites",
+      "population": "US dealer websites",
+      "verified_date": "2026-09-01",
+      "usage": "reference_only",
+      "metrics": [
+        {
+          "key": "composite",
+          "label": "ILE composite score",
+          "value": 71,
+          "unit": "index_0_100",
+          "definition": "Composite web-lead response effectiveness index."
+        },
+        {
+          "key": "answered_within_24h_typical",
+          "label": "Typical inquiries answered within 24h",
+          "value": 0.78,
+          "unit": "ratio_0_1",
+          "definition": "Share of typical inquiries answered within 24 hours."
+        },
+        {
+          "key": "answered_complex",
+          "label": "Complex inquiries answered",
+          "value": 0.51,
+          "unit": "ratio_0_1",
+          "definition": "Share of complex inquiries answered."
+        },
+        {
+          "key": "multichannel",
+          "label": "Multichannel response",
+          "value": 0.62,
+          "unit": "ratio_0_1",
+          "definition": "Share responding on multiple channels."
+        }
+      ],
+      "note": "Response-effectiveness composite (24h answer). NOT a median and NOT business-hours filtered → incompatible with SW-011. Not mapped."
+    },
+    {
+      "id": "IB-NADA-DATA-2025",
+      "publisher": "NADA",
+      "title": "NADA Data 2025 — annual financial profile of America's franchised new-car dealerships",
+      "url": "https://www.nada.org/media/4695",
+      "publication_date": "2025",
+      "observed_period": "2024-2025",
+      "sample": "NADA member franchised dealers",
+      "population": "US franchised new-car dealers",
+      "verified_date": "2026-09-01",
+      "usage": "reference_only",
+      "metrics": [],
+      "note": "Annual national aggregate; not period-compatible with a single dealer-week. Reference-only; no per-metric numeric mapping."
+    }
+  ],
+  "candidate_mappings": [
+    {
+      "metric_id": "SW-032",
+      "benchmark_id": "IB-FOUREYES-FUNNEL-Q1-2026",
+      "benchmark_metric_key": "appointment_show",
+      "benchmark_value": 0.59,
+      "compatible": false,
+      "decision": "reference_only",
+      "reason": "SW-032 denominator is \"total appointment rows in period\", which the committed supporting data proves includes cancelled (4) and rescheduled (7) appointments (23 appointments: 14 confirmed, 13 shown, 6 no-show, 4 cancelled, 7 rescheduled). Foureyes show = appointment shows / appointments SET. The denominators are not the same population, so the mapping is reference-only and NOT used as a variance basis."
+    },
+    {
+      "metric_id": "SW-031",
+      "benchmark_id": "IB-FOUREYES-FUNNEL-Q1-2026",
+      "benchmark_metric_key": "appointment_set",
+      "benchmark_value": 0.4,
+      "compatible": false,
+      "decision": "reference_only",
+      "reason": "SW-031 denominator is leads_total (appointments set / leads, store aggregate). Foureyes appointment-set = appointments set / opportunities with established CONTACT. Denominator differs (leads vs contacted opportunities); reference-only, NOT mapped."
+    },
+    {
+      "metric_id": "SW-011",
+      "benchmark_id": "IB-PIEDPIPER-ILE-2026",
+      "benchmark_metric_key": "composite",
+      "benchmark_value": 71,
+      "compatible": false,
+      "decision": "reference_only",
+      "reason": "SW-011 is the median of business-hours Actual Response Time (minutes). Pied Piper ILE is a response-effectiveness composite (24h answer presence/speed/quality) — not a median and not business-hours filtered. Incompatible; reference-only, NOT mapped."
+    }
+  ],
+  "accepted_mappings": [],
+  "rejected_mappings": [
+    {
+      "metric_id": "SW-032",
+      "benchmark_id": "IB-FOUREYES-FUNNEL-Q1-2026",
+      "decision": "reference_only",
+      "reason": "SW-032 denominator is \"total appointment rows in period\", which the committed supporting data proves includes cancelled (4) and rescheduled (7) appointments (23 appointments: 14 confirmed, 13 shown, 6 no-show, 4 cancelled, 7 rescheduled). Foureyes show = appointment shows / appointments SET. The denominators are not the same population, so the mapping is reference-only and NOT used as a variance basis."
+    },
+    {
+      "metric_id": "SW-031",
+      "benchmark_id": "IB-FOUREYES-FUNNEL-Q1-2026",
+      "decision": "reference_only",
+      "reason": "SW-031 denominator is leads_total (appointments set / leads, store aggregate). Foureyes appointment-set = appointments set / opportunities with established CONTACT. Denominator differs (leads vs contacted opportunities); reference-only, NOT mapped."
+    },
+    {
+      "metric_id": "SW-011",
+      "benchmark_id": "IB-PIEDPIPER-ILE-2026",
+      "decision": "reference_only",
+      "reason": "SW-011 is the median of business-hours Actual Response Time (minutes). Pied Piper ILE is a response-effectiveness composite (24h answer presence/speed/quality) — not a median and not business-hours filtered. Incompatible; reference-only, NOT mapped."
+    }
+  ],
+  "operational_targets_used": [
+    {
+      "metric_id": "SW-011",
+      "operational_target_id": "OT-SW-011",
+      "threshold": 10,
+      "direction": "lower_is_better"
+    },
+    {
+      "metric_id": "SW-012",
+      "operational_target_id": "OT-SW-012",
+      "threshold": 0,
+      "direction": "lower_is_better"
+    },
+    {
+      "metric_id": "SW-015",
+      "operational_target_id": "OT-SW-015",
+      "threshold": 0,
+      "direction": "lower_is_better"
+    },
+    {
+      "metric_id": "SW-021",
+      "operational_target_id": "comm-content-SW-021-red-flag-target-0",
+      "threshold": 0,
+      "direction": "lower_is_better"
+    },
+    {
+      "metric_id": "SW-022",
+      "operational_target_id": "comm-SW-022-red-flag-target-0",
+      "threshold": 0,
+      "direction": "lower_is_better"
+    },
+    {
+      "metric_id": "SW-031",
+      "operational_target_id": "OT-SW-031",
+      "threshold": 0.25,
+      "direction": "higher_is_better"
+    },
+    {
+      "metric_id": "SW-032",
+      "operational_target_id": "OT-SW-032",
+      "threshold": 0.55,
+      "direction": "higher_is_better"
+    },
+    {
+      "metric_id": "SW-033",
+      "operational_target_id": "OT-SW-033",
+      "threshold": 0.6,
+      "direction": "higher_is_better"
+    },
+    {
+      "metric_id": "SW-041",
+      "operational_target_id": "OT-SW-041",
+      "threshold": 0.45,
+      "direction": "lower_is_better"
+    },
+    {
+      "metric_id": "SW-045",
+      "operational_target_id": "OT-SW-045",
+      "threshold": 1,
+      "direction": "lower_is_better"
+    },
+    {
+      "metric_id": "SW-046",
+      "operational_target_id": "OT-SW-046",
+      "threshold": 0.5,
+      "direction": "higher_is_better"
+    },
+    {
+      "metric_id": "SW-090",
+      "operational_target_id": "OT-SW-090",
+      "threshold": 0,
+      "direction": "lower_is_better"
+    },
+    {
+      "metric_id": "SW-133",
+      "operational_target_id": "comm-SW-133-red-flag-target-0",
+      "threshold": 0,
+      "direction": "lower_is_better"
+    },
+    {
+      "metric_id": "SW-142",
+      "operational_target_id": "comm-content-SW-142-red-flag-target-0",
+      "threshold": 0,
+      "direction": "lower_is_better"
+    },
+    {
+      "metric_id": "SW-145",
+      "operational_target_id": "comm-content-SW-145-red-flag-target-0",
+      "threshold": 0,
+      "direction": "lower_is_better"
+    },
+    {
+      "metric_id": "SW-149",
+      "operational_target_id": "comm-content-SW-149-red-flag-target-0",
+      "threshold": 0,
+      "direction": "lower_is_better"
+    },
+    {
+      "metric_id": "SW-150",
+      "operational_target_id": "comm-content-SW-150-red-flag-target-0",
+      "threshold": 0,
+      "direction": "lower_is_better"
+    }
+  ],
+  "accounting": {
+    "conditions": 295,
+    "evaluated": 17,
+    "unresolved": 278,
+    "evaluated_cells": 51,
+    "unresolved_cells": 834,
+    "total_cells": 885,
+    "change_from_this_gate": "none — Gate 5A verifies the committed corpus; it promotes nothing"
+  }
+}

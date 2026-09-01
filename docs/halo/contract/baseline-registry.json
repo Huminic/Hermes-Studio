@@ -2,7 +2,7 @@
   "artifact": "halo-baseline-registry",
   "version": 1,
   "status": "ACTIVE — definition-first baseline registry for the Gate 2 evaluator spine",
-  "principle": "Definition-first. A baseline may be used for an SW condition ONLY when its exact definition, unit, population, and period grain are compatible with that condition's computed metric. Never force a source onto an incompatible condition. Operational targets (Duane-supplied catalog thresholds) are labeled as such and are NEVER represented as industry benchmarks. Industry benchmark VALUES that are not independently verified in this repo are recorded with value=null and value_status=unverified so no fabricated number can enter an evaluation.",
+  "principle": "Definition-first. A baseline may be used for an SW condition ONLY when its exact definition, unit, population, and period grain are compatible with that condition's computed metric. Never force a source onto an incompatible condition. Operational targets (Duane-supplied catalog thresholds) are labeled as such and are NEVER represented as industry benchmarks. Industry benchmark figures verified in-repo are recorded under verified_metrics with a verified_date; the top-level value remains null unless a benchmark is BOTH verified AND definition-compatible with a mapped metric (none are, as of Gate 5A) so no benchmark number can enter a variance computation. Unverified benchmarks keep value=null and value_status=unverified_pending_operator_transcription.",
   "basis_kinds": {
     "operational_target": "A Duane-supplied starter threshold from the catalog (threshold_provenance). Authoritative comparison basis for a rule-style condition. Not an industry benchmark.",
     "industry_benchmark": "A published external benchmark. Usable for variance only when definition-compatible AND value is verified. Reference-only otherwise."
@@ -157,16 +157,45 @@
       "title": "2026 Automotive Dealer Benchmarks Report",
       "publication_date": "2026",
       "observed_period": "2025",
-      "sample": "22,900+ dealer sites",
-      "population": "US franchise + independent dealers; Sales-only filtering per publisher",
-      "exact_definition": "Publisher-defined dealership benchmark set (lead handling, appointment, close).",
+      "sample": "22,900+ dealer sites (non-sales/service filtered)",
+      "population": "US franchise + independent dealers",
+      "exact_definition": "Publisher-defined dealership benchmark set (lead handling).",
       "unit": "mixed",
       "value": null,
-      "value_status": "unverified_pending_operator_transcription",
+      "value_status": "verified_reference_only",
       "url": "https://www.foureyes.io/blog/2026-automotive-dealer-benchmarks-report",
-      "verified_date": null,
-      "confidence": "unverified",
-      "compatibility_constraints": "Definitions must be matched per-metric before use. Not yet mapped to any SW condition."
+      "verified_date": "2026-09-01",
+      "confidence": "verified_reference",
+      "mapped_to": null,
+      "compatibility": "reference_only",
+      "verified_metrics": [
+        {
+          "key": "qualified_leads_mishandled",
+          "value": 0.427,
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "never_logged_to_crm",
+          "value": 0.152,
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "returning_sales_leads_not_answered_24h",
+          "value": 0.628,
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "buying_leads_closed_within_3d",
+          "value": 0.612,
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "sales_leads_eventually_bought",
+          "value": 0.117,
+          "unit": "ratio_0_1"
+        }
+      ],
+      "compatibility_constraints": "Verified reference. Definitions must be matched per-metric before any use; not mapped to any SW condition. Reference-only."
     },
     {
       "id": "IB-FOUREYES-FUNNEL-Q1-2026",
@@ -177,32 +206,105 @@
       "observed_period": "Q1 2026",
       "sample": "2.6M leads; 1,150+ dealers; 48 markets",
       "population": "US dealers across 48 metros",
-      "exact_definition": "Lead-to-sale close rates by metro / funnel stage.",
+      "exact_definition": "Lead-to-sale funnel: contact=contacted opportunities/total opportunities; set=appointments set/opportunities with established contact; show=appointment shows/appointments set; show-to-sale=sales from appointment/appointment shows.",
       "unit": "ratio_0_1",
       "value": null,
-      "value_status": "unverified_pending_operator_transcription",
+      "value_status": "verified_reference_only",
       "url": "https://www.foureyes.io/blog/dealership-close-rates-by-metro",
-      "verified_date": null,
-      "confidence": "unverified",
-      "compatibility_constraints": "Close-rate denominator (leads) definition must match; our held families do not yet provide a period-comparable lead-to-sale close rate. Not mapped."
+      "support_url": "https://support.foureyes.io/en/articles/8504360-keep-your-eyes-on-the-prize-with-sales-process-performance",
+      "verified_date": "2026-09-01",
+      "confidence": "verified_reference",
+      "mapped_to": null,
+      "compatibility": "reference_only",
+      "verified_metrics": [
+        {
+          "key": "close",
+          "value": 0.185,
+          "range": [0.145, 0.301],
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "contact",
+          "value": 0.69,
+          "range": [0.47, 0.79],
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "appointment_set",
+          "value": 0.4,
+          "range": [0.3, 0.59],
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "appointment_show",
+          "value": 0.59,
+          "range": [0.41, 0.74],
+          "unit": "ratio_0_1"
+        }
+      ],
+      "compatibility_constraints": "appointment_show (0.59) is NOT mapped to SW-032: SW-032 denominator is total appointment rows (includes cancelled + rescheduled per committed supporting data), whereas Foureyes show = shows/appointments-set. appointment_set (0.40) is NOT mapped to SW-031: SW-031 denominator is leads, Foureyes set denominator is contacted opportunities. Reference-only."
     },
     {
-      "id": "IB-FOUREYES-APPTSET-BYTYPE",
+      "id": "IB-FOUREYES-APPT-H2-2023",
       "basis": "industry_benchmark",
       "publisher": "Foureyes",
-      "title": "Dealership appointment-set rates by lead type",
-      "publication_date": "2026",
-      "observed_period": "2025-2026",
-      "sample": "publisher lead corpus",
-      "population": "US dealers; by lead type",
-      "exact_definition": "Appointment-set rate segmented BY LEAD TYPE.",
+      "title": "H2 2023 dealership appointment-rate study (by lead type / vehicle condition)",
+      "publication_date": "2023",
+      "observed_period": "H2 2023",
+      "sample": "~700 US dealers",
+      "population": "US dealers; by lead type / vehicle condition",
+      "exact_definition": "Appointment funnel by segment. Internet+Phone new: contact 63%, set 42%, show 58%, show-to-sale 41%. Used: contact 67%, set 48%, show 54%, show-to-sale 40%.",
       "unit": "ratio_0_1",
       "value": null,
-      "value_status": "unverified_pending_operator_transcription",
-      "url": "https://www.foureyes.io/blog/dealership-appointment-set-rates",
-      "verified_date": null,
-      "confidence": "unverified",
-      "compatibility_constraints": "Segmented BY LEAD TYPE; SW-031 as computed is a STORE-AGGREGATE set rate. Denominator basis differs → reference-only, NOT a variance basis for SW-031."
+      "value_status": "verified_reference_only",
+      "url": "https://www.foureyes.io/blog/dealership-data-study-appointment-rates",
+      "verified_date": "2026-09-01",
+      "confidence": "verified_reference",
+      "mapped_to": null,
+      "compatibility": "reference_only",
+      "verified_metrics": [
+        {
+          "key": "internet_phone_new_contact",
+          "value": 0.63,
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "internet_phone_new_set",
+          "value": 0.42,
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "internet_phone_new_show",
+          "value": 0.58,
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "internet_phone_new_show_to_sale",
+          "value": 0.41,
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "used_contact",
+          "value": 0.67,
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "used_set",
+          "value": 0.48,
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "used_show",
+          "value": 0.54,
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "used_show_to_sale",
+          "value": 0.4,
+          "unit": "ratio_0_1"
+        }
+      ],
+      "compatibility_constraints": "Dated secondary reference. Segmented by lead type / vehicle condition; SW-031 is a store-aggregate set rate and its denominator is leads. Use ONLY when exact compatibility is proven. Supersedes the earlier unverified IB-FOUREYES-APPTSET-BYTYPE placeholder. Reference-only, not mapped."
     },
     {
       "id": "IB-PIEDPIPER-ILE-2026",
@@ -213,14 +315,38 @@
       "observed_period": "2026",
       "sample": "3,290 dealer websites",
       "population": "US dealer websites",
-      "exact_definition": "Web-lead response effectiveness (response presence/speed/quality).",
+      "exact_definition": "Web-lead response effectiveness composite (response presence/speed/quality; 24h answer).",
       "unit": "mixed",
       "value": null,
-      "value_status": "unverified_pending_operator_transcription",
+      "value_status": "verified_reference_only",
       "url": "https://www.piedpiperpsi.com/press/press-release-infiniti-dealers-rank-highest-in-2026-web-lead-response-study-ai-and-automation-drive-industry-improvement-512.htm",
-      "verified_date": null,
-      "confidence": "unverified",
-      "compatibility_constraints": "Response-effectiveness composite; our Dashboard exposes an AVERAGE (not median) response time and no business-hours filter → incompatible with SW-011 (median, business hours). Not mapped."
+      "verified_date": "2026-09-01",
+      "confidence": "verified_reference",
+      "mapped_to": null,
+      "compatibility": "reference_only",
+      "verified_metrics": [
+        {
+          "key": "composite",
+          "value": 71,
+          "unit": "index_0_100"
+        },
+        {
+          "key": "answered_within_24h_typical",
+          "value": 0.78,
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "answered_complex",
+          "value": 0.51,
+          "unit": "ratio_0_1"
+        },
+        {
+          "key": "multichannel",
+          "value": 0.62,
+          "unit": "ratio_0_1"
+        }
+      ],
+      "compatibility_constraints": "Response-effectiveness composite (24h answer), NOT a median and NOT business-hours filtered, incompatible with SW-011 (median, business hours). Not mapped."
     },
     {
       "id": "IB-NADA-DATA-2025",
@@ -231,13 +357,16 @@
       "observed_period": "2024-2025",
       "sample": "NADA member franchised dealers",
       "population": "US franchised new-car dealers",
-      "exact_definition": "Aggregate financial profile (gross, expense, throughput).",
+      "exact_definition": "Aggregate annual financial profile (gross, expense, throughput).",
       "unit": "usd_and_ratios",
       "value": null,
-      "value_status": "unverified_pending_operator_transcription",
+      "value_status": "verified_reference_only",
       "url": "https://www.nada.org/media/4695",
-      "verified_date": null,
-      "confidence": "unverified",
+      "verified_date": "2026-09-01",
+      "confidence": "verified_reference",
+      "mapped_to": null,
+      "compatibility": "reference_only",
+      "verified_metrics": [],
       "compatibility_constraints": "Annual national aggregate; not period-compatible with a single dealer-week. Reference-only."
     }
   ]

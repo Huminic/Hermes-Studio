@@ -1,0 +1,567 @@
+{
+  "artifact": "gate5a-customer-safe-projection",
+  "revision": "K1",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "scope_note": "Sales-only. Per-metric peer comparison across your three rooftops against an internal operational target. Verified public industry references were reviewed; none matched an exact metric definition, so all are context-only and none is used to score. No value is computed from an industry benchmark.",
+  "public_references_reviewed": [
+    {
+      "publisher": "Foureyes",
+      "title": "Q1 2026 dealership close-rate / funnel study",
+      "url": "https://www.foureyes.io/blog/dealership-close-rates-by-metro",
+      "usage": "reference_only"
+    },
+    {
+      "publisher": "Foureyes",
+      "title": "H2 2023 dealership appointment-rate study",
+      "url": "https://www.foureyes.io/blog/dealership-data-study-appointment-rates",
+      "usage": "reference_only"
+    },
+    {
+      "publisher": "Foureyes",
+      "title": "2026 Automotive Dealer Benchmarks Report",
+      "url": "https://www.foureyes.io/blog/2026-automotive-dealer-benchmarks-report",
+      "usage": "reference_only"
+    },
+    {
+      "publisher": "Pied Piper",
+      "title": "2026 Internet Lead Effectiveness (ILE) study",
+      "url": "https://www.piedpiperpsi.com/press/press-release-infiniti-dealers-rank-highest-in-2026-web-lead-response-study-ai-and-automation-drive-industry-improvement-512.htm",
+      "usage": "reference_only"
+    },
+    {
+      "publisher": "NADA",
+      "title": "NADA Data 2025 — annual financial profile of America's franchised new-car dealerships",
+      "url": "https://www.nada.org/media/4695",
+      "usage": "reference_only"
+    }
+  ],
+  "metrics": [
+    {
+      "metric_id": "SW-011",
+      "metric": "Median time-to-first-touch exceeds 10 minutes during business hours.",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "10 min",
+        "better_when": "lower_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "4 min",
+          "peer_rank": 1,
+          "status": "healthy"
+        },
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "4.5 min",
+          "peer_rank": 2,
+          "status": "healthy"
+        },
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "6 min",
+          "peer_rank": 3,
+          "status": "healthy"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": "A published Pied Piper industry reference was reviewed but does not match this metric's exact definition, so it is provided for context only and is not used to score."
+    },
+    {
+      "metric_id": "SW-012",
+      "metric": "Any lead untouched >30 minutes during staffed hours triggers escalation.",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "0%",
+        "better_when": "lower_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "3.1%",
+          "peer_rank": 1,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "13.7%",
+          "peer_rank": 2,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "19.7%",
+          "peer_rank": 3,
+          "status": "breach"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    },
+    {
+      "metric_id": "SW-015",
+      "metric": "Sales rep's average first-response time is 2x the store median.",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "0%",
+        "better_when": "lower_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "50%",
+          "peer_rank": 1,
+          "status": "breach"
+        },
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "66.7%",
+          "peer_rank": 2,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "75%",
+          "peer_rank": 3,
+          "status": "breach"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    },
+    {
+      "metric_id": "SW-021",
+      "metric": "Rep sends identical templated message to >70% of leads (no personalization).",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "0%",
+        "better_when": "lower_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "12.5%",
+          "peer_rank": 1,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "18.2%",
+          "peer_rank": 2,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "22.2%",
+          "peer_rank": 3,
+          "status": "breach"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    },
+    {
+      "metric_id": "SW-022",
+      "metric": "Rep's text-to-call ratio exceeds 5:1 (avoiding voice contact).",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "0%",
+        "better_when": "lower_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "10%",
+          "peer_rank": 1,
+          "status": "breach"
+        },
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "28.6%",
+          "peer_rank": 2,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "33.3%",
+          "peer_rank": 3,
+          "status": "breach"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    },
+    {
+      "metric_id": "SW-031",
+      "metric": "Lead-to-appointment set rate falls below 25%.",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "25%",
+        "better_when": "higher_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "15.8%",
+          "peer_rank": 1,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "15.5%",
+          "peer_rank": 2,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "10.9%",
+          "peer_rank": 3,
+          "status": "breach"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": "A published Foureyes industry reference was reviewed but does not match this metric's exact definition, so it is provided for context only and is not used to score."
+    },
+    {
+      "metric_id": "SW-032",
+      "metric": "Appointment show rate drops below 55%.",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "55%",
+        "better_when": "higher_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "57.1%",
+          "peer_rank": 1,
+          "status": "watch"
+        },
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "42.9%",
+          "peer_rank": 2,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "33.3%",
+          "peer_rank": 3,
+          "status": "breach"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": "A published Foureyes industry reference was reviewed but does not match this metric's exact definition, so it is provided for context only and is not used to score."
+    },
+    {
+      "metric_id": "SW-033",
+      "metric": "Show-to-write rate below 60%.",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "60%",
+        "better_when": "higher_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "breach"
+        },
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "breach"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    },
+    {
+      "metric_id": "SW-041",
+      "metric": "Appointment no-show rate exceeds 45%.",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "45%",
+        "better_when": "lower_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "35.7%",
+          "peer_rank": 1,
+          "status": "healthy"
+        },
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "50%",
+          "peer_rank": 2,
+          "status": "breach"
+        },
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "57.1%",
+          "peer_rank": 3,
+          "status": "breach"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    },
+    {
+      "metric_id": "SW-045",
+      "metric": "Ratio of \"be-backs\" to fresh ups inverted (retention symptom).",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "100%",
+        "better_when": "lower_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "healthy"
+        },
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "8.3%",
+          "peer_rank": 2,
+          "status": "healthy"
+        },
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "27.3%",
+          "peer_rank": 3,
+          "status": "healthy"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    },
+    {
+      "metric_id": "SW-046",
+      "metric": "Test drive completion rate <50% of showroom visits.",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "50%",
+        "better_when": "higher_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "23.5%",
+          "peer_rank": 1,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "0%",
+          "peer_rank": 2,
+          "status": "breach"
+        },
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "0%",
+          "peer_rank": 2,
+          "status": "breach"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    },
+    {
+      "metric_id": "SW-090",
+      "metric": "Lead has no assigned salesperson >2 hours after creation.",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "0%",
+        "better_when": "lower_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "healthy"
+        },
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "healthy"
+        },
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "healthy"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    },
+    {
+      "metric_id": "SW-133",
+      "metric": "Rep replies after customer has sent 2+ consecutive messages (customer chasing rep).",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "0%",
+        "better_when": "lower_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "1.7%",
+          "peer_rank": 1,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "2.3%",
+          "peer_rank": 2,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "3.6%",
+          "peer_rank": 3,
+          "status": "breach"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    },
+    {
+      "metric_id": "SW-142",
+      "metric": "Rep uses generic template with unfilled merge tags (\"Hi {{FirstName}}\").",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "0%",
+        "better_when": "lower_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "healthy"
+        },
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "healthy"
+        },
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "healthy"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    },
+    {
+      "metric_id": "SW-145",
+      "metric": "Same message body sent to >5 customers in a day (copy-paste factory).",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "0%",
+        "better_when": "lower_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "0.3%",
+          "peer_rank": 1,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "0.4%",
+          "peer_rank": 2,
+          "status": "breach"
+        },
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "0.4%",
+          "peer_rank": 3,
+          "status": "breach"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    },
+    {
+      "metric_id": "SW-149",
+      "metric": "Rep's messages average <15 words (low-effort replies).",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "0%",
+        "better_when": "lower_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "healthy"
+        },
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "11.1%",
+          "peer_rank": 2,
+          "status": "breach"
+        },
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "18.2%",
+          "peer_rank": 3,
+          "status": "breach"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    },
+    {
+      "metric_id": "SW-150",
+      "metric": "Rep only sends links, no conversational context.",
+      "operational_target": {
+        "label": "internal operational target (not an industry benchmark)",
+        "value": "0%",
+        "better_when": "lower_is_better"
+      },
+      "rooftops": [
+        {
+          "dealer": "Serra Honda of Sylacauga",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "healthy"
+        },
+        {
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "healthy"
+        },
+        {
+          "dealer": "Tony Serra Ford",
+          "value": "0%",
+          "peer_rank": 1,
+          "status": "healthy"
+        }
+      ],
+      "peer_rank_note": "Rank 1 is the strongest of your three rooftops for this metric; this is a peer comparison across your rooftops, not an industry ranking.",
+      "public_reference": null
+    }
+  ]
+}

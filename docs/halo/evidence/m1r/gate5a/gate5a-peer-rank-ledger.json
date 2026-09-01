@@ -1,0 +1,535 @@
+{
+  "artifact": "gate5a-peer-rank-ledger",
+  "revision": "K1",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "note": "Direction-aware peer rank across the three governed rooftops; rank 1 = best. PEER rank, not industry rank.",
+  "records": [
+    {
+      "metric_id": "SW-011",
+      "condition": "Median time-to-first-touch exceeds 10 minutes during business hours.",
+      "section": "2. Speed-to-Lead & First Response",
+      "directionality": "lower_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": false,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 4,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 4.5,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 6,
+          "rank": 3
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-012",
+      "condition": "Any lead untouched >30 minutes during staffed hours triggers escalation.",
+      "section": "2. Speed-to-Lead & First Response",
+      "directionality": "lower_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": false,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0.03125,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0.13725490196078433,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0.19736842105263158,
+          "rank": 3
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-015",
+      "condition": "Sales rep's average first-response time is 2x the store median.",
+      "section": "2. Speed-to-Lead & First Response",
+      "directionality": "lower_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": false,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0.5,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0.6666666666666666,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0.75,
+          "rank": 3
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-021",
+      "condition": "Rep sends identical templated message to >70% of leads (no personalization).",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "directionality": "lower_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": false,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0.125,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0.18181818181818182,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0.2222222222222222,
+          "rank": 3
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-022",
+      "condition": "Rep's text-to-call ratio exceeds 5:1 (avoiding voice contact).",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "directionality": "lower_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": false,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0.1,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0.2857142857142857,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0.3333333333333333,
+          "rank": 3
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-031",
+      "condition": "Lead-to-appointment set rate falls below 25%.",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "directionality": "higher_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": false,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0.15789473684210525,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0.15517241379310345,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0.10869565217391304,
+          "rank": 3
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-032",
+      "condition": "Appointment show rate drops below 55%.",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "directionality": "higher_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": false,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0.5714285714285714,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0.42857142857142855,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0.3333333333333333,
+          "rank": 3
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-033",
+      "condition": "Show-to-write rate below 60%.",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "directionality": "higher_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": true,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0,
+          "rank": 1
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-041",
+      "condition": "Appointment no-show rate exceeds 45%.",
+      "section": "5. Appointment & Showroom Metrics",
+      "directionality": "lower_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": false,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0.35714285714285715,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0.5,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0.5714285714285714,
+          "rank": 3
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-045",
+      "condition": "Ratio of \"be-backs\" to fresh ups inverted (retention symptom).",
+      "section": "5. Appointment & Showroom Metrics",
+      "directionality": "lower_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": false,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0.08333333333333333,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0.2727272727272727,
+          "rank": 3
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-046",
+      "condition": "Test drive completion rate <50% of showroom visits.",
+      "section": "5. Appointment & Showroom Metrics",
+      "directionality": "higher_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": true,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0.23529411764705882,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0,
+          "rank": 2
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-090",
+      "condition": "Lead has no assigned salesperson >2 hours after creation.",
+      "section": "12. Data Integrity & CRM Hygiene",
+      "directionality": "lower_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": true,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0,
+          "rank": 1
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-133",
+      "condition": "Rep replies after customer has sent 2+ consecutive messages (customer chasing rep).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "directionality": "lower_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": false,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0.01694915254237288,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0.023076923076923078,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0.03571428571428571,
+          "rank": 3
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-142",
+      "condition": "Rep uses generic template with unfilled merge tags (\"Hi {{FirstName}}\").",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "directionality": "lower_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": true,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0,
+          "rank": 1
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-145",
+      "condition": "Same message body sent to >5 customers in a day (copy-paste factory).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "directionality": "lower_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": false,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0.002777777777777778,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0.004103967168262654,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0.004310344827586207,
+          "rank": 3
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-149",
+      "condition": "Rep's messages average <15 words (low-effort replies).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "directionality": "lower_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": false,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0.1111111111111111,
+          "rank": 2
+        },
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0.18181818181818182,
+          "rank": 3
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    },
+    {
+      "metric_id": "SW-150",
+      "condition": "Rep only sends links, no conversational context.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "directionality": "lower_is_better",
+      "comparable": true,
+      "not_ranked_reason": null,
+      "tie": true,
+      "tie_rule": "ties share the better rank (standard competition ranking, deterministic)",
+      "ranking": [
+        {
+          "dealer_id": "21043",
+          "dealer": "Serra Honda of Sylacauga",
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21044",
+          "dealer": "Serra Nissan of Sylacauga",
+          "value": 0,
+          "rank": 1
+        },
+        {
+          "dealer_id": "21047",
+          "dealer": "Tony Serra Ford",
+          "value": 0,
+          "rank": 1
+        }
+      ],
+      "note": "Peer rank across the three governed rooftops; rank 1 = best given directionality. This is a PEER rank, NOT an industry rank."
+    }
+  ]
+}
