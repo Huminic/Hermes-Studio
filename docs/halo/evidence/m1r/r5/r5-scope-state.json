@@ -1,0 +1,517 @@
+{
+  "artifact": "m2r-r5-scope-state-verification",
+  "verified_head": "964da6fea4b964331fe40c38861cf84b02b278ee",
+  "note": "R5 independent recomputation. Top-level requirement checks (state/git/srv/R1/R4/suites) recomputed live in this file; the R2/R3/R4 per-store checks were recomputed by the R5 module-level probe from committed artifacts + live modules (deterministic, fixture-derived). Overall/total_checks/failed are derived from the full checks array.",
+  "worktree_state": {
+    "committed_r4_baseline": "clean; HEAD==github==964da6fea",
+    "current_worktree": "NOT clean by design; contains ONLY the three allowed untracked R5 evidence files",
+    "untracked": [
+      "docs/halo/evidence/m1r/SW295_R5_VERIFICATION.md",
+      "docs/halo/evidence/m1r/r5/"
+    ],
+    "tracked_modifications": []
+  },
+  "overall": "PASS",
+  "total_checks": 99,
+  "failed": 0,
+  "top_level_checks": 33,
+  "per_store_checks": 66,
+  "checks": [
+    {
+      "id": "R5.state.branch",
+      "pass": true,
+      "detail": "codex/m1r-gate3-schedule-audit"
+    },
+    {
+      "id": "R5.state.head_eq_verified",
+      "pass": true,
+      "detail": "964da6fea4b964331fe40c38861cf84b02b278ee"
+    },
+    {
+      "id": "R5.state.head_eq_github",
+      "pass": true,
+      "detail": "local=964da6fea4b964331fe40c38861cf84b02b278ee remote=964da6fea4b964331fe40c38861cf84b02b278ee"
+    },
+    {
+      "id": "R5.state.diff_check_clean",
+      "pass": true,
+      "detail": "git diff --check exit 0"
+    },
+    {
+      "id": "R5.state.r4_baseline_no_tracked_mods",
+      "pass": true,
+      "detail": "tracked_mods=0"
+    },
+    {
+      "id": "R5.state.worktree_only_allowed_r5",
+      "pass": true,
+      "detail": "untracked=['docs/halo/evidence/m1r/SW295_R5_VERIFICATION.md', 'docs/halo/evidence/m1r/r5/']"
+    },
+    {
+      "id": "R5.state.only_allowed_r5_files_changed",
+      "pass": true,
+      "detail": "no tracked change; untracked \u2286 allowed R5 evidence"
+    },
+    {
+      "id": "R5.state.no_concurrent_writer",
+      "pass": true,
+      "detail": "none"
+    },
+    {
+      "id": "R5.state.chain_present",
+      "pass": true,
+      "detail": "5ffc17399->70b36525d->089503327->964da6fea"
+    },
+    {
+      "id": "R5.state.srv_hash_unchanged",
+      "pass": true,
+      "detail": "serra-honda:1a3e3bd3a562@2026-08-30 23:46; serra-nissan:da8d80347f29@2026-08-30 23:46; tony-serra-ford:69e01c0e7b8e@2026-08-30 23:46"
+    },
+    {
+      "id": "R5.state.no_production_writes",
+      "pass": true,
+      "detail": "/srv immutable; no tracked/production mutation; no deploy/merge/send/activation performed"
+    },
+    {
+      "id": "R1.catalog_295_unique",
+      "pass": true,
+      "detail": "295 unique"
+    },
+    {
+      "id": "R1.ledger_885_rows",
+      "pass": true,
+      "detail": "885"
+    },
+    {
+      "id": "R1.per_dealer_295",
+      "pass": true,
+      "detail": "{'serra-honda': 295, 'serra-nissan': 295, 'tony-serra-ford': 295}"
+    },
+    {
+      "id": "R1.runnable_6",
+      "pass": true,
+      "detail": "6"
+    },
+    {
+      "id": "R1.runnable_ids_sw032_041",
+      "pass": true,
+      "detail": "['SW-032', 'SW-041']"
+    },
+    {
+      "id": "R1.structured_null_879",
+      "pass": true,
+      "detail": "879"
+    },
+    {
+      "id": "R1.service_18_ids",
+      "pass": true,
+      "detail": "18"
+    },
+    {
+      "id": "R1.service_54_rows_owner_null",
+      "pass": true,
+      "detail": "54 rows owner-null"
+    },
+    {
+      "id": "R1.unresolved_082_218_excluded",
+      "pass": true,
+      "detail": "['SW-082', 'SW-218'] (6 rows)"
+    },
+    {
+      "id": "R1.false_positive_176_274",
+      "pass": true,
+      "detail": "['SW-176', 'SW-274']"
+    },
+    {
+      "id": "R1.prose_verbatim",
+      "pass": true,
+      "detail": "verbatim field-copy fidelity validated by m2r-sw295-inventory test 10/10 (R5 session)"
+    },
+    {
+      "id": "R4.pngs_14",
+      "pass": true,
+      "detail": "14 PNGs"
+    },
+    {
+      "id": "R4.serra-honda.textlayer_clean",
+      "pass": true,
+      "detail": "no banned/SW/slug/hash/path/causal/false-295"
+    },
+    {
+      "id": "R4.serra-nissan.textlayer_clean",
+      "pass": true,
+      "detail": "no banned/SW/slug/hash/path/causal/false-295"
+    },
+    {
+      "id": "R4.tony-serra-ford.textlayer_clean",
+      "pass": true,
+      "detail": "no banned/SW/slug/hash/path/causal/false-295"
+    },
+    {
+      "id": "R4.honest_295_all",
+      "pass": true,
+      "detail": "each PDF states the honest 295/2 framework once; no execution claim"
+    },
+    {
+      "id": "R4.inert_labels_match",
+      "pass": true,
+      "detail": "Not-Active labels 4/7/7 == action counts"
+    },
+    {
+      "id": "R4.pages_4_5_5",
+      "pass": true,
+      "detail": "manifest pages 4/5/5"
+    },
+    {
+      "id": "R4.visual_14_pages",
+      "pass": true,
+      "detail": "14/14 per-page PNG contact set present + per-page text-layer scanned this R5 session; each page individually visually inspected in the R4 correction (full headers/footers, no clipping/overlap/blank/tiny/orphan)"
+    },
+    {
+      "id": "R4.qa_manifest_all_pass",
+      "pass": true,
+      "detail": "all_pass=True"
+    },
+    {
+      "id": "SUITE.controls_108",
+      "pass": true,
+      "detail": "observed R5 session: 6 control files, 108 tests passed (m2r-sw295 10 + halo-manifest 10 + accepted-facts 40 + accepted-findings 17 + consultant-synthesis 20 + halo-card-render 11)"
+    },
+    {
+      "id": "SUITE.full_1680",
+      "pass": true,
+      "detail": "observed R5 session: 202 files, 1680 passed / 7 skipped / 0 failed"
+    },
+    {
+      "id": "R2.serra-honda.validate",
+      "pass": true,
+      "detail": "validateAcceptedFactsBundle"
+    },
+    {
+      "id": "R2.serra-honda.identity",
+      "pass": true,
+      "detail": "Serra Honda/21043"
+    },
+    {
+      "id": "R2.serra-honda.period",
+      "pass": true,
+      "detail": "{\"start\":\"2026-08-24\",\"end\":\"2026-08-30\"}"
+    },
+    {
+      "id": "R2.serra-honda.context22",
+      "pass": true,
+      "detail": "context=22"
+    },
+    {
+      "id": "R2.serra-honda.native_only",
+      "pass": true,
+      "detail": "observed KPIs \u2286 NATIVE7"
+    },
+    {
+      "id": "R2.serra-honda.no_quarantined",
+      "pass": true,
+      "detail": "no ROI/CAGE/comm in accepted"
+    },
+    {
+      "id": "R2.serra-honda.checksums64",
+      "pass": true,
+      "detail": "sha256 provenance"
+    },
+    {
+      "id": "R2.serra-honda.gates",
+      "pass": true,
+      "detail": "gate invariants"
+    },
+    {
+      "id": "R2.serra-honda.no_service",
+      "pass": true,
+      "detail": "no Service/Parts in bundle"
+    },
+    {
+      "id": "R3.serra-honda.measures",
+      "pass": true,
+      "detail": "measures=19"
+    },
+    {
+      "id": "R3.serra-honda.findings",
+      "pass": true,
+      "detail": "findings=4"
+    },
+    {
+      "id": "R3.serra-honda.visit_to_sale",
+      "pass": true,
+      "detail": "15.4%"
+    },
+    {
+      "id": "R3.serra-honda.lead_to_sale_yield",
+      "pass": true,
+      "detail": "5.8%"
+    },
+    {
+      "id": "R3.serra-honda.response",
+      "pass": true,
+      "detail": "210"
+    },
+    {
+      "id": "R3.serra-honda.gross_total",
+      "pass": true,
+      "detail": "$14,185.20"
+    },
+    {
+      "id": "R3.serra-honda.catalog_2of295",
+      "pass": true,
+      "detail": "2/295"
+    },
+    {
+      "id": "R3.serra-honda.ford_count_safe",
+      "pass": true,
+      "detail": "n/a (counts agree)"
+    },
+    {
+      "id": "R4.serra-honda.html_deterministic",
+      "pass": true,
+      "detail": "rebuilt==committed html sha"
+    },
+    {
+      "id": "R4.serra-honda.html_sha_eq_manifest",
+      "pass": true,
+      "detail": "committed==manifest html sha"
+    },
+    {
+      "id": "R4.serra-honda.pdf_bytes_eq_manifest",
+      "pass": true,
+      "detail": "bytes=122963"
+    },
+    {
+      "id": "R4.serra-honda.pages",
+      "pass": true,
+      "detail": "pages=4"
+    },
+    {
+      "id": "R4.serra-honda.qa_pass",
+      "pass": true,
+      "detail": "qa_pass"
+    },
+    {
+      "id": "R2.serra-nissan.validate",
+      "pass": true,
+      "detail": "validateAcceptedFactsBundle"
+    },
+    {
+      "id": "R2.serra-nissan.identity",
+      "pass": true,
+      "detail": "Serra Nissan/21044"
+    },
+    {
+      "id": "R2.serra-nissan.period",
+      "pass": true,
+      "detail": "{\"start\":\"2026-08-24\",\"end\":\"2026-08-30\"}"
+    },
+    {
+      "id": "R2.serra-nissan.context22",
+      "pass": true,
+      "detail": "context=22"
+    },
+    {
+      "id": "R2.serra-nissan.native_only",
+      "pass": true,
+      "detail": "observed KPIs \u2286 NATIVE7"
+    },
+    {
+      "id": "R2.serra-nissan.no_quarantined",
+      "pass": true,
+      "detail": "no ROI/CAGE/comm in accepted"
+    },
+    {
+      "id": "R2.serra-nissan.checksums64",
+      "pass": true,
+      "detail": "sha256 provenance"
+    },
+    {
+      "id": "R2.serra-nissan.gates",
+      "pass": true,
+      "detail": "gate invariants"
+    },
+    {
+      "id": "R2.serra-nissan.no_service",
+      "pass": true,
+      "detail": "no Service/Parts in bundle"
+    },
+    {
+      "id": "R3.serra-nissan.measures",
+      "pass": true,
+      "detail": "measures=19"
+    },
+    {
+      "id": "R3.serra-nissan.findings",
+      "pass": true,
+      "detail": "findings=7"
+    },
+    {
+      "id": "R3.serra-nissan.visit_to_sale",
+      "pass": true,
+      "detail": "23.5%"
+    },
+    {
+      "id": "R3.serra-nissan.lead_to_sale_yield",
+      "pass": true,
+      "detail": "10.5%"
+    },
+    {
+      "id": "R3.serra-nissan.response",
+      "pass": true,
+      "detail": "238"
+    },
+    {
+      "id": "R3.serra-nissan.gross_total",
+      "pass": true,
+      "detail": "$13,224.00"
+    },
+    {
+      "id": "R3.serra-nissan.catalog_2of295",
+      "pass": true,
+      "detail": "2/295"
+    },
+    {
+      "id": "R3.serra-nissan.ford_count_safe",
+      "pass": true,
+      "detail": "n/a (counts agree)"
+    },
+    {
+      "id": "R4.serra-nissan.html_deterministic",
+      "pass": true,
+      "detail": "rebuilt==committed html sha"
+    },
+    {
+      "id": "R4.serra-nissan.html_sha_eq_manifest",
+      "pass": true,
+      "detail": "committed==manifest html sha"
+    },
+    {
+      "id": "R4.serra-nissan.pdf_bytes_eq_manifest",
+      "pass": true,
+      "detail": "bytes=135022"
+    },
+    {
+      "id": "R4.serra-nissan.pages",
+      "pass": true,
+      "detail": "pages=5"
+    },
+    {
+      "id": "R4.serra-nissan.qa_pass",
+      "pass": true,
+      "detail": "qa_pass"
+    },
+    {
+      "id": "R2.tony-serra-ford.validate",
+      "pass": true,
+      "detail": "validateAcceptedFactsBundle"
+    },
+    {
+      "id": "R2.tony-serra-ford.identity",
+      "pass": true,
+      "detail": "Tony Serra Ford/21047"
+    },
+    {
+      "id": "R2.tony-serra-ford.period",
+      "pass": true,
+      "detail": "{\"start\":\"2026-08-24\",\"end\":\"2026-08-30\"}"
+    },
+    {
+      "id": "R2.tony-serra-ford.context22",
+      "pass": true,
+      "detail": "context=22"
+    },
+    {
+      "id": "R2.tony-serra-ford.native_only",
+      "pass": true,
+      "detail": "observed KPIs \u2286 NATIVE7"
+    },
+    {
+      "id": "R2.tony-serra-ford.no_quarantined",
+      "pass": true,
+      "detail": "no ROI/CAGE/comm in accepted"
+    },
+    {
+      "id": "R2.tony-serra-ford.checksums64",
+      "pass": true,
+      "detail": "sha256 provenance"
+    },
+    {
+      "id": "R2.tony-serra-ford.gates",
+      "pass": true,
+      "detail": "gate invariants"
+    },
+    {
+      "id": "R2.tony-serra-ford.no_service",
+      "pass": true,
+      "detail": "no Service/Parts in bundle"
+    },
+    {
+      "id": "R3.tony-serra-ford.measures",
+      "pass": true,
+      "detail": "measures=17"
+    },
+    {
+      "id": "R3.tony-serra-ford.findings",
+      "pass": true,
+      "detail": "findings=7"
+    },
+    {
+      "id": "R3.tony-serra-ford.visit_to_sale",
+      "pass": true,
+      "detail": "21.4%"
+    },
+    {
+      "id": "R3.tony-serra-ford.lead_to_sale_yield",
+      "pass": true,
+      "detail": "16.2%"
+    },
+    {
+      "id": "R3.tony-serra-ford.response",
+      "pass": true,
+      "detail": "317"
+    },
+    {
+      "id": "R3.tony-serra-ford.gross_total",
+      "pass": true,
+      "detail": "$1,600.99"
+    },
+    {
+      "id": "R3.tony-serra-ford.catalog_2of295",
+      "pass": true,
+      "detail": "2/295"
+    },
+    {
+      "id": "R3.tony-serra-ford.ford_count_safe",
+      "pass": true,
+      "detail": "per-unit composites blocked"
+    },
+    {
+      "id": "R4.tony-serra-ford.html_deterministic",
+      "pass": true,
+      "detail": "rebuilt==committed html sha"
+    },
+    {
+      "id": "R4.tony-serra-ford.html_sha_eq_manifest",
+      "pass": true,
+      "detail": "committed==manifest html sha"
+    },
+    {
+      "id": "R4.tony-serra-ford.pdf_bytes_eq_manifest",
+      "pass": true,
+      "detail": "bytes=134866"
+    },
+    {
+      "id": "R4.tony-serra-ford.pages",
+      "pass": true,
+      "detail": "pages=5"
+    },
+    {
+      "id": "R4.tony-serra-ford.qa_pass",
+      "pass": true,
+      "detail": "qa_pass"
+    }
+  ],
+  "qa_manifest_all_pass": true
+}
