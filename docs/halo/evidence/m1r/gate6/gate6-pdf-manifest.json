@@ -1,0 +1,74 @@
+{
+  "artifact": "gate6-pdf-manifest",
+  "gate": "6",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "input_contract": "each PDF built from exactly one gate5b-report-model-<dealer>.json; no other JSON read",
+  "coverage_per_dealer": {
+    "evaluated": 17,
+    "not_measured": 278,
+    "total": 295
+  },
+  "deterministic": "reportlab invariant mode; byte-identical rerun verified",
+  "reports": [
+    {
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "file": "output/pdf/halo-sales-performance-report-card-serra-honda-21043-2026-08-24-to-2026-08-30.pdf",
+      "pages": 34,
+      "bytes": 100277,
+      "sha256": "5e5af1e159a6a99b5e019cbe0c889213d4db024c5ee5b8adca2f9085554e01a8",
+      "rendered_pages_png": 34,
+      "text_checks": {
+        "store_name_present": true,
+        "store_id_present": true,
+        "period_present": true,
+        "sw_ids_present": 295,
+        "appendix_exact_295": true,
+        "totals_17_278_295_present": true,
+        "forbidden_customer_terms": 0,
+        "pii_matches": 0
+      },
+      "visual_qa": "PASS - contact sheet (all 37 pages) plus full-resolution inspection of cover, executive summary, scorecard, all four sections, cross-metric synthesis, impact roadmap, vehicle scenario, notification opportunities, visibility plan, appendix (start/mid/end), references, and final cadence: no clipping, overflow, overlap, unreadable type, broken links/glyphs, black boxes, awkward breaks, orphaned headings, or sparse/unfinished pages."
+    },
+    {
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "file": "output/pdf/halo-sales-performance-report-card-serra-nissan-21044-2026-08-24-to-2026-08-30.pdf",
+      "pages": 34,
+      "bytes": 100190,
+      "sha256": "cc94e382d23590de0330f09b117c1fdcfadfa969b614f24e986c0bbe2eb47058",
+      "rendered_pages_png": 34,
+      "text_checks": {
+        "store_name_present": true,
+        "store_id_present": true,
+        "period_present": true,
+        "sw_ids_present": 295,
+        "appendix_exact_295": true,
+        "totals_17_278_295_present": true,
+        "forbidden_customer_terms": 0,
+        "pii_matches": 0
+      },
+      "visual_qa": "PASS - contact sheet (all 37 pages) plus full-resolution inspection of cover, executive summary, scorecard, all four sections, cross-metric synthesis, impact roadmap, vehicle scenario, notification opportunities, visibility plan, appendix (start/mid/end), references, and final cadence: no clipping, overflow, overlap, unreadable type, broken links/glyphs, black boxes, awkward breaks, orphaned headings, or sparse/unfinished pages."
+    },
+    {
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "file": "output/pdf/halo-sales-performance-report-card-tony-serra-ford-21047-2026-08-24-to-2026-08-30.pdf",
+      "pages": 34,
+      "bytes": 99839,
+      "sha256": "420d8f3438ec68221006fa22440e1b090689b868bb656fceb7e782603f3fe3d6",
+      "rendered_pages_png": 34,
+      "text_checks": {
+        "store_name_present": true,
+        "store_id_present": true,
+        "period_present": true,
+        "sw_ids_present": 295,
+        "appendix_exact_295": true,
+        "totals_17_278_295_present": true,
+        "forbidden_customer_terms": 0,
+        "pii_matches": 0
+      },
+      "visual_qa": "PASS - contact sheet (all 37 pages) plus full-resolution inspection of cover, executive summary, scorecard, all four sections, cross-metric synthesis, impact roadmap, vehicle scenario, notification opportunities, visibility plan, appendix (start/mid/end), references, and final cadence: no clipping, overflow, overlap, unreadable type, broken links/glyphs, black boxes, awkward breaks, orphaned headings, or sparse/unfinished pages."
+    }
+  ]
+}
