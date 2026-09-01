@@ -53,7 +53,8 @@ const REQUIRED_FIELDS = [
   'required_raw_fields',
   'definition_denominator_grain',
   'required_source',
-  'report_family',
+  'dependency_bucket',
+  'source_report_family',
   'boundary_domain',
   'current_source_state',
   'calculable_from_accepted_bytes',
@@ -237,10 +238,10 @@ describe('Gate 3 controller corrections — approval / domain / dataset (materia
       expect(r.controller_observed_dataset).not.toBe('Service')
       expect(r.controller_observed_dataset).not.toBe('Service Appointments')
     }
-    // The 510 quarantined block is presented by 3 families × 3 dealers, not "one pass".
+    // The 510 quarantined block is presented by dependency bucket × dealer, not "one pass".
     expect(
-      ACQ.quarantined_reconstruction.by_family_dealer.length,
-    ).toBeGreaterThanOrEqual(9)
+      ACQ.quarantined_reconstruction.by_dependency_bucket_dealer.length,
+    ).toBe(12)
     expect(String(ACQ.quarantined_reconstruction.note)).toMatch(
       /NOT claimed as "one pass closes 510"/,
     )
@@ -249,5 +250,59 @@ describe('Gate 3 controller corrections — approval / domain / dataset (materia
       expect(p.duane_approval_required).toBe(false)
       expect(p.route_proof_state).toBe('candidate_unproved')
     }
+  })
+})
+
+describe('Gate 3 quarantine decomposition — precise mutually-exclusive buckets (Defect 3)', () => {
+  const ACQ = JSON.parse(
+    fs.readFileSync(
+      path.join(REPO, 'docs/halo/contract/acquisition-contract.json'),
+      'utf8',
+    ),
+  )
+  it('reconciles: 4 dependency buckets × 3 dealers = 12 entries, sum 510; multiple_quarantined is NOT a report family', () => {
+    const q = REGISTRY.records.filter(
+      (r) => r.unresolved_reason_category === 'quarantined',
+    )
+    expect(q.length).toBe(510)
+    // Mutually exclusive: each quarantined cell belongs to exactly one dependency bucket.
+    const byBucket: Record<string, number> = {}
+    for (const r of q) {
+      const b = String(r.dependency_bucket)
+      byBucket[b] = (byBucket[b] ?? 0) + 1
+    }
+    const qr = ACQ.quarantined_reconstruction
+    expect(qr.by_dependency_bucket).toEqual(byBucket)
+    expect(Object.values(byBucket).reduce((a: number, b) => a + b, 0)).toBe(510)
+    // The multi-family DEPENDENCY bucket exists and is NOT one of the report families.
+    expect(Object.keys(byBucket)).toContain('multiple_quarantined')
+    expect(qr.multi_family_dependency_bucket).toBe('multiple_quarantined')
+    expect(qr.source_provenance_report_families).toEqual([
+      'lead_source_roi',
+      'cage_kpi',
+      'sales_comm_log',
+    ])
+    expect(qr.source_provenance_report_families).not.toContain(
+      'multiple_quarantined',
+    )
+    // source_report_family is null exactly for multiple_quarantined cells (join deps).
+    for (const r of q) {
+      if (r.dependency_bucket === 'multiple_quarantined')
+        expect(r.source_report_family).toBeNull()
+      else expect(r.source_report_family).toBe(r.dependency_bucket)
+    }
+    // 12 dependency-bucket × dealer entries reconciling to 510.
+    expect(qr.bucket_count).toBe(12)
+    expect(qr.by_dependency_bucket_dealer.length).toBe(12)
+    expect(
+      qr.by_dependency_bucket_dealer.reduce(
+        (a: number, b: { cell_count: number }) => a + b.cell_count,
+        0,
+      ),
+    ).toBe(510)
+    expect(qr.reconciles_to_510).toBe(true)
+    // Wording calls them dependency buckets, not report families.
+    expect(String(qr.note)).toMatch(/DEPENDENCY bucket/)
+    expect(String(qr.note)).not.toMatch(/4 report-family buckets/)
   })
 })

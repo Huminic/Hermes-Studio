@@ -90,7 +90,11 @@ export type ClosureRecord = {
   required_raw_fields: string
   definition_denominator_grain: string
   required_source: string
-  report_family: string | null
+  // The mutually-exclusive dependency grouping for a quarantined cell: one of the three
+  // single source-provenance report families OR 'multiple_quarantined' (a JOIN across >1
+  // quarantined family). multiple_quarantined is a DEPENDENCY bucket, NOT a report family.
+  dependency_bucket: string | null
+  source_report_family: string | null
   boundary_domain: BoundaryDomain | null
   current_source_state: SourceState
   calculable_from_accepted_bytes: boolean
@@ -209,7 +213,8 @@ function boundaryDomain(c: CatalogDetail): BoundaryDomain | null {
   return OUTSIDE_BOUNDARY_DOMAIN[c.metric_id.replace('-', '')] ?? null
 }
 
-function reportFamily(c: CatalogDetail): string | null {
+/** The mutually-exclusive DEPENDENCY bucket for a quarantined cell (not a report family). */
+function dependencyBucket(c: CatalogDetail): string {
   const s = c.source
   const roi = /\bROI\b/i.test(s)
   const cage = /CAGE|Enterprise Performance/i.test(s)
@@ -219,7 +224,13 @@ function reportFamily(c: CatalogDetail): string | null {
   if (roi) return 'lead_source_roi'
   if (cage) return 'cage_kpi'
   if (comm) return 'sales_comm_log'
-  return null
+  return 'multiple_quarantined'
+}
+
+/** The single source-provenance report family, or null for a multi-family dependency. */
+function sourceReportFamily(c: CatalogDetail): string | null {
+  const b = dependencyBucket(c)
+  return b === 'multiple_quarantined' ? null : b
 }
 
 // Controller-observed Custom Reporting datasets (28 nonblank; Service + Service Appointments
@@ -270,7 +281,7 @@ function candidateDataset(
       if (/write-up|gross|deal/i.test(c.condition)) return 'CRM Sales'
       return 'Leads'
     case 'quarantined': {
-      const f = reportFamily(c)
+      const f = dependencyBucket(c)
       if (f === 'sales_comm_log') return 'Daily Communication Summary By User' // SALES columns ONLY
       if (f === 'cage_kpi') return 'Daily Dealer Summary'
       return 'Leads'
@@ -581,7 +592,8 @@ export function buildClosureRecord(
     required_raw_fields: c.fields_and_keys,
     definition_denominator_grain: c.period_grain_population,
     required_source: c.source,
-    report_family: cat === 'quarantined' ? reportFamily(c) : null,
+    dependency_bucket: cat === 'quarantined' ? dependencyBucket(c) : null,
+    source_report_family: cat === 'quarantined' ? sourceReportFamily(c) : null,
     boundary_domain: cat === 'outside_boundary' ? boundaryDomain(c) : null,
     current_source_state: t.source_state,
     // Unresolved cells are, by construction, NOT calculable from accepted bytes (Gate 2

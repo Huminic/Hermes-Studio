@@ -21,8 +21,114 @@ import type { ClosureRecord } from './closure'
 import type { EvalRow } from './types'
 
 export const REQUIRED_CELLS = 885
+export const REQUIRED_CELLS_PER_DEALER = 295
+
+// The only governed profile↔dealer pairs. Scope requests must match exactly.
+export const GOVERNED_PAIRS: Record<string, string> = {
+  'serra-honda': '21043',
+  'serra-nissan': '21044',
+  'tony-serra-ford': '21047',
+}
 
 export type PipelineMode = 'preflight' | 'customer_final'
+export type ScopeMode = 'portfolio' | 'dealer'
+
+type Period = { start: string; end: string; timezone: string }
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
+
+/** Fail-closed scope resolution. Dealer scope requires BOTH a matching governed pair. */
+function resolveScope(
+  profile: string | null | undefined,
+  dealerId: string | null | undefined,
+):
+  | {
+      ok: true
+      mode: ScopeMode
+      dealer_ids: Array<string>
+      profile: string | null
+      dealer_id: string | null
+    }
+  | { ok: false; error: string } {
+  const hasP = typeof profile === 'string' && profile.length > 0
+  const hasD = typeof dealerId === 'string' && dealerId.length > 0
+  if (!hasP && !hasD) {
+    return {
+      ok: true,
+      mode: 'portfolio',
+      dealer_ids: Object.values(GOVERNED_PAIRS),
+      profile: null,
+      dealer_id: null,
+    }
+  }
+  if (hasP !== hasD) {
+    return {
+      ok: false,
+      error: `dealer scope requires BOTH profile and dealerId (got profile=${profile ?? 'null'}, dealerId=${dealerId ?? 'null'})`,
+    }
+  }
+  const governed = (GOVERNED_PAIRS as Record<string, string | undefined>)[
+    profile as string
+  ]
+  if (governed === undefined || governed !== dealerId) {
+    return {
+      ok: false,
+      error: `unknown/mismatched governed pair: profile=${profile as string} dealerId=${dealerId as string} (expected ${profile as string}->${governed ?? 'n/a'})`,
+    }
+  }
+  return {
+    ok: true,
+    mode: 'dealer',
+    dealer_ids: [dealerId],
+    profile: profile as string,
+    dealer_id: dealerId,
+  }
+}
+
+/** Fail-closed period control. Proves agreement across selected inputs; matches an option. */
+function resolvePeriod(
+  selected: Array<{ reporting_period: Period }>,
+  requested: Period | undefined,
+): { ok: true; period: Period } | { ok: false; error: string } {
+  if (selected.length === 0)
+    return { ok: false, error: 'no selected inputs to prove a period' }
+  const first = selected[0].reporting_period
+  for (const s of selected) {
+    if (
+      s.reporting_period.start !== first.start ||
+      s.reporting_period.end !== first.end ||
+      s.reporting_period.timezone !== first.timezone
+    ) {
+      return {
+        ok: false,
+        error: 'mixed source periods across selected accepted inputs',
+      }
+    }
+  }
+  if (requested !== undefined) {
+    if (
+      !ISO_DATE.test(requested.start) ||
+      !ISO_DATE.test(requested.end) ||
+      requested.timezone.length === 0
+    ) {
+      return {
+        ok: false,
+        error: `malformed requested period ${JSON.stringify(requested)}`,
+      }
+    }
+    if (
+      requested.start !== first.start ||
+      requested.end !== first.end ||
+      requested.timezone !== first.timezone
+    ) {
+      return {
+        ok: false,
+        error: `requested period ${requested.start}..${requested.end} ${requested.timezone} != proved input period ${first.start}..${first.end} ${first.timezone}`,
+      }
+    }
+  }
+  return { ok: true, period: first }
+}
 
 export type StageResult = { name: string; ok: boolean; note: string }
 
@@ -36,8 +142,14 @@ export type ClusterSynthesis = {
 export type PipelinePreflight = {
   artifact: 'gate3-pipeline-preflight'
   mode: PipelineMode
+  scope_mode: ScopeMode
   period: { start: string; end: string; timezone: string }
-  scope: { profile: string | null; dealer_id: string | null }
+  scope: {
+    profile: string | null
+    dealer_id: string | null
+    dealer_ids: Array<string>
+  }
+  required_cells: number
   cells: number
   evaluated: number
   unresolved: number
@@ -106,9 +218,62 @@ export function runPipeline(opts: {
     `assembled ${inputs.dealers.length} dealers from accepted held families (allowlist+sha)`,
   )
 
+  // 1a. scope — fail-closed BEFORE calculation (labels are not trusted).
+  const scope = resolveScope(opts.profile, opts.dealerId)
+  if (!scope.ok) {
+    record('scope', false, scope.error)
+    return {
+      mode: opts.mode,
+      ok: false,
+      stages,
+      preflight: null,
+      refusal_reason: scope.error,
+    }
+  }
+  const selectedDealers = inputs.dealers.filter((d) =>
+    scope.dealer_ids.includes(d.dealer_id),
+  )
+  if (selectedDealers.length !== scope.dealer_ids.length) {
+    const err = `selected dealers not all present in accepted inputs (wanted ${scope.dealer_ids.join(',')})`
+    record('scope', false, err)
+    return {
+      mode: opts.mode,
+      ok: false,
+      stages,
+      preflight: null,
+      refusal_reason: err,
+    }
+  }
+  record(
+    'scope',
+    true,
+    `scope=${scope.mode} dealers=${scope.dealer_ids.join(',')}`,
+  )
+
+  // 1b. period — fail-closed; derived from validated inputs, never copied from raw options.
+  const per = resolvePeriod(selectedDealers, opts.period)
+  if (!per.ok) {
+    record('period', false, per.error)
+    return {
+      mode: opts.mode,
+      ok: false,
+      stages,
+      preflight: null,
+      refusal_reason: per.error,
+    }
+  }
+  const provedPeriod = per.period
+  record(
+    'period',
+    true,
+    `period ${provedPeriod.start}..${provedPeriod.end} ${provedPeriod.timezone} proved from selected inputs`,
+  )
+
   // 2-6. validate → transform → calculate → baseline → rank (all inside buildSpine, which
-  //      applies the strict predicate + semantic validator to every candidate).
-  const spine = buildSpine(inputs)
+  //      applies the strict predicate + semantic validator to every candidate). Scoped to
+  //      the selected dealers only (dealer scope = 295 cells; portfolio = 885).
+  const spine = buildSpine({ ...inputs, dealers: selectedDealers })
+  const requiredCells = REQUIRED_CELLS_PER_DEALER * selectedDealers.length
   record(
     'validate',
     true,
@@ -168,16 +333,23 @@ export function runPipeline(opts: {
     const cat = categorize(r.unresolved_reason ?? '')
     unresolvedByCategory[cat] = (unresolvedByCategory[cat] ?? 0) + 1
   }
-  const period = opts.period ?? inputs.dealers[0].reporting_period
-  const customerAllowed = spine.summary.evaluated === REQUIRED_CELLS
+  // Customer-final is DYNAMIC but equally strict: portfolio needs 885/885, dealer scope 295/295.
+  const customerAllowed = spine.summary.evaluated === requiredCells
   const refusal = customerAllowed
     ? null
-    : `customer-final PDF refused: evaluated_count=${spine.summary.evaluated} != required ${REQUIRED_CELLS}; ${spine.summary.unresolved} cells unresolved`
+    : `customer-final PDF refused: evaluated_count=${spine.summary.evaluated} != required ${requiredCells} (${scope.mode} scope); ${spine.summary.unresolved} cells unresolved`
   const preflight: PipelinePreflight = {
     artifact: 'gate3-pipeline-preflight',
     mode: opts.mode,
-    period,
-    scope: { profile: opts.profile ?? null, dealer_id: opts.dealerId ?? null },
+    scope_mode: scope.mode,
+    // period + scope derived from VALIDATED selected inputs, never copied from raw options.
+    period: provedPeriod,
+    scope: {
+      profile: scope.profile,
+      dealer_id: scope.dealer_id,
+      dealer_ids: scope.dealer_ids,
+    },
+    required_cells: requiredCells,
     cells: spine.rows.length,
     evaluated: spine.summary.evaluated,
     unresolved: spine.summary.unresolved,
@@ -187,7 +359,7 @@ export function runPipeline(opts: {
     customer_final_allowed: customerAllowed,
     customer_final_refusal_reason: refusal,
     is_customer_deliverable: false,
-    note: 'INTERNAL preflight. Technical gaps stay in internal evidence; customer PDFs are produced only after all 885 cells are evaluated.',
+    note: 'INTERNAL preflight. Technical gaps stay in internal evidence; customer PDFs are produced only after ALL cells in scope are evaluated (portfolio 885/885 or dealer 295/295); the orchestration still requires all three dealer PDFs + portfolio reconciliation.',
   }
   record(
     'render-preflight',
@@ -209,8 +381,8 @@ export function runPipeline(opts: {
   }
   record(
     'verify',
-    spine.rows.length === REQUIRED_CELLS,
-    `verified ${spine.rows.length} cells; customer_final_allowed=${customerAllowed}`,
+    spine.rows.length === requiredCells,
+    `verified ${spine.rows.length}/${requiredCells} cells (${scope.mode}); customer_final_allowed=${customerAllowed}`,
   )
   return { mode: opts.mode, ok: true, stages, preflight, refusal_reason: null }
 }

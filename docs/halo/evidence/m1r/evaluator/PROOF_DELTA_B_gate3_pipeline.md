@@ -45,7 +45,8 @@ quarantined primary is the read-only reconstruction, saved-schedule repair is th
 approval-requiring alternative); **domain routing** (only genuine Service-domain → the Service
 workspace; compliance/cross-rooftop/enrichment → their own routes; boundary split 27/48/9/21);
 **non-overclaiming dataset presence** (every route `candidate_unproved`; Service datasets never
-mapped; the 510 quarantined block is 3 families × 3 dealers, never "one pass closes 510").
+mapped; the 510 quarantined block is 4 dependency buckets × 3 dealers, never "one pass closes
+510").
 
 ## Data-minimization addendum
 
@@ -56,9 +57,26 @@ compliance route; a compliance route MAY retain PII with authorization; observed
 is distinct from allowed selection; invariants (routes 603/273, domains 27/48/9/21, all
 candidate_unproved) preserved. `data_minimization.validation.ok=true`. Not a new approval gate.
 
+## Shadow FAIL repair — adversarial coverage (Defects 1–3 + provenance tightening)
+
+- **Promotion probe** (`evaluator-promotion-probe.test.ts`, 17 cases): committed probe
+  recomputes byte-identically from the real ledger + accepted allowlist; positive exactly
+  SW-031/032/041; regressions for empty/absent evidence, empty allowlist, wrong-but-64-hex
+  SHA, wrong source_fields/formula, wrong baseline id/comparator/direction/value, row↔lineage
+  dealer/family/profile mismatch, row↔lineage period mismatch, **co-mutated row+lineage
+  period (SHA valid)**, **swapped filename**, **mutated period_hint**, **mutated
+  row.condition**, duplicate-dealer, and catalog-condition mutation — each prevents promotion.
+- **Pipeline scope/period** (`evaluator-pipeline.test.ts`): portfolio 885 / dealer 295;
+  fail-closed for fake dealer 99999, mismatched pair, one-sided scope, 1900/stale period,
+  wrong timezone, malformed period — each `ok=false`, no preflight; customer-final refused at
+  9/885 and 3/295; deterministic.
+- **Quarantine dependency buckets** (`evaluator-closure.test.ts`): reconciles the 4 mutually
+  exclusive dependency buckets × 3 dealers = 12 to 510; `multiple_quarantined` is a dependency
+  bucket, not a report family; `source_report_family` null for join deps.
+
 ## Validation summary
 
-- Gate 3 focused suite **29/29** (closure 9, promotion-probe 6, pipeline 8, data-minimization 6) + Gate 2 + Gate 1 + consumer regressions green.
+- Gate 3 focused suite **41/41** (closure 10, promotion-probe 17, pipeline 8, data-minimization 6) + gate3 evidence-hash guard 2 + Gate 2 + Gate 1 + consumer regressions green.
 - Typecheck **498 == baseline** (zero new Gate 3 errors); lint clean; **actual Prettier check
   clean** over every Gate 3 file incl generated JSON; deterministic byte-identical rerun.
 - No `/srv` write; no raw file / PII / secret committed; Gate 2 ledger unchanged

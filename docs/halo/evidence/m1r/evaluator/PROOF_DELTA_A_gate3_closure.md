@@ -5,6 +5,35 @@ for review, NOT self-certified. Acceptance is **unchanged**: 295 conditions × 3
 **885** cells, **9 evaluated / 876 unresolved** today. No scope shrink, no synthetic values,
 no missing→zero, no quarantined-source values, Sales-only preserved. No customer PDF authored.
 
+## Shadow FAIL of 7e2596400 → this repair (Defects 1–3 + provenance tightening)
+
+- **Defect 1 (probe circular).** `promotion-probe.ts` was rewritten to be EVIDENCE-DERIVED
+  from the real Gate 2 spine rows AND bound to the authoritative accepted-delivery allowlist
+  (`native-scheduled-evidence.json` held deliveries: filename + SHA + period_hint + proved
+  reporting_period). A cell promotes only when all THREE distinct governed dealer cells bind
+  to the exact allowlisted filename+SHA+period, the metric-spec source family/fields/formula/
+  unit, the exact baseline id/basis/comparator/direction + canonical threshold, the row
+  condition equals the canonical condition, and row period = lineage period = accepted
+  period. `status=evaluated` or a valid-looking 64-hex SHA is NOT sufficient. Adversarial
+  regressions: empty/absent evidence, wrong-but-64-hex SHA, wrong source_fields/formula,
+  wrong baseline id/comparator/direction/value, row↔lineage dealer/family/profile mismatch,
+  row↔lineage period mismatch, CO-MUTATED row+lineage period (SHA valid), swapped filename,
+  mutated period_hint, mutated row.condition, duplicate-dealer, and catalog-condition
+  mutation — each prevents promotion. Positive: exactly SW-031/032/041 from the byte build.
+- **Defect 2 (pipeline labels).** `pipeline.ts` now applies FAIL-CLOSED scope + period
+  controls BEFORE calculation: portfolio (no scope) = 3 governed pairs / 885 cells; dealer
+  scope requires BOTH a matching governed pair and filters to exactly 295 cells; a fake/
+  mismatched/one-sided pair or a malformed/stale/mixed/wrong-tz period returns `ok=false`
+  with NO preflight. Preflight scope/period are derived from validated inputs, never copied
+  from raw options. Customer-final is dynamic: portfolio 885/885, dealer 295/295 — still
+  refused at 9/885 and 3/295.
+- **Defect 3 (quarantine wording).** The 510 quarantined cells decompose into 4
+  mutually-exclusive DEPENDENCY buckets × 3 dealers = 12 entries: the three source-provenance
+  report families (lead_source_roi 12, cage_kpi 12, sales_comm_log 225) plus one multi-family
+  dependency bucket `multiple_quarantined` (261). `multiple_quarantined` is a DEPENDENCY
+  bucket, not a report family; the closure record now carries `dependency_bucket` +
+  `source_report_family` (null for the join deps), reconciled by test to 510.
+
 ## Bounded Gate 2 doc caveat fixed
 
 - Proof Delta B: the stale "31 cases" now reads **60 cases** (the current semantic suite).
@@ -113,18 +142,18 @@ The Gate 2 ledger (`spine-ledger.json` `c028e227…`) is unchanged.
 
 | File                                                       | sha256:16          |
 | ---------------------------------------------------------- | ------------------ |
-| `src/server/reports/evaluator/closure.ts`                  | `c20efda9df964b49` |
-| `src/server/reports/evaluator/promotion-probe.ts`          | `4628026ce75541b4` |
+| `src/server/reports/evaluator/closure.ts`                  | `6a65a34e6c1c32b5` |
+| `src/server/reports/evaluator/promotion-probe.ts`          | `92f8dd4300f6deff` |
 | `src/server/reports/evaluator/data-minimization.ts`        | `21a85b8c1f5462c0` |
-| `src/server/reports/evaluator/pipeline.ts`                 | `3d7a9be96753d67e` |
-| `scripts/m1r-evaluator/build-closure.ts`                   | `f3b0aa10d0b4d3e3` |
+| `src/server/reports/evaluator/pipeline.ts`                 | `abd58c71c1daf86e` |
+| `scripts/m1r-evaluator/build-closure.ts`                   | `5a266f4d0ec9ad02` |
 | `scripts/m1r-evaluator/run-pipeline.ts`                    | `981e29548e2d6e6e` |
-| `docs/halo/contract/acquisition-contract.json`             | `e138a9a21d13cd09` |
-| `docs/halo/contract/acquisition-contract.md`               | `0d7016b44e7d353c` |
-| `docs/halo/evidence/m1r/evaluator/closure-registry.json`   | `27060deada9e7076` |
+| `docs/halo/contract/acquisition-contract.json`             | `f6a839ddc0deccbf` |
+| `docs/halo/contract/acquisition-contract.md`               | `042946e0328fe61a` |
+| `docs/halo/evidence/m1r/evaluator/closure-registry.json`   | `de308c5dc9fb8e6e` |
 | `docs/halo/evidence/m1r/evaluator/closure-views.json`      | `c6a83c25164d7508` |
-| `docs/halo/evidence/m1r/evaluator/promotion-probe.json`    | `3a9d1b4ca677f7f8` |
-| `docs/halo/evidence/m1r/evaluator/pipeline-preflight.json` | `a0c3d363109022e6` |
+| `docs/halo/evidence/m1r/evaluator/promotion-probe.json`    | `f26ee922d40a0586` |
+| `docs/halo/evidence/m1r/evaluator/pipeline-preflight.json` | `32f2c5ea78baef60` |
 
 Every `sha256:16` above is recomputed from the current committed bytes and compared by
 `src/test/evaluator-gate3-evidence-hashes.test.ts`, so a later formatting cycle that desyncs

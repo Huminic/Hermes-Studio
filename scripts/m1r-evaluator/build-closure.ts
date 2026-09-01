@@ -15,7 +15,10 @@ import {
   duaneForRoute,
   loadCatalogDetail,
 } from '@/server/reports/evaluator/closure'
-import { probeConditions } from '@/server/reports/evaluator/promotion-probe'
+import {
+  buildAcceptedEvidence,
+  probeConditions,
+} from '@/server/reports/evaluator/promotion-probe'
 import {
   ALLOWED_EXPORT_FIELD_SELECTION,
   DATA_MINIMIZATION_POLICY,
@@ -168,11 +171,37 @@ async function main(): Promise<void> {
       JSON.stringify(by_category) === JSON.stringify(ledgerCatCounts),
   }
 
-  // Promotion probe (condition-by-condition).
-  const reasonByMetric = new Map<string, string>()
-  for (const r of unresolved)
-    reasonByMetric.set(r.metric_id, r.unresolved_reason ?? '')
-  const probe = probeConditions(details, reasonByMetric)
+  // Promotion probe — EVIDENCE-DERIVED from the actual Gate 2 spine rows, bound to the
+  // authoritative accepted-delivery SHA allowlist (native-scheduled-evidence held deliveries).
+  const scheduledEvidence = JSON.parse(
+    fs.readFileSync(
+      path.join(OUT, '..', 'scheduled', 'native-scheduled-evidence.json'),
+      'utf8',
+    ),
+  ) as {
+    deliveries: Array<{
+      profile: string
+      family: string
+      sha256: string
+      filename: string
+      period_hint: string
+      validation_state: string
+    }>
+  }
+  const heldDeliveries = scheduledEvidence.deliveries
+    .filter((d) => d.validation_state === 'held')
+    .map((d) => ({
+      profile: d.profile,
+      family: d.family,
+      sha256: d.sha256,
+      filename: d.filename,
+      period_hint: d.period_hint,
+    }))
+  const probe = probeConditions(
+    details,
+    ledger.rows,
+    buildAcceptedEvidence(heldDeliveries),
+  )
 
   // Acquisition contract (grouped by route; NON-overclaiming — dataset presence is a
   // candidate route only; nothing "closes" a cell until fields/period/filters/rows proved).
@@ -194,32 +223,57 @@ async function main(): Promise<void> {
     }
   })
 
-  // Quarantined block: distinguish the 3 report families × 3 dealers, with BOTH candidate
+  // Quarantined block: the mutually-exclusive DEPENDENCY buckets (3 single source-provenance
+  // report families + 1 multi-family dependency bucket) × 3 dealers, with BOTH candidate
   // routes (unsaved reconstruction vs saved-schedule repair), all UNPROVED.
   const quarantined = records.filter(
     (r) => r.unresolved_reason_category === 'quarantined',
   )
-  const qFamilies = [...new Set(quarantined.map((r) => r.report_family))].sort()
+  const qBuckets = [
+    ...new Set(quarantined.map((r) => r.dependency_bucket)),
+  ].sort()
   const qDealers = ['21043', '21044', '21047']
+  const by_dependency_bucket_dealer = qBuckets.flatMap((bucket) =>
+    qDealers.map((dealer) => {
+      const cells = quarantined.filter(
+        (r) => r.dependency_bucket === bucket && r.dealer_id === dealer,
+      )
+      return {
+        dependency_bucket: bucket,
+        is_multi_family_dependency: bucket === 'multiple_quarantined',
+        dealer_id: dealer,
+        cell_count: cells.length,
+        primary_route: 'new_readonly_vinsolutions_export',
+        primary_duane_approval_required: false,
+        alternative_route: 'existing_scheduled_report',
+        alternative_duane_approval_required: true,
+        route_proof_state: 'candidate_unproved',
+      }
+    }),
+  )
+  const by_dependency_bucket: Record<string, number> = {}
+  for (const r of quarantined)
+    by_dependency_bucket[String(r.dependency_bucket)] =
+      (by_dependency_bucket[String(r.dependency_bucket)] ?? 0) + 1
+  const bySourceReportFamily: Record<string, number> = {}
+  for (const r of quarantined)
+    if (r.source_report_family !== null)
+      bySourceReportFamily[r.source_report_family] =
+        (bySourceReportFamily[r.source_report_family] ?? 0) + 1
   const quarantined_reconstruction = {
-    note: 'The 510 quarantined cells are 3 report families × 3 dealers. PRIMARY candidate: read-only UNSAVED Sales-only Custom Reporting reconstruction/export (no new approval). ALTERNATIVE: saved-schedule repair (mutation + hidden Lead Intent control, new approval). BOTH candidate_unproved until exact fields/filters/rows are inspected. NOT claimed as "one pass closes 510".',
-    by_family_dealer: qFamilies.flatMap((family) =>
-      qDealers.map((dealer) => {
-        const cells = quarantined.filter(
-          (r) => r.report_family === family && r.dealer_id === dealer,
-        )
-        return {
-          report_family: family,
-          dealer_id: dealer,
-          cell_count: cells.length,
-          primary_route: 'new_readonly_vinsolutions_export',
-          primary_duane_approval_required: false,
-          alternative_route: 'existing_scheduled_report',
-          alternative_duane_approval_required: true,
-          route_proof_state: 'candidate_unproved',
-        }
-      }),
-    ),
+    note: 'The 510 quarantined cells decompose into MUTUALLY EXCLUSIVE DEPENDENCY buckets: THREE single source-provenance report families (lead_source_roi, cage_kpi, sales_comm_log) PLUS ONE multi-family dependency bucket (multiple_quarantined) for conditions that JOIN more than one quarantined family. multiple_quarantined is a DEPENDENCY bucket, NOT a report family. Exact decomposition: 4 dependency buckets × 3 dealers = 12 bucket×dealer entries (NOT nine non-overlapping single-family buckets). PRIMARY candidate: read-only UNSAVED Sales-only Custom Reporting reconstruction/export (no new approval). ALTERNATIVE: saved-schedule repair (mutation + hidden Lead Intent control, new approval). BOTH candidate_unproved until exact fields/filters/rows are inspected. NOT claimed as "one pass closes 510".',
+    source_provenance_report_families: [
+      'lead_source_roi',
+      'cage_kpi',
+      'sales_comm_log',
+    ],
+    by_source_report_family: bySourceReportFamily,
+    dependency_buckets: qBuckets,
+    multi_family_dependency_bucket: 'multiple_quarantined',
+    bucket_count: by_dependency_bucket_dealer.length,
+    by_dependency_bucket,
+    by_dependency_bucket_dealer,
+    reconciles_to_510: quarantined.length === 510,
   }
 
   // Fewest honest read-only browser passes: one Custom Reporting session per dealer covering

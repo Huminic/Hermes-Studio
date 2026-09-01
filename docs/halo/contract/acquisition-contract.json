@@ -431,10 +431,35 @@
     }
   ],
   "quarantined_reconstruction": {
-    "note": "The 510 quarantined cells are 3 report families × 3 dealers. PRIMARY candidate: read-only UNSAVED Sales-only Custom Reporting reconstruction/export (no new approval). ALTERNATIVE: saved-schedule repair (mutation + hidden Lead Intent control, new approval). BOTH candidate_unproved until exact fields/filters/rows are inspected. NOT claimed as \"one pass closes 510\".",
-    "by_family_dealer": [
+    "note": "The 510 quarantined cells decompose into MUTUALLY EXCLUSIVE DEPENDENCY buckets: THREE single source-provenance report families (lead_source_roi, cage_kpi, sales_comm_log) PLUS ONE multi-family dependency bucket (multiple_quarantined) for conditions that JOIN more than one quarantined family. multiple_quarantined is a DEPENDENCY bucket, NOT a report family. Exact decomposition: 4 dependency buckets × 3 dealers = 12 bucket×dealer entries (NOT nine non-overlapping single-family buckets). PRIMARY candidate: read-only UNSAVED Sales-only Custom Reporting reconstruction/export (no new approval). ALTERNATIVE: saved-schedule repair (mutation + hidden Lead Intent control, new approval). BOTH candidate_unproved until exact fields/filters/rows are inspected. NOT claimed as \"one pass closes 510\".",
+    "source_provenance_report_families": [
+      "lead_source_roi",
+      "cage_kpi",
+      "sales_comm_log"
+    ],
+    "by_source_report_family": {
+      "lead_source_roi": 12,
+      "sales_comm_log": 225,
+      "cage_kpi": 12
+    },
+    "dependency_buckets": [
+      "cage_kpi",
+      "lead_source_roi",
+      "multiple_quarantined",
+      "sales_comm_log"
+    ],
+    "multi_family_dependency_bucket": "multiple_quarantined",
+    "bucket_count": 12,
+    "by_dependency_bucket": {
+      "lead_source_roi": 12,
+      "sales_comm_log": 225,
+      "multiple_quarantined": 261,
+      "cage_kpi": 12
+    },
+    "by_dependency_bucket_dealer": [
       {
-        "report_family": "cage_kpi",
+        "dependency_bucket": "cage_kpi",
+        "is_multi_family_dependency": false,
         "dealer_id": "21043",
         "cell_count": 4,
         "primary_route": "new_readonly_vinsolutions_export",
@@ -444,7 +469,8 @@
         "route_proof_state": "candidate_unproved"
       },
       {
-        "report_family": "cage_kpi",
+        "dependency_bucket": "cage_kpi",
+        "is_multi_family_dependency": false,
         "dealer_id": "21044",
         "cell_count": 4,
         "primary_route": "new_readonly_vinsolutions_export",
@@ -454,7 +480,8 @@
         "route_proof_state": "candidate_unproved"
       },
       {
-        "report_family": "cage_kpi",
+        "dependency_bucket": "cage_kpi",
+        "is_multi_family_dependency": false,
         "dealer_id": "21047",
         "cell_count": 4,
         "primary_route": "new_readonly_vinsolutions_export",
@@ -464,7 +491,8 @@
         "route_proof_state": "candidate_unproved"
       },
       {
-        "report_family": "lead_source_roi",
+        "dependency_bucket": "lead_source_roi",
+        "is_multi_family_dependency": false,
         "dealer_id": "21043",
         "cell_count": 4,
         "primary_route": "new_readonly_vinsolutions_export",
@@ -474,7 +502,8 @@
         "route_proof_state": "candidate_unproved"
       },
       {
-        "report_family": "lead_source_roi",
+        "dependency_bucket": "lead_source_roi",
+        "is_multi_family_dependency": false,
         "dealer_id": "21044",
         "cell_count": 4,
         "primary_route": "new_readonly_vinsolutions_export",
@@ -484,7 +513,8 @@
         "route_proof_state": "candidate_unproved"
       },
       {
-        "report_family": "lead_source_roi",
+        "dependency_bucket": "lead_source_roi",
+        "is_multi_family_dependency": false,
         "dealer_id": "21047",
         "cell_count": 4,
         "primary_route": "new_readonly_vinsolutions_export",
@@ -494,7 +524,8 @@
         "route_proof_state": "candidate_unproved"
       },
       {
-        "report_family": "multiple_quarantined",
+        "dependency_bucket": "multiple_quarantined",
+        "is_multi_family_dependency": true,
         "dealer_id": "21043",
         "cell_count": 87,
         "primary_route": "new_readonly_vinsolutions_export",
@@ -504,7 +535,8 @@
         "route_proof_state": "candidate_unproved"
       },
       {
-        "report_family": "multiple_quarantined",
+        "dependency_bucket": "multiple_quarantined",
+        "is_multi_family_dependency": true,
         "dealer_id": "21044",
         "cell_count": 87,
         "primary_route": "new_readonly_vinsolutions_export",
@@ -514,7 +546,8 @@
         "route_proof_state": "candidate_unproved"
       },
       {
-        "report_family": "multiple_quarantined",
+        "dependency_bucket": "multiple_quarantined",
+        "is_multi_family_dependency": true,
         "dealer_id": "21047",
         "cell_count": 87,
         "primary_route": "new_readonly_vinsolutions_export",
@@ -524,7 +557,8 @@
         "route_proof_state": "candidate_unproved"
       },
       {
-        "report_family": "sales_comm_log",
+        "dependency_bucket": "sales_comm_log",
+        "is_multi_family_dependency": false,
         "dealer_id": "21043",
         "cell_count": 75,
         "primary_route": "new_readonly_vinsolutions_export",
@@ -534,7 +568,8 @@
         "route_proof_state": "candidate_unproved"
       },
       {
-        "report_family": "sales_comm_log",
+        "dependency_bucket": "sales_comm_log",
+        "is_multi_family_dependency": false,
         "dealer_id": "21044",
         "cell_count": 75,
         "primary_route": "new_readonly_vinsolutions_export",
@@ -544,7 +579,8 @@
         "route_proof_state": "candidate_unproved"
       },
       {
-        "report_family": "sales_comm_log",
+        "dependency_bucket": "sales_comm_log",
+        "is_multi_family_dependency": false,
         "dealer_id": "21047",
         "cell_count": 75,
         "primary_route": "new_readonly_vinsolutions_export",
@@ -553,7 +589,8 @@
         "alternative_duane_approval_required": true,
         "route_proof_state": "candidate_unproved"
       }
-    ]
+    ],
+    "reconciles_to_510": true
   },
   "browser_passes": [
     {

@@ -41,11 +41,15 @@ ingested.** Full field notes + the 26 selectable Sales datasets are in the JSON
 Cells total: 519 + 189 + 48 + 42 + 42 + 27 + 9 = **876** (reconciles to the closure registry).
 Every group is `route_proof_state = candidate_unproved`.
 
-## Quarantined families — do NOT claim "one pass closes 510"
+## Quarantined dependency buckets — do NOT claim "one pass closes 510"
 
-The 510 quarantined cells are **3 report families × 3 dealers** (`quarantined_reconstruction`
-in the JSON). Two candidate routes, both **unproved** until exact fields/filters/rows are
-inspected:
+The 510 quarantined cells decompose into **4 mutually-exclusive DEPENDENCY buckets × 3
+dealers = 12 entries** (`quarantined_reconstruction` in the JSON): the **three
+source-provenance report families** — `lead_source_roi` (12), `cage_kpi` (12),
+`sales_comm_log` (225) — **plus one multi-family dependency bucket** `multiple_quarantined`
+(261) for conditions that JOIN more than one quarantined family. `multiple_quarantined` is a
+dependency bucket, **not** a report family. Two candidate routes, both **unproved** until
+exact fields/filters/rows are inspected:
 
 - **Primary (no approval):** read-only UNSAVED Sales-only Custom Reporting reconstruction/export.
 - **Alternative (approval):** saved-schedule repair — needs the hidden Lead Intent control
