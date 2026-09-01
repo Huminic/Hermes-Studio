@@ -1,0 +1,500 @@
+{
+  "artifact": "gate4c2-comm-evaluation-ledger",
+  "family": "enhanced_sales_communication_log_weekly",
+  "formula_version": "comm-metric-v1",
+  "reporting_period": {
+    "preset": "Previous Week (Mon-Sun)",
+    "start": "2026-08-24",
+    "end": "2026-08-30",
+    "timezone": "America/New_York"
+  },
+  "evaluated_ids": ["SW-022", "SW-133"],
+  "evaluated_cells": 6,
+  "held_ids": [
+    "SW-019",
+    "SW-026",
+    "SW-076",
+    "SW-084",
+    "SW-086",
+    "SW-132",
+    "SW-134",
+    "SW-137",
+    "SW-138",
+    "SW-288"
+  ],
+  "note": "NON-PII overlay. Aggregate integer numerator/denominator + derived rate only; no name, customer, rep/thread token, or message content. Separate from the 4-family core spine; the prior 30 evaluated cells are unchanged. Promotes zero metrics into the core spine ledger.",
+  "cells": [
+    {
+      "metric_id": "SW-022",
+      "dealer_id": "21043",
+      "profile": "serra-honda",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["rep_token", "direction", "channel"],
+      "formula": "flagged_reps / eligible_reps; rep flagged if outbound_calls==0&outbound_texts>0 OR outbound_texts>5*outbound_calls",
+      "formula_version": "comm-metric-v1",
+      "value": 0.1,
+      "unit": "ratio",
+      "numerator": 1,
+      "denominator": 10,
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-SW-022-red-flag-target-0",
+        "label": "Rep's outbound text-to-call ratio exceeds 5:1 (avoiding voice) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0 (no flagged reps/threads). Not an industry benchmark."
+      },
+      "variance": 0.1,
+      "rating": "breach",
+      "rank": 1,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "observed events=1, eligible reps (>=5 outbound)=10; small observed-event counts reduce estimate precision"
+      },
+      "evaluation_detail": {
+        "observed_events": 1,
+        "eligible_population": 10,
+        "population_grain": "reps (>=5 outbound)",
+        "ambiguous_excluded_endpoints": 0,
+        "low_sample": true,
+        "footnote": "LOW SAMPLE: 1 observed event(s) over 10 eligible reps (>=5 outbound); interpret as a screening signal, not a precise rate."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:36:18-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21043",
+        "raw_sha256": "25ac45f9e27c72efede545e218682b9fd7d6cb20800967a31061293e68c15adc",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "outbound-only scope; a rep below the floor is not judged; does not distinguish deliberate avoidance from customer channel preference; cross-rooftop shared staff counted only for their activity at this rooftop"
+    },
+    {
+      "metric_id": "SW-022",
+      "dealer_id": "21044",
+      "profile": "serra-nissan",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["rep_token", "direction", "channel"],
+      "formula": "flagged_reps / eligible_reps; rep flagged if outbound_calls==0&outbound_texts>0 OR outbound_texts>5*outbound_calls",
+      "formula_version": "comm-metric-v1",
+      "value": 0.3333333333333333,
+      "unit": "ratio",
+      "numerator": 3,
+      "denominator": 9,
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-SW-022-red-flag-target-0",
+        "label": "Rep's outbound text-to-call ratio exceeds 5:1 (avoiding voice) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0 (no flagged reps/threads). Not an industry benchmark."
+      },
+      "variance": 0.3333333333333333,
+      "rating": "breach",
+      "rank": 3,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "observed events=3, eligible reps (>=5 outbound)=9; small observed-event counts reduce estimate precision"
+      },
+      "evaluation_detail": {
+        "observed_events": 3,
+        "eligible_population": 9,
+        "population_grain": "reps (>=5 outbound)",
+        "ambiguous_excluded_endpoints": 0,
+        "low_sample": true,
+        "footnote": "LOW SAMPLE: 3 observed event(s) over 9 eligible reps (>=5 outbound); interpret as a screening signal, not a precise rate."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:27:58-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21044",
+        "raw_sha256": "26adece2cb6c385cff1bddb9dd9b7b611dc04c883d709c57ae1f1a2a6f6ba0a5",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "outbound-only scope; a rep below the floor is not judged; does not distinguish deliberate avoidance from customer channel preference; cross-rooftop shared staff counted only for their activity at this rooftop"
+    },
+    {
+      "metric_id": "SW-022",
+      "dealer_id": "21047",
+      "profile": "tony-serra-ford",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["rep_token", "direction", "channel"],
+      "formula": "flagged_reps / eligible_reps; rep flagged if outbound_calls==0&outbound_texts>0 OR outbound_texts>5*outbound_calls",
+      "formula_version": "comm-metric-v1",
+      "value": 0.2857142857142857,
+      "unit": "ratio",
+      "numerator": 2,
+      "denominator": 7,
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-SW-022-red-flag-target-0",
+        "label": "Rep's outbound text-to-call ratio exceeds 5:1 (avoiding voice) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0 (no flagged reps/threads). Not an industry benchmark."
+      },
+      "variance": 0.2857142857142857,
+      "rating": "breach",
+      "rank": 2,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "observed events=2, eligible reps (>=5 outbound)=7; small observed-event counts reduce estimate precision"
+      },
+      "evaluation_detail": {
+        "observed_events": 2,
+        "eligible_population": 7,
+        "population_grain": "reps (>=5 outbound)",
+        "ambiguous_excluded_endpoints": 0,
+        "low_sample": true,
+        "footnote": "LOW SAMPLE: 2 observed event(s) over 7 eligible reps (>=5 outbound); interpret as a screening signal, not a precise rate."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:40:56-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21047",
+        "raw_sha256": "0d96f848df86abbee1129e9d2cf9fa5655a1321b25afc153c3b04e1c8afea467",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "outbound-only scope; a rep below the floor is not judged; does not distinguish deliberate avoidance from customer channel preference; cross-rooftop shared staff counted only for their activity at this rooftop"
+    },
+    {
+      "metric_id": "SW-133",
+      "dealer_id": "21043",
+      "profile": "serra-honda",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["thread_token", "direction", "activity_iso"],
+      "formula": "threads with a reply preceded by >=2 inbound since the rep’s previous outbound (timestamp-value rule, tie-order-invariant) / threads_with(>=2 messages)",
+      "formula_version": "comm-metric-v1",
+      "value": 0.03571428571428571,
+      "unit": "ratio",
+      "numerator": 10,
+      "denominator": 280,
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-SW-133-red-flag-target-0",
+        "label": "Rep replies after customer sent 2+ consecutive messages (customer chasing rep) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0 (no flagged reps/threads). Not an industry benchmark."
+      },
+      "variance": 0.03571428571428571,
+      "rating": "breach",
+      "rank": 3,
+      "evaluation_confidence": {
+        "label": "high",
+        "basis": "observed events=10, eligible threads (>=2 messages)=280; small observed-event counts reduce estimate precision"
+      },
+      "evaluation_detail": {
+        "observed_events": 10,
+        "eligible_population": 280,
+        "population_grain": "threads (>=2 messages)",
+        "ambiguous_excluded_endpoints": 4,
+        "low_sample": false,
+        "footnote": "10 observed event(s) over 280 eligible threads (>=2 messages). 4 additional threads (>=2 messages) conservatively EXCLUDED because a same-minute endpoint bucket left within-minute order unknowable (never counted on arbitrary order)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:36:18-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21043",
+        "raw_sha256": "25ac45f9e27c72efede545e218682b9fd7d6cb20800967a31061293e68c15adc",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "minute-resolution timestamps: the rule is a function of the (direction, minute) multiset only, so it is invariant to same-minute ordering (an arbitrary tie-break would swing the count materially); an inbound sharing the reply minute is conservatively excluded and disclosed (ambiguous_excluded_endpoints); conservative/right-truncated at the window edge (under-counts, never over-counts); does not assert customer dissatisfaction"
+    },
+    {
+      "metric_id": "SW-133",
+      "dealer_id": "21044",
+      "profile": "serra-nissan",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["thread_token", "direction", "activity_iso"],
+      "formula": "threads with a reply preceded by >=2 inbound since the rep’s previous outbound (timestamp-value rule, tie-order-invariant) / threads_with(>=2 messages)",
+      "formula_version": "comm-metric-v1",
+      "value": 0.023076923076923078,
+      "unit": "ratio",
+      "numerator": 3,
+      "denominator": 130,
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-SW-133-red-flag-target-0",
+        "label": "Rep replies after customer sent 2+ consecutive messages (customer chasing rep) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0 (no flagged reps/threads). Not an industry benchmark."
+      },
+      "variance": 0.023076923076923078,
+      "rating": "breach",
+      "rank": 2,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "observed events=3, eligible threads (>=2 messages)=130; small observed-event counts reduce estimate precision"
+      },
+      "evaluation_detail": {
+        "observed_events": 3,
+        "eligible_population": 130,
+        "population_grain": "threads (>=2 messages)",
+        "ambiguous_excluded_endpoints": 3,
+        "low_sample": true,
+        "footnote": "LOW SAMPLE: 3 observed event(s) over 130 eligible threads (>=2 messages); interpret as a screening signal, not a precise rate. 3 additional threads (>=2 messages) conservatively EXCLUDED because a same-minute endpoint bucket left within-minute order unknowable (never counted on arbitrary order)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:27:58-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21044",
+        "raw_sha256": "26adece2cb6c385cff1bddb9dd9b7b611dc04c883d709c57ae1f1a2a6f6ba0a5",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "minute-resolution timestamps: the rule is a function of the (direction, minute) multiset only, so it is invariant to same-minute ordering (an arbitrary tie-break would swing the count materially); an inbound sharing the reply minute is conservatively excluded and disclosed (ambiguous_excluded_endpoints); conservative/right-truncated at the window edge (under-counts, never over-counts); does not assert customer dissatisfaction"
+    },
+    {
+      "metric_id": "SW-133",
+      "dealer_id": "21047",
+      "profile": "tony-serra-ford",
+      "status": "evaluated",
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_fields": ["thread_token", "direction", "activity_iso"],
+      "formula": "threads with a reply preceded by >=2 inbound since the rep’s previous outbound (timestamp-value rule, tie-order-invariant) / threads_with(>=2 messages)",
+      "formula_version": "comm-metric-v1",
+      "value": 0.01694915254237288,
+      "unit": "ratio",
+      "numerator": 2,
+      "denominator": 118,
+      "baseline": {
+        "basis": "operational_target",
+        "id": "comm-SW-133-red-flag-target-0",
+        "label": "Rep replies after customer sent 2+ consecutive messages (customer chasing rep) — operational target 0",
+        "unit": "ratio",
+        "value": 0,
+        "comparator": ">",
+        "direction": "lower_is_better",
+        "source": "internal operational target (red-flag rate ideal = 0); NOT an industry benchmark",
+        "publication_date": null,
+        "url": null,
+        "confidence": "operational",
+        "definition": "red-flag rate; the operational ideal is 0 (no flagged reps/threads). Not an industry benchmark."
+      },
+      "variance": 0.01694915254237288,
+      "rating": "breach",
+      "rank": 1,
+      "evaluation_confidence": {
+        "label": "low",
+        "basis": "observed events=2, eligible threads (>=2 messages)=118; small observed-event counts reduce estimate precision"
+      },
+      "evaluation_detail": {
+        "observed_events": 2,
+        "eligible_population": 118,
+        "population_grain": "threads (>=2 messages)",
+        "ambiguous_excluded_endpoints": 1,
+        "low_sample": true,
+        "footnote": "LOW SAMPLE: 2 observed event(s) over 118 eligible threads (>=2 messages); interpret as a screening signal, not a precise rate. 1 additional threads (>=2 messages) conservatively EXCLUDED because a same-minute endpoint bucket left within-minute order unknowable (never counted on arbitrary order)."
+      },
+      "reporting_period": {
+        "preset": "Previous Week (Mon-Sun)",
+        "start": "2026-08-24",
+        "end": "2026-08-30",
+        "timezone": "America/New_York"
+      },
+      "captured_at": "2026-09-01T04:40:56-04:00",
+      "lineage": {
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21047",
+        "raw_sha256": "0d96f848df86abbee1129e9d2cf9fa5655a1321b25afc153c3b04e1c8afea467",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada",
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog"
+      },
+      "limitations": "minute-resolution timestamps: the rule is a function of the (direction, minute) multiset only, so it is invariant to same-minute ordering (an arbitrary tie-break would swing the count materially); an inbound sharing the reply minute is conservatively excluded and disclosed (ambiguous_excluded_endpoints); conservative/right-truncated at the window edge (under-counts, never over-counts); does not assert customer dissatisfaction"
+    }
+  ],
+  "held": [
+    {
+      "metric_id": "SW-019",
+      "status": "held_unresolved",
+      "condition": "Rep logs <3 outbound calls/day for 2 consecutive days",
+      "hold_reason": "rep population + eligible-workday/absence handling not provable without an accepted roster (CAGE is quarantined; Users is a candidate-unproved route). Comm-log-only reps under-count the worst offenders.",
+      "missing_item": "survivorship: a rep who logged nothing is invisible",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "ratify the named semantic/input (or accumulate history); do not promote until all three rooftop cells meet acceptance"
+    },
+    {
+      "metric_id": "SW-026",
+      "status": "held_unresolved",
+      "condition": "Rep never uses video/personalized media while peers do",
+      "hold_reason": "\"never\" needs multi-week history; a single week only shows \"no video this week\" and would misclassify biweekly/occasional video users. Insufficient history.",
+      "missing_item": "\"no video this week\" != \"never uses video\"",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "ratify the named semantic/input (or accumulate history); do not promote until all three rooftop cells meet acceptance"
+    },
+    {
+      "metric_id": "SW-076",
+      "status": "held_unresolved",
+      "condition": "Response latency grows across a thread (fade-out)",
+      "hold_reason": "requires business-hours-adjusted latency + a ratified \"grows\" definition + thread censoring handling; distinct from SW-134. Material semantic choices unresolved.",
+      "missing_item": "single week truncates threads (censoring)",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "ratify the named semantic/input (or accumulate history); do not promote until all three rooftop cells meet acceptance"
+    },
+    {
+      "metric_id": "SW-084",
+      "status": "held_unresolved",
+      "condition": "BDC connect rate falls below 35%",
+      "hold_reason": "native source (CAGE/Enterprise Performance) is quarantined; user_group is BDC/Internet combined (not pure BDC); interaction_result is ~61% blank and mixes channels, so the connect numerator / attempt denominator are not derivable.",
+      "missing_item": "interaction_result ~61% blank and channel-mixed",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "ratify the named semantic/input (or accumulate history); do not promote until all three rooftop cells meet acceptance"
+    },
+    {
+      "metric_id": "SW-086",
+      "status": "held_unresolved",
+      "condition": "Voicemails left without follow-up text/email within 15 minutes",
+      "hold_reason": "\"voicemail left\" is unprovable: interaction_result \"Answering Machine\" only proves an outbound call reached a voicemail system, not that a message was left. Material meaning change (a proxy, not the literal condition).",
+      "missing_item": "Answering Machine = reached voicemail, not proof a message was left",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "ratify the named semantic/input (or accumulate history); do not promote until all three rooftop cells meet acceptance"
+    },
+    {
+      "metric_id": "SW-132",
+      "status": "held_unresolved",
+      "condition": "Customer's last message unanswered >4 business hours during active thread",
+      "hold_reason": "needs a ratified \"active thread\" definition + right-censoring (late-week inbound messages have not had 4 business hours to be answered by capture) + an as-of reference. These choices materially move the count (fail closed under truth-over-compliance).",
+      "missing_item": "external Sales hours captured 2026-09-01 (serra280.com / tonyserraford.com: Mon-Sat 9:00-19:00, Sun closed, America/New_York) but \"active thread\" + right-censoring + as-of reference remain unratified",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "ratify the named semantic/input (or accumulate history); do not promote until all three rooftop cells meet acceptance"
+    },
+    {
+      "metric_id": "SW-134",
+      "status": "held_unresolved",
+      "condition": "Response gap widens across a thread (2h -> 8h -> 24h)",
+      "hold_reason": "requires >=3 rep-response cycles per thread within one week (history-limited) and a ratified wall-clock vs business-hours basis. Material.",
+      "missing_item": "needs >=3 rep-response cycles per thread in one week (history-limited)",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "ratify the named semantic/input (or accumulate history); do not promote until all three rooftop cells meet acceptance"
+    },
+    {
+      "metric_id": "SW-137",
+      "status": "held_unresolved",
+      "condition": "Rep replies to text with email (channel mismatch)",
+      "hold_reason": "under the conservative unique-minute-bucket adjacency, every observed inbound-Text->outbound-Email candidate has a non-singleton endpoint bucket (Honda 1, Nissan 1, Ford 0 candidate events, all ambiguous). The earlier 1/1/0 depended on unknowable within-minute ordering; reporting 0 would fabricate \"missing\" as zero. Under all-three-rooftops-or-no-metric, held across all three.",
+      "missing_item": "every observed candidate had an ambiguous same-minute endpoint bucket; the numerator would depend on unknowable within-minute order, so no unambiguous event survives",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "acquire a higher-resolution timestamp (seconds) or an unambiguous message-sequence source so inbound-Text->outbound-Email adjacency can be established without same-minute ambiguity; then re-evaluate all three rooftops.",
+      "candidate_guard_evidence": [
+        {
+          "dealer_id": "21043",
+          "candidate_numerator": 0,
+          "denominator": 280,
+          "ambiguous_excluded_endpoints": 1
+        },
+        {
+          "dealer_id": "21044",
+          "candidate_numerator": 0,
+          "denominator": 130,
+          "ambiguous_excluded_endpoints": 1
+        },
+        {
+          "dealer_id": "21047",
+          "candidate_numerator": 0,
+          "denominator": 118,
+          "ambiguous_excluded_endpoints": 0
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-138",
+      "status": "held_unresolved",
+      "condition": "Multiple rapid-fire rep messages with no customer reply (spammy cadence)",
+      "hold_reason": "authorized only as a labeled operational proxy, but \"multiple\"/\"rapid-fire\" (K count, T window) are unratified and materially change the flag population. No proxy substitution permitted here — held for ratification.",
+      "missing_item": "the proxy parameters swing the result ~3x (>=3-in-60min flags ~33% of threads = normal multi-touch cadence)",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "ratify the named semantic/input (or accumulate history); do not promote until all three rooftop cells meet acceptance"
+    },
+    {
+      "metric_id": "SW-288",
+      "status": "held_unresolved",
+      "condition": "Cadence health composite (response times, message balance, thread momentum)",
+      "hold_reason": "composite over components that are themselves unresolved (SW-076/SW-134 held; momentum needs history). A composite cannot hide unresolved components.",
+      "missing_item": "depends on unresolved response-time + momentum components",
+      "owner": "Huminic Semantic Watchdog pipeline / Duane (ratification)",
+      "next_action": "ratify the named semantic/input (or accumulate history); do not promote until all three rooftop cells meet acceptance"
+    }
+  ]
+}

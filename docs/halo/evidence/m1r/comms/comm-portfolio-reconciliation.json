@@ -1,0 +1,56 @@
+{
+  "artifact": "gate4c2-portfolio-reconciliation",
+  "required_cells": 885,
+  "spine_evaluated": 30,
+  "comm_overlay_evaluated": 6,
+  "evaluated": 36,
+  "unresolved": 849,
+  "by_dealer": {
+    "21043": {
+      "spine_evaluated": 10,
+      "comm_evaluated": 2,
+      "evaluated": 12,
+      "unresolved": 283
+    },
+    "21044": {
+      "spine_evaluated": 10,
+      "comm_evaluated": 2,
+      "evaluated": 12,
+      "unresolved": 283
+    },
+    "21047": {
+      "spine_evaluated": 10,
+      "comm_evaluated": 2,
+      "evaluated": 12,
+      "unresolved": 283
+    }
+  },
+  "spine_evaluated_ids": [
+    "SW-011",
+    "SW-012",
+    "SW-015",
+    "SW-031",
+    "SW-032",
+    "SW-033",
+    "SW-041",
+    "SW-045",
+    "SW-046",
+    "SW-090"
+  ],
+  "comm_evaluated_ids": ["SW-022", "SW-133"],
+  "portfolio_evaluated_ids": [
+    "SW-011",
+    "SW-012",
+    "SW-015",
+    "SW-022",
+    "SW-031",
+    "SW-032",
+    "SW-033",
+    "SW-041",
+    "SW-045",
+    "SW-046",
+    "SW-090",
+    "SW-133"
+  ],
+  "note": "Atomic union of the untouched 4-family core spine (30, byte-semantically preserved) and the separate privacy-minimized comm overlay (9 = SW-022/133/137 x 3 rooftops). No core-spine cell changed; comm-derived PII never enters buildSpine."
+}

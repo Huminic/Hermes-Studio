@@ -11,6 +11,10 @@ const PROOF = new URL(
   '../../docs/halo/evidence/m1r/comms/PROOF_DELTA_A_comm_admission.md',
   import.meta.url,
 )
+const PROOF_C = new URL(
+  '../../docs/halo/evidence/m1r/comms/PROOF_DELTA_C_comm_evaluation.md',
+  import.meta.url,
+)
 const HASH16 = /^[0-9a-f]{16}$/
 const PATHISH = /\.(ts|json|md)$/
 
@@ -49,6 +53,33 @@ describe('Gate 4C1 comm proof delta recorded artifact hashes', () => {
       'src/server/reports/comms/comm-reader.ts',
       'scripts/m1r-comms/comm-capability-decisions.ts',
       'docs/halo/evidence/m1r/comms/comm-admission-aggregates.json',
+    ])
+      expect(
+        recorded.some((r) => r.file === req),
+        `must record ${req}`,
+      ).toBe(true)
+  })
+
+  it('every recorded first-16 SHA-256 matches the current file bytes', () => {
+    for (const r of recorded)
+      expect(first16(new URL(r.file, ROOT)), `${r.file} hash drift`).toBe(
+        r.hash,
+      )
+  })
+})
+
+describe('Gate 4C2 comm evaluation proof delta recorded artifact hashes', () => {
+  const md = fs.readFileSync(PROOF_C, 'utf8')
+  const recorded = parseRecordedHashes(md)
+
+  it('parses the full Gate 4C2 artifact set (2 modules/scripts + 1 contract + 2 evidence = 5)', () => {
+    expect(recorded.length).toBe(5)
+    for (const req of [
+      'src/server/reports/comms/comm-metrics.ts',
+      'scripts/m1r-comms/build-comm-evaluation.ts',
+      'docs/halo/contract/sw295-comm-metric-specs.json',
+      'docs/halo/evidence/m1r/comms/comm-evaluation-ledger.json',
+      'docs/halo/evidence/m1r/comms/comm-portfolio-reconciliation.json',
     ])
       expect(
         recorded.some((r) => r.file === req),
