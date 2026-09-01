@@ -1,0 +1,48 @@
+{
+  "artifact": "gate3-pipeline-preflight",
+  "mode": "preflight",
+  "period": {
+    "start": "2026-08-24",
+    "end": "2026-08-30",
+    "timezone": "America/New_York"
+  },
+  "scope": {
+    "profile": null,
+    "dealer_id": null
+  },
+  "cells": 885,
+  "evaluated": 9,
+  "unresolved": 876,
+  "evaluated_ids": ["SW-031", "SW-032", "SW-041"],
+  "unresolved_by_category": {
+    "quarantined": 510,
+    "missing_field": 6,
+    "external_source": 168,
+    "response_time_def_mismatch": 21,
+    "unavailable_retention": 24,
+    "manual_crm": 21,
+    "definition_mismatch": 3,
+    "trend_history_needed": 6,
+    "denominator_integrity": 3,
+    "outside_boundary": 105,
+    "second_order_composite": 9
+  },
+  "cluster_synthesis": [
+    {
+      "cluster": "4. Pipeline Health & Funnel Dynamics",
+      "evaluated_metric_ids": ["SW-031", "SW-032"],
+      "evaluated_cells": 6,
+      "dealers": ["21043", "21044", "21047"]
+    },
+    {
+      "cluster": "5. Appointment & Showroom Metrics",
+      "evaluated_metric_ids": ["SW-041"],
+      "evaluated_cells": 3,
+      "dealers": ["21043", "21044", "21047"]
+    }
+  ],
+  "customer_final_allowed": false,
+  "customer_final_refusal_reason": "customer-final PDF refused: evaluated_count=9 != required 885; 876 cells unresolved",
+  "is_customer_deliverable": false,
+  "note": "INTERNAL preflight. Technical gaps stay in internal evidence; customer PDFs are produced only after all 885 cells are evaluated."
+}

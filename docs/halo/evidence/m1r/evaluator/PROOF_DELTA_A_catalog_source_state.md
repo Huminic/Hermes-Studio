@@ -56,7 +56,7 @@ variance, rating, rank, and confidence.
 
 ## Unresolved accounting (876 cells, by reason)
 
-| count | reason                                                                            |
+| count | reason (closure category)                                                         |
 | ----- | --------------------------------------------------------------------------------- |
 | 510   | source is (or joins) a quarantined family (ROI / CAGE / Sales-Communication)      |
 | 168   | requires a non-VinSolutions external source                                       |
@@ -64,11 +64,15 @@ variance, rating, rank, and confidence.
 | 24    | source unavailable or retention-limited                                           |
 | 21    | Dashboard gives an AVERAGE, not the definitional median; no business-hours filter |
 | 21    | requires manual CRM inspection; no scheduled export                               |
-| 9     | second-order composite needing a trend/threshold basis                            |
-| 9     | condition-specific (SW-008 / SW-034 / SW-042 / SW-043 / SW-049)                   |
-| 3     | SW-050 denominator integrity (0 new deals ×2; 2/4 blank Front Gross ×1)           |
+| 9     | second-order composite needing a trend/threshold basis (SW-111/113/114 ×3)        |
+| 6     | missing field (SW-008 lead-source attribution, SW-034 write-up count) ×3          |
+| 6     | trend history needed (SW-043 3-week, SW-049 30-day) ×3                            |
+| 3     | definition mismatch (SW-042 confirm-within-24h) ×3                                |
+| 3     | denominator integrity (SW-050: 0 new deals ×2; 2/4 blank Front Gross ×1)          |
 
-Total unresolved = 876. Evaluated + unresolved = 885.
+Total unresolved = 876 (510+168+105+24+21+21+9+6+6+3+3). Evaluated + unresolved = 885. (The
+earlier grouping of these condition-specific rows summed to 870; corrected here and
+reconciled by the Gate 3 closure views.)
 
 ## Boundaries honored
 

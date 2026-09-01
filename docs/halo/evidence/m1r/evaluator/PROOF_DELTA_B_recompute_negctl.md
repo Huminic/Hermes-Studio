@@ -33,7 +33,7 @@ flips the verdict — no field escapes semantic validation.
 ## Semantic validator — non-vacuous corruption detection (repair req 1)
 
 `validateEvaluatedRow` recomputes every value + derived field and binds lineage to the
-delivery envelope. Adversarial tests (`evaluator-semantic-validator.test.ts`, 31 cases)
+delivery envelope. Adversarial tests (`evaluator-semantic-validator.test.ts`, 60 cases)
 prove an authentic row passes and each single corruption fails with the intended clause:
 
 | corruption                                                                             | detected                                                       |
