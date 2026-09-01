@@ -10,7 +10,9 @@ import {
   CONTENT_HELD_DECISIONS,
   CONTENT_PROMOTED_IDS,
   CONTENT_PROMOTED_SPECS,
+  CONTENT_SPEC_KEYS,
   CommContentMetricError,
+  buildHeldSpec,
   evaluateCommContentMetrics,
   sw021,
   sw142,
@@ -254,6 +256,87 @@ describe('Gate 4E disposition table integrity', () => {
       expect(d.hold_reason && d.hold_reason.length > 0).toBe(true)
       expect(d.category).not.toBe('definition_exact_deterministic_now')
     }
+  })
+})
+
+describe('Gate 4E-R1 — every candidate row carries a schema-complete spec', () => {
+  const matrix = JSON.parse(
+    fs.readFileSync(
+      path.join(REPO, 'docs/halo/contract/sw295-comm-content-matrix.json'),
+      'utf8',
+    ),
+  ) as {
+    spec_schema: Array<string>
+    rows: Array<{
+      metric_id: string
+      disposition: string
+      spec: Record<string, unknown>
+    }>
+  }
+  const REQUIRED = [...CONTENT_SPEC_KEYS].sort()
+  const STRING_KEYS = REQUIRED.filter((k) => k !== 'source_fields')
+
+  it('the derived spec schema is exactly 14 keys and matches the committed matrix', () => {
+    expect(CONTENT_SPEC_KEYS.length).toBe(14)
+    expect([...matrix.spec_schema].sort()).toEqual(REQUIRED)
+  })
+
+  it('all 75 rows have a spec with EXACTLY the required keys and correct types', () => {
+    expect(matrix.rows.length).toBe(75)
+    for (const r of matrix.rows) {
+      expect(r.spec, `${r.metric_id} has spec`).toBeTruthy()
+      expect(Object.keys(r.spec).sort(), `${r.metric_id} keys`).toEqual(
+        REQUIRED,
+      )
+      for (const k of STRING_KEYS)
+        expect(typeof r.spec[k], `${r.metric_id}.${k} is string`).toBe('string')
+      expect(
+        Array.isArray(r.spec.source_fields),
+        `${r.metric_id}.source_fields is array`,
+      ).toBe(true)
+    }
+  })
+
+  it('HOLD specs cannot masquerade as executable/promoted definitions', () => {
+    const promoted = new Set(CONTENT_PROMOTED_IDS as ReadonlyArray<string>)
+    for (const r of matrix.rows) {
+      if (r.disposition !== 'HOLD') continue
+      expect(promoted.has(r.metric_id)).toBe(false)
+      expect(r.spec.numerator).toBe('unresolved (held)')
+      expect(r.spec.denominator).toBe('unresolved (held)')
+      expect(r.spec.detection_threshold).toBe('unresolved (held)')
+      expect(r.spec.baseline_basis).toBe('unresolved (held)')
+      expect(r.spec.rank_direction).toBe('not_applicable (held)')
+    }
+  })
+
+  it('PROMOTE specs carry executable (non-held) numerators', () => {
+    const promoted = new Set(CONTENT_PROMOTED_IDS as ReadonlyArray<string>)
+    for (const r of matrix.rows) {
+      if (r.disposition !== 'PROMOTE') continue
+      expect(promoted.has(r.metric_id)).toBe(true)
+      expect(r.spec.numerator).not.toBe('unresolved (held)')
+      expect(r.spec.denominator).not.toBe('unresolved (held)')
+    }
+  })
+
+  it('buildHeldSpec is schema-complete and non-executable for a bare decision', () => {
+    const s = buildHeldSpec(
+      {
+        metric_id: 'SW-999',
+        category: 'outside_accepted_evidence',
+        disposition: 'hold',
+      },
+      {
+        condition: 'x',
+        period_grain_population: '',
+        limitations_false_positives: '',
+        minimum_history: '',
+      },
+    )
+    expect(Object.keys(s).sort()).toEqual(REQUIRED)
+    expect(s.numerator).toBe('unresolved (held)')
+    expect(s.population).toBe('unresolved (held)') // empty catalog ⇒ explicit unresolved
   })
 })
 

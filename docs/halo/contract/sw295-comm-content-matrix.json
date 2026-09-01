@@ -7,6 +7,23 @@
   "capability_delta_ref": "docs/halo/contract/sw295-comm-capability-delta.json",
   "candidate_set": "nlp_content_capable_pending (75)",
   "provider_verdict": "no in-boundary governed semantic provider is approved to classify this tenant’s restricted communication content; the only AI paths transmit customer text to an external provider (out of boundary). No live model call is made in Gate 4E; semantic conditions are HELD, not proxied.",
+  "spec_schema": [
+    "metric_id",
+    "title",
+    "population",
+    "numerator",
+    "denominator",
+    "detection_threshold",
+    "window",
+    "zero_denominator",
+    "source_fields",
+    "baseline_basis",
+    "rank_direction",
+    "false_positive_controls",
+    "false_negative_controls",
+    "limitations"
+  ],
+  "spec_schema_note": "Every candidate row (promoted AND held) carries a spec object with exactly these keys. Held specs populate title/population/window/false_positive_controls/limitations from the literal catalog+capability decision and use explicit `unresolved (held)` / `not_applicable (held)` for every executable field (numerator, denominator, detection_threshold, source_fields, baseline_basis, rank_direction, false_negative_controls); nothing is invented and a held spec cannot masquerade as executable.",
   "totals": {
     "candidates": 75,
     "promoted": 5,
@@ -358,6 +375,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (auto-reply vs human classification of the first response); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "auto-reply vs human classification of the first response",
+      "spec": {
+        "metric_id": "SW-014",
+        "title": "First response is auto-reply only (no human touch within 2 hours).",
+        "population": "Lead opportunity; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "No native scheduler; first-contact/appointment/sold fields were blank in this sample.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (auto-reply vs human classification of the first response); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: auto-reply vs human classification of the first response."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -388,6 +421,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (outbound sentiment (negative/pushy) trend); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "outbound sentiment (negative/pushy) trend",
+      "spec": {
+        "metric_id": "SW-029",
+        "title": "Sentiment on rep's outbound messages trends negative/pushy (NLP flag).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (outbound sentiment (negative/pushy) trend); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: outbound sentiment (negative/pushy) trend."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -418,6 +467,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires a customer complaint / CSI verbatim source and a named-rep match — neither is in the accepted Sales communication log.",
       "missing_item": "external complaint/CSI verbatim source + rep-name attribution",
+      "spec": {
+        "metric_id": "SW-030",
+        "title": "Rep is called out by name in customer complaint or negative CSI verbatim.",
+        "population": "Depends on external system; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not simulate external truth from CRM proxies.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [outside_accepted_evidence]: requires a customer complaint / CSI verbatim source and a named-rep match — neither is in the accepted Sales communication log. Missing: external complaint/CSI verbatim source + rep-name attribution."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -448,6 +513,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (inbound customer sentiment (spike detection)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "inbound customer sentiment (spike detection)",
+      "spec": {
+        "metric_id": "SW-070",
+        "title": "Negative sentiment spike in inbound customer messages (NLP >2σ).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (inbound customer sentiment (spike detection)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: inbound customer sentiment (spike detection)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -478,6 +559,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (churn/competitor language in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "churn/competitor language in customer text",
+      "spec": {
+        "metric_id": "SW-071",
+        "title": "Customer uses churn/competitor language (\"just looking elsewhere\", \"cancel\").",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (churn/competitor language in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: churn/competitor language in customer text."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -508,6 +605,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (price/payment objection detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "price/payment objection detection",
+      "spec": {
+        "metric_id": "SW-072",
+        "title": "Price/payment objection appears in first 2 messages (early friction).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (price/payment objection detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: price/payment objection detection."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -538,6 +651,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires detecting a manager-escalation request (semantic) AND a manager note logged in the CRM — the CRM manager note is outside the accepted communication log.",
       "missing_item": "CRM manager-note source + escalation-request semantics",
+      "spec": {
+        "metric_id": "SW-073",
+        "title": "Customer requests manager escalation and no manager note logged.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [outside_accepted_evidence]: requires detecting a manager-escalation request (semantic) AND a manager note logged in the CRM — the CRM manager note is outside the accepted communication log. Missing: CRM manager-note source + escalation-request semantics."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -568,6 +697,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (profanity/complaint keyword MEANING and an escalation flag); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "profanity/complaint keyword MEANING and an escalation flag",
+      "spec": {
+        "metric_id": "SW-074",
+        "title": "Profanity or complaint keywords in customer thread without escalation flag.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (profanity/complaint keyword MEANING and an escalation flag); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: profanity/complaint keyword MEANING and an escalation flag."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -598,6 +743,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (repeated-question equivalence (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "repeated-question equivalence (same ask 3+ times)",
+      "spec": {
+        "metric_id": "SW-075",
+        "title": "Repeated question from customer (same ask 3+ times) — indicates rep not answering.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (repeated-question equivalence (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: repeated-question equivalence (same ask 3+ times)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -628,6 +789,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (\"high-intent message\" classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "\"high-intent message\" classification that triggers the silence window",
+      "spec": {
+        "metric_id": "SW-077",
+        "title": "Customer thread goes silent >5 days after high-intent message.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (\"high-intent message\" classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: \"high-intent message\" classification that triggers the silence window."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -658,6 +835,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (language detection of customer vs rep messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "language detection of customer vs rep messages",
+      "spec": {
+        "metric_id": "SW-078",
+        "title": "Language mismatch (customer writes Spanish, rep replies English only).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (language detection of customer vs rep messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: language detection of customer vs rep messages."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -688,6 +881,22 @@
       "disposition": "HOLD",
       "hold_reason": "architecture note (\"semantic layer: NLP over notes/messages\"), not a single ratified metric with a numerator/population/threshold.",
       "missing_item": "a ratified concrete metric definition",
+      "spec": {
+        "metric_id": "SW-131",
+        "title": "Semantic layer: NLP over notes/messages to catch things structured fields miss (sentiment, objections, churn language, escalations).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [requires_ratified_semantic_definition_or_threshold]: architecture note (\"semantic layer: NLP over notes/messages\"), not a single ratified metric with a numerator/population/threshold. Missing: a ratified concrete metric definition."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -718,6 +927,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (extracting a customer-stated deadline and comparing reply timing to it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "extracting a customer-stated deadline and comparing reply timing to it",
+      "spec": {
+        "metric_id": "SW-135",
+        "title": "Rep's reply arrives after customer's stated deadline (\"I need to decide by Friday\").",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (extracting a customer-stated deadline and comparing reply timing to it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: extracting a customer-stated deadline and comparing reply timing to it."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -748,6 +973,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (\"hot\" signal (payment/financing/delivery) classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "\"hot\" signal (payment/financing/delivery) classification that triggers the silence window",
+      "spec": {
+        "metric_id": "SW-136",
+        "title": "Message thread goes silent >72h after a \"hot\" signal (payment, financing, delivery question).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (\"hot\" signal (payment/financing/delivery) classification that triggers the silence window); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: \"hot\" signal (payment/financing/delivery) classification that triggers the silence window."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -778,6 +1019,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (extracting a customer-stated callback time); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "extracting a customer-stated callback time",
+      "spec": {
+        "metric_id": "SW-139",
+        "title": "Rep sends follow-up before customer's stated callback time (\"call me after 5\" ignored).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (extracting a customer-stated callback time); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: extracting a customer-stated callback time."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -808,6 +1065,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (\"high intent\" classification of the weekend/evening inbound message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "\"high intent\" classification of the weekend/evening inbound message",
+      "spec": {
+        "metric_id": "SW-141",
+        "title": "Weekend/evening message from customer with high intent, no response until 2+ days later.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (\"high intent\" classification of the weekend/evening inbound message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: \"high intent\" classification of the weekend/evening inbound message."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -838,6 +1111,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (whether a reply answers the specific question asked (Q-A alignment)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "whether a reply answers the specific question asked (Q-A alignment)",
+      "spec": {
+        "metric_id": "SW-143",
+        "title": "Reply doesn't answer the specific question asked (semantic mismatch).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (whether a reply answers the specific question asked (Q-A alignment)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: whether a reply answers the specific question asked (Q-A alignment)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -868,6 +1157,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (whether a reply ignores information the customer already provided); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "whether a reply ignores information the customer already provided",
+      "spec": {
+        "metric_id": "SW-144",
+        "title": "Rep's message ignores information the customer already provided (asking for name/vehicle already stated).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (whether a reply ignores information the customer already provided); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: whether a reply ignores information the customer already provided."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -898,6 +1203,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (whether the rep asked a question (a \"?\" count is a proxy, not the concept \"question\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "whether the rep asked a question (a \"?\" count is a proxy, not the concept \"question\")",
+      "spec": {
+        "metric_id": "SW-146",
+        "title": "Zero questions asked by rep across entire thread (no discovery).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (whether the rep asked a question (a \"?\" count is a proxy, not the concept \"question\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: whether the rep asked a question (a \"?\" count is a proxy, not the concept \"question\")."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -928,6 +1249,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (the customer’s stated vehicle of interest and whether the rep mentions it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "the customer’s stated vehicle of interest and whether the rep mentions it",
+      "spec": {
+        "metric_id": "SW-147",
+        "title": "Rep never mentions customer's stated vehicle of interest by name/trim.",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (the customer’s stated vehicle of interest and whether the rep mentions it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: the customer’s stated vehicle of interest and whether the rep mentions it."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -958,6 +1295,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (pricing/payment/next-step CTA presence in a message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "pricing/payment/next-step CTA presence in a message",
+      "spec": {
+        "metric_id": "SW-148",
+        "title": "No pricing, payment, or next-step CTA in any rep message across 5+ exchanges.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (pricing/payment/next-step CTA presence in a message); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: pricing/payment/next-step CTA presence in a message."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -988,6 +1341,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (greeting/sign-off style vs the store’s top performers (peer style model)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "greeting/sign-off style vs the store’s top performers (peer style model)",
+      "spec": {
+        "metric_id": "SW-151",
+        "title": "Missing greeting/sign-off patterns typical of the store's top performers.",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (greeting/sign-off style vs the store’s top performers (peer style model)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: greeting/sign-off style vs the store’s top performers (peer style model)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1018,6 +1387,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a customer price/payment concern and whether the reply addresses it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a customer price/payment concern and whether the reply addresses it",
+      "spec": {
+        "metric_id": "SW-152",
+        "title": "Customer mentions price/payment concern and rep doesn't address it in reply.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a customer price/payment concern and whether the reply addresses it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a customer price/payment concern and whether the reply addresses it."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1048,6 +1433,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a financing/credit question and whether the rep pivots away); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a financing/credit question and whether the rep pivots away",
+      "spec": {
+        "metric_id": "SW-153",
+        "title": "Customer asks about financing/credit and rep pivots away without answering.",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a financing/credit question and whether the rep pivots away); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a financing/credit question and whether the rep pivots away."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1078,6 +1479,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (buying-signal phrases (\"I’m ready\") and an appointment-set join within 1h); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "buying-signal phrases (\"I’m ready\") and an appointment-set join within 1h",
+      "spec": {
+        "metric_id": "SW-154",
+        "title": "Customer says \"I'm ready\" / \"let's do it\" / \"when can I come in\" — no appointment set within 1h.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (buying-signal phrases (\"I’m ready\") and an appointment-set join within 1h); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: buying-signal phrases (\"I’m ready\") and an appointment-set join within 1h."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1108,6 +1525,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (voluntary trade info and a trade-appraisal offer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "voluntary trade info and a trade-appraisal offer",
+      "spec": {
+        "metric_id": "SW-155",
+        "title": "Customer provides trade info voluntarily, no trade appraisal offer follows.",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (voluntary trade info and a trade-appraisal offer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: voluntary trade info and a trade-appraisal offer."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1138,6 +1571,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (an out-the-door price ask repeated without an answer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "an out-the-door price ask repeated without an answer",
+      "spec": {
+        "metric_id": "SW-156",
+        "title": "Customer asks for out-the-door price 2+ times without receiving one.",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (an out-the-door price ask repeated without an answer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: an out-the-door price ask repeated without an answer."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1168,6 +1617,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (an evasion pattern (\"come in and let’s talk\" answering \"how much\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "an evasion pattern (\"come in and let’s talk\" answering \"how much\")",
+      "spec": {
+        "metric_id": "SW-157",
+        "title": "Rep responds to \"how much\" with only \"come in and let's talk\" (evasion pattern).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (an evasion pattern (\"come in and let’s talk\" answering \"how much\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: an evasion pattern (\"come in and let’s talk\" answering \"how much\")."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1198,6 +1663,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a credit-challenge mention and a special-finance handoff); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a credit-challenge mention and a special-finance handoff",
+      "spec": {
+        "metric_id": "SW-158",
+        "title": "Customer mentions credit challenge — no special finance handoff.",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a credit-challenge mention and a special-finance handoff); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a credit-challenge mention and a special-finance handoff."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1228,6 +1709,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (customer urgency and whether the rep mirrors it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "customer urgency and whether the rep mirrors it",
+      "spec": {
+        "metric_id": "SW-159",
+        "title": "Customer expresses urgency (\"this weekend\", \"before month-end\") with no urgency mirrored back.",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (customer urgency and whether the rep mirrors it); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: customer urgency and whether the rep mirrors it."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1258,6 +1755,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a discount offered before the customer objects on price); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a discount offered before the customer objects on price",
+      "spec": {
+        "metric_id": "SW-160",
+        "title": "Rep offers discount before customer objects on price (leaving gross on the table).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a discount offered before the customer objects on price); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a discount offered before the customer objects on price."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1288,6 +1801,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a competitor dealer/brand named in customer text (entity recognition)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a competitor dealer/brand named in customer text (entity recognition)",
+      "spec": {
+        "metric_id": "SW-161",
+        "title": "Customer mentions competitor dealer/brand by name.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a competitor dealer/brand named in customer text (entity recognition)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a competitor dealer/brand named in customer text (entity recognition)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1318,6 +1847,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (shopping-around phrases in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "shopping-around phrases in customer text",
+      "spec": {
+        "metric_id": "SW-162",
+        "title": "Phrases like \"shopping around\", \"getting other quotes\", \"still looking\".",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (shopping-around phrases in customer text); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: shopping-around phrases in customer text."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1348,6 +1893,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (exit-intent phrases (\"not interested\", \"take me off your list\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "exit-intent phrases (\"not interested\", \"take me off your list\")",
+      "spec": {
+        "metric_id": "SW-163",
+        "title": "\"Never mind\", \"not interested anymore\", \"take me off your list\".",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (exit-intent phrases (\"not interested\", \"take me off your list\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: exit-intent phrases (\"not interested\", \"take me off your list\")."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1378,6 +1939,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a specific competing offer referenced by the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a specific competing offer referenced by the customer",
+      "spec": {
+        "metric_id": "SW-164",
+        "title": "Customer references a specific competing offer (\"[other dealer] offered me X\").",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a specific competing offer referenced by the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a specific competing offer referenced by the customer."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1408,6 +1985,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (an OTD/final-number ask after previously-warm intent (state + semantics)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "an OTD/final-number ask after previously-warm intent (state + semantics)",
+      "spec": {
+        "metric_id": "SW-165",
+        "title": "Customer asks for OTD/final number after previously being warm (comparison-shopping mode).",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (an OTD/final-number ask after previously-warm intent (state + semantics)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: an OTD/final-number ask after previously-warm intent (state + semantics)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1438,6 +2031,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a tone shift from questions to short replies); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a tone shift from questions to short replies",
+      "spec": {
+        "metric_id": "SW-166",
+        "title": "Customer's tone shifts from questions to short replies (\"k\", \"ok\", \"maybe\").",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a tone shift from questions to short replies); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a tone shift from questions to short replies."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1468,6 +2077,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (pause/defer phrases (\"think about it\", \"revisit next month\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "pause/defer phrases (\"think about it\", \"revisit next month\")",
+      "spec": {
+        "metric_id": "SW-168",
+        "title": "Customer asks to \"pause\", \"think about it\", or \"revisit next month\".",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (pause/defer phrases (\"think about it\", \"revisit next month\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: pause/defer phrases (\"think about it\", \"revisit next month\")."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1498,6 +2123,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a life event that delays purchase (job change, move, medical)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a life event that delays purchase (job change, move, medical)",
+      "spec": {
+        "metric_id": "SW-169",
+        "title": "Mentions of life event that delays purchase (job change, move, medical).",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a life event that delays purchase (job change, move, medical)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a life event that delays purchase (job change, move, medical)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1528,6 +2169,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (negative sentiment on the customer’s last messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "negative sentiment on the customer’s last messages",
+      "spec": {
+        "metric_id": "SW-170",
+        "title": "Negative sentiment score on customer's last 2 messages (NLP flag).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (negative sentiment on the customer’s last messages); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: negative sentiment on the customer’s last messages."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1558,6 +2215,22 @@
       "disposition": "HOLD",
       "hold_reason": "repeated !!!/??? are deterministic, but the disjunct \"ALL CAPS\" cannot be separated from auto-domain acronyms (SUV, VIN, AWD, MSRP, APR) without a ratified caps rule; promoting only the punctuation part would drop a named disjunct and change the condition.",
       "missing_item": "a ratified ALL-CAPS rule that excludes domain acronyms",
+      "spec": {
+        "metric_id": "SW-171",
+        "title": "Escalating punctuation (!!!, ???, ALL CAPS) from customer.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [requires_ratified_semantic_definition_or_threshold]: repeated !!!/??? are deterministic, but the disjunct \"ALL CAPS\" cannot be separated from auto-domain acronyms (SUV, VIN, AWD, MSRP, APR) without a ratified caps rule; promoting only the punctuation part would drop a named disjunct and change the condition. Missing: a ratified ALL-CAPS rule that excludes domain acronyms."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1588,6 +2261,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (profanity/slurs/complaint keyword MEANING (either direction)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "profanity/slurs/complaint keyword MEANING (either direction)",
+      "spec": {
+        "metric_id": "SW-172",
+        "title": "Profanity, slurs, or complaint keywords in either direction.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (profanity/slurs/complaint keyword MEANING (either direction)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: profanity/slurs/complaint keyword MEANING (either direction)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1618,6 +2307,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (rep tone flagged pushy/aggressive by a sentiment model); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "rep tone flagged pushy/aggressive by a sentiment model",
+      "spec": {
+        "metric_id": "SW-173",
+        "title": "Rep tone flagged as pushy/aggressive by sentiment model.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (rep tone flagged pushy/aggressive by a sentiment model); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: rep tone flagged pushy/aggressive by a sentiment model."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1648,6 +2353,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (emotion words (\"frustrated\", \"misled\") as customer sentiment, not literal substrings); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "emotion words (\"frustrated\", \"misled\") as customer sentiment, not literal substrings",
+      "spec": {
+        "metric_id": "SW-174",
+        "title": "Customer uses words like \"frustrated\", \"disappointed\", \"unprofessional\", \"misled\".",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (emotion words (\"frustrated\", \"misled\") as customer sentiment, not literal substrings); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: emotion words (\"frustrated\", \"misled\") as customer sentiment, not literal substrings."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1678,6 +2399,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (sarcasm / passive-aggression detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "sarcasm / passive-aggression detection",
+      "spec": {
+        "metric_id": "SW-175",
+        "title": "Sarcasm or passive-aggressive patterns detected in customer replies.",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (sarcasm / passive-aggression detection); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: sarcasm / passive-aggression detection."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1708,6 +2445,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (rep sentiment consistency (polite then curt) across a thread); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "rep sentiment consistency (polite then curt) across a thread",
+      "spec": {
+        "metric_id": "SW-176",
+        "title": "Rep sentiment inconsistent — polite then curt (mood-driven service).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (rep sentiment consistency (polite then curt) across a thread); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: rep sentiment consistency (polite then curt) across a thread."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1738,6 +2491,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a request to speak to a manager / \"someone else\"); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a request to speak to a manager / \"someone else\"",
+      "spec": {
+        "metric_id": "SW-177",
+        "title": "Customer requests to speak to a manager or \"someone else\".",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a request to speak to a manager / \"someone else\"); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a request to speak to a manager / \"someone else\"."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1768,6 +2537,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (apology detection (\"apology\" is a meaning, not a fixed keyword list)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "apology detection (\"apology\" is a meaning, not a fixed keyword list)",
+      "spec": {
+        "metric_id": "SW-178",
+        "title": "Apology count from rep >2 in single thread (something went wrong).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (apology detection (\"apology\" is a meaning, not a fixed keyword list)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: apology detection (\"apology\" is a meaning, not a fixed keyword list)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1798,6 +2583,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (quoted prices/payments across messages and whether they differ without explanation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "quoted prices/payments across messages and whether they differ without explanation",
+      "spec": {
+        "metric_id": "SW-179",
+        "title": "Rep quotes different price/payment in successive messages without explanation.",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (quoted prices/payments across messages and whether they differ without explanation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: quoted prices/payments across messages and whether they differ without explanation."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1828,6 +2629,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (an explicit promise (\"I’ll call at 3\") and a follow-through join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "an explicit promise (\"I’ll call at 3\") and a follow-through join",
+      "spec": {
+        "metric_id": "SW-181",
+        "title": "Promise made (\"I'll call you at 3\") with no follow-through logged.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (an explicit promise (\"I’ll call at 3\") and a follow-through join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: an explicit promise (\"I’ll call at 3\") and a follow-through join."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1858,6 +2675,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires detecting a \"manager approved\" claim (semantic) AND a backing manager note in the CRM — the CRM note is outside the accepted communication log.",
       "missing_item": "CRM manager-note source + claim semantics",
+      "spec": {
+        "metric_id": "SW-183",
+        "title": "Rep says \"manager approved\" with no manager note in CRM to back it.",
+        "population": "Record or current dashboard snapshot; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Manual observations cannot support portfolio-scale causal claims.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [outside_accepted_evidence]: requires detecting a \"manager approved\" claim (semantic) AND a backing manager note in the CRM — the CRM note is outside the accepted communication log. Missing: CRM manager-note source + claim semantics."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1888,6 +2721,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (the rep asking for the same info twice (semantic equivalence)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "the rep asking for the same info twice (semantic equivalence)",
+      "spec": {
+        "metric_id": "SW-185",
+        "title": "Rep asks customer for the same info twice (didn't read prior messages).",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (the rep asking for the same info twice (semantic equivalence)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: the rep asking for the same info twice (semantic equivalence)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1918,6 +2767,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (an unsubstantiable compliance promise (\"guaranteed approval\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "an unsubstantiable compliance promise (\"guaranteed approval\")",
+      "spec": {
+        "metric_id": "SW-193",
+        "title": "Rep makes promise CRM can't substantiate (\"guaranteed approval\", \"lowest price in the state\").",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (an unsubstantiable compliance promise (\"guaranteed approval\")); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: an unsubstantiable compliance promise (\"guaranteed approval\")."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1948,6 +2813,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (two reps giving CONFLICTING info within 24h (the conflict is semantic)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "two reps giving CONFLICTING info within 24h (the conflict is semantic)",
+      "spec": {
+        "metric_id": "SW-194",
+        "title": "Two reps message same customer within 24h with conflicting info.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (two reps giving CONFLICTING info within 24h (the conflict is semantic)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: two reps giving CONFLICTING info within 24h (the conflict is semantic)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -1978,6 +2859,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a floor-rep self-introduction and a BDC-appointment/role join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a floor-rep self-introduction and a BDC-appointment/role join",
+      "spec": {
+        "metric_id": "SW-195",
+        "title": "BDC sets appointment, floor rep never introduces themselves before visit.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a floor-rep self-introduction and a BDC-appointment/role join); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a floor-rep self-introduction and a BDC-appointment/role join."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2008,6 +2905,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a manager takeover with no context recap to the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a manager takeover with no context recap to the customer",
+      "spec": {
+        "metric_id": "SW-196",
+        "title": "Manager takes over thread with no context recap to customer.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a manager takeover with no context recap to the customer); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a manager takeover with no context recap to the customer."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2038,6 +2951,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a reassigned rep failing to acknowledge the prior conversation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a reassigned rep failing to acknowledge the prior conversation",
+      "spec": {
+        "metric_id": "SW-197",
+        "title": "Lead reassigned, new rep doesn't acknowledge prior conversation.",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a reassigned rep failing to acknowledge the prior conversation); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a reassigned rep failing to acknowledge the prior conversation."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2068,6 +2997,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (the customer’s stated vehicle interest changing 3+ times); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "the customer’s stated vehicle interest changing 3+ times",
+      "spec": {
+        "metric_id": "SW-200",
+        "title": "Customer's stated vehicle interest changes 3+ times in a thread (unclear discovery).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (the customer’s stated vehicle interest changing 3+ times); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: the customer’s stated vehicle interest changing 3+ times."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2098,6 +3043,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (whether the rep confirms the customer’s actual need (family size, use, budget)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "whether the rep confirms the customer’s actual need (family size, use, budget)",
+      "spec": {
+        "metric_id": "SW-201",
+        "title": "Rep never confirms customer's actual need (family size, use case, budget).",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (whether the rep confirms the customer’s actual need (family size, use, budget)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: whether the rep confirms the customer’s actual need (family size, use, budget)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2128,6 +3089,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (language detection (customer writes Spanish, rep replies English only)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "language detection (customer writes Spanish, rep replies English only)",
+      "spec": {
+        "metric_id": "SW-202",
+        "title": "Language mismatch — customer writes in Spanish/other, rep replies in English only.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (language detection (customer writes Spanish, rep replies English only)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: language detection (customer writes Spanish, rep replies English only)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2158,6 +3135,22 @@
       "disposition": "HOLD",
       "hold_reason": "reading-level is computable, but \"far above/below the customer (mismatch)\" has no ratified threshold or comparison basis.",
       "missing_item": "a ratified reading-level mismatch threshold",
+      "spec": {
+        "metric_id": "SW-203",
+        "title": "Reading level of rep's messages far above/below customer's (mismatch).",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [requires_ratified_semantic_definition_or_threshold]: reading-level is computable, but \"far above/below the customer (mismatch)\" has no ratified threshold or comparison basis. Missing: a ratified reading-level mismatch threshold."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2188,6 +3181,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a competence gap (rep clearly doesn’t know a feature/model the customer asks about)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a competence gap (rep clearly doesn’t know a feature/model the customer asks about)",
+      "spec": {
+        "metric_id": "SW-204",
+        "title": "Customer asks about a feature/model the rep clearly doesn't know (competence gap).",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a competence gap (rep clearly doesn’t know a feature/model the customer asks about)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a competence gap (rep clearly doesn’t know a feature/model the customer asks about)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2218,6 +3227,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (an emotional-escalation curve (sentiment worsening across messages)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "an emotional-escalation curve (sentiment worsening across messages)",
+      "spec": {
+        "metric_id": "SW-205",
+        "title": "Emotional escalation curve — sentiment worsens across each message.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (an emotional-escalation curve (sentiment worsening across messages)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: an emotional-escalation curve (sentiment worsening across messages)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2248,6 +3273,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a repeated customer question (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a repeated customer question (same ask 3+ times)",
+      "spec": {
+        "metric_id": "SW-206",
+        "title": "Repeated question (customer asks same thing 3+ times) — rep is dodging.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a repeated customer question (same ask 3+ times)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a repeated customer question (same ask 3+ times)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2278,6 +3319,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a past mention of family/friend interest (referral mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a past mention of family/friend interest (referral mining)",
+      "spec": {
+        "metric_id": "SW-239",
+        "title": "Customers who mentioned family/friend interest in past communications (NLP dig).",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a past mention of family/friend interest (referral mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a past mention of family/friend interest (referral mining)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2308,6 +3365,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a past mention of baby/marriage/move/new job (life-event mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a past mention of baby/marriage/move/new job (life-event mining)",
+      "spec": {
+        "metric_id": "SW-256",
+        "title": "Customers who mentioned baby/marriage/move/new job in past comms — lifecycle pitch.",
+        "population": "Condition-dependent; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Do not infer missing history, source spend, or external behavior.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a past mention of baby/marriage/move/new job (life-event mining)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a past mention of baby/marriage/move/new job (life-event mining)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2338,6 +3411,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (an intent classifier (buying-signal/info/objection/complaint/exit)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "an intent classifier (buying-signal/info/objection/complaint/exit)",
+      "spec": {
+        "metric_id": "SW-285",
+        "title": "Intent classifier: buying-signal, information-seeking, objection, complaint, exit.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (an intent classifier (buying-signal/info/objection/complaint/exit)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: an intent classifier (buying-signal/info/objection/complaint/exit)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2368,6 +3457,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (a sentiment tracker (per-message + thread-trend deltas)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "a sentiment tracker (per-message + thread-trend deltas)",
+      "spec": {
+        "metric_id": "SW-286",
+        "title": "Sentiment tracker: per-message and thread-trend deltas.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (a sentiment tracker (per-message + thread-trend deltas)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: a sentiment tracker (per-message + thread-trend deltas)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2398,6 +3503,22 @@
       "disposition": "HOLD",
       "hold_reason": "requires semantic understanding of message meaning (question-answer alignment (did the reply address the question?)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords.",
       "missing_item": "question-answer alignment (did the reply address the question?)",
+      "spec": {
+        "metric_id": "SW-287",
+        "title": "Question-answer alignment: did rep's reply address customer's actual question?",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [definition_exact_via_governed_semantic_provider]: requires semantic understanding of message meaning (question-answer alignment (did the reply address the question?)); no in-boundary governed semantic provider exists, so it cannot be evaluated without proxying meaning as keywords. Missing: question-answer alignment (did the reply address the question?)."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",
@@ -2428,6 +3549,22 @@
       "disposition": "HOLD",
       "hold_reason": "a \"personalization score\" (template-vs-custom ratio) is an unratified composite; its deterministic components (identical body / merge tags) are promoted separately as SW-021/SW-142/SW-145, but the score formula/threshold is not ratified.",
       "missing_item": "a ratified personalization-score formula + threshold",
+      "spec": {
+        "metric_id": "SW-289",
+        "title": "Personalization score: template detection vs custom content ratio.",
+        "population": "Communication event; current thread grouping is derived; source periods in supporting-data-summary.json",
+        "numerator": "unresolved (held)",
+        "denominator": "unresolved (held)",
+        "detection_threshold": "unresolved (held)",
+        "window": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "zero_denominator": "not evaluated (held); missing is never zero",
+        "source_fields": ["unresolved (held)"],
+        "baseline_basis": "unresolved (held)",
+        "rank_direction": "not_applicable (held)",
+        "false_positive_controls": "Keyword/thread results are provisional; no native sentiment/intent columns or thread ID.",
+        "false_negative_controls": "unresolved (held)",
+        "limitations": "HELD [requires_ratified_semantic_definition_or_threshold]: a \"personalization score\" (template-vs-custom ratio) is an unratified composite; its deterministic components (identical body / merge tags) are promoted separately as SW-021/SW-142/SW-145, but the score formula/threshold is not ratified. Missing: a ratified personalization-score formula + threshold."
+      },
       "rooftop_disposition": [
         {
           "dealer_id": "21043",

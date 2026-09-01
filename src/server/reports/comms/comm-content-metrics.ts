@@ -564,6 +564,69 @@ export const CONTENT_CANDIDATE_IDS: ReadonlyArray<string> = [
 export const CONTENT_PROMOTED_IDS: ReadonlyArray<ContentMetricId> =
   CONTENT_PROMOTED_SPECS.map((s) => s.metric_id)
 
+// ── Schema-complete per-ID spec for a HELD row ────────────────────────────────
+// Gate 4E-R1: every candidate row (promoted AND held) carries a spec object with the SAME key set
+// as the promoted spec. A HELD spec populates fields KNOWN from the literal catalog/capability
+// decision (title, population, window, false-positive controls, limitations) and uses EXPLICIT
+// `unresolved (held)` / `not_applicable (held)` sentinels for every field that would define an
+// executable computation (numerator, denominator, detection_threshold, source_fields, baseline,
+// rank direction, false-negative controls) — nothing is invented, and a held spec can never
+// masquerade as an executable/promoted definition.
+export type HeldSpec = {
+  metric_id: string
+  title: string
+  population: string
+  numerator: string
+  denominator: string
+  detection_threshold: string
+  window: string
+  zero_denominator: string
+  source_fields: Array<string>
+  baseline_basis: string
+  rank_direction: string
+  false_positive_controls: string
+  false_negative_controls: string
+  limitations: string
+}
+
+/** The required per-ID spec schema, DERIVED from the promoted spec (not guessed). Both promoted
+ *  and held specs must carry exactly these keys. */
+export const CONTENT_SPEC_KEYS: Array<keyof PromotedSpec> = Object.keys(
+  CONTENT_PROMOTED_SPECS[0],
+) as Array<keyof PromotedSpec>
+
+/** The explicit sentinel marking a field whose executable value is NOT resolved (held). */
+export const HELD_UNRESOLVED = 'unresolved (held)' as const
+
+/** Literal catalog/capability facts a held spec may populate from (no inference). */
+export type CatalogFacts = {
+  condition: string
+  period_grain_population: string
+  limitations_false_positives: string
+  minimum_history: string
+}
+
+/** Build a schema-complete held spec: literal catalog/capability where known; explicit
+ *  held/not-applicable sentinels for every executable field. */
+export function buildHeldSpec(d: ContentDecision, f: CatalogFacts): HeldSpec {
+  return {
+    metric_id: d.metric_id,
+    title: f.condition,
+    population: f.period_grain_population || HELD_UNRESOLVED,
+    numerator: HELD_UNRESOLVED,
+    denominator: HELD_UNRESOLVED,
+    detection_threshold: HELD_UNRESOLVED,
+    window: f.minimum_history || HELD_UNRESOLVED,
+    zero_denominator: 'not evaluated (held); missing is never zero',
+    source_fields: [HELD_UNRESOLVED],
+    baseline_basis: HELD_UNRESOLVED,
+    rank_direction: 'not_applicable (held)',
+    false_positive_controls: f.limitations_false_positives || HELD_UNRESOLVED,
+    false_negative_controls: HELD_UNRESOLVED,
+    limitations: `HELD [${d.category}]: ${d.hold_reason ?? ''}${d.missing_item ? ` Missing: ${d.missing_item}.` : ''}`,
+  }
+}
+
 // ── Evaluators (pure; over the reader's NON-PII content-feature rows) ──────────
 const DIR_OUT = 'Outbound'
 const WRITTEN_CHANNELS = new Set(['Text', 'Email'])

@@ -72,14 +72,26 @@ category, disposition, promoted spec or hold reason) + the 225-cell rooftop disp
 provider verdict + category tally. Candidate set asserted equal to the committed
 `nlp_content_capable_pending` 75 (unique, canonical).
 
+**Gate 4E-R1 (shadow repair):** EVERY candidate row — promoted AND held — now carries a
+schema-complete `spec` object with exactly the 14-key schema DERIVED from the promoted spec
+(`spec_schema` in the artifact): `metric_id, title, population, numerator, denominator,
+detection_threshold, window, zero_denominator, source_fields, baseline_basis, rank_direction,
+false_positive_controls, false_negative_controls, limitations`. A HELD spec populates
+`title`/`population`/`window`/`false_positive_controls`/`limitations` from the LITERAL
+catalog+capability decision and sets every executable field (`numerator`, `denominator`,
+`detection_threshold`, `source_fields`, `baseline_basis`, `rank_direction`,
+`false_negative_controls`) to an explicit `unresolved (held)` / `not_applicable (held)` sentinel —
+nothing invented, and a held spec can never masquerade as an executable/promoted definition. A
+regression test asserts all 75 specs match the schema and that HOLD specs are non-executable.
+
 ## Committed artifacts (SHA-256 first 16)
 
 | File | sha256:16 |
 | ---- | --------- |
 | `src/server/reports/comms/comm-content-features.ts` | `cba283ce2109a66f` |
 | `src/server/reports/comms/comm-content-reader.ts` | `ab34883ce0f875ef` |
-| `src/server/reports/comms/comm-content-metrics.ts` | `f2d5817c3fb4aaa7` |
-| `docs/halo/contract/sw295-comm-content-matrix.json` | `abe34ff8954257b5` |
+| `src/server/reports/comms/comm-content-metrics.ts` | `a2643ab9fdde7aa2` |
+| `docs/halo/contract/sw295-comm-content-matrix.json` | `12652f79cb28ffc5` |
 
 Each `sha256:16` is recomputed from the current committed bytes by
 `src/test/comm-evidence-hashes.test.ts`, so a later formatting cycle that desyncs this proof fails

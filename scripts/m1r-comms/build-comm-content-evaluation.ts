@@ -35,7 +35,9 @@ import {
   CONTENT_CANDIDATE_IDS,
   CONTENT_HELD_DECISIONS,
   CONTENT_PROMOTED_SPECS,
+  CONTENT_SPEC_KEYS,
   PROVIDER_VERDICT,
+  buildHeldSpec,
   evaluateCommContentMetrics,
 } from '@/server/reports/comms/comm-content-metrics'
 
@@ -235,8 +237,15 @@ async function main(): Promise<void> {
 
   // ── Candidate-set integrity: exactly the 75 nlp_content_capable_pending IDs, unique/canonical ──
   const capDelta = JSON.parse(fs.readFileSync(CAP_DELTA, 'utf8')) as {
-    rows: Array<{ metric_id: string; category: string }>
+    rows: Array<{
+      metric_id: string
+      category: string
+      minimum_history?: string
+    }>
   }
+  const minHistoryById = new Map(
+    capDelta.rows.map((r) => [r.metric_id, String(r.minimum_history ?? '')]),
+  )
   const nlp75 = capDelta.rows
     .filter((r) => r.category === 'nlp_content_capable_pending')
     .map((r) => r.metric_id)
@@ -256,7 +265,13 @@ async function main(): Promise<void> {
   const catalog = JSON.parse(fs.readFileSync(CATALOG, 'utf8')) as unknown
   const condById = new Map<
     string,
-    { condition: string; section: string; subsection: string }
+    {
+      condition: string
+      section: string
+      subsection: string
+      period_grain_population: string
+      limitations_false_positives: string
+    }
   >()
   const walk = (o: unknown): void => {
     if (Array.isArray(o)) {
@@ -269,6 +284,10 @@ async function main(): Promise<void> {
           condition: String(rec.condition ?? ''),
           section: String(rec.section ?? ''),
           subsection: String(rec.subsection ?? ''),
+          period_grain_population: String(rec.period_grain_population ?? ''),
+          limitations_false_positives: String(
+            rec.limitations_false_positives ?? '',
+          ),
         })
       for (const v of Object.values(rec)) walk(v)
     }
@@ -335,6 +354,12 @@ async function main(): Promise<void> {
       disposition: 'HOLD',
       hold_reason: held.hold_reason,
       missing_item: held.missing_item,
+      spec: buildHeldSpec(held, {
+        condition: cond.condition,
+        period_grain_population: cond.period_grain_population,
+        limitations_false_positives: cond.limitations_false_positives,
+        minimum_history: minHistoryById.get(id) ?? '',
+      }),
       rooftop_disposition: GOVERNED.map((d) => ({
         dealer_id: d,
         status: 'unresolved',
@@ -343,6 +368,22 @@ async function main(): Promise<void> {
       })),
     }
   })
+
+  // Every candidate row (promoted AND held) must carry a schema-complete spec with the derived key
+  // set; a held spec must not masquerade as executable (its numerator/denominator are held sentinels).
+  for (const r of matrixRows) {
+    const keys = Object.keys(r.spec).sort()
+    must(
+      JSON.stringify(keys) === JSON.stringify([...CONTENT_SPEC_KEYS].sort()),
+      `${r.metric_id} spec keys != required schema`,
+    )
+    if (r.disposition === 'HOLD')
+      must(
+        r.spec.numerator === 'unresolved (held)' &&
+          r.spec.denominator === 'unresolved (held)',
+        `${r.metric_id} held spec must not be executable`,
+      )
+  }
 
   // 225-cell accounting.
   const cellCount = matrixRows.reduce(
@@ -378,6 +419,9 @@ async function main(): Promise<void> {
     capability_delta_ref: 'docs/halo/contract/sw295-comm-capability-delta.json',
     candidate_set: 'nlp_content_capable_pending (75)',
     provider_verdict: PROVIDER_VERDICT,
+    spec_schema: CONTENT_SPEC_KEYS,
+    spec_schema_note:
+      'Every candidate row (promoted AND held) carries a spec object with exactly these keys. Held specs populate title/population/window/false_positive_controls/limitations from the literal catalog+capability decision and use explicit `unresolved (held)` / `not_applicable (held)` for every executable field (numerator, denominator, detection_threshold, source_fields, baseline_basis, rank_direction, false_negative_controls); nothing is invented and a held spec cannot masquerade as executable.',
     totals: {
       candidates: 75,
       promoted: promotedIds.length,
