@@ -76,7 +76,7 @@ candidate_unproved) preserved. `data_minimization.validation.ok=true`. Not a new
 
 ## Validation summary
 
-- Gate 3 focused suite **41/41** (closure 10, promotion-probe 17, pipeline 8, data-minimization 6) + gate3 evidence-hash guard 2 + Gate 2 + Gate 1 + consumer regressions green.
+- Gate 3 focused suite **49/49** (closure 10, promotion-probe 17, pipeline 16, data-minimization 6) + gate3 evidence-hash guard 2 (counted separately) + Gate 2 + Gate 1 + consumer regressions green.
 - Typecheck **498 == baseline** (zero new Gate 3 errors); lint clean; **actual Prettier check
   clean** over every Gate 3 file incl generated JSON; deterministic byte-identical rerun.
 - No `/srv` write; no raw file / PII / secret committed; Gate 2 ledger unchanged
