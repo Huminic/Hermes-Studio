@@ -12,6 +12,30 @@ no missing→zero, no quarantined-source values, Sales-only preserved. No custom
   condition-specific line was mis-grouped); corrected to sum to **876** and reconciled by the
   Gate 3 closure views. Guards remain true.
 
+## Controller corrections applied (before shadow acceptance)
+
+Integrating the authorized READ-ONLY Custom Reporting inspection (28 datasets; Service +
+Service Appointments permanently excluded) at `reporting-vinsolutions.app.coxautoinc.com`:
+
+1. **Approval-state truth.** `duane_approval_required` now means a NEW material approval. The
+   active goal already authorizes read-only browser capture + unsaved export retrieval +
+   historical accumulation → those routes are `false`. Saved-schedule mutation, external
+   feeds, compliance/PII, cross-rooftop, and Service work → `true`. Result: **603 cells need
+   no new approval; 273 do.**
+2. **Domain split.** The 105 outside-boundary cells are split by ACTUAL domain — **service 27,
+   compliance 48, cross_rooftop 9, external_enrichment 21** — routed to
+   `separate_service_workspace` / `compliance_authorization` / `separate_cross_rooftop_route`
+   (new route) / `external_feed`. Only genuine Service-domain conditions reach the Service
+   workspace. All IDs preserved; 876 reconciliation intact.
+3. **No "one pass closes 510".** The 510 quarantined cells are 3 report families × 3 dealers,
+   with two candidate routes — read-only UNSAVED Sales-only reconstruction (no approval) vs
+   saved-schedule repair (needs the hidden Lead Intent control standard Edit Parameters did
+   not expose) — **both `candidate_unproved`**.
+4. **Dataset evidence integrated, non-overclaiming.** `acquisition-contract.json` records the
+   28 datasets + observed fields + the caveat that presence proves a candidate route only.
+   Every route is `route_proof_state=candidate_unproved`; fewest honest browser passes are one
+   read-only session per dealer, none claimed to "close" a cell.
+
 ## 1. Executable 876-cell closure registry
 
 `closure-registry.json` — one deterministic record per unresolved cell, **876 records** with
@@ -42,7 +66,12 @@ ledger reason categories (`reconciles_to_876=true`, `reconciles_to_gate2_reason_
 | denominator_integrity (SW-050)       | 3     |
 
 Sum = 876. by_dealer = 292 unresolved each. **Sales-only boundary conflicts identified (not
-deleted): 129 cells** (all Service-to-Sales §10 + compliance/cross-rooftop conditions).
+deleted): 45 cells** (genuine Service-domain 27 + cross-rooftop 9 + Service-to-Sales §10
+non-boundary conditions 9). Compliance + external-enrichment are Sales-scoped (need
+authorization / a feed), not Sales-only boundary conflicts. Route split: 519
+new_readonly_vinsolutions_export, 189 external_feed, 48 compliance_authorization, 42
+readonly_browser_capture, 42 historical_accumulation, 27 separate_service_workspace, 9
+separate_cross_rooftop_route.
 
 ## 2. Maximize evaluation from accepted bytes — proven condition-by-condition
 
@@ -75,15 +104,15 @@ The Gate 2 ledger (`spine-ledger.json` `c028e227…`) is unchanged.
 
 | File                                                       | sha256:16          |
 | ---------------------------------------------------------- | ------------------ |
-| `src/server/reports/evaluator/closure.ts`                  | `f382ab835cdf3b93` |
+| `src/server/reports/evaluator/closure.ts`                  | `c20efda9df964b49` |
 | `src/server/reports/evaluator/promotion-probe.ts`          | `4628026ce75541b4` |
 | `src/server/reports/evaluator/pipeline.ts`                 | `3d7a9be96753d67e` |
-| `scripts/m1r-evaluator/build-closure.ts`                   | `a382dceba5d6d2d3` |
+| `scripts/m1r-evaluator/build-closure.ts`                   | `859ae8a04215ed89` |
 | `scripts/m1r-evaluator/run-pipeline.ts`                    | `981e29548e2d6e6e` |
-| `docs/halo/contract/acquisition-contract.json`             | `73dd79000a8d2f2f` |
-| `docs/halo/contract/acquisition-contract.md`               | `fb8b50517d86062e` |
-| `docs/halo/evidence/m1r/evaluator/closure-registry.json`   | `7fdced268ecebc65` |
-| `docs/halo/evidence/m1r/evaluator/closure-views.json`      | `fb93744b023a9845` |
+| `docs/halo/contract/acquisition-contract.json`             | `4c3059380fdb88c2` |
+| `docs/halo/contract/acquisition-contract.md`               | `63f8c2eec7c5e100` |
+| `docs/halo/evidence/m1r/evaluator/closure-registry.json`   | `27060deada9e7076` |
+| `docs/halo/evidence/m1r/evaluator/closure-views.json`      | `c6a83c25164d7508` |
 | `docs/halo/evidence/m1r/evaluator/promotion-probe.json`    | `3a9d1b4ca677f7f8` |
 | `docs/halo/evidence/m1r/evaluator/pipeline-preflight.json` | `a0c3d363109022e6` |
 

@@ -53,10 +53,15 @@ const REQUIRED_FIELDS = [
   'required_raw_fields',
   'definition_denominator_grain',
   'required_source',
+  'report_family',
+  'boundary_domain',
   'current_source_state',
   'calculable_from_accepted_bytes',
   'calculable_proof',
   'acquisition_route',
+  'alternative_acquisition_route',
+  'route_proof_state',
+  'controller_observed_dataset',
   'baseline_route',
   'owner',
   'next_action',
@@ -64,8 +69,25 @@ const REQUIRED_FIELDS = [
   'earliest_evidence_point',
   'stop_condition',
   'duane_approval_required',
+  'alternative_duane_approval_required',
+  'duane_approval_reason',
   'sales_only_boundary_conflict',
 ]
+
+// Approval rule: routine read-only routes need NO new approval; scope/mutation routes do.
+const NO_APPROVAL_ROUTES = new Set([
+  'new_readonly_vinsolutions_export',
+  'readonly_browser_capture',
+  'historical_accumulation',
+  'genuinely_unavailable',
+])
+const NEW_APPROVAL_ROUTES = new Set([
+  'existing_scheduled_report',
+  'external_feed',
+  'separate_service_workspace',
+  'separate_cross_rooftop_route',
+  'compliance_authorization',
+])
 
 describe('Gate 3 closure registry — 876 exact cells (req 1)', () => {
   it('exactly 876 records with the exact 876 unresolved keys', () => {
@@ -133,5 +155,99 @@ describe('Gate 3 closure views — reconcile exactly to 876 + Gate 2 reasons (re
       .map((d) => d.metric_id)
     for (const id of s10)
       expect(VIEWS.sales_only_boundary_conflicts.metric_ids).toContain(id)
+  })
+})
+
+describe('Gate 3 controller corrections — approval / domain / dataset (material)', () => {
+  const ACQ = JSON.parse(
+    fs.readFileSync(
+      path.join(REPO, 'docs/halo/contract/acquisition-contract.json'),
+      'utf8',
+    ),
+  )
+
+  it('approval-state truth: read-only/unsaved/accumulation need NO new approval; scope/mutation do', () => {
+    for (const r of REGISTRY.records) {
+      const route = String(r.acquisition_route)
+      if (NO_APPROVAL_ROUTES.has(route)) {
+        expect(
+          r.duane_approval_required,
+          `${r.metric_id as string} ${route}`,
+        ).toBe(false)
+      } else if (NEW_APPROVAL_ROUTES.has(route)) {
+        expect(
+          r.duane_approval_required,
+          `${r.metric_id as string} ${route}`,
+        ).toBe(true)
+      }
+    }
+    // Quarantined primary route is the read-only unsaved reconstruction (no approval),
+    // with the saved-schedule repair as an approval-requiring ALTERNATIVE.
+    const q = REGISTRY.records.filter(
+      (r) => r.unresolved_reason_category === 'quarantined',
+    )
+    expect(q.length).toBe(510)
+    for (const r of q) {
+      expect(r.acquisition_route).toBe('new_readonly_vinsolutions_export')
+      expect(r.duane_approval_required).toBe(false)
+      expect(r.alternative_acquisition_route).toBe('existing_scheduled_report')
+      expect(r.alternative_duane_approval_required).toBe(true)
+    }
+  })
+
+  it('domain routing: only genuine Service-domain conditions route to the Service workspace', () => {
+    for (const r of REGISTRY.records) {
+      if (r.acquisition_route === 'separate_service_workspace') {
+        expect(r.boundary_domain, r.metric_id as string).toBe('service')
+      }
+      if (r.boundary_domain === 'compliance')
+        expect(r.acquisition_route).toBe('compliance_authorization')
+      if (r.boundary_domain === 'cross_rooftop')
+        expect(r.acquisition_route).toBe('separate_cross_rooftop_route')
+      if (r.boundary_domain === 'external_enrichment')
+        expect(r.acquisition_route).toBe('external_feed')
+    }
+    // Not all 105 outside-boundary cells go to Service — the split is 27/48/9/21.
+    expect(VIEWS.by_boundary_domain).toEqual({
+      service: 27,
+      compliance: 48,
+      cross_rooftop: 9,
+      external_enrichment: 21,
+    })
+    expect(VIEWS.by_acquisition_route.separate_service_workspace).toBe(27)
+  })
+
+  it('non-overclaiming dataset presence: candidate routes only, Service datasets never mapped', () => {
+    // Every route is candidate_unproved; nothing claims to "close" a cell yet.
+    for (const r of REGISTRY.records)
+      expect(r.route_proof_state).toBe('candidate_unproved')
+    for (const g of ACQ.groups) {
+      expect(g.route_proof_state).toBe('candidate_unproved')
+      expect(g.closes_cells_only_when_proved).toBe(true)
+      expect(g).not.toHaveProperty('closes_metric_ids') // renamed to candidate_metric_ids
+    }
+    // Dataset evidence present with the non-overclaim caveat + Service permanently excluded.
+    expect(ACQ.dataset_evidence.nonblank_datasets_total).toBe(28)
+    expect(ACQ.dataset_evidence.permanently_excluded).toEqual([
+      'Service',
+      'Service Appointments',
+    ])
+    expect(String(ACQ.dataset_evidence.caveat)).toMatch(/candidate route only/i)
+    for (const r of REGISTRY.records) {
+      expect(r.controller_observed_dataset).not.toBe('Service')
+      expect(r.controller_observed_dataset).not.toBe('Service Appointments')
+    }
+    // The 510 quarantined block is presented by 3 families × 3 dealers, not "one pass".
+    expect(
+      ACQ.quarantined_reconstruction.by_family_dealer.length,
+    ).toBeGreaterThanOrEqual(9)
+    expect(String(ACQ.quarantined_reconstruction.note)).toMatch(
+      /NOT claimed as "one pass closes 510"/,
+    )
+    // Browser passes are per-dealer, candidate-unproved, no approval.
+    for (const p of ACQ.browser_passes) {
+      expect(p.duane_approval_required).toBe(false)
+      expect(p.route_proof_state).toBe('candidate_unproved')
+    }
   })
 })

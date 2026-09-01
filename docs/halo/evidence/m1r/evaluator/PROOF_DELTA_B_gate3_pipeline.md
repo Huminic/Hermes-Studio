@@ -37,10 +37,20 @@ render-preflight → verify`
 | Sales-only: Service-to-Sales §10 conditions flagged as boundary conflicts (not deleted)   | pass   |
 | no promotion: every closure cell `calculable_from_accepted_bytes=false`, no N/A→evaluated | pass   |
 
+## Controller corrections (approval / domain / dataset) — tested
+
+`evaluator-closure.test.ts` adds material-correction tests: **approval-state truth**
+(read-only/unsaved/accumulation → `duane_approval_required=false`; mutation/scope → `true`;
+quarantined primary is the read-only reconstruction, saved-schedule repair is the
+approval-requiring alternative); **domain routing** (only genuine Service-domain → the Service
+workspace; compliance/cross-rooftop/enrichment → their own routes; boundary split 27/48/9/21);
+**non-overclaiming dataset presence** (every route `candidate_unproved`; Service datasets never
+mapped; the 510 quarantined block is 3 families × 3 dealers, never "one pass closes 510").
+
 ## Validation summary
 
-- Gate 3 focused suite **20/20** (closure 6, promotion-probe 6, pipeline 8) + Gate 2 + Gate 1
-  - consumer regressions green.
+- Gate 3 focused suite **23/23** (closure 9 incl 3 correction tests, promotion-probe 6,
+  pipeline 8) + Gate 2 + Gate 1 + consumer regressions green.
 - Typecheck **498 == baseline** (zero new Gate 3 errors); lint clean; **actual Prettier check
   clean** over every Gate 3 file incl generated JSON; deterministic byte-identical rerun.
 - No `/srv` write; no raw file / PII / secret committed; Gate 2 ledger unchanged

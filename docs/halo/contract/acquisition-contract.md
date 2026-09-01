@@ -1,30 +1,60 @@
 # Gate 3 — source-acquisition contract (for the local controller)
 
 Machine-readable companion: `acquisition-contract.json`. This tells the controller exactly
-what additional **read-only** inputs would close which metric IDs, grouped into the fewest
-passes. **The pipeline performs no browser/Gmail/production actions** — the controller does.
-No claim is made that Cox exposes a report unless committed evidence proves it.
+what additional **read-only** inputs are CANDIDATES to close which metric IDs, grouped into
+the fewest passes. **The pipeline performs no browser/Gmail/production actions** — the
+controller does. No claim is made that Cox exposes a report unless committed evidence proves
+it. **Dataset presence proves a candidate route only** — never field completeness, safe
+filters, exportability, history, or baseline compatibility.
 
 Scope: three Sales rooftops — serra-honda (21043), serra-nissan (21044), tony-serra-ford
-(21047). Permanent Sales-only boundary: Service/Parts/compliance/cross-rooftop data **never**
-enters the Sales profiles. 9 of 885 cells are evaluated today; the 876 below are unresolved.
+(21047). Permanent Sales-only boundary: Service/Parts/cross-rooftop data **never** enters the
+Sales profiles. 9 of 885 cells are evaluated today; the 876 below are unresolved.
 
-| Route                              | Cells | Closes  | Duane? | What to acquire                                                                                                                                                                                                              |
-| ---------------------------------- | ----- | ------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `existing_scheduled_report`        | 510   | 170 IDs | yes    | Re-run the SAME weekly ROI / Enterprise-Performance / Sales-Communication-Log schedules with the saved-filter Lead Intents corrected to **exclude** Service/Parts; same dealer, columns, period. Fixes the quarantine cause. |
-| `external_feed`                    | 168   | 56 IDs  | yes    | Governed read-only non-VinSolutions feeds named by the conditions (Google Analytics, ad-spend, phone/call system, third-party vendors) with definition/unit/period.                                                          |
-| `separate_service_workspace`       | 84    | 28 IDs  | yes    | Route via the separately-governed combined Serra **Service** workspace — never the Sales profiles. Owned by the Service-domain contract.                                                                                     |
-| `readonly_browser_capture`         | 42    | 14 IDs  | yes    | Read-only browser captures: Dealer Dashboard **Response Times** per-lead CSV (median + business-hours + untouched policy) and CRM Notes/History/Desking surfaces.                                                            |
-| `historical_accumulation`          | 42    | 14 IDs  | no     | **No new source** — accumulate the already-accepted Leads/Appointments/CRM/Dashboard families across the stated trailing window (WoW / 30-day / N consecutive weeks) and complete composites once components exist.          |
-| `compliance_authorization`         | 21    | 7 IDs   | yes    | Explicit compliance/PII authorization + a governed source before any evaluation.                                                                                                                                             |
-| `new_readonly_vinsolutions_export` | 9     | 3 IDs   | yes    | A read-only VinSolutions export carrying the currently-missing field: per-source appointment attribution (SW-008), write-up counts (SW-034), confirm-within-24h timing (SW-042).                                             |
+**Approval rule.** `duane_approval_required` marks where a **new material approval** is still
+needed. The active goal already authorizes routine **read-only browser capture + unsaved
+export retrieval + historical accumulation** (so those are `false`). Saved-schedule mutation,
+external feeds, compliance/PII scope, cross-rooftop scope, and separate Service work remain
+`true`. Corrected totals: **603 cells need no new approval; 273 do.**
 
-Per-route required columns/filters/period/history, dealer identity, provenance, and
-Sales-only proof are in `acquisition-contract.json` (`required_inputs`, `sales_only_proof`).
-Cells total: 510 + 168 + 84 + 42 + 42 + 21 + 9 = **876** (reconciles to the closure registry).
+## Controller-observed dataset evidence (authorized READ-ONLY inspection)
 
-**Fewest-pass guidance:** one corrected VinSolutions schedule pass closes the largest block
-(510 cells, quarantine cause); one browser pass (Response Times + CRM surfaces) closes 42;
-one new read-only export closes the 3 missing-field conditions. Historical accumulation needs
-no acquisition — only time. Service/compliance/external routes require Duane authority and
-remain outside the Sales-only boundary.
+At `reporting-vinsolutions.app.coxautoinc.com` the Custom Reporting selector exposes **28
+nonblank datasets**; nothing was saved/exported/scheduled/modified. **`Service` and `Service
+Appointments` are permanently excluded.** `Daily Communication Summary By User` exposes
+SEPARATE Sales vs Service call-count columns — **Service columns must never be selected or
+ingested.** Full field notes + the 26 selectable Sales datasets are in the JSON
+(`dataset_evidence`). Presence is a candidate route only.
+
+## Candidate routes (grouped; nothing "closes" a cell until proved)
+
+| Route                              | Cells | Candidate IDs | New approval? | What to acquire                                                                                                                                                                                                                                                                          |
+| ---------------------------------- | ----- | ------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `new_readonly_vinsolutions_export` | 519   | 173           | **no**        | Read-only UNSAVED Custom Reporting exports: Sales-only reconstruction of the quarantined families (candidate datasets Leads / Daily Communication Summary By User [Sales cols] / Daily Dealer Summary) + missing-field/definition exports. Unproved until fields/filters/rows inspected. |
+| `external_feed`                    | 189   | 63            | yes           | Governed non-VinSolutions feeds (GA / ad-spend / phone / registration / insurance / credit / public-records enrichment).                                                                                                                                                                 |
+| `compliance_authorization`         | 48    | 16            | yes           | Sales-domain compliance/PII conditions — authorization + governed source; stays out of the Service workspace.                                                                                                                                                                            |
+| `readonly_browser_capture`         | 42    | 14            | **no**        | Read-only captures: Leads per-lead response timing (median + business-hours + untouched policy); Customer Contact / Recent Task Detail CRM surfaces.                                                                                                                                     |
+| `historical_accumulation`          | 42    | 14            | **no**        | No new source — accumulate the already-accepted families over the stated trailing window; complete composites once components exist.                                                                                                                                                     |
+| `separate_service_workspace`       | 27    | 9             | yes           | GENUINELY Service-domain conditions only — the separately-governed Serra Service workspace, never the Sales profiles.                                                                                                                                                                    |
+| `separate_cross_rooftop_route`     | 9     | 3             | yes           | Cross-rooftop conditions — a separate governed cross-rooftop route; the Sales profile is one-rooftop by design.                                                                                                                                                                          |
+
+Cells total: 519 + 189 + 48 + 42 + 42 + 27 + 9 = **876** (reconciles to the closure registry).
+Every group is `route_proof_state = candidate_unproved`.
+
+## Quarantined families — do NOT claim "one pass closes 510"
+
+The 510 quarantined cells are **3 report families × 3 dealers** (`quarantined_reconstruction`
+in the JSON). Two candidate routes, both **unproved** until exact fields/filters/rows are
+inspected:
+
+- **Primary (no approval):** read-only UNSAVED Sales-only Custom Reporting reconstruction/export.
+- **Alternative (approval):** saved-schedule repair — needs the hidden Lead Intent control
+  that **standard Edit Parameters did not expose** (unproved access).
+
+## Fewest honest browser passes (candidate, unproved)
+
+`browser_passes` in the JSON: **one read-only Custom Reporting session per dealer** covering
+that dealer's candidate datasets (Leads, Appointments, CRM Sales, Customer Contact, Daily
+Communication Summary By User [Sales cols]). Candidate coverage only — each dataset must still
+prove exact fields, period, Sales-only filters, and row-level validation before it closes any
+cell. No pass is claimed to "close" cells at this gate.

@@ -10,7 +10,9 @@ import { formatJsonFile } from './serialize'
 import type { EvalRow } from '@/server/reports/evaluator/types'
 import type { ClosureRecord } from '@/server/reports/evaluator/closure'
 import {
+  CONTROLLER_DATASETS,
   buildClosureRecord,
+  duaneForRoute,
   loadCatalogDetail,
 } from '@/server/reports/evaluator/closure'
 import { probeConditions } from '@/server/reports/evaluator/promotion-probe'
@@ -39,21 +41,21 @@ const ACQUISITION_TEMPLATE: Record<
 > = {
   existing_scheduled_report: {
     required_inputs:
-      're-run the SAME weekly VinSolutions schedule (ROI / Enterprise Performance / Sales Communication Log) with the saved-filter Lead Intents corrected to EXCLUDE Service/Parts; same dealer, same columns, same period_hint range.',
+      'ALTERNATIVE for quarantined families only: repair the SAVED weekly schedule (ROI / Enterprise Performance / Sales Communication Log) so its saved-filter Lead Intents EXCLUDE Service/Parts. Requires the hidden Lead Intent control that standard Edit Parameters did NOT expose — UNPROVED until inspected. Mutates a server object (new approval).',
     sales_only_proof:
       'Filters Lead Type/Lead Intent must NOT positively select Service/Parts; data rows scanned clean; one dealer.',
   },
   new_readonly_vinsolutions_export: {
     required_inputs:
-      'a read-only VinSolutions export whose columns include the currently-missing field/definition (e.g. per-source appointment attribution, write-up counts, confirm-within-24h timing); one dealer; range period_hint; native spaced headers unchanged.',
+      'read-only UNSAVED Custom Reporting export: for quarantined families, reconstruct a Sales-only report (candidate datasets: Leads / Daily Communication Summary By User [SALES columns] / Daily Dealer Summary) with Service/Parts Lead Intents excluded; for missing-field/definition cells, an export carrying the missing field. One dealer; range period; native spaced headers; UNPROVED until exact fields/filters/rows inspected.',
     sales_only_proof:
-      'Filters exclude Service lead sources; Appt Reason = Sales Appointment; Lead Types = {Internet,Phone,Walk-in}; clean data rows.',
+      'exclude Service lead sources + never select Service columns; Appt Reason = Sales Appointment; Lead Types = {Internet,Phone,Walk-in}; clean data rows; one dealer.',
   },
   readonly_browser_capture: {
     required_inputs:
-      'a read-only browser capture (e.g. Dealer Dashboard Response Times per-lead CSV, or CRM Notes/History/Desking surfaces) with per-lead timestamps + business-hours calendar + a defined blank/untouched policy; one dealer; explicit period.',
+      'read-only browser capture (candidate datasets: Leads per-lead response timing; Customer Contact / Recent Task Detail CRM surfaces) with per-lead timestamps + business-hours calendar + a defined untouched-lead policy; one dealer; explicit period; UNPROVED until fields/rows inspected.',
     sales_only_proof:
-      'capture provenance (host vinsolutions.app.coxautoinc.com), one dealer, Sales-only surface; no Message Content beyond authorization.',
+      'capture provenance (host reporting-vinsolutions.app.coxautoinc.com), one dealer, Sales-only surface; no Service columns; no Message Content beyond authorization.',
   },
   historical_accumulation: {
     required_inputs:
@@ -63,20 +65,27 @@ const ACQUISITION_TEMPLATE: Record<
   },
   external_feed: {
     required_inputs:
-      'a non-VinSolutions governed read-only feed named by the condition (Google Analytics, ad-spend, phone/call system, third-party vendor) with a governed ingestion contract, definition, unit, and period.',
+      'a non-VinSolutions governed read-only feed named by the condition (Google Analytics, ad-spend, phone/call system, or an external enrichment vendor — registration/insurance/credit/public records) with a governed ingestion contract, definition, unit, and period.',
     sales_only_proof:
       'external feed must be Sales-scoped and carry its own provenance; never routed through the Service workspace.',
   },
   separate_service_workspace: {
     required_inputs:
-      'route via the separately governed combined Serra Service workspace — NOT the three Sales profiles. Profile slug/format/route/owner are defined by the separate Service-domain contract.',
+      'GENUINELY Service-domain conditions only: route via the separately governed combined Serra Service workspace — NOT the three Sales profiles. Profile slug/format/route/owner are defined by the separate Service-domain contract.',
     sales_only_proof:
       'PERMANENT boundary: Service data never enters the Sales profiles.',
   },
+  separate_cross_rooftop_route: {
+    required_inputs:
+      'cross-rooftop conditions only: define a separate governed cross-rooftop route; the single Sales profile is one-rooftop by design.',
+    sales_only_proof:
+      'one-rooftop boundary: another rooftop’s data never enters this Sales profile.',
+  },
   compliance_authorization: {
     required_inputs:
-      'explicit compliance/PII authorization + a governed source before any evaluation.',
-    sales_only_proof: 'compliance sign-off; PII handling per authorization.',
+      'Sales-domain compliance/PII conditions: explicit compliance/PII authorization + a governed source before any evaluation (stays out of the Service workspace).',
+    sales_only_proof:
+      'compliance sign-off; PII handling per authorization; Sales-scoped.',
   },
   genuinely_unavailable: {
     required_inputs: 'no known governed route today.',
@@ -122,6 +131,12 @@ async function main(): Promise<void> {
     (r) => r.unresolved_reason_category,
   )
 
+  const by_boundary_domain = tally(
+    records.filter((r) => r.boundary_domain !== null),
+    (r) => String(r.boundary_domain),
+  )
+  const by_route_proof_state = tally(records, (r) => r.route_proof_state)
+
   const views = {
     artifact: 'gate3-closure-views',
     total: records.length,
@@ -132,9 +147,13 @@ async function main(): Promise<void> {
     by_owner,
     by_acquisition_route,
     by_baseline_route,
+    by_boundary_domain,
+    by_route_proof_state,
     duane_approval_required_count: records.filter(
       (r) => r.duane_approval_required,
     ).length,
+    no_new_approval_count: records.filter((r) => !r.duane_approval_required)
+      .length,
     sales_only_boundary_conflicts: {
       count: conflicts.length,
       metric_ids: conflictIds,
@@ -149,29 +168,113 @@ async function main(): Promise<void> {
     reasonByMetric.set(r.metric_id, r.unresolved_reason ?? '')
   const probe = probeConditions(details, reasonByMetric)
 
-  // Acquisition contract (grouped by route; fewest passes).
+  // Acquisition contract (grouped by route; NON-overclaiming — dataset presence is a
+  // candidate route only; nothing "closes" a cell until fields/period/filters/rows proved).
   const routes = [...new Set(records.map((r) => r.acquisition_route))].sort()
+  const groups = routes.map((route) => {
+    const inRoute = records.filter((r) => r.acquisition_route === route)
+    const metricIds = [...new Set(inRoute.map((r) => r.metric_id))].sort()
+    const tpl = ACQUISITION_TEMPLATE[route]
+    return {
+      acquisition_route: route,
+      candidate_metric_ids: metricIds,
+      cell_count: inRoute.length,
+      route_proof_state: inRoute[0].route_proof_state,
+      duane_approval_required: duaneForRoute(route),
+      duane_approval_reason: inRoute[0].duane_approval_reason,
+      required_inputs: tpl.required_inputs,
+      sales_only_proof: tpl.sales_only_proof,
+      closes_cells_only_when_proved: true,
+    }
+  })
+
+  // Quarantined block: distinguish the 3 report families × 3 dealers, with BOTH candidate
+  // routes (unsaved reconstruction vs saved-schedule repair), all UNPROVED.
+  const quarantined = records.filter(
+    (r) => r.unresolved_reason_category === 'quarantined',
+  )
+  const qFamilies = [...new Set(quarantined.map((r) => r.report_family))].sort()
+  const qDealers = ['21043', '21044', '21047']
+  const quarantined_reconstruction = {
+    note: 'The 510 quarantined cells are 3 report families × 3 dealers. PRIMARY candidate: read-only UNSAVED Sales-only Custom Reporting reconstruction/export (no new approval). ALTERNATIVE: saved-schedule repair (mutation + hidden Lead Intent control, new approval). BOTH candidate_unproved until exact fields/filters/rows are inspected. NOT claimed as "one pass closes 510".',
+    by_family_dealer: qFamilies.flatMap((family) =>
+      qDealers.map((dealer) => {
+        const cells = quarantined.filter(
+          (r) => r.report_family === family && r.dealer_id === dealer,
+        )
+        return {
+          report_family: family,
+          dealer_id: dealer,
+          cell_count: cells.length,
+          primary_route: 'new_readonly_vinsolutions_export',
+          primary_duane_approval_required: false,
+          alternative_route: 'existing_scheduled_report',
+          alternative_duane_approval_required: true,
+          route_proof_state: 'candidate_unproved',
+        }
+      }),
+    ),
+  }
+
+  // Fewest honest read-only browser passes: one Custom Reporting session per dealer covering
+  // the distinct candidate datasets its read-only-route cells reference. Candidate-unproved.
+  const readonlyRoutes = new Set<string>([
+    'new_readonly_vinsolutions_export',
+    'readonly_browser_capture',
+  ])
+  const browser_passes = qDealers.map((dealer) => {
+    const cells = records.filter(
+      (r) =>
+        r.dealer_id === dealer &&
+        readonlyRoutes.has(r.acquisition_route) &&
+        r.controller_observed_dataset !== null,
+    )
+    const datasets = [
+      ...new Set(cells.map((r) => String(r.controller_observed_dataset))),
+    ].sort()
+    return {
+      dealer_id: dealer,
+      pass: 'one read-only Custom Reporting session',
+      candidate_datasets: datasets,
+      candidate_cell_count: cells.length,
+      duane_approval_required: false,
+      route_proof_state: 'candidate_unproved',
+      note: 'candidate coverage only; each dataset must still prove exact fields, period, Sales-only filters, and row-level validation before it closes any cell',
+    }
+  })
+
   const acquisition = {
     artifact: 'gate3-acquisition-contract',
-    note: 'Read-only acquisition packet for the local controller. Grouped by route into the fewest passes. Claims no Cox report exists unless committed evidence proves it. Do not perform browser/Gmail/production actions from the pipeline.',
+    note: 'Read-only acquisition packet for the local controller. Dataset presence is a CANDIDATE route only — never proof of field completeness, safe filters, exportability, history, or baseline compatibility. Claims no Cox report exists unless committed evidence proves it. The pipeline performs no browser/Gmail/production actions.',
+    approval_rule:
+      'duane_approval_required = a NEW material approval is still required. Read-only browser capture, unsaved export retrieval, and historical accumulation are already authorized (false). Saved-schedule mutation, external feeds, compliance/PII, cross-rooftop, and separate Service work require approval (true).',
+    dataset_evidence: {
+      source:
+        'authorized READ-ONLY Computer Use inspection of the existing Chrome Custom Reporting session at reporting-vinsolutions.app.coxautoinc.com; nothing saved/exported/scheduled/modified',
+      nonblank_datasets_total: 28,
+      permanently_excluded: ['Service', 'Service Appointments'],
+      selectable_sales_datasets: CONTROLLER_DATASETS,
+      observed_field_notes: {
+        Leads:
+          'Lead/Dealer IDs, source/type/status, origination/modified/sold timestamps, actual/adjusted/actionable response timing, first/last/attempted contacts, rep/BDC/user groups, after-hours, vehicle fields',
+        Appointments:
+          'appointment/dealer IDs, type/reason/location, assigned user, start/confirmed/rescheduled/completed/created timestamps and users',
+        'Customer Contact':
+          'dealer/customer status; last attempted/actual contacts with CRM user/date/group',
+        'Daily Communication Summary By User':
+          'dealer/user/date with SEPARATE Sales vs Service call-count columns — Service columns must NEVER be selected or ingested',
+      },
+      caveat:
+        'Dataset presence proves a candidate route only, not exact field completeness, safe filters, exportability, history, or baseline compatibility.',
+    },
     dealers: [
       { profile: 'serra-honda', dealer_id: '21043' },
       { profile: 'serra-nissan', dealer_id: '21044' },
       { profile: 'tony-serra-ford', dealer_id: '21047' },
     ],
-    groups: routes.map((route) => {
-      const inRoute = records.filter((r) => r.acquisition_route === route)
-      const metricIds = [...new Set(inRoute.map((r) => r.metric_id))].sort()
-      const tpl = ACQUISITION_TEMPLATE[route]
-      return {
-        acquisition_route: route,
-        closes_metric_ids: metricIds,
-        cell_count: inRoute.length,
-        duane_approval_required: inRoute.some((r) => r.duane_approval_required),
-        required_inputs: tpl.required_inputs,
-        sales_only_proof: tpl.sales_only_proof,
-      }
-    }),
+    groups,
+    quarantined_reconstruction,
+    browser_passes,
   }
 
   fs.mkdirSync(OUT, { recursive: true })
