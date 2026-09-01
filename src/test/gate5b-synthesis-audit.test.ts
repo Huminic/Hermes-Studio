@@ -311,21 +311,28 @@ describe('Gate 5B R2 — standalone fact contract + typed claims', () => {
   const partitionOf = (d: string) =>
     APPENDIX.cells.filter((c: any) => c.dealer_id === d)
 
-  it('the reader module imports no Gate 5A / internal-audit / raw evidence', () => {
+  it('the reader module has no import of Gate 5A / internal-audit / raw evidence', () => {
     const src = fs.readFileSync(
       url('src/server/reports/gate5b/customer-report.ts'),
       'utf8',
     )
-    expect(src).not.toMatch(/gate5a/i)
-    expect(src).not.toMatch(/internal-audit/i)
-    expect(src).not.toMatch(/spine-ledger|comparison-ledger|import .*residual/i)
+    // Inspect IMPORT statements only (denylist tokens legitimately appear inside the guard regex).
+    const importLines = src.split('\n').filter((l) => /^\s*import\b/.test(l))
+    for (const l of importLines)
+      expect(l).not.toMatch(
+        /gate5a|residual|evaluator|internal-audit|spine-ledger|comparison/i,
+      )
   })
 
   it('assembles 17 structured evaluated facts + 278 not-measured per dealer from customer artifacts alone', () => {
     for (const d of DEALERS) {
       const model = assembleCustomerReport(BUNDLE[d], partitionOf(d))
       expect(model.dealer_id).toBe(d)
-      expect(model.coverage).toBe(295)
+      expect(model.coverage).toEqual({
+        evaluated: 17,
+        not_measured: 278,
+        total: 295,
+      })
       expect(model.evaluated).toHaveLength(17)
       expect(model.not_measured).toHaveLength(278)
       // every evaluated fact is fully structured
@@ -360,7 +367,7 @@ describe('Gate 5B R2 — standalone fact contract + typed claims', () => {
       const model = assembleCustomerReport(BUNDLE[d], partitionOf(d))
       expect(committed.evaluated).toEqual(model.evaluated)
       expect(committed.not_measured).toEqual(model.not_measured)
-      expect(committed.coverage).toBe(295)
+      expect(committed.coverage.total).toBe(295)
     }
   })
 
@@ -482,5 +489,216 @@ describe('Gate 5B R2 — standalone fact contract + typed claims', () => {
           expect(h.text.toLowerCase()).not.toContain('write')
       }
     }
+  })
+})
+
+describe('Gate 5B R3 — complete standalone PDF-consumer package', () => {
+  const clone = (x: any) => JSON.parse(JSON.stringify(x))
+  const partitionOf = (d: string) =>
+    APPENDIX.cells.filter((c: any) => c.dealer_id === d)
+  const modelOf = (d: string) =>
+    assembleCustomerReport(BUNDLE[d], partitionOf(d))
+  const SECTIONS = [
+    'dealer_id',
+    'dealer',
+    'accepted_week',
+    'freshness',
+    'executive_narrative',
+    'clusters',
+    'cross_cluster_synthesis',
+    'ranked_opportunities',
+    'vehicle_opportunity_scenario',
+    'notification_candidates',
+    'coverage',
+    'visibility_plan',
+    'evaluated',
+    'not_measured',
+    'appendix',
+  ]
+
+  it('one report-model file carries every section a PDF needs (no other JSON dependency)', () => {
+    for (const d of DEALERS) {
+      const rm = read(`${G}/gate5b-report-model-${d}.json`)
+      for (const k of SECTIONS) expect(rm[k]).toBeDefined()
+      expect(rm.dealer).toMatch(/Serra|Tony/)
+      expect(rm.clusters).toHaveLength(4)
+      expect(rm.appendix).toHaveLength(295)
+      expect(rm.coverage).toEqual({
+        evaluated: 17,
+        not_measured: 278,
+        total: 295,
+      })
+      expect(rm.freshness).toMatch(/weekly/)
+    }
+  })
+
+  it('every one of 295 appendix entries has a specific nonempty label', () => {
+    for (const d of DEALERS) {
+      const rm = modelOf(d)
+      expect(rm.appendix).toHaveLength(295)
+      expect(new Set(rm.appendix.map((c: any) => c.metric_id)).size).toBe(295)
+      for (const c of rm.appendix as Array<any>) {
+        expect(typeof c.label).toBe('string')
+        expect(c.label.length).toBeGreaterThan(0)
+      }
+      const neutral = rm.appendix.filter(
+        (c: any) => c.label === 'Separate operational-domain metric',
+      )
+      expect(neutral).toHaveLength(36)
+    }
+  })
+
+  it('3 inert notification candidates packaged per dealer with full contract', () => {
+    for (const d of DEALERS) {
+      const rm = modelOf(d)
+      expect(rm.notification_candidates).toHaveLength(3)
+      for (const n of rm.notification_candidates as Array<any>) {
+        expect(n.activated).toBe(false)
+        for (const k of [
+          'trigger',
+          'audience',
+          'timing',
+          'payload',
+          'guardrails',
+          'kind',
+        ])
+          expect(n[k]).toBeTruthy()
+      }
+    }
+  })
+
+  it('visibility themes cover exactly the 278 not-measured IDs once each', () => {
+    for (const d of DEALERS) {
+      const rm = modelOf(d)
+      const themeIds = rm.visibility_plan.themes.flatMap(
+        (t: any) => t.metric_ids,
+      )
+      expect(themeIds).toHaveLength(278)
+      expect(new Set(themeIds).size).toBe(278)
+      expect(new Set(themeIds)).toEqual(
+        new Set(rm.not_measured.map((n: any) => n.metric_id)),
+      )
+      for (const t of rm.visibility_plan.themes)
+        expect(t.count).toBe(t.metric_ids.length)
+    }
+  })
+
+  it('the whole packaged report-model is free of forbidden language / paths / PII', () => {
+    for (const d of DEALERS) {
+      const blob = JSON.stringify(read(`${G}/gate5b-report-model-${d}.json`))
+      for (const bad of [
+        'docs/halo',
+        'spine-ledger',
+        'VinSolutions',
+        'Dashboard',
+        'Is Show',
+        'Actual Response Time',
+        'quarantin',
+        'blocker_class',
+        'rep_token',
+      ])
+        expect(blob).not.toContain(bad)
+      expect(blob).not.toMatch(/\bservice\b/i)
+      expect(blob).not.toMatch(/\bparts\b/i)
+    }
+  })
+
+  it('reader fails closed on missing section, activated notif, unsafe language, bad label/citation', () => {
+    const d = '21043'
+    const noExec = clone(BUNDLE[d])
+    delete noExec.executive_narrative
+    expect(() => assembleCustomerReport(noExec, partitionOf(d))).toThrow()
+    const noClusters = clone(BUNDLE[d])
+    delete noClusters.clusters
+    expect(() => assembleCustomerReport(noClusters, partitionOf(d))).toThrow(
+      /clusters/i,
+    )
+    const noNotif = clone(BUNDLE[d])
+    delete noNotif.notification_candidates
+    expect(() => assembleCustomerReport(noNotif, partitionOf(d))).toThrow(
+      /notification/i,
+    )
+    const act = clone(BUNDLE[d])
+    act.notification_candidates[0].activated = true
+    expect(() => assembleCustomerReport(act, partitionOf(d))).toThrow(
+      /activated=false/i,
+    )
+    const part = clone(partitionOf(d))
+    delete part[part.findIndex((c: any) => c.status === 'not_measured')].label
+    expect(() => assembleCustomerReport(BUNDLE[d], part)).toThrow(
+      /specific label/i,
+    )
+    const unsafe = clone(BUNDLE[d])
+    unsafe.clusters[0].narrative.text += ' service department leak'
+    expect(() => assembleCustomerReport(unsafe, partitionOf(d))).toThrow(
+      /unsafe customer language/i,
+    )
+    const badCite = clone(BUNDLE[d])
+    badCite.clusters[0].implication.cites = ['SW-999']
+    expect(() => assembleCustomerReport(badCite, partitionOf(d))).toThrow(
+      /non-evaluated/i,
+    )
+  })
+
+  it('reader rejects the shadow malformed-probe set (bogus status / banana / sideways / missing-nested)', () => {
+    const d = '21043'
+    // bogus appendix status enum
+    const bogusStatus = clone(partitionOf(d))
+    bogusStatus[0].status = 'banana'
+    expect(() => assembleCustomerReport(BUNDLE[d], bogusStatus)).toThrow(
+      /invalid status/i,
+    )
+    // banana claim type on a narrative
+    const banana = clone(BUNDLE[d])
+    banana.clusters[0].narrative.claim = 'banana'
+    expect(() => assembleCustomerReport(banana, partitionOf(d))).toThrow(
+      /invalid claim type/i,
+    )
+    // sideways enum: comparator not < or >
+    const sideways = clone(BUNDLE[d])
+    sideways.clusters[0].facts[0].operational_target.comparator = 'sideways'
+    expect(() => assembleCustomerReport(sideways, partitionOf(d))).toThrow(
+      /not fully structured/i,
+    )
+    // missing nested field: strip evidence.period.end
+    const missNested = clone(BUNDLE[d])
+    delete missNested.clusters[0].facts[0].evidence.period.end
+    expect(() => assembleCustomerReport(missNested, partitionOf(d))).toThrow(
+      /not fully structured/i,
+    )
+    // missing nested: operational_target.kind
+    const missKind = clone(BUNDLE[d])
+    delete missKind.clusters[0].facts[0].operational_target.kind
+    expect(() => assembleCustomerReport(missKind, partitionOf(d))).toThrow(
+      /not fully structured/i,
+    )
+    // out-of-range rank
+    const badRank = clone(BUNDLE[d])
+    badRank.clusters[0].facts[0].peer_rank.rank = 9
+    expect(() => assembleCustomerReport(badRank, partitionOf(d))).toThrow(
+      /not fully structured/i,
+    )
+    // non-finite value
+    const nanVal = clone(BUNDLE[d])
+    nanVal.clusters[0].facts[0].value = 'x'
+    expect(() => assembleCustomerReport(nanVal, partitionOf(d))).toThrow(
+      /not fully structured/i,
+    )
+  })
+
+  it('reader enforces the exact SW-001..SW-295 catalog set', () => {
+    const d = '21043'
+    // Rename one not-measured id to a non-catalog id in BOTH the appendix and the visibility theme
+    // so consistency checks pass and the exact-catalog-set guard is the one that fires.
+    const b2 = clone(BUNDLE[d])
+    const part = clone(partitionOf(d))
+    const nm = part.find((c: any) => c.status === 'not_measured')
+    const oldId = nm.metric_id
+    nm.metric_id = 'SW-777'
+    for (const t of b2.visibility_plan.themes) {
+      const i = t.metric_ids.indexOf(oldId)
+      if (i >= 0) t.metric_ids[i] = 'SW-777'
+    }
+    expect(() => assembleCustomerReport(b2, part)).toThrow(/SW-001\.\.SW-295/)
   })
 })

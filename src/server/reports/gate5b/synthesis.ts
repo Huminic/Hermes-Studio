@@ -915,6 +915,36 @@ export function assertCustomerSafe(label: string, str: string): void {
     )
 }
 
+/**
+ * Neutralize catalog metric titles so a customer-safe title can carry the specific meaning without
+ * whole-word Service/Parts (permanent boundary) or a raw system codename. Deterministic word swaps.
+ */
+export function sanitizeCustomerTitle(s: string): string {
+  return s
+    .replace(/\bservices?\b/gi, 'customer-experience')
+    .replace(/\bparts\b/gi, 'components')
+    .replace(/\bDMS\b/g, 'dealer management system')
+}
+
+const TITLE_PII = /\b(\d{3}-\d{2}-\d{4}|@[a-z0-9.-]+\.[a-z]{2,})\b/i
+
+/**
+ * Title/label guard: catalog metric titles carry legitimate Title-Case field terms (e.g. "Lead
+ * Source") that the free-text person-name heuristic would falsely flag, so this checks the forbidden
+ * internal/system/CRM vocabulary + PII WITHOUT the name-pair heuristic. Used for appendix labels.
+ */
+export function assertTitleSafe(label: string, str: string): void {
+  if (!str.trim()) throw new Error(`Gate 5B: empty title (${label})`)
+  if (
+    CUSTOMER_FORBIDDEN.test(str) ||
+    CUSTOMER_FORBIDDEN_5B.test(str) ||
+    TITLE_PII.test(str)
+  )
+    throw new Error(
+      `Gate 5B: title exposes an internal/system/CRM term or PII (${label}): "${str}"`,
+    )
+}
+
 /** The controlled owner/audience role vocabulary (requirement #3). */
 export const ALLOWED_ROLES =
   /^(GM|General Manager|Sales Manager|BDC Manager|salesperson|the assigned salesperson|CRM administrator|analytics vendor|vendor|dealership management)$/i

@@ -32,6 +32,7 @@ import {
   METRIC_LABEL,
   assertCustomerSafe,
   assertRoleSafe,
+  assertTitleSafe,
   buildClusterBlock,
   coverageExpansion,
   crossClusterInteractions,
@@ -41,6 +42,7 @@ import {
   pct,
   rankOpportunities,
   roiScenario,
+  sanitizeCustomerTitle,
   sourceLabel,
   valueDisplay,
 } from '@/server/reports/gate5b/synthesis'
@@ -57,6 +59,10 @@ const RANK = path.join(EV, 'gate5a/gate5a-peer-rank-ledger.json')
 const GATE4H = path.join(
   EV,
   'residual/gate4h-internal-accountability-ledger.json',
+)
+const GATE4H_CUSTOMER = path.join(
+  EV,
+  'residual/gate4h-downstream-customer-contract.json',
 )
 const SPINE = path.join(EV, 'evaluator/spine-ledger.json')
 
@@ -194,12 +200,10 @@ async function main(): Promise<void> {
     }
   }
 
-  // ── Per-dealer synthesis bundles ──
+  // ── Unresolved partition, coverage themes, notification set, and catalog titles ──
+  // These are computed BEFORE the bundle loop and EMBEDDED in every dealer bundle so the standalone
+  // reader never needs Gate 5A, the internal audit, raw evidence, or a separate ledger.
   const roiScenarios: Array<ReturnType<typeof roiScenario>> = []
-  const allNotif = new Map<
-    string,
-    ReturnType<typeof notificationCandidates>[number]
-  >()
   const crossDealerOpps: Array<{
     metric_id: string
     cluster: string
@@ -212,6 +216,48 @@ async function main(): Promise<void> {
     }>
     total_weight: number
   }> = []
+
+  const unresolved = gate4h.rows.filter((r) => r.status === 'unresolved')
+  must(unresolved.length === 278, `unresolved ${unresolved.length} != 278`)
+  const unresolvedRows: Array<UnresolvedRow> = unresolved.map((r) => ({
+    metric_id: r.metric_id,
+    section: r.section,
+    blocker_class:
+      r.internal_explanation?.blocker_class ?? 'outside_sales_boundary',
+    eligible: r.customer_display_eligible ?? false,
+  }))
+  const coverage = coverageExpansion(unresolvedRows)
+  const coverageIds = coverage.flatMap((t) => t.metric_ids)
+  must(
+    coverageIds.length === 278 && new Set(coverageIds).size === 278,
+    `coverage plan must account for 278 unresolved exactly once (got ${coverageIds.length})`,
+  )
+  sweepStrings(coverage, safeCheck)
+
+  // Notification candidates (union across dealers) embedded in every bundle; nothing activated.
+  const allNotif = new Map<
+    string,
+    ReturnType<typeof notificationCandidates>[number]
+  >()
+  for (const d of DEALERS) {
+    const df = [...factOf.values()].filter((f) => f.dealer_id === d)
+    for (const n of notificationCandidates(df)) allNotif.set(n.metric_id, n)
+  }
+  const notifArray = [...allNotif.values()].sort((a, b) =>
+    a.metric_id.localeCompare(b.metric_id),
+  )
+  sweepStrings(notifArray, safeCheck)
+
+  // Customer-safe catalog titles for not-measured metrics (specific, not a broad theme).
+  const gate4hCustomer = readJson<{
+    rows: Array<{ metric_id: string; customer: { what_this_watches: string } }>
+  }>(GATE4H_CUSTOMER)
+  const titleOf = new Map<string, string>()
+  for (const r of gate4hCustomer.rows)
+    titleOf.set(
+      r.metric_id,
+      sanitizeCustomerTitle(r.customer.what_this_watches),
+    )
 
   const bundles: Record<string, unknown> = {}
   for (const d of DEALERS) {
@@ -227,7 +273,6 @@ async function main(): Promise<void> {
     const opportunities = rankOpportunities(facts)
     const roi = roiScenario(roiOperandsOf(d))
     roiScenarios.push(roi)
-    for (const n of notificationCandidates(facts)) allNotif.set(n.metric_id, n)
 
     // Executive narrative (deterministic; every entry is a typed claim with cited metric IDs).
     const workingFacts = facts.filter((f) => f.rating === 'healthy')
@@ -307,7 +352,7 @@ async function main(): Promise<void> {
 
     const bundle = {
       artifact: 'gate5b-dealer-synthesis',
-      revision: 'L1',
+      revision: 'L3',
       accepted_week: ACCEPTED_WEEK,
       dealer_id: d,
       dealer: dealerName(d),
@@ -316,6 +361,9 @@ async function main(): Promise<void> {
       cross_cluster_synthesis: interactions,
       ranked_opportunities: opportunities,
       vehicle_opportunity_scenario: roi,
+      notification_candidates: notifArray,
+      visibility_plan: { unresolved_total: 278, themes: coverage },
+      coverage_summary: { evaluated: 17, not_measured: 278, total: 295 },
     }
 
     // Fail-closed customer-safety sweep over every customer string in the bundle.
@@ -328,24 +376,6 @@ async function main(): Promise<void> {
       )
     bundles[d] = bundle
   }
-
-  // ── Coverage-expansion plan (278 unresolved, customer-friendly) ──
-  const unresolved = gate4h.rows.filter((r) => r.status === 'unresolved')
-  must(unresolved.length === 278, `unresolved ${unresolved.length} != 278`)
-  const unresolvedRows: Array<UnresolvedRow> = unresolved.map((r) => ({
-    metric_id: r.metric_id,
-    section: r.section,
-    blocker_class:
-      r.internal_explanation?.blocker_class ?? 'outside_sales_boundary',
-    eligible: r.customer_display_eligible ?? false,
-  }))
-  const coverage = coverageExpansion(unresolvedRows)
-  const coverageIds = coverage.flatMap((t) => t.metric_ids)
-  must(
-    coverageIds.length === 278 && new Set(coverageIds).size === 278,
-    `coverage plan must account for 278 unresolved exactly once (got ${coverageIds.length})`,
-  )
-  sweepStrings(coverage, safeCheck)
 
   // ── 295×3 customer appendix (every one of 885 cells exactly once) ──
   const evaluatedIds = new Set([...factOf.values()].map((f) => f.metric_id))
@@ -361,6 +391,7 @@ async function main(): Promise<void> {
           metric_id: id,
           dealer_id: d,
           status: 'evaluated',
+          label: f.label,
           measure: f.label,
           value: f.value_display,
           basis_id: `OT/${CLUSTER_OF[id]}`,
@@ -382,10 +413,16 @@ async function main(): Promise<void> {
       } else {
         const u = unresolvedById.get(id)!
         const theme = coverage.find((t) => t.metric_ids.includes(id))!
+        // Specific customer-safe title: catalog title for Sales-relevant metrics; neutral for
+        // separately-governed / out-of-domain metrics (never expose whole-word Service/Parts).
+        const label = u.eligible
+          ? (titleOf.get(id) ?? 'Sales metric not measured this cycle')
+          : 'Separate operational-domain metric'
         appendixCells.push({
           metric_id: id,
           dealer_id: d,
           status: 'not_measured',
+          label,
           measure: theme.theme,
           note: 'Not measured this cycle',
           next_visibility_unlock: theme.next_visibility_unlock,
@@ -412,7 +449,9 @@ async function main(): Promise<void> {
       885,
     'appendix cells not unique',
   )
-  sweepStrings(appendixCells, safeCheck)
+  sweepStrings(appendixCells, (label, s) =>
+    label.endsWith('.label') ? assertTitleSafe(label, s) : safeCheck(label, s),
+  )
 
   // ── Baselines / ranks unchanged vs Gate 5A (fail-closed cross-check) ──
   for (const c of comparison.records) {
@@ -510,25 +549,19 @@ async function main(): Promise<void> {
       partition as Parameters<typeof assembleCustomerReport>[1],
     )
     must(
-      model.coverage === 295 &&
+      model.coverage.total === 295 &&
         model.evaluated.length === 17 &&
-        model.not_measured.length === 278,
-      `${d} report model coverage ${model.coverage} / ${model.evaluated.length} / ${model.not_measured.length}`,
+        model.not_measured.length === 278 &&
+        model.clusters.length === 4 &&
+        model.notification_candidates.length === notifArray.length,
+      `${d} report model incomplete: ${model.coverage.total} / ${model.evaluated.length} / ${model.not_measured.length}`,
     )
+    // The emitted one-file model carries only customer-safe fields (no internal filenames / Gate 5A /
+    // internal-audit / raw-evidence metadata), so the whole file passes the customer-safety scan.
     paths.push(
       await write(`gate5b-report-model-${d}.json`, {
         artifact: 'gate5b-report-model',
-        revision: 'L2',
-        accepted_week: ACCEPTED_WEEK,
-        built_from: [
-          `gate5b-synthesis-${d}.json`,
-          'gate5b-customer-appendix-295x3.json (this dealer partition)',
-        ],
-        built_without: [
-          'gate5b-internal-audit.json',
-          'Gate 5A ledgers',
-          'raw evidence',
-        ],
+        revision: 'L3',
         ...model,
       }),
     )

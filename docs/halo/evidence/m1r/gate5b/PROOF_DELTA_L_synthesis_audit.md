@@ -1,6 +1,27 @@
 # PROOF DELTA L — Gate 5B customer-facing consultant synthesis
 
-**Gate:** 5B · **Revision:** L3 (R2 corrective) · **Accepted week:** 2026-08-24..2026-08-30 (America/New_York)
+**Gate:** 5B · **Revision:** L4 (R3 corrective) · **Accepted week:** 2026-08-24..2026-08-30 (America/New_York)
+
+> **R3 corrective (complete standalone PDF-consumer contract).** The report-model is now the COMPLETE,
+> validated one-file input the PDF generator needs, built by the standalone reader from a dealer bundle
+> plus that dealer's appendix partition ALONE. The enriched bundle embeds the notification candidates
+> (3, `activated=false`), a `visibility_plan` (grouped themes), and a `coverage_summary`; the appendix
+> gives every one of the 295 entries a **specific customer-safe title/label** (catalog title for
+> Sales-relevant not-measured metrics — whole-word Service/Parts/DMS neutralized; "Separate
+> operational-domain metric" for the 36 out-of-domain). The model carries dealer name/ID, accepted
+> week and freshness, executive narrative, four clusters (structured facts and typed narrative/
+> implication/hypotheses/actions), cross-cluster synthesis, ranked opportunities, the ROI scenario,
+> inert notification candidates, coverage 17/278/295, visibility themes, and the complete 295-entry
+> appendix. The reader **fails closed** on missing sections, malformed typed claims/citations,
+> incomplete facts, strict enum/nested violations (operational_target.kind/value_display/comparator/
+> direction, rating, confidence, peer_rank.of, evidence.period.end/freshness, finite value/rank
+> bounds), an invalid appendix status (no ignored cells), a valued not-measured cell, an activated
+> notification candidate, unsafe customer language, or coverage that is not exactly the SW-001..SW-295
+> catalog set. The emitted one-file model carries **no** internal filenames / Gate 5A / internal-audit /
+> raw-evidence metadata (built_from/built_without removed), so the whole file passes the customer-safety
+> scan. Values, targets, ranks, confidence, benchmark mappings, ROI arithmetic, notification
+> definitions/activation, and the 51/834/885 accounting are unchanged; Gate 5A and Gate 4H/4I/4J are
+> byte-identical; the cross-dealer / notification / ROI / coverage ledger bytes are unchanged from R2.
 
 > **R2 corrective (standalone consumer contract + typed claims).** (3) **Standalone complete fact
 > contract.** Each dealer bundle's `clusters[].facts[]` is now a full `CustomerFact` (metric_id,
@@ -113,12 +134,23 @@ each exactly once: **51 evaluated** (value / basis / variance / peer rank / evid
 
 ## 6. Controls
 
-- **Focused tests** (`src/test/gate5b-synthesis-audit.test.ts`): 11/11 — three dealers; 17 metrics used
+- **Focused tests** (`src/test/gate5b-synthesis-audit.test.ts`): 34/34 — three dealers; 17 metrics used
   exactly once per dealer; cross-cluster conclusions cite ≥2 or hypothesis; ROI gap/shows/units
   recompute and dollars null with reference-only high bound; 885-cell exactness (51/834, unique);
   278 unresolved grouped once with customer-friendly language only; ranks/baselines unchanged vs Gate
-  5A; privacy guards (no path/report-title/CRM-field/hold-term/PII) with planted-term + non-role-owner
-  fail-closed; notification contract complete and not activated.
+  5A; privacy guards with planted-term + non-role-owner fail-closed; notification contract complete
+  and not activated; **plus R2/R3**: the standalone reader assembles the full package from one bundle +
+  its appendix partition, the report-model carries every PDF section, all 295 appendix entries have a
+  specific label, the exact SW-001..SW-295 catalog set is enforced, strict enums/nested fields and the
+  shadow malformed-probe set (SW-999 / bogus-status / banana / sideways / missing-nested) are rejected,
+  and the whole one-file model passes the customer-safety scan.
+
+**Contractual vs non-contractual.** The **exact 278-metric-ID set** carried by the visibility plan and
+the not-measured partition is **contractual** (validated to equal the not-measured ID set and, with the
+17 evaluated, the exact SW-001..SW-295 catalog). The **grouping of those 278 into ~28 visibility
+themes is NON-contractual** presentation and may be regrouped in a later gate without breaking the
+consumer contract, provided the union of theme IDs still equals the 278 exactly.
+
 - **Hash guard** (`src/test/gate5b-evidence-hashes.test.ts`): recomputes every SHA-256 below.
 - Deterministic (byte-identical rerun); Prettier + ESLint clean; changed-file `tsc` adds no new errors.
 - Only Gate 5B files changed; Gate 5A + Gate 4H/4I/4J byte-identical. No PDFs; nothing sent/activated.
@@ -127,21 +159,21 @@ each exactly once: **51 evaluated** (value / basis / variance / peer rank / evid
 
 | File                                                                        | sha256:16          |
 | --------------------------------------------------------------------------- | ------------------ |
-| `src/server/reports/gate5b/synthesis.ts`                                    | `f9cb51534be04690` |
-| `src/server/reports/gate5b/customer-report.ts`                              | `b600fdbec194756d` |
-| `scripts/m1r-gate5b/build-gate5b-synthesis.ts`                              | `0e7aad1783fd0578` |
-| `src/test/gate5b-synthesis-audit.test.ts`                                   | `e08d4fe39dbf9df4` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21043.json`                 | `b374c9b5ef00e0b0` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21044.json`                 | `8363881701a55bf3` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21047.json`                 | `5ae62ecdf34df5e5` |
+| `src/server/reports/gate5b/synthesis.ts`                                    | `2102c293db498ebe` |
+| `src/server/reports/gate5b/customer-report.ts`                              | `556cfef08ee490a5` |
+| `scripts/m1r-gate5b/build-gate5b-synthesis.ts`                              | `b8c9166461884898` |
+| `src/test/gate5b-synthesis-audit.test.ts`                                   | `1a5b1637f9500940` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21043.json`                 | `0687c5edc290bd99` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21044.json`                 | `ac9f475744b085a4` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21047.json`                 | `69e8b3f77c2ecca9` |
 | `docs/halo/evidence/m1r/gate5b/gate5b-cross-dealer-opportunity-ledger.json` | `5367fb8b36b01a61` |
 | `docs/halo/evidence/m1r/gate5b/gate5b-notification-automation-ledger.json`  | `87f7cdc13bdd3537` |
 | `docs/halo/evidence/m1r/gate5b/gate5b-roi-scenario-ledger.json`             | `6a4e045c7f6a78e4` |
 | `docs/halo/evidence/m1r/gate5b/gate5b-coverage-expansion-plan.json`         | `d8787db62973be99` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-customer-appendix-295x3.json`         | `9ab999d645c00318` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-report-model-21043.json`              | `14cc22a0ffd57b9e` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-report-model-21044.json`              | `021bd8c87a57d091` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-report-model-21047.json`              | `38cadf50c53481be` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-customer-appendix-295x3.json`         | `68f31f1a49c08494` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-report-model-21043.json`              | `04c3f965e1d087e9` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-report-model-21044.json`              | `10dcfe6e1ba1fd73` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-report-model-21047.json`              | `1d37f783eeb59ba6` |
 | `docs/halo/evidence/m1r/gate5b/gate5b-internal-audit.json`                  | `23b1306d7a789d34` |
 
 Each `sha256:16` is recomputed from the current committed bytes by
