@@ -19,14 +19,22 @@ schema, distinct restricted-data policy.
 - **Report host (separate):** `reporting-vinsolutions.app.coxautoinc.com`
   (`/VinAnalyticsDashboards/` path) — the analytics host that renders the Communication Log.
 - Both admitted hosts are exact; evil subdomains, suffix attacks (`…coxautoinc.com.evil.com`),
-  non-https, wrong path, and explicit ports all fail closed.
-- **Capture id:** `VIN-COMM-WEEKLY-YYYYMMDD-<dealerId>` (binds the rooftop).
+  non-https, wrong path, and explicit ports all fail closed. **Ports are rejected from the RAW
+  URL authority before normalization**, so an explicit `:443` (which `URL.port` normalizes to
+  empty) also fails.
+- **Capture id:** `VIN-COMM-WEEKLY-YYYYMMDD-<dealerId>` — binds the rooftop AND the capture
+  DATE: the id's `<dealerId>` must equal the manifest `dealer_id`, and its `YYYYMMDD` must equal
+  the `captured_at` calendar date (a different-date / different-rooftop capture id fails closed).
 - **Required per capture:** capture_id, profile, dealer_id/name, source_url, report_url,
   captured_at (with explicit tz offset), declared_report_kind, reporting_period, declared
   rows/columns/unique_lead_ids/sha256, filename, **and BOTH** `filter_evidence_sha256`
   (filter-selection screenshot) **and** `applied_result_evidence_sha256` (post-apply screenshot
   proving the applied `08/24/2026 – 08/30/2026` period + counts). Manifest SHA-256 and every
   screenshot/CSV SHA are recomputed from the manifest; any drift fails closed.
+- **Exact agreement enforced (shadow HOLD repair):** the manifest `dealer` NAME must equal the
+  contracted rooftop name AND every CSV row's `Dealer` must match it; the filename's embedded
+  `_YYYY-MM-DD_YYYY-MM-DD` period must equal the contracted/captured window (a 1999-period
+  filename binding current data fails closed).
 
 ## Schema (exact 24 columns, fail-closed)
 
@@ -74,7 +82,15 @@ swapped input.
 
 ## Scope of this gate
 
-Admission + a machine-readable capability delta (`sw295-comm-capability-delta.json`, one row per
-metric, none evaluated) + seven proposed structured rules
-(`enhanced-comm-structured-candidates.json`, all flagged for controller ratification). **No SW
-metric is promoted; the family is not yet wired into the evaluator spine.**
+Admission + a **field-backed** machine-readable capability delta
+(`sw295-comm-capability-delta.json`, one row per metric, none evaluated) + seven proposed
+structured rules (`enhanced-comm-structured-candidates.json`, all flagged for controller
+ratification). The delta is bounded by the ADMITTED derivative's actual fields + the single
+7-day week (not condition keywords): a metric is `definition_compatible_now` only when its
+current value is fully computable + fully specified from those fields (threshold-only choices
+remain a ratification flag but cannot cure unavailable inputs); `semantic_definition_pending`
+means the events are supported but a numerator/population/window/event-semantic is unresolved.
+At admission **zero** rows are `definition_compatible_now` and **14** are
+`semantic_definition_pending`; everything else needs message content, an absent field, a join,
+longer history, or lies outside the Sales boundary. **No SW metric is promoted; the family is
+not wired into the evaluator spine.**

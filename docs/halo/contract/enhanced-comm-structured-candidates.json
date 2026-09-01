@@ -4,6 +4,7 @@
   "gate": "4C1",
   "status": "PROPOSED — none promoted this gate; every candidate carries at least one semantic choice requiring controller ratification",
   "promoted_this_gate": 0,
+  "field_backed_reaudit": "Shadow/control repair: all seven candidates were re-audited against the ADMITTED derivative fields. All seven map to category `semantic_definition_pending` in sw295-comm-capability-delta.json — the derivative genuinely supports their EVENTS (channel/direction/timing/thread/rep within the 7-day week) but each numerator/population/window/event-semantic is a controller choice. None relies on message meaning (never inferred from content_length/presence). SW-132 additionally requires a ratified/external business-hours calendar, which the family does not carry. No candidate is promotable now.",
   "rule": "A candidate is promotable only when its definition is verbatim/structurally forced by the catalog AND byte-recomputable without an invented threshold or population choice. Every candidate below fails that test on at least one flagged choice, so all remain PROPOSED.",
   "aggregate_safety": "All proposed evaluation_detail is aggregate-only (counts/shares/distributions). Per-rep and per-thread grouping uses non-reversible goal-scoped pseudonyms; no Customer/User/Message Content/name is ever persisted. Business-local timestamps only.",
   "candidates": [

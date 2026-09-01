@@ -9,6 +9,9 @@ import type { CommManifestEntry } from '@/server/reports/comms/comm-reader'
 import {
   COMM_HEADERS,
   DEALER_IDENTITY,
+  admitReportUrl,
+  admitSourceUrl,
+  hasExplicitPort,
 } from '@/server/reports/comms/comm-family-contract'
 import {
   readCommWeekly,
@@ -84,7 +87,7 @@ function entryFor(
     capture_id: 'VIN-COMM-WEEKLY-20260901-21043',
     dealer: 'Serra Honda of Sylacauga',
     dealer_id: '21043',
-    filename: 'synthetic.csv',
+    filename: 'serra-honda-21043_communication-log_2026-08-24_2026-08-30.csv',
     sha256: createHash('sha256').update(buf).digest('hex'),
     bytes: buf.byteLength,
     captured_at: '2026-09-01T04:36:18-04:00',
@@ -289,6 +292,8 @@ describe('Enhanced weekly Communication Log — PII no-leak + adversarial (Gate 
       capture_id: 'VIN-COMM-WEEKLY-20260901-21044',
       dealer: 'Serra Nissan of Sylacauga',
       dealer_id: '21044',
+      filename:
+        'serra-nissan-21044_communication-log_2026-08-24_2026-08-30.csv',
     })
     const nissan = readCommWeekly({
       buf: nBuf,
@@ -304,16 +309,23 @@ describe('Enhanced weekly Communication Log — PII no-leak + adversarial (Gate 
     )
   })
 
-  it('swapping rooftop / period / hash / capture fails closed', () => {
+  it('swapping rooftop / period / hash / capture / count fails closed', () => {
     const { buf, entry } = validCapture()
     // hash swap: declared sha no longer matches the bytes.
     expect(() => read(buf, entryFor(buf, { sha256: 'f'.repeat(64) }))).toThrow(
       /sha mismatch/,
     )
-    // rooftop swap: bytes are 21043 but the manifest entry claims 21044 → wrong-dealer.
+    // rooftop swap: entry claims 21044 but the capture_id + bytes are 21043.
     expect(() => read(buf, entryFor(buf, { dealer_id: '21044' }))).toThrow(
-      /wrong-dealer/,
+      /capture_id rooftop/,
     )
+    // capture-ID mutation: a different-rooftop capture id binding this 21043 data.
+    expect(() =>
+      read(
+        buf,
+        entryFor(buf, { capture_id: 'VIN-COMM-WEEKLY-20260901-21044' }),
+      ),
+    ).toThrow(/capture_id rooftop/)
     // period swap: same bytes validated against a different week → out of window.
     expect(() =>
       read(buf, entry, {
@@ -323,11 +335,65 @@ describe('Enhanced weekly Communication Log — PII no-leak + adversarial (Gate 
           timezone: 'America/New_York',
         },
       }),
-    ).toThrow(/outside window/)
+    ).toThrow(/filename period|outside window/)
     // count swap: manifest claims a different unique-lead count than the bytes.
     expect(() => read(buf, entryFor(buf, { unique_lead_ids: 999 }))).toThrow(
       /unique Lead IDs/,
     )
+  })
+
+  it('PROVENANCE HARDENING (shadow HOLD): explicit port, capture-id date, dealer label, filename period all fail closed', () => {
+    const { buf } = validCapture()
+    // Explicit :443 (and any port) is rejected from the RAW string, before URL normalization.
+    for (const bad of [
+      'https://vinsolutions.app.coxautoinc.com:443/vinconnect/',
+      'https://vinsolutions.app.coxautoinc.com:8443/vinconnect/',
+    ])
+      expect(admitSourceUrl(bad), bad).toBe(false)
+    expect(
+      admitReportUrl(
+        'https://reporting-vinsolutions.app.coxautoinc.com:443/VinAnalyticsDashboards/x',
+      ),
+    ).toBe(false)
+    expect(
+      hasExplicitPort(
+        'https://vinsolutions.app.coxautoinc.com:443/vinconnect/',
+      ),
+    ).toBe(true)
+    // A different-DATE capture id binding this data fails closed.
+    expect(() =>
+      read(
+        buf,
+        entryFor(buf, { capture_id: 'VIN-COMM-WEEKLY-20250101-21043' }),
+      ),
+    ).toThrow(/capture_id date/)
+    // A wrong manifest dealer LABEL fails closed.
+    expect(() => read(buf, entryFor(buf, { dealer: 'Evil Motors' }))).toThrow(
+      /manifest dealer/,
+    )
+    // A filename with a 1999 period binding current data fails closed.
+    expect(() =>
+      read(
+        buf,
+        entryFor(buf, {
+          filename:
+            'serra-honda-21043_communication-log_1999-08-24_1999-08-30.csv',
+        }),
+      ),
+    ).toThrow(/filename period/)
+    // A filename lacking a period fails closed.
+    expect(() =>
+      read(buf, entryFor(buf, { filename: 'no-period.csv' })),
+    ).toThrow(/filename lacks/)
+    // A wrong per-row Dealer NAME (bytes) fails closed.
+    const badRows = toCsv([
+      synthRow({ Dealer: 'Someone Else Motors' }),
+      synthRow({
+        'Communication ID': 'C2',
+        'Activity Date': '08/30/2026 02:30 PM',
+      }),
+    ])
+    expect(() => read(badRows, entryFor(badRows))).toThrow(/row Dealer name/)
   })
 
   it('lineage binds raw sha + manifest sha + capture + rooftop + period + transform', () => {

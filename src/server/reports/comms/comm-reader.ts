@@ -30,6 +30,9 @@ import {
   REQUIRED_COMM_TYPE,
   SERVICE_PARTS_TOKEN,
   TRANSFORM_VERSION,
+  localDateOf,
+  parseCaptureId,
+  parseFilenamePeriod,
 } from './comm-family-contract'
 
 export class CommReaderError extends Error {}
@@ -209,6 +212,37 @@ export function readCommWeekly(input: {
   if (buf.byteLength !== entry.bytes)
     throw new CommReaderError(`byte-size mismatch for ${entry.filename}`)
 
+  // 1a. Capture-id must be well-formed AND agree on rooftop + capture DATE (a different-date
+  //     or different-rooftop capture id binding this data fails closed).
+  const cap = parseCaptureId(entry.capture_id)
+  if (cap === null)
+    throw new CommReaderError(`malformed capture_id ${entry.capture_id}`)
+  if (cap.dealer_id !== entry.dealer_id)
+    throw new CommReaderError(
+      `capture_id rooftop ${cap.dealer_id} != dealer_id ${entry.dealer_id}`,
+    )
+  const capturedDate = localDateOf(entry.captured_at)
+  if (capturedDate === '' || cap.date !== capturedDate)
+    throw new CommReaderError(
+      `capture_id date ${cap.date} != captured_at date ${capturedDate || '(unparseable)'}`,
+    )
+
+  // 1b. Exact dealer-name/ID agreement (a wrong manifest dealer label fails closed).
+  if (entry.dealer !== dealerName)
+    throw new CommReaderError(
+      `manifest dealer "${entry.dealer}" != expected "${dealerName}"`,
+    )
+
+  // 1c. Filename-embedded period must equal the contracted/captured window (a 1999-period
+  //     filename binding current data fails closed).
+  const fnPeriod = parseFilenamePeriod(entry.filename)
+  if (fnPeriod === null)
+    throw new CommReaderError(`filename lacks a YYYY-MM-DD_YYYY-MM-DD period`)
+  if (fnPeriod.start !== period.start || fnPeriod.end !== period.end)
+    throw new CommReaderError(
+      `filename period ${fnPeriod.start}..${fnPeriod.end} != contracted ${period.start}..${period.end}`,
+    )
+
   // 2. Parse (RFC-4180, BOM-safe) + exact 24-column schema.
   const matrix = parseCsv(buf.toString('utf8'))
   if (matrix.length === 0) throw new CommReaderError('empty CSV')
@@ -230,6 +264,7 @@ export function readCommWeekly(input: {
     )
 
   const col = (name: string) => header.indexOf(name)
+  const iDealer = col(COMM_KEY_COLUMNS.dealer)
   const iUserGroup = col(COMM_KEY_COLUMNS.userGroup)
   const iUser = col(COMM_KEY_COLUMNS.user)
   const iDealerId = col(COMM_KEY_COLUMNS.dealerId)
@@ -265,6 +300,11 @@ export function readCommWeekly(input: {
   const present = (v: string | undefined): string => (v ?? '').trim()
 
   for (const r of data) {
+    // 3-pre. Per-row Dealer NAME must match the expected rooftop name (exact agreement).
+    if (present(r[iDealer]) !== dealerName)
+      throw new CommReaderError(
+        `row Dealer name != expected "${dealerName}" (fail closed)`,
+      )
     // 3a. Comm Type = Sales on EVERY row.
     if (present(r[iCommType]) !== REQUIRED_COMM_TYPE)
       throw new CommReaderError(

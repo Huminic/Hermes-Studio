@@ -25,10 +25,16 @@ It is admitted but **not wired into the evaluator spine** (no metric promoted).
 
 VinConnect source host `vinsolutions.app.coxautoinc.com` (`/vinconnect/`) + a SEPARATE report
 host `reporting-vinsolutions.app.coxautoinc.com` (`/VinAnalyticsDashboards/`); both exact (evil
-subdomain / suffix / non-https / wrong-path / explicit-port all fail). Capture id
-`VIN-COMM-WEEKLY-YYYYMMDD-<dealerId>`. Every required provenance field is present incl. **both**
+subdomain / suffix / non-https / wrong-path fail). **Ports are rejected from the RAW URL
+authority before normalization**, so explicit `:443` (which `URL.port` normalizes away) also
+fails. Capture id `VIN-COMM-WEEKLY-YYYYMMDD-<dealerId>` — the rooftop must equal the manifest
+`dealer_id` AND the `YYYYMMDD` must equal the `captured_at` date (a different-date / different-
+rooftop capture id fails closed). Every required provenance field is present incl. **both**
 `filter_evidence_sha256` and `applied_result_evidence_sha256` (the post-apply screenshot proving
 the applied `08/24/2026 – 08/30/2026` period + counts); `captured_at` carries an explicit tz.
+**Exact agreement enforced (shadow HOLD repair):** manifest `dealer` NAME == contracted rooftop
+name == every CSV row's `Dealer`; the filename's `_YYYY-MM-DD_YYYY-MM-DD` period == the
+contracted window (a 1999-period filename binding current data fails closed).
 
 ## 3. Schema + Sales-only reader (fail-closed)
 
@@ -49,32 +55,43 @@ never committed. Lineage binds raw SHA + manifest SHA + capture id + rooftop + p
 version/hash. **Adversarial tests** prove raw names/customer/message cannot appear in the
 derivative, and that swapping rooftop / period / hash / capture / count fails closed.
 
-## 5. Capability delta (one row per metric, NONE evaluated)
+## 5. Capability delta (FIELD-BACKED repair; one row per metric, NONE evaluated)
 
-`sw295-comm-capability-delta.json` — 295 rows, `evaluated_count: 0`, reconciles to 295. Six
-controller categories (`definition_compatible_now`, `nlp_content_capable_pending`,
-`unsupported_field`, `insufficient_history`, `other_source_or_join`, `outside_sales_boundary`); a
-`requires_ratified_threshold` flag marks structurally-computable metrics still needing a ratified
-threshold/choice. This is a first-pass, auditable heuristic MAP (each row carries a `basis`), not
-a promotion. Distribution: `other_source_or_join 95`, `definition_compatible_now 54`,
-`outside_sales_boundary 50`, `nlp_content_capable_pending 45`, `unsupported_field 39`,
-`insufficient_history 12`.
+`sw295-comm-capability-delta.json` (`field-backed-v2`) — 295 rows, `evaluated_count: 0`,
+reconciles to 295. The keyword-heuristic v1 over-optimistically marked **54** rows
+`definition_compatible_now`; the shadow found ≥37 clearly incompatible. The decision is now
+bounded by the ADMITTED derivative's ACTUAL fields + the single 7-day week, with a per-row
+record (required_inputs, admitted_fields_satisfying, missing_inputs, minimum_history,
+join/NLP requirement, rationale). Seven honest categories (added `semantic_definition_pending`).
 
-> **Flagged for controller ratification (taxonomy):** `definition_compatible_now` means the
-> family can express the metric's definition for the governed week; it does NOT mean promotable —
-> 54 of the 54 carry `requires_ratified_threshold: true`. The heuristic classifier is a starting
-> map; per-metric boundaries (esp. the ~54 comm-structural rows) should be controller-reviewed
-> before any promotion gate.
+**Before → after:** `definition_compatible_now` **54 → 0**; new `semantic_definition_pending`
+**14**; `nlp_content_capable_pending` 45 → **76**; `unsupported_field` 39 → **57**;
+`other_source_or_join` 95 → **112**; `insufficient_history` 12 → **9**; `outside_sales_boundary`
+50 → **27**.
+
+- **`definition_compatible_now` = 0** — no catalog metric is fully specified from this family
+  alone (every one leaves a numerator/population/window/event-semantic open, and none is only a
+  threshold away). The genuinely-ready ID list is therefore empty.
+- **`semantic_definition_pending` = 14** (SW-019/022/026/076/084/086/089/132/133/134/137/138/140/288)
+  — the derivative supports the EVENTS within the week but each needs a ratified semantic choice.
+- Representative repairs: SW-003/007/091 (no phone/email field) → unsupported; SW-025 (CRM
+  login) → unsupported; SW-233/234/235 (opens/clicks/video-opens) → unsupported; SW-015
+  (already evaluated via Leads) → other_source (this family does not supersede it); SW-176
+  (Sales-domain sentiment, wrongly pushed outside Sales by the word "service") → nlp;
+  SW-056/094/180 (DMS deps) → other_source; message-semantics rows → nlp; sold/status/vehicle
+  joins → other_source. Message meaning is NEVER inferred from `content_length`/`presence`.
 
 ## 6. Seven structured candidates — proposed, NONE promoted
 
 `enhanced-comm-structured-candidates.json` proposes an exact deterministic numerator,
 denominator/population, time-window/business-hour rule, minimum sample, threshold/trigger,
 missing/zero behavior, aggregate-safe evaluation_detail, baseline basis, and source fields for
-SW-019, SW-022, SW-076, SW-132, SW-134, SW-137, SW-138. **Every one carries at least one flagged
-semantic choice** (zero-activity-day firing, min-sample/denominator, business-hours calendar,
-"active thread", trend/"grows"/"widens" definition, "reply" adjacency, "rapid-fire" run/window),
-so none is verbatim/structurally forced without an invented threshold. `promoted_this_gate: 0`.
+SW-019, SW-022, SW-076, SW-132, SW-134, SW-137, SW-138. Field-backed re-audit: all seven are
+retained but map to **`semantic_definition_pending`** — the derivative genuinely supports their
+events within the 7-day week, but **every one carries at least one flagged semantic choice**
+(zero-activity-day firing, min-sample/denominator, business-hours calendar, "active thread",
+trend/"grows"/"widens" definition, "reply" adjacency, "rapid-fire" run/window). None relies on
+message meaning. `promoted_this_gate: 0`.
 
 ## Boundaries honored
 
@@ -86,15 +103,15 @@ Content/name/phone/email persisted.
 
 | File                                                                       | sha256:16          |
 | -------------------------------------------------------------------------- | ------------------ |
-| `src/server/reports/comms/comm-family-contract.ts`                         | `3c6967b3836c51f4` |
-| `src/server/reports/comms/comm-reader.ts`                                  | `bc62eee140f347f9` |
+| `src/server/reports/comms/comm-family-contract.ts`                         | `dbf0e6d1c212807f` |
+| `src/server/reports/comms/comm-reader.ts`                                  | `94c42935d2b5aa90` |
 | `scripts/m1r-comms/build-comm-admission.ts`                                | `7b1173ef2e10fcd3` |
 | `scripts/m1r-comms/build-comm-contract.ts`                                 | `b0ccf2eeae772a45` |
-| `scripts/m1r-comms/build-comm-capability-delta.ts`                         | `c6264d790d50e516` |
+| `scripts/m1r-comms/build-comm-capability-delta.ts`                         | `9475acc7b1fe644b` |
 | `docs/halo/contract/enhanced-sales-communication-log-weekly-contract.json` | `40fe56e0eb1156a1` |
-| `docs/halo/contract/enhanced-sales-communication-log-weekly-contract.md`   | `d72d06aa90191bb1` |
-| `docs/halo/contract/sw295-comm-capability-delta.json`                      | `8ec33c91ec4bef2d` |
-| `docs/halo/contract/enhanced-comm-structured-candidates.json`              | `b88290bdea82f5eb` |
+| `docs/halo/contract/enhanced-sales-communication-log-weekly-contract.md`   | `f02a8d2969f663e3` |
+| `docs/halo/contract/sw295-comm-capability-delta.json`                      | `0c9e3ea75b0c2d3f` |
+| `docs/halo/contract/enhanced-comm-structured-candidates.json`              | `764ef9b10b00f812` |
 | `docs/halo/evidence/m1r/comms/comm-admission-aggregates.json`              | `3c0f6855d895c522` |
 
 Every `sha256:16` above is recomputed from the current committed bytes by

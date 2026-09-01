@@ -48,9 +48,26 @@ export function parseHost(urlOrHost: string | null | undefined): string | null {
   }
 }
 
-/** Admit the VinConnect source URL: https + EXACT source host + /vinconnect/ path. */
+/**
+ * True if the RAW url string carries an explicit port in its authority — INCLUDING the
+ * scheme default `:443`, which `new URL(...).port` normalizes away. We inspect the authority
+ * substring directly (before any URL normalization) so `https://host:443/…` fails closed as
+ * the contract requires. Rejects `host:443`, `host:8443`, `user@host:443`, etc.
+ */
+export function hasExplicitPort(rawUrl: string): boolean {
+  const m = /^[a-z][a-z0-9+.-]*:\/\/([^/?#]*)/i.exec(rawUrl.trim())
+  if (!m) return false
+  const authority = m[1]
+  const at = authority.lastIndexOf('@')
+  const hostport = at >= 0 ? authority.slice(at + 1) : authority
+  // A DNS host followed by ":<digits>" is an explicit port (our hosts are never IPv6/bracketed).
+  return /:\d+$/.test(hostport)
+}
+
+/** Admit the VinConnect source URL: https + EXACT source host + /vinconnect/ path + NO port. */
 export function admitSourceUrl(url: string | null | undefined): boolean {
   const raw = (url ?? '').trim()
+  if (hasExplicitPort(raw)) return false
   let u: URL
   try {
     u = new URL(raw)
@@ -59,15 +76,15 @@ export function admitSourceUrl(url: string | null | undefined): boolean {
   }
   return (
     u.protocol === 'https:' &&
-    u.port === '' &&
     u.hostname.toLowerCase() === SOURCE_HOST &&
     u.pathname.startsWith(SOURCE_PATH_PREFIX)
   )
 }
 
-/** Admit the SEPARATE report URL: https + EXACT report host + /VinAnalyticsDashboards/ path. */
+/** Admit the SEPARATE report URL: https + EXACT report host + /VinAnalyticsDashboards/ + NO port. */
 export function admitReportUrl(url: string | null | undefined): boolean {
   const raw = (url ?? '').trim()
+  if (hasExplicitPort(raw)) return false
   let u: URL
   try {
     u = new URL(raw)
@@ -76,10 +93,31 @@ export function admitReportUrl(url: string | null | undefined): boolean {
   }
   return (
     u.protocol === 'https:' &&
-    u.port === '' &&
     u.hostname.toLowerCase() === REPORT_HOST &&
     u.pathname.startsWith(REPORT_PATH_PREFIX)
   )
+}
+
+/** Parse the `_YYYY-MM-DD_YYYY-MM-DD.csv` period embedded in a capture filename, or null. */
+export function parseFilenamePeriod(
+  filename: string,
+): { start: string; end: string } | null {
+  const m = /_(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})\.csv$/.exec(filename)
+  return m ? { start: m[1], end: m[2] } : null
+}
+
+/** Parse the capture-id date + rooftop: VIN-COMM-WEEKLY-YYYYMMDD-<dealerId>, or null. */
+export function parseCaptureId(
+  captureId: string,
+): { date: string; dealer_id: string } | null {
+  const m = /^VIN-COMM-WEEKLY-(\d{4})(\d{2})(\d{2})-(\d{5})$/.exec(captureId)
+  return m ? { date: `${m[1]}-${m[2]}-${m[3]}`, dealer_id: m[4] } : null
+}
+
+/** The business-local calendar date of an ISO timestamp that carries an explicit offset
+ *  (the first 10 chars are the local date). Returns '' if not a dated ISO string. */
+export function localDateOf(iso: string): string {
+  return /^\d{4}-\d{2}-\d{2}T/.test(iso.trim()) ? iso.trim().slice(0, 10) : ''
 }
 
 // ── Container shape ─────────────────────────────────────────────────────────
