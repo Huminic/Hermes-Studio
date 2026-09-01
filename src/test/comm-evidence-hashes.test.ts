@@ -15,6 +15,10 @@ const PROOF_C = new URL(
   '../../docs/halo/evidence/m1r/comms/PROOF_DELTA_C_comm_evaluation.md',
   import.meta.url,
 )
+const PROOF_D = new URL(
+  '../../docs/halo/evidence/m1r/structured/PROOF_DELTA_D_structured_audit.md',
+  import.meta.url,
+)
 const HASH16 = /^[0-9a-f]{16}$/
 const PATHISH = /\.(ts|json|md)$/
 
@@ -53,6 +57,33 @@ describe('Gate 4C1 comm proof delta recorded artifact hashes', () => {
       'src/server/reports/comms/comm-reader.ts',
       'scripts/m1r-comms/comm-capability-decisions.ts',
       'docs/halo/evidence/m1r/comms/comm-admission-aggregates.json',
+    ])
+      expect(
+        recorded.some((r) => r.file === req),
+        `must record ${req}`,
+      ).toBe(true)
+  })
+
+  it('every recorded first-16 SHA-256 matches the current file bytes', () => {
+    for (const r of recorded)
+      expect(first16(new URL(r.file, ROOT)), `${r.file} hash drift`).toBe(
+        r.hash,
+      )
+  })
+})
+
+describe('Gate 4D structured-audit proof delta recorded artifact hashes', () => {
+  const md = fs.readFileSync(PROOF_D, 'utf8')
+  const recorded = parseRecordedHashes(md)
+
+  it('parses the full Gate 4D artifact set (2 generator/module + 1 test + 1 contract + 1 evidence = 5)', () => {
+    expect(recorded.length).toBe(5)
+    for (const req of [
+      'scripts/m1r-structured/build-structured-candidate-audit.ts',
+      'scripts/m1r-structured/portfolio.ts',
+      'docs/halo/contract/sw295-structured-candidate-matrix.json',
+      'docs/halo/evidence/m1r/structured/structured-portfolio-reconciliation.json',
+      'src/test/structured-candidate-audit.test.ts',
     ])
       expect(
         recorded.some((r) => r.file === req),

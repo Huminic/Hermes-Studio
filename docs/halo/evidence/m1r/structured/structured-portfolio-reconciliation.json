@@ -1,0 +1,37 @@
+{
+  "artifact": "gate4d-portfolio-reconciliation",
+  "required_cells": 885,
+  "conditions": 295,
+  "rooftops": 3,
+  "spine_evaluated": 30,
+  "comm_overlay_evaluated": 6,
+  "comm_evaluated_per_rooftop": 2,
+  "structured_promoted_this_gate": 0,
+  "evaluated": 36,
+  "unresolved": 849,
+  "by_dealer": {
+    "21043": {
+      "spine_evaluated": 10,
+      "comm_evaluated": 2,
+      "structured_promoted_this_gate": 0,
+      "evaluated": 12,
+      "unresolved": 283
+    },
+    "21044": {
+      "spine_evaluated": 10,
+      "comm_evaluated": 2,
+      "structured_promoted_this_gate": 0,
+      "evaluated": 12,
+      "unresolved": 283
+    },
+    "21047": {
+      "spine_evaluated": 10,
+      "comm_evaluated": 2,
+      "structured_promoted_this_gate": 0,
+      "evaluated": 12,
+      "unresolved": 283
+    }
+  },
+  "composition_source": "Derived from the real Gate 2 spine (SHA-allowlisted accepted bytes) + the committed Gate 4C2 comm-portfolio-reconciliation.json; reconciled fail-closed (dealer sets, required_cells, aggregate and per-rooftop arithmetic). No 2/6/36/849 literal in generator logic.",
+  "note": "Gate 4D added 0 evaluated cells. Portfolio = 30 spine + 6 comm overlay + 0 structured = 36 evaluated / 849 unresolved over 885 required cells; per-rooftop composition in by_dealer. No spine cell, comm cell, evaluator, or baseline changed."
+}

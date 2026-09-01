@@ -1,0 +1,475 @@
+{
+  "artifact": "gate4d-structured-candidate-matrix",
+  "gate": "4D",
+  "scope": "Re-audit of unresolved SW conditions on a native/structured VinSolutions cadence for definition-exact promotion from the accepted structured families over the accepted week.",
+  "accepted_structured_families": [
+    "appointments",
+    "crm_sales_gross",
+    "dealership_performance",
+    "vinsolutions_custom_reporting_leads"
+  ],
+  "quarantined_families": ["lead_source_roi", "cage_kpi", "sales_comm_log"],
+  "accepted_week": {
+    "start": "2026-08-24",
+    "end": "2026-08-30",
+    "timezone": "America/New_York"
+  },
+  "evidence_source": "REAL Gate 2 spine built from the SHA-allowlisted accepted bytes (scripts/m1r-evaluator path); verdicts and hold reasons are the spine’s own byte-backed unresolved_reason, not hand-authored.",
+  "catalog_sha256": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+  "totals": {
+    "catalog": 295,
+    "evaluated_ids": 12,
+    "spine_evaluated_ids": 10,
+    "comm_evaluated_ids": 2,
+    "structured_candidates": 19,
+    "residual_non_structured": 264
+  },
+  "promotion_statement": "Promotes exactly 0 additional IDs; all 19 structured candidates HOLD. Portfolio unchanged at 36 evaluated / 849 unresolved.",
+  "promoted_ids": [],
+  "material_findings": [
+    "SW-050 (front-gross-negative rate on new-car deals) FIRES at Ford 21047 (≥1 of 4 new-car deals has negative Front Gross → ≥25% > 20% threshold, robust to the 2 blank-front-gross deals), but Serra Honda 21043 and Serra Nissan 21044 each sold 0 new cars in the accepted week (denominator 0; missing is not zero). Under all-three-rooftops-or-no-metric it cannot promote."
+  ],
+  "candidates": [
+    {
+      "metric_id": "SW-001",
+      "section": "1. Lead Intake & Source Quality",
+      "condition": "Lead source volume drops >25% week-over-week vs trailing 4-week average.",
+      "catalog_source": "Lead Source ROI weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "lead_source_roi (quarantined)",
+      "blocker_class": "quarantined_family",
+      "verdict": "HOLD",
+      "hold_reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "spine_unresolved_reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+        "21044": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+        "21047": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Use volume/funnel metrics now; obtain accounting spend before ROI claims."
+    },
+    {
+      "metric_id": "SW-004",
+      "section": "1. Lead Intake & Source Quality",
+      "condition": "Third-party lead provider ROI (gross/lead cost) falls below dealership breakeven threshold.",
+      "catalog_source": "Lead Source ROI weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "lead_source_roi (quarantined)",
+      "blocker_class": "quarantined_family",
+      "verdict": "HOLD",
+      "hold_reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "spine_unresolved_reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+        "21044": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+        "21047": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Use volume/funnel metrics now; obtain accounting spend before ROI claims."
+    },
+    {
+      "metric_id": "SW-005",
+      "section": "1. Lead Intake & Source Quality",
+      "condition": "New lead source appears with zero attribution mapping (unclassified traffic).",
+      "catalog_source": "Lead Source ROI weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "lead_source_roi (quarantined)",
+      "blocker_class": "quarantined_family",
+      "verdict": "HOLD",
+      "hold_reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "spine_unresolved_reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+        "21044": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+        "21047": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Use volume/funnel metrics now; obtain accounting spend before ROI claims."
+    },
+    {
+      "metric_id": "SW-006",
+      "section": "1. Lead Intake & Source Quality",
+      "condition": "Internet lead close rate for a source drops >30% month-over-month.",
+      "catalog_source": "Lead Source ROI weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "lead_source_roi (quarantined)",
+      "blocker_class": "quarantined_family",
+      "verdict": "HOLD",
+      "hold_reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "spine_unresolved_reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+        "21044": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+        "21047": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Use volume/funnel metrics now; obtain accounting spend before ROI claims."
+    },
+    {
+      "metric_id": "SW-008",
+      "section": "1. Lead Intake & Source Quality",
+      "condition": "Lead-to-appointment ratio for a source falls below 8%.",
+      "catalog_source": "Appointments weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "appointments",
+      "blocker_class": "definition_mismatch_missing_field",
+      "verdict": "HOLD",
+      "hold_reason": "Appointments report has no lead-source attribution; per-source lead-to-appointment ratio not computable",
+      "spine_unresolved_reason": "Appointments report has no lead-source attribution; per-source lead-to-appointment ratio not computable",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "Appointments report has no lead-source attribution; per-source lead-to-appointment ratio not computable",
+        "21044": "Appointments report has no lead-source attribution; per-source lead-to-appointment ratio not computable",
+        "21047": "Appointments report has no lead-source attribution; per-source lead-to-appointment ratio not computable"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Calculate show/confirm/no-show rates downstream and join only on supported keys."
+    },
+    {
+      "metric_id": "SW-013",
+      "section": "2. Speed-to-Lead & First Response",
+      "condition": "After-hours leads with no response by opening +15 min.",
+      "catalog_source": "Dealer Dashboard Response Times Opportunities CSV",
+      "acquisition_class": "Native manual export",
+      "family_attempted": "vinsolutions_custom_reporting_leads",
+      "blocker_class": "definition_mismatch_missing_field",
+      "verdict": "HOLD",
+      "hold_reason": "Accepted Leads capture exposes only dealer-week aggregates (median/counts within Originated-After-Hours=No), not per-row after-hours→next-opening timing or a business/holiday calendar; the \"no response by opening +15 min\" rule is not computable.",
+      "spine_unresolved_reason": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
+        "21044": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
+        "21047": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch"
+      },
+      "owner": "Huminic local report operator",
+      "next_action": "Continue fail-closed weekly export and calculate SLA/business-calendar metrics locally."
+    },
+    {
+      "metric_id": "SW-014",
+      "section": "2. Speed-to-Lead & First Response",
+      "condition": "First response is auto-reply only (no human touch within 2 hours).",
+      "catalog_source": "Dealer Dashboard Response Times Opportunities CSV",
+      "acquisition_class": "Native manual export",
+      "family_attempted": "vinsolutions_custom_reporting_leads",
+      "blocker_class": "definition_mismatch_missing_field",
+      "verdict": "HOLD",
+      "hold_reason": "Accepted Leads capture has no auto-reply-vs-human classification (that is message content, i.e. the quarantined Communication Log); \"first response is auto-reply only\" is not computable.",
+      "spine_unresolved_reason": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
+        "21044": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
+        "21047": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch"
+      },
+      "owner": "Huminic local report operator",
+      "next_action": "Continue fail-closed weekly export and calculate SLA/business-calendar metrics locally."
+    },
+    {
+      "metric_id": "SW-016",
+      "section": "2. Speed-to-Lead & First Response",
+      "condition": "Weekend/holiday response SLA breach rate >20%.",
+      "catalog_source": "Dealer Dashboard Response Times Opportunities CSV",
+      "acquisition_class": "Native manual export",
+      "family_attempted": "vinsolutions_custom_reporting_leads",
+      "blocker_class": "definition_mismatch_missing_field",
+      "verdict": "HOLD",
+      "hold_reason": "Accepted Leads capture has no weekend/holiday partition and a holiday calendar is an external source; weekend/holiday SLA breach rate is not computable.",
+      "spine_unresolved_reason": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
+        "21044": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
+        "21047": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch"
+      },
+      "owner": "Huminic local report operator",
+      "next_action": "Continue fail-closed weekly export and calculate SLA/business-calendar metrics locally."
+    },
+    {
+      "metric_id": "SW-017",
+      "section": "2. Speed-to-Lead & First Response",
+      "condition": "Phone leads with no outbound call attempt within 5 minutes.",
+      "catalog_source": "Dealer Dashboard Response Times Opportunities CSV",
+      "acquisition_class": "Native manual export",
+      "family_attempted": "vinsolutions_custom_reporting_leads",
+      "blocker_class": "definition_mismatch_missing_field",
+      "verdict": "HOLD",
+      "hold_reason": "Accepted Leads capture has no per-channel lead type or outbound-call-attempt timing (that is the quarantined Communication Log); \"phone lead with no outbound call within 5 min\" is not computable.",
+      "spine_unresolved_reason": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
+        "21044": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
+        "21047": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch"
+      },
+      "owner": "Huminic local report operator",
+      "next_action": "Continue fail-closed weekly export and calculate SLA/business-calendar metrics locally."
+    },
+    {
+      "metric_id": "SW-034",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "condition": "Write-to-close rate below 40%.",
+      "catalog_source": "CRM Sales Gross weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "crm_sales_gross",
+      "blocker_class": "zero_or_absent_denominator",
+      "verdict": "HOLD",
+      "hold_reason": "CRM Sales Gross has no write-up count; write-to-close denominator unavailable",
+      "spine_unresolved_reason": "CRM Sales Gross has no write-up count; write-to-close denominator unavailable",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "CRM Sales Gross has no write-up count; write-to-close denominator unavailable",
+        "21044": "CRM Sales Gross has no write-up count; write-to-close denominator unavailable",
+        "21047": "CRM Sales Gross has no write-up count; write-to-close denominator unavailable"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Join sold outcomes to stable lead/customer keys only when a supported bridge exists.",
+      "observed_crm_new_car_deals": {
+        "21043": {
+          "new_deals": 0,
+          "new_negative_front": 0,
+          "new_front_blank": 0
+        },
+        "21044": {
+          "new_deals": 0,
+          "new_negative_front": 0,
+          "new_front_blank": 0
+        },
+        "21047": {
+          "new_deals": 4,
+          "new_negative_front": 1,
+          "new_front_blank": 2
+        }
+      }
+    },
+    {
+      "metric_id": "SW-042",
+      "section": "5. Appointment & Showroom Metrics",
+      "condition": "Confirmed appointment rate (reconfirmed within 24h) below 70%.",
+      "catalog_source": "Appointments weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "appointments",
+      "blocker_class": "definition_mismatch_missing_field",
+      "verdict": "HOLD",
+      "hold_reason": "Is Confirmed lacks the 'reconfirmed within 24h' timing basis; definition mismatch",
+      "spine_unresolved_reason": "Is Confirmed lacks the 'reconfirmed within 24h' timing basis; definition mismatch",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "Is Confirmed lacks the 'reconfirmed within 24h' timing basis; definition mismatch",
+        "21044": "Is Confirmed lacks the 'reconfirmed within 24h' timing basis; definition mismatch",
+        "21047": "Is Confirmed lacks the 'reconfirmed within 24h' timing basis; definition mismatch"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Calculate show/confirm/no-show rates downstream and join only on supported keys."
+    },
+    {
+      "metric_id": "SW-043",
+      "section": "5. Appointment & Showroom Metrics",
+      "condition": "Same-day appointment set rate declining 3 weeks in a row.",
+      "catalog_source": "Appointments weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "appointments",
+      "blocker_class": "trend_requires_history",
+      "verdict": "HOLD",
+      "hold_reason": "requires 3 consecutive weeks; single held week insufficient",
+      "spine_unresolved_reason": "requires 3 consecutive weeks; single held week insufficient",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "requires 3 consecutive weeks; single held week insufficient",
+        "21044": "requires 3 consecutive weeks; single held week insufficient",
+        "21047": "requires 3 consecutive weeks; single held week insufficient"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Calculate show/confirm/no-show rates downstream and join only on supported keys."
+    },
+    {
+      "metric_id": "SW-049",
+      "section": "6. Deal & Desking Signals",
+      "condition": "Gross-per-unit falls >15% below trailing 30-day average.",
+      "catalog_source": "CRM Sales Gross weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "crm_sales_gross",
+      "blocker_class": "trend_requires_history",
+      "verdict": "HOLD",
+      "hold_reason": "requires trailing 30-day gross-per-unit average; single held week insufficient",
+      "spine_unresolved_reason": "requires trailing 30-day gross-per-unit average; single held week insufficient",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "requires trailing 30-day gross-per-unit average; single held week insufficient",
+        "21044": "requires trailing 30-day gross-per-unit average; single held week insufficient",
+        "21047": "requires trailing 30-day gross-per-unit average; single held week insufficient"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Join sold outcomes to stable lead/customer keys only when a supported bridge exists.",
+      "observed_crm_new_car_deals": {
+        "21043": {
+          "new_deals": 0,
+          "new_negative_front": 0,
+          "new_front_blank": 0
+        },
+        "21044": {
+          "new_deals": 0,
+          "new_negative_front": 0,
+          "new_front_blank": 0
+        },
+        "21047": {
+          "new_deals": 4,
+          "new_negative_front": 1,
+          "new_front_blank": 2
+        }
+      }
+    },
+    {
+      "metric_id": "SW-050",
+      "section": "6. Deal & Desking Signals",
+      "condition": "Front-end gross negative on >20% of new car deals in a week.",
+      "catalog_source": "CRM Sales Gross weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "crm_sales_gross",
+      "blocker_class": "zero_or_absent_denominator",
+      "verdict": "HOLD",
+      "hold_reason": "Front-gross-negative rate on new-car deals FIRES at Ford 21047 (≥1 of 4 new deals has negative Front Gross → ≥25% > 20%, robust to the 2 blank-front-gross deals) but Honda 21043 and Nissan 21044 each sold 0 new cars in the accepted week (denominator 0; missing is not zero). Under all-three-rooftops-or-no-metric it cannot promote. See observed_crm_new_car_deals.",
+      "spine_unresolved_reason": "per-rooftop (see spine_unresolved_reason_by_rooftop)",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "0 new-car deals in period (denominator 0; missing is not zero)",
+        "21044": "0 new-car deals in period (denominator 0; missing is not zero)",
+        "21047": "2 of 4 new-car deals have blank Front Gross; denominator integrity fails (missing is not zero)"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Join sold outcomes to stable lead/customer keys only when a supported bridge exists.",
+      "observed_crm_new_car_deals": {
+        "21043": {
+          "new_deals": 0,
+          "new_negative_front": 0,
+          "new_front_blank": 0
+        },
+        "21044": {
+          "new_deals": 0,
+          "new_negative_front": 0,
+          "new_front_blank": 0
+        },
+        "21047": {
+          "new_deals": 4,
+          "new_negative_front": 1,
+          "new_front_blank": 2
+        }
+      }
+    },
+    {
+      "metric_id": "SW-084",
+      "section": "11. BDC / Call Center Metrics",
+      "condition": "BDC connect rate falls below 35%.",
+      "catalog_source": "Enterprise Performance/CAGE weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "cage (quarantined)",
+      "blocker_class": "quarantined_family",
+      "verdict": "HOLD",
+      "hold_reason": "Native CAGE source is quarantined; the accepted Dealership Performance Dashboard TOTALs do not expose BDC connect/attempt counts, so BDC connect rate is not computable from an accepted family.",
+      "spine_unresolved_reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+        "21044": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+        "21047": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Calculate rep/team ratios and anomaly baselines downstream."
+    },
+    {
+      "metric_id": "SW-109",
+      "section": "14. Team / Managerial Dynamics",
+      "condition": "Turnover-risk signal: top rep's activity drops 50%+ for 5 days (disengagement).",
+      "catalog_source": "Enterprise Performance/CAGE weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "cage (quarantined)",
+      "blocker_class": "quarantined_family",
+      "verdict": "HOLD",
+      "hold_reason": "Native CAGE source is quarantined; no accepted family exposes per-rep daily activity, and the rule is a 5-day trend; not computable from a single accepted week.",
+      "spine_unresolved_reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+        "21044": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+        "21047": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Calculate rep/team ratios and anomaly baselines downstream."
+    },
+    {
+      "metric_id": "SW-111",
+      "section": "15. Cross-Functional / Second-Order Signals",
+      "condition": "Rising lead volume + falling close rate = capacity or quality problem.",
+      "catalog_source": "CRM Sales Gross weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "crm_sales_gross",
+      "blocker_class": "trend_requires_history",
+      "verdict": "HOLD",
+      "hold_reason": "second-order composite requires a trend/threshold basis not defined in held single-week data",
+      "spine_unresolved_reason": "second-order composite requires a trend/threshold basis not defined in held single-week data",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "second-order composite requires a trend/threshold basis not defined in held single-week data",
+        "21044": "second-order composite requires a trend/threshold basis not defined in held single-week data",
+        "21047": "second-order composite requires a trend/threshold basis not defined in held single-week data"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Join sold outcomes to stable lead/customer keys only when a supported bridge exists.",
+      "observed_crm_new_car_deals": {
+        "21043": {
+          "new_deals": 0,
+          "new_negative_front": 0,
+          "new_front_blank": 0
+        },
+        "21044": {
+          "new_deals": 0,
+          "new_negative_front": 0,
+          "new_front_blank": 0
+        },
+        "21047": {
+          "new_deals": 4,
+          "new_negative_front": 1,
+          "new_front_blank": 2
+        }
+      }
+    },
+    {
+      "metric_id": "SW-113",
+      "section": "15. Cross-Functional / Second-Order Signals",
+      "condition": "High appointment set rate + low show rate = quality-of-set problem.",
+      "catalog_source": "Appointments weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "appointments",
+      "blocker_class": "undefined_threshold_composite",
+      "verdict": "HOLD",
+      "hold_reason": "Component levels exist (appointment set rate SW-031, show rate SW-032), but \"high set rate + low show rate\" has no ratified numeric threshold defining high/low; inventing one would fabricate a benchmark.",
+      "spine_unresolved_reason": "second-order composite requires a trend/threshold basis not defined in held single-week data",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "second-order composite requires a trend/threshold basis not defined in held single-week data",
+        "21044": "second-order composite requires a trend/threshold basis not defined in held single-week data",
+        "21047": "second-order composite requires a trend/threshold basis not defined in held single-week data"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Calculate show/confirm/no-show rates downstream and join only on supported keys."
+    },
+    {
+      "metric_id": "SW-114",
+      "section": "15. Cross-Functional / Second-Order Signals",
+      "condition": "High show rate + low close rate = desking or product problem.",
+      "catalog_source": "Appointments weekly report",
+      "acquisition_class": "Vin-native scheduled",
+      "family_attempted": "appointments+dealership_performance",
+      "blocker_class": "undefined_threshold_composite",
+      "verdict": "HOLD",
+      "hold_reason": "Show rate is available, but \"close rate\" needs sold/write-up and the accepted Dashboard write-up TOTAL is 0 (denominator 0); the composite also has no ratified high/low threshold.",
+      "spine_unresolved_reason": "second-order composite requires a trend/threshold basis not defined in held single-week data",
+      "spine_unresolved_reason_by_rooftop": {
+        "21043": "second-order composite requires a trend/threshold basis not defined in held single-week data",
+        "21044": "second-order composite requires a trend/threshold basis not defined in held single-week data",
+        "21047": "second-order composite requires a trend/threshold basis not defined in held single-week data"
+      },
+      "owner": "Existing VinSolutions schedule / Huminic validator",
+      "next_action": "Calculate show/confirm/no-show rates downstream and join only on supported keys."
+    }
+  ],
+  "residual_categorical": {
+    "total": 264,
+    "by_acquisition_class": {
+      "Scheduled source plus downstream calculation/NLP": 158,
+      "Separate external source required": 56,
+      "Unavailable or retention-limited": 8,
+      "Manual CRM inspection": 7,
+      "Outside governed boundary": 35
+    },
+    "note": "Every residual unresolved ID is categorically non-structured: Scheduled-source + downstream NLP/join (Enhanced Communication Log NLP and joins that touch a quarantined family — includes the deferred 75-ID NLP gate), Separate external source, Outside governed boundary, Unavailable/retention-limited, or Manual CRM inspection. None is evaluable from the accepted structured families."
+  },
+  "join_note": "No accepted-family cross-join is definition-exact: the held readers emit privacy-minimized dealer-week aggregates with NO shared row-level key exposed across families (no Lead ID / Sale ID / Appointment ID), so every join candidate fails on key/population/semantic alignment. The unused appointment fields completed/cancelled have no matching SW condition in the catalog; none is manufactured."
+}
