@@ -79,7 +79,7 @@ describe('Halo Data report card — pure (no /srv): catalog, Sales-only, narrati
     }))
     const text = buildHaloNarrative({
       profile: 'tony-serra-ford', windowDays: 30, cards,
-      coverage: { total: 19, current_value: 0, no_current_data: 0, withheld: 19 },
+      coverage: { total: 20, current_value: 0, no_current_data: 0, withheld: 20 },
       limitations: ['Sales-only.'],
     })
     expect(text).toMatch(/No catalog measure has a current governed value/i)
@@ -95,40 +95,51 @@ describe.runIf(HAVE_DATA)('Halo Data report card — three-store goldens (accept
     else process.env.BRAIN_PROFILES_ROOT = saved
   })
 
-  it('serra-honda: 5 current values (gross + 4 appt) with provenance; industry/baseline states; coverage; Sales-only', () => {
+  it('serra-honda: 7 current values (NATIVE7) with provenance; industry/baseline states; coverage; Sales-only', () => {
     const r = buildHaloReportCard('serra-honda', 30)
     expect(r.sales_only).toBe(true)
-    expect(r.cards.length).toBe(19)
+    expect(r.cards.length).toBe(20)
 
-    // Exact current values (display) + provenance/period.
+    // Exact current values (display) + provenance/period. Gross precedence is CRM Sales Gross.
     const gross = card(r, 'gross.total_sum')
     expect(gross.current.state).toBe('value')
-    expect(gross.display).toBe('$12,240.78')
-    expect(gross.provenance).toMatchObject({ source: 'dealership_performance', period: { start: '2026-08-17', end: '2026-08-23' } })
+    expect(gross.display).toBe('$14,185.20')
+    expect(gross.provenance).toMatchObject({ source: 'crm_sales_gross', period: { start: '2026-08-24', end: '2026-08-30' } })
     expect(gross.industry.state).toBe('no_benchmark')
     expect(gross.baseline.state).toBe('insufficient_history')
 
+    // Reconciliation-mismatches (CRM per-deal) and response time (Dashboard) are now VALUES.
+    const recon = card(r, 'gross.reconciliation_mismatches')
+    expect(recon.current.state).toBe('value')
+    expect(recon.display).toBe('0')
+    expect(recon.provenance).toMatchObject({ source: 'crm_sales_gross' })
+    const rt = card(r, 'dashboard.response_time_actual_avg_min')
+    expect(rt.current.state).toBe('value')
+    expect(rt.display).toBe('210')
+    expect(rt.provenance).toMatchObject({ source: 'dealership_performance' })
+
     const show = card(r, 'appt.show_rate')
-    expect(show.display).toBe('66.7%')
+    expect(show.display).toBe('57.1%')
     expect(show.industry.state).toBe('directional_non_scoring')
     if (show.industry.state === 'directional_non_scoring') {
       expect(show.industry.scoring).toBe(false)
       expect(show.industry.verified_on).toBe('2026-08-28')
     }
     expect(show.provenance).toMatchObject({ source: 'appointments' })
-    expect(card(r, 'appt.no_show_rate').display).toBe('22.2%')
-    expect(card(r, 'appt.confirmed_rate').display).toBe('33.3%')
-    expect(card(r, 'appt.cancel_rate').display).toBe('11.1%')
+    expect(card(r, 'appt.no_show_rate').display).toBe('35.7%')
+    expect(card(r, 'appt.confirmed_rate').display).toBe('50.0%')
+    expect(card(r, 'appt.cancel_rate').display).toBe('7.1%')
 
-    // Coverage: 5 values, 3 no-current (hub engagement.*), 11 withheld.
-    expect(r.coverage).toEqual({ total: 19, current_value: 5, no_current_data: 3, withheld: 11 })
+    // Coverage: 7 values (NATIVE7), 3 no-current (hub engagement.*), 10 withheld.
+    expect(r.coverage).toEqual({ total: 20, current_value: 7, no_current_data: 3, withheld: 10 })
 
     // ROI withheld (contract).
     expect(card(r, 'roi.total_leads').current.state).toBe('withheld')
 
-    // Narrative grounding: $/% tokens are exactly the 5 displays.
+    // Narrative grounding: $/% tokens are exactly the currency + 4 percent displays
+    // (the two count displays 0 and 210 are not currency/percent tokens).
     expect(new Set(moneyPercentTokens(r.narrative))).toEqual(
-      new Set(['$12,240.78', '66.7%', '22.2%', '33.3%', '11.1%']),
+      new Set(['$14,185.20', '57.1%', '35.7%', '50.0%', '7.1%']),
     )
     expect(r.narrative).toMatch(/Limitations:/)
 
@@ -136,21 +147,28 @@ describe.runIf(HAVE_DATA)('Halo Data report card — three-store goldens (accept
     expect(r.cards.some((c) => /service|parts/i.test(c.category))).toBe(false)
   })
 
-  it('serra-nissan: gross only; appointments have NO current value (unavailable, not zero)', () => {
+  it('serra-nissan: NATIVE7 present incl. appointments (real values, not zero); gross precedence CRM', () => {
     const r = buildHaloReportCard('serra-nissan', 30)
-    expect(card(r, 'gross.total_sum').display).toBe('$5,263.60')
-    for (const s of ['appt.show_rate', 'appt.no_show_rate', 'appt.confirmed_rate', 'appt.cancel_rate']) {
-      expect(card(r, s).current.state).toBe('no_current_data')
-      expect(card(r, s).display).toBeNull()
-    }
-    expect(r.coverage.current_value).toBe(1)
+    expect(card(r, 'gross.total_sum').display).toBe('$13,224.00')
+    expect(card(r, 'gross.total_sum').provenance).toMatchObject({ source: 'crm_sales_gross' })
+    expect(card(r, 'appt.show_rate').display).toBe('33.3%')
+    expect(card(r, 'appt.no_show_rate').display).toBe('50.0%')
+    expect(card(r, 'appt.confirmed_rate').display).toBe('50.0%')
+    expect(card(r, 'appt.cancel_rate').display).toBe('16.7%')
+    expect(card(r, 'dashboard.response_time_actual_avg_min').display).toBe('238')
+    expect(r.coverage.current_value).toBe(7)
   })
 
-  it('tony-serra-ford: no current values (all withheld/no-current); narrative invents nothing', () => {
+  it('tony-serra-ford: NATIVE7 present; gross $1,600.99; CRM-vs-Dashboard sold count disagrees', () => {
     const r = buildHaloReportCard('tony-serra-ford', 30)
-    expect(r.coverage.current_value).toBe(0)
-    expect(card(r, 'gross.total_sum').display).toBeNull()
-    expect(moneyPercentTokens(r.narrative)).toEqual([])
-    expect(r.narrative).toMatch(/No catalog measure has a current governed value/i)
+    expect(r.coverage.current_value).toBe(7)
+    expect(card(r, 'gross.total_sum').display).toBe('$1,600.99')
+    expect(card(r, 'appt.show_rate').display).toBe('42.9%')
+    expect(card(r, 'appt.no_show_rate').display).toBe('57.1%')
+    expect(card(r, 'dashboard.response_time_actual_avg_min').display).toBe('317')
+    // Narrative is grounded in the real supported values (currency + 4 percents).
+    expect(new Set(moneyPercentTokens(r.narrative))).toEqual(
+      new Set(['$1,600.99', '42.9%', '57.1%', '42.9%', '0.0%']),
+    )
   })
 })

@@ -1,0 +1,294 @@
+{
+  "note": "R2 durable expected-facts fixture. Non-PII AGGREGATE reader outputs (no customer rows) for the three governed Sales stores, governed week 2026-08-24..2026-08-30, reproduced by the governed native readers off /srv and equal to the committed real-data-e2e receipt values (docs/halo/evidence/m1r/e2e/real-data-e2e-receipt.json). Used so R2 acceptance assertions survive away from /srv. No raw XLSX, no PII, no production DB content.",
+  "period": {
+    "start": "2026-08-24",
+    "end": "2026-08-30"
+  },
+  "as_of_iso": "2026-08-31T12:00:00.000Z",
+  "stores": {
+    "serra-honda": {
+      "appointments": {
+        "available": true,
+        "source": "appointments",
+        "provenance": {
+          "deliveryId": "3153ab0e-5731-475e-bc45-df2509ba34b3",
+          "checksum": "e64a5208a2848f1f8738a1ba84272d0c3d5ec31cb39d6d4a38950c59acf757c6",
+          "parserVersion": "vin-xlsx-1",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "acceptedRows": 14,
+          "reportKind": "appointments"
+        },
+        "total": 14,
+        "completed": 8,
+        "confirmed": 7,
+        "show": 8,
+        "noShow": 5,
+        "cancelled": 1,
+        "rescheduled": 2,
+        "byStatus": {
+          "Missed": 5,
+          "Completed": 8,
+          "Cancelled": 1
+        }
+      },
+      "crm": {
+        "available": true,
+        "source": "crm_sales_gross",
+        "provenance": {
+          "deliveryId": "ad8fc995-1f39-4941-860d-1a026ffb5666",
+          "checksum": "8178807561f6b0e50238d923af7f8db1d4ae0c030b9f9073ae3b31a3d2970d9c",
+          "parserVersion": "vin-xlsx-1",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "acceptedRows": 5,
+          "reportKind": "crm_sales_gross"
+        },
+        "rowCount": 5,
+        "frontSum": 11534.31,
+        "backSum": 2650.89,
+        "totalSum": 14185.2,
+        "reconciliationMismatches": 0
+      },
+      "dashboard": {
+        "available": true,
+        "source": "dealership_performance",
+        "provenance": {
+          "deliveryId": "f5df0ee0-9fb5-4614-89e6-d1cc642ecc0a",
+          "checksum": "9613643d5870e44c7acfd297dcfd885cc34f5653479cd30ed3ee21212f6407c9",
+          "parserVersion": "vin-xlsx-1",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "acceptedRows": 40,
+          "reportKind": "dealership_performance"
+        },
+        "summary": {
+          "leads": 86,
+          "apptsSet": 10,
+          "apptsShow": 8,
+          "totalVisits": 26,
+          "visitsSold": 4,
+          "soldInPeriod": 5,
+          "frontGross": 11534.31,
+          "backGross": 2650.89,
+          "totalGross": 14185.199999999999,
+          "avgTotalGross": 2837.04,
+          "responseTimeAdjustedAvgMin": 88,
+          "responseTimeActualAvgMin": 210
+        },
+        "byInventoryType": [
+          {
+            "label": "New",
+            "leads": 47,
+            "soldInPeriod": 0
+          },
+          {
+            "label": "Unknown",
+            "leads": 15,
+            "soldInPeriod": 0
+          },
+          {
+            "label": "Used",
+            "leads": 24,
+            "soldInPeriod": 5
+          }
+        ]
+      }
+    },
+    "serra-nissan": {
+      "appointments": {
+        "available": true,
+        "source": "appointments",
+        "provenance": {
+          "deliveryId": "6f6bbd1b-7e53-4a26-8cc0-a13f93df6cc8",
+          "checksum": "a73f4e379945257e56d7b05e2b340e58fac16b058e79294a0bddbf374ef423bc",
+          "parserVersion": "vin-xlsx-1",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "acceptedRows": 6,
+          "reportKind": "appointments"
+        },
+        "total": 6,
+        "completed": 2,
+        "confirmed": 3,
+        "show": 2,
+        "noShow": 3,
+        "cancelled": 1,
+        "rescheduled": 0,
+        "byStatus": {
+          "Completed": 2,
+          "Missed": 3,
+          "Cancelled": 1
+        }
+      },
+      "crm": {
+        "available": true,
+        "source": "crm_sales_gross",
+        "provenance": {
+          "deliveryId": "fdc61750-cc2e-4154-8fe1-4c717f53ac1c",
+          "checksum": "7a31cee49f220d481292e6ec846d78c95bcd661082f9c3abca9844d466c2e15f",
+          "parserVersion": "vin-xlsx-1",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "acceptedRows": 6,
+          "reportKind": "crm_sales_gross"
+        },
+        "rowCount": 6,
+        "frontSum": 10063.67,
+        "backSum": 3160.33,
+        "totalSum": 13224,
+        "reconciliationMismatches": 0
+      },
+      "dashboard": {
+        "available": true,
+        "source": "dealership_performance",
+        "provenance": {
+          "deliveryId": "b4843616-78d1-40c7-b8ca-ccfa6da493e4",
+          "checksum": "969ff03d65554d1ab0fe62d1c7b6262375c31b7a7f6b5e2e4f77dfd55ffc7328",
+          "parserVersion": "vin-xlsx-1",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "acceptedRows": 41,
+          "reportKind": "dealership_performance"
+        },
+        "summary": {
+          "leads": 57,
+          "apptsSet": 9,
+          "apptsShow": 2,
+          "totalVisits": 17,
+          "visitsSold": 4,
+          "soldInPeriod": 6,
+          "frontGross": 10063.67,
+          "backGross": 3160.33,
+          "totalGross": 13224,
+          "avgTotalGross": 2204,
+          "responseTimeAdjustedAvgMin": 66,
+          "responseTimeActualAvgMin": 238
+        },
+        "byInventoryType": [
+          {
+            "label": "Unknown",
+            "leads": 20,
+            "soldInPeriod": 0
+          },
+          {
+            "label": "Used",
+            "leads": 20,
+            "soldInPeriod": 6
+          },
+          {
+            "label": "New",
+            "leads": 17,
+            "soldInPeriod": 0
+          }
+        ]
+      }
+    },
+    "tony-serra-ford": {
+      "appointments": {
+        "available": true,
+        "source": "appointments",
+        "provenance": {
+          "deliveryId": "f3978fb4-414d-4bef-abad-dad7fd81ceb5",
+          "checksum": "1d52c108925f2ccb8b4faa2e87c5262614bce373eedb8e3c3b875f496e1a16ff",
+          "parserVersion": "vin-xlsx-1",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "acceptedRows": 7,
+          "reportKind": "appointments"
+        },
+        "total": 7,
+        "completed": 3,
+        "confirmed": 3,
+        "show": 3,
+        "noShow": 4,
+        "cancelled": 0,
+        "rescheduled": 2,
+        "byStatus": {
+          "Completed": 3,
+          "Missed": 4
+        }
+      },
+      "crm": {
+        "available": true,
+        "source": "crm_sales_gross",
+        "provenance": {
+          "deliveryId": "344cb473-3ea9-4b58-9cfc-14dac545fe87",
+          "checksum": "98bac42071f70ee0ca86aade3a9c564b108853d4aa56e883fab16b965b3b7689",
+          "parserVersion": "vin-xlsx-1",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "acceptedRows": 7,
+          "reportKind": "crm_sales_gross"
+        },
+        "rowCount": 7,
+        "frontSum": -2267.16,
+        "backSum": 3868.15,
+        "totalSum": 1600.99,
+        "reconciliationMismatches": 0
+      },
+      "dashboard": {
+        "available": true,
+        "source": "dealership_performance",
+        "provenance": {
+          "deliveryId": "2ff75788-0e21-42f7-acc2-2fdef9711656",
+          "checksum": "2ae6dbbe44027bdf7f63512f10e41ac5cf72a85187a07a31335384b8185584d6",
+          "parserVersion": "vin-xlsx-1",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "acceptedRows": 41,
+          "reportKind": "dealership_performance"
+        },
+        "summary": {
+          "leads": 37,
+          "apptsSet": 6,
+          "apptsShow": 2,
+          "totalVisits": 14,
+          "visitsSold": 3,
+          "soldInPeriod": 6,
+          "frontGross": -2267.16,
+          "backGross": 3868.15,
+          "totalGross": 1600.9900000000002,
+          "avgTotalGross": 266.831666666667,
+          "responseTimeAdjustedAvgMin": 216,
+          "responseTimeActualAvgMin": 317
+        },
+        "byInventoryType": [
+          {
+            "label": "New",
+            "leads": 15,
+            "soldInPeriod": 3
+          },
+          {
+            "label": "Used",
+            "leads": 15,
+            "soldInPeriod": 3
+          },
+          {
+            "label": "Unknown",
+            "leads": 7,
+            "soldInPeriod": 0
+          }
+        ]
+      }
+    }
+  }
+}

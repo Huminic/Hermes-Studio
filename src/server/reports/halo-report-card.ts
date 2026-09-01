@@ -25,7 +25,7 @@ import {
   type CurrentLayer,
   type IndustryLayer,
 } from './halo-three-layer'
-import { readAppointments, readDealershipPerformance } from '../ingest-native-metrics'
+import { readAppointments, readCrmSalesGross, readDealershipPerformance } from '../ingest-native-metrics'
 import { buildHaloNarrative } from './halo-narrative'
 import { withAiNarration, type NarrationDeps } from './halo-ai-narrative'
 
@@ -104,7 +104,7 @@ function buildLimitations(cards: ReadonlyArray<HaloCard>, coverage: HaloCoverage
   ]
   if (coverage.withheld > 0) {
     out.push(
-      `${coverage.withheld} measure(s) withheld pending governed readers (ROI → Lead Source ROI; comm.* → Vin Sales Communication Log; cage.* → Enterprise Performance/CAGE; gross.reconciliation_mismatches → per-deal CRM Sales Gross).`,
+      `${coverage.withheld} measure(s) withheld pending governed readers (ROI → Lead Source ROI; comm.* → Vin Sales Communication Log; cage.* → Enterprise Performance/CAGE).`,
     )
   }
   if (coverage.no_current_data > 0) {
@@ -134,9 +134,22 @@ export function buildHaloReportCard(
   // Provenance sources (availability-safe readers; per-profile / tenant-isolated).
   const dp = readDealershipPerformance(profile)
   const ap = readAppointments(profile)
+  const crm = readCrmSalesGross(profile)
   const provenanceFor = (slug: string, hasValue: boolean): CardProvenance => {
     if (!hasValue) return null
-    if (slug === 'gross.total_sum' && dp.available) {
+    // gross.total_sum: CRM Sales Gross is the PRECEDENCE source; the Dealership
+    // Performance TOTAL is the reconciling fallback (used only when CRM is absent).
+    if (slug === 'gross.total_sum') {
+      if (crm.available) return { source: 'crm_sales_gross', period: crm.provenance.period, checksum: crm.provenance.checksum }
+      if (dp.available) return { source: 'dealership_performance', period: dp.provenance.period, checksum: dp.provenance.checksum }
+      return null
+    }
+    // gross.reconciliation_mismatches is CRM per-deal ONLY (Dashboard never emits it).
+    if (slug === 'gross.reconciliation_mismatches' && crm.available) {
+      return { source: 'crm_sales_gross', period: crm.provenance.period, checksum: crm.provenance.checksum }
+    }
+    // dashboard.response_time_actual_avg_min = Dealership Performance "Avg Actual (Min)".
+    if (slug === 'dashboard.response_time_actual_avg_min' && dp.available) {
       return { source: 'dealership_performance', period: dp.provenance.period, checksum: dp.provenance.checksum }
     }
     if (slug.startsWith('appt.') && ap.available) {

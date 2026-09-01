@@ -15,17 +15,17 @@ const REPORT = {
   report: {
     profile: 'serra-honda',
     sales_only: true,
-    manifest_version: '1.1.0',
+    manifest_version: '1.2.0',
     window_days: 30,
     narrative_mode: 'deterministic_grounded',
-    coverage: { total: 19, current_value: 5, no_current_data: 3, withheld: 11 },
+    coverage: { total: 20, current_value: 7, no_current_data: 3, withheld: 10 },
     limitations: [
       'Sales-only: Service and Parts are excluded (separate combined Serra Service workspace).',
-      '11 measure(s) withheld pending governed readers.',
+      '10 measure(s) withheld pending governed readers.',
       'Industry references are directional and NON-SCORING where no definition-compatible standard exists.',
       'Dealer baseline: insufficient history (fewer than 3 governed periods) — non-scoring.',
     ],
-    narrative: 'Halo Data report — serra-honda (Sales only).\n5 of 19 catalog measures have a current governed value.',
+    narrative: 'Halo Data report — serra-honda (Sales only).\n7 of 20 catalog measures have a current governed value.',
     cards: [
       { slug: 'gross.total_sum', label: 'Total gross', category: 'Gross', unit: 'currency_usd', display: '$12,240.78', current: { state: 'value', value: 12240.78, unit: 'currency_usd' }, industry: { state: 'no_benchmark', note: 'incompatible grain' }, baseline: { state: 'insufficient_history', periods_available: 0, needed: 3 }, provenance: { source: 'dealership_performance', period: { start: '2026-08-17', end: '2026-08-23' }, checksum: 'abc' } },
       { slug: 'appt.show_rate', label: 'Appointment show rate', category: 'Appointments', unit: 'ratio_0_1', display: '66.7%', current: { state: 'value', value: 0.6667, unit: 'ratio_0_1' }, industry: { state: 'directional_non_scoring', scoring: false, range: '50–65% (vendor-directional)', source_url: 'https://www.demandlocal.com/blog/appointment-setting-show-rate-statistics/', source_type: 'vendor blog (directional)', confidence: 'low', source_published_or_updated: '2026-06-04', verified_on: '2026-08-28', definition_compatibility: 'incompatible', note: 'shows ÷ SET vs ÷ ROWS' }, baseline: { state: 'insufficient_history', periods_available: 0, needed: 3 }, provenance: { source: 'appointments', period: { start: '2026-08-17', end: '2026-08-23' } } },
@@ -47,7 +47,7 @@ describe('HaloReportCardPanel', () => {
     expect(screen.getByTestId('halo-report').textContent).toContain('Halo Data — serra-honda')
     expect(screen.getByTestId('halo-narrative-mode').textContent).toContain('deterministic_grounded')
     // Coverage
-    expect(screen.getByTestId('halo-coverage').textContent).toContain('5 / 19')
+    expect(screen.getByTestId('halo-coverage').textContent).toContain('7 / 20')
 
     // Window wording is NEUTRAL — does not imply every metric covers the window.
     const win = screen.getByTestId('halo-window-note').textContent ?? ''
@@ -86,7 +86,7 @@ describe('HaloReportCardPanel', () => {
     const report = {
       ok: true,
       report: {
-        profile: 'serra-honda', sales_only: true, manifest_version: '1.1.0', window_days: 30,
+        profile: 'serra-honda', sales_only: true, manifest_version: '1.2.0', window_days: 30,
         narrative_mode: 'deterministic_grounded',
         coverage: { total: 1, current_value: 1, no_current_data: 0, withheld: 0 },
         limitations: ['Sales-only.'],

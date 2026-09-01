@@ -19,6 +19,7 @@ import type { BaselineLayer, IndustryLayer } from '../halo-three-layer'
 import { narrateHaloReportCard, type HaloAiClaim, type NarrationDeps } from '../halo-ai-narrative'
 import {
   readAppointments,
+  readCrmSalesGross,
   readDealershipPerformance,
   type AppointmentsMetrics,
   type DealershipPerformance,
@@ -275,6 +276,33 @@ export async function buildM2BReportModel(
         }
       })()
     : { available: false, reason: ap.available === false ? ap.reason : 'unavailable' }
+
+  // CRM Sales Gross is the PRECEDENCE source for gross.total_sum (+ per-deal
+  // reconciliation) — list it in the evidence manifest/freshness when accepted so the
+  // ledger's gross provenance is fully traceable (Dashboard TOTAL is the fallback).
+  const crm = readCrmSalesGross(profile)
+  if (crm.available) {
+    const src: EvidenceSource = {
+      family: 'crm_sales_gross',
+      delivery_id: crm.provenance.deliveryId,
+      checksum: crm.provenance.checksum,
+      parser_version: crm.provenance.parserVersion,
+      period: crm.provenance.period,
+      accepted_rows: crm.provenance.acceptedRows,
+    }
+    sources.push(src)
+    const age = ageDays(crm.provenance.period.end, now)
+    freshness.push({
+      family: 'crm_sales_gross',
+      period_start: crm.provenance.period.start,
+      period_end: crm.provenance.period.end,
+      age_days: age,
+      freshness: freshnessOf(age),
+      checksum: crm.provenance.checksum,
+      parser_version: crm.provenance.parserVersion,
+      accepted_rows: crm.provenance.acceptedRows,
+    })
+  }
 
   const newest = freshness
     .map((f) => f.period_end)

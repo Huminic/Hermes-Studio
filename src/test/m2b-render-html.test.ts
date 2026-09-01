@@ -7,7 +7,7 @@ import { offlineNarrationDeps } from '@/server/reports/m2b/offline-narratives'
 
 const REAL_ROOT = '/srv/ingest-dev/analytics'
 const HAVE_DATA = fs.existsSync(`${REAL_ROOT}/serra-honda/brain/brain.db`)
-const NOW = Date.parse('2026-08-29T12:00:00Z')
+const NOW = Date.parse('2026-08-31T12:00:00Z')
 
 const modelFor = (p: string) => buildM2BReportModel(p, { now: NOW, narration: offlineNarrationDeps(p) })
 
@@ -22,8 +22,8 @@ describe.runIf(HAVE_DATA)('M2B HTML rendering', () => {
   it('serra-honda HTML: identity, coverage period, supported value, withheld + missing wording', async () => {
     const html = renderM2BHtml(await modelFor('serra-honda'))
     expect(html).toContain('Serra Honda')
-    expect(html).toContain('2026-08-17 to 2026-08-23')
-    expect(html).toContain('$12,240.78')
+    expect(html).toContain('2026-08-24 to 2026-08-30')
+    expect(html).toContain('$14,185.20')
     expect(html).toMatch(/Withheld - /)
     expect(html).toMatch(/No current value \(/)
     expect(html).toMatch(/Gross reconciliation:.*Reconciles\./s)
@@ -47,11 +47,15 @@ describe.runIf(HAVE_DATA)('M2B HTML rendering', () => {
     }
   })
 
-  it('missing-not-zero: withheld/missing metrics never render a bare zero value', async () => {
+  it('missing-not-zero: withheld/missing metrics render words; a genuine supported 0 is allowed', async () => {
     const html = renderM2BHtml(await modelFor('tony-serra-ford'))
-    expect(html).not.toMatch(/<span class="v">0<\/span>/)
-    expect(html).toContain('No accepted native source for this rooftop this period.')
-    expect(html).toContain('Restore accepted Sales deliveries')
+    // Withheld (ROI/CAGE/comm) + missing (engagement) render words, never a fabricated number.
+    expect(html).toMatch(/Withheld - /)
+    expect(html).toMatch(/No current value \(/)
+    // Ford now has accepted native sources this period (no coverage-unavailable banner).
+    expect(html).not.toContain('No accepted native source for this rooftop this period.')
+    // A GENUINE measured zero (per-deal reconciliation mismatches = 0) is a supported value.
+    expect(html).toContain('<span class="v">0</span>')
   })
 
   it('shows the three comparison layers per metric (current, industry, dealer baseline)', async () => {
@@ -68,20 +72,25 @@ describe.runIf(HAVE_DATA)('M2B HTML rendering', () => {
     expect(html).toMatch(/<h2>References \(industry context - non-scoring\)<\/h2>/)
   })
 
-  it('Ford uses human coverage wording, not "na to na" / "n/a to n/a"', async () => {
+  it('Ford now has an accepted weekly source: shows the coverage period, not the unavailable wording', async () => {
     const html = renderM2BHtml(await modelFor('tony-serra-ford'))
-    expect(html).toContain('No accepted weekly source (coverage unavailable)')
+    expect(html).toContain('2026-08-24 to 2026-08-30')
+    expect(html).not.toContain('No accepted weekly source (coverage unavailable)')
     expect(html).not.toMatch(/na to na/)
     expect(html).not.toMatch(/n\/a to n\/a/)
   })
 
-  it('document <title> (-> PDF metadata Title) has no trailing hyphen when coverage end is null', async () => {
-    const fordTitle = renderM2BHtml(await modelFor('tony-serra-ford')).match(/<title>([^<]*)<\/title>/)![1]
-    expect(fordTitle).toBe('Halo Data Report Card - Tony Serra Ford')
-    expect(fordTitle).not.toMatch(/-\s*$/) // no trailing hyphen/space
+  it('document <title> (-> PDF metadata Title) includes the coverage end; null-end drops the trailing segment', async () => {
     // A store WITH an accepted period keeps the period in the title.
     const hondaTitle = renderM2BHtml(await modelFor('serra-honda')).match(/<title>([^<]*)<\/title>/)![1]
-    expect(hondaTitle).toBe('Halo Data Report Card - Serra Honda - 2026-08-23')
+    expect(hondaTitle).toBe('Halo Data Report Card - Serra Honda - 2026-08-30')
+    // Control: with a null coverage end (no accepted period), the title omits the segment
+    // and has no trailing hyphen. Uses a real model with the end field nulled (branch test).
+    const fordModel = await modelFor('tony-serra-ford')
+    const nullEndTitle = renderM2BHtml({ ...fordModel, coverage_period: { ...fordModel.coverage_period, end: null } })
+      .match(/<title>([^<]*)<\/title>/)![1]
+    expect(nullEndTitle).toBe('Halo Data Report Card - Tony Serra Ford')
+    expect(nullEndTitle).not.toMatch(/-\s*$/) // no trailing hyphen/space
   })
 
   it('Sales-only + contamination provenance are stated on the report', async () => {

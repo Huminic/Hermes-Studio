@@ -6,12 +6,16 @@ const OWNERS = new Set(['GM', 'Sales Manager', 'Salesperson'])
 const TYPES = new Set(['coverage_gap', 'notification', 'automation', 'coaching', 'huminic_opportunity'])
 
 function hondaLike(): OppInput {
+  // R2: NATIVE7 supported (recon + response-time are now VALUES, not withheld).
   const withheld = [
-    'roi.total_leads', 'roi.sold_from_leads', 'roi.duplicate_rate', 'gross.reconciliation_mismatches',
+    'roi.total_leads', 'roi.sold_from_leads', 'roi.duplicate_rate',
     'cage.total_comms', 'cage.deals_from_leads', 'cage.rep_count',
     'comm.escalation_keyword_screen', 'comm.template_overuse', 'comm.inbound_high_intent_keywords', 'comm.multi_rep_within_24h',
   ]
-  const supported = ['appt.show_rate', 'appt.no_show_rate', 'appt.confirmed_rate', 'appt.cancel_rate', 'gross.total_sum']
+  const supported = [
+    'appt.show_rate', 'appt.no_show_rate', 'appt.confirmed_rate', 'appt.cancel_rate',
+    'gross.total_sum', 'gross.reconciliation_mismatches', 'dashboard.response_time_actual_avg_min',
+  ]
   const missing = ['engagement.reply_rate', 'engagement.conversations', 'engagement.resurrections']
   return {
     profile: 'serra-honda',
@@ -21,15 +25,18 @@ function hondaLike(): OppInput {
       ...missing.map((slug) => ({ slug, state: 'missing' as const })),
       ...withheld.map((slug) => ({ slug, state: 'withheld' as const })),
     ],
-    coverage_counts: { total: 19, supported: 5, missing: 3, withheld: 11, unsupported: 0 },
+    coverage_counts: { total: 20, supported: 7, missing: 3, withheld: 10, unsupported: 0 },
     dealershipPerformance: { available: true, summary: { leads: 96, apptsSet: 18, apptsShow: 12, soldInPeriod: 5 } },
     appointments: { available: true, counts: { total: 18, show: 12, noShow: 4, confirmed: 6, cancelled: 2 } },
   }
 }
 
-function fordLike(): OppInput {
+// Pure builder-branch fixture: a store with ZERO accepted families (exercises the
+// coverage-first "restore deliveries" path). NOT a claim about a real rooftop.
+function noAcceptedSourceStore(): OppInput {
   const all = [
     'appt.show_rate', 'appt.no_show_rate', 'appt.confirmed_rate', 'appt.cancel_rate', 'gross.total_sum',
+    'gross.reconciliation_mismatches', 'dashboard.response_time_actual_avg_min',
     'engagement.reply_rate', 'engagement.conversations', 'engagement.resurrections',
   ].map((slug) => ({ slug, state: 'missing' as const }))
   const withheld = ['roi.total_leads', 'cage.total_comms', 'comm.escalation_keyword_screen'].map((slug) => ({ slug, state: 'withheld' as const }))
@@ -37,7 +44,7 @@ function fordLike(): OppInput {
     profile: 'tony-serra-ford',
     dealerName: 'Tony Serra Ford',
     ledger: [...all, ...withheld],
-    coverage_counts: { total: 19, supported: 0, missing: 8, withheld: 11, unsupported: 0 },
+    coverage_counts: { total: 20, supported: 0, missing: 10, withheld: 10, unsupported: 0 },
     dealershipPerformance: { available: false, reason: 'no accepted dealership_performance' },
     appointments: { available: false, reason: 'no accepted appointments' },
   }
@@ -77,8 +84,8 @@ describe('M2B opportunities', () => {
     expect(os.some((o) => /3 governed weekly periods/i.test(o.title))).toBe(true)
   })
 
-  it('Ford: coverage-first restore opportunity; no funnel/no-show (no dp/appt data)', () => {
-    const os = buildM2BOpportunities(fordLike())
+  it('zero-accepted-source store: coverage-first restore opportunity; no funnel/no-show (no dp/appt data)', () => {
+    const os = buildM2BOpportunities(noAcceptedSourceStore())
     expect(os.some((o) => /Restore accepted Sales deliveries/i.test(o.title) && o.expected_impact === 5)).toBe(true)
     expect(os.some((o) => /no-show follow-up/i.test(o.title))).toBe(false)
     expect(os.some((o) => /lead-to-sold funnel/i.test(o.title))).toBe(false)
