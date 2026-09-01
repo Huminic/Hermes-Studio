@@ -121,7 +121,7 @@ actual, deltas, negative/adversarial results, context-fact inventory, deviations
 |---|---|---|
 | (1) Cross-source compatibility described but not ENFORCED | Enforce period equality + CRM-vs-Dashboard gross reconciliation before any cross-source claim | `assembleAcceptedFacts` computes per-family coverage/freshness, checks period equality across fresh families, and compares CRM total vs Dashboard total gross at the governed **$0.50** tolerance. `period` is null unless families agree; "reconciles" requires matching periods AND totals within tolerance. Ford count disagreement blocks count composites without contaminating gross. |
 | (2) `buildAcceptedFindings` trusts caller bundles | Independent fail-closed validation | New `validateAcceptedFactsBundle()` (called first in `buildAcceptedFindings`) independently rejects non-Sales/Service profiles, `sales_only!==true`, registry-mismatch, tampered gates, quarantined/Service provenance, non-fresh-promoted exact conditions, unresolved evidence refs, bad checksums, and forged "reconciles" claims. |
-| (3) Promote broader strict facts as context | Separate `accepted_context_facts` collection | Added, kept OUT of the 20-slug NATIVE7/product counts and never an SW firing. Dashboard(9)+CRM(5)+Appointments(7) = **21 context facts** per fully-covered store. |
+| (3) Promote broader strict facts as context | Separate `accepted_context_facts` collection | Added, kept OUT of the 20-slug NATIVE7/product counts and never an SW firing. Dashboard(10)+CRM(5)+Appointments(7) = **22 context facts** per fully-covered store (Dashboard gained `dashboard.visits_sold` in the R3 re-review contract extension). |
 | (D) Durable evidence beyond a silent /srv skip | Committed receipt-derived non-PII fixture | `src/test/fixtures/r2-governed-facts.fixture.json` (aggregate reader outputs + lineage; no rows/PII). Acceptance is proven via the fixture WITHOUT /srv; an optional `/srv` read-only cross-check asserts the readers reproduce the fixture bundle exactly. |
 
 ## New enforcement (Proof Delta A — scope/state)
@@ -161,11 +161,14 @@ to an accepted fact; dealer identity not matching the registry; tampered gate in
 non-SHA-256 checksum on an accepted KPI.
 
 ## Accepted context-fact inventory (per store, fully covered)
-Dashboard (9): leads, appts_set, appts_shown, total_visits, sold_in_period, front_gross,
-back_gross, total_gross, avg_actual_response_min. CRM (5): row_count, front_sum, back_sum,
-total_sum, reconciliation_mismatches. Appointments (7): total, show, no_show, confirmed,
-cancelled, completed, rescheduled. **Total 21/store (63 across the three stores).** Separate
+Dashboard (10): leads, appts_set, appts_shown, total_visits, visits_sold, sold_in_period,
+front_gross, back_gross, total_gross, avg_actual_response_min. CRM (5): row_count, front_sum,
+back_sum, total_sum, reconciliation_mismatches. Appointments (7): total, show, no_show, confirmed,
+cancelled, completed, rescheduled. **Total 22/store (66 across the three stores).** Separate
 collection; NATIVE7/product coverage stays 7 observed / 3 missing / 10 withheld = 20.
+(`dashboard.visits_sold` was added in the R3 re-review as a bounded accepted-fact contract
+extension from the already-governed Dashboard reader field `visitsSold`; values Honda=4, Nissan=4,
+Ford=3. It is the correct numerator for visit-to-sale and is NOT `sold_in_period`.)
 
 ## Proof Delta B (correction)
 - `accepted-facts` **10/10**, `accepted-findings` **14/14** (durable-fixture branch tests +

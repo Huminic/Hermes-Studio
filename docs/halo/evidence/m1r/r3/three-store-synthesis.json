@@ -1,0 +1,1940 @@
+{
+  "artifact": "m2r-r3-three-store-consultant-synthesis",
+  "schema_version": "1.0.0",
+  "note": "Deterministic R3 cross-metric consultant synthesis for the three governed Sales stores, governed week 2026-08-24..2026-08-30, derived from the committed R2 durable fixture (equals /srv reader values). Visit-to-sale uses the governed Dashboard visits_sold numerator (not sold_in_period). INTERNAL proof and EXTERNAL customer copy are separated per store. Safe-ratio (no non-finite values); no benchmark from incompatible material; no causal/magnitude/outcome claims in customer copy. No raw XLSX/PII; Sales-only.",
+  "period": {
+    "start": "2026-08-24",
+    "end": "2026-08-30"
+  },
+  "as_of_iso": "2026-08-31T12:00:00.000Z",
+  "catalog_spine": "docs/halo/contract/sw295-inventory.json (SW-001..SW-295)",
+  "stores": {
+    "serra-honda": {
+      "internal": {
+        "schema_version": "1.0.0",
+        "profile": "serra-honda",
+        "dealer_name": "Serra Honda",
+        "dealer_id": "21043",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "as_of_iso": "2026-08-31T12:00:00.000Z",
+        "derived_measures": [
+          {
+            "key": "funnel.appointment_set_rate",
+            "label": "Appointment-set rate (set / leads)",
+            "cluster": "lead_funnel",
+            "value": 0.11627906976744186,
+            "display": "11.6%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.appts_set / dashboard.leads",
+            "inputs": [
+              "dashboard.appts_set",
+              "dashboard.leads"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "funnel.shown_through_rate",
+            "label": "Shown-through rate (shown / set)",
+            "cluster": "appointments",
+            "value": 0.8,
+            "display": "80.0%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.appts_shown / dashboard.appts_set",
+            "inputs": [
+              "dashboard.appts_shown",
+              "dashboard.appts_set"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "funnel.visit_rate",
+            "label": "Visit rate (visits / leads)",
+            "cluster": "lead_funnel",
+            "value": 0.3023255813953488,
+            "display": "30.2%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.total_visits / dashboard.leads",
+            "inputs": [
+              "dashboard.total_visits",
+              "dashboard.leads"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "funnel.visit_to_sale_rate",
+            "label": "Visit-to-sale rate (visits-sold / visits)",
+            "cluster": "showroom_conversion",
+            "value": 0.15384615384615385,
+            "display": "15.4%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.visits_sold / dashboard.total_visits",
+            "inputs": [
+              "dashboard.visits_sold",
+              "dashboard.total_visits"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "funnel.lead_to_sale_yield",
+            "label": "Lead-to-sale yield, end-to-end (sold / leads)",
+            "cluster": "lead_funnel",
+            "value": 0.05813953488372093,
+            "display": "5.8%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.sold_in_period / dashboard.leads",
+            "inputs": [
+              "dashboard.sold_in_period",
+              "dashboard.leads"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.confirmation_rate",
+            "label": "Confirmation rate (confirmed / total)",
+            "cluster": "appointments",
+            "value": 0.5,
+            "display": "50.0%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.confirmed / appointments.total",
+            "inputs": [
+              "appointments.confirmed",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.confirmation_gap",
+            "label": "Confirmation gap (unconfirmed / total)",
+            "cluster": "appointments",
+            "value": 0.5,
+            "display": "50.0%",
+            "unit": "ratio_0_1",
+            "formula": "(appointments.total - appointments.confirmed) / appointments.total",
+            "inputs": [
+              "appointments.total",
+              "appointments.confirmed"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.show_rate",
+            "label": "Show rate (shown / total)",
+            "cluster": "appointments",
+            "value": 0.5714285714285714,
+            "display": "57.1%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.show / appointments.total",
+            "inputs": [
+              "appointments.show",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.no_show_rate",
+            "label": "No-show rate (no-show / total)",
+            "cluster": "appointments",
+            "value": 0.35714285714285715,
+            "display": "35.7%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.no_show / appointments.total",
+            "inputs": [
+              "appointments.no_show",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.cancel_rate",
+            "label": "Cancel rate (cancelled / total)",
+            "cluster": "appointments",
+            "value": 0.07142857142857142,
+            "display": "7.1%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.cancelled / appointments.total",
+            "inputs": [
+              "appointments.cancelled",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.reschedule_rate",
+            "label": "Reschedule rate (rescheduled / total)",
+            "cluster": "appointments",
+            "value": 0.14285714285714285,
+            "display": "14.3%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.rescheduled / appointments.total",
+            "inputs": [
+              "appointments.rescheduled",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.completion_rate",
+            "label": "Completion rate (completed / total)",
+            "cluster": "appointments",
+            "value": 0.5714285714285714,
+            "display": "57.1%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.completed / appointments.total",
+            "inputs": [
+              "appointments.completed",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "gross.total",
+            "label": "Total gross (CRM per-deal sum)",
+            "cluster": "gross_economics",
+            "value": 14185.2,
+            "display": "$14,185.20",
+            "unit": "currency_usd",
+            "formula": "crm.total_sum",
+            "inputs": [
+              "crm.total_sum"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "gross.front_mix",
+            "label": "Front-gross mix (front / total)",
+            "cluster": "gross_economics",
+            "value": 0.8131228322476947,
+            "display": "81.3%",
+            "unit": "ratio_0_1",
+            "formula": "crm.front_sum / crm.total_sum",
+            "inputs": [
+              "crm.front_sum",
+              "crm.total_sum"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "gross.back_mix",
+            "label": "Back-gross mix (back / total)",
+            "cluster": "gross_economics",
+            "value": 0.1868771677523052,
+            "display": "18.7%",
+            "unit": "ratio_0_1",
+            "formula": "crm.back_sum / crm.total_sum",
+            "inputs": [
+              "crm.back_sum",
+              "crm.total_sum"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "gross.avg_per_sale",
+            "label": "Average gross per CRM sale",
+            "cluster": "gross_economics",
+            "value": 2837.04,
+            "display": "$2,837.04",
+            "unit": "currency_usd",
+            "formula": "crm.total_sum / crm.row_count",
+            "inputs": [
+              "crm.total_sum",
+              "crm.row_count"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "responsiveness.avg_actual_response_min",
+            "label": "Avg actual response (minutes)",
+            "cluster": "responsiveness",
+            "value": 210,
+            "display": "210",
+            "unit": "count",
+            "formula": "dashboard.avg_actual_response_min",
+            "inputs": [
+              "dashboard.avg_actual_response_min"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "cross.confirmation_vs_show_gap",
+            "label": "Confirmed-not-shown gap (confirmation rate - show rate)",
+            "cluster": "cross_cluster",
+            "value": -0.0714285714285714,
+            "display": "-7.1%",
+            "unit": "ratio_0_1",
+            "formula": "appt.confirmation_rate - appt.show_rate",
+            "inputs": [
+              "appointments.confirmed",
+              "appointments.show",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "cross.gross_per_delivered",
+            "label": "Gross per delivered unit (CRM gross / Dashboard sold)",
+            "cluster": "cross_cluster",
+            "value": 2837.04,
+            "display": "$2,837.04",
+            "unit": "currency_usd",
+            "formula": "crm.total_sum / dashboard.sold_in_period",
+            "inputs": [
+              "crm.total_sum",
+              "dashboard.sold_in_period"
+            ],
+            "compatibility": "cross_family_period_matched"
+          }
+        ],
+        "blocked_measures": [],
+        "findings": [
+          {
+            "id": "r3-funnel-review",
+            "profile": "serra-honda",
+            "dealer_name": "Serra Honda",
+            "clusters": [
+              "lead_funnel",
+              "showroom_conversion"
+            ],
+            "lens": "sales_gross_lift",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "dashboard.leads",
+              "dashboard.appts_set",
+              "dashboard.appts_shown",
+              "dashboard.total_visits",
+              "dashboard.visits_sold",
+              "dashboard.sold_in_period"
+            ],
+            "formula": "named transition snapshots (set/leads, shown/set, visits_sold/visits) and end-to-end yield (sold/leads)",
+            "proves": "This period: appointment-set rate 11.6%, shown-through rate 80.0%, visit-to-sale rate 15.4%; end-to-end lead-to-sale yield 5.8%. These are distinct named snapshots, not interchangeable stages.",
+            "does_not_prove": "Which step is the largest opportunity, where leakage occurs, a cause, or a guaranteed lift; the lowest raw percentage does not identify the biggest lever. Lead-to-sale is end-to-end yield, not a transition stage. A cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.5,
+            "expected_impact": 4,
+            "impact_rationale": "Reviewing the funnel snapshots together supports a structured, bounded diagnostic conversation.",
+            "business_consequence": "These are period snapshots of distinct funnel steps and the end-to-end yield.",
+            "owner": "Sales Manager",
+            "next_action": "Walk the funnel steps in order in the weekly meeting and review each snapshot next period.",
+            "follow_up_metric": "funnel.lead_to_sale_yield",
+            "inert_notification_candidate": "INERT (not sent): include the funnel snapshots in the weekly review.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): a structured funnel-review checklist, subject to approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "external_copy": "Review your funnel steps together - set, show, and close - alongside your overall lead-to-sale yield, and track each snapshot next period.",
+            "impact_score": 2,
+            "impact_rank": 1
+          },
+          {
+            "id": "r3-response-time-exposure",
+            "profile": "serra-honda",
+            "dealer_name": "Serra Honda",
+            "clusters": [
+              "responsiveness",
+              "cross_cluster"
+            ],
+            "lens": "prospect_friction",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "dashboard.avg_actual_response_min"
+            ],
+            "formula": "dashboard.avg_actual_response_min (minutes)",
+            "proves": "Average actual response time was 210 minutes this period.",
+            "does_not_prove": "That response time affected any outcome, guest intent, a cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file). This is not a first-response-time metric.",
+            "confidence": 0.5,
+            "expected_impact": 3,
+            "impact_rationale": "Response time is a workflow measure with a dealer-relative target the team can set.",
+            "business_consequence": "Average response time is a workflow measure the team can track period over period.",
+            "owner": "Sales Manager",
+            "next_action": "Set a dealer-relative response-time target and review next period.",
+            "follow_up_metric": "dashboard.avg_actual_response_min",
+            "inert_notification_candidate": "INERT (not sent): weekly response-time summary to the Sales Manager (no ratified threshold).",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): a lead-response prompt, subject to approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "external_copy": "Track your average response time and set a dealer-relative target to review next period.",
+            "impact_score": 1.5,
+            "impact_rank": 2
+          },
+          {
+            "id": "r3-gross-mix",
+            "profile": "serra-honda",
+            "dealer_name": "Serra Honda",
+            "clusters": [
+              "gross_economics"
+            ],
+            "lens": "training",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "crm.front_sum",
+              "crm.back_sum",
+              "crm.total_sum"
+            ],
+            "formula": "crm.front_sum / crm.total_sum (front mix); crm.back_sum / crm.total_sum (back mix)",
+            "proves": "Front-gross made up 81.3% of total gross this period.",
+            "does_not_prove": "A cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.5,
+            "expected_impact": 2,
+            "impact_rationale": "Front/back balance is a defined coaching focus in deal reviews.",
+            "business_consequence": "Front/back mix is a snapshot of gross composition this period.",
+            "owner": "Sales Manager",
+            "next_action": "Review front/back balance in deal reviews.",
+            "follow_up_metric": "gross.total_sum",
+            "inert_notification_candidate": "INERT (not sent): weekly gross-mix summary to the Sales Manager.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): deal-desk review prompts, subject to approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "external_copy": "Review your front/back gross mix in deal reviews.",
+            "impact_score": 1,
+            "impact_rank": 3
+          },
+          {
+            "id": "r3-appointments-on-track",
+            "profile": "serra-honda",
+            "dealer_name": "Serra Honda",
+            "clusters": [
+              "appointments"
+            ],
+            "lens": "training",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "appt.show_rate",
+              "appt.no_show_rate"
+            ],
+            "formula": "appt.show_rate >= 55% and appt.no_show_rate <= 45%",
+            "proves": "Show rate 57.1% and no-show rate 35.7% are within the ratified thresholds this period; neither SW-032 nor SW-041 fired.",
+            "does_not_prove": "Sustained performance or a cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.5,
+            "expected_impact": 2,
+            "impact_rationale": "Both ratified appointment conditions are within range this period.",
+            "business_consequence": "Both ratified appointment conditions are within range this period.",
+            "owner": "Sales Manager",
+            "next_action": "Continue the current confirmation steps and keep accumulating governed periods.",
+            "follow_up_metric": "appt.show_rate",
+            "inert_notification_candidate": "INERT (not sent): weekly appointment-status confirmation to the Sales Manager.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): none needed while within range.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "incompatible_reference": {
+              "note": "Demand Local (updated 2026-06-04) explicitly states there is no single universal show-rate benchmark. Foureyes defines Appointment Show Rate = shows ÷ appointments SET (support.foureyes.io, 2025-03-14); Studio computes shows ÷ appointment ROWS — different denominator. The Foureyes 2025-05-06 page is a SET-rate study (40% internet / 75% phone), NOT a show-rate target. Do NOT cite Foureyes for a 50% target and do NOT score.",
+              "source_url": "https://www.demandlocal.com/blog/appointment-setting-show-rate-statistics/",
+              "source_published_or_updated": "2026-06-04",
+              "definition_compatibility": "incompatible"
+            },
+            "external_copy": "Your appointment show and no-show rates are within range this period - keep the current confirmation steps and review again next period.",
+            "impact_score": 1,
+            "impact_rank": 4
+          }
+        ],
+        "catalog_accountability": {
+          "total": 295,
+          "spine": "docs/halo/contract/sw295-inventory.json (SW-001..SW-295, 885 rows; R1 spine)",
+          "directly_evaluated": [
+            "SW-032",
+            "SW-041"
+          ],
+          "directly_evaluated_count": 2,
+          "accounted_only_count": 293,
+          "note": "Only the ratified conditions SW-032/SW-041 are directly evaluated this period; the remaining 293 are accounted-only via the R1 inventory spine. Derived measures are definition-compatible context, not ratified SW firings."
+        },
+        "rejected_source_families": [
+          {
+            "family": "Lead Source ROI (native — absent)",
+            "state": "withheld",
+            "reason": "Dashboard vs Lead Source ROI definitions diverge for the same period (e.g. Honda 89 leads/8 sold vs ROI 110/5); needs a governed Lead Source ROI native reader."
+          },
+          {
+            "family": "Enterprise Performance / CAGE (native — absent)",
+            "state": "withheld",
+            "reason": "needs a governed Enterprise Performance / CAGE native reader (report not ingested here)."
+          },
+          {
+            "family": "Vin Sales Communication Log (native — absent)",
+            "state": "withheld",
+            "reason": "needs a governed Vin Sales Communication Log reader — prior Honda exploration lacks stable IDs and is not a 3-store daily feed."
+          },
+          {
+            "family": "messaging-hub (native)",
+            "state": "no_current_data",
+            "reason": "hub reader exists but the three isolated stores hold no conversation data (0 threads) → no current value."
+          },
+          {
+            "family": "Service / Parts (any source)",
+            "state": "excluded",
+            "reason": "Permanent Sales-only boundary; zero Service/Parts facts or conclusions enter a Sales profile."
+          }
+        ],
+        "assumptions": [
+          "Single governed period: no trend, causal, magnitude/savings, guest-intent, industry-superiority, or guaranteed-outcome claims.",
+          "Every division uses safe ratio semantics; a zero/absent denominator yields a blocked measure, never an invalid non-finite value.",
+          "Funnel measures are named snapshots; lead-to-sale is end-to-end yield, not a transition stage; no weakest-stage/biggest-lever claim.",
+          "Benchmarks require definition-compatible governed material; the current appointment reference is incompatible and kept only as internal provenance, never a benchmark or a customer comparison.",
+          "Count-dependent composites are blocked when accepted sources disagree on the unit count; separately-reconciled gross is preserved.",
+          "Only accepted facts power measures/findings; quarantined ROI/CAGE/Sales-Communication and Service/Parts are excluded."
+        ],
+        "freshness": {
+          "as_of_iso": "2026-08-31T12:00:00.000Z",
+          "max_age_days": 14,
+          "families": [
+            {
+              "family": "appointments",
+              "freshness": "fresh",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "fresh": true
+            },
+            {
+              "family": "crm_sales_gross",
+              "freshness": "fresh",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "fresh": true
+            },
+            {
+              "family": "dealership_performance",
+              "freshness": "fresh",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "fresh": true
+            }
+          ]
+        }
+      },
+      "external": {
+        "profile": "serra-honda",
+        "dealer_name": "Serra Honda",
+        "headline": "Serra Honda: your prioritized Sales opportunities for the week",
+        "opportunities": [
+          {
+            "rank": 1,
+            "title": "Grow sales and gross",
+            "message": "Review your funnel steps together - set, show, and close - alongside your overall lead-to-sale yield, and track each snapshot next period.",
+            "owner": "Sales Manager",
+            "next_step": "Walk the funnel steps in order in the weekly meeting and review each snapshot next period."
+          },
+          {
+            "rank": 2,
+            "title": "Smooth the buyer path",
+            "message": "Track your average response time and set a dealer-relative target to review next period.",
+            "owner": "Sales Manager",
+            "next_step": "Set a dealer-relative response-time target and review next period."
+          },
+          {
+            "rank": 3,
+            "title": "Coach for consistency",
+            "message": "Review your front/back gross mix in deal reviews.",
+            "owner": "Sales Manager",
+            "next_step": "Review front/back balance in deal reviews."
+          },
+          {
+            "rank": 4,
+            "title": "Coach for consistency",
+            "message": "Your appointment show and no-show rates are within range this period - keep the current confirmation steps and review again next period.",
+            "owner": "Sales Manager",
+            "next_step": "Continue the current confirmation steps and keep accumulating governed periods."
+          }
+        ],
+        "closing": "These are prioritized, dealer-relative opportunities based on your own governed Sales results. Each is a recommendation your team can act on and review next period."
+      }
+    },
+    "serra-nissan": {
+      "internal": {
+        "schema_version": "1.0.0",
+        "profile": "serra-nissan",
+        "dealer_name": "Serra Nissan",
+        "dealer_id": "21044",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "as_of_iso": "2026-08-31T12:00:00.000Z",
+        "derived_measures": [
+          {
+            "key": "funnel.appointment_set_rate",
+            "label": "Appointment-set rate (set / leads)",
+            "cluster": "lead_funnel",
+            "value": 0.15789473684210525,
+            "display": "15.8%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.appts_set / dashboard.leads",
+            "inputs": [
+              "dashboard.appts_set",
+              "dashboard.leads"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "funnel.shown_through_rate",
+            "label": "Shown-through rate (shown / set)",
+            "cluster": "appointments",
+            "value": 0.2222222222222222,
+            "display": "22.2%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.appts_shown / dashboard.appts_set",
+            "inputs": [
+              "dashboard.appts_shown",
+              "dashboard.appts_set"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "funnel.visit_rate",
+            "label": "Visit rate (visits / leads)",
+            "cluster": "lead_funnel",
+            "value": 0.2982456140350877,
+            "display": "29.8%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.total_visits / dashboard.leads",
+            "inputs": [
+              "dashboard.total_visits",
+              "dashboard.leads"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "funnel.visit_to_sale_rate",
+            "label": "Visit-to-sale rate (visits-sold / visits)",
+            "cluster": "showroom_conversion",
+            "value": 0.23529411764705882,
+            "display": "23.5%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.visits_sold / dashboard.total_visits",
+            "inputs": [
+              "dashboard.visits_sold",
+              "dashboard.total_visits"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "funnel.lead_to_sale_yield",
+            "label": "Lead-to-sale yield, end-to-end (sold / leads)",
+            "cluster": "lead_funnel",
+            "value": 0.10526315789473684,
+            "display": "10.5%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.sold_in_period / dashboard.leads",
+            "inputs": [
+              "dashboard.sold_in_period",
+              "dashboard.leads"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.confirmation_rate",
+            "label": "Confirmation rate (confirmed / total)",
+            "cluster": "appointments",
+            "value": 0.5,
+            "display": "50.0%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.confirmed / appointments.total",
+            "inputs": [
+              "appointments.confirmed",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.confirmation_gap",
+            "label": "Confirmation gap (unconfirmed / total)",
+            "cluster": "appointments",
+            "value": 0.5,
+            "display": "50.0%",
+            "unit": "ratio_0_1",
+            "formula": "(appointments.total - appointments.confirmed) / appointments.total",
+            "inputs": [
+              "appointments.total",
+              "appointments.confirmed"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.show_rate",
+            "label": "Show rate (shown / total)",
+            "cluster": "appointments",
+            "value": 0.3333333333333333,
+            "display": "33.3%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.show / appointments.total",
+            "inputs": [
+              "appointments.show",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.no_show_rate",
+            "label": "No-show rate (no-show / total)",
+            "cluster": "appointments",
+            "value": 0.5,
+            "display": "50.0%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.no_show / appointments.total",
+            "inputs": [
+              "appointments.no_show",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.cancel_rate",
+            "label": "Cancel rate (cancelled / total)",
+            "cluster": "appointments",
+            "value": 0.16666666666666666,
+            "display": "16.7%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.cancelled / appointments.total",
+            "inputs": [
+              "appointments.cancelled",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.reschedule_rate",
+            "label": "Reschedule rate (rescheduled / total)",
+            "cluster": "appointments",
+            "value": 0,
+            "display": "0.0%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.rescheduled / appointments.total",
+            "inputs": [
+              "appointments.rescheduled",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.completion_rate",
+            "label": "Completion rate (completed / total)",
+            "cluster": "appointments",
+            "value": 0.3333333333333333,
+            "display": "33.3%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.completed / appointments.total",
+            "inputs": [
+              "appointments.completed",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "gross.total",
+            "label": "Total gross (CRM per-deal sum)",
+            "cluster": "gross_economics",
+            "value": 13224,
+            "display": "$13,224.00",
+            "unit": "currency_usd",
+            "formula": "crm.total_sum",
+            "inputs": [
+              "crm.total_sum"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "gross.front_mix",
+            "label": "Front-gross mix (front / total)",
+            "cluster": "gross_economics",
+            "value": 0.7610155777374471,
+            "display": "76.1%",
+            "unit": "ratio_0_1",
+            "formula": "crm.front_sum / crm.total_sum",
+            "inputs": [
+              "crm.front_sum",
+              "crm.total_sum"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "gross.back_mix",
+            "label": "Back-gross mix (back / total)",
+            "cluster": "gross_economics",
+            "value": 0.23898442226255293,
+            "display": "23.9%",
+            "unit": "ratio_0_1",
+            "formula": "crm.back_sum / crm.total_sum",
+            "inputs": [
+              "crm.back_sum",
+              "crm.total_sum"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "gross.avg_per_sale",
+            "label": "Average gross per CRM sale",
+            "cluster": "gross_economics",
+            "value": 2204,
+            "display": "$2,204.00",
+            "unit": "currency_usd",
+            "formula": "crm.total_sum / crm.row_count",
+            "inputs": [
+              "crm.total_sum",
+              "crm.row_count"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "responsiveness.avg_actual_response_min",
+            "label": "Avg actual response (minutes)",
+            "cluster": "responsiveness",
+            "value": 238,
+            "display": "238",
+            "unit": "count",
+            "formula": "dashboard.avg_actual_response_min",
+            "inputs": [
+              "dashboard.avg_actual_response_min"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "cross.confirmation_vs_show_gap",
+            "label": "Confirmed-not-shown gap (confirmation rate - show rate)",
+            "cluster": "cross_cluster",
+            "value": 0.16666666666666669,
+            "display": "16.7%",
+            "unit": "ratio_0_1",
+            "formula": "appt.confirmation_rate - appt.show_rate",
+            "inputs": [
+              "appointments.confirmed",
+              "appointments.show",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "cross.gross_per_delivered",
+            "label": "Gross per delivered unit (CRM gross / Dashboard sold)",
+            "cluster": "cross_cluster",
+            "value": 2204,
+            "display": "$2,204.00",
+            "unit": "currency_usd",
+            "formula": "crm.total_sum / dashboard.sold_in_period",
+            "inputs": [
+              "crm.total_sum",
+              "dashboard.sold_in_period"
+            ],
+            "compatibility": "cross_family_period_matched"
+          }
+        ],
+        "blocked_measures": [],
+        "findings": [
+          {
+            "id": "r3-appt-show-leakage",
+            "profile": "serra-nissan",
+            "dealer_name": "Serra Nissan",
+            "clusters": [
+              "appointments"
+            ],
+            "lens": "prospect_friction",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "appt.show_rate",
+              "appointments.show",
+              "appointments.total"
+            ],
+            "formula": "appointments.show / appointments.total (SW-032 threshold < 55%)",
+            "proves": "2 of 6 booked appointments were recorded as shown (show rate 33.3%), below the ratified SW-032 55% floor for this period.",
+            "does_not_prove": "A cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.7,
+            "expected_impact": 5,
+            "impact_rationale": "Recorded shows are the appointments that reached the showroom; the ratified floor was not met this period.",
+            "business_consequence": "The recorded show count is the number of booked appointments that reached the showroom this period.",
+            "owner": "Sales Manager",
+            "next_action": "Review the confirmation and reminder steps for the 6 booked appointments this period.",
+            "follow_up_metric": "appt.show_rate",
+            "inert_notification_candidate": "INERT (not sent): notify the Sales Manager that the recorded show rate 33.3% is below the 55% floor this period.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): a guest reminder-cadence step, subject to explicit approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "incompatible_reference": {
+              "note": "Demand Local (updated 2026-06-04) explicitly states there is no single universal show-rate benchmark. Foureyes defines Appointment Show Rate = shows ÷ appointments SET (support.foureyes.io, 2025-03-14); Studio computes shows ÷ appointment ROWS — different denominator. The Foureyes 2025-05-06 page is a SET-rate study (40% internet / 75% phone), NOT a show-rate target. Do NOT cite Foureyes for a 50% target and do NOT score.",
+              "source_url": "https://www.demandlocal.com/blog/appointment-setting-show-rate-statistics/",
+              "source_published_or_updated": "2026-06-04",
+              "definition_compatibility": "incompatible"
+            },
+            "external_copy": "Review how booked appointments are confirmed and reminded. A structured confirmation routine is a practical step to test against next period's recorded show rate.",
+            "impact_score": 3.5,
+            "impact_rank": 1
+          },
+          {
+            "id": "r3-no-show-handoff",
+            "profile": "serra-nissan",
+            "dealer_name": "Serra Nissan",
+            "clusters": [
+              "appointments"
+            ],
+            "lens": "handoff_process",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "appt.no_show_rate",
+              "appointments.no_show",
+              "appointments.total"
+            ],
+            "formula": "appointments.no_show / appointments.total (SW-041 threshold > 45%)",
+            "proves": "3 of 6 booked appointments were recorded as no-shows (no-show rate 50.0%), above the ratified SW-041 45% ceiling for this period.",
+            "does_not_prove": "A cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.7,
+            "expected_impact": 4,
+            "impact_rationale": "A same-day recovery step is a defined process the manager can own; effect is testable next period.",
+            "business_consequence": "The recorded no-show count is the number of booked appointments not recorded as arriving this period.",
+            "owner": "Sales Manager",
+            "next_action": "Define a same-day follow-up step for no-shows and review the recorded no-show rate next period.",
+            "follow_up_metric": "appt.no_show_rate",
+            "inert_notification_candidate": "INERT (not sent): notify the Sales Manager on a same-day recorded no-show.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): a same-day reschedule step, subject to explicit approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "incompatible_reference": {
+              "note": "Derived from the show-rate range; the ~20% figure that circulates is a SERVICE number and must not be applied to sales. Non-scoring.",
+              "source_url": "https://www.demandlocal.com/blog/appointment-setting-show-rate-statistics/",
+              "source_published_or_updated": "2026-06-04",
+              "definition_compatibility": "incompatible"
+            },
+            "external_copy": "Consider a defined same-day follow-up step for guests who did not arrive, and compare the recorded no-show rate next period.",
+            "impact_score": 2.8,
+            "impact_rank": 2
+          },
+          {
+            "id": "r3-funnel-review",
+            "profile": "serra-nissan",
+            "dealer_name": "Serra Nissan",
+            "clusters": [
+              "lead_funnel",
+              "showroom_conversion"
+            ],
+            "lens": "sales_gross_lift",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "dashboard.leads",
+              "dashboard.appts_set",
+              "dashboard.appts_shown",
+              "dashboard.total_visits",
+              "dashboard.visits_sold",
+              "dashboard.sold_in_period"
+            ],
+            "formula": "named transition snapshots (set/leads, shown/set, visits_sold/visits) and end-to-end yield (sold/leads)",
+            "proves": "This period: appointment-set rate 15.8%, shown-through rate 22.2%, visit-to-sale rate 23.5%; end-to-end lead-to-sale yield 10.5%. These are distinct named snapshots, not interchangeable stages.",
+            "does_not_prove": "Which step is the largest opportunity, where leakage occurs, a cause, or a guaranteed lift; the lowest raw percentage does not identify the biggest lever. Lead-to-sale is end-to-end yield, not a transition stage. A cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.5,
+            "expected_impact": 4,
+            "impact_rationale": "Reviewing the funnel snapshots together supports a structured, bounded diagnostic conversation.",
+            "business_consequence": "These are period snapshots of distinct funnel steps and the end-to-end yield.",
+            "owner": "Sales Manager",
+            "next_action": "Walk the funnel steps in order in the weekly meeting and review each snapshot next period.",
+            "follow_up_metric": "funnel.lead_to_sale_yield",
+            "inert_notification_candidate": "INERT (not sent): include the funnel snapshots in the weekly review.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): a structured funnel-review checklist, subject to approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "external_copy": "Review your funnel steps together - set, show, and close - alongside your overall lead-to-sale yield, and track each snapshot next period.",
+            "impact_score": 2,
+            "impact_rank": 3
+          },
+          {
+            "id": "r3-confirmation-show-gap",
+            "profile": "serra-nissan",
+            "dealer_name": "Serra Nissan",
+            "clusters": [
+              "cross_cluster",
+              "appointments"
+            ],
+            "lens": "training",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "appointments.confirmed",
+              "appointments.show",
+              "appointments.total"
+            ],
+            "formula": "appt.confirmation_rate - appt.show_rate",
+            "proves": "Confirmation rate exceeded show rate by 16.7% this period.",
+            "does_not_prove": "A cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.6,
+            "expected_impact": 3,
+            "impact_rationale": "A confirm-to-show gap is a defined coaching focus; effect is testable next period.",
+            "business_consequence": "The gap is the difference between recorded confirmations and recorded arrivals this period.",
+            "owner": "Sales Manager",
+            "next_action": "Review reminder timing and day-of steps, and compare the gap next period.",
+            "follow_up_metric": "appt.show_rate",
+            "inert_notification_candidate": "INERT (not sent): flag the confirm-to-show gap in the weekly coaching note.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): a day-of reminder step, subject to approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "external_copy": "Compare how many guests confirm versus how many are recorded as arriving, and test whether adjusting reminder timing changes the gap.",
+            "impact_score": 1.8,
+            "impact_rank": 4
+          },
+          {
+            "id": "r3-no-show-effort-reduction",
+            "profile": "serra-nissan",
+            "dealer_name": "Serra Nissan",
+            "clusters": [
+              "appointments"
+            ],
+            "lens": "expense_reduction",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "appt.no_show_rate",
+              "appointments.no_show"
+            ],
+            "formula": "appointments.no_show (count) contextualized by appointments.total",
+            "proves": "3 booked appointments were recorded as no-shows this period.",
+            "does_not_prove": "A dollar amount, wasted-effort quantity, guest intent, a cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.55,
+            "expected_impact": 3,
+            "impact_rationale": "No-show volume is an input a manager can weigh when allocating confirmation effort.",
+            "business_consequence": "No-show volume is one input a manager can weigh when allocating confirmation effort this period.",
+            "owner": "Sales Manager",
+            "next_action": "Prioritize confirmation effort for this period's bookings and review the recorded no-show count next period.",
+            "follow_up_metric": "appt.no_show_rate",
+            "inert_notification_candidate": "INERT (not sent): weekly summary of recorded no-show volume to the Sales Manager.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): prioritized confirmation outreach, subject to approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "external_copy": "Use your recorded no-show count to decide where confirmation effort is worth prioritizing, and review the change next period.",
+            "impact_score": 1.65,
+            "impact_rank": 5
+          },
+          {
+            "id": "r3-response-time-exposure",
+            "profile": "serra-nissan",
+            "dealer_name": "Serra Nissan",
+            "clusters": [
+              "responsiveness",
+              "cross_cluster"
+            ],
+            "lens": "prospect_friction",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "dashboard.avg_actual_response_min"
+            ],
+            "formula": "dashboard.avg_actual_response_min (minutes)",
+            "proves": "Average actual response time was 238 minutes this period.",
+            "does_not_prove": "That response time affected any outcome, guest intent, a cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file). This is not a first-response-time metric.",
+            "confidence": 0.5,
+            "expected_impact": 3,
+            "impact_rationale": "Response time is a workflow measure with a dealer-relative target the team can set.",
+            "business_consequence": "Average response time is a workflow measure the team can track period over period.",
+            "owner": "Sales Manager",
+            "next_action": "Set a dealer-relative response-time target and review next period.",
+            "follow_up_metric": "dashboard.avg_actual_response_min",
+            "inert_notification_candidate": "INERT (not sent): weekly response-time summary to the Sales Manager (no ratified threshold).",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): a lead-response prompt, subject to approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "external_copy": "Track your average response time and set a dealer-relative target to review next period.",
+            "impact_score": 1.5,
+            "impact_rank": 6
+          },
+          {
+            "id": "r3-gross-mix",
+            "profile": "serra-nissan",
+            "dealer_name": "Serra Nissan",
+            "clusters": [
+              "gross_economics"
+            ],
+            "lens": "training",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "crm.front_sum",
+              "crm.back_sum",
+              "crm.total_sum"
+            ],
+            "formula": "crm.front_sum / crm.total_sum (front mix); crm.back_sum / crm.total_sum (back mix)",
+            "proves": "Front-gross made up 76.1% of total gross this period.",
+            "does_not_prove": "A cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.5,
+            "expected_impact": 2,
+            "impact_rationale": "Front/back balance is a defined coaching focus in deal reviews.",
+            "business_consequence": "Front/back mix is a snapshot of gross composition this period.",
+            "owner": "Sales Manager",
+            "next_action": "Review front/back balance in deal reviews.",
+            "follow_up_metric": "gross.total_sum",
+            "inert_notification_candidate": "INERT (not sent): weekly gross-mix summary to the Sales Manager.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): deal-desk review prompts, subject to approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "external_copy": "Review your front/back gross mix in deal reviews.",
+            "impact_score": 1,
+            "impact_rank": 7
+          }
+        ],
+        "catalog_accountability": {
+          "total": 295,
+          "spine": "docs/halo/contract/sw295-inventory.json (SW-001..SW-295, 885 rows; R1 spine)",
+          "directly_evaluated": [
+            "SW-032",
+            "SW-041"
+          ],
+          "directly_evaluated_count": 2,
+          "accounted_only_count": 293,
+          "note": "Only the ratified conditions SW-032/SW-041 are directly evaluated this period; the remaining 293 are accounted-only via the R1 inventory spine. Derived measures are definition-compatible context, not ratified SW firings."
+        },
+        "rejected_source_families": [
+          {
+            "family": "Lead Source ROI (native — absent)",
+            "state": "withheld",
+            "reason": "Dashboard vs Lead Source ROI definitions diverge for the same period (e.g. Honda 89 leads/8 sold vs ROI 110/5); needs a governed Lead Source ROI native reader."
+          },
+          {
+            "family": "Enterprise Performance / CAGE (native — absent)",
+            "state": "withheld",
+            "reason": "needs a governed Enterprise Performance / CAGE native reader (report not ingested here)."
+          },
+          {
+            "family": "Vin Sales Communication Log (native — absent)",
+            "state": "withheld",
+            "reason": "needs a governed Vin Sales Communication Log reader — prior Honda exploration lacks stable IDs and is not a 3-store daily feed."
+          },
+          {
+            "family": "messaging-hub (native)",
+            "state": "no_current_data",
+            "reason": "hub reader exists but the three isolated stores hold no conversation data (0 threads) → no current value."
+          },
+          {
+            "family": "Service / Parts (any source)",
+            "state": "excluded",
+            "reason": "Permanent Sales-only boundary; zero Service/Parts facts or conclusions enter a Sales profile."
+          }
+        ],
+        "assumptions": [
+          "Single governed period: no trend, causal, magnitude/savings, guest-intent, industry-superiority, or guaranteed-outcome claims.",
+          "Every division uses safe ratio semantics; a zero/absent denominator yields a blocked measure, never an invalid non-finite value.",
+          "Funnel measures are named snapshots; lead-to-sale is end-to-end yield, not a transition stage; no weakest-stage/biggest-lever claim.",
+          "Benchmarks require definition-compatible governed material; the current appointment reference is incompatible and kept only as internal provenance, never a benchmark or a customer comparison.",
+          "Count-dependent composites are blocked when accepted sources disagree on the unit count; separately-reconciled gross is preserved.",
+          "Only accepted facts power measures/findings; quarantined ROI/CAGE/Sales-Communication and Service/Parts are excluded."
+        ],
+        "freshness": {
+          "as_of_iso": "2026-08-31T12:00:00.000Z",
+          "max_age_days": 14,
+          "families": [
+            {
+              "family": "appointments",
+              "freshness": "fresh",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "fresh": true
+            },
+            {
+              "family": "crm_sales_gross",
+              "freshness": "fresh",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "fresh": true
+            },
+            {
+              "family": "dealership_performance",
+              "freshness": "fresh",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "fresh": true
+            }
+          ]
+        }
+      },
+      "external": {
+        "profile": "serra-nissan",
+        "dealer_name": "Serra Nissan",
+        "headline": "Serra Nissan: your prioritized Sales opportunities for the week",
+        "opportunities": [
+          {
+            "rank": 1,
+            "title": "Smooth the buyer path",
+            "message": "Review how booked appointments are confirmed and reminded. A structured confirmation routine is a practical step to test against next period's recorded show rate.",
+            "owner": "Sales Manager",
+            "next_step": "Review the confirmation and reminder steps for the 6 booked appointments this period."
+          },
+          {
+            "rank": 2,
+            "title": "Tighten your process",
+            "message": "Consider a defined same-day follow-up step for guests who did not arrive, and compare the recorded no-show rate next period.",
+            "owner": "Sales Manager",
+            "next_step": "Define a same-day follow-up step for no-shows and review the recorded no-show rate next period."
+          },
+          {
+            "rank": 3,
+            "title": "Grow sales and gross",
+            "message": "Review your funnel steps together - set, show, and close - alongside your overall lead-to-sale yield, and track each snapshot next period.",
+            "owner": "Sales Manager",
+            "next_step": "Walk the funnel steps in order in the weekly meeting and review each snapshot next period."
+          },
+          {
+            "rank": 4,
+            "title": "Coach for consistency",
+            "message": "Compare how many guests confirm versus how many are recorded as arriving, and test whether adjusting reminder timing changes the gap.",
+            "owner": "Sales Manager",
+            "next_step": "Review reminder timing and day-of steps, and compare the gap next period."
+          },
+          {
+            "rank": 5,
+            "title": "Focus your team's effort",
+            "message": "Use your recorded no-show count to decide where confirmation effort is worth prioritizing, and review the change next period.",
+            "owner": "Sales Manager",
+            "next_step": "Prioritize confirmation effort for this period's bookings and review the recorded no-show count next period."
+          },
+          {
+            "rank": 6,
+            "title": "Smooth the buyer path",
+            "message": "Track your average response time and set a dealer-relative target to review next period.",
+            "owner": "Sales Manager",
+            "next_step": "Set a dealer-relative response-time target and review next period."
+          },
+          {
+            "rank": 7,
+            "title": "Coach for consistency",
+            "message": "Review your front/back gross mix in deal reviews.",
+            "owner": "Sales Manager",
+            "next_step": "Review front/back balance in deal reviews."
+          }
+        ],
+        "closing": "These are prioritized, dealer-relative opportunities based on your own governed Sales results. Each is a recommendation your team can act on and review next period."
+      }
+    },
+    "tony-serra-ford": {
+      "internal": {
+        "schema_version": "1.0.0",
+        "profile": "tony-serra-ford",
+        "dealer_name": "Tony Serra Ford",
+        "dealer_id": "21047",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "as_of_iso": "2026-08-31T12:00:00.000Z",
+        "derived_measures": [
+          {
+            "key": "funnel.appointment_set_rate",
+            "label": "Appointment-set rate (set / leads)",
+            "cluster": "lead_funnel",
+            "value": 0.16216216216216217,
+            "display": "16.2%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.appts_set / dashboard.leads",
+            "inputs": [
+              "dashboard.appts_set",
+              "dashboard.leads"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "funnel.shown_through_rate",
+            "label": "Shown-through rate (shown / set)",
+            "cluster": "appointments",
+            "value": 0.3333333333333333,
+            "display": "33.3%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.appts_shown / dashboard.appts_set",
+            "inputs": [
+              "dashboard.appts_shown",
+              "dashboard.appts_set"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "funnel.visit_rate",
+            "label": "Visit rate (visits / leads)",
+            "cluster": "lead_funnel",
+            "value": 0.3783783783783784,
+            "display": "37.8%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.total_visits / dashboard.leads",
+            "inputs": [
+              "dashboard.total_visits",
+              "dashboard.leads"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "funnel.visit_to_sale_rate",
+            "label": "Visit-to-sale rate (visits-sold / visits)",
+            "cluster": "showroom_conversion",
+            "value": 0.21428571428571427,
+            "display": "21.4%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.visits_sold / dashboard.total_visits",
+            "inputs": [
+              "dashboard.visits_sold",
+              "dashboard.total_visits"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "funnel.lead_to_sale_yield",
+            "label": "Lead-to-sale yield, end-to-end (sold / leads)",
+            "cluster": "lead_funnel",
+            "value": 0.16216216216216217,
+            "display": "16.2%",
+            "unit": "ratio_0_1",
+            "formula": "dashboard.sold_in_period / dashboard.leads",
+            "inputs": [
+              "dashboard.sold_in_period",
+              "dashboard.leads"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.confirmation_rate",
+            "label": "Confirmation rate (confirmed / total)",
+            "cluster": "appointments",
+            "value": 0.42857142857142855,
+            "display": "42.9%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.confirmed / appointments.total",
+            "inputs": [
+              "appointments.confirmed",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.confirmation_gap",
+            "label": "Confirmation gap (unconfirmed / total)",
+            "cluster": "appointments",
+            "value": 0.5714285714285714,
+            "display": "57.1%",
+            "unit": "ratio_0_1",
+            "formula": "(appointments.total - appointments.confirmed) / appointments.total",
+            "inputs": [
+              "appointments.total",
+              "appointments.confirmed"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.show_rate",
+            "label": "Show rate (shown / total)",
+            "cluster": "appointments",
+            "value": 0.42857142857142855,
+            "display": "42.9%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.show / appointments.total",
+            "inputs": [
+              "appointments.show",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.no_show_rate",
+            "label": "No-show rate (no-show / total)",
+            "cluster": "appointments",
+            "value": 0.5714285714285714,
+            "display": "57.1%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.no_show / appointments.total",
+            "inputs": [
+              "appointments.no_show",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.cancel_rate",
+            "label": "Cancel rate (cancelled / total)",
+            "cluster": "appointments",
+            "value": 0,
+            "display": "0.0%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.cancelled / appointments.total",
+            "inputs": [
+              "appointments.cancelled",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.reschedule_rate",
+            "label": "Reschedule rate (rescheduled / total)",
+            "cluster": "appointments",
+            "value": 0.2857142857142857,
+            "display": "28.6%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.rescheduled / appointments.total",
+            "inputs": [
+              "appointments.rescheduled",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "appt.completion_rate",
+            "label": "Completion rate (completed / total)",
+            "cluster": "appointments",
+            "value": 0.42857142857142855,
+            "display": "42.9%",
+            "unit": "ratio_0_1",
+            "formula": "appointments.completed / appointments.total",
+            "inputs": [
+              "appointments.completed",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "gross.total",
+            "label": "Total gross (CRM per-deal sum)",
+            "cluster": "gross_economics",
+            "value": 1600.99,
+            "display": "$1,600.99",
+            "unit": "currency_usd",
+            "formula": "crm.total_sum",
+            "inputs": [
+              "crm.total_sum"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "gross.front_mix",
+            "label": "Front-gross mix (front / total)",
+            "cluster": "gross_economics",
+            "value": -1.416098788874384,
+            "display": "-141.6%",
+            "unit": "ratio_0_1",
+            "formula": "crm.front_sum / crm.total_sum",
+            "inputs": [
+              "crm.front_sum",
+              "crm.total_sum"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "gross.back_mix",
+            "label": "Back-gross mix (back / total)",
+            "cluster": "gross_economics",
+            "value": 2.416098788874384,
+            "display": "241.6%",
+            "unit": "ratio_0_1",
+            "formula": "crm.back_sum / crm.total_sum",
+            "inputs": [
+              "crm.back_sum",
+              "crm.total_sum"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "responsiveness.avg_actual_response_min",
+            "label": "Avg actual response (minutes)",
+            "cluster": "responsiveness",
+            "value": 317,
+            "display": "317",
+            "unit": "count",
+            "formula": "dashboard.avg_actual_response_min",
+            "inputs": [
+              "dashboard.avg_actual_response_min"
+            ],
+            "compatibility": "within_family"
+          },
+          {
+            "key": "cross.confirmation_vs_show_gap",
+            "label": "Confirmed-not-shown gap (confirmation rate - show rate)",
+            "cluster": "cross_cluster",
+            "value": 0,
+            "display": "0.0%",
+            "unit": "ratio_0_1",
+            "formula": "appt.confirmation_rate - appt.show_rate",
+            "inputs": [
+              "appointments.confirmed",
+              "appointments.show",
+              "appointments.total"
+            ],
+            "compatibility": "within_family"
+          }
+        ],
+        "blocked_measures": [
+          {
+            "key": "gross.avg_per_sale",
+            "label": "Average gross per CRM sale",
+            "cluster": "gross_economics",
+            "blocked_by": "count_disagreement",
+            "reason": "CRM delivered-sale rows disagree with Dashboard sold-in-period; count-dependent composites are blocked."
+          },
+          {
+            "key": "cross.gross_per_delivered",
+            "label": "Gross per delivered unit",
+            "cluster": "cross_cluster",
+            "blocked_by": "count_disagreement",
+            "reason": "CRM delivered-sale rows disagree with Dashboard sold-in-period; count-dependent composites are blocked."
+          }
+        ],
+        "findings": [
+          {
+            "id": "r3-appt-show-leakage",
+            "profile": "tony-serra-ford",
+            "dealer_name": "Tony Serra Ford",
+            "clusters": [
+              "appointments"
+            ],
+            "lens": "prospect_friction",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "appt.show_rate",
+              "appointments.show",
+              "appointments.total"
+            ],
+            "formula": "appointments.show / appointments.total (SW-032 threshold < 55%)",
+            "proves": "3 of 7 booked appointments were recorded as shown (show rate 42.9%), below the ratified SW-032 55% floor for this period.",
+            "does_not_prove": "A cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.7,
+            "expected_impact": 5,
+            "impact_rationale": "Recorded shows are the appointments that reached the showroom; the ratified floor was not met this period.",
+            "business_consequence": "The recorded show count is the number of booked appointments that reached the showroom this period.",
+            "owner": "Sales Manager",
+            "next_action": "Review the confirmation and reminder steps for the 7 booked appointments this period.",
+            "follow_up_metric": "appt.show_rate",
+            "inert_notification_candidate": "INERT (not sent): notify the Sales Manager that the recorded show rate 42.9% is below the 55% floor this period.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): a guest reminder-cadence step, subject to explicit approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "incompatible_reference": {
+              "note": "Demand Local (updated 2026-06-04) explicitly states there is no single universal show-rate benchmark. Foureyes defines Appointment Show Rate = shows ÷ appointments SET (support.foureyes.io, 2025-03-14); Studio computes shows ÷ appointment ROWS — different denominator. The Foureyes 2025-05-06 page is a SET-rate study (40% internet / 75% phone), NOT a show-rate target. Do NOT cite Foureyes for a 50% target and do NOT score.",
+              "source_url": "https://www.demandlocal.com/blog/appointment-setting-show-rate-statistics/",
+              "source_published_or_updated": "2026-06-04",
+              "definition_compatibility": "incompatible"
+            },
+            "external_copy": "Review how booked appointments are confirmed and reminded. A structured confirmation routine is a practical step to test against next period's recorded show rate.",
+            "impact_score": 3.5,
+            "impact_rank": 1
+          },
+          {
+            "id": "r3-no-show-handoff",
+            "profile": "tony-serra-ford",
+            "dealer_name": "Tony Serra Ford",
+            "clusters": [
+              "appointments"
+            ],
+            "lens": "handoff_process",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "appt.no_show_rate",
+              "appointments.no_show",
+              "appointments.total"
+            ],
+            "formula": "appointments.no_show / appointments.total (SW-041 threshold > 45%)",
+            "proves": "4 of 7 booked appointments were recorded as no-shows (no-show rate 57.1%), above the ratified SW-041 45% ceiling for this period.",
+            "does_not_prove": "A cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.7,
+            "expected_impact": 4,
+            "impact_rationale": "A same-day recovery step is a defined process the manager can own; effect is testable next period.",
+            "business_consequence": "The recorded no-show count is the number of booked appointments not recorded as arriving this period.",
+            "owner": "Sales Manager",
+            "next_action": "Define a same-day follow-up step for no-shows and review the recorded no-show rate next period.",
+            "follow_up_metric": "appt.no_show_rate",
+            "inert_notification_candidate": "INERT (not sent): notify the Sales Manager on a same-day recorded no-show.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): a same-day reschedule step, subject to explicit approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "incompatible_reference": {
+              "note": "Derived from the show-rate range; the ~20% figure that circulates is a SERVICE number and must not be applied to sales. Non-scoring.",
+              "source_url": "https://www.demandlocal.com/blog/appointment-setting-show-rate-statistics/",
+              "source_published_or_updated": "2026-06-04",
+              "definition_compatibility": "incompatible"
+            },
+            "external_copy": "Consider a defined same-day follow-up step for guests who did not arrive, and compare the recorded no-show rate next period.",
+            "impact_score": 2.8,
+            "impact_rank": 2
+          },
+          {
+            "id": "r3-gross-mix",
+            "profile": "tony-serra-ford",
+            "dealer_name": "Tony Serra Ford",
+            "clusters": [
+              "gross_economics"
+            ],
+            "lens": "sales_gross_lift",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "crm.front_sum",
+              "crm.back_sum",
+              "crm.total_sum"
+            ],
+            "formula": "crm.front_sum / crm.total_sum (front mix); crm.back_sum / crm.total_sum (back mix)",
+            "proves": "Front gross was recorded below zero (-$2,267.16) this period; back-gross made up 241.6% of total.",
+            "does_not_prove": "A cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.65,
+            "expected_impact": 4,
+            "impact_rationale": "Front-end desking is a defined review focus when front gross is recorded below zero.",
+            "business_consequence": "This period, front gross was negative and back-end gross made up the majority of total gross.",
+            "owner": "Sales Manager",
+            "next_action": "Review front-end desking on this period's deals.",
+            "follow_up_metric": "gross.total_sum",
+            "inert_notification_candidate": "INERT (not sent): weekly gross-mix summary to the Sales Manager.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): deal-desk review prompts, subject to approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "external_copy": "Review front-end desking on recent deals; front gross was recorded below zero this period.",
+            "impact_score": 2.6,
+            "impact_rank": 3
+          },
+          {
+            "id": "r3-count-reconciliation",
+            "profile": "tony-serra-ford",
+            "dealer_name": "Tony Serra Ford",
+            "clusters": [
+              "data_integrity",
+              "gross_economics"
+            ],
+            "lens": "handoff_process",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "crm.row_count",
+              "dashboard.sold_in_period",
+              "gross.total_sum"
+            ],
+            "formula": "crm.row_count vs dashboard.sold_in_period (same period); gross.total_sum reconciliation stated separately",
+            "proves": "CRM delivered-sale rows (7) and Dashboard sold-in-period (6) disagree for this period. Total gross reconciles across sources within tolerance.",
+            "does_not_prove": "Which source's unit count is correct; per-unit and close-rate composites are blocked this period.",
+            "confidence": 0.8,
+            "expected_impact": 3,
+            "impact_rationale": "A single trusted sold count is required before per-unit or close-rate measures are reported.",
+            "business_consequence": "A single trusted sold count is required before per-unit or close-rate measures are reported.",
+            "owner": "GM",
+            "next_action": "Reconcile the CRM delivered rows (7) against the Dashboard sold figure (6).",
+            "follow_up_metric": "gross.total_sum",
+            "inert_notification_candidate": "INERT (not sent): flag the GM that two accepted sources disagree on the sold count (7 vs 6).",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): a reporting reconciliation checklist.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "external_copy": "Align your reports on a single trusted sold count so per-deal and close-rate views match across your reports.",
+            "impact_score": 2.4,
+            "impact_rank": 4
+          },
+          {
+            "id": "r3-funnel-review",
+            "profile": "tony-serra-ford",
+            "dealer_name": "Tony Serra Ford",
+            "clusters": [
+              "lead_funnel",
+              "showroom_conversion"
+            ],
+            "lens": "sales_gross_lift",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "dashboard.leads",
+              "dashboard.appts_set",
+              "dashboard.appts_shown",
+              "dashboard.total_visits",
+              "dashboard.visits_sold",
+              "dashboard.sold_in_period"
+            ],
+            "formula": "named transition snapshots (set/leads, shown/set, visits_sold/visits) and end-to-end yield (sold/leads)",
+            "proves": "This period: appointment-set rate 16.2%, shown-through rate 33.3%, visit-to-sale rate 21.4%; end-to-end lead-to-sale yield 16.2%. These are distinct named snapshots, not interchangeable stages.",
+            "does_not_prove": "Which step is the largest opportunity, where leakage occurs, a cause, or a guaranteed lift; the lowest raw percentage does not identify the biggest lever. Lead-to-sale is end-to-end yield, not a transition stage. A cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.5,
+            "expected_impact": 4,
+            "impact_rationale": "Reviewing the funnel snapshots together supports a structured, bounded diagnostic conversation.",
+            "business_consequence": "These are period snapshots of distinct funnel steps and the end-to-end yield.",
+            "owner": "Sales Manager",
+            "next_action": "Walk the funnel steps in order in the weekly meeting and review each snapshot next period.",
+            "follow_up_metric": "funnel.lead_to_sale_yield",
+            "inert_notification_candidate": "INERT (not sent): include the funnel snapshots in the weekly review.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): a structured funnel-review checklist, subject to approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "external_copy": "Review your funnel steps together - set, show, and close - alongside your overall lead-to-sale yield, and track each snapshot next period.",
+            "impact_score": 2,
+            "impact_rank": 5
+          },
+          {
+            "id": "r3-no-show-effort-reduction",
+            "profile": "tony-serra-ford",
+            "dealer_name": "Tony Serra Ford",
+            "clusters": [
+              "appointments"
+            ],
+            "lens": "expense_reduction",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "appt.no_show_rate",
+              "appointments.no_show"
+            ],
+            "formula": "appointments.no_show (count) contextualized by appointments.total",
+            "proves": "4 booked appointments were recorded as no-shows this period.",
+            "does_not_prove": "A dollar amount, wasted-effort quantity, guest intent, a cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file).",
+            "confidence": 0.55,
+            "expected_impact": 3,
+            "impact_rationale": "No-show volume is an input a manager can weigh when allocating confirmation effort.",
+            "business_consequence": "No-show volume is one input a manager can weigh when allocating confirmation effort this period.",
+            "owner": "Sales Manager",
+            "next_action": "Prioritize confirmation effort for this period's bookings and review the recorded no-show count next period.",
+            "follow_up_metric": "appt.no_show_rate",
+            "inert_notification_candidate": "INERT (not sent): weekly summary of recorded no-show volume to the Sales Manager.",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): prioritized confirmation outreach, subject to approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "external_copy": "Use your recorded no-show count to decide where confirmation effort is worth prioritizing, and review the change next period.",
+            "impact_score": 1.65,
+            "impact_rank": 6
+          },
+          {
+            "id": "r3-response-time-exposure",
+            "profile": "tony-serra-ford",
+            "dealer_name": "Tony Serra Ford",
+            "clusters": [
+              "responsiveness",
+              "cross_cluster"
+            ],
+            "lens": "prospect_friction",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "evidence_refs": [
+              "dashboard.avg_actual_response_min"
+            ],
+            "formula": "dashboard.avg_actual_response_min (minutes)",
+            "proves": "Average actual response time was 317 minutes this period.",
+            "does_not_prove": "That response time affected any outcome, guest intent, a cause, a trend, a magnitude or savings amount, guest intent, an industry-superiority claim, or a guaranteed outcome (only one governed period is on file). This is not a first-response-time metric.",
+            "confidence": 0.5,
+            "expected_impact": 3,
+            "impact_rationale": "Response time is a workflow measure with a dealer-relative target the team can set.",
+            "business_consequence": "Average response time is a workflow measure the team can track period over period.",
+            "owner": "Sales Manager",
+            "next_action": "Set a dealer-relative response-time target and review next period.",
+            "follow_up_metric": "dashboard.avg_actual_response_min",
+            "inert_notification_candidate": "INERT (not sent): weekly response-time summary to the Sales Manager (no ratified threshold).",
+            "external_automation_candidate": "RECOMMENDATION ONLY (cannot execute): a lead-response prompt, subject to approval.",
+            "benchmark": {
+              "state": "no_benchmark",
+              "note": "No definition-compatible external benchmark in-repo; judged dealer-relative and by funnel logic (non-scoring)."
+            },
+            "external_copy": "Track your average response time and set a dealer-relative target to review next period.",
+            "impact_score": 1.5,
+            "impact_rank": 7
+          }
+        ],
+        "catalog_accountability": {
+          "total": 295,
+          "spine": "docs/halo/contract/sw295-inventory.json (SW-001..SW-295, 885 rows; R1 spine)",
+          "directly_evaluated": [
+            "SW-032",
+            "SW-041"
+          ],
+          "directly_evaluated_count": 2,
+          "accounted_only_count": 293,
+          "note": "Only the ratified conditions SW-032/SW-041 are directly evaluated this period; the remaining 293 are accounted-only via the R1 inventory spine. Derived measures are definition-compatible context, not ratified SW firings."
+        },
+        "rejected_source_families": [
+          {
+            "family": "Lead Source ROI (native — absent)",
+            "state": "withheld",
+            "reason": "Dashboard vs Lead Source ROI definitions diverge for the same period (e.g. Honda 89 leads/8 sold vs ROI 110/5); needs a governed Lead Source ROI native reader."
+          },
+          {
+            "family": "Enterprise Performance / CAGE (native — absent)",
+            "state": "withheld",
+            "reason": "needs a governed Enterprise Performance / CAGE native reader (report not ingested here)."
+          },
+          {
+            "family": "Vin Sales Communication Log (native — absent)",
+            "state": "withheld",
+            "reason": "needs a governed Vin Sales Communication Log reader — prior Honda exploration lacks stable IDs and is not a 3-store daily feed."
+          },
+          {
+            "family": "messaging-hub (native)",
+            "state": "no_current_data",
+            "reason": "hub reader exists but the three isolated stores hold no conversation data (0 threads) → no current value."
+          },
+          {
+            "family": "Service / Parts (any source)",
+            "state": "excluded",
+            "reason": "Permanent Sales-only boundary; zero Service/Parts facts or conclusions enter a Sales profile."
+          }
+        ],
+        "assumptions": [
+          "Single governed period: no trend, causal, magnitude/savings, guest-intent, industry-superiority, or guaranteed-outcome claims.",
+          "Every division uses safe ratio semantics; a zero/absent denominator yields a blocked measure, never an invalid non-finite value.",
+          "Funnel measures are named snapshots; lead-to-sale is end-to-end yield, not a transition stage; no weakest-stage/biggest-lever claim.",
+          "Benchmarks require definition-compatible governed material; the current appointment reference is incompatible and kept only as internal provenance, never a benchmark or a customer comparison.",
+          "Count-dependent composites are blocked when accepted sources disagree on the unit count; separately-reconciled gross is preserved.",
+          "Only accepted facts power measures/findings; quarantined ROI/CAGE/Sales-Communication and Service/Parts are excluded."
+        ],
+        "freshness": {
+          "as_of_iso": "2026-08-31T12:00:00.000Z",
+          "max_age_days": 14,
+          "families": [
+            {
+              "family": "appointments",
+              "freshness": "fresh",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "fresh": true
+            },
+            {
+              "family": "crm_sales_gross",
+              "freshness": "fresh",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "fresh": true
+            },
+            {
+              "family": "dealership_performance",
+              "freshness": "fresh",
+              "period": {
+                "start": "2026-08-24",
+                "end": "2026-08-30"
+              },
+              "fresh": true
+            }
+          ]
+        }
+      },
+      "external": {
+        "profile": "tony-serra-ford",
+        "dealer_name": "Tony Serra Ford",
+        "headline": "Tony Serra Ford: your prioritized Sales opportunities for the week",
+        "opportunities": [
+          {
+            "rank": 1,
+            "title": "Smooth the buyer path",
+            "message": "Review how booked appointments are confirmed and reminded. A structured confirmation routine is a practical step to test against next period's recorded show rate.",
+            "owner": "Sales Manager",
+            "next_step": "Review the confirmation and reminder steps for the 7 booked appointments this period."
+          },
+          {
+            "rank": 2,
+            "title": "Tighten your process",
+            "message": "Consider a defined same-day follow-up step for guests who did not arrive, and compare the recorded no-show rate next period.",
+            "owner": "Sales Manager",
+            "next_step": "Define a same-day follow-up step for no-shows and review the recorded no-show rate next period."
+          },
+          {
+            "rank": 3,
+            "title": "Grow sales and gross",
+            "message": "Review front-end desking on recent deals; front gross was recorded below zero this period.",
+            "owner": "Sales Manager",
+            "next_step": "Review front-end desking on this period's deals."
+          },
+          {
+            "rank": 4,
+            "title": "Tighten your process",
+            "message": "Align your reports on a single trusted sold count so per-deal and close-rate views match across your reports.",
+            "owner": "GM",
+            "next_step": "Reconcile the CRM delivered rows (7) against the Dashboard sold figure (6)."
+          },
+          {
+            "rank": 5,
+            "title": "Grow sales and gross",
+            "message": "Review your funnel steps together - set, show, and close - alongside your overall lead-to-sale yield, and track each snapshot next period.",
+            "owner": "Sales Manager",
+            "next_step": "Walk the funnel steps in order in the weekly meeting and review each snapshot next period."
+          },
+          {
+            "rank": 6,
+            "title": "Focus your team's effort",
+            "message": "Use your recorded no-show count to decide where confirmation effort is worth prioritizing, and review the change next period.",
+            "owner": "Sales Manager",
+            "next_step": "Prioritize confirmation effort for this period's bookings and review the recorded no-show count next period."
+          },
+          {
+            "rank": 7,
+            "title": "Smooth the buyer path",
+            "message": "Track your average response time and set a dealer-relative target to review next period.",
+            "owner": "Sales Manager",
+            "next_step": "Set a dealer-relative response-time target and review next period."
+          }
+        ],
+        "closing": "These are prioritized, dealer-relative opportunities based on your own governed Sales results. Each is a recommendation your team can act on and review next period."
+      }
+    }
+  }
+}

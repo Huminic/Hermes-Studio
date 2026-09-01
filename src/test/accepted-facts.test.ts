@@ -53,7 +53,7 @@ describe('accepted facts - Sales-only gate (no data needed)', () => {
 })
 
 describe('accepted facts - DURABLE receipt-derived fixture (no /srv required)', () => {
-  it('serra-honda: neither SW fires; NATIVE7 observed; 21 context facts; gross reconciles; no discrepancy; valid', () => {
+  it('serra-honda: neither SW fires; NATIVE7 observed; 22 context facts; gross reconciles; no discrepancy; valid', () => {
     const b = fromFixture('serra-honda')
     expect(() => validateAcceptedFactsBundle(b)).not.toThrow()
     expect(b.period).toEqual({ start: '2026-08-24', end: '2026-08-30' })
@@ -61,10 +61,10 @@ describe('accepted facts - DURABLE receipt-derived fixture (no /srv required)', 
     expect(cond(b, 'SW-041')).toMatchObject({ numerator: 5, denominator: 14, fires: false, display: '35.7%' })
     expect(new Set(b.observed_kpis.map((k) => k.slug))).toEqual(NATIVE7_SET)
     expect(kpi(b, 'gross.total_sum').display).toBe('$14,185.20')
-    // context facts: Dashboard 9 + CRM 5 + Appointments 7 = 21 (separate from NATIVE7).
-    expect(b.accepted_context_facts.length).toBe(21)
+    // context facts: Dashboard 10 + CRM 5 + Appointments 7 = 22 (separate from NATIVE7).
+    expect(b.accepted_context_facts.length).toBe(22)
     expect(b.counts.observed_kpis).toBe(7)
-    expect(b.counts.context_facts).toBe(21)
+    expect(b.counts.context_facts).toBe(22)
     // cross-source gross reconciles within tolerance; no count discrepancy for Honda.
     expect(b.cross_source_gross).toMatchObject({ periods_match: true, reconciles: true })
     expect(b.gates.periods_compatible).toBe(true)
@@ -222,12 +222,30 @@ describe('accepted facts - third-shadow data-integrity corruptions', () => {
     b.accepted_context_facts = b.accepted_context_facts.filter((f) => f.key !== 'dashboard.leads')
     expect(() => validateAcceptedFactsBundle(b)).toThrow(AcceptedFactsValidationError)
   })
-  it('asserts the exact family subset present on the honest bundle (9 dashboard / 5 crm / 7 appt)', () => {
+  it('asserts the exact family subset present on the honest bundle (10 dashboard / 5 crm / 7 appt)', () => {
     const b = fromFixture('serra-honda')
     const byFam = (p: string) => b.accepted_context_facts.filter((f) => f.key.startsWith(p)).map((f) => f.key).sort()
-    expect(byFam('dashboard.')).toEqual(['dashboard.appts_set', 'dashboard.appts_shown', 'dashboard.avg_actual_response_min', 'dashboard.back_gross', 'dashboard.front_gross', 'dashboard.leads', 'dashboard.sold_in_period', 'dashboard.total_gross', 'dashboard.total_visits'])
+    expect(byFam('dashboard.')).toEqual(['dashboard.appts_set', 'dashboard.appts_shown', 'dashboard.avg_actual_response_min', 'dashboard.back_gross', 'dashboard.front_gross', 'dashboard.leads', 'dashboard.sold_in_period', 'dashboard.total_gross', 'dashboard.total_visits', 'dashboard.visits_sold'])
+    expect(byFam('dashboard.').length).toBe(10)
     expect(byFam('crm.').length).toBe(5)
     expect(byFam('appointments.').length).toBe(7)
+  })
+
+  // dashboard.visits_sold is a governed accepted context key: altered/missing/wrong-family rejected.
+  it('rejects a missing dashboard.visits_sold on a fresh Dashboard family', () => {
+    const b = clone(fromFixture('serra-honda'))
+    b.accepted_context_facts = b.accepted_context_facts.filter((f) => f.key !== 'dashboard.visits_sold')
+    expect(() => validateAcceptedFactsBundle(b)).toThrow(AcceptedFactsValidationError)
+  })
+  it('rejects dashboard.visits_sold mapped to the wrong family', () => {
+    const b = clone(fromFixture('serra-honda'))
+    b.accepted_context_facts.find((f) => f.key === 'dashboard.visits_sold')!.source_family = 'crm_sales_gross'
+    expect(() => validateAcceptedFactsBundle(b)).toThrow(AcceptedFactsValidationError)
+  })
+  it('rejects an altered dashboard.visits_sold checksum (provenance != coverage)', () => {
+    const b = clone(fromFixture('serra-honda'))
+    b.accepted_context_facts.find((f) => f.key === 'dashboard.visits_sold')!.checksum = 'f'.repeat(64)
+    expect(() => validateAcceptedFactsBundle(b)).toThrow(AcceptedFactsValidationError)
   })
 
   // 2. Gates recomputed from canonical facts.

@@ -106,7 +106,7 @@ const KPI_ALLOW: Record<string, Array<{ source: string; family: FamilyName }>> =
 
 /** EXACT context-fact keys per family (no prefix acceptance). */
 const CTX_KEYS_BY_FAMILY: Record<FamilyName, string[]> = {
-  dealership_performance: ['dashboard.leads', 'dashboard.appts_set', 'dashboard.appts_shown', 'dashboard.total_visits', 'dashboard.sold_in_period', 'dashboard.front_gross', 'dashboard.back_gross', 'dashboard.total_gross', 'dashboard.avg_actual_response_min'],
+  dealership_performance: ['dashboard.leads', 'dashboard.appts_set', 'dashboard.appts_shown', 'dashboard.total_visits', 'dashboard.visits_sold', 'dashboard.sold_in_period', 'dashboard.front_gross', 'dashboard.back_gross', 'dashboard.total_gross', 'dashboard.avg_actual_response_min'],
   crm_sales_gross: ['crm.row_count', 'crm.front_sum', 'crm.back_sum', 'crm.total_sum', 'crm.reconciliation_mismatches'],
   appointments: ['appointments.total', 'appointments.show', 'appointments.no_show', 'appointments.confirmed', 'appointments.cancelled', 'appointments.completed', 'appointments.rescheduled'],
 }
@@ -488,6 +488,7 @@ export function assembleAcceptedFacts(profile: string, sources: AcceptedFactsSou
     pushCtx('dashboard.appts_set', 'Appointments set (Dashboard)', 'dealership_performance', s.apptsSet, 'count', g, pop, ck, per, fr)
     pushCtx('dashboard.appts_shown', 'Appointments shown (Dashboard)', 'dealership_performance', s.apptsShow, 'count', g, pop, ck, per, fr)
     pushCtx('dashboard.total_visits', 'Total visits (Dashboard)', 'dealership_performance', s.totalVisits, 'count', g, pop, ck, per, fr)
+    pushCtx('dashboard.visits_sold', 'Visits sold (Dashboard)', 'dealership_performance', s.visitsSold, 'count', g, pop, ck, per, fr)
     pushCtx('dashboard.sold_in_period', 'Sold in period (Dashboard)', 'dealership_performance', s.soldInPeriod, 'count', g, pop, ck, per, fr)
     pushCtx('dashboard.front_gross', 'Front gross (Dashboard)', 'dealership_performance', s.frontGross, 'currency_usd', g, pop, ck, per, fr)
     pushCtx('dashboard.back_gross', 'Back gross (Dashboard)', 'dealership_performance', s.backGross, 'currency_usd', g, pop, ck, per, fr)
