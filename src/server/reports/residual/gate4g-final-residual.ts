@@ -148,25 +148,41 @@ const BOUNDARY_LANE_RULES: ReadonlyArray<
   ],
 ]
 
+/** Raw per-rooftop CRM new-car deal counts, verbatim from the committed structured-candidate matrix. */
+export type ObservedRooftopCounts = {
+  new_deals: number
+  new_negative_front: number
+  new_front_blank: number
+}
+
 /**
- * Observed zero/absent-denominator evidence for a ratio metric, sourced from the committed
- * structured-candidate matrix. The metric value STAYS unresolved (never value=0): an observed zero
- * or integrity-failed eligible denominator makes the ratio undefined (0/0), and per the standing
- * rule missing is never zero. This preserves the OBSERVED fact without ever recording a computed 0.
+ * Observed rooftop-specific evidence for a HELD metric, sourced from the committed structured-
+ * candidate matrix. The metric value STAYS unresolved (never value=0): an observed zero/absent/
+ * integrity-failed denominator makes the ratio undefined, and per the standing rule missing is
+ * never zero. This preserves the OBSERVED fact without ever recording a computed 0.
+ *
+ * Two shapes coexist because the metrics differ:
+ *   - `eligible_denominator_observed` (R1/SW-050): per-rooftop eligible denominator WITH interpretive
+ *     status, used where the observed counts ARE the metric denominator.
+ *   - `observed_context_counts` + `observed_denominator_statement` + `relation_to_primary_blocker`
+ *     (R2): used where the primary blocker is something else (absent field, missing trend history,
+ *     unratified composite threshold) and the observed counts are recorded truthfully as context.
  */
 export type ObservedDenominatorEvidence = {
   source_ref: string
   structured_blocker_class: string
   metric_ratio: string
-  eligible_denominator_observed: Record<
+  /** R1/SW-050 shape: per-rooftop eligible denominator whose observed counts ARE the metric denominator. */
+  eligible_denominator_observed?: Record<
     string,
-    {
-      new_deals: number
-      new_negative_front: number
-      new_front_blank: number
-      denominator_status: string
-    }
+    ObservedRooftopCounts & { denominator_status: string }
   >
+  /** R2: how the observed fact relates to this metric's PRIMARY blocker (primary | co-primary | secondary). */
+  relation_to_primary_blocker?: string
+  /** R2: the truthful denominator/threshold fact for this metric (absent field, observed-zero total, …). */
+  observed_denominator_statement?: string
+  /** R2: raw committed per-rooftop deal counts, recorded as CONTEXT (not necessarily the metric denominator). */
+  observed_context_counts?: Record<string, ObservedRooftopCounts>
   why_unresolved: string
   unlock: string
 }
@@ -275,16 +291,21 @@ const LANE_AUTHORITY: Record<Gate4gBoundaryLane, string> = {
 }
 
 /**
- * Build one HOLD row. `primary_blocker` is the committed delta rationale (exact reason).
+ * Build one HOLD row. `primary_blocker` is the committed delta rationale (exact reason) — the
+ * metric's OWN primary blocker is always preserved and is never overwritten by observed evidence.
  *
- * `observed` (optional) attaches committed observed zero/absent-denominator evidence — the ratio
- * value STAYS unresolved (never 0); the observed fact is recorded in `observed_evidence` and a
- * matching `additional_blockers` line, and the frozen spec's denominator remains `unresolved (held)`.
+ * `observed` (optional) attaches committed observed rooftop evidence — the metric value STAYS
+ * unresolved (never 0); the observed fact is recorded in `observed_evidence`, the frozen spec's
+ * denominator remains `unresolved (held)`, and a matching `additional_blockers` line is added.
+ * `observedBlockerLine` (optional) is that additional line, composed by the caller from the
+ * committed evidence so it reflects each metric's own blocker; when omitted the legacy R1/SW-050
+ * eligible-denominator line is computed from `eligible_denominator_observed`.
  */
 export function buildHoldRow(
   catalog: CatalogRow,
   delta: DeltaRow,
   observed?: ObservedDenominatorEvidence,
+  observedBlockerLine?: string,
 ): Gate4gRow {
   if (disposition(delta.category) !== 'HOLD')
     throw new Error(`${catalog.metric_id} is not a HOLD`)
@@ -308,12 +329,18 @@ export function buildHoldRow(
   if (lane !== 'not_applicable')
     additional.push(`boundary_lane: ${lane} — ${LANE_AUTHORITY[lane]}`)
   if (observed) {
-    const zeroRoofs = Object.entries(observed.eligible_denominator_observed)
-      .filter(([, v]) => v.new_deals === 0)
-      .map(([d]) => d)
-    additional.push(
-      `observed: eligible ratio denominator = 0 at ${zeroRoofs.join(' and ') || '(none)'} (0 eligible deals in the accepted week) and integrity-failed elsewhere; the ratio is undefined (0/0) — held UNRESOLVED, never value=0 (see observed_evidence; source ${observed.source_ref})`,
-    )
+    if (observedBlockerLine) {
+      additional.push(observedBlockerLine)
+    } else {
+      const zeroRoofs = Object.entries(
+        observed.eligible_denominator_observed ?? {},
+      )
+        .filter(([, v]) => v.new_deals === 0)
+        .map(([d]) => d)
+      additional.push(
+        `observed: eligible ratio denominator = 0 at ${zeroRoofs.join(' and ') || '(none)'} (0 eligible deals in the accepted week) and integrity-failed elsewhere; the ratio is undefined (0/0) — held UNRESOLVED, never value=0 (see observed_evidence; source ${observed.source_ref})`,
+      )
+    }
   }
 
   return {

@@ -1,9 +1,12 @@
 # Gate 4G — Proof Delta G (final residual audit — the last 122 IDs)
 
 **Branch:** `codex/halo-295-unshrinkable-inputs`. One writer. **Status:** submitted for review,
-NOT self-certified. **Revision:** R1 — bounded repair of the shadow-identified SW-050 defect only
-(observed zero eligible-new-car denominator now preserved; see §4·R1). All other counts/IDs/rows/
-prior bytes are unchanged from the R0 submission. **Bounded gate:** an exhaustive audit of the FINAL
+NOT self-certified. **Revision:** R2 — bounded evidence-fidelity repair for four further
+structured-candidate IDs (`SW-034`, `SW-049`, `SW-111`, `SW-114`); each now carries its committed
+rooftop-specific observed evidence while preserving its OWN primary blocker (see §4·R2). Builds on R1
+(the SW-050 observed zero-denominator repair, §4·R1, preserved byte-identical). All counts/IDs/
+tallies/partition and every other row (including SW-050) are unchanged; only the four R2 rows, the
+ledger, and this proof differ. **Bounded gate:** an exhaustive audit of the FINAL
 **122** catalog IDs =
 canonical **295** − disjoint evaluated **17** − Gate 4E content-HOLD **70** − Gate 4F
 scheduled-residual-HOLD **86**. After this gate every one of the 295 IDs is dispositioned — **zero**
@@ -49,14 +52,14 @@ in Directive 2 as previously audited & held) is a member of the 122.
 Directive-2 acquisition-class counts (the committed `acquisition_class` field of the feasibility
 matrix, tallied over the 122 and asserted exactly):
 
-| acquisition_class                   | count | next-action lane                                                      |
-| ----------------------------------- | ----- | --------------------------------------------------------------------- |
-| `Vin-native scheduled`              | 15    | authorize a bounded read-only VinSolutions-native scheduled export    |
-| `Native manual export`              | 3     | read-only Response Times CSV manual export (next authorized — §3)     |
-| `Manual CRM inspection`             | 6     | authorize a bounded read-only manual CRM inspection                   |
-| `Separate external source required` | 55    | admit + reconcile a named separate source (stable same-period join)   |
-| `Unavailable or retention-limited`  | 8     | obtain retained/historical window (missing is never zero)             |
-| `Outside governed boundary`         | 35    | route to the specific lane authority — see §3 (NOT one approval)      |
+| acquisition_class                   | count | next-action lane                                                    |
+| ----------------------------------- | ----- | ------------------------------------------------------------------- |
+| `Vin-native scheduled`              | 15    | authorize a bounded read-only VinSolutions-native scheduled export  |
+| `Native manual export`              | 3     | read-only Response Times CSV manual export (next authorized — §3)   |
+| `Manual CRM inspection`             | 6     | authorize a bounded read-only manual CRM inspection                 |
+| `Separate external source required` | 55    | admit + reconcile a named separate source (stable same-period join) |
+| `Unavailable or retention-limited`  | 8     | obtain retained/historical window (missing is never zero)           |
+| `Outside governed boundary`         | 35    | route to the specific lane authority — see §3 (NOT one approval)    |
 
 Total = 122.
 
@@ -68,12 +71,12 @@ cross-rooftop → service; the section title is deliberately excluded so that th
 section name cannot incidentally match the OFAC/Red-Flags compliance keyword). The independent test
 re-derives the same split:
 
-| boundary_lane      | count | authority                                                         |
-| ------------------ | ----- | ----------------------------------------------------------------- |
-| `compliance_legal` | 16    | Compliance/legal (TCPA/DNC/OFAC/Safeguards/privacy) sign-off      |
-| `service`          | 10    | Service data owner (Service-to-Sales / equity mining)             |
-| `enrichment`       | 6     | Third-party enrichment / external-append data owner               |
-| `cross_rooftop`    | 3     | Cross-rooftop data-sharing authority across sister stores         |
+| boundary_lane      | count | authority                                                    |
+| ------------------ | ----- | ------------------------------------------------------------ |
+| `compliance_legal` | 16    | Compliance/legal (TCPA/DNC/OFAC/Safeguards/privacy) sign-off |
+| `service`          | 10    | Service data owner (Service-to-Sales / equity mining)        |
+| `enrichment`       | 6     | Third-party enrichment / external-append data owner          |
+| `cross_rooftop`    | 3     | Cross-rooftop data-sharing authority across sister stores    |
 
 Total = 35. Note: `SW-199` ("Service advisor and sales rep contact same customer … no coordination")
 routes to **service** — its blocking data-domain is Service-advisor contact logs, not a legal rule —
@@ -117,11 +120,11 @@ blocker and did not preserve that observed fact.
 `docs/halo/contract/sw295-structured-candidate-matrix.json` (`observed_crm_new_car_deals` +
 `spine_unresolved_reason_by_rooftop`), plus a matching `additional_blockers` line:
 
-| rooftop | observed new-car deals | denominator | status                                                          |
-| ------- | ---------------------- | ----------- | --------------------------------------------------------------- |
-| 21043   | 0                      | 0           | ratio 0/0 undefined → **UNRESOLVED, never value=0**             |
-| 21044   | 0                      | 0           | ratio 0/0 undefined → **UNRESOLVED, never value=0**             |
-| 21047   | 4 (2 blank Front Gross)| integrity ✗ | denominator integrity fails → UNRESOLVED, missing is never zero |
+| rooftop | observed new-car deals  | denominator | status                                                          |
+| ------- | ----------------------- | ----------- | --------------------------------------------------------------- |
+| 21043   | 0                       | 0           | ratio 0/0 undefined → **UNRESOLVED, never value=0**             |
+| 21044   | 0                       | 0           | ratio 0/0 undefined → **UNRESOLVED, never value=0**             |
+| 21047   | 4 (2 blank Front Gross) | integrity ✗ | denominator integrity fails → UNRESOLVED, missing is never zero |
 
 The ratio (negative-front new-car deals ÷ eligible new-car deals) is undefined where the eligible
 denominator is 0 or integrity-failed; per the standing rule **missing is never zero**, so the metric
@@ -133,12 +136,43 @@ observed 0 denominators fail-closed; the independent test adds a literal regress
 (`SW-050 … held UNRESOLVED not zero`). Disposition, blocker_class, all tallies, the 122 set, the
 partition, and every other row are unchanged (only the SW-050 row bytes differ).
 
-> **Flagged (not repaired — outside this bounded R1):** the committed structured-candidate matrix
-> shows four other IDs with analogous observed zero/absent-denominator facts not surfaced in their
-> generic Gate 4G rows — **SW-114** (accepted Dashboard write-up TOTAL = 0), **SW-034** (write-up
-> count absent), and **SW-049 / SW-111** (new-car field present but primarily history/trend-blocked).
-> Recorded here for the shadow/operator to decide whether a follow-up repair applies; not changed in
-> R1 per the bounded instruction ("preserve all other counts/IDs/prior bytes").
+## 4·R2. Four further IDs — committed rooftop observations merged, each own primary blocker preserved
+
+**Defect (shadow R2, from the R1-flagged four):** the committed structured-candidate matrix records
+rooftop-specific observed facts for four more IDs that the generic Gate 4G rows did not surface. R2
+merges each ID's committed observation into its row (`observed_evidence` + one `additional_blockers`
+line) **and the acquisition ledger** (`observed_metric_evidence`), sourced verbatim from
+`docs/halo/contract/sw295-structured-candidate-matrix.json` and asserted fail-closed. Crucially, each
+ID's OWN primary blocker is preserved — `primary_blocker` (committed delta `rationale`) and
+`blocker_class` (committed delta `category`) are unchanged; the observed fact is added, never
+substituted. All four remain HOLD/UNRESOLVED and are NEVER recorded as value 0 (frozen
+numerator/denominator stay `unresolved (held)`; missing is never zero).
+
+| ID       | own primary blocker (unchanged)                                | committed observed fact merged (source: structured-candidate matrix)                                                                                               | relation       |
+| -------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- |
+| `SW-034` | write-to-close needs the deal family (`other_source_or_join`)¹ | write-to-close denominator (write-up count) **ABSENT** from the accepted export at 21043/21044/21047 (absent ≠ zero); co-observed new-car deals 0/0/4              | **primary**    |
+| `SW-049` | gross-per-unit vs 30-day avg **needs history**                 | single held governed week → **trailing-30-day trend basis absent**; observed current-week new-car deals 0/0/4 recorded as context only                             | **secondary**  |
+| `SW-111` | rising-volume/falling-close **needs deal outcomes**            | **second-order composite needs a directional trend basis** a single week cannot establish; observed new-car deals 0/0/4 as context only                            | **secondary**  |
+| `SW-114` | show-vs-close needs deal outcomes                              | accepted Dashboard **write-up TOTAL = 0** (observed-zero close-rate denominator) **and** no ratified high/low composite threshold; no per-rooftop counts committed | **co-primary** |
+
+¹ `SW-034`'s committed delta `blocker_class` is `other_source_or_join` (deal-family framing at the
+capability layer); the structured audit adds that even within the deal family the write-up-count
+denominator is **absent**. The two lenses are both recorded; the delta-derived
+`primary_blocker`/`blocker_class` are left intact and the structured finding is attached as
+`observed_evidence` (`structured_blocker_class = zero_or_absent_denominator`).
+
+**Fidelity discipline.** `SW-049` and `SW-111` are **history/trend-primary**: their observed
+current-week new-car counts (0 at 21043, 0 at 21044, 4 at 21047) are recorded as **context only**
+(`relation_to_primary_blocker = secondary`) and explicitly do NOT convert the metric into a
+zero-denominator hold — that would misstate the binding blocker. `SW-034` (absent field) and `SW-114`
+(observed-zero write-up TOTAL) are genuine zero/absent-denominator cases and are labelled primary /
+co-primary respectively. `SW-114` carries **no** per-rooftop counts because none are committed (its
+fact is the aggregate write-up TOTAL = 0), so no per-rooftop structure is fabricated. Every number,
+blocker class, and hold-reason quote is read from the committed matrix and asserted (`0/0/4`;
+`zero_or_absent_denominator`; `trend_requires_history`; `undefined_threshold_composite`; the literal
+"write-up TOTAL is 0"). SW-050's R1 evidence, the 122 set, the hash, all tallies, the partition, and
+every non-R2 row are byte-unchanged; the ledger keeps SW-050's `observed_zero_or_absent_denominator`
+block untouched and adds a separate `observed_metric_evidence` block for the four.
 
 ## 5. Portfolio — preserved 51 / 834; disjoint 295-ID / 885-cell partition; ZERO unaudited
 
@@ -161,7 +195,7 @@ and the test.
 
 ## 6. Controls
 
-- **Independent test** (`src/test/gate4g-final-residual-audit.test.ts`, 13): re-derives the 122 from
+- **Independent test** (`src/test/gate4g-final-residual-audit.test.ts`, 14): re-derives the 122 from
   raw committed inputs and asserts equality with the committed matrix; the Directive-1 sorted-newline
   SHA-256; the Directive-2 acquisition counts (15/3/6/55/8/35); 0 promote / 122 hold (none
   `definition_compatible_now`, so 0 is DERIVED); the Directive-3 lane split (10/16/3/6) re-derived
@@ -169,9 +203,15 @@ and the test.
   IDs; a **test-declared literal** 14-key frozen schema over all 122 rows with non-executable specs; a
   **negative regression** proving the evaluator-metadata schema cannot satisfy the frozen contract;
   per-row blocker/classification/owner/approval traceability; the disjoint 17/70/86/122/0 partition
-  and preserved 51/834; ledger reconciliation; and the **R1 regression** that SW-050's observed
-  eligible denominator = 0 is preserved and held UNRESOLVED (never value=0), cross-checked against the
-  committed structured-candidate matrix, with observed_evidence present on SW-050 only.
+  and preserved 51/834; ledger reconciliation; the **R1 regression** that SW-050's observed eligible
+  denominator = 0 is preserved and held UNRESOLVED (never value=0), cross-checked against the committed
+  structured-candidate matrix, with `observed_evidence` now present on exactly the five
+  evidence-fidelity IDs (`SW-034/049/050/111/114`); and the **R2 regression** that `SW-034/049/111/114`
+  each preserve their own committed `primary_blocker`/`blocker_class`, stay HOLD/UNRESOLVED (never
+  value=0), carry the observed line, and reproduce the committed per-rooftop new-car counts (0/0/4 for
+  the three CRM IDs; SW-114 has none), with `relation_to_primary_blocker` primary (SW-034) /
+  co-primary (SW-114) / secondary (SW-049, SW-111) and the ledger's separate `observed_metric_evidence`
+  block reconciled.
 - **Hash guard** (`src/test/gate4g-evidence-hashes.test.ts`): recomputes every SHA-256 recorded below
   from the current committed bytes.
 - Deterministic byte-identical regeneration of all three artifacts; frozen Gate 4C1/4C2/4E/4F bytes
@@ -180,14 +220,14 @@ and the test.
 
 ## Committed artifacts (SHA-256 first 16)
 
-| File                                                                       | sha256:16          |
-| -------------------------------------------------------------------------- | ------------------ |
-| `src/server/reports/residual/gate4g-final-residual.ts`                     | `e7ee17ff1ed3e6a4` |
-| `scripts/m1r-residual/build-gate4g-final-residual-audit.ts`                | `f9c06f7e30e7fe25` |
-| `docs/halo/contract/sw295-gate4g-final-residual-matrix.json`               | `03e991785ab2d6db` |
-| `docs/halo/evidence/m1r/residual/gate4g-acquisition-action-ledger.json`    | `0b291f2de9b6b1da` |
-| `docs/halo/evidence/m1r/residual/gate4g-portfolio-reconciliation.json`     | `4781a77fd43b22af` |
-| `src/test/gate4g-final-residual-audit.test.ts`                             | `f9611eb10759d2da` |
+| File                                                                    | sha256:16          |
+| ----------------------------------------------------------------------- | ------------------ |
+| `src/server/reports/residual/gate4g-final-residual.ts`                  | `2207f254909a86a4` |
+| `scripts/m1r-residual/build-gate4g-final-residual-audit.ts`             | `f358aa6bff337444` |
+| `docs/halo/contract/sw295-gate4g-final-residual-matrix.json`            | `aa65431b56940378` |
+| `docs/halo/evidence/m1r/residual/gate4g-acquisition-action-ledger.json` | `3f89988126da6974` |
+| `docs/halo/evidence/m1r/residual/gate4g-portfolio-reconciliation.json`  | `4781a77fd43b22af` |
+| `src/test/gate4g-final-residual-audit.test.ts`                          | `1c8edd1fb2d5ebb6` |
 
 Each `sha256:16` is recomputed from the current committed bytes by
 `src/test/gate4g-evidence-hashes.test.ts`.

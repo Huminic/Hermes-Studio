@@ -816,7 +816,8 @@
       "primary_blocker": "write-to-close is a deal metric; needs the deal family, not communications",
       "additional_blockers": [
         "missing_inputs: write-up + close (deal) counts",
-        "join_or_nlp_required: join to another family/source"
+        "join_or_nlp_required: join to another family/source",
+        "observed: the write-to-close denominator (write-up count) is ABSENT from the accepted CRM Sales Gross export at 21043, 21044 and 21047 (absent field, not an observed zero) — the rate is uncomputable and held UNRESOLVED, never value=0 (see observed_evidence; source docs/halo/contract/sw295-structured-candidate-matrix.json)"
       ],
       "classification": {
         "source": "CRM Sales Gross weekly report",
@@ -825,6 +826,32 @@
         "threshold": "no ratified threshold required",
         "join": "join to another family/source",
         "authority": "Existing VinSolutions schedule / Huminic validator (acquisition class: Vin-native scheduled)"
+      },
+      "observed_evidence": {
+        "source_ref": "docs/halo/contract/sw295-structured-candidate-matrix.json",
+        "structured_blocker_class": "zero_or_absent_denominator",
+        "metric_ratio": "closed deals ÷ write-ups (write-to-close rate), per rooftop, per week",
+        "relation_to_primary_blocker": "primary — the observed zero/absent denominator is material: the write-up-count denominator is ABSENT from the accepted CRM Sales Gross export at all three rooftops (an absent field, not an observed zero)",
+        "observed_denominator_statement": "Committed structured audit: \"CRM Sales Gross has no write-up count; write-to-close denominator unavailable\" — the write-up-count denominator is absent (an absent field, not an observed zero) at 21043, 21044 and 21047, so the write-to-close rate is uncomputable.",
+        "observed_context_counts": {
+          "21043": {
+            "new_deals": 0,
+            "new_negative_front": 0,
+            "new_front_blank": 0
+          },
+          "21044": {
+            "new_deals": 0,
+            "new_negative_front": 0,
+            "new_front_blank": 0
+          },
+          "21047": {
+            "new_deals": 4,
+            "new_negative_front": 1,
+            "new_front_blank": 2
+          }
+        },
+        "why_unresolved": "Write-to-close = closed ÷ write-ups. The write-up count is not present in the accepted CRM Sales Gross export, so the denominator is absent and the rate is uncomputable. Absent is not zero — per the standing rule missing is never zero, the metric is held UNRESOLVED and is NEVER recorded as value 0. (The same export's observed new-car deal counts — 0/0/4 — are a distinct quantity and do not supply the write-up denominator.)",
+        "unlock": "A read-only export (or CRM view) that includes the per-period write-up count alongside closed-deal outcomes at all three rooftops would establish the write-to-close denominator. No external source and no Service/Parts data is required."
       },
       "owner": "Existing VinSolutions schedule / Huminic validator",
       "next_safe_action": "Join sold outcomes to stable lead/customer keys only when a supported bridge exists.",
@@ -1160,7 +1187,8 @@
       "primary_blocker": "gross-per-unit vs 30-day average needs history",
       "additional_blockers": [
         "missing_inputs: trailing-30-day gross",
-        "join_or_nlp_required: multi-week history"
+        "join_or_nlp_required: multi-week history",
+        "observed: single held governed week — the trailing-30-day trend basis is absent (primary blocker: trend_requires_history); the observed current-week new-car deal counts (0 at 21043, 0 at 21044, 4 at 21047) are context only and do not resolve the history requirement — held UNRESOLVED, never value=0 (see observed_evidence; source docs/halo/contract/sw295-structured-candidate-matrix.json)"
       ],
       "classification": {
         "source": "CRM Sales Gross weekly report",
@@ -1169,6 +1197,32 @@
         "threshold": "no ratified threshold required",
         "join": "multi-week history",
         "authority": "Existing VinSolutions schedule / Huminic validator (acquisition class: Vin-native scheduled)"
+      },
+      "observed_evidence": {
+        "source_ref": "docs/halo/contract/sw295-structured-candidate-matrix.json",
+        "structured_blocker_class": "trend_requires_history",
+        "metric_ratio": "current-week gross-per-unit vs trailing-30-day average gross-per-unit",
+        "relation_to_primary_blocker": "secondary — the PRIMARY blocker is the missing trailing-30-day history (trend_requires_history); the observed current-week new-car deal counts are context only and do not resolve the trend requirement",
+        "observed_denominator_statement": "Committed structured audit: \"requires trailing 30-day gross-per-unit average; single held week insufficient\" — only one governed week is held, so the trailing-30-day trend basis is absent. This is a history blocker, not a zero-denominator blocker.",
+        "observed_context_counts": {
+          "21043": {
+            "new_deals": 0,
+            "new_negative_front": 0,
+            "new_front_blank": 0
+          },
+          "21044": {
+            "new_deals": 0,
+            "new_negative_front": 0,
+            "new_front_blank": 0
+          },
+          "21047": {
+            "new_deals": 4,
+            "new_negative_front": 1,
+            "new_front_blank": 2
+          }
+        },
+        "why_unresolved": "Gross-per-unit vs a trailing-30-day average cannot be computed from a single held week; the 30-day trend basis is absent, which remains the binding blocker. Missing is never zero — the metric is held UNRESOLVED and is NEVER recorded as value 0. The observed current-week new-car counts (0 at 21043, 0 at 21044, 4 at 21047) neither supply the trailing average nor change the primary history blocker.",
+        "unlock": "Read-only access to ≥30 days of prior governed CRM Sales Gross weeks (multi-week history) at all three rooftops would establish the trailing-30-day average. Sales-only; no external source or Service/Parts data."
       },
       "owner": "Existing VinSolutions schedule / Huminic validator",
       "next_safe_action": "Join sold outcomes to stable lead/customer keys only when a supported bridge exists.",
@@ -2876,7 +2930,8 @@
       "primary_blocker": "rising-volume-falling-close needs deal outcomes",
       "additional_blockers": [
         "missing_inputs: volume + close composite",
-        "join_or_nlp_required: join to another family/source"
+        "join_or_nlp_required: join to another family/source",
+        "observed: single held governed week — the directional trend/threshold basis for the second-order composite is absent (primary blocker: trend_requires_history); the observed current-week new-car deal counts (0 at 21043, 0 at 21044, 4 at 21047) are context only — held UNRESOLVED, never value=0 (see observed_evidence; source docs/halo/contract/sw295-structured-candidate-matrix.json)"
       ],
       "classification": {
         "source": "CRM Sales Gross weekly report",
@@ -2885,6 +2940,32 @@
         "threshold": "no ratified threshold required",
         "join": "join to another family/source",
         "authority": "Existing VinSolutions schedule / Huminic validator (acquisition class: Vin-native scheduled)"
+      },
+      "observed_evidence": {
+        "source_ref": "docs/halo/contract/sw295-structured-candidate-matrix.json",
+        "structured_blocker_class": "trend_requires_history",
+        "metric_ratio": "composite: lead-volume trend (rising) × close-rate trend (falling)",
+        "relation_to_primary_blocker": "secondary — the PRIMARY blocker is the missing trend/threshold basis for a second-order composite (trend_requires_history); the observed current-week new-car deal counts are context only",
+        "observed_denominator_statement": "Committed structured audit: \"second-order composite requires a trend/threshold basis not defined in held single-week data\" — the composite needs a directional trend basis (rising volume, falling close) that a single held week cannot establish.",
+        "observed_context_counts": {
+          "21043": {
+            "new_deals": 0,
+            "new_negative_front": 0,
+            "new_front_blank": 0
+          },
+          "21044": {
+            "new_deals": 0,
+            "new_negative_front": 0,
+            "new_front_blank": 0
+          },
+          "21047": {
+            "new_deals": 4,
+            "new_negative_front": 1,
+            "new_front_blank": 2
+          }
+        },
+        "why_unresolved": "A rising-volume + falling-close composite is inherently a trend signal; a single held week defines no direction, so the trend/threshold basis is absent. Missing is never zero — held UNRESOLVED, NEVER value 0. The observed current-week new-car counts (0 at 21043, 0 at 21044, 4 at 21047) do not establish a trend.",
+        "unlock": "Read-only multi-week governed history (lead volume + close outcomes) at all three rooftops to establish the directional trend basis and a ratified composite threshold. Sales-only; no external or Service/Parts data."
       },
       "owner": "Existing VinSolutions schedule / Huminic validator",
       "next_safe_action": "Join sold outcomes to stable lead/customer keys only when a supported bridge exists.",
@@ -2962,7 +3043,8 @@
       "primary_blocker": "show-vs-close needs deal outcomes",
       "additional_blockers": [
         "missing_inputs: show + close composite",
-        "join_or_nlp_required: join to another family/source"
+        "join_or_nlp_required: join to another family/source",
+        "observed: the close-rate denominator (accepted Dashboard write-up TOTAL) is observed 0 (denominator 0 → ratio undefined) and the show-vs-close composite has no ratified high/low threshold — co-primary blockers; held UNRESOLVED, never value=0 (see observed_evidence; source docs/halo/contract/sw295-structured-candidate-matrix.json)"
       ],
       "classification": {
         "source": "Appointments weekly report",
@@ -2971,6 +3053,15 @@
         "threshold": "no ratified threshold required",
         "join": "join to another family/source",
         "authority": "Existing VinSolutions schedule / Huminic validator (acquisition class: Vin-native scheduled)"
+      },
+      "observed_evidence": {
+        "source_ref": "docs/halo/contract/sw295-structured-candidate-matrix.json",
+        "structured_blocker_class": "undefined_threshold_composite",
+        "metric_ratio": "composite: show rate (available) × close rate (sold ÷ write-ups)",
+        "relation_to_primary_blocker": "co-primary — an observed zero close-rate denominator (accepted Dashboard write-up TOTAL = 0) AND an unratified high/low composite threshold both block it",
+        "observed_denominator_statement": "Committed structured audit: \"Show rate is available, but \"close rate\" needs sold/write-up and the accepted Dashboard write-up TOTAL is 0 (denominator 0); the composite also has no ratified high/low threshold.\" The close-rate denominator (write-up total) is observed 0 in the accepted week, and no high/low threshold is ratified for the show-vs-close composite.",
+        "why_unresolved": "The close-rate arm is sold ÷ write-ups; the accepted Dashboard write-up TOTAL is observed 0, making that ratio undefined (0/0). Independently the show-vs-close composite has no ratified high/low threshold. Both must be resolved. A zero/missing denominator is never treated as value 0 — held UNRESOLVED. Show rate alone is available but does not satisfy the composite.",
+        "unlock": "A read-only export with a non-zero write-up (opportunity) total joined to sold outcomes at all three rooftops, PLUS a ratified high-show/low-close threshold, would make the composite computable. Sales-only; no external or Service/Parts data."
       },
       "owner": "Existing VinSolutions schedule / Huminic validator",
       "next_safe_action": "Calculate show/confirm/no-show rates downstream and join only on supported keys.",

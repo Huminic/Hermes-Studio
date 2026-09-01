@@ -23,6 +23,8 @@ import type {
   CatalogRow,
   DeltaRow,
   Gate4gBoundaryLane,
+  ObservedDenominatorEvidence,
+  ObservedRooftopCounts,
 } from '@/server/reports/residual/gate4g-final-residual'
 import {
   DEFINITION_COMPATIBLE,
@@ -275,6 +277,7 @@ async function main(): Promise<void> {
       metric_id: string
       blocker_class?: string
       condition?: string
+      hold_reason?: string
       observed_crm_new_car_deals?: Record<
         string,
         {
@@ -335,16 +338,170 @@ async function main(): Promise<void> {
       'A read-only CRM Sales Gross weekly export whose accepted week yields a non-empty, integrity-complete eligible new-car-deal population (non-blank Front Gross) at ALL THREE rooftops would establish a computable denominator. No external source and no Service/Parts data is required.',
   }
 
+  // ── R2: evidence-fidelity merge for four more structured-candidate IDs. Each row's PRIMARY
+  //        blocker (delta rationale/category) is preserved; the committed rooftop-specific observed
+  //        facts are surfaced as observed_evidence + a metric-specific additional_blockers line. All
+  //        stay HOLD/UNRESOLVED, never value=0. DERIVED from the committed structured matrix and
+  //        asserted fail-closed — nothing is hardcoded/fabricated. ──
+  const STRUCT_SRC = 'docs/halo/contract/sw295-structured-candidate-matrix.json'
+  const structById = new Map(structured.candidates.map((c) => [c.metric_id, c]))
+  const structRec = (id: string) => {
+    const rec = structById.get(id)
+    must(!!rec, `${id} missing from structured-candidate matrix`)
+    return rec!
+  }
+  // Read + assert the committed per-rooftop new-car deal counts (0/0/4) verbatim; return as context.
+  const contextCounts = (id: string): Record<string, ObservedRooftopCounts> => {
+    const o = structRec(id).observed_crm_new_car_deals
+    must(!!o, `${id} has no observed_crm_new_car_deals`)
+    must(
+      o!['21043'].new_deals === 0 &&
+        o!['21044'].new_deals === 0 &&
+        o!['21047'].new_deals === 4,
+      `${id} observed new-car deals != 0/0/4`,
+    )
+    return Object.fromEntries(
+      GOVERNED.map((d) => {
+        const v = o![d]
+        return [
+          d,
+          {
+            new_deals: v.new_deals,
+            new_negative_front: v.new_negative_front,
+            new_front_blank: v.new_front_blank,
+          },
+        ]
+      }),
+    )
+  }
+
+  const rec034 = structRec('SW-034')
+  must(
+    rec034.blocker_class === 'zero_or_absent_denominator',
+    'SW-034 structured blocker_class != zero_or_absent_denominator',
+  )
+  must(
+    /no write-up count/.test(rec034.hold_reason ?? ''),
+    'SW-034 committed hold_reason missing absent-write-up fact',
+  )
+  const rec049 = structRec('SW-049')
+  must(
+    rec049.blocker_class === 'trend_requires_history',
+    'SW-049 structured blocker_class != trend_requires_history',
+  )
+  must(
+    /trailing 30-day/.test(rec049.hold_reason ?? ''),
+    'SW-049 committed hold_reason missing trailing-30-day fact',
+  )
+  const rec111 = structRec('SW-111')
+  must(
+    rec111.blocker_class === 'trend_requires_history',
+    'SW-111 structured blocker_class != trend_requires_history',
+  )
+  must(
+    /second-order composite/.test(rec111.hold_reason ?? ''),
+    'SW-111 committed hold_reason missing second-order-composite fact',
+  )
+  const rec114 = structRec('SW-114')
+  must(
+    rec114.blocker_class === 'undefined_threshold_composite',
+    'SW-114 structured blocker_class != undefined_threshold_composite',
+  )
+  must(
+    /write-up TOTAL is 0/.test(rec114.hold_reason ?? ''),
+    'SW-114 committed hold_reason missing write-up-TOTAL-0 fact',
+  )
+  must(
+    !rec114.observed_crm_new_car_deals,
+    'SW-114 unexpectedly carries observed_crm_new_car_deals (no per-rooftop counts expected)',
+  )
+
+  const R2_IDS = ['SW-034', 'SW-049', 'SW-111', 'SW-114'] as const
+  const r2EvidenceLiteral: Record<
+    string,
+    { evidence: ObservedDenominatorEvidence; line: string }
+  > = {
+    'SW-034': {
+      evidence: {
+        source_ref: STRUCT_SRC,
+        structured_blocker_class: rec034.blocker_class!,
+        metric_ratio:
+          'closed deals ÷ write-ups (write-to-close rate), per rooftop, per week',
+        relation_to_primary_blocker:
+          'primary — the observed zero/absent denominator is material: the write-up-count denominator is ABSENT from the accepted CRM Sales Gross export at all three rooftops (an absent field, not an observed zero)',
+        observed_denominator_statement: `Committed structured audit: "${rec034.hold_reason}" — the write-up-count denominator is absent (an absent field, not an observed zero) at 21043, 21044 and 21047, so the write-to-close rate is uncomputable.`,
+        observed_context_counts: contextCounts('SW-034'),
+        why_unresolved:
+          "Write-to-close = closed ÷ write-ups. The write-up count is not present in the accepted CRM Sales Gross export, so the denominator is absent and the rate is uncomputable. Absent is not zero — per the standing rule missing is never zero, the metric is held UNRESOLVED and is NEVER recorded as value 0. (The same export's observed new-car deal counts — 0/0/4 — are a distinct quantity and do not supply the write-up denominator.)",
+        unlock:
+          'A read-only export (or CRM view) that includes the per-period write-up count alongside closed-deal outcomes at all three rooftops would establish the write-to-close denominator. No external source and no Service/Parts data is required.',
+      },
+      line: `observed: the write-to-close denominator (write-up count) is ABSENT from the accepted CRM Sales Gross export at 21043, 21044 and 21047 (absent field, not an observed zero) — the rate is uncomputable and held UNRESOLVED, never value=0 (see observed_evidence; source ${STRUCT_SRC})`,
+    },
+    'SW-049': {
+      evidence: {
+        source_ref: STRUCT_SRC,
+        structured_blocker_class: rec049.blocker_class!,
+        metric_ratio:
+          'current-week gross-per-unit vs trailing-30-day average gross-per-unit',
+        relation_to_primary_blocker:
+          'secondary — the PRIMARY blocker is the missing trailing-30-day history (trend_requires_history); the observed current-week new-car deal counts are context only and do not resolve the trend requirement',
+        observed_denominator_statement: `Committed structured audit: "${rec049.hold_reason}" — only one governed week is held, so the trailing-30-day trend basis is absent. This is a history blocker, not a zero-denominator blocker.`,
+        observed_context_counts: contextCounts('SW-049'),
+        why_unresolved:
+          'Gross-per-unit vs a trailing-30-day average cannot be computed from a single held week; the 30-day trend basis is absent, which remains the binding blocker. Missing is never zero — the metric is held UNRESOLVED and is NEVER recorded as value 0. The observed current-week new-car counts (0 at 21043, 0 at 21044, 4 at 21047) neither supply the trailing average nor change the primary history blocker.',
+        unlock:
+          'Read-only access to ≥30 days of prior governed CRM Sales Gross weeks (multi-week history) at all three rooftops would establish the trailing-30-day average. Sales-only; no external source or Service/Parts data.',
+      },
+      line: `observed: single held governed week — the trailing-30-day trend basis is absent (primary blocker: trend_requires_history); the observed current-week new-car deal counts (0 at 21043, 0 at 21044, 4 at 21047) are context only and do not resolve the history requirement — held UNRESOLVED, never value=0 (see observed_evidence; source ${STRUCT_SRC})`,
+    },
+    'SW-111': {
+      evidence: {
+        source_ref: STRUCT_SRC,
+        structured_blocker_class: rec111.blocker_class!,
+        metric_ratio:
+          'composite: lead-volume trend (rising) × close-rate trend (falling)',
+        relation_to_primary_blocker:
+          'secondary — the PRIMARY blocker is the missing trend/threshold basis for a second-order composite (trend_requires_history); the observed current-week new-car deal counts are context only',
+        observed_denominator_statement: `Committed structured audit: "${rec111.hold_reason}" — the composite needs a directional trend basis (rising volume, falling close) that a single held week cannot establish.`,
+        observed_context_counts: contextCounts('SW-111'),
+        why_unresolved:
+          'A rising-volume + falling-close composite is inherently a trend signal; a single held week defines no direction, so the trend/threshold basis is absent. Missing is never zero — held UNRESOLVED, NEVER value 0. The observed current-week new-car counts (0 at 21043, 0 at 21044, 4 at 21047) do not establish a trend.',
+        unlock:
+          'Read-only multi-week governed history (lead volume + close outcomes) at all three rooftops to establish the directional trend basis and a ratified composite threshold. Sales-only; no external or Service/Parts data.',
+      },
+      line: `observed: single held governed week — the directional trend/threshold basis for the second-order composite is absent (primary blocker: trend_requires_history); the observed current-week new-car deal counts (0 at 21043, 0 at 21044, 4 at 21047) are context only — held UNRESOLVED, never value=0 (see observed_evidence; source ${STRUCT_SRC})`,
+    },
+    'SW-114': {
+      evidence: {
+        source_ref: STRUCT_SRC,
+        structured_blocker_class: rec114.blocker_class!,
+        metric_ratio:
+          'composite: show rate (available) × close rate (sold ÷ write-ups)',
+        relation_to_primary_blocker:
+          'co-primary — an observed zero close-rate denominator (accepted Dashboard write-up TOTAL = 0) AND an unratified high/low composite threshold both block it',
+        observed_denominator_statement: `Committed structured audit: "${rec114.hold_reason}" The close-rate denominator (write-up total) is observed 0 in the accepted week, and no high/low threshold is ratified for the show-vs-close composite.`,
+        why_unresolved:
+          'The close-rate arm is sold ÷ write-ups; the accepted Dashboard write-up TOTAL is observed 0, making that ratio undefined (0/0). Independently the show-vs-close composite has no ratified high/low threshold. Both must be resolved. A zero/missing denominator is never treated as value 0 — held UNRESOLVED. Show rate alone is available but does not satisfy the composite.',
+        unlock:
+          'A read-only export with a non-zero write-up (opportunity) total joined to sold outcomes at all three rooftops, PLUS a ratified high-show/low-close threshold, would make the composite computable. Sales-only; no external or Service/Parts data.',
+      },
+      line: `observed: the close-rate denominator (accepted Dashboard write-up TOTAL) is observed 0 (denominator 0 → ratio undefined) and the show-vs-close composite has no ratified high/low threshold — co-primary blockers; held UNRESOLVED, never value=0 (see observed_evidence; source ${STRUCT_SRC})`,
+    },
+  }
+
+  const r2Evidence = new Map(Object.entries(r2EvidenceLiteral))
+
   const matrixRows = rows.map((r) => {
     if (r.disp !== 'HOLD')
       throw new Error(
         `Gate 4G: ${r.id} classified PROMOTE but no evaluated evidence exists — refusing to fabricate`,
       )
-    return buildHoldRow(
-      r.cat,
-      r.d,
-      r.id === OBSERVED_DENOMINATOR_ID ? observedEvidence : undefined,
-    )
+    if (r.id === OBSERVED_DENOMINATOR_ID)
+      return buildHoldRow(r.cat, r.d, observedEvidence)
+    const r2 = r2Evidence.get(r.id)
+    if (r2) return buildHoldRow(r.cat, r.d, r2.evidence, r2.line)
+    return buildHoldRow(r.cat, r.d)
   })
 
   // R1 guard: SW-050 preserves the observed 0 denominator AND stays unresolved (never value=0).
@@ -352,18 +509,52 @@ async function main(): Promise<void> {
     (r) => r.metric_id === OBSERVED_DENOMINATOR_ID,
   )
   must(!!sw050Row, `${OBSERVED_DENOMINATOR_ID} row missing`)
+  const sw050edo = sw050Row!.observed_evidence?.eligible_denominator_observed
   must(
-    !!sw050Row!.observed_evidence &&
-      sw050Row!.observed_evidence.eligible_denominator_observed['21043']
-        .new_deals === 0 &&
-      sw050Row!.observed_evidence.eligible_denominator_observed['21044']
-        .new_deals === 0,
+    !!sw050edo,
+    `${OBSERVED_DENOMINATOR_ID} observed_evidence missing eligible_denominator_observed`,
+  )
+  must(
+    sw050edo!['21043'].new_deals === 0 && sw050edo!['21044'].new_deals === 0,
     `${OBSERVED_DENOMINATOR_ID} observed_evidence does not preserve denominator 0`,
   )
   must(
     sw050Row!.frozen_e1_spec.denominator === 'unresolved (held)' &&
       sw050Row!.frozen_e1_spec.numerator === 'unresolved (held)',
     `${OBSERVED_DENOMINATOR_ID} must stay unresolved (never value=0)`,
+  )
+
+  // R2 guard: each of the four evidence-fidelity IDs preserves its OWN primary blocker (delta
+  // rationale/category unchanged), carries observed_evidence + the observed line, and stays
+  // UNRESOLVED (never value=0). observed_evidence appears on EXACTLY the five expected IDs.
+  for (const id of R2_IDS) {
+    const row = matrixRows.find((r) => r.metric_id === id)
+    must(!!row, `${id} row missing`)
+    const d = deltaById.get(id)
+    must(!!row!.observed_evidence, `${id} row missing observed_evidence (R2)`)
+    must(
+      row!.primary_blocker === d!.rationale &&
+        row!.blocker_class === d!.category,
+      `${id} primary blocker/class not preserved from committed delta`,
+    )
+    must(
+      row!.frozen_e1_spec.numerator === 'unresolved (held)' &&
+        row!.frozen_e1_spec.denominator === 'unresolved (held)',
+      `${id} must stay unresolved (never value=0)`,
+    )
+    must(
+      row!.additional_blockers.some((b) => b.startsWith('observed:')),
+      `${id} missing observed additional_blockers line`,
+    )
+  }
+  const withObserved = matrixRows
+    .filter((r) => r.observed_evidence)
+    .map((r) => r.metric_id)
+    .sort()
+  must(
+    JSON.stringify(withObserved) ===
+      JSON.stringify(['SW-034', 'SW-049', 'SW-050', 'SW-111', 'SW-114']),
+    `observed_evidence not on exactly the 5 expected IDs: ${JSON.stringify(withObserved)}`,
   )
 
   // ── Directive 3: outside-boundary sub-lanes (Service | compliance/legal | cross-rooftop | enrichment) ──
@@ -639,6 +830,27 @@ async function main(): Promise<void> {
         unlock: observedEvidence.unlock,
       },
     ],
+    observed_metric_evidence_note:
+      'R2 evidence-fidelity merge for four further structured-candidate IDs. Each preserves its OWN primary blocker (delta rationale/category unchanged) while surfacing the committed rooftop-specific observed facts; relation_to_primary_blocker states whether the observed zero/absent denominator is primary (SW-034), co-primary with an unratified threshold (SW-114) or secondary to a history/trend blocker (SW-049, SW-111). All stay HOLD/UNRESOLVED, never value=0. SW-050 is memorialized separately above in observed_zero_or_absent_denominator.',
+    observed_metric_evidence: R2_IDS.map((id) => {
+      const row = matrixRows.find((r) => r.metric_id === id)!
+      const oe = row.observed_evidence!
+      return {
+        metric_id: id,
+        condition: row.condition,
+        source_ref: oe.source_ref,
+        structured_blocker_class: oe.structured_blocker_class,
+        primary_blocker: row.primary_blocker,
+        relation_to_primary_blocker: oe.relation_to_primary_blocker,
+        observed_denominator_statement: oe.observed_denominator_statement,
+        ...(oe.observed_context_counts
+          ? { observed_context_counts: oe.observed_context_counts }
+          : {}),
+        held_not_zero:
+          'value stays UNRESOLVED (never 0): an absent/observed-zero/integrity-failed denominator is never recorded as value 0; missing is never zero',
+        unlock: oe.unlock,
+      }
+    }),
     blocker_class_tally: Object.fromEntries(blockerTally),
   }
   fs.mkdirSync(OUT, { recursive: true })

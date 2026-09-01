@@ -410,17 +410,143 @@ describe('Gate 4G — final residual audit', () => {
     ).toBe(true)
     expect(oe.why_unresolved).toMatch(/missing is never zero/)
     expect(oe.unlock).toMatch(/eligible new-car-deal population/)
-    // No other row carries observed_evidence (bounded R1 scope).
+    // observed_evidence is present on exactly the five evidence-fidelity IDs (SW-050 R1 + four R2).
     expect(
       MATRIX.rows
         .filter((x: { observed_evidence?: unknown }) => x.observed_evidence)
-        .map((x: { metric_id: string }) => x.metric_id),
-    ).toEqual(['SW-050'])
-    // Ledger memorializes the same observed fact.
+        .map((x: { metric_id: string }) => x.metric_id)
+        .sort(),
+    ).toEqual(['SW-034', 'SW-049', 'SW-050', 'SW-111', 'SW-114'])
+    // Ledger memorializes SW-050's observed fact in the dedicated (unchanged) block.
     const led = LEDGER.observed_zero_or_absent_denominator
     expect(led).toHaveLength(1)
     expect(led[0].metric_id).toBe('SW-050')
     expect(led[0].eligible_denominator_observed['21043'].new_deals).toBe(0)
     expect(led[0].held_not_zero).toMatch(/never 0/)
+  })
+
+  it('R2 regression: SW-034/049/111/114 preserve each own primary blocker + committed rooftop observations, held UNRESOLVED not zero', () => {
+    const STRUCT = read(
+      'docs/halo/contract/sw295-structured-candidate-matrix.json',
+    )
+    const deltaById = new Map(
+      DELTA.rows.map((r: { metric_id: string }) => [r.metric_id, r]),
+    )
+    const structById = new Map(
+      STRUCT.candidates.map((c: { metric_id: string }) => [c.metric_id, c]),
+    )
+    const rowById = new Map(
+      MATRIX.rows.map((r: { metric_id: string }) => [r.metric_id, r]),
+    )
+
+    // Each ID keeps its OWN committed primary blocker (delta rationale/category unchanged) AND
+    // stays HOLD/UNRESOLVED (never value=0), with the observed line + observed_evidence attached.
+    for (const id of ['SW-034', 'SW-049', 'SW-111', 'SW-114']) {
+      const r = rowById.get(id) as {
+        disposition: string
+        primary_blocker: string
+        blocker_class: string
+        additional_blockers: Array<string>
+        observed_evidence: {
+          source_ref: string
+          structured_blocker_class: string
+          relation_to_primary_blocker: string
+          observed_denominator_statement: string
+          observed_context_counts?: Record<string, { new_deals: number }>
+        }
+        frozen_e1_spec: { numerator: string; denominator: string }
+      }
+      const d = deltaById.get(id) as { rationale: string; category: string }
+      const s = structById.get(id) as { blocker_class: string }
+      expect(r.disposition).toBe('HOLD')
+      expect(r.primary_blocker).toBe(d.rationale)
+      expect(r.blocker_class).toBe(d.category)
+      expect(r.frozen_e1_spec.numerator).toBe('unresolved (held)')
+      expect(r.frozen_e1_spec.denominator).toBe('unresolved (held)')
+      const oe = r.observed_evidence
+      expect(oe).toBeTruthy()
+      expect(oe.source_ref).toBe(
+        'docs/halo/contract/sw295-structured-candidate-matrix.json',
+      )
+      // structured_blocker_class is the committed structured-matrix class verbatim (traceable).
+      expect(oe.structured_blocker_class).toBe(s.blocker_class)
+      expect(oe.relation_to_primary_blocker.length).toBeGreaterThan(0)
+      expect(
+        r.additional_blockers.some((b) => /^observed:.*never value=0/.test(b)),
+      ).toBe(true)
+    }
+
+    // Per-rooftop committed new-car deal facts (0/0/4) preserved verbatim for the three CRM IDs.
+    for (const id of ['SW-034', 'SW-049', 'SW-111']) {
+      const r = rowById.get(id) as {
+        observed_evidence: {
+          observed_context_counts: Record<string, { new_deals: number }>
+        }
+      }
+      const s = structById.get(id) as {
+        observed_crm_new_car_deals: Record<string, { new_deals: number }>
+      }
+      const cc = r.observed_evidence.observed_context_counts
+      expect(cc['21043'].new_deals).toBe(0)
+      expect(cc['21044'].new_deals).toBe(0)
+      expect(cc['21047'].new_deals).toBe(4)
+      // Cross-check against the committed structured-candidate matrix, rooftop by rooftop.
+      for (const roof of ['21043', '21044', '21047'])
+        expect(cc[roof].new_deals).toBe(
+          s.observed_crm_new_car_deals[roof].new_deals,
+        )
+    }
+
+    // SW-034 primary is the absent write-up denominator; SW-049/SW-111 primary stays history/trend.
+    const sw034 = rowById.get('SW-034') as {
+      observed_evidence: { relation_to_primary_blocker: string }
+    }
+    expect(sw034.observed_evidence.relation_to_primary_blocker).toMatch(
+      /^primary/,
+    )
+    for (const id of ['SW-049', 'SW-111']) {
+      const r = rowById.get(id) as {
+        observed_evidence: { relation_to_primary_blocker: string }
+      }
+      expect(r.observed_evidence.relation_to_primary_blocker).toMatch(
+        /^secondary/,
+      )
+    }
+
+    // SW-114 has NO per-rooftop counts (none committed); its observed fact is the write-up TOTAL = 0
+    // co-primary with an unratified composite threshold.
+    const sw114 = rowById.get('SW-114') as {
+      observed_evidence: {
+        relation_to_primary_blocker: string
+        observed_denominator_statement: string
+        observed_context_counts?: unknown
+      }
+    }
+    expect(sw114.observed_evidence.observed_context_counts).toBeUndefined()
+    expect(sw114.observed_evidence.relation_to_primary_blocker).toMatch(
+      /^co-primary/,
+    )
+    expect(sw114.observed_evidence.observed_denominator_statement).toMatch(
+      /write-up TOTAL is 0/,
+    )
+    const s114 = structById.get('SW-114') as {
+      observed_crm_new_car_deals?: unknown
+    }
+    expect(s114.observed_crm_new_car_deals).toBeUndefined()
+
+    // Ledger memorializes the four in a dedicated R2 block, separate from SW-050's.
+    const led2 = LEDGER.observed_metric_evidence
+    expect(led2.map((e: { metric_id: string }) => e.metric_id)).toEqual([
+      'SW-034',
+      'SW-049',
+      'SW-111',
+      'SW-114',
+    ])
+    for (const e of led2)
+      expect(e.held_not_zero).toMatch(/never recorded as value 0|never 0/)
+    // SW-050 is NOT duplicated into the R2 block.
+    expect(
+      led2.some((e: { metric_id: string }) => e.metric_id === 'SW-050'),
+    ).toBe(false)
   })
 })
