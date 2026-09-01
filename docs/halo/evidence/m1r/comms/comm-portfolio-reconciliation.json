@@ -3,6 +3,8 @@
   "required_cells": 885,
   "spine_evaluated": 30,
   "comm_overlay_evaluated": 6,
+  "comm_overlay_per_rooftop": 2,
+  "comm_overlay_composition": "6 cells = SW-022 + SW-133 x 3 rooftops (2/rooftop); SW-137 held (candidate guard)",
   "evaluated": 36,
   "unresolved": 849,
   "by_dealer": {
@@ -38,6 +40,18 @@
     "SW-090"
   ],
   "comm_evaluated_ids": ["SW-022", "SW-133"],
+  "comm_held_ids": [
+    "SW-019",
+    "SW-026",
+    "SW-076",
+    "SW-084",
+    "SW-086",
+    "SW-132",
+    "SW-134",
+    "SW-137",
+    "SW-138",
+    "SW-288"
+  ],
   "portfolio_evaluated_ids": [
     "SW-011",
     "SW-012",
@@ -52,5 +66,5 @@
     "SW-090",
     "SW-133"
   ],
-  "note": "Atomic union of the untouched 4-family core spine (30, byte-semantically preserved) and the separate privacy-minimized comm overlay (9 = SW-022/133/137 x 3 rooftops). No core-spine cell changed; comm-derived PII never enters buildSpine."
+  "note": "Atomic union of the untouched 4-family core spine (30, byte-semantically preserved) and the separate privacy-minimized comm overlay (6 cells = SW-022 + SW-133 x 3 rooftops (2/rooftop); SW-137 held (candidate guard)). Per rooftop: 10 spine + 2 comm = 12 evaluated / 283 unresolved. No core-spine cell changed; comm-derived PII never enters buildSpine."
 }

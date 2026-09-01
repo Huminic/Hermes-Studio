@@ -28,8 +28,9 @@ raw/manifest SHA + transform version/hash + source/report URL), reporting period
 The comm metrics are computed by a SEPARATE `comm-metrics.ts` evaluator over the reader's
 NON-PII derived rows and written to a SEPARATE overlay ledger. Comm-derived data never enters
 `buildSpine`, so the prior 30 cells are unchanged. `comm-portfolio-reconciliation.json` is the
-atomic union (spine 30 + comm 6 = 36/849, per-dealer 13/282); it asserts no comm ID collides
-with a spine-evaluated ID. Emitted evidence is aggregate-only — integer numerator/denominator +
+atomic union (spine 30 + comm 6 = 36/849, per-dealer 12 evaluated / 283 unresolved = 10 spine + 2
+comm); it carries a derived `comm_overlay_composition` ("6 cells = SW-022 + SW-133 x 3 rooftops;
+SW-137 held") and asserts no comm ID collides with a spine-evaluated ID. Emitted evidence is aggregate-only — integer numerator/denominator +
 derived rate — never a name, customer, rep/thread/person token, or message content.
 
 ## 3. Order-invariance (the shadow-required fix)
@@ -84,10 +85,10 @@ the generator; no raw CSV/JPEG/PII/secret committed; scope limited to comm files
 | File | sha256:16 |
 | ---- | --------- |
 | `src/server/reports/comms/comm-metrics.ts` | `9a8377f66109e69a` |
-| `scripts/m1r-comms/build-comm-evaluation.ts` | `c17cee86d5cf9709` |
+| `scripts/m1r-comms/build-comm-evaluation.ts` | `21c08696311f4747` |
 | `docs/halo/contract/sw295-comm-metric-specs.json` | `56128aa2b3633d63` |
 | `docs/halo/evidence/m1r/comms/comm-evaluation-ledger.json` | `4b4ce0875a9373de` |
-| `docs/halo/evidence/m1r/comms/comm-portfolio-reconciliation.json` | `0d9be741db35c2c9` |
+| `docs/halo/evidence/m1r/comms/comm-portfolio-reconciliation.json` | `600be55430f87d0a` |
 
 Every `sha256:16` above is recomputed from the current committed bytes by
 `src/test/comm-evidence-hashes.test.ts`, so a later formatting cycle that desyncs this proof

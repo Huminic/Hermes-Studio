@@ -254,21 +254,37 @@ async function main(): Promise<void> {
     }
   }
   const portfolioEvaluated = spine.evaluated + evaln.cells.length
+  const rooftopCount = Object.keys(byDealer).length
+  if (evaln.cells.length % rooftopCount !== 0)
+    throw new Error(
+      `comm cells (${evaln.cells.length}) not evenly distributed across ${rooftopCount} rooftops`,
+    )
+  const commPerRooftop = evaln.cells.length / rooftopCount
+  const heldOverlayIds = evaln.held
+    .filter(
+      (h) => (evaln.evaluated_ids as Array<string>).indexOf(h.metric_id) < 0,
+    )
+    .map((h) => h.metric_id)
+  // DERIVED (never hardcoded) so the note/composition cannot regress against the real counts.
+  const commOverlayComposition = `${evaln.cells.length} cells = ${evaln.evaluated_ids.join(' + ')} x ${rooftopCount} rooftops (${commPerRooftop}/rooftop); SW-137 held (candidate guard)`
   const recon = {
     artifact: 'gate4c2-portfolio-reconciliation',
     required_cells: spine.required_cells,
     spine_evaluated: spine.evaluated,
     comm_overlay_evaluated: evaln.cells.length,
+    comm_overlay_per_rooftop: commPerRooftop,
+    comm_overlay_composition: commOverlayComposition,
     evaluated: portfolioEvaluated,
     unresolved: spine.required_cells - portfolioEvaluated,
     by_dealer: byDealer,
     spine_evaluated_ids: spine.evaluated_ids,
     comm_evaluated_ids: evaln.evaluated_ids,
+    comm_held_ids: heldOverlayIds,
     portfolio_evaluated_ids: [
       ...spine.evaluated_ids,
       ...evaln.evaluated_ids,
     ].sort(),
-    note: 'Atomic union of the untouched 4-family core spine (30, byte-semantically preserved) and the separate privacy-minimized comm overlay (9 = SW-022/133/137 x 3 rooftops). No core-spine cell changed; comm-derived PII never enters buildSpine.',
+    note: `Atomic union of the untouched 4-family core spine (${spine.evaluated}, byte-semantically preserved) and the separate privacy-minimized comm overlay (${commOverlayComposition}). Per rooftop: ${spine.evaluated / rooftopCount} spine + ${commPerRooftop} comm = ${portfolioEvaluated / rooftopCount} evaluated / ${(spine.required_cells - portfolioEvaluated) / rooftopCount} unresolved. No core-spine cell changed; comm-derived PII never enters buildSpine.`,
   }
   const reconPath = path.join(OUT, 'comm-portfolio-reconciliation.json')
   fs.writeFileSync(reconPath, await formatJsonFile(recon, reconPath))

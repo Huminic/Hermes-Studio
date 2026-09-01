@@ -442,4 +442,25 @@ describe('committed comm evaluation evidence', () => {
     for (const id of recon.comm_evaluated_ids)
       expect(recon.spine_evaluated_ids).not.toContain(id)
   })
+
+  it('states the exact overlay composition (6 = SW-022/133 x 3; SW-137 held) — cannot regress', () => {
+    expect(recon.comm_overlay_per_rooftop).toBe(2)
+    expect(recon.comm_overlay_composition).toBe(
+      '6 cells = SW-022 + SW-133 x 3 rooftops (2/rooftop); SW-137 held (candidate guard)',
+    )
+    expect(recon.comm_held_ids).toContain('SW-137')
+    // note must NOT claim the stale 9 = SW-022/133/137 overlay
+    expect(recon.note).toContain('6 cells = SW-022 + SW-133')
+    expect(recon.note).not.toMatch(/9 = SW-022|SW-022\/133\/137/)
+  })
+
+  it('per-dealer state is 12 evaluated / 283 unresolved (= 10 spine + 2 comm) for all three', () => {
+    for (const d of ['21043', '21044', '21047']) {
+      const bd = recon.by_dealer[d]
+      expect(bd.spine_evaluated).toBe(10)
+      expect(bd.comm_evaluated).toBe(2)
+      expect(bd.evaluated).toBe(12)
+      expect(bd.unresolved).toBe(283)
+    }
+  })
 })
