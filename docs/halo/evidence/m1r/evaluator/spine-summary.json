@@ -1,0 +1,33 @@
+{
+  "artifact": "gate2-spine-summary",
+  "required_cells": 885,
+  "evaluated": 9,
+  "unresolved": 876,
+  "by_dealer": {
+    "21043": {
+      "evaluated": 3,
+      "unresolved": 292
+    },
+    "21044": {
+      "evaluated": 3,
+      "unresolved": 292
+    },
+    "21047": {
+      "evaluated": 3,
+      "unresolved": 292
+    }
+  },
+  "by_source_family": {
+    "dealership_performance": 3,
+    "appointments": 6
+  },
+  "by_section_evaluated": {
+    "4. Pipeline Health & Funnel Dynamics": 6,
+    "5. Appointment & Showroom Metrics": 3
+  },
+  "evaluated_ids": [
+    "SW-031",
+    "SW-032",
+    "SW-041"
+  ]
+}

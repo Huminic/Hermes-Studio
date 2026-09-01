@@ -1,0 +1,361 @@
+/**
+ * Gate 2 — the exact 885-cell evaluator spine.
+ *
+ * buildSpine maps exactly SW-001..SW-295 x {21043,21044,21047} to 885 unique
+ * dealer-metric rows. A row is 'evaluated' ONLY when its evaluator produces a value
+ * from a HELD family AND the strict predicate passes; every other row is 'unresolved'
+ * with a precise reason/owner/next-action. Unresolved rows stay in the ledger but do
+ * NOT count toward completion. Deterministic + pure (no I/O, no clock, no randomness).
+ */
+import { EVALUABLE_IDS, EVALUATORS } from './evaluators'
+import {
+  confidenceLabel,
+  rankByDirection,
+  rating,
+  signedVariance,
+} from './metrics'
+import { evaluateStrictPredicate } from './strict-predicate'
+import type { EvaluableId, HeldBundle } from './evaluators'
+import type { BaselineRegistry } from './baseline-registry'
+import type { CatalogCondition } from './catalog'
+import type { EvalRow, SourceLineage } from './types'
+
+export type FamilyLineage = {
+  filename: string
+  sha256: string
+  captured_at: string
+  sales_only_proof: string
+}
+
+export type DealerInput = {
+  dealer_id: string
+  profile: string
+  dealer_name: string
+  reporting_period: { start: string; end: string; timezone: string }
+  captured_at: string
+  bundle: HeldBundle
+  lineage: {
+    appointments: FamilyLineage
+    crm_sales_gross: FamilyLineage
+    dealership_performance: FamilyLineage
+  }
+}
+
+export type SpineInput = {
+  catalog: Array<CatalogCondition>
+  dealers: Array<DealerInput>
+  registry: BaselineRegistry
+  evaluableBaselineIds: Record<string, string>
+}
+
+export type Spine = {
+  rows: Array<EvalRow>
+  summary: {
+    required_cells: number
+    evaluated: number
+    unresolved: number
+    by_dealer: Record<string, { evaluated: number; unresolved: number }>
+    by_source_family: Record<string, number>
+    by_section_evaluated: Record<string, number>
+    evaluated_ids: Array<string>
+  }
+}
+
+const QUARANTINE_HINTS = [
+  /\bROI\b/i,
+  /Communication Log/i,
+  /\bCAGE\b/i,
+  /Enterprise Performance/i,
+]
+const TREND_HINTS = [
+  /week-over-week/i,
+  /month-over-month/i,
+  /trailing/i,
+  /consecutive/i,
+  /declining/i,
+  /\brising\b/i,
+  /\d+\s*weeks?\b/i,
+  /\bMoM\b/,
+  /\bWoW\b/,
+]
+
+function familyOf(
+  input: DealerInput,
+  family: keyof DealerInput['lineage'],
+): FamilyLineage {
+  return input.lineage[family]
+}
+
+function lineageFor(input: DealerInput, family: string): SourceLineage | null {
+  if (
+    family === 'appointments' ||
+    family === 'crm_sales_gross' ||
+    family === 'dealership_performance'
+  ) {
+    const fl = familyOf(input, family)
+    return {
+      family,
+      artifact_filename: fl.filename,
+      artifact_sha256: fl.sha256,
+      captured_at: fl.captured_at,
+      reporting_period: input.reporting_period,
+      dealer_id: input.dealer_id,
+      dealer_name: input.dealer_name,
+      sales_only_proof: fl.sales_only_proof,
+    }
+  }
+  return null
+}
+
+/** Deterministic unresolved reason from the catalog + (for a few ids) real held data. */
+function unresolvedReason(c: CatalogCondition, input: DealerInput): string {
+  const crm = input.bundle.crm
+  switch (c.metric_id) {
+    case 'SW-050':
+      if (!crm) return 'CRM Sales Gross held family unavailable'
+      if (crm.newDeals <= 0)
+        return `0 new-car deals in period (denominator 0; missing is not zero)`
+      if (crm.newFrontBlank > 0)
+        return `${crm.newFrontBlank} of ${crm.newDeals} new-car deals have blank Front Gross; denominator integrity fails (missing is not zero)`
+      return 'front-gross-negative rate on new deals not evaluated'
+    case 'SW-042':
+      return "Is Confirmed lacks the 'reconfirmed within 24h' timing basis; definition mismatch"
+    case 'SW-034':
+      return 'CRM Sales Gross has no write-up count; write-to-close denominator unavailable'
+    case 'SW-008':
+      return 'Appointments report has no lead-source attribution; per-source lead-to-appointment ratio not computable'
+    case 'SW-049':
+      return 'requires trailing 30-day gross-per-unit average; single held week insufficient'
+    case 'SW-043':
+      return 'requires 3 consecutive weeks; single held week insufficient'
+    case 'SW-111':
+    case 'SW-113':
+    case 'SW-114':
+      return 'second-order composite requires a trend/threshold basis not defined in held single-week data'
+    default:
+      break
+  }
+  if (/Dealer Dashboard Response Times/i.test(c.source)) {
+    return 'Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch'
+  }
+  if (QUARANTINE_HINTS.some((re) => re.test(c.source))) {
+    return 'source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative'
+  }
+  switch (c.acquisition_class) {
+    case 'Separate external source required':
+      return 'requires a non-VinSolutions external source named by the condition; outside held families'
+    case 'Manual CRM inspection':
+      return 'requires manual CRM inspection; no scheduled export available'
+    case 'Outside governed boundary':
+      return 'outside the governed boundary (Service / cross-rooftop / compliance / enrichment); classification only, no access authorized'
+    case 'Unavailable or retention-limited':
+      return 'source unavailable or retention-limited for the period'
+    default:
+      break
+  }
+  if (TREND_HINTS.some((re) => re.test(c.condition))) {
+    return 'requires trailing history; a single held week is insufficient for this trend/threshold rule'
+  }
+  return `not evaluable from held families under the strict predicate (acquisition_class="${c.acquisition_class}", source="${c.source}")`
+}
+
+function evaluableSiblingsBySection(
+  catalog: Array<CatalogCondition>,
+): Map<string, Array<string>> {
+  const bySection = new Map<string, Array<string>>()
+  for (const c of catalog) {
+    if ((EVALUABLE_IDS as ReadonlyArray<string>).includes(c.metric_id)) {
+      const arr = bySection.get(c.section) ?? []
+      arr.push(c.metric_id)
+      bySection.set(c.section, arr)
+    }
+  }
+  return bySection
+}
+
+export function buildSpine(input: SpineInput): Spine {
+  const { catalog, dealers, registry, evaluableBaselineIds } = input
+  const siblings = evaluableSiblingsBySection(catalog)
+
+  // Pass 1: candidate values per evaluable id per dealer (for cross-dealer ranking).
+  const candByIdDealer = new Map<string, Map<string, number>>()
+  for (const id of EVALUABLE_IDS) {
+    const m = new Map<string, number>()
+    for (const d of dealers) {
+      const res = EVALUATORS[id](d.bundle)
+      if (res.ok) m.set(d.dealer_id, res.value)
+    }
+    candByIdDealer.set(id, m)
+  }
+
+  const rows: Array<EvalRow> = []
+  for (const c of catalog) {
+    const sectionSiblings = (siblings.get(c.section) ?? []).filter(
+      (x) => x !== c.metric_id,
+    )
+    for (const d of dealers) {
+      rows.push(
+        buildRow(
+          c,
+          d,
+          sectionSiblings,
+          registry,
+          evaluableBaselineIds,
+          candByIdDealer,
+        ),
+      )
+    }
+  }
+
+  return { rows, summary: summarize(rows) }
+}
+
+function buildRow(
+  c: CatalogCondition,
+  d: DealerInput,
+  sectionSiblings: Array<string>,
+  registry: BaselineRegistry,
+  evaluableBaselineIds: Record<string, string>,
+  candByIdDealer: Map<string, Map<string, number>>,
+): EvalRow {
+  const base: EvalRow = {
+    metric_id: c.metric_id,
+    dealer_id: d.dealer_id,
+    profile: d.profile,
+    section: c.section,
+    subsection: c.subsection,
+    condition: c.condition,
+    status: 'unresolved',
+    source_family: null,
+    source_lineage: null,
+    source_fields: null,
+    formula: null,
+    value: null,
+    unit: null,
+    numerator: null,
+    denominator: null,
+    reporting_period: null,
+    captured_at: null,
+    baseline: null,
+    variance: null,
+    rating: null,
+    rank: null,
+    evaluation_confidence: null,
+    related_metric_ids: sectionSiblings,
+    cluster: c.section,
+    evidence_or_inference: null,
+    recommended_owner: c.owner || null,
+    recommended_action: c.next_action || null,
+    notification_or_automation_candidate: null,
+    customer_pdf_location: `docs/halo/customer/${d.profile}/${c.metric_id}.pdf (Gate 3+, not yet produced)`,
+    internal_evidence_location: `docs/halo/evidence/m1r/evaluator/spine-ledger.json#${c.metric_id}:${d.dealer_id}`,
+    unresolved_reason: null,
+    unresolved_owner: null,
+    unresolved_next_action: null,
+  }
+
+  const isEvaluable = (EVALUABLE_IDS as ReadonlyArray<string>).includes(
+    c.metric_id,
+  )
+  if (isEvaluable) {
+    const res = EVALUATORS[c.metric_id as EvaluableId](d.bundle)
+    if (res.ok) {
+      const baselineId = evaluableBaselineIds[c.metric_id] ?? ''
+      const baseline = registry.resolve(baselineId)
+      const lineage = lineageFor(d, res.source_family)
+      const dir = baseline?.direction ?? 'higher_is_better'
+      const peers = [...(candByIdDealer.get(c.metric_id)?.entries() ?? [])]
+        .filter(([dealerId]) => dealerId !== d.dealer_id)
+        .map(([, v]) => v)
+      const candidate: EvalRow = {
+        ...base,
+        source_family: res.source_family,
+        source_lineage: lineage,
+        source_fields: res.source_fields,
+        formula: res.formula,
+        value: res.value,
+        unit: res.unit,
+        numerator: res.numerator,
+        denominator: res.denominator,
+        reporting_period: d.reporting_period,
+        captured_at: lineage?.captured_at ?? d.captured_at,
+        baseline,
+        variance: baseline ? signedVariance(res.value, baseline) : null,
+        rating: baseline ? rating(res.value, baseline) : null,
+        rank: rankByDirection(res.value, peers, dir),
+        evaluation_confidence: {
+          label: confidenceLabel(res.denominator),
+          basis: 'denominator sample size',
+        },
+        evidence_or_inference: 'evidence',
+        notification_or_automation_candidate:
+          baseline && rating(res.value, baseline) === 'breach'
+            ? 'alert_candidate'
+            : 'monitor_only',
+      }
+      const verdict = evaluateStrictPredicate(candidate)
+      if (verdict.ok) {
+        return { ...candidate, status: 'evaluated' }
+      }
+      return toUnresolved(
+        base,
+        c,
+        d,
+        `strict predicate failed: ${verdict.failed.join(', ')}`,
+      )
+    }
+    return toUnresolved(base, c, d, res.reason)
+  }
+
+  return toUnresolved(base, c, d, unresolvedReason(c, d))
+}
+
+function toUnresolved(
+  base: EvalRow,
+  c: CatalogCondition,
+  d: DealerInput,
+  reason: string,
+): EvalRow {
+  return {
+    ...base,
+    status: 'unresolved',
+    unresolved_reason: reason,
+    unresolved_owner: c.owner || 'Huminic Semantic Watchdog pipeline',
+    unresolved_next_action:
+      c.next_action || 'resolve source/definition/baseline before evaluation',
+  }
+}
+
+function summarize(rows: Array<EvalRow>): Spine['summary'] {
+  const by_dealer: Record<string, { evaluated: number; unresolved: number }> =
+    {}
+  const by_source_family: Record<string, number> = {}
+  const by_section_evaluated: Record<string, number> = {}
+  const evaluated_ids = new Set<string>()
+  let evaluated = 0
+  let unresolved = 0
+  for (const r of rows) {
+    by_dealer[r.dealer_id] ??= { evaluated: 0, unresolved: 0 }
+    if (r.status === 'evaluated') {
+      evaluated++
+      by_dealer[r.dealer_id].evaluated++
+      const fam = r.source_family ?? 'unknown'
+      by_source_family[fam] = (by_source_family[fam] ?? 0) + 1
+      by_section_evaluated[r.section] =
+        (by_section_evaluated[r.section] ?? 0) + 1
+      evaluated_ids.add(r.metric_id)
+    } else {
+      unresolved++
+      by_dealer[r.dealer_id].unresolved++
+    }
+  }
+  return {
+    required_cells: rows.length,
+    evaluated,
+    unresolved,
+    by_dealer,
+    by_source_family,
+    by_section_evaluated,
+    evaluated_ids: [...evaluated_ids].sort(),
+  }
+}

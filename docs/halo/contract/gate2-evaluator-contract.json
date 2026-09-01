@@ -1,0 +1,147 @@
+{
+  "artifact": "gate2-evaluator-contract",
+  "version": 1,
+  "status": "ACTIVE — Gate 2 exact 885-cell evaluator spine",
+  "goal_ref": "docs/halo/contract/active-295-acceptance.json",
+  "catalog_ref": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json",
+  "baseline_registry_ref": "docs/halo/contract/baseline-registry.json",
+  "conditions": 295,
+  "dealers": 3,
+  "dealer_ids": ["21043", "21044", "21047"],
+  "dealer_profiles": {
+    "21043": "serra-honda",
+    "21044": "serra-nissan",
+    "21047": "tony-serra-ford"
+  },
+  "required_cells": 885,
+  "held_source_families": [
+    "appointments",
+    "crm_sales_gross",
+    "dealership_performance"
+  ],
+  "leads_family_landed": "vinsolutions_custom_reporting_leads",
+  "quarantined_source_families": [
+    "lead_source_roi",
+    "cage_kpi",
+    "sales_comm_log"
+  ],
+  "required_row_fields": [
+    "metric_id",
+    "dealer_id",
+    "profile",
+    "section",
+    "subsection",
+    "condition",
+    "status",
+    "source_family",
+    "source_lineage",
+    "source_fields",
+    "formula",
+    "value",
+    "unit",
+    "numerator",
+    "denominator",
+    "reporting_period",
+    "captured_at",
+    "baseline",
+    "variance",
+    "rating",
+    "rank",
+    "evaluation_confidence",
+    "related_metric_ids",
+    "cluster",
+    "evidence_or_inference",
+    "recommended_owner",
+    "recommended_action",
+    "notification_or_automation_candidate",
+    "customer_pdf_location",
+    "internal_evidence_location",
+    "unresolved_reason",
+    "unresolved_owner",
+    "unresolved_next_action"
+  ],
+  "status_values": ["evaluated", "unresolved"],
+  "strict_evaluated_predicate": {
+    "note": "status=evaluated is legal ONLY when every clause holds; otherwise status=unresolved. Unresolved rows remain in the 885 ledger but DO NOT count toward completion.",
+    "clauses": [
+      "value_is_computed_from_accepted_source",
+      "source_family_is_held_or_accepted_never_quarantined",
+      "missing_is_not_zero",
+      "formula_is_explicit",
+      "numerator_is_explicit_integer",
+      "denominator_is_explicit_positive_integer",
+      "reporting_period_proved",
+      "captured_at_proved",
+      "definition_compatible_baseline_or_labeled_operational_target_exists",
+      "variance_computed",
+      "rating_computed",
+      "rank_computed",
+      "evaluation_confidence_computed",
+      "source_lineage_complete"
+    ]
+  },
+  "completion_rule": {
+    "unshrinkable": true,
+    "evaluated_count_must_equal_required_cells_for_completion": 885,
+    "withheld_counts_toward_completion": false,
+    "unresolved_counts_toward_completion": false,
+    "cataloged_or_accounted_counts_toward_completion": false
+  },
+  "confidence_model": {
+    "basis": "denominator sample size (missing != zero); operator-defined target certainty",
+    "tiers": [
+      { "label": "low", "min_denominator": 1, "max_denominator": 14 },
+      { "label": "medium", "min_denominator": 15, "max_denominator": 99 },
+      { "label": "high", "min_denominator": 100 }
+    ],
+    "note": "Small held-family weekly samples yield low/medium confidence honestly; a firing rule on n<15 is a low-confidence signal, not a certainty."
+  },
+  "rating_model": {
+    "note": "rating compares the observed value to the operational target given the metric direction. rank is the 1..3 position of this dealer among the three rooftops for the same metric (best-first by direction).",
+    "values": ["healthy", "watch", "breach"],
+    "watch_band_fraction_of_threshold": 0.1
+  },
+  "evaluable_conditions": {
+    "SW-031": {
+      "source_family": "dealership_performance",
+      "metric_slug": "dashboard.lead_to_appt_set_rate",
+      "formula": "appts_set_total / leads_total (Dealership Performance Dashboard summary TOTAL row)",
+      "numerator_field": "Appts Set (TOTAL)",
+      "denominator_field": "Leads (TOTAL)",
+      "unit": "ratio_0_1",
+      "baseline_id": "OT-SW-031",
+      "reconciliation": "computed rate must equal the source 'Appts Set %' TOTAL cell within 1e-6",
+      "direction": "higher_is_better"
+    },
+    "SW-032": {
+      "source_family": "appointments",
+      "metric_slug": "appt.show_rate",
+      "formula": "count(Is Show=Yes) / count(appointment rows)",
+      "numerator_field": "Is Show=Yes",
+      "denominator_field": "appointment rows (total)",
+      "unit": "ratio_0_1",
+      "baseline_id": "OT-SW-032",
+      "reconciliation": "matches RATIFIED R2 appt.show_rate definition",
+      "direction": "higher_is_better"
+    },
+    "SW-041": {
+      "source_family": "appointments",
+      "metric_slug": "appt.no_show_rate",
+      "formula": "count(Is No Show=Yes) / count(appointment rows)",
+      "numerator_field": "Is No Show=Yes",
+      "denominator_field": "appointment rows (total)",
+      "unit": "ratio_0_1",
+      "baseline_id": "OT-SW-041",
+      "reconciliation": "matches RATIFIED R2 appt.no_show_rate definition",
+      "direction": "lower_is_better"
+    }
+  },
+  "explicitly_unresolved_examples": {
+    "SW-050": "Front-gross-negative rate on NEW deals: Honda/Nissan have 0 new deals in period (denominator 0 -> missing != zero); Ford has 4 new deals but 2 blank Front Gross -> denominator integrity fails. Unresolved.",
+    "SW-042": "Confirmed appointment rate 'reconfirmed within 24h' — Is Confirmed lacks the within-24h timing basis. Definition mismatch. Unresolved.",
+    "SW-011": "Median time-to-first-touch during business hours — Dashboard provides an AVERAGE (not median) with no business-hours filter. Definition mismatch. Unresolved.",
+    "SW-049": "Gross-per-unit vs trailing 30-day average — single week held; no trailing history. Unresolved.",
+    "quarantined_sourced": "Any condition whose only source is lead_source_roi / cage_kpi / sales_comm_log is unresolved (quarantined; hidden Parts/Service Lead Intents).",
+    "external_or_manual": "Separate external source / manual CRM inspection / outside governed boundary -> unresolved."
+  }
+}
