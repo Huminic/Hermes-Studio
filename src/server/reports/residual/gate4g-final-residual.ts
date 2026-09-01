@@ -148,6 +148,29 @@ const BOUNDARY_LANE_RULES: ReadonlyArray<
   ],
 ]
 
+/**
+ * Observed zero/absent-denominator evidence for a ratio metric, sourced from the committed
+ * structured-candidate matrix. The metric value STAYS unresolved (never value=0): an observed zero
+ * or integrity-failed eligible denominator makes the ratio undefined (0/0), and per the standing
+ * rule missing is never zero. This preserves the OBSERVED fact without ever recording a computed 0.
+ */
+export type ObservedDenominatorEvidence = {
+  source_ref: string
+  structured_blocker_class: string
+  metric_ratio: string
+  eligible_denominator_observed: Record<
+    string,
+    {
+      new_deals: number
+      new_negative_front: number
+      new_front_blank: number
+      denominator_status: string
+    }
+  >
+  why_unresolved: string
+  unlock: string
+}
+
 export type Gate4gRow = {
   metric_id: string
   section: string
@@ -168,6 +191,7 @@ export type Gate4gRow = {
     join: string
     authority: string
   }
+  observed_evidence?: ObservedDenominatorEvidence
   owner: string
   next_safe_action: string
   approval_boundary: string
@@ -250,8 +274,18 @@ const LANE_AUTHORITY: Record<Gate4gBoundaryLane, string> = {
     'Third-party enrichment / external-append data owner (appended non-dealer records)',
 }
 
-/** Build one HOLD row. `primary_blocker` is the committed delta rationale (exact reason). */
-export function buildHoldRow(catalog: CatalogRow, delta: DeltaRow): Gate4gRow {
+/**
+ * Build one HOLD row. `primary_blocker` is the committed delta rationale (exact reason).
+ *
+ * `observed` (optional) attaches committed observed zero/absent-denominator evidence — the ratio
+ * value STAYS unresolved (never 0); the observed fact is recorded in `observed_evidence` and a
+ * matching `additional_blockers` line, and the frozen spec's denominator remains `unresolved (held)`.
+ */
+export function buildHoldRow(
+  catalog: CatalogRow,
+  delta: DeltaRow,
+  observed?: ObservedDenominatorEvidence,
+): Gate4gRow {
   if (disposition(delta.category) !== 'HOLD')
     throw new Error(`${catalog.metric_id} is not a HOLD`)
   const acquisition = asAcquisitionClass(catalog.acquisition_class)
@@ -273,6 +307,14 @@ export function buildHoldRow(catalog: CatalogRow, delta: DeltaRow): Gate4gRow {
     additional.push('requires a ratified threshold (none in boundary)')
   if (lane !== 'not_applicable')
     additional.push(`boundary_lane: ${lane} — ${LANE_AUTHORITY[lane]}`)
+  if (observed) {
+    const zeroRoofs = Object.entries(observed.eligible_denominator_observed)
+      .filter(([, v]) => v.new_deals === 0)
+      .map(([d]) => d)
+    additional.push(
+      `observed: eligible ratio denominator = 0 at ${zeroRoofs.join(' and ') || '(none)'} (0 eligible deals in the accepted week) and integrity-failed elsewhere; the ratio is undefined (0/0) — held UNRESOLVED, never value=0 (see observed_evidence; source ${observed.source_ref})`,
+    )
+  }
 
   return {
     metric_id: catalog.metric_id,
@@ -296,6 +338,7 @@ export function buildHoldRow(catalog: CatalogRow, delta: DeltaRow): Gate4gRow {
       join: delta.join_or_nlp_required || 'not_applicable (held)',
       authority,
     },
+    ...(observed ? { observed_evidence: observed } : {}),
     owner: catalog.owner,
     next_safe_action: catalog.next_action,
     approval_boundary: APPROVAL_BOUNDARY[acquisition],

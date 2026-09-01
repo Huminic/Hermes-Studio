@@ -48,6 +48,10 @@ const CATALOG = path.join(
   'semantic-watchdog-feasibility-matrix-295.json',
 )
 const CAP_DELTA = path.join(CONTRACT, 'sw295-comm-capability-delta.json')
+const STRUCTURED_MATRIX = path.join(
+  CONTRACT,
+  'sw295-structured-candidate-matrix.json',
+)
 const GATE4F_MATRIX = path.join(
   CONTRACT,
   'sw295-gate4f-scheduled-residual-matrix.json',
@@ -85,6 +89,11 @@ const EXPECTED_ACQUISITION_COUNTS: Record<string, number> = {
 }
 const RESPONSE_TIMES_SOURCE =
   'Dealer Dashboard Response Times Opportunities CSV'
+
+// R1: the shadow-identified defect ID whose observed zero eligible-new-car denominator MUST be
+// preserved (held UNRESOLVED, never value=0). Numbers below are DERIVED from the committed
+// structured-candidate matrix and asserted fail-closed — nothing is hardcoded/fabricated.
+const OBSERVED_DENOMINATOR_ID = 'SW-050'
 
 function must(cond: boolean, msg: string): void {
   if (!cond) throw new Error(`Gate 4G reconciliation failed: ${msg}`)
@@ -259,13 +268,103 @@ async function main(): Promise<void> {
   must(promoted.length === 0, `expected 0 promotions, got ${promoted.length}`)
   must(held.length === 122, `expected 122 holds, got ${held.length}`)
 
+  // ── R1: observed zero eligible-denominator evidence for SW-050 (DERIVED from the committed
+  //        structured-candidate matrix; the ratio stays UNRESOLVED, never value=0) ──
+  const structured = readJson<{
+    candidates: Array<{
+      metric_id: string
+      blocker_class?: string
+      condition?: string
+      observed_crm_new_car_deals?: Record<
+        string,
+        {
+          new_deals: number
+          new_negative_front: number
+          new_front_blank: number
+        }
+      >
+      spine_unresolved_reason_by_rooftop?: Record<string, string>
+    }>
+  }>(STRUCTURED_MATRIX)
+  const sw050 = structured.candidates.find(
+    (c) => c.metric_id === OBSERVED_DENOMINATOR_ID,
+  )
+  must(
+    !!sw050,
+    `${OBSERVED_DENOMINATOR_ID} missing from structured-candidate matrix`,
+  )
+  const obs = sw050!.observed_crm_new_car_deals
+  must(!!obs, `${OBSERVED_DENOMINATOR_ID} has no observed_crm_new_car_deals`)
+  // Fail-closed: the observed eligible new-car denominator is really 0 at 21043 and 21044.
+  must(
+    obs!['21043'].new_deals === 0 && obs!['21044'].new_deals === 0,
+    `${OBSERVED_DENOMINATOR_ID} observed new-car denominator not 0 at 21043/21044`,
+  )
+  must(
+    sw050!.blocker_class === 'zero_or_absent_denominator',
+    `${OBSERVED_DENOMINATOR_ID} structured blocker_class != zero_or_absent_denominator`,
+  )
+  const reasons = sw050!.spine_unresolved_reason_by_rooftop ?? {}
+  const observedEvidence = {
+    source_ref: 'docs/halo/contract/sw295-structured-candidate-matrix.json',
+    structured_blocker_class: sw050!.blocker_class!,
+    metric_ratio:
+      'negative-front-gross new-car deals ÷ eligible new-car deals (per rooftop, per week)',
+    eligible_denominator_observed: Object.fromEntries(
+      GOVERNED.map((d) => {
+        const o = obs![d]
+        const reason = reasons[d] ?? ''
+        const status =
+          o.new_deals === 0
+            ? `observed 0 eligible new-car deals — ratio undefined (0/0); UNRESOLVED, never value=0${reason ? ` (${reason})` : ''}`
+            : `${o.new_deals} eligible new-car deals but ${o.new_front_blank} blank Front Gross — denominator integrity fails; UNRESOLVED, missing is never zero${reason ? ` (${reason})` : ''}`
+        return [
+          d,
+          {
+            new_deals: o.new_deals,
+            new_negative_front: o.new_negative_front,
+            new_front_blank: o.new_front_blank,
+            denominator_status: status,
+          },
+        ]
+      }),
+    ),
+    why_unresolved:
+      'The condition is a ratio (negative-front new-car deals ÷ eligible new-car deals). Where the eligible denominator is observed 0 (21043, 21044) the ratio is 0/0 = undefined; where it is present but incomplete (21047: 2 of 4 Front Gross blank) its integrity fails. Per the standing rule, missing is never zero — the observed zero/absent denominator holds the metric UNRESOLVED and is NEVER recorded as value 0. Under all-three-rooftops-or-no-metric it cannot promote.',
+    unlock:
+      'A read-only CRM Sales Gross weekly export whose accepted week yields a non-empty, integrity-complete eligible new-car-deal population (non-blank Front Gross) at ALL THREE rooftops would establish a computable denominator. No external source and no Service/Parts data is required.',
+  }
+
   const matrixRows = rows.map((r) => {
     if (r.disp !== 'HOLD')
       throw new Error(
         `Gate 4G: ${r.id} classified PROMOTE but no evaluated evidence exists — refusing to fabricate`,
       )
-    return buildHoldRow(r.cat, r.d)
+    return buildHoldRow(
+      r.cat,
+      r.d,
+      r.id === OBSERVED_DENOMINATOR_ID ? observedEvidence : undefined,
+    )
   })
+
+  // R1 guard: SW-050 preserves the observed 0 denominator AND stays unresolved (never value=0).
+  const sw050Row = matrixRows.find(
+    (r) => r.metric_id === OBSERVED_DENOMINATOR_ID,
+  )
+  must(!!sw050Row, `${OBSERVED_DENOMINATOR_ID} row missing`)
+  must(
+    !!sw050Row!.observed_evidence &&
+      sw050Row!.observed_evidence.eligible_denominator_observed['21043']
+        .new_deals === 0 &&
+      sw050Row!.observed_evidence.eligible_denominator_observed['21044']
+        .new_deals === 0,
+    `${OBSERVED_DENOMINATOR_ID} observed_evidence does not preserve denominator 0`,
+  )
+  must(
+    sw050Row!.frozen_e1_spec.denominator === 'unresolved (held)' &&
+      sw050Row!.frozen_e1_spec.numerator === 'unresolved (held)',
+    `${OBSERVED_DENOMINATOR_ID} must stay unresolved (never value=0)`,
+  )
 
   // ── Directive 3: outside-boundary sub-lanes (Service | compliance/legal | cross-rooftop | enrichment) ──
   const laneTally = new Map<Gate4gBoundaryLane, number>()
@@ -528,6 +627,18 @@ async function main(): Promise<void> {
         .filter((r) => r.boundary_lane === lane)
         .map((r) => r.metric_id),
     })),
+    observed_zero_or_absent_denominator: [
+      {
+        metric_id: OBSERVED_DENOMINATOR_ID,
+        condition: sw050Row!.condition,
+        source_ref: observedEvidence.source_ref,
+        eligible_denominator_observed:
+          observedEvidence.eligible_denominator_observed,
+        held_not_zero:
+          'value stays UNRESOLVED (never 0): observed zero/absent eligible denominator makes the ratio undefined; missing is never zero',
+        unlock: observedEvidence.unlock,
+      },
+    ],
     blocker_class_tally: Object.fromEntries(blockerTally),
   }
   fs.mkdirSync(OUT, { recursive: true })

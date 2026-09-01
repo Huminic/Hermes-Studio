@@ -366,4 +366,61 @@ describe('Gate 4G — final residual audit', () => {
     )
     expect(new Set(laneIds).size).toBe(35)
   })
+
+  it('R1 regression: SW-050 preserves observed eligible new-car denominator = 0, held UNRESOLVED not zero', () => {
+    const r = MATRIX.rows.find(
+      (x: { metric_id: string }) => x.metric_id === 'SW-050',
+    )
+    expect(r, 'SW-050 row present').toBeTruthy()
+    // Stays HOLD and NEVER value=0: the frozen ratio fields remain unresolved.
+    expect(r.disposition).toBe('HOLD')
+    expect(r.frozen_e1_spec.numerator).toBe('unresolved (held)')
+    expect(r.frozen_e1_spec.denominator).toBe('unresolved (held)')
+    expect(r.frozen_e1_spec.missing_data_behavior).toBe(
+      'unresolved; missing is never zero',
+    )
+    // The OBSERVED zero eligible denominator is explicitly preserved and traceable to the source.
+    const oe = r.observed_evidence
+    expect(oe).toBeTruthy()
+    expect(oe.source_ref).toBe(
+      'docs/halo/contract/sw295-structured-candidate-matrix.json',
+    )
+    expect(oe.structured_blocker_class).toBe('zero_or_absent_denominator')
+    expect(oe.eligible_denominator_observed['21043'].new_deals).toBe(0)
+    expect(oe.eligible_denominator_observed['21044'].new_deals).toBe(0)
+    expect(oe.eligible_denominator_observed['21047'].new_deals).toBe(4)
+    for (const d of ['21043', '21044'])
+      expect(oe.eligible_denominator_observed[d].denominator_status).toMatch(
+        /UNRESOLVED, never value=0/,
+      )
+    // Independently cross-check against the committed structured-candidate matrix.
+    const STRUCT = read(
+      'docs/halo/contract/sw295-structured-candidate-matrix.json',
+    )
+    const cand = STRUCT.candidates.find(
+      (c: { metric_id: string }) => c.metric_id === 'SW-050',
+    )
+    expect(cand.observed_crm_new_car_deals['21043'].new_deals).toBe(0)
+    expect(cand.observed_crm_new_car_deals['21044'].new_deals).toBe(0)
+    // additional_blockers carries the observed-denominator line; explains ratio + unlock.
+    expect(
+      r.additional_blockers.some((b: string) =>
+        /observed: eligible ratio denominator = 0/.test(b),
+      ),
+    ).toBe(true)
+    expect(oe.why_unresolved).toMatch(/missing is never zero/)
+    expect(oe.unlock).toMatch(/eligible new-car-deal population/)
+    // No other row carries observed_evidence (bounded R1 scope).
+    expect(
+      MATRIX.rows
+        .filter((x: { observed_evidence?: unknown }) => x.observed_evidence)
+        .map((x: { metric_id: string }) => x.metric_id),
+    ).toEqual(['SW-050'])
+    // Ledger memorializes the same observed fact.
+    const led = LEDGER.observed_zero_or_absent_denominator
+    expect(led).toHaveLength(1)
+    expect(led[0].metric_id).toBe('SW-050')
+    expect(led[0].eligible_denominator_observed['21043'].new_deals).toBe(0)
+    expect(led[0].held_not_zero).toMatch(/never 0/)
+  })
 })

@@ -217,6 +217,35 @@
       "metric_ids": ["SW-264", "SW-272", "SW-273", "SW-274", "SW-275", "SW-276"]
     }
   ],
+  "observed_zero_or_absent_denominator": [
+    {
+      "metric_id": "SW-050",
+      "condition": "Front-end gross negative on >20% of new car deals in a week.",
+      "source_ref": "docs/halo/contract/sw295-structured-candidate-matrix.json",
+      "eligible_denominator_observed": {
+        "21043": {
+          "new_deals": 0,
+          "new_negative_front": 0,
+          "new_front_blank": 0,
+          "denominator_status": "observed 0 eligible new-car deals — ratio undefined (0/0); UNRESOLVED, never value=0 (0 new-car deals in period (denominator 0; missing is not zero))"
+        },
+        "21044": {
+          "new_deals": 0,
+          "new_negative_front": 0,
+          "new_front_blank": 0,
+          "denominator_status": "observed 0 eligible new-car deals — ratio undefined (0/0); UNRESOLVED, never value=0 (0 new-car deals in period (denominator 0; missing is not zero))"
+        },
+        "21047": {
+          "new_deals": 4,
+          "new_negative_front": 1,
+          "new_front_blank": 2,
+          "denominator_status": "4 eligible new-car deals but 2 blank Front Gross — denominator integrity fails; UNRESOLVED, missing is never zero (2 of 4 new-car deals have blank Front Gross; denominator integrity fails (missing is not zero))"
+        }
+      },
+      "held_not_zero": "value stays UNRESOLVED (never 0): observed zero/absent eligible denominator makes the ratio undefined; missing is never zero",
+      "unlock": "A read-only CRM Sales Gross weekly export whose accepted week yields a non-empty, integrity-complete eligible new-car-deal population (non-blank Front Gross) at ALL THREE rooftops would establish a computable denominator. No external source and no Service/Parts data is required."
+    }
+  ],
   "blocker_class_tally": {
     "insufficient_history": 5,
     "other_source_or_join": 73,

@@ -1,7 +1,10 @@
 # Gate 4G — Proof Delta G (final residual audit — the last 122 IDs)
 
 **Branch:** `codex/halo-295-unshrinkable-inputs`. One writer. **Status:** submitted for review,
-NOT self-certified. **Bounded gate:** an exhaustive audit of the FINAL **122** catalog IDs =
+NOT self-certified. **Revision:** R1 — bounded repair of the shadow-identified SW-050 defect only
+(observed zero eligible-new-car denominator now preserved; see §4·R1). All other counts/IDs/rows/
+prior bytes are unchanged from the R0 submission. **Bounded gate:** an exhaustive audit of the FINAL
+**122** catalog IDs =
 canonical **295** − disjoint evaluated **17** − Gate 4E content-HOLD **70** − Gate 4F
 scheduled-residual-HOLD **86**. After this gate every one of the 295 IDs is dispositioned — **zero**
 unaudited remain. No PDF/customer-final, no production, no browser/Gmail/VinSolutions/schedule/CRM/
@@ -102,6 +105,41 @@ missing item as `join_requirements`, the permanent Sales-only `exclusions`, and 
 field — including `window` and `minimum_history` — is `unresolved (held)` / `not_applicable (held)`.
 Non-executable by construction.
 
+## 4·R1. SW-050 — observed zero eligible-new-car denominator preserved (held, never value=0)
+
+**Defect (shadow R1):** SW-050 ("Front-end gross negative on >20% of new car deals in a week.") is a
+ratio, and the committed structured-candidate matrix already OBSERVED that the eligible new-car
+denominator is **0** at two of the three rooftops. The R0 row carried only the generic capability
+blocker and did not preserve that observed fact.
+
+**Repair (bounded to SW-050; derived, not fabricated).** SW-050's row now carries an
+`observed_evidence` block sourced verbatim from
+`docs/halo/contract/sw295-structured-candidate-matrix.json` (`observed_crm_new_car_deals` +
+`spine_unresolved_reason_by_rooftop`), plus a matching `additional_blockers` line:
+
+| rooftop | observed new-car deals | denominator | status                                                          |
+| ------- | ---------------------- | ----------- | --------------------------------------------------------------- |
+| 21043   | 0                      | 0           | ratio 0/0 undefined → **UNRESOLVED, never value=0**             |
+| 21044   | 0                      | 0           | ratio 0/0 undefined → **UNRESOLVED, never value=0**             |
+| 21047   | 4 (2 blank Front Gross)| integrity ✗ | denominator integrity fails → UNRESOLVED, missing is never zero |
+
+The ratio (negative-front new-car deals ÷ eligible new-car deals) is undefined where the eligible
+denominator is 0 or integrity-failed; per the standing rule **missing is never zero**, so the metric
+stays HOLD/UNRESOLVED and is NEVER recorded as value 0 — the `frozen_e1_spec.numerator/denominator`
+remain `unresolved (held)`. **Unlock:** a read-only CRM Sales Gross weekly export whose accepted week
+yields a non-empty, integrity-complete eligible new-car-deal population (non-blank Front Gross) at all
+three rooftops; no external source and no Service/Parts data is required. The generator asserts the
+observed 0 denominators fail-closed; the independent test adds a literal regression
+(`SW-050 … held UNRESOLVED not zero`). Disposition, blocker_class, all tallies, the 122 set, the
+partition, and every other row are unchanged (only the SW-050 row bytes differ).
+
+> **Flagged (not repaired — outside this bounded R1):** the committed structured-candidate matrix
+> shows four other IDs with analogous observed zero/absent-denominator facts not surfaced in their
+> generic Gate 4G rows — **SW-114** (accepted Dashboard write-up TOTAL = 0), **SW-034** (write-up
+> count absent), and **SW-049 / SW-111** (new-car field present but primarily history/trend-blocked).
+> Recorded here for the shadow/operator to decide whether a follow-up repair applies; not changed in
+> R1 per the bounded instruction ("preserve all other counts/IDs/prior bytes").
+
 ## 5. Portfolio — preserved 51 / 834; disjoint 295-ID / 885-cell partition; ZERO unaudited
 
 Gate 4G evaluates **0** new cells, so the portfolio stays **51 evaluated / 834 unresolved** — the
@@ -123,7 +161,7 @@ and the test.
 
 ## 6. Controls
 
-- **Independent test** (`src/test/gate4g-final-residual-audit.test.ts`, 12): re-derives the 122 from
+- **Independent test** (`src/test/gate4g-final-residual-audit.test.ts`, 13): re-derives the 122 from
   raw committed inputs and asserts equality with the committed matrix; the Directive-1 sorted-newline
   SHA-256; the Directive-2 acquisition counts (15/3/6/55/8/35); 0 promote / 122 hold (none
   `definition_compatible_now`, so 0 is DERIVED); the Directive-3 lane split (10/16/3/6) re-derived
@@ -131,7 +169,9 @@ and the test.
   IDs; a **test-declared literal** 14-key frozen schema over all 122 rows with non-executable specs; a
   **negative regression** proving the evaluator-metadata schema cannot satisfy the frozen contract;
   per-row blocker/classification/owner/approval traceability; the disjoint 17/70/86/122/0 partition
-  and preserved 51/834; ledger reconciliation.
+  and preserved 51/834; ledger reconciliation; and the **R1 regression** that SW-050's observed
+  eligible denominator = 0 is preserved and held UNRESOLVED (never value=0), cross-checked against the
+  committed structured-candidate matrix, with observed_evidence present on SW-050 only.
 - **Hash guard** (`src/test/gate4g-evidence-hashes.test.ts`): recomputes every SHA-256 recorded below
   from the current committed bytes.
 - Deterministic byte-identical regeneration of all three artifacts; frozen Gate 4C1/4C2/4E/4F bytes
@@ -142,12 +182,12 @@ and the test.
 
 | File                                                                       | sha256:16          |
 | -------------------------------------------------------------------------- | ------------------ |
-| `src/server/reports/residual/gate4g-final-residual.ts`                     | `6b3c55b09f83266d` |
-| `scripts/m1r-residual/build-gate4g-final-residual-audit.ts`                | `fc6808f43b992e55` |
-| `docs/halo/contract/sw295-gate4g-final-residual-matrix.json`               | `879c9bc998cdbc31` |
-| `docs/halo/evidence/m1r/residual/gate4g-acquisition-action-ledger.json`    | `1c3d6f3c4d86d81a` |
+| `src/server/reports/residual/gate4g-final-residual.ts`                     | `e7ee17ff1ed3e6a4` |
+| `scripts/m1r-residual/build-gate4g-final-residual-audit.ts`                | `f9c06f7e30e7fe25` |
+| `docs/halo/contract/sw295-gate4g-final-residual-matrix.json`               | `03e991785ab2d6db` |
+| `docs/halo/evidence/m1r/residual/gate4g-acquisition-action-ledger.json`    | `0b291f2de9b6b1da` |
 | `docs/halo/evidence/m1r/residual/gate4g-portfolio-reconciliation.json`     | `4781a77fd43b22af` |
-| `src/test/gate4g-final-residual-audit.test.ts`                             | `1f4b5dc11393af12` |
+| `src/test/gate4g-final-residual-audit.test.ts`                             | `f9611eb10759d2da` |
 
 Each `sha256:16` is recomputed from the current committed bytes by
 `src/test/gate4g-evidence-hashes.test.ts`.

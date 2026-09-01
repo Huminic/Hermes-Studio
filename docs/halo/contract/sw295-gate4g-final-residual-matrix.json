@@ -1203,7 +1203,8 @@
       "primary_blocker": "front-gross-negative is a deal metric (CRM family)",
       "additional_blockers": [
         "missing_inputs: front gross on new deals (CRM family)",
-        "join_or_nlp_required: join to another family/source"
+        "join_or_nlp_required: join to another family/source",
+        "observed: eligible ratio denominator = 0 at 21043 and 21044 (0 eligible deals in the accepted week) and integrity-failed elsewhere; the ratio is undefined (0/0) — held UNRESOLVED, never value=0 (see observed_evidence; source docs/halo/contract/sw295-structured-candidate-matrix.json)"
       ],
       "classification": {
         "source": "CRM Sales Gross weekly report",
@@ -1212,6 +1213,33 @@
         "threshold": "no ratified threshold required",
         "join": "join to another family/source",
         "authority": "Existing VinSolutions schedule / Huminic validator (acquisition class: Vin-native scheduled)"
+      },
+      "observed_evidence": {
+        "source_ref": "docs/halo/contract/sw295-structured-candidate-matrix.json",
+        "structured_blocker_class": "zero_or_absent_denominator",
+        "metric_ratio": "negative-front-gross new-car deals ÷ eligible new-car deals (per rooftop, per week)",
+        "eligible_denominator_observed": {
+          "21043": {
+            "new_deals": 0,
+            "new_negative_front": 0,
+            "new_front_blank": 0,
+            "denominator_status": "observed 0 eligible new-car deals — ratio undefined (0/0); UNRESOLVED, never value=0 (0 new-car deals in period (denominator 0; missing is not zero))"
+          },
+          "21044": {
+            "new_deals": 0,
+            "new_negative_front": 0,
+            "new_front_blank": 0,
+            "denominator_status": "observed 0 eligible new-car deals — ratio undefined (0/0); UNRESOLVED, never value=0 (0 new-car deals in period (denominator 0; missing is not zero))"
+          },
+          "21047": {
+            "new_deals": 4,
+            "new_negative_front": 1,
+            "new_front_blank": 2,
+            "denominator_status": "4 eligible new-car deals but 2 blank Front Gross — denominator integrity fails; UNRESOLVED, missing is never zero (2 of 4 new-car deals have blank Front Gross; denominator integrity fails (missing is not zero))"
+          }
+        },
+        "why_unresolved": "The condition is a ratio (negative-front new-car deals ÷ eligible new-car deals). Where the eligible denominator is observed 0 (21043, 21044) the ratio is 0/0 = undefined; where it is present but incomplete (21047: 2 of 4 Front Gross blank) its integrity fails. Per the standing rule, missing is never zero — the observed zero/absent denominator holds the metric UNRESOLVED and is NEVER recorded as value 0. Under all-three-rooftops-or-no-metric it cannot promote.",
+        "unlock": "A read-only CRM Sales Gross weekly export whose accepted week yields a non-empty, integrity-complete eligible new-car-deal population (non-blank Front Gross) at ALL THREE rooftops would establish a computable denominator. No external source and no Service/Parts data is required."
       },
       "owner": "Existing VinSolutions schedule / Huminic validator",
       "next_safe_action": "Join sold outcomes to stable lead/customer keys only when a supported bridge exists.",
