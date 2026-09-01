@@ -627,6 +627,190 @@ export function buildHeldSpec(d: ContentDecision, f: CatalogFacts): HeldSpec {
   }
 }
 
+// ── FROZEN E1 governing spec contract (Gate 4E-R2) ────────────────────────────
+// The GOVERNING per-ID spec schema is this hardcoded literal 14-key set — the frozen E1 contract.
+// It is deliberately DISTINCT from the evaluator-metadata `spec` (PromotedSpec) above; that spec is
+// evaluator metadata only and does NOT satisfy this contract. Both the generator and the tests hold
+// this list literally (the tests declare it independently); a drift fails the suite.
+export const FROZEN_E1_SPEC_KEYS = [
+  'population',
+  'numerator',
+  'denominator',
+  'event_sequence',
+  'window',
+  'threshold',
+  'minimum_sample',
+  'minimum_history',
+  'exclusions',
+  'ambiguity_handling',
+  'join_requirements',
+  'unit',
+  'rank_direction',
+  'missing_data_behavior',
+] as const
+
+export type FrozenE1Spec = Record<(typeof FROZEN_E1_SPEC_KEYS)[number], string>
+
+const HELD_NA = 'not_applicable (held)' as const
+const SALES_ONLY_EXCL =
+  'Service/Parts and service leads/sources permanently excluded (Sales-only boundary)'
+const PROMOTE_MISSING_BEHAVIOR =
+  'unresolved, not zero (zero eligible population ⇒ unresolved cell; missing is never zero)'
+const PROMOTE_MIN_HISTORY =
+  'one governed week is sufficient; no history beyond the governed week required'
+const PROMOTE_MIN_SAMPLE =
+  'none (literal population; no minimum-sample floor — small samples disclosed as confidence, never excluded)'
+
+/** The five PROMOTE frozen specs — every field mapped explicitly from the actual evaluator /
+ *  literal condition (values preserved; these describe the executable definition). */
+export const PROMOTED_FROZEN_E1: Record<ContentMetricId, FrozenE1Spec> = {
+  'SW-142': {
+    population:
+      'eligible written messages (outbound, Comm Channel Text or Email, non-blank Message Content)',
+    numerator:
+      'eligible written messages containing an unfilled merge-tag delimiter of an enumerated syntax',
+    denominator: 'eligible written messages',
+    event_sequence:
+      'per-message presence test (no ordering / no thread sequence)',
+    window: ONE_WEEK,
+    threshold:
+      'presence of an unfilled merge-tag delimiter ∈ the enumerated syntaxes (literal)',
+    minimum_sample: PROMOTE_MIN_SAMPLE,
+    minimum_history: PROMOTE_MIN_HISTORY,
+    exclusions: `Logged Call notes, inbound messages, and blank-content rows excluded; ${SALES_ONLY_EXCL}`,
+    ambiguity_handling:
+      'none (deterministic delimiter regex; enumerated syntaxes disclosed as the recall bound)',
+    join_requirements:
+      'none (single communication-log family; no cross-source join)',
+    unit: 'ratio',
+    rank_direction: 'lower_is_better',
+    missing_data_behavior: PROMOTE_MISSING_BEHAVIOR,
+  },
+  'SW-149': {
+    population:
+      'reps with >=1 eligible written message (literal population; no minimum-message floor)',
+    numerator:
+      'reps whose mean word count over eligible written messages is < 15',
+    denominator: 'reps with >=1 eligible written message',
+    event_sequence:
+      'per-rep aggregate of per-message word counts (no ordering)',
+    window: ONE_WEEK,
+    threshold: '< 15 words mean (literal)',
+    minimum_sample: PROMOTE_MIN_SAMPLE,
+    minimum_history: PROMOTE_MIN_HISTORY,
+    exclusions: `Logged Call notes, inbound messages, and blank-content rows excluded; ${SALES_ONLY_EXCL}`,
+    ambiguity_handling:
+      'word = whitespace token containing a Unicode letter/number (bare punctuation/emoji not counted)',
+    join_requirements:
+      'none (single communication-log family; no cross-source join)',
+    unit: 'ratio',
+    rank_direction: 'lower_is_better',
+    missing_data_behavior: PROMOTE_MISSING_BEHAVIOR,
+  },
+  'SW-150': {
+    population:
+      'reps with >=1 eligible written message (literal population; no minimum-message floor)',
+    numerator:
+      'reps for whom EVERY eligible written message is link-only (>=1 URL and no other letters/numbers)',
+    denominator: 'reps with >=1 eligible written message',
+    event_sequence:
+      'per-rep universal test over all eligible written messages (no ordering)',
+    window: ONE_WEEK,
+    threshold: 'every eligible written message is link-only (literal "only")',
+    minimum_sample: PROMOTE_MIN_SAMPLE,
+    minimum_history: PROMOTE_MIN_HISTORY,
+    exclusions: `Logged Call notes, inbound messages, and blank-content rows excluded; ${SALES_ONLY_EXCL}`,
+    ambiguity_handling:
+      'a message carrying any conversational word alongside a link is not link-only',
+    join_requirements:
+      'none (single communication-log family; no cross-source join)',
+    unit: 'ratio',
+    rank_direction: 'lower_is_better',
+    missing_data_behavior: PROMOTE_MISSING_BEHAVIOR,
+  },
+  'SW-145': {
+    population:
+      'distinct (trim-normalized body, calendar day) groups among eligible written messages',
+    numerator:
+      'distinct (body, day) groups delivered to > 5 distinct customers (person_token) that day',
+    denominator: 'distinct (body, day) groups',
+    event_sequence:
+      'group eligible written messages by (body-identity, activity_date); count distinct customers per group',
+    window: ONE_WEEK,
+    threshold:
+      '> 5 distinct customers for one identical body in one day (literal)',
+    minimum_sample: 'none (literal population; no minimum-sample floor)',
+    minimum_history: PROMOTE_MIN_HISTORY,
+    exclusions: `Logged Call notes, inbound, and blank-content rows excluded; identical bodies split across days are separate day-groups; ${SALES_ONLY_EXCL}`,
+    ambiguity_handling:
+      'distinct customers by person_token (a repeat to the same customer counts once); exact trim-normalized body identity',
+    join_requirements:
+      'none (single communication-log family; no cross-source join)',
+    unit: 'ratio',
+    rank_direction: 'lower_is_better',
+    missing_data_behavior: PROMOTE_MISSING_BEHAVIOR,
+  },
+  'SW-021': {
+    population:
+      'reps with >=1 eligible written lead (literal population; no minimum-lead floor)',
+    numerator:
+      'reps whose single most-frequent identical (trim-normalized) body was sent across > 70% of that rep’s distinct leads',
+    denominator: 'reps with >=1 eligible written lead',
+    event_sequence:
+      'per-rep: group eligible written messages by body-identity, count distinct leads per body, take the modal body’s lead share',
+    window: ONE_WEEK,
+    threshold: '> 70% of the rep’s distinct leads (literal)',
+    minimum_sample:
+      'none (literal population; degenerate low-lead flags disclosed, never excluded)',
+    minimum_history: PROMOTE_MIN_HISTORY,
+    exclusions: `Logged Call notes, inbound, blank-content, and blank-lead rows excluded; ${SALES_ONLY_EXCL}`,
+    ambiguity_handling:
+      'exact trim-normalized body identity; the single modal body’s distinct-lead share',
+    join_requirements:
+      'none (single communication-log family; no cross-source join)',
+    unit: 'ratio',
+    rank_direction: 'lower_is_better',
+    missing_data_behavior: PROMOTE_MISSING_BEHAVIOR,
+  },
+}
+
+/** Governed known facts a HELD frozen spec may populate from (no inference). */
+export type FrozenE1HeldFacts = {
+  period_grain_population: string // catalog (explicit) or ''
+  join_or_nlp_required: string // capability (explicit) or ''
+  missing_item: string // decision (explicit) or ''
+}
+
+/**
+ * Build a HELD frozen E1 spec. Only governed KNOWN facts are populated: catalog population (if
+ * explicit), the capability join/NLP requirement + missing item (join_requirements), and the
+ * permanent Sales-only exclusions. EVERY other field — including window and minimum_history (the
+ * universal one-week is NOT a condition-specific window/history) — is an explicit
+ * `unresolved (held)` / `not_applicable (held)` sentinel. Non-executable by construction.
+ */
+export function buildFrozenE1HeldSpec(f: FrozenE1HeldFacts): FrozenE1Spec {
+  return {
+    population: f.period_grain_population || HELD_UNRESOLVED,
+    numerator: HELD_UNRESOLVED,
+    denominator: HELD_UNRESOLVED,
+    event_sequence: HELD_UNRESOLVED,
+    window: HELD_UNRESOLVED,
+    threshold: HELD_UNRESOLVED,
+    minimum_sample: HELD_UNRESOLVED,
+    minimum_history: HELD_UNRESOLVED,
+    exclusions: SALES_ONLY_EXCL,
+    ambiguity_handling: HELD_UNRESOLVED,
+    join_requirements: f.join_or_nlp_required
+      ? `requires ${f.join_or_nlp_required}${f.missing_item ? ` (missing: ${f.missing_item})` : ''}`
+      : HELD_UNRESOLVED,
+    unit: HELD_UNRESOLVED,
+    rank_direction: HELD_NA,
+    // missing_data_behavior is a GOVERNED standing rule (not condition-specific), so it is known
+    // even while the metric is held.
+    missing_data_behavior: 'unresolved; missing is never zero',
+  }
+}
+
 // ── Evaluators (pure; over the reader's NON-PII content-feature rows) ──────────
 const DIR_OUT = 'Outbound'
 const WRITTEN_CHANNELS = new Set(['Text', 'Email'])

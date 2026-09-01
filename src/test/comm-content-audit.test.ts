@@ -12,6 +12,7 @@ import {
   CONTENT_PROMOTED_SPECS,
   CONTENT_SPEC_KEYS,
   CommContentMetricError,
+  buildFrozenE1HeldSpec,
   buildHeldSpec,
   evaluateCommContentMetrics,
   sw021,
@@ -337,6 +338,113 @@ describe('Gate 4E-R1 — every candidate row carries a schema-complete spec', ()
     expect(Object.keys(s).sort()).toEqual(REQUIRED)
     expect(s.numerator).toBe('unresolved (held)')
     expect(s.population).toBe('unresolved (held)') // empty catalog ⇒ explicit unresolved
+  })
+})
+
+describe('Gate 4E-R2 — frozen E1 governing spec (literal, independent contract)', () => {
+  // The frozen E1 schema is declared HERE as a literal, INDEPENDENTLY of the implementation. It
+  // must NOT be imported from or derived by implementation code — this test IS the contract.
+  const FROZEN_E1_REQUIRED = [
+    'population',
+    'numerator',
+    'denominator',
+    'event_sequence',
+    'window',
+    'threshold',
+    'minimum_sample',
+    'minimum_history',
+    'exclusions',
+    'ambiguity_handling',
+    'join_requirements',
+    'unit',
+    'rank_direction',
+    'missing_data_behavior',
+  ]
+  const SORTED = [...FROZEN_E1_REQUIRED].sort()
+  const matrix = JSON.parse(
+    fs.readFileSync(
+      path.join(REPO, 'docs/halo/contract/sw295-comm-content-matrix.json'),
+      'utf8',
+    ),
+  ) as {
+    frozen_e1_spec_schema: Array<string>
+    rows: Array<{
+      metric_id: string
+      disposition: string
+      frozen_e1_spec: Record<string, unknown>
+    }>
+  }
+
+  it('the committed matrix declares exactly the literal frozen 14-key schema', () => {
+    expect(FROZEN_E1_REQUIRED.length).toBe(14)
+    expect([...matrix.frozen_e1_spec_schema].sort()).toEqual(SORTED)
+  })
+
+  it('all 75 rows carry frozen_e1_spec with EXACTLY the frozen keys and string values', () => {
+    expect(matrix.rows.length).toBe(75)
+    for (const r of matrix.rows) {
+      expect(r.frozen_e1_spec, `${r.metric_id} has frozen_e1_spec`).toBeTruthy()
+      expect(
+        Object.keys(r.frozen_e1_spec).sort(),
+        `${r.metric_id} keys`,
+      ).toEqual(SORTED)
+      for (const k of FROZEN_E1_REQUIRED)
+        expect(
+          typeof r.frozen_e1_spec[k],
+          `${r.metric_id}.${k} is string`,
+        ).toBe('string')
+    }
+  })
+
+  it('HOLD frozen specs are non-executable; window/minimum_history are NOT the universal one-week', () => {
+    for (const r of matrix.rows) {
+      if (r.disposition !== 'HOLD') continue
+      const f = r.frozen_e1_spec
+      expect(f.numerator).toBe('unresolved (held)')
+      expect(f.denominator).toBe('unresolved (held)')
+      expect(f.threshold).toBe('unresolved (held)')
+      expect(f.event_sequence).toBe('unresolved (held)')
+      expect(f.window).toBe('unresolved (held)')
+      expect(f.minimum_history).toBe('unresolved (held)')
+      expect(f.minimum_sample).toBe('unresolved (held)')
+      expect(f.unit).toBe('unresolved (held)')
+      expect(f.rank_direction).toBe('not_applicable (held)')
+      // governed known facts populated (not invented, not blank)
+      expect(f.missing_data_behavior).toBe('unresolved; missing is never zero')
+      expect(String(f.exclusions)).toContain('Sales-only')
+      expect(String(f.join_requirements)).toContain('NLP on Message Content')
+      // the universal one-week must never appear as a held window/history
+      expect(String(f.window)).not.toContain('2026-08-24')
+      expect(String(f.minimum_history)).not.toContain('2026-08-24')
+    }
+  })
+
+  it('PROMOTE frozen specs are explicit and executable', () => {
+    const promoted = new Set(CONTENT_PROMOTED_IDS as ReadonlyArray<string>)
+    for (const r of matrix.rows) {
+      if (r.disposition !== 'PROMOTE') continue
+      expect(promoted.has(r.metric_id)).toBe(true)
+      const f = r.frozen_e1_spec
+      expect(f.numerator).not.toBe('unresolved (held)')
+      expect(f.threshold).not.toBe('unresolved (held)')
+      expect(f.unit).toBe('ratio')
+      expect(f.rank_direction).toBe('lower_is_better')
+    }
+  })
+
+  it('NEGATIVE: an implementation-derived schema CANNOT pass the literal frozen contract', () => {
+    // The evaluator-metadata spec schema (CONTENT_SPEC_KEYS, derived from PromotedSpec) is a
+    // DIFFERENT key set and must not satisfy the frozen contract.
+    expect([...CONTENT_SPEC_KEYS].sort()).not.toEqual(SORTED)
+    // A held frozen spec built by the implementation must match the literal frozen keys, and must
+    // NOT match the implementation-derived evaluator-metadata schema.
+    const built = buildFrozenE1HeldSpec({
+      period_grain_population: '',
+      join_or_nlp_required: 'NLP on Message Content',
+      missing_item: 'x',
+    })
+    expect(Object.keys(built).sort()).toEqual(SORTED)
+    expect(Object.keys(built).sort()).not.toEqual([...CONTENT_SPEC_KEYS].sort())
   })
 })
 

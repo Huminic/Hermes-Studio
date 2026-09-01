@@ -18,7 +18,10 @@ import path from 'node:path'
 import { createHash } from 'node:crypto'
 import { formatJsonFile } from '../m1r-evaluator/serialize'
 import type { CommManifestEntry } from '@/server/reports/comms/comm-reader'
-import type { ContentRooftopInput } from '@/server/reports/comms/comm-content-metrics'
+import type {
+  ContentMetricId,
+  ContentRooftopInput,
+} from '@/server/reports/comms/comm-content-metrics'
 import {
   CAPTURE_ID_RE,
   COMM_WEEKLY_FAMILY,
@@ -36,7 +39,10 @@ import {
   CONTENT_HELD_DECISIONS,
   CONTENT_PROMOTED_SPECS,
   CONTENT_SPEC_KEYS,
+  FROZEN_E1_SPEC_KEYS,
+  PROMOTED_FROZEN_E1,
   PROVIDER_VERDICT,
+  buildFrozenE1HeldSpec,
   buildHeldSpec,
   evaluateCommContentMetrics,
 } from '@/server/reports/comms/comm-content-metrics'
@@ -241,10 +247,18 @@ async function main(): Promise<void> {
       metric_id: string
       category: string
       minimum_history?: string
+      join_or_nlp_required?: string
+      missing_inputs?: string
     }>
   }
   const minHistoryById = new Map(
     capDelta.rows.map((r) => [r.metric_id, String(r.minimum_history ?? '')]),
+  )
+  const joinReqById = new Map(
+    capDelta.rows.map((r) => [
+      r.metric_id,
+      String(r.join_or_nlp_required ?? ''),
+    ]),
   )
   const nlp75 = capDelta.rows
     .filter((r) => r.category === 'nlp_content_capable_pending')
@@ -330,6 +344,7 @@ async function main(): Promise<void> {
         subsection: cond.subsection,
         category: 'definition_exact_deterministic_now',
         disposition: 'PROMOTE',
+        frozen_e1_spec: PROMOTED_FROZEN_E1[id as ContentMetricId],
         spec: promoted,
         rooftop_disposition: GOVERNED.map((d) => {
           const v = byDealer.get(d)!
@@ -354,6 +369,11 @@ async function main(): Promise<void> {
       disposition: 'HOLD',
       hold_reason: held.hold_reason,
       missing_item: held.missing_item,
+      frozen_e1_spec: buildFrozenE1HeldSpec({
+        period_grain_population: cond.period_grain_population,
+        join_or_nlp_required: joinReqById.get(id) ?? '',
+        missing_item: held.missing_item ?? '',
+      }),
       spec: buildHeldSpec(held, {
         condition: cond.condition,
         period_grain_population: cond.period_grain_population,
@@ -369,19 +389,26 @@ async function main(): Promise<void> {
     }
   })
 
-  // Every candidate row (promoted AND held) must carry a schema-complete spec with the derived key
-  // set; a held spec must not masquerade as executable (its numerator/denominator are held sentinels).
+  // Every candidate row (promoted AND held) must carry BOTH the frozen E1 governing spec (14
+  // hardcoded keys) AND the evaluator-metadata spec (derived key set). A held spec of either kind
+  // must not masquerade as executable (its numerator/denominator are held sentinels).
+  const frozenKeys = JSON.stringify([...FROZEN_E1_SPEC_KEYS].sort())
   for (const r of matrixRows) {
-    const keys = Object.keys(r.spec).sort()
     must(
-      JSON.stringify(keys) === JSON.stringify([...CONTENT_SPEC_KEYS].sort()),
-      `${r.metric_id} spec keys != required schema`,
+      JSON.stringify(Object.keys(r.frozen_e1_spec).sort()) === frozenKeys,
+      `${r.metric_id} frozen_e1_spec keys != frozen E1 schema`,
+    )
+    must(
+      JSON.stringify(Object.keys(r.spec).sort()) ===
+        JSON.stringify([...CONTENT_SPEC_KEYS].sort()),
+      `${r.metric_id} evaluator-metadata spec keys != schema`,
     )
     if (r.disposition === 'HOLD')
       must(
-        r.spec.numerator === 'unresolved (held)' &&
-          r.spec.denominator === 'unresolved (held)',
-        `${r.metric_id} held spec must not be executable`,
+        r.frozen_e1_spec.numerator === 'unresolved (held)' &&
+          r.frozen_e1_spec.denominator === 'unresolved (held)' &&
+          r.spec.numerator === 'unresolved (held)',
+        `${r.metric_id} held specs must not be executable`,
       )
   }
 
@@ -419,9 +446,12 @@ async function main(): Promise<void> {
     capability_delta_ref: 'docs/halo/contract/sw295-comm-capability-delta.json',
     candidate_set: 'nlp_content_capable_pending (75)',
     provider_verdict: PROVIDER_VERDICT,
+    frozen_e1_spec_schema: FROZEN_E1_SPEC_KEYS,
+    frozen_e1_spec_note:
+      'GOVERNING CONTRACT. Every candidate row carries a frozen_e1_spec with EXACTLY these 14 hardcoded keys. PROMOTE rows map every field explicitly from the evaluator/literal condition (executable). HOLD rows populate only governed known facts (catalog population, capability join/NLP requirement, permanent Sales-only exclusions, and the standing missing-is-never-zero rule) and set every unknown/condition-specific field — including window and minimum_history (the universal one-week is NOT used) — to `unresolved (held)` / `not_applicable (held)`; non-executable by construction. The separate `spec` field below is EVALUATOR METADATA ONLY and does NOT satisfy this contract.',
     spec_schema: CONTENT_SPEC_KEYS,
     spec_schema_note:
-      'Every candidate row (promoted AND held) carries a spec object with exactly these keys. Held specs populate title/population/window/false_positive_controls/limitations from the literal catalog+capability decision and use explicit `unresolved (held)` / `not_applicable (held)` for every executable field (numerator, denominator, detection_threshold, source_fields, baseline_basis, rank_direction, false_negative_controls); nothing is invented and a held spec cannot masquerade as executable.',
+      'EVALUATOR METADATA ONLY (does NOT satisfy the frozen E1 contract). Every candidate row carries this spec object with exactly these keys. Held specs populate title/population/window/false_positive_controls/limitations from the literal catalog+capability decision and use explicit `unresolved (held)` / `not_applicable (held)` for every executable field; nothing is invented and a held spec cannot masquerade as executable.',
     totals: {
       candidates: 75,
       promoted: promotedIds.length,

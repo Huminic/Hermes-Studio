@@ -50,15 +50,17 @@ customers — disclosed as a false-positive control, not silently filtered.
   (empty/punctuation/multilingual/emoji/URL), merge-tag detection (each enumerated syntax + filled
   templates + JSON/`$5`/emails as non-tags), link-only (bare/multi-URL/with-text/empty), trim-only
   identity (case + internal-whitespace sensitivity, blank ⇒ empty identity, 16-hex one-way).
-- **Evaluator + disposition tests** (`src/test/comm-content-audit.test.ts`, 20): the five
+- **Evaluator + disposition tests** (`src/test/comm-content-audit.test.ts`, 25): the five
   evaluators (Logged-Call/Inbound exclusion, no-floor denominators, degenerate single-lead SW-021,
   two-day SW-145 split), all-three 15 cells + 70 held, **fail-closed** (empty population ⇒
   `CommContentMetricError`, unresolved not zero), **dealer isolation**, 75-candidate integrity, the
-  committed matrix/reconciliation (51/834, 17/278, 75/12/208=295), and the **Gate 4E-R1
-  schema-completeness regression** (all 75 rows carry the derived 14-key spec with correct types;
-  HOLD specs are non-executable and cannot masquerade as promoted; `buildHeldSpec` is
-  schema-complete). One test is **byte-backed**: SW-142/SW-149 recomputed from the real Honda
-  capture match the committed ledger cells.
+  committed matrix/reconciliation (51/834, 17/278, 75/12/208=295), the Gate 4E-R1
+  evaluator-metadata schema regression, and the **Gate 4E-R2 frozen-E1 contract**: an
+  independently-declared literal 14-key list asserts all 75 `frozen_e1_spec`s conform, HOLD frozen
+  specs are non-executable (window/minimum_history are NOT the universal one-week), PROMOTE frozen
+  specs are executable, plus a **negative regression** proving the implementation-derived schema
+  cannot pass the literal frozen contract. One test is **byte-backed**: SW-142/SW-149 recomputed
+  from the real Honda capture match the committed ledger cells.
 - **Hash guard**: `src/test/comm-evidence-hashes.test.ts` recomputes every artifact hash recorded
   in Proof Deltas E1 + E2.
 - Deterministic byte-identical regeneration of all three artifacts; frozen Gate 4C1 reader/contract
@@ -70,11 +72,11 @@ customers — disclosed as a false-positive control, not silently filtered.
 
 | File | sha256:16 |
 | ---- | --------- |
-| `scripts/m1r-comms/build-comm-content-evaluation.ts` | `652aa7342d6a0ec4` |
+| `scripts/m1r-comms/build-comm-content-evaluation.ts` | `802217ec2a6b925a` |
 | `docs/halo/evidence/m1r/comms/comm-content-evaluation-ledger.json` | `0ef15eda1ed9bdaa` |
 | `docs/halo/evidence/m1r/comms/comm-content-portfolio-reconciliation.json` | `4abda40c0a1f5153` |
 | `src/test/comm-content-features.test.ts` | `d6dae653c325396f` |
-| `src/test/comm-content-audit.test.ts` | `32344153c2169eb5` |
+| `src/test/comm-content-audit.test.ts` | `bcf864fa29137b96` |
 
 Each `sha256:16` is recomputed from the current committed bytes by
 `src/test/comm-evidence-hashes.test.ts`.

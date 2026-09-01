@@ -72,17 +72,39 @@ category, disposition, promoted spec or hold reason) + the 225-cell rooftop disp
 provider verdict + category tally. Candidate set asserted equal to the committed
 `nlp_content_capable_pending` 75 (unique, canonical).
 
-**Gate 4E-R1 (shadow repair):** EVERY candidate row — promoted AND held — now carries a
-schema-complete `spec` object with exactly the 14-key schema DERIVED from the promoted spec
-(`spec_schema` in the artifact): `metric_id, title, population, numerator, denominator,
-detection_threshold, window, zero_denominator, source_fields, baseline_basis, rank_direction,
-false_positive_controls, false_negative_controls, limitations`. A HELD spec populates
-`title`/`population`/`window`/`false_positive_controls`/`limitations` from the LITERAL
-catalog+capability decision and sets every executable field (`numerator`, `denominator`,
-`detection_threshold`, `source_fields`, `baseline_basis`, `rank_direction`,
-`false_negative_controls`) to an explicit `unresolved (held)` / `not_applicable (held)` sentinel —
-nothing invented, and a held spec can never masquerade as an executable/promoted definition. A
-regression test asserts all 75 specs match the schema and that HOLD specs are non-executable.
+**Gate 4E-R2 (shadow repair — GOVERNING CONTRACT).** EVERY candidate row — promoted AND held —
+carries a `frozen_e1_spec` with EXACTLY this hardcoded literal 14-key schema (the frozen E1
+contract, `frozen_e1_spec_schema` in the artifact):
+
+`population, numerator, denominator, event_sequence, window, threshold, minimum_sample,
+minimum_history, exclusions, ambiguity_handling, join_requirements, unit, rank_direction,
+missing_data_behavior`.
+
+- **PROMOTE** rows map every field explicitly from the actual evaluator / literal condition
+  (executable): the literal `threshold` (<15 words, >5 customers, >70% leads, merge-tag present,
+  link-only), `unit = ratio`, `rank_direction = lower_is_better`, the evaluator population/
+  numerator/denominator/event_sequence/exclusions/ambiguity_handling, `join_requirements = none`,
+  `minimum_sample = none (no invented floor)`, `missing_data_behavior = unresolved, not zero`.
+- **HOLD** rows populate ONLY governed known facts — catalog `population` (if explicit), the
+  capability `join_or_nlp_required` (+ missing item) as `join_requirements`, the permanent
+  Sales-only `exclusions`, and the standing `missing_data_behavior = "unresolved; missing is never
+  zero"` — and set every unknown/condition-specific field to the exact sentinel `unresolved (held)`
+  / `not_applicable (held)`. Crucially, `window` and `minimum_history` are `unresolved (held)`: the
+  universal one-week evaluation period is NOT used as a condition-specific window/history. No
+  threshold, event sequence, unit, ambiguity rule, or sample is inferred. Non-executable by
+  construction.
+
+**The frozen contract is independent of implementation.** The regression test declares the literal
+14-key list itself (it does not import or derive it from code) and asserts all 75 rows conform, that
+HOLD frozen specs are non-executable, and — a **negative regression** — that the
+implementation-derived evaluator-metadata schema (`CONTENT_SPEC_KEYS`, from `PromotedSpec`) is a
+DIFFERENT key set that CANNOT satisfy the frozen contract.
+
+**The separate `spec` field (Gate 4E-R1) is EVALUATOR METADATA ONLY** (its 14 keys are the
+`PromotedSpec` shape: `metric_id, title, population, numerator, denominator, detection_threshold,
+window, zero_denominator, source_fields, baseline_basis, rank_direction, false_positive_controls,
+false_negative_controls, limitations`). It does **NOT** satisfy or replace `frozen_e1_spec`; it is
+retained only as auxiliary evaluator detail.
 
 ## Committed artifacts (SHA-256 first 16)
 
@@ -90,8 +112,8 @@ regression test asserts all 75 specs match the schema and that HOLD specs are no
 | ---- | --------- |
 | `src/server/reports/comms/comm-content-features.ts` | `cba283ce2109a66f` |
 | `src/server/reports/comms/comm-content-reader.ts` | `ab34883ce0f875ef` |
-| `src/server/reports/comms/comm-content-metrics.ts` | `a2643ab9fdde7aa2` |
-| `docs/halo/contract/sw295-comm-content-matrix.json` | `12652f79cb28ffc5` |
+| `src/server/reports/comms/comm-content-metrics.ts` | `0b82ed09af039e66` |
+| `docs/halo/contract/sw295-comm-content-matrix.json` | `c92debbd13971af8` |
 
 Each `sha256:16` is recomputed from the current committed bytes by
 `src/test/comm-evidence-hashes.test.ts`, so a later formatting cycle that desyncs this proof fails
