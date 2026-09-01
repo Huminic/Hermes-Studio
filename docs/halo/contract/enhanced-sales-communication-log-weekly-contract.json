@@ -1,0 +1,187 @@
+{
+  "artifact": "enhanced-sales-communication-log-weekly-contract",
+  "family": "enhanced_sales_communication_log_weekly",
+  "contract_state": "proposed_extension_pending_consumer_acceptance",
+  "capture_kind": "browser_export",
+  "separate_from_legacy_strict_family": "sales_comm_log",
+  "not_a_relaxation_note": "This is a NEW weekly browser-export family. It does not reuse or relax the strict single-day scheduled Sales Communication family (sales_comm_log), which remains quarantined.",
+  "provenance": {
+    "source_host": "vinsolutions.app.coxautoinc.com",
+    "report_host": "reporting-vinsolutions.app.coxautoinc.com",
+    "admitted_hosts": [
+      "vinsolutions.app.coxautoinc.com",
+      "reporting-vinsolutions.app.coxautoinc.com"
+    ],
+    "source_path_prefix": "/vinconnect/",
+    "report_path_prefix": "/VinAnalyticsDashboards/",
+    "expected_report_kind": "enhanced_sales_communication_log_weekly",
+    "capture_id_pattern": "VIN-COMM-WEEKLY-YYYYMMDD-<dealerId>",
+    "required_provenance_fields": [
+      "capture_id",
+      "profile",
+      "dealer_id",
+      "dealer_name",
+      "source_url",
+      "report_url",
+      "captured_at",
+      "declared_report_kind",
+      "reporting_period",
+      "declared_rows",
+      "declared_columns",
+      "declared_unique_lead_ids",
+      "declared_sha256",
+      "filename",
+      "filter_evidence_sha256",
+      "applied_result_evidence_sha256"
+    ]
+  },
+  "schema": {
+    "column_count": 24,
+    "headers": [
+      "Dealer",
+      "User Group",
+      "User",
+      "Customer",
+      "Dealer ID",
+      "Activity Date",
+      "Direction",
+      "Comm Channel",
+      "Comm Type",
+      "Interaction Result",
+      "Lead Type",
+      "Lead Status Type",
+      "Lead Status",
+      "Lead Source Group",
+      "Lead Source",
+      "Lead Created Date",
+      "Make",
+      "Message Content",
+      "Text Attachment",
+      "Text Image",
+      "Text Video",
+      "Global Customer ID",
+      "Lead ID",
+      "Communication ID"
+    ],
+    "restricted_columns": [
+      "Customer",
+      "User",
+      "Message Content",
+      "Global Customer ID",
+      "Lead ID",
+      "Communication ID"
+    ],
+    "permitted_derived_columns": [
+      "Dealer",
+      "User Group",
+      "Dealer ID",
+      "Activity Date",
+      "Direction",
+      "Comm Channel",
+      "Comm Type",
+      "Interaction Result",
+      "Lead Type",
+      "Lead Status Type",
+      "Lead Status",
+      "Lead Source Group",
+      "Lead Source",
+      "Lead Created Date",
+      "Make",
+      "Text Attachment",
+      "Text Image",
+      "Text Video"
+    ]
+  },
+  "sales_only": {
+    "required_comm_type": "Sales",
+    "allowed_lead_types": [
+      "Import",
+      "Internet",
+      "Phone",
+      "PreviousCustomer",
+      "Referral",
+      "Walk-in",
+      "WebsiteChat",
+      "Wholesale"
+    ],
+    "service_parts_scan_columns": [
+      "User Group",
+      "Direction",
+      "Comm Channel",
+      "Comm Type",
+      "Interaction Result",
+      "Lead Type",
+      "Lead Status Type",
+      "Lead Status",
+      "Lead Source Group",
+      "Lead Source",
+      "Make"
+    ],
+    "row_scan_guard": "no categorical field may contain a \\b(service|parts)\\b token",
+    "message_content_excluded_from_scan": "Message Content is restricted and is never read as text for matching; it is converted in-memory to length/presence only."
+  },
+  "business_timezone": "America/New_York",
+  "rooftop_identity": {
+    "serra-honda": {
+      "dealer_id": "21043",
+      "dealer_name": "Serra Honda of Sylacauga"
+    },
+    "serra-nissan": {
+      "dealer_id": "21044",
+      "dealer_name": "Serra Nissan of Sylacauga"
+    },
+    "tony-serra-ford": {
+      "dealer_id": "21047",
+      "dealer_name": "Tony Serra Ford"
+    }
+  },
+  "classifier_checks": [
+    "manifest_allowlisted",
+    "declared_sha256",
+    "profile",
+    "dealer_identity",
+    "capture_id",
+    "source_url_host",
+    "report_url_host",
+    "declared_report_kind",
+    "captured_at_timezone",
+    "reporting_window",
+    "filename_period",
+    "filter_evidence_present",
+    "applied_result_evidence_present",
+    "schema_exact_24",
+    "row_count",
+    "column_count",
+    "one_rooftop",
+    "dealer_name",
+    "comm_type_sales_every_row",
+    "activity_date_in_window",
+    "service_parts_scan",
+    "wrong_dealer_rows_zero",
+    "communication_id_complete",
+    "communication_id_unique",
+    "unique_lead_ids"
+  ],
+  "privacy": {
+    "raw_repository_commit_allowed": false,
+    "restricted_raw_columns": [
+      "Customer",
+      "User",
+      "Message Content",
+      "Global Customer ID",
+      "Lead ID",
+      "Communication ID"
+    ],
+    "never_persisted": [
+      "Customer",
+      "User (employee name)",
+      "Message Content (verbatim)",
+      "phone/email",
+      "any person name"
+    ],
+    "pseudonym_scheme": "non-reversible goal-scoped truncated SHA-256 over salt||rooftop||kind||rawId; used only where rep/thread/person joins are necessary; blank id yields no token",
+    "content_derivation": "Message Content -> length + presence ONLY (in-memory), then discarded",
+    "transform_version": "comm-weekly-derive-v1",
+    "committed_outputs": "aggregate admission proof + lineage only; per-row derived data is never committed"
+  }
+}

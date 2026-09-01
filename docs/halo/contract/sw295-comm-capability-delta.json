@@ -1,0 +1,2691 @@
+{
+  "artifact": "gate4c1-comm-weekly-capability-delta",
+  "family": "enhanced_sales_communication_log_weekly",
+  "catalog_ref": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json",
+  "total": 295,
+  "reconciles_to_295": true,
+  "evaluated_count": 0,
+  "none_evaluated_note": "This is a capability MAP. No category is counted as evaluated; this gate promotes zero SW metrics. requires_ratified_threshold=true marks a structurally-computable metric that still needs a controller-ratified threshold/semantic choice.",
+  "categories": [
+    "definition_compatible_now",
+    "nlp_content_capable_pending",
+    "unsupported_field",
+    "insufficient_history",
+    "other_source_or_join",
+    "outside_sales_boundary"
+  ],
+  "by_category": {
+    "insufficient_history": 12,
+    "other_source_or_join": 95,
+    "definition_compatible_now": 54,
+    "unsupported_field": 39,
+    "nlp_content_capable_pending": 45,
+    "outside_sales_boundary": 50
+  },
+  "structured_candidates": [
+    "SW-019",
+    "SW-022",
+    "SW-076",
+    "SW-132",
+    "SW-134",
+    "SW-137",
+    "SW-138"
+  ],
+  "rows": [
+    {
+      "metric_id": "SW-001",
+      "section": "1. Lead Intake & Source Quality",
+      "subsection": "",
+      "category": "insufficient_history",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "requires multi-week trend/history beyond the single governed week"
+    },
+    {
+      "metric_id": "SW-002",
+      "section": "1. Lead Intake & Source Quality",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-003",
+      "section": "1. Lead Intake & Source Quality",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-004",
+      "section": "1. Lead Intake & Source Quality",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-005",
+      "section": "1. Lead Intake & Source Quality",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-006",
+      "section": "1. Lead Intake & Source Quality",
+      "subsection": "",
+      "category": "insufficient_history",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "requires multi-week trend/history beyond the single governed week"
+    },
+    {
+      "metric_id": "SW-007",
+      "section": "1. Lead Intake & Source Quality",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-008",
+      "section": "1. Lead Intake & Source Quality",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-009",
+      "section": "1. Lead Intake & Source Quality",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-010",
+      "section": "1. Lead Intake & Source Quality",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-011",
+      "section": "2. Speed-to-Lead & First Response",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-012",
+      "section": "2. Speed-to-Lead & First Response",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-013",
+      "section": "2. Speed-to-Lead & First Response",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-014",
+      "section": "2. Speed-to-Lead & First Response",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-015",
+      "section": "2. Speed-to-Lead & First Response",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-016",
+      "section": "2. Speed-to-Lead & First Response",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-017",
+      "section": "2. Speed-to-Lead & First Response",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-018",
+      "section": "2. Speed-to-Lead & First Response",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-019",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "shadow structured candidate — computable from this family but carries a semantic choice (see enhanced-comm-structured-candidates.json)"
+    },
+    {
+      "metric_id": "SW-020",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-021",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-022",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "shadow structured candidate — computable from this family but carries a semantic choice (see enhanced-comm-structured-candidates.json)"
+    },
+    {
+      "metric_id": "SW-023",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-024",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-025",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-026",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-027",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-028",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-029",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-030",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-031",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-032",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-033",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-034",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-035",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "subsection": "",
+      "category": "insufficient_history",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "requires multi-week trend/history beyond the single governed week"
+    },
+    {
+      "metric_id": "SW-036",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-037",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-038",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-039",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-040",
+      "section": "4. Pipeline Health & Funnel Dynamics",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-041",
+      "section": "5. Appointment & Showroom Metrics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-042",
+      "section": "5. Appointment & Showroom Metrics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-043",
+      "section": "5. Appointment & Showroom Metrics",
+      "subsection": "",
+      "category": "insufficient_history",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "requires multi-week trend/history beyond the single governed week"
+    },
+    {
+      "metric_id": "SW-044",
+      "section": "5. Appointment & Showroom Metrics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-045",
+      "section": "5. Appointment & Showroom Metrics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-046",
+      "section": "5. Appointment & Showroom Metrics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-047",
+      "section": "6. Deal & Desking Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-048",
+      "section": "6. Deal & Desking Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-049",
+      "section": "6. Deal & Desking Signals",
+      "subsection": "",
+      "category": "insufficient_history",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "requires multi-week trend/history beyond the single governed week"
+    },
+    {
+      "metric_id": "SW-050",
+      "section": "6. Deal & Desking Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-051",
+      "section": "6. Deal & Desking Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-052",
+      "section": "6. Deal & Desking Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-053",
+      "section": "6. Deal & Desking Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-054",
+      "section": "6. Deal & Desking Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-055",
+      "section": "6. Deal & Desking Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-056",
+      "section": "6. Deal & Desking Signals",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-057",
+      "section": "7. Inventory & Vehicle-of-Interest (VOI) Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-058",
+      "section": "7. Inventory & Vehicle-of-Interest (VOI) Signals",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-059",
+      "section": "7. Inventory & Vehicle-of-Interest (VOI) Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-060",
+      "section": "7. Inventory & Vehicle-of-Interest (VOI) Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-061",
+      "section": "7. Inventory & Vehicle-of-Interest (VOI) Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-062",
+      "section": "7. Inventory & Vehicle-of-Interest (VOI) Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-063",
+      "section": "8. Marketing & Attribution",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-064",
+      "section": "8. Marketing & Attribution",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-065",
+      "section": "8. Marketing & Attribution",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-066",
+      "section": "8. Marketing & Attribution",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-067",
+      "section": "8. Marketing & Attribution",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-068",
+      "section": "8. Marketing & Attribution",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-069",
+      "section": "8. Marketing & Attribution",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-070",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-071",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-072",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-073",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-074",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-075",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-076",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "shadow structured candidate — computable from this family but carries a semantic choice (see enhanced-comm-structured-candidates.json)"
+    },
+    {
+      "metric_id": "SW-077",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-078",
+      "section": "9. Customer Communication Sentiment & Content",
+      "subsection": "",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-079",
+      "section": "10. Service-to-Sales & Equity Mining",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-080",
+      "section": "10. Service-to-Sales & Equity Mining",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-081",
+      "section": "10. Service-to-Sales & Equity Mining",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-082",
+      "section": "10. Service-to-Sales & Equity Mining",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-083",
+      "section": "10. Service-to-Sales & Equity Mining",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-084",
+      "section": "11. BDC / Call Center Metrics",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-085",
+      "section": "11. BDC / Call Center Metrics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-086",
+      "section": "11. BDC / Call Center Metrics",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-087",
+      "section": "11. BDC / Call Center Metrics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-088",
+      "section": "11. BDC / Call Center Metrics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-089",
+      "section": "11. BDC / Call Center Metrics",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-090",
+      "section": "12. Data Integrity & CRM Hygiene",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-091",
+      "section": "12. Data Integrity & CRM Hygiene",
+      "subsection": "",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-092",
+      "section": "12. Data Integrity & CRM Hygiene",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-093",
+      "section": "12. Data Integrity & CRM Hygiene",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-094",
+      "section": "12. Data Integrity & CRM Hygiene",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-095",
+      "section": "12. Data Integrity & CRM Hygiene",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-096",
+      "section": "12. Data Integrity & CRM Hygiene",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-097",
+      "section": "12. Data Integrity & CRM Hygiene",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-098",
+      "section": "12. Data Integrity & CRM Hygiene",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-099",
+      "section": "13. Compliance & Risk",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-100",
+      "section": "13. Compliance & Risk",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-101",
+      "section": "13. Compliance & Risk",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-102",
+      "section": "13. Compliance & Risk",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-103",
+      "section": "13. Compliance & Risk",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-104",
+      "section": "13. Compliance & Risk",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-105",
+      "section": "14. Team / Managerial Dynamics",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-106",
+      "section": "14. Team / Managerial Dynamics",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-107",
+      "section": "14. Team / Managerial Dynamics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-108",
+      "section": "14. Team / Managerial Dynamics",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-109",
+      "section": "14. Team / Managerial Dynamics",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-110",
+      "section": "14. Team / Managerial Dynamics",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-111",
+      "section": "15. Cross-Functional / Second-Order Signals",
+      "subsection": "",
+      "category": "insufficient_history",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "requires multi-week trend/history beyond the single governed week"
+    },
+    {
+      "metric_id": "SW-112",
+      "section": "15. Cross-Functional / Second-Order Signals",
+      "subsection": "",
+      "category": "insufficient_history",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "requires multi-week trend/history beyond the single governed week"
+    },
+    {
+      "metric_id": "SW-113",
+      "section": "15. Cross-Functional / Second-Order Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-114",
+      "section": "15. Cross-Functional / Second-Order Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-115",
+      "section": "15. Cross-Functional / Second-Order Signals",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-116",
+      "section": "15. Cross-Functional / Second-Order Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-117",
+      "section": "15. Cross-Functional / Second-Order Signals",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-118",
+      "section": "15. Cross-Functional / Second-Order Signals",
+      "subsection": "",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-119",
+      "section": "15. Cross-Functional / Second-Order Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-120",
+      "section": "15. Cross-Functional / Second-Order Signals",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-121",
+      "section": "16. Anomaly & Statistical Triggers (engine-level rules)",
+      "subsection": "",
+      "category": "insufficient_history",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "requires multi-week trend/history beyond the single governed week"
+    },
+    {
+      "metric_id": "SW-122",
+      "section": "16. Anomaly & Statistical Triggers (engine-level rules)",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-123",
+      "section": "16. Anomaly & Statistical Triggers (engine-level rules)",
+      "subsection": "",
+      "category": "insufficient_history",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "requires multi-week trend/history beyond the single governed week"
+    },
+    {
+      "metric_id": "SW-124",
+      "section": "16. Anomaly & Statistical Triggers (engine-level rules)",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-125",
+      "section": "16. Anomaly & Statistical Triggers (engine-level rules)",
+      "subsection": "",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-126",
+      "section": "16. Anomaly & Statistical Triggers (engine-level rules)",
+      "subsection": "",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-127",
+      "section": "16. Anomaly & Statistical Triggers (engine-level rules)",
+      "subsection": "Suggested Watchdog Architecture Notes",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-128",
+      "section": "16. Anomaly & Statistical Triggers (engine-level rules)",
+      "subsection": "Suggested Watchdog Architecture Notes",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-129",
+      "section": "16. Anomaly & Statistical Triggers (engine-level rules)",
+      "subsection": "Suggested Watchdog Architecture Notes",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-130",
+      "section": "16. Anomaly & Statistical Triggers (engine-level rules)",
+      "subsection": "Suggested Watchdog Architecture Notes",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-131",
+      "section": "16. Anomaly & Statistical Triggers (engine-level rules)",
+      "subsection": "Suggested Watchdog Architecture Notes",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-132",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "shadow structured candidate — computable from this family but carries a semantic choice (see enhanced-comm-structured-candidates.json)"
+    },
+    {
+      "metric_id": "SW-133",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "insufficient_history",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "requires multi-week trend/history beyond the single governed week"
+    },
+    {
+      "metric_id": "SW-134",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "shadow structured candidate — computable from this family but carries a semantic choice (see enhanced-comm-structured-candidates.json)"
+    },
+    {
+      "metric_id": "SW-135",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-136",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-137",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "shadow structured candidate — computable from this family but carries a semantic choice (see enhanced-comm-structured-candidates.json)"
+    },
+    {
+      "metric_id": "SW-138",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "shadow structured candidate — computable from this family but carries a semantic choice (see enhanced-comm-structured-candidates.json)"
+    },
+    {
+      "metric_id": "SW-139",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-140",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-141",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "A. Response Behavior & Cadence Failures",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-142",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-143",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-144",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-145",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-146",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-147",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-148",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-149",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-150",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-151",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "B. Content Quality & Personalization Failures",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-152",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-153",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-154",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-155",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-156",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-157",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-158",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-159",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-160",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "C. Objection & Buying-Signal Handling",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-161",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-162",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-163",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-164",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-165",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-166",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-167",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-168",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-169",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "D. Churn & Competitor Signals in Customer Language",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-170",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-171",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-172",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-173",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-174",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-175",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-176",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-177",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-178",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "E. Sentiment & Tone Red Flags",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-179",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "F. Trust & Transparency Breakdowns",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-180",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "F. Trust & Transparency Breakdowns",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-181",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "F. Trust & Transparency Breakdowns",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-182",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "F. Trust & Transparency Breakdowns",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-183",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "F. Trust & Transparency Breakdowns",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-184",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "F. Trust & Transparency Breakdowns",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-185",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "F. Trust & Transparency Breakdowns",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-186",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "G. Compliance & Legal Red Flags in Comms",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-187",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "G. Compliance & Legal Red Flags in Comms",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-188",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "G. Compliance & Legal Red Flags in Comms",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-189",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "G. Compliance & Legal Red Flags in Comms",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-190",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "G. Compliance & Legal Red Flags in Comms",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-191",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "G. Compliance & Legal Red Flags in Comms",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-192",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "G. Compliance & Legal Red Flags in Comms",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-193",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "G. Compliance & Legal Red Flags in Comms",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-194",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "H. Handoff & Team Coordination Failures",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-195",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "H. Handoff & Team Coordination Failures",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-196",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "H. Handoff & Team Coordination Failures",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-197",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "H. Handoff & Team Coordination Failures",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-198",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "H. Handoff & Team Coordination Failures",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-199",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "H. Handoff & Team Coordination Failures",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-200",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-201",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-202",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-203",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-204",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-205",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-206",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications",
+      "subsection": "I. Semantic Anomalies Worth Flagging",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication section metric computable from this family; threshold/definition still needs ratification"
+    },
+    {
+      "metric_id": "SW-207",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "A. Dormant & Lost-Lead Reactivation",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-208",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "A. Dormant & Lost-Lead Reactivation",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-209",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "A. Dormant & Lost-Lead Reactivation",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-210",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "A. Dormant & Lost-Lead Reactivation",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-211",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "A. Dormant & Lost-Lead Reactivation",
+      "category": "insufficient_history",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "requires multi-week trend/history beyond the single governed week"
+    },
+    {
+      "metric_id": "SW-212",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "A. Dormant & Lost-Lead Reactivation",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-213",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "A. Dormant & Lost-Lead Reactivation",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-214",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "A. Dormant & Lost-Lead Reactivation",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-215",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "B. Equity Mining & Portfolio Opportunities",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-216",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "B. Equity Mining & Portfolio Opportunities",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-217",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "B. Equity Mining & Portfolio Opportunities",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-218",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "B. Equity Mining & Portfolio Opportunities",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-219",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "B. Equity Mining & Portfolio Opportunities",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-220",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "B. Equity Mining & Portfolio Opportunities",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-221",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "B. Equity Mining & Portfolio Opportunities",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-222",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "B. Equity Mining & Portfolio Opportunities",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-223",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "C. Service Drive → Sales Conversion",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-224",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "C. Service Drive → Sales Conversion",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-225",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "C. Service Drive → Sales Conversion",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-226",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "C. Service Drive → Sales Conversion",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-227",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "C. Service Drive → Sales Conversion",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-228",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "C. Service Drive → Sales Conversion",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-229",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "C. Service Drive → Sales Conversion",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-230",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "D. Behavioral & Digital Intent Signals",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-231",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "D. Behavioral & Digital Intent Signals",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-232",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "D. Behavioral & Digital Intent Signals",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-233",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "D. Behavioral & Digital Intent Signals",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-234",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "D. Behavioral & Digital Intent Signals",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-235",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "D. Behavioral & Digital Intent Signals",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-236",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "D. Behavioral & Digital Intent Signals",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-237",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "D. Behavioral & Digital Intent Signals",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-238",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "E. Referral & Loyalty Mining",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-239",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "E. Referral & Loyalty Mining",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-240",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "E. Referral & Loyalty Mining",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-241",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "E. Referral & Loyalty Mining",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-242",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "E. Referral & Loyalty Mining",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-243",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "E. Referral & Loyalty Mining",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-244",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "F. Lookalike & Predictive Audience Building",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-245",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "F. Lookalike & Predictive Audience Building",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-246",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "F. Lookalike & Predictive Audience Building",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-247",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "F. Lookalike & Predictive Audience Building",
+      "category": "insufficient_history",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "requires multi-week trend/history beyond the single governed week"
+    },
+    {
+      "metric_id": "SW-248",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "F. Lookalike & Predictive Audience Building",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-249",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "F. Lookalike & Predictive Audience Building",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-250",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "G. Inventory-Driven Opportunities",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "fundamentally an appointments/deals/inventory/marketing/CRM metric — not this communication family"
+    },
+    {
+      "metric_id": "SW-251",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "G. Inventory-Driven Opportunities",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-252",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "G. Inventory-Driven Opportunities",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-253",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "G. Inventory-Driven Opportunities",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-254",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "G. Inventory-Driven Opportunities",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-255",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "G. Inventory-Driven Opportunities",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-256",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "H. Life-Event & Trigger Marketing",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-257",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "H. Life-Event & Trigger Marketing",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-258",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "H. Life-Event & Trigger Marketing",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-259",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "H. Life-Event & Trigger Marketing",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-260",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "H. Life-Event & Trigger Marketing",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-261",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "I. Timing & Cadence Optimization",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-262",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "I. Timing & Cadence Optimization",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-263",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "I. Timing & Cadence Optimization",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-264",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "I. Timing & Cadence Optimization",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-265",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "I. Timing & Cadence Optimization",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-266",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "I. Timing & Cadence Optimization",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-267",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "J. Cross-Rooftop / Group Opportunities (Serra & Columbia)",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-268",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "J. Cross-Rooftop / Group Opportunities (Serra & Columbia)",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-269",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "J. Cross-Rooftop / Group Opportunities (Serra & Columbia)",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-270",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "J. Cross-Rooftop / Group Opportunities (Serra & Columbia)",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-271",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "J. Cross-Rooftop / Group Opportunities (Serra & Columbia)",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-272",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "K. External Data Enrichment Opportunities",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-273",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "K. External Data Enrichment Opportunities",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-274",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "K. External Data Enrichment Opportunities",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-275",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "K. External Data Enrichment Opportunities",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-276",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "K. External Data Enrichment Opportunities",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Outside governed boundary"
+    },
+    {
+      "metric_id": "SW-277",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "L. Pattern-Based Opportunity Alerts (Watchdog Rules)",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-278",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "L. Pattern-Based Opportunity Alerts (Watchdog Rules)",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-279",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "L. Pattern-Based Opportunity Alerts (Watchdog Rules)",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-280",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "L. Pattern-Based Opportunity Alerts (Watchdog Rules)",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-281",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "L. Pattern-Based Opportunity Alerts (Watchdog Rules)",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-282",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "L. Pattern-Based Opportunity Alerts (Watchdog Rules)",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-283",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "L. Pattern-Based Opportunity Alerts (Watchdog Rules)",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-284",
+      "section": "PART 2 — Opportunity Mining: Signals to Attract & Reactivate Customers",
+      "subsection": "L. Pattern-Based Opportunity Alerts (Watchdog Rules)",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-285",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Communication-Specific Models to Deploy",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-286",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Communication-Specific Models to Deploy",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-287",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Communication-Specific Models to Deploy",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-288",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Communication-Specific Models to Deploy",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    },
+    {
+      "metric_id": "SW-289",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Communication-Specific Models to Deploy",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-290",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Communication-Specific Models to Deploy",
+      "category": "nlp_content_capable_pending",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "requires Message Content NLP/sentiment/deterministic content scoring (not yet agreed)"
+    },
+    {
+      "metric_id": "SW-291",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Opportunity Scoring Models",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-292",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Opportunity Scoring Models",
+      "category": "other_source_or_join",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "catalog acquisition_class = Separate external source required"
+    },
+    {
+      "metric_id": "SW-293",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Opportunity Scoring Models",
+      "category": "unsupported_field",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "no field in this family supports the metric definition"
+    },
+    {
+      "metric_id": "SW-294",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Opportunity Scoring Models",
+      "category": "outside_sales_boundary",
+      "requires_ratified_threshold": false,
+      "evaluated": false,
+      "basis": "section or condition references Service / compliance / cross-rooftop boundary"
+    },
+    {
+      "metric_id": "SW-295",
+      "section": "PART 3 — Suggested Semantic Watchdog Add-ons",
+      "subsection": "Opportunity Scoring Models",
+      "category": "definition_compatible_now",
+      "requires_ratified_threshold": true,
+      "evaluated": false,
+      "basis": "communication-structural signal (call/text/email/timing/cadence) computable from this family; threshold/population choice still needs ratification"
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "artifact": "enhanced-comm-structured-candidates",
+  "family": "enhanced_sales_communication_log_weekly",
+  "gate": "4C1",
+  "status": "PROPOSED — none promoted this gate; every candidate carries at least one semantic choice requiring controller ratification",
+  "promoted_this_gate": 0,
+  "rule": "A candidate is promotable only when its definition is verbatim/structurally forced by the catalog AND byte-recomputable without an invented threshold or population choice. Every candidate below fails that test on at least one flagged choice, so all remain PROPOSED.",
+  "aggregate_safety": "All proposed evaluation_detail is aggregate-only (counts/shares/distributions). Per-rep and per-thread grouping uses non-reversible goal-scoped pseudonyms; no Customer/User/Message Content/name is ever persisted. Business-local timestamps only.",
+  "candidates": [
+    {
+      "metric_id": "SW-019",
+      "condition": "Rep logs fewer than 3 outbound calls/day for 2 consecutive days.",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "family_fields": [
+        "User (rep pseudonym)",
+        "Direction",
+        "Comm Channel",
+        "Activity Date"
+      ],
+      "population": "Sales reps (User -> rep pseudonym) present in the governed week",
+      "numerator": "reps with at least one pair of adjacent calendar days that BOTH have < 3 outbound Logged Calls",
+      "denominator": "reps in the population",
+      "time_window_rule": "per calendar day in America/New_York across 2026-08-24..2026-08-30; 'consecutive' = adjacent calendar days",
+      "minimum_sample": "PROPOSED: a rep must appear on >= 2 days in the week to be eligible (else insufficient signal)",
+      "threshold_trigger": "< 3 outbound Logged Calls/day on 2 consecutive days (catalog values 3 and 2 are verbatim)",
+      "missing_zero_behavior": "a day on which a rep has zero rows yields zero outbound calls; whether that counts as a '<3' firing day vs an off/absent day is a SEMANTIC CHOICE",
+      "aggregate_safe_evaluation_detail": {
+        "reps_in_population": "int",
+        "reps_triggered": "int",
+        "triggered_share": "ratio_0_1",
+        "per_rep_low_call_day_distribution": "histogram of low-call-day counts (no names)"
+      },
+      "baseline_basis": "operational_target (thresholds 3 calls, 2 days are catalog-verbatim)",
+      "semantic_choices_for_ratification": [
+        "Does a rep-day with zero activity count as a '<3 outbound calls' firing day, or is the rep treated as off/absent and excluded?",
+        "Rep population definition (all reps with any row, vs reps expected to be staffed).",
+        "Do weekend days (Sat 08-29 handling / Sun 08-30) count toward 'consecutive days'?",
+        "Minimum days-present eligibility."
+      ],
+      "promotable_now": false,
+      "why_not": "the zero-activity-day and population definitions are not verbatim-forced by the catalog"
+    },
+    {
+      "metric_id": "SW-022",
+      "condition": "Rep's text-to-call ratio exceeds 5:1 (avoiding voice contact).",
+      "section": "3. Sales Rep Activity & Communication Behavior",
+      "family_fields": [
+        "User (rep pseudonym)",
+        "Comm Channel",
+        "Direction",
+        "Activity Date"
+      ],
+      "population": "reps with at least the minimum call sample (see choices)",
+      "numerator": "reps whose (Text count / Logged Call count) > 5",
+      "denominator": "reps in the population",
+      "time_window_rule": "whole governed week 2026-08-24..2026-08-30 (America/New_York)",
+      "minimum_sample": "PROPOSED: rep must have >= 5 Logged Calls to avoid a small-denominator / divide-by-zero artefact",
+      "threshold_trigger": "ratio > 5 (catalog 5:1 verbatim)",
+      "missing_zero_behavior": "a rep with 0 Logged Calls has an undefined/infinite ratio; excluded unless the minimum-call rule is met (missing is not zero)",
+      "aggregate_safe_evaluation_detail": {
+        "reps_in_population": "int",
+        "reps_triggered": "int",
+        "triggered_share": "ratio_0_1",
+        "max_rep_text_to_call_ratio": "number"
+      },
+      "baseline_basis": "operational_target (ratio 5 catalog-verbatim)",
+      "semantic_choices_for_ratification": [
+        "Minimum Logged Call denominator to be eligible (small-sample guard).",
+        "Directionality: outbound-only Texts/Calls vs both directions.",
+        "Whole-week aggregation vs per-day."
+      ],
+      "promotable_now": false,
+      "why_not": "minimum-sample and directionality choices are not verbatim-forced"
+    },
+    {
+      "metric_id": "SW-076",
+      "condition": "Response latency between customer and rep grows across a thread (fade-out).",
+      "section": "9. Customer Communication Sentiment & Content",
+      "family_fields": [
+        "Lead ID (thread pseudonym)",
+        "Direction",
+        "Activity Date",
+        "Comm Channel"
+      ],
+      "population": "threads (Lead ID) with >= 3 alternating customer->rep latency measurements",
+      "numerator": "threads whose successive customer->rep response latencies are increasing (fade-out)",
+      "denominator": "eligible threads",
+      "time_window_rule": "activities ordered by Activity Date within the week; latency = time from a customer Inbound to the next rep Outbound",
+      "minimum_sample": "PROPOSED: >= 3 latency measurements per thread to assess a trend",
+      "threshold_trigger": "NONE in catalog — 'grows' is a trend, not a fixed threshold",
+      "missing_zero_behavior": "threads with < 3 latencies are ineligible (not a zero)",
+      "aggregate_safe_evaluation_detail": {
+        "eligible_threads": "int",
+        "fade_out_threads": "int",
+        "fade_out_share": "ratio_0_1"
+      },
+      "baseline_basis": "operational_target PENDING — no catalog threshold; 'grows' must be defined",
+      "semantic_choices_for_ratification": [
+        "Definition of 'grows' (strictly monotonic increase vs last>first vs positive regression slope).",
+        "Business-hours vs wall-clock latency.",
+        "Minimum latency measurements per thread."
+      ],
+      "promotable_now": false,
+      "why_not": "no catalog threshold and 'grows across a thread' is a trend definition requiring ratification"
+    },
+    {
+      "metric_id": "SW-132",
+      "condition": "Customer's last message unanswered >4 business hours during active thread.",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications / A. Response Behavior & Cadence Failures",
+      "family_fields": [
+        "Lead ID (thread pseudonym)",
+        "Direction",
+        "Activity Date"
+      ],
+      "population": "active threads (definition pending) with a trailing customer Inbound",
+      "numerator": "threads whose final customer Inbound has no rep Outbound within 4 business hours",
+      "denominator": "active threads",
+      "time_window_rule": "4 BUSINESS hours after the customer's last Inbound (catalog value 4 verbatim)",
+      "minimum_sample": "n/a (per-thread event)",
+      "threshold_trigger": "> 4 business hours (catalog verbatim)",
+      "missing_zero_behavior": "a thread with no trailing unanswered inbound does not fire; a thread still open at capture end is a boundary case (choice)",
+      "aggregate_safe_evaluation_detail": {
+        "active_threads": "int",
+        "unanswered_over_4bh_threads": "int",
+        "rate": "ratio_0_1"
+      },
+      "baseline_basis": "operational_target (4 business hours catalog-verbatim) — but business-hours calendar is external",
+      "semantic_choices_for_ratification": [
+        "BUSINESS-HOURS CALENDAR: per-rooftop open/close times are NOT in this family and must be supplied/ratified.",
+        "Definition of 'active thread'.",
+        "Handling of threads still open at the capture boundary (right-censoring)."
+      ],
+      "promotable_now": false,
+      "why_not": "business-hours calendar is not carried by this family; 'active thread' and censoring are choices"
+    },
+    {
+      "metric_id": "SW-134",
+      "condition": "Response gap widens across a thread (2h -> 8h -> 24h fade-out pattern).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications / A. Response Behavior & Cadence Failures",
+      "family_fields": [
+        "Lead ID (thread pseudonym)",
+        "Direction",
+        "Activity Date"
+      ],
+      "population": "threads with >= 3 successive rep response gaps",
+      "numerator": "threads whose successive response gaps widen",
+      "denominator": "eligible threads",
+      "time_window_rule": "successive rep response gaps ordered by Activity Date",
+      "minimum_sample": "PROPOSED: >= 3 gaps",
+      "threshold_trigger": "the 2h/8h/24h figures are ILLUSTRATIVE, not a fixed rule",
+      "missing_zero_behavior": "threads with < 3 gaps ineligible",
+      "aggregate_safe_evaluation_detail": {
+        "eligible_threads": "int",
+        "widening_threads": "int",
+        "widening_share": "ratio_0_1"
+      },
+      "baseline_basis": "operational_target PENDING — no fixed threshold; 'widens' must be defined",
+      "semantic_choices_for_ratification": [
+        "Is '2h->8h->24h' a literal step ladder or any monotonic widening?",
+        "Business-hours vs wall-clock gaps.",
+        "Minimum successive gaps."
+      ],
+      "promotable_now": false,
+      "why_not": "the widening pattern is illustrative, not a byte-forced threshold"
+    },
+    {
+      "metric_id": "SW-137",
+      "condition": "Rep replies to text with email (channel mismatch — customer disengages).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications / A. Response Behavior & Cadence Failures",
+      "family_fields": [
+        "Lead ID (thread pseudonym)",
+        "Direction",
+        "Comm Channel",
+        "Activity Date"
+      ],
+      "population": "threads containing at least one customer Inbound Text",
+      "numerator": "reply events where the first rep Outbound after a customer Inbound Text is an Email",
+      "denominator": "customer Inbound Text events that received any rep reply",
+      "time_window_rule": "'reply' = the next rep Outbound in the same thread after the customer Inbound Text (optional max-window pending)",
+      "minimum_sample": "n/a (per-event)",
+      "threshold_trigger": "any channel-mismatch reply (trigger on count > 0 is one option)",
+      "missing_zero_behavior": "an Inbound Text with no subsequent rep Outbound is not a reply (excluded, not zero)",
+      "aggregate_safe_evaluation_detail": {
+        "inbound_text_with_reply": "int",
+        "email_reply_mismatch": "int",
+        "mismatch_rate": "ratio_0_1"
+      },
+      "baseline_basis": "operational_target PENDING (trigger definition)",
+      "semantic_choices_for_ratification": [
+        "Definition of 'reply' = strictly the next rep Outbound vs any rep Outbound within a window.",
+        "Optional maximum reply window.",
+        "Event-level vs thread-level counting and the trigger threshold."
+      ],
+      "promotable_now": false,
+      "why_not": "the 'reply' adjacency/window and trigger are choices, not verbatim-forced"
+    },
+    {
+      "metric_id": "SW-138",
+      "condition": "Multiple rapid-fire messages from rep with no customer reply in between (spammy cadence).",
+      "section": "PART 1 — Red Flags in Sales-to-Customer Communications / A. Response Behavior & Cadence Failures",
+      "family_fields": [
+        "Lead ID (thread pseudonym)",
+        "Direction",
+        "Activity Date",
+        "Comm Channel"
+      ],
+      "population": "threads with consecutive rep Outbound runs",
+      "numerator": "threads with a run of >= N consecutive rep Outbound messages (no customer Inbound between) within a time window",
+      "denominator": "threads with any rep Outbound",
+      "time_window_rule": "consecutive rep Outbound with no intervening customer Inbound, within a 'rapid-fire' window",
+      "minimum_sample": "n/a",
+      "threshold_trigger": "N ('multiple') and the window ('rapid-fire') are NOT specified in the catalog",
+      "missing_zero_behavior": "threads with no rep-outbound run do not fire",
+      "aggregate_safe_evaluation_detail": {
+        "threads_with_rep_runs": "int",
+        "spammy_threads": "int",
+        "spammy_share": "ratio_0_1",
+        "max_consecutive_rep_run": "int"
+      },
+      "baseline_basis": "operational_target PENDING (N and window undefined in catalog)",
+      "semantic_choices_for_ratification": [
+        "N = how many consecutive rep messages counts as 'multiple/rapid-fire'.",
+        "The 'rapid-fire' time window.",
+        "Whether a run must be same-channel."
+      ],
+      "promotable_now": false,
+      "why_not": "neither the run count N nor the rapid-fire window is specified by the catalog"
+    }
+  ]
+}

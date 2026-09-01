@@ -1,0 +1,207 @@
+{
+  "artifact": "gate4c1-comm-weekly-admission",
+  "family": "enhanced_sales_communication_log_weekly",
+  "contract_state": "proposed_extension_pending_consumer_acceptance",
+  "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+  "reporting_period": {
+    "start": "2026-08-24",
+    "end": "2026-08-30",
+    "timezone": "America/New_York"
+  },
+  "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+  "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog",
+  "note": "NON-PII admission proof. Raw CSVs remain restricted in /tmp and are never committed; no Customer/User/Message Content/name is persisted. This gate admits the family + proves provenance/schema/Sales-only; it promotes NO SW metric.",
+  "rooftops": [
+    {
+      "aggregates": {
+        "family": "enhanced_sales_communication_log_weekly",
+        "profile": "serra-honda",
+        "dealer_id": "21043",
+        "rows": 1530,
+        "columns": 24,
+        "unique_communication_ids": 1530,
+        "unique_lead_ids": 386,
+        "unique_reps": 12,
+        "direction_counts": {
+          "Outbound": 1335,
+          "Inbound": 195
+        },
+        "channel_counts": {
+          "Logged Call": 540,
+          "Text": 756,
+          "Email": 234
+        },
+        "comm_type_counts": {
+          "Sales": 1530
+        },
+        "lead_type_counts": {
+          "Referral": 1,
+          "Internet": 1164,
+          "Walk-in": 102,
+          "Phone": 238,
+          "Import": 25
+        },
+        "interaction_result_counts": {
+          "Not Contacted": 309,
+          "Answering Machine": 109,
+          "": 941,
+          "Contacted": 122,
+          "Email Read": 49
+        },
+        "service_parts_signal_rows": 0,
+        "wrong_dealer_rows": 0,
+        "observed_activity_min": "2026-08-24T08:49:00-04:00",
+        "observed_activity_max": "2026-08-29T18:55:00-04:00",
+        "sales_only_proof": "1530 rows: Comm Type=Sales on every row; one rooftop Dealer ID=21043; zero Service/Parts tokens across 11 categorical columns (incl User Group); zero wrong-dealer rows; 1530 unique Communication IDs; all Activity Dates within 2026-08-24..2026-08-30 (America/New_York)"
+      },
+      "lineage": {
+        "family": "enhanced_sales_communication_log_weekly",
+        "profile": "serra-honda",
+        "dealer_id": "21043",
+        "dealer_name": "Serra Honda of Sylacauga",
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21043",
+        "raw_sha256": "25ac45f9e27c72efede545e218682b9fd7d6cb20800967a31061293e68c15adc",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "reporting_period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30",
+          "timezone": "America/New_York"
+        },
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog",
+        "captured_at": "2026-09-01T04:36:18-04:00",
+        "filter_evidence_sha256": "14fe40ed357cedb48dc81a8fb81087ce1ee615b55f67ece04e1a110d9c866d1c",
+        "applied_result_evidence_sha256": "95d83aa4fa2b1639045dc06692c1416d73a7a94aee6b17adf70d8af9b3d04542",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada"
+      }
+    },
+    {
+      "aggregates": {
+        "family": "enhanced_sales_communication_log_weekly",
+        "profile": "serra-nissan",
+        "dealer_id": "21044",
+        "rows": 760,
+        "columns": 24,
+        "unique_communication_ids": 760,
+        "unique_lead_ids": 237,
+        "unique_reps": 13,
+        "direction_counts": {
+          "Outbound": 693,
+          "Inbound": 67
+        },
+        "channel_counts": {
+          "Text": 281,
+          "Logged Call": 325,
+          "Email": 154
+        },
+        "comm_type_counts": {
+          "Sales": 760
+        },
+        "lead_type_counts": {
+          "Internet": 621,
+          "Walk-in": 34,
+          "Phone": 93,
+          "Import": 12
+        },
+        "interaction_result_counts": {
+          "": 420,
+          "Not Contacted": 271,
+          "Contacted": 53,
+          "Email Read": 15,
+          "Answering Machine": 1
+        },
+        "service_parts_signal_rows": 0,
+        "wrong_dealer_rows": 0,
+        "observed_activity_min": "2026-08-24T08:56:00-04:00",
+        "observed_activity_max": "2026-08-30T10:59:00-04:00",
+        "sales_only_proof": "760 rows: Comm Type=Sales on every row; one rooftop Dealer ID=21044; zero Service/Parts tokens across 11 categorical columns (incl User Group); zero wrong-dealer rows; 760 unique Communication IDs; all Activity Dates within 2026-08-24..2026-08-30 (America/New_York)"
+      },
+      "lineage": {
+        "family": "enhanced_sales_communication_log_weekly",
+        "profile": "serra-nissan",
+        "dealer_id": "21044",
+        "dealer_name": "Serra Nissan of Sylacauga",
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21044",
+        "raw_sha256": "26adece2cb6c385cff1bddb9dd9b7b611dc04c883d709c57ae1f1a2a6f6ba0a5",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "reporting_period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30",
+          "timezone": "America/New_York"
+        },
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog",
+        "captured_at": "2026-09-01T04:27:58-04:00",
+        "filter_evidence_sha256": "1d7566cc18b921f53adfd127626cc6d886198e2c78a4a3fc72d2d5dda0b3b49c",
+        "applied_result_evidence_sha256": "cc738694c7ae8bd58fb8f6abadd5fac9c40eebc4fda6cc49d9d37b0ffe7b2bdd",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada"
+      }
+    },
+    {
+      "aggregates": {
+        "family": "enhanced_sales_communication_log_weekly",
+        "profile": "tony-serra-ford",
+        "dealer_id": "21047",
+        "rows": 526,
+        "columns": 24,
+        "unique_communication_ids": 526,
+        "unique_lead_ids": 199,
+        "unique_reps": 10,
+        "direction_counts": {
+          "Outbound": 467,
+          "Inbound": 59
+        },
+        "channel_counts": {
+          "Text": 206,
+          "Logged Call": 231,
+          "Email": 89
+        },
+        "comm_type_counts": {
+          "Sales": 526
+        },
+        "lead_type_counts": {
+          "Internet": 403,
+          "Walk-in": 18,
+          "Phone": 94,
+          "Import": 8,
+          "Referral": 3
+        },
+        "interaction_result_counts": {
+          "": 283,
+          "Contacted": 61,
+          "Not Contacted": 154,
+          "Email Read": 12,
+          "Answering Machine": 16
+        },
+        "service_parts_signal_rows": 0,
+        "wrong_dealer_rows": 0,
+        "observed_activity_min": "2026-08-24T08:41:00-04:00",
+        "observed_activity_max": "2026-08-30T15:18:00-04:00",
+        "sales_only_proof": "526 rows: Comm Type=Sales on every row; one rooftop Dealer ID=21047; zero Service/Parts tokens across 11 categorical columns (incl User Group); zero wrong-dealer rows; 526 unique Communication IDs; all Activity Dates within 2026-08-24..2026-08-30 (America/New_York)"
+      },
+      "lineage": {
+        "family": "enhanced_sales_communication_log_weekly",
+        "profile": "tony-serra-ford",
+        "dealer_id": "21047",
+        "dealer_name": "Tony Serra Ford",
+        "capture_id": "VIN-COMM-WEEKLY-20260901-21047",
+        "raw_sha256": "0d96f848df86abbee1129e9d2cf9fa5655a1321b25afc153c3b04e1c8afea467",
+        "manifest_sha256": "54fac701e85fa643fd84b188f2d963c626124d766eb31fff7f37244407d7f4c5",
+        "reporting_period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30",
+          "timezone": "America/New_York"
+        },
+        "source_url": "https://vinsolutions.app.coxautoinc.com/vinconnect/",
+        "report_url": "https://reporting-vinsolutions.app.coxautoinc.com/VinAnalyticsDashboards/rdPage.aspx?rdReport=Communication.StandAlone.CommunicationsLog",
+        "captured_at": "2026-09-01T04:40:56-04:00",
+        "filter_evidence_sha256": "65c0aac58defcb65903bab03026e0fdbd897f794478243a23918cc2bbb5c862b",
+        "applied_result_evidence_sha256": "ac47b9fa64ac712e89fd1607b49a39e407cc8a20b2decbe720aac9199ee58641",
+        "transform_version": "comm-weekly-derive-v1",
+        "transform_hash": "a9972ca936815ada"
+      }
+    }
+  ]
+}
