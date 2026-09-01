@@ -33,7 +33,7 @@
     {
       "metric_id": "SW-012",
       "cluster": "A",
-      "label": "Leads left untouched past 30 minutes",
+      "label": "Leads with no tracked response within 30 minutes",
       "by_dealer": [
         {
           "dealer_id": "21043",

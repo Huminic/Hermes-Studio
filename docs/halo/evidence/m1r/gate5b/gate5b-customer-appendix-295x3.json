@@ -303,7 +303,7 @@
       "metric_id": "SW-012",
       "dealer_id": "21043",
       "status": "evaluated",
-      "measure": "Leads left untouched past 30 minutes",
+      "measure": "Leads with no tracked response within 30 minutes",
       "value": "19.7%",
       "basis_id": "OT/A",
       "target": "0%",
@@ -319,7 +319,7 @@
       "metric_id": "SW-012",
       "dealer_id": "21044",
       "status": "evaluated",
-      "measure": "Leads left untouched past 30 minutes",
+      "measure": "Leads with no tracked response within 30 minutes",
       "value": "13.7%",
       "basis_id": "OT/A",
       "target": "0%",
@@ -335,7 +335,7 @@
       "metric_id": "SW-012",
       "dealer_id": "21047",
       "status": "evaluated",
-      "measure": "Leads left untouched past 30 minutes",
+      "measure": "Leads with no tracked response within 30 minutes",
       "value": "3.1%",
       "basis_id": "OT/A",
       "target": "0%",
@@ -2151,121 +2151,121 @@
       "metric_id": "SW-079",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-079",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-079",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-080",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-080",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-080",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-081",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-081",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-081",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-082",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-082",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-082",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-083",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-083",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-083",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-084",
@@ -2607,193 +2607,193 @@
       "metric_id": "SW-097",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Data and CRM hygiene",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-097",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Data and CRM hygiene",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-097",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Data and CRM hygiene",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-098",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Data and CRM hygiene",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-098",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Data and CRM hygiene",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-098",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Data and CRM hygiene",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-099",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-099",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-099",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-100",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-100",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-100",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-101",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-101",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-101",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-102",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-102",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-102",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-103",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-103",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-103",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-104",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-104",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-104",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Compliance and call-center coverage",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-105",
@@ -3111,25 +3111,25 @@
       "metric_id": "SW-118",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Cross-functional and advanced signals",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-118",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Cross-functional and advanced signals",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-118",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Cross-functional and advanced signals",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-119",
@@ -4863,169 +4863,169 @@
       "metric_id": "SW-186",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-186",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-186",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-187",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-187",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-187",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-188",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-188",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-188",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-189",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-189",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-189",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-190",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-190",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-190",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-191",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-191",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-191",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-192",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-192",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-192",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-193",
@@ -5175,25 +5175,25 @@
       "metric_id": "SW-199",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-199",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-199",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Conversation quality",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-200",
@@ -5631,25 +5631,25 @@
       "metric_id": "SW-218",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-218",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-218",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-219",
@@ -5727,193 +5727,193 @@
       "metric_id": "SW-222",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-222",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-222",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-223",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-223",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-223",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-224",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-224",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-224",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-225",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-225",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-225",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-226",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-226",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-226",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-227",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-227",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-227",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-228",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-228",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-228",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-229",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-229",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-229",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-230",
@@ -6711,25 +6711,25 @@
       "metric_id": "SW-263",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-263",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-263",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-264",
@@ -6737,7 +6737,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-264",
@@ -6745,7 +6745,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-264",
@@ -6753,7 +6753,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-265",
@@ -6809,7 +6809,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-267",
@@ -6817,7 +6817,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-267",
@@ -6825,7 +6825,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-268",
@@ -6833,7 +6833,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-268",
@@ -6841,7 +6841,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-268",
@@ -6849,7 +6849,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-269",
@@ -6857,7 +6857,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-269",
@@ -6865,7 +6865,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-269",
@@ -6873,55 +6873,55 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-270",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-270",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-270",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-271",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-271",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-271",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-272",
@@ -6929,7 +6929,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-272",
@@ -6937,7 +6937,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-272",
@@ -6945,7 +6945,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-273",
@@ -6953,7 +6953,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-273",
@@ -6961,7 +6961,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-273",
@@ -6969,7 +6969,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-274",
@@ -6977,7 +6977,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-274",
@@ -6985,7 +6985,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-274",
@@ -6993,7 +6993,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-275",
@@ -7001,7 +7001,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-275",
@@ -7009,7 +7009,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-275",
@@ -7017,7 +7017,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-276",
@@ -7025,7 +7025,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-276",
@@ -7033,7 +7033,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-276",
@@ -7041,7 +7041,7 @@
       "status": "not_measured",
       "measure": "Customer reactivation and opportunity mining",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
     },
     {
       "metric_id": "SW-277",
@@ -7095,25 +7095,25 @@
       "metric_id": "SW-279",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-279",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-279",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Customer reactivation and opportunity mining",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-280",
@@ -7455,25 +7455,25 @@
       "metric_id": "SW-294",
       "dealer_id": "21043",
       "status": "not_measured",
-      "measure": "Cross-functional and advanced signals",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-294",
       "dealer_id": "21044",
       "status": "not_measured",
-      "measure": "Cross-functional and advanced signals",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-294",
       "dealer_id": "21047",
       "status": "not_measured",
-      "measure": "Cross-functional and advanced signals",
+      "measure": "Separate operational domain",
       "note": "Not measured this cycle",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics."
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
     },
     {
       "metric_id": "SW-295",

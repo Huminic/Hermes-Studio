@@ -7,7 +7,7 @@
   "executive_narrative": {
     "what_is_working": "On target this period: Median first-response time (business hours); Be-backs vs fresh-ups balance; Leads unassigned past 2 hours; Unfilled personalization tags in messages.",
     "largest_controllable_opportunity": "Appointment no-show rate (Appointment conversion) is the largest controllable opportunity, weighing off-target severity, three-store peer position, and evidence confidence.",
-    "how_evidence_connects": "A healthy median response time sits alongside untouched leads and a below-target set rate: fast average speed is not translating into set appointments because some leads are never worked.",
+    "how_evidence_connects": "A healthy median response time sits alongside leads with no tracked response within the first 30 minutes and a below-target set rate: fast average speed is not translating into set appointments while some leads get no tracked response in the first 30 minutes.",
     "claim_separation": "Facts are measured values; implications are inferences from ≥2 facts; hypotheses need more evidence; actions are recommendations."
   },
   "clusters": [
@@ -25,7 +25,7 @@
         {
           "metric_id": "SW-012",
           "claim": "fact",
-          "text": "Leads left untouched past 30 minutes: 3.1% (target at or below 0%; off target; strongest of the three rooftops).",
+          "text": "Leads with no tracked response within 30 minutes: 3.1% (target at or below 0%; off target; strongest of the three rooftops).",
           "rating": "breach",
           "rank": 1
         },
@@ -51,7 +51,7 @@
           "rank": 2
         }
       ],
-      "narrative": "The store-average first-response time is 4.5 min, which reads on target — but that average hides inconsistency: 3.1% of business-hours leads were left untouched past 30 minutes and rep first-response outliers are off target. A healthy median can coexist with leads that never get worked, so average speed alone overstates coverage.",
+      "narrative": "The store-average first-response time is 4.5 min, which reads on target — but that average hides inconsistency: 3.1% of business-hours leads had no tracked response within the first 30 minutes and rep first-response outliers are off target. A healthy median can coexist with leads that get no tracked response within the first 30 minutes, so average speed alone overstates coverage.",
       "implication": {
         "claim": "inference",
         "text": "Coaching to the store average would miss the real gap; the opportunity is even coverage of every lead, not a faster headline median.",
@@ -60,16 +60,16 @@
       "hypotheses": [
         {
           "claim": "hypothesis",
-          "text": "Untouched leads may concentrate in specific hours, sources, or individual reps rather than being spread evenly; a per-rep/per-hour view would confirm.",
+          "text": "Leads with no tracked response in the first 30 minutes may concentrate in specific hours, sources, or individual reps rather than being spread evenly; a per-rep/per-hour view would confirm.",
           "cites": ["SW-012", "SW-015"]
         }
       ],
       "actions": [
         {
-          "action": "Stand up a daily untouched-lead sweep so no business-hours lead passes 30 minutes without a first response.",
+          "action": "Stand up a daily sweep of leads with no tracked response yet, so no business-hours lead passes 30 minutes without a tracked first response.",
           "owner": "Sales Manager",
           "cadence": "daily",
-          "success_measure": "untouched-past-30-minutes rate trending to zero",
+          "success_measure": "no-tracked-response-within-30-minutes rate trending to zero",
           "effort": "low",
           "impact": "high"
         }
@@ -306,7 +306,7 @@
       "narrative": "Showroom execution this period: be-backs vs fresh-ups is 27.3% (on target), test-drive completion is 0% (off target), and lead assignment past 2 hours is 0% (on target). A zero test-drive value may reflect logging rather than activity — it does not prove no test-drives happened.",
       "implication": {
         "claim": "inference",
-        "text": "Lead ownership is clean, so any follow-through gap sits with showroom execution rather than assignment.",
+        "text": "Assignment timeliness passed this specific two-hour check this period; later ownership and execution quality remain separate questions this report does not measure, so a soft follow-through signal is not attributed to any single cause here.",
         "cites": ["SW-090", "SW-046"]
       },
       "hypotheses": [
@@ -332,7 +332,7 @@
     {
       "id": "speed-masks-then-conversion-gap",
       "claim": "inference",
-      "text": "A healthy median response time sits alongside untouched leads and a below-target set rate: fast average speed is not translating into set appointments because some leads are never worked.",
+      "text": "A healthy median response time sits alongside leads with no tracked response within the first 30 minutes and a below-target set rate: fast average speed is not translating into set appointments while some leads get no tracked response in the first 30 minutes.",
       "cites": ["SW-011", "SW-012", "SW-031"]
     },
     {
@@ -343,8 +343,8 @@
     },
     {
       "id": "ownership-vs-followthrough",
-      "claim": "inference",
-      "text": "Lead ownership is clean while showroom follow-through is soft, which points the opportunity at execution after assignment rather than at who owns the lead.",
+      "claim": "hypothesis",
+      "text": "Assignment timeliness passed its two-hour check while showroom follow-through is soft. One hypothesis worth testing is that the opportunity lies in execution after assignment; this does not rule out assignment quality, which the two-hour check does not measure.",
       "cites": ["SW-090", "SW-046"]
     }
   ],
@@ -392,7 +392,7 @@
     {
       "metric_id": "SW-012",
       "cluster": "A",
-      "label": "Leads left untouched past 30 minutes",
+      "label": "Leads with no tracked response within 30 minutes",
       "rating": "breach",
       "rank": 1,
       "confidence": "medium",

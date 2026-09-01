@@ -372,6 +372,11 @@ async function main(): Promise<void> {
     )
   }
 
+  // Customer-safety sweep over the remaining customer-facing ledgers (bundles/coverage/appendix
+  // are already swept above; the internal audit is intentionally NOT swept).
+  sweepStrings(crossDealerOpps, safeCheck)
+  sweepStrings([...allNotif.values()], safeCheck)
+
   // ── Emit ──
   fs.mkdirSync(OUT, { recursive: true })
   const write = async (name: string, obj: unknown): Promise<string> => {

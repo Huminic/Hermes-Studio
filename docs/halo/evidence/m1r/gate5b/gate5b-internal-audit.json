@@ -66,7 +66,7 @@
     },
     {
       "metric_id": "SW-012",
-      "label": "Leads left untouched past 30 minutes",
+      "label": "Leads with no tracked response within 30 minutes",
       "dealer_id": "21043",
       "value": 0.19736842105263158,
       "unit": "ratio_0_1",
@@ -86,7 +86,7 @@
     },
     {
       "metric_id": "SW-012",
-      "label": "Leads left untouched past 30 minutes",
+      "label": "Leads with no tracked response within 30 minutes",
       "dealer_id": "21044",
       "value": 0.13725490196078433,
       "unit": "ratio_0_1",
@@ -106,7 +106,7 @@
     },
     {
       "metric_id": "SW-012",
-      "label": "Leads left untouched past 30 minutes",
+      "label": "Leads with no tracked response within 30 minutes",
       "dealer_id": "21047",
       "value": 0.03125,
       "unit": "ratio_0_1",

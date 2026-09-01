@@ -27,7 +27,7 @@ export type ClaimLayer = 'fact' | 'inference' | 'hypothesis' | 'recommendation'
 /** Customer-friendly labels for the 17 evaluated metrics (never the raw CRM/condition text). */
 export const METRIC_LABEL: Record<string, string> = {
   'SW-011': 'Median first-response time (business hours)',
-  'SW-012': 'Leads left untouched past 30 minutes',
+  'SW-012': 'Leads with no tracked response within 30 minutes',
   'SW-015': 'Rep first-response outliers vs the store median',
   'SW-021': 'Templated messages with no personalization',
   'SW-022': 'Text-vs-call balance (voice avoidance)',
@@ -243,8 +243,8 @@ function clusterA(m: Record<string, MetricFact>): Built {
     median.rating === 'healthy' &&
     (untouched.rating !== 'healthy' || outliers.rating !== 'healthy')
   const narrative = masks
-    ? `The store-average first-response time is ${median.value_display}, which reads on target — but that average hides inconsistency: ${pct(untouched.value)} of business-hours leads were left untouched past 30 minutes and rep first-response outliers are ${ratingWord(outliers.rating)}. A healthy median can coexist with leads that never get worked, so average speed alone overstates coverage.`
-    : `First-response speed is ${median.value_display} (${ratingWord(median.rating)}); untouched-lead rate is ${pct(untouched.value)} and rep outliers are ${ratingWord(outliers.rating)}. Speed and consistency are moving together this period.`
+    ? `The store-average first-response time is ${median.value_display}, which reads on target — but that average hides inconsistency: ${pct(untouched.value)} of business-hours leads had no tracked response within the first 30 minutes and rep first-response outliers are ${ratingWord(outliers.rating)}. A healthy median can coexist with leads that get no tracked response within the first 30 minutes, so average speed alone overstates coverage.`
+    : `First-response speed is ${median.value_display} (${ratingWord(median.rating)}); the no-tracked-response-within-30-minutes rate is ${pct(untouched.value)} and rep outliers are ${ratingWord(outliers.rating)}. Speed and consistency are moving together this period.`
   return {
     narrative,
     implication: {
@@ -257,7 +257,7 @@ function clusterA(m: Record<string, MetricFact>): Built {
     hypotheses: [
       {
         claim: 'hypothesis',
-        text: 'Untouched leads may concentrate in specific hours, sources, or individual reps rather than being spread evenly; a per-rep/per-hour view would confirm.',
+        text: 'Leads with no tracked response in the first 30 minutes may concentrate in specific hours, sources, or individual reps rather than being spread evenly; a per-rep/per-hour view would confirm.',
         cites: ['SW-012', 'SW-015'],
       },
     ],
@@ -265,10 +265,11 @@ function clusterA(m: Record<string, MetricFact>): Built {
       untouched.rating !== 'healthy'
         ? {
             action:
-              'Stand up a daily untouched-lead sweep so no business-hours lead passes 30 minutes without a first response.',
+              'Stand up a daily sweep of leads with no tracked response yet, so no business-hours lead passes 30 minutes without a tracked first response.',
             owner: 'Sales Manager',
             cadence: 'daily',
-            success_measure: 'untouched-past-30-minutes rate trending to zero',
+            success_measure:
+              'no-tracked-response-within-30-minutes rate trending to zero',
             effort: 'low' as const,
             impact: 'high' as const,
           }
@@ -277,7 +278,8 @@ function clusterA(m: Record<string, MetricFact>): Built {
               'Keep the current first-response routine and spot-check outliers weekly.',
             owner: 'Sales Manager',
             cadence: 'weekly',
-            success_measure: 'untouched rate stays at zero',
+            success_measure:
+              'no-tracked-response-within-30-minutes rate stays at zero',
             effort: 'low' as const,
             impact: 'medium' as const,
           },
@@ -397,8 +399,8 @@ function clusterD(m: Record<string, MetricFact>): Built {
       claim: 'inference',
       text:
         unassigned.rating === 'healthy'
-          ? 'Lead ownership is clean, so any follow-through gap sits with showroom execution rather than assignment.'
-          : 'Assignment gaps and showroom follow-through are both in play; fix ownership first so follow-through has an owner.',
+          ? 'Assignment timeliness passed this specific two-hour check this period; later ownership and execution quality remain separate questions this report does not measure, so a soft follow-through signal is not attributed to any single cause here.'
+          : 'Assignment timeliness and showroom follow-through are both worth attention this period.',
       cites: ['SW-090', 'SW-046'],
     },
     hypotheses: [
@@ -445,7 +447,7 @@ export function crossClusterInteractions(
     out.push({
       id: 'speed-masks-then-conversion-gap',
       claim: 'inference',
-      text: 'A healthy median response time sits alongside untouched leads and a below-target set rate: fast average speed is not translating into set appointments because some leads are never worked.',
+      text: 'A healthy median response time sits alongside leads with no tracked response within the first 30 minutes and a below-target set rate: fast average speed is not translating into set appointments while some leads get no tracked response in the first 30 minutes.',
       cites: ['SW-011', 'SW-012', 'SW-031'],
     })
 
@@ -466,8 +468,8 @@ export function crossClusterInteractions(
   )
     out.push({
       id: 'ownership-vs-followthrough',
-      claim: 'inference',
-      text: 'Lead ownership is clean while showroom follow-through is soft, which points the opportunity at execution after assignment rather than at who owns the lead.',
+      claim: 'hypothesis',
+      text: 'Assignment timeliness passed its two-hour check while showroom follow-through is soft. One hypothesis worth testing is that the opportunity lies in execution after assignment; this does not rule out assignment quality, which the two-hour check does not measure.',
       cites: ['SW-090', m['SW-045'].rating !== 'healthy' ? 'SW-045' : 'SW-046'],
     })
 
@@ -731,35 +733,62 @@ const UNLOCK_OF_BLOCKER = (
       step: 'agree the exact definition with management',
     }
   return {
-    unlock: 'a separate governed workspace for service or compliance topics',
-    step: 'route these to the appropriate separate review',
+    unlock: 'a further addition to the accepted weekly Sales export',
+    step: 'confirm the specific Sales data needed, then evaluate',
   }
 }
+
+/** The neutral separate-domain wording for catalog items outside this Sales report (no Service/Parts). */
+const SEPARATE_DOMAIN = {
+  theme: 'Separate operational domain',
+  unlock:
+    'separate-domain reporting would require a separately governed analysis',
+  step: 'commission a separately governed analysis only if this domain is needed',
+} as const
 
 export function coverageExpansion(
   rows: Array<UnresolvedRow>,
 ): Array<CoverageTheme> {
-  const groups = new Map<string, Array<UnresolvedRow>>()
-  for (const r of rows) {
-    const key = `${THEME_OF_SECTION(r.section)}||${UNLOCK_OF_BLOCKER(r.blocker_class).unlock}`
-    const list = groups.get(key) ?? []
-    list.push(r)
-    groups.set(key, list)
+  type Group = {
+    theme: string
+    unlock: string
+    step: string
+    eligible: boolean
+    rows: Array<UnresolvedRow>
   }
-  const themes = [...groups.entries()].map(([key, list]) => {
-    const [theme, unlock] = key.split('||')
-    const step = UNLOCK_OF_BLOCKER(list[0].blocker_class).step
-    return {
-      theme,
-      metric_ids: list.map((r) => r.metric_id).sort(),
-      count: list.length,
-      what_it_would_reveal: `${theme} signals that are not part of this cycle's measured set.`,
-      why_not_this_cycle:
-        'Not measured this cycle — the accepted weekly Sales data does not yet support these specific signals.',
-      next_visibility_unlock: `Next visibility unlock: ${unlock}.`,
-      next_step: `Next step: ${step}.`,
-    }
-  })
+  const groups = new Map<string, Group>()
+  for (const r of rows) {
+    const theme = r.eligible
+      ? THEME_OF_SECTION(r.section)
+      : SEPARATE_DOMAIN.theme
+    const u = r.eligible ? UNLOCK_OF_BLOCKER(r.blocker_class) : SEPARATE_DOMAIN
+    const key = `${theme}||${u.unlock}`
+    const g =
+      groups.get(key) ??
+      ({
+        theme,
+        unlock: u.unlock,
+        step: u.step,
+        eligible: r.eligible,
+        rows: [],
+      } as Group)
+    g.rows.push(r)
+    groups.set(key, g)
+  }
+  const themes = [...groups.values()].map((g) => ({
+    theme: g.theme,
+    metric_ids: g.rows.map((r) => r.metric_id).sort(),
+    count: g.rows.length,
+    // Customer-facing: outside-domain items are described neutrally and never project Service/Parts.
+    what_it_would_reveal: g.eligible
+      ? `${g.theme} signals that are not part of this cycle's measured set.`
+      : 'This metric belongs to a separate operational domain and is not part of this Sales report.',
+    why_not_this_cycle: g.eligible
+      ? 'Not measured this cycle — the accepted weekly Sales data does not yet support these specific signals.'
+      : 'Not measured this cycle — this metric is outside the scope of this Sales report.',
+    next_visibility_unlock: `Next visibility unlock: ${g.unlock}.`,
+    next_step: `Next step: ${g.step}.`,
+  }))
   return themes.sort(
     (a, b) => b.count - a.count || a.theme.localeCompare(b.theme),
   )
@@ -770,7 +799,7 @@ export function coverageExpansion(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const CUSTOMER_FORBIDDEN_5B =
-  /\b(First Contact Attempt|First Customer Contact|Actual Response Time|Originated After Hours|Is Show|Is No Show|rep_token|blocker_class|frozen_e1|quarantin|nlp_content|vinsolutions_custom_reporting|other_source_or_join|unsupported_field|insufficient_history|semantic_definition_pending|withheld|escalation trigger)\b/i
+  /\b(service|parts|First Contact Attempt|First Customer Contact|Actual Response Time|Originated After Hours|Is Show|Is No Show|rep_token|blocker_class|frozen_e1|quarantin|nlp_content|vinsolutions_custom_reporting|other_source_or_join|unsupported_field|insufficient_history|semantic_definition_pending|withheld|escalation trigger)\b/i
 
 export function assertCustomerSafe(label: string, str: string): void {
   assertProjectionSafe(label, str)

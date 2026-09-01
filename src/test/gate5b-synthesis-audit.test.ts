@@ -223,3 +223,83 @@ describe('Gate 5B — customer-safety / privacy guards', () => {
     }
   })
 })
+
+describe('Gate 5B R1 — Sales-only boundary + narrowed SW-012 / SW-090 claims', () => {
+  const CUSTOMER = [
+    BUNDLE['21043'],
+    BUNDLE['21044'],
+    BUNDLE['21047'],
+    APPENDIX,
+    COVERAGE,
+    ROI,
+    XDEALER,
+    NOTIF,
+  ]
+
+  it('customer-facing artifacts contain zero whole-word Service/Parts (case-insensitive)', () => {
+    const blob = JSON.stringify(CUSTOMER)
+    expect(blob).not.toMatch(/\bservice\b/i)
+    expect(blob).not.toMatch(/\bparts\b/i)
+  })
+
+  it('outside-domain items use neutral separate-domain wording', () => {
+    const neutral = COVERAGE.themes.find(
+      (t: any) => t.theme === 'Separate operational domain',
+    )
+    expect(neutral).toBeTruthy()
+    expect(neutral.what_it_would_reveal).toMatch(
+      /separate operational domain and is not part of this Sales report/i,
+    )
+    expect(neutral.next_visibility_unlock).toMatch(
+      /separately governed analysis/i,
+    )
+    expect(neutral.next_visibility_unlock).not.toMatch(/\bservice\b/i)
+  })
+
+  it('customer artifacts contain none of the forbidden overclaim phrases', () => {
+    const blob = JSON.stringify([
+      BUNDLE['21043'],
+      BUNDLE['21044'],
+      BUNDLE['21047'],
+      XDEALER,
+    ]).toLowerCase()
+    for (const p of [
+      'never worked',
+      'ownership is clean',
+      'rather than assignment',
+      'not assignment',
+    ])
+      expect(blob).not.toContain(p)
+  })
+
+  it('SW-012 uses the measured tracked-response definition', () => {
+    const blob = JSON.stringify(CUSTOMER)
+    expect(blob).toMatch(/no tracked response within the first 30 minutes/i)
+  })
+
+  it('SW-090 ownership interaction is a bounded hypothesis that does not exclude assignment quality', () => {
+    for (const d of DEALERS) {
+      const own = BUNDLE[d].cross_cluster_synthesis.find(
+        (i: any) => i.id === 'ownership-vs-followthrough',
+      )
+      if (own) {
+        expect(own.claim).toBe('hypothesis')
+        expect(own.text).toMatch(/does not rule out assignment quality/i)
+      }
+      // The bounded clusterD implication passed only the two-hour check.
+      const dCluster = BUNDLE[d].clusters[3]
+      expect(dCluster.title).toBe('Showroom execution and ownership')
+      expect(dCluster.implication.text).not.toMatch(/ownership is clean/i)
+    }
+  })
+
+  it('the customer guard fails closed on whole-word service/parts', () => {
+    expect(() => assertCustomerSafe('x', 'a service topic')).toThrow()
+    expect(() => assertCustomerSafe('x', 'parts counter')).toThrow()
+    expect(() => assertCustomerSafe('x', 'a Sales appointment')).not.toThrow()
+  })
+
+  it('internal audit is intentionally excluded from the customer scan', () => {
+    expect(AUDIT.artifact).toBe('gate5b-internal-audit')
+  })
+})

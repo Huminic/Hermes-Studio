@@ -137,13 +137,30 @@
       "next_step": "Next step: confirm which reports are needed and the exact common field before matching."
     },
     {
-      "theme": "Customer reactivation and opportunity mining",
+      "theme": "Separate operational domain",
       "metric_ids": [
         "SW-079",
         "SW-080",
         "SW-081",
         "SW-082",
         "SW-083",
+        "SW-097",
+        "SW-098",
+        "SW-099",
+        "SW-100",
+        "SW-101",
+        "SW-102",
+        "SW-103",
+        "SW-104",
+        "SW-118",
+        "SW-186",
+        "SW-187",
+        "SW-188",
+        "SW-189",
+        "SW-190",
+        "SW-191",
+        "SW-192",
+        "SW-199",
         "SW-218",
         "SW-222",
         "SW-223",
@@ -154,24 +171,16 @@
         "SW-228",
         "SW-229",
         "SW-263",
-        "SW-264",
-        "SW-267",
-        "SW-268",
-        "SW-269",
         "SW-270",
         "SW-271",
-        "SW-272",
-        "SW-273",
-        "SW-274",
-        "SW-275",
-        "SW-276",
-        "SW-279"
+        "SW-279",
+        "SW-294"
       ],
-      "count": 27,
-      "what_it_would_reveal": "Customer reactivation and opportunity mining signals that are not part of this cycle's measured set.",
-      "why_not_this_cycle": "Not measured this cycle — the accepted weekly Sales data does not yet support these specific signals.",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics.",
-      "next_step": "Next step: route these to the appropriate separate review."
+      "count": 36,
+      "what_it_would_reveal": "This metric belongs to a separate operational domain and is not part of this Sales report.",
+      "why_not_this_cycle": "Not measured this cycle — this metric is outside the scope of this Sales report.",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis.",
+      "next_step": "Next step: commission a separately governed analysis only if this domain is needed."
     },
     {
       "theme": "Cross-functional and advanced signals",
@@ -261,22 +270,23 @@
       "next_step": "Next step: confirm which reports are needed and the exact common field before matching."
     },
     {
-      "theme": "Conversation quality",
+      "theme": "Customer reactivation and opportunity mining",
       "metric_ids": [
-        "SW-186",
-        "SW-187",
-        "SW-188",
-        "SW-189",
-        "SW-190",
-        "SW-191",
-        "SW-192",
-        "SW-199"
+        "SW-264",
+        "SW-267",
+        "SW-268",
+        "SW-269",
+        "SW-272",
+        "SW-273",
+        "SW-274",
+        "SW-275",
+        "SW-276"
       ],
-      "count": 8,
-      "what_it_would_reveal": "Conversation quality signals that are not part of this cycle's measured set.",
+      "count": 9,
+      "what_it_would_reveal": "Customer reactivation and opportunity mining signals that are not part of this cycle's measured set.",
       "why_not_this_cycle": "Not measured this cycle — the accepted weekly Sales data does not yet support these specific signals.",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics.",
-      "next_step": "Next step: route these to the appropriate separate review."
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export.",
+      "next_step": "Next step: confirm the specific Sales data needed, then evaluate."
     },
     {
       "theme": "Cross-functional and advanced signals",
@@ -329,22 +339,6 @@
       "why_not_this_cycle": "Not measured this cycle — the accepted weekly Sales data does not yet support these specific signals.",
       "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one.",
       "next_step": "Next step: confirm which reports are needed and the exact common field before matching."
-    },
-    {
-      "theme": "Compliance and call-center coverage",
-      "metric_ids": [
-        "SW-099",
-        "SW-100",
-        "SW-101",
-        "SW-102",
-        "SW-103",
-        "SW-104"
-      ],
-      "count": 6,
-      "what_it_would_reveal": "Compliance and call-center coverage signals that are not part of this cycle's measured set.",
-      "why_not_this_cycle": "Not measured this cycle — the accepted weekly Sales data does not yet support these specific signals.",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics.",
-      "next_step": "Next step: route these to the appropriate separate review."
     },
     {
       "theme": "Cross-functional and advanced signals",
@@ -428,15 +422,6 @@
       "next_step": "Next step: agree the exact definition with management."
     },
     {
-      "theme": "Cross-functional and advanced signals",
-      "metric_ids": ["SW-118", "SW-294"],
-      "count": 2,
-      "what_it_would_reveal": "Cross-functional and advanced signals signals that are not part of this cycle's measured set.",
-      "why_not_this_cycle": "Not measured this cycle — the accepted weekly Sales data does not yet support these specific signals.",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics.",
-      "next_step": "Next step: route these to the appropriate separate review."
-    },
-    {
       "theme": "Customer reactivation and opportunity mining",
       "metric_ids": ["SW-239", "SW-256"],
       "count": 2,
@@ -453,15 +438,6 @@
       "why_not_this_cycle": "Not measured this cycle — the accepted weekly Sales data does not yet support these specific signals.",
       "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history.",
       "next_step": "Next step: keep accepting the weekly Sales export so trends accumulate."
-    },
-    {
-      "theme": "Data and CRM hygiene",
-      "metric_ids": ["SW-097", "SW-098"],
-      "count": 2,
-      "what_it_would_reveal": "Data and CRM hygiene signals that are not part of this cycle's measured set.",
-      "why_not_this_cycle": "Not measured this cycle — the accepted weekly Sales data does not yet support these specific signals.",
-      "next_visibility_unlock": "Next visibility unlock: a separate governed workspace for service or compliance topics.",
-      "next_step": "Next step: route these to the appropriate separate review."
     },
     {
       "theme": "Lead sources and marketing",

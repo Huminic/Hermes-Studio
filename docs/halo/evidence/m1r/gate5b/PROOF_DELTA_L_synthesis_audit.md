@@ -1,6 +1,25 @@
 # PROOF DELTA L — Gate 5B customer-facing consultant synthesis
 
-**Gate:** 5B · **Revision:** L1 · **Accepted week:** 2026-08-24..2026-08-30 (America/New_York)
+**Gate:** 5B · **Revision:** L2 (R1 corrective) · **Accepted week:** 2026-08-24..2026-08-30 (America/New_York)
+
+> **R1 corrective (two customer-projection acceptance defects).** (1) **Permanent Sales-only boundary
+> in customer projection.** All customer-facing artifacts (per-dealer synthesis, coverage-expansion,
+> 295×3 appendix, cross-dealer and notification ledgers) now contain **zero** whole-word Service/Parts
+> (case-insensitive). Catalog items outside this Sales report's governed domain (the 36 withheld) are
+> grouped into a neutral "Separate operational domain" theme — "This metric belongs to a separate
+> operational domain and is not part of this Sales report", next step "separate-domain reporting would
+> require a separately governed analysis" — never naming the excluded domains. The customer guard now
+> fails closed on whole-word service/parts; the internal audit may still state the exclusion boundary
+> and is intentionally excluded from the customer scan. (2) **Narrowed SW-012 / SW-090 claims to
+> measured definitions.** Every "never worked" statement is replaced with "no tracked response within
+> the first 30 minutes"; every "ownership is clean" / "rather than assignment" assertion is replaced
+> with bounded wording (assignment timeliness passed this specific two-hour check; later ownership and
+> execution remain separate questions), and the assignment-vs-execution idea is now an explicit
+> **hypothesis** that does not rule out assignment quality. The "Showroom execution and ownership"
+> heading is preserved. **No metric value, evidence classification, peer rank, benchmark mapping, ROI
+> arithmetic, or the 51/834/885 accounting changed.** Gate 5A and Gate 4H/4I/4J artifacts are
+> byte-identical; `gate5b-notification-automation-ledger.json` and `gate5b-roi-scenario-ledger.json`
+> bytes are unchanged from L1.
 
 **Rooftops:** 21043 (Serra Honda of Sylacauga) · 21044 (Serra Nissan of Sylacauga) · 21047 (Tony Serra Ford)
 
@@ -85,18 +104,18 @@ each exactly once: **51 evaluated** (value / basis / variance / peer rank / evid
 
 | File                                                                        | sha256:16          |
 | --------------------------------------------------------------------------- | ------------------ |
-| `src/server/reports/gate5b/synthesis.ts`                                    | `c8a74ef50ee81997` |
-| `scripts/m1r-gate5b/build-gate5b-synthesis.ts`                              | `b4c9f1f6d41debe8` |
-| `src/test/gate5b-synthesis-audit.test.ts`                                   | `1ef1a4e36cc1af1c` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21043.json`                 | `001bfb15d11c3203` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21044.json`                 | `f32f9fbe2797c735` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21047.json`                 | `09e71b70cb6773d5` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-cross-dealer-opportunity-ledger.json` | `9a5172992c6c2a2f` |
+| `src/server/reports/gate5b/synthesis.ts`                                    | `3ca4599fb5c0d921` |
+| `scripts/m1r-gate5b/build-gate5b-synthesis.ts`                              | `46b3a7d43909b7a9` |
+| `src/test/gate5b-synthesis-audit.test.ts`                                   | `26813aa001d4d6fe` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21043.json`                 | `53a11256a53a2c75` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21044.json`                 | `2481cf069ccf8026` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21047.json`                 | `c76b57ebbf99a51c` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-cross-dealer-opportunity-ledger.json` | `5367fb8b36b01a61` |
 | `docs/halo/evidence/m1r/gate5b/gate5b-notification-automation-ledger.json`  | `87f7cdc13bdd3537` |
 | `docs/halo/evidence/m1r/gate5b/gate5b-roi-scenario-ledger.json`             | `6a4e045c7f6a78e4` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-coverage-expansion-plan.json`         | `5e07a03bbec90c0b` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-customer-appendix-295x3.json`         | `a6482e375cca1d4a` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-internal-audit.json`                  | `ce833ef21ef9aebf` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-coverage-expansion-plan.json`         | `d8787db62973be99` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-customer-appendix-295x3.json`         | `3f9dc793c30aba9a` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-internal-audit.json`                  | `2a3ddf8e9e34de32` |
 
 Each `sha256:16` is recomputed from the current committed bytes by
 `src/test/gate5b-evidence-hashes.test.ts`.
