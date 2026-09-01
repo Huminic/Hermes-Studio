@@ -32,12 +32,16 @@ Total = 86.
 
 ## 2. Derivation of the 86 (reproducible)
 
-`target class (162) − prior evaluated (17) − content-75 = 86`. The 76 removed inside the class are
-the 5 content promotions plus the 71 other content-candidate members that fall in this class; the 8
-spine IDs and 0 comm IDs that are prior-evaluated fall in OTHER acquisition classes, and 3
-content-candidate IDs (SW-014/030/183) are classified in other classes — the arithmetic is enforced
-fail-closed in the generator and re-derived independently in the test from the raw feasibility
-matrix, spine summary, comm ledger, content reconciliation, and capability delta.
+`target class (162) − 76 removed = 86`. The **76** removed inside the class are the **72**
+content-candidate members that fall in this class (5 promoted + 67 held) **plus 4 non-content
+prior-evaluated members that also fall in this class** — comm `SW-022`, `SW-133` and spine
+`SW-046`, `SW-090`. (`content-75 ∩ class = 72`; `prior-evaluated-17 ∩ class = 9`, i.e. the 5
+content promotions + those 4 non-content IDs.) The remaining prior-evaluated and content IDs fall in
+OTHER acquisition classes and were never in the 162: the other **8** prior-evaluated IDs are spine
+(`SW-011/012/015/031/032/033/041/045`) and the other **3** content-candidate IDs are
+`SW-014/030/183`. The full breakdown is computed and asserted fail-closed in the generator
+(`derivation` block) and re-derived independently in the test from the raw feasibility matrix, spine
+summary, comm ledger, content reconciliation, and capability delta.
 
 ## 3. Each HOLD is a schema-complete, traceable record
 
@@ -94,11 +98,11 @@ Pairwise-disjoint and total coverage are asserted fail-closed in both the genera
 | File                                                                   | sha256:16          |
 | ---------------------------------------------------------------------- | ------------------ |
 | `src/server/reports/residual/gate4f-scheduled-residual.ts`             | `114b30f24308728c` |
-| `scripts/m1r-residual/build-gate4f-scheduled-residual-audit.ts`        | `199e06bda84c3cfc` |
-| `docs/halo/contract/sw295-gate4f-scheduled-residual-matrix.json`       | `4a53f6ecd6dd630d` |
+| `scripts/m1r-residual/build-gate4f-scheduled-residual-audit.ts`        | `b84ee09f148f374e` |
+| `docs/halo/contract/sw295-gate4f-scheduled-residual-matrix.json`       | `cbe1f38072bf2c7f` |
 | `docs/halo/evidence/m1r/residual/gate4f-evaluated-cell-ledger.json`    | `dd3e68f678112251` |
 | `docs/halo/evidence/m1r/residual/gate4f-portfolio-reconciliation.json` | `99a9b331d3ae49a6` |
-| `src/test/gate4f-scheduled-residual-audit.test.ts`                     | `923e11ac87a35e77` |
+| `src/test/gate4f-scheduled-residual-audit.test.ts`                     | `7182e45625a6b07a` |
 
 Each `sha256:16` is recomputed from the current committed bytes by
 `src/test/gate4f-evidence-hashes.test.ts`.

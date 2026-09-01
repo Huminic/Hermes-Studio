@@ -155,6 +155,74 @@ async function main(): Promise<void> {
   must(ids86.length === 86, `residual is ${ids86.length}, not 86`)
   must(new Set(ids86).size === 86, 'residual IDs not unique')
 
+  // ── Derivation breakdown (computed + asserted, so the narrative cannot drift) ──
+  const universeIds = new Set(
+    catalog
+      .filter((r) => r.acquisition_class === GATE4F_TARGET_CLASS)
+      .map((r) => r.metric_id),
+  )
+  const contentInClass = [...contentCandidates].filter((id) =>
+    universeIds.has(id),
+  )
+  const priorInClass = [...priorEvaluated].filter((id) => universeIds.has(id))
+  const priorNonContentInClass = priorInClass
+    .filter((id) => !contentCandidates.has(id))
+    .sort((a, b) => swIndex(a) - swIndex(b))
+  const contentInClassPromoted = contentInClass.filter((id) =>
+    priorEvaluated.has(id),
+  )
+  const contentInClassHeld = contentInClass.filter(
+    (id) => !priorEvaluated.has(id),
+  )
+  const removedInClass = universeIds.size - ids86.length
+  must(universeIds.size === 162, `target class is ${universeIds.size}, not 162`)
+  must(
+    contentInClass.length === 72,
+    `content75 ∩ class is ${contentInClass.length}, not 72`,
+  )
+  must(
+    contentInClassPromoted.length === 5 && contentInClassHeld.length === 67,
+    `content-in-class split ${contentInClassPromoted.length}/${contentInClassHeld.length} != 5/67`,
+  )
+  must(
+    priorInClass.length === 9,
+    `evaluated17 ∩ class is ${priorInClass.length}, not 9`,
+  )
+  must(
+    priorNonContentInClass.length === 4 &&
+      JSON.stringify(priorNonContentInClass) ===
+        JSON.stringify(['SW-022', 'SW-046', 'SW-090', 'SW-133']),
+    `non-content prior-in-class ${JSON.stringify(priorNonContentInClass)} != [SW-022,SW-046,SW-090,SW-133]`,
+  )
+  must(
+    contentInClass.length + priorNonContentInClass.length === removedInClass,
+    `removed-in-class ${removedInClass} != content-in-class ${contentInClass.length} + non-content prior-in-class ${priorNonContentInClass.length}`,
+  )
+  must(
+    removedInClass === 76 && universeIds.size - removedInClass === 86,
+    `162 - ${removedInClass} != 86`,
+  )
+  const derivation = {
+    target_class_size: universeIds.size,
+    prior_evaluated_total: priorEvaluated.size,
+    content_candidates_total: contentCandidates.size,
+    residual: ids86.length,
+    removed_inside_class: removedInClass,
+    removed_breakdown: {
+      content_candidates_in_class: contentInClass.length,
+      content_in_class_promoted: contentInClassPromoted.length,
+      content_in_class_held: contentInClassHeld.length,
+      prior_evaluated_non_content_in_class: priorNonContentInClass.length,
+      prior_evaluated_non_content_in_class_ids: priorNonContentInClass,
+    },
+    outside_class: {
+      content_candidates_outside_class:
+        contentCandidates.size - contentInClass.length,
+      prior_evaluated_outside_class: priorEvaluated.size - priorInClass.length,
+    },
+    formula: `${universeIds.size} target-class − ${removedInClass} removed (${contentInClass.length} content-candidates-in-class [${contentInClassPromoted.length} promoted + ${contentInClassHeld.length} held] + ${priorNonContentInClass.length} non-content prior-evaluated-in-class [${priorNonContentInClass.join(', ')}]) = ${ids86.length}`,
+  }
+
   // ── Classify + build rows (PROMOTE only if definition_compatible_now; else HOLD) ──
   const rows = ids86.map((id) => {
     const cat = catalogById.get(id)
@@ -317,8 +385,7 @@ async function main(): Promise<void> {
     catalog_ref:
       'docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json',
     capability_delta_ref: 'docs/halo/contract/sw295-comm-capability-delta.json',
-    derivation:
-      'target acquisition class (162) minus prior evaluated (17: spine 10 + comm 2 + content 5) minus the 75-ID content candidate set = 86; the 5 content promotions and 8 spine IDs that fall outside this class account for the (162 - 86) removed.',
+    derivation,
     frozen_e1_spec_schema: FROZEN_E1_SPEC_KEYS,
     frozen_e1_spec_note:
       'GOVERNING CONTRACT. Every row carries a frozen_e1_spec with EXACTLY these 14 hardcoded keys. All 86 are HOLD: only governed known facts are populated (catalog population, the capability join/NLP requirement + missing item, permanent Sales-only exclusions, and the standing missing-is-never-zero rule); every unknown/condition-specific field — including window and minimum_history — is `unresolved (held)` / `not_applicable (held)`. Non-executable by construction. Reuses the frozen Gate 4E E1 schema + builder.',

@@ -6,7 +6,30 @@
   "governed_rooftops": ["21043", "21044", "21047"],
   "catalog_ref": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json",
   "capability_delta_ref": "docs/halo/contract/sw295-comm-capability-delta.json",
-  "derivation": "target acquisition class (162) minus prior evaluated (17: spine 10 + comm 2 + content 5) minus the 75-ID content candidate set = 86; the 5 content promotions and 8 spine IDs that fall outside this class account for the (162 - 86) removed.",
+  "derivation": {
+    "target_class_size": 162,
+    "prior_evaluated_total": 17,
+    "content_candidates_total": 75,
+    "residual": 86,
+    "removed_inside_class": 76,
+    "removed_breakdown": {
+      "content_candidates_in_class": 72,
+      "content_in_class_promoted": 5,
+      "content_in_class_held": 67,
+      "prior_evaluated_non_content_in_class": 4,
+      "prior_evaluated_non_content_in_class_ids": [
+        "SW-022",
+        "SW-046",
+        "SW-090",
+        "SW-133"
+      ]
+    },
+    "outside_class": {
+      "content_candidates_outside_class": 3,
+      "prior_evaluated_outside_class": 8
+    },
+    "formula": "162 target-class − 76 removed (72 content-candidates-in-class [5 promoted + 67 held] + 4 non-content prior-evaluated-in-class [SW-022, SW-046, SW-090, SW-133]) = 86"
+  },
   "frozen_e1_spec_schema": [
     "population",
     "numerator",

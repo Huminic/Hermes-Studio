@@ -99,6 +99,63 @@ describe('Gate 4F — scheduled-source residual audit', () => {
     expect(MATRIX.held_ids).toEqual(derived)
   })
 
+  it('derivation breakdown: exact intersections and the four non-content in-class IDs', () => {
+    const inClass = new Set<string>(
+      CATALOG.filter(
+        (r: { acquisition_class: string }) =>
+          r.acquisition_class === TARGET_CLASS,
+      ).map((r: { metric_id: string }) => r.metric_id),
+    )
+    const prior = new Set<string>([
+      ...SPINE.evaluated_ids,
+      ...COMM.evaluated_ids,
+      ...CONTENT.content_promoted_ids,
+    ])
+    const content75 = new Set<string>(
+      DELTA.rows
+        .filter(
+          (r: { category: string }) =>
+            r.category === 'nlp_content_capable_pending',
+        )
+        .map((r: { metric_id: string }) => r.metric_id),
+    )
+    const promoted = new Set<string>(CONTENT.content_promoted_ids)
+    const contentInClass = [...content75].filter((id) => inClass.has(id))
+    const priorInClass = [...prior].filter((id) => inClass.has(id))
+    const nonContentPriorInClass = priorInClass
+      .filter((id) => !content75.has(id))
+      .sort()
+
+    expect(inClass.size).toBe(162)
+    expect(contentInClass).toHaveLength(72)
+    expect(contentInClass.filter((id) => promoted.has(id))).toHaveLength(5)
+    expect(contentInClass.filter((id) => !promoted.has(id))).toHaveLength(67)
+    expect(priorInClass).toHaveLength(9)
+    expect(nonContentPriorInClass).toEqual([
+      'SW-022',
+      'SW-046',
+      'SW-090',
+      'SW-133',
+    ])
+    // 72 content-in-class + 4 non-content prior-in-class = 76 removed; 162 − 76 = 86.
+    expect(contentInClass.length + nonContentPriorInClass.length).toBe(76)
+    expect(inClass.size - 76).toBe(86)
+
+    // The committed matrix derivation block agrees exactly.
+    const d = MATRIX.derivation
+    expect(d.target_class_size).toBe(162)
+    expect(d.removed_inside_class).toBe(76)
+    expect(d.removed_breakdown.content_candidates_in_class).toBe(72)
+    expect(d.removed_breakdown.content_in_class_promoted).toBe(5)
+    expect(d.removed_breakdown.content_in_class_held).toBe(67)
+    expect(d.removed_breakdown.prior_evaluated_non_content_in_class).toBe(4)
+    expect(
+      d.removed_breakdown.prior_evaluated_non_content_in_class_ids,
+    ).toEqual(['SW-022', 'SW-046', 'SW-090', 'SW-133'])
+    expect(d.outside_class.content_candidates_outside_class).toBe(3)
+    expect(d.outside_class.prior_evaluated_outside_class).toBe(8)
+  })
+
   it('promotes 0 and holds 86 (evidence-backed, all under target acquisition class)', () => {
     expect(MATRIX.totals).toMatchObject({
       candidates: 86,
