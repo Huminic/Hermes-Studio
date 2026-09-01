@@ -183,6 +183,12 @@ export type ObservedDenominatorEvidence = {
   observed_denominator_statement?: string
   /** R2: raw committed per-rooftop deal counts, recorded as CONTEXT (not necessarily the metric denominator). */
   observed_context_counts?: Record<string, ObservedRooftopCounts>
+  /**
+   * R3: when the structured audit finds the metric needs a ratified threshold that the committed
+   * capability delta did not flag (e.g. a composite's high/low cutoff), setting this to true makes
+   * the row's `classification.threshold` truthfully say ratification is required.
+   */
+  requires_ratified_threshold?: boolean
   why_unresolved: string
   unlock: string
 }
@@ -359,9 +365,11 @@ export function buildHoldRow(
       source: catalog.source,
       field: delta.missing_inputs || 'unresolved (held)',
       history: delta.minimum_history || 'not_applicable (held)',
-      threshold: delta.requires_ratified_threshold
-        ? 'ratified threshold required'
-        : 'no ratified threshold required',
+      threshold: observed?.requires_ratified_threshold
+        ? 'ratified threshold required (composite; per structured audit)'
+        : delta.requires_ratified_threshold
+          ? 'ratified threshold required'
+          : 'no ratified threshold required',
       join: delta.join_or_nlp_required || 'not_applicable (held)',
       authority,
     },

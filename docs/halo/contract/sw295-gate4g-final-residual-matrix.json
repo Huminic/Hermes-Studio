@@ -3050,7 +3050,7 @@
         "source": "Appointments weekly report",
         "field": "show + close composite",
         "history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-        "threshold": "no ratified threshold required",
+        "threshold": "ratified threshold required (composite; per structured audit)",
         "join": "join to another family/source",
         "authority": "Existing VinSolutions schedule / Huminic validator (acquisition class: Vin-native scheduled)"
       },
@@ -3060,6 +3060,7 @@
         "metric_ratio": "composite: show rate (available) × close rate (sold ÷ write-ups)",
         "relation_to_primary_blocker": "co-primary — an observed zero close-rate denominator (accepted Dashboard write-up TOTAL = 0) AND an unratified high/low composite threshold both block it",
         "observed_denominator_statement": "Committed structured audit: \"Show rate is available, but \"close rate\" needs sold/write-up and the accepted Dashboard write-up TOTAL is 0 (denominator 0); the composite also has no ratified high/low threshold.\" The close-rate denominator (write-up total) is observed 0 in the accepted week, and no high/low threshold is ratified for the show-vs-close composite.",
+        "requires_ratified_threshold": true,
         "why_unresolved": "The close-rate arm is sold ÷ write-ups; the accepted Dashboard write-up TOTAL is observed 0, making that ratio undefined (0/0). Independently the show-vs-close composite has no ratified high/low threshold. Both must be resolved. A zero/missing denominator is never treated as value 0 — held UNRESOLVED. Show rate alone is available but does not satisfy the composite.",
         "unlock": "A read-only export with a non-zero write-up (opportunity) total joined to sold outcomes at all three rooftops, PLUS a ratified high-show/low-close threshold, would make the composite computable. Sales-only; no external or Service/Parts data."
       },

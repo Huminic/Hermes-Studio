@@ -549,4 +549,62 @@ describe('Gate 4G — final residual audit', () => {
       led2.some((e: { metric_id: string }) => e.metric_id === 'SW-050'),
     ).toBe(false)
   })
+
+  it('R3 regression: SW-114 threshold contradiction fixed; ledger held_not_zero matches each blocker (no mismatch)', () => {
+    // Fix 1: SW-114's row now truthfully requires threshold ratification for the composite; the old
+    // "no ratified threshold required" contradiction against its co-primary threshold fact is gone.
+    const sw114 = MATRIX.rows.find(
+      (r: { metric_id: string }) => r.metric_id === 'SW-114',
+    )
+    expect(sw114.classification.threshold).toMatch(
+      /ratified threshold required/,
+    )
+    expect(sw114.classification.threshold).not.toBe(
+      'no ratified threshold required',
+    )
+    expect(sw114.observed_evidence.requires_ratified_threshold).toBe(true)
+    // The observed line and statement both name the unratified composite threshold.
+    expect(
+      sw114.additional_blockers.some((b: string) => /threshold/.test(b)),
+    ).toBe(true)
+    // No other row's threshold classification is disturbed (composite override is SW-114-only).
+    expect(
+      MATRIX.rows.filter((r: { classification: { threshold: string } }) =>
+        /per structured audit/.test(r.classification.threshold),
+      ).length,
+    ).toBe(1)
+
+    // Fix 2: each R2 ledger held_not_zero MATCHES its own primary blocker — no false attribution of
+    // the history/trend-primary IDs to an absent/zero denominator.
+    const led2 = LEDGER.observed_metric_evidence
+    const byId = new Map(
+      led2.map((e: { metric_id: string }) => [e.metric_id, e]),
+    )
+    for (const e of led2) {
+      const rel = e.relation_to_primary_blocker as string
+      const hnz = e.held_not_zero as string
+      expect(hnz).toMatch(/never (recorded as )?value ?= ?0|never 0/)
+      if (rel.startsWith('secondary')) {
+        // History/trend-primary: attributed to trend/history, counts explicitly secondary context,
+        // and explicitly NOT to a zero/absent denominator.
+        expect(hnz).toMatch(/trend|history/)
+        expect(hnz).toMatch(/secondary context/)
+        expect(hnz).toMatch(/not on a zero\/absent denominator/)
+      }
+    }
+    // SW-034 (absent denominator) names the absent field; SW-114 (co-primary) names BOTH the zero
+    // write-up total and the threshold.
+    expect(
+      (byId.get('SW-034') as { held_not_zero: string }).held_not_zero,
+    ).toMatch(/absent/i)
+    const h114 = (byId.get('SW-114') as { held_not_zero: string }).held_not_zero
+    expect(h114).toMatch(/write-up TOTAL = 0/)
+    expect(h114).toMatch(/threshold/)
+    // SW-049 and SW-111 must NOT be described as denominator-blocked as their primary reason.
+    for (const id of ['SW-049', 'SW-111']) {
+      const rel = (byId.get(id) as { relation_to_primary_blocker: string })
+        .relation_to_primary_blocker
+      expect(rel).toMatch(/^secondary/)
+    }
+  })
 })
