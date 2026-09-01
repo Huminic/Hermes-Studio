@@ -1,0 +1,165 @@
+{
+  "artifact": "m2r-r4-halo-card-qa",
+  "period": "2026-08-24..2026-08-30",
+  "as_of_iso": "2026-08-31T12:00:00.000Z",
+  "note": "Internal QA manifest for the three customer-facing Halo Sales report-card PDFs. HTML is deterministic (sha256 stable); PDF sha256 recorded as generated (chromium embeds a creation timestamp). Per-page PNG contact set under r4/qa/. No customer PII/raw sources.",
+  "all_pass": true,
+  "cards": [
+    {
+      "profile": "serra-honda",
+      "dealer_name": "Serra Honda",
+      "dealer_number": "21043",
+      "period": "Aug 24, 2026 - Aug 30, 2026",
+      "pages": 4,
+      "page_size": "595.92 x 842.88 pts (A4)",
+      "measures": 19,
+      "actions": 4,
+      "html": {
+        "path": "output/pdf/halo/halo-serra-honda-2026-08-24_2026-08-30.html",
+        "bytes": 17295,
+        "sha256": "48186f3525135fa7f8320831841c9982ba322e798a9bc6a50f72d9b9d2574bef"
+      },
+      "pdf": {
+        "path": "output/pdf/halo/halo-serra-honda-2026-08-24_2026-08-30.pdf",
+        "bytes": 122963,
+        "sha256": "0cf569d2fac389e9a494ee97d3c8bbd37b8b1668944ed84b85c202cc55fd7cd3"
+      },
+      "per_page": [
+        {
+          "page": 1,
+          "chars": 2773,
+          "png": "docs/halo/evidence/m1r/r4/qa/serra-honda-page-1.png",
+          "png_bytes": 147228
+        },
+        {
+          "page": 2,
+          "chars": 2742,
+          "png": "docs/halo/evidence/m1r/r4/qa/serra-honda-page-2.png",
+          "png_bytes": 147734
+        },
+        {
+          "page": 3,
+          "chars": 3768,
+          "png": "docs/halo/evidence/m1r/r4/qa/serra-honda-page-3.png",
+          "png_bytes": 180958
+        },
+        {
+          "page": 4,
+          "chars": 3192,
+          "png": "docs/halo/evidence/m1r/r4/qa/serra-honda-page-4.png",
+          "png_bytes": 118092
+        }
+      ],
+      "qa_findings": [],
+      "qa_pass": true
+    },
+    {
+      "profile": "serra-nissan",
+      "dealer_name": "Serra Nissan",
+      "dealer_number": "21044",
+      "period": "Aug 24, 2026 - Aug 30, 2026",
+      "pages": 5,
+      "page_size": "595.92 x 842.88 pts (A4)",
+      "measures": 19,
+      "actions": 7,
+      "html": {
+        "path": "output/pdf/halo/halo-serra-nissan-2026-08-24_2026-08-30.html",
+        "bytes": 21238,
+        "sha256": "3fa60e4f57626afe1ebe5b88052fa19a270ded337151967a98d58b4d7207513d"
+      },
+      "pdf": {
+        "path": "output/pdf/halo/halo-serra-nissan-2026-08-24_2026-08-30.pdf",
+        "bytes": 135022,
+        "sha256": "ad5c25da1876131da2e58181d7d5dc1f2ed73c999957c274b6d3ee96624230d1"
+      },
+      "per_page": [
+        {
+          "page": 1,
+          "chars": 2787,
+          "png": "docs/halo/evidence/m1r/r4/qa/serra-nissan-page-1.png",
+          "png_bytes": 152025
+        },
+        {
+          "page": 2,
+          "chars": 2868,
+          "png": "docs/halo/evidence/m1r/r4/qa/serra-nissan-page-2.png",
+          "png_bytes": 155965
+        },
+        {
+          "page": 3,
+          "chars": 3402,
+          "png": "docs/halo/evidence/m1r/r4/qa/serra-nissan-page-3.png",
+          "png_bytes": 193330
+        },
+        {
+          "page": 4,
+          "chars": 4184,
+          "png": "docs/halo/evidence/m1r/r4/qa/serra-nissan-page-4.png",
+          "png_bytes": 191504
+        },
+        {
+          "page": 5,
+          "chars": 3059,
+          "png": "docs/halo/evidence/m1r/r4/qa/serra-nissan-page-5.png",
+          "png_bytes": 113763
+        }
+      ],
+      "qa_findings": [],
+      "qa_pass": true
+    },
+    {
+      "profile": "tony-serra-ford",
+      "dealer_name": "Tony Serra Ford",
+      "dealer_number": "21047",
+      "period": "Aug 24, 2026 - Aug 30, 2026",
+      "pages": 5,
+      "page_size": "595.92 x 842.88 pts (A4)",
+      "measures": 17,
+      "actions": 7,
+      "html": {
+        "path": "output/pdf/halo/halo-tony-serra-ford-2026-08-24_2026-08-30.html",
+        "bytes": 20978,
+        "sha256": "ef0e51af26dedd7a58422686f03ac5bb8a37fdfd557938a94347c54806916043"
+      },
+      "pdf": {
+        "path": "output/pdf/halo/halo-tony-serra-ford-2026-08-24_2026-08-30.pdf",
+        "bytes": 134866,
+        "sha256": "a45caad41b0120627f0713687626e14ae145eed595c86a25684222f855d3d4da"
+      },
+      "per_page": [
+        {
+          "page": 1,
+          "chars": 2793,
+          "png": "docs/halo/evidence/m1r/r4/qa/tony-serra-ford-page-1.png",
+          "png_bytes": 151148
+        },
+        {
+          "page": 2,
+          "chars": 2910,
+          "png": "docs/halo/evidence/m1r/r4/qa/tony-serra-ford-page-2.png",
+          "png_bytes": 154935
+        },
+        {
+          "page": 3,
+          "chars": 3308,
+          "png": "docs/halo/evidence/m1r/r4/qa/tony-serra-ford-page-3.png",
+          "png_bytes": 186752
+        },
+        {
+          "page": 4,
+          "chars": 4378,
+          "png": "docs/halo/evidence/m1r/r4/qa/tony-serra-ford-page-4.png",
+          "png_bytes": 198002
+        },
+        {
+          "page": 5,
+          "chars": 2786,
+          "png": "docs/halo/evidence/m1r/r4/qa/tony-serra-ford-page-5.png",
+          "png_bytes": 104622
+        }
+      ],
+      "qa_findings": [],
+      "qa_pass": true
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Tony Serra Ford - Halo Sales Performance</title><style>
+  * { box-sizing: border-box; }
+  html,body { margin:0; padding:0; }
+  body { font-family: Arial, Helvetica, "DejaVu Sans", sans-serif; color:#1b2330; font-size:12px; line-height:1.5; }
+  .page { padding: 4mm 2mm; }
+  .hero { background: linear-gradient(135deg,#0f2740,#1e4e79); color:#fff; border-radius:12px; padding:26px 28px; margin-bottom:16px; }
+  .hero .eyebrow { font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#a9c6e6; }
+  .hero h1 { font-size:26px; margin:6px 0 2px; font-weight:800; }
+  .hero .sub { color:#d6e4f3; font-size:12px; }
+  .badge { display:inline-block; margin-top:12px; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28); color:#eaf2fb; font-size:10.5px; padding:5px 10px; border-radius:20px; }
+  h2 { font-size:15px; color:#0f2740; margin:20px 0 8px; padding-bottom:5px; border-bottom:2px solid #e3a008; letter-spacing:.01em; break-after:avoid; }
+  h3 { font-size:12px; color:#334155; margin:10px 0 5px; break-after:avoid; }
+  p { margin:5px 0; }
+  .kpis { display:flex; flex-wrap:wrap; gap:10px; }
+  .kpi { flex:1 1 30%; min-width:150px; border:1px solid #e6ebf2; border-radius:10px; padding:12px 14px; background:#fbfcfe; }
+  .kpi .l { font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:#64748b; }
+  .kpi .v { font-size:23px; font-weight:800; color:#0f2740; font-variant-numeric:tabular-nums; margin:2px 0; }
+  .kpi .c { font-size:10px; color:#94a3b8; }
+  .funnel .row { display:flex; align-items:center; gap:10px; margin:6px 0; }
+  .funnel .name { width:34%; font-size:11.5px; color:#334155; }
+  .funnel .bar { flex:1; background:#eef2f7; border-radius:6px; height:20px; position:relative; overflow:hidden; }
+  .funnel .fill { height:100%; background:linear-gradient(90deg,#1e4e79,#3b82c4); border-radius:6px; }
+  .funnel .val { width:22%; text-align:right; font-size:11.5px; font-variant-numeric:tabular-nums; color:#0f2740; font-weight:700; }
+  .grid { display:flex; flex-wrap:wrap; gap:8px; }
+  .cell { flex:1 1 22%; min-width:110px; border:1px solid #e6ebf2; border-radius:8px; padding:8px 10px; background:#fff; }
+  .cell .l { font-size:10px; color:#64748b; } .cell .v { font-size:16px; font-weight:700; color:#0f2740; }
+  table { width:100%; border-collapse:collapse; margin:6px 0; }
+  th,td { border:1px solid #e6ebf2; padding:6px 8px; text-align:left; font-size:11px; vertical-align:top; }
+  th { background:#f4f7fb; color:#334155; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+  tr { break-inside:avoid; }
+  .action { border:1px solid #e6ebf2; border-left:5px solid #1e4e79; border-radius:10px; padding:12px 14px; margin:9px 0; break-inside:avoid; background:#fff; }
+  .action .top { display:flex; justify-content:space-between; align-items:baseline; }
+  .action .rank { font-size:11px; font-weight:800; color:#e3a008; text-transform:uppercase; letter-spacing:.05em; }
+  .action .focus { font-size:10px; color:#64748b; }
+  .action .t { font-size:13.5px; font-weight:800; color:#0f2740; margin:3px 0; }
+  .action .msg { font-size:11.5px; color:#1b2330; }
+  .action .why { font-size:11px; color:#475569; font-style:italic; margin:4px 0; }
+  .action dl { display:flex; flex-wrap:wrap; gap:4px 18px; margin:6px 0 0; }
+  .action dt { font-size:9.5px; text-transform:uppercase; color:#94a3b8; }
+  .action dd { margin:0; font-size:11px; color:#0f2740; }
+  .automation { margin-top:6px; padding:7px 9px; background:#fbf7ec; border:1px solid #f0e2bf; border-radius:7px; font-size:10.5px; color:#7a5b12; }
+  .automation .pill { display:inline-block; background:#e3a008; color:#3a2c05; font-weight:800; font-size:9px; padding:1px 7px; border-radius:10px; text-transform:uppercase; letter-spacing:.04em; margin-right:6px; }
+  .watchdog { border:1px solid #dfe6ef; border-radius:10px; padding:12px 14px; background:#f6f9fc; }
+  .watchdog .stats { display:flex; gap:16px; margin-top:8px; }
+  .watchdog .s { text-align:center; } .watchdog .s .n { font-size:20px; font-weight:800; color:#1e4e79; } .watchdog .s .l { font-size:9.5px; color:#64748b; text-transform:uppercase; }
+  .footnotes { margin-top:14px; border-top:1px solid #e6ebf2; padding-top:8px; color:#94a3b8; font-size:9.5px; }
+  .footnotes li { margin:2px 0; }
+  h2, h3 { page-break-after: avoid; }
+</style></head>
+<body><div class="page">
+  <div class="hero">
+    <div class="eyebrow">Halo Sales Performance Report</div>
+    <h1>Tony Serra Ford</h1>
+    <div class="sub">Dealer 21047 &nbsp;|&nbsp; Aug 24, 2026 - Aug 30, 2026</div>
+    <div class="badge">Data current through Aug 30, 2026; generated Aug 31, 2026; one day old.</div>
+  </div>
+
+  <h2>Executive Snapshot</h2>
+  <div class="kpis"><div class="kpi"><div class="l">Total Gross</div><div class="v">$1,600.99</div><div class="c">Delivered this week</div></div><div class="kpi"><div class="l">Show Rate</div><div class="v">42.9%</div><div class="c">Booked appointments shown</div></div><div class="kpi"><div class="l">Lead-to-Sale Yield</div><div class="v">16.2%</div><div class="c">End-to-end, this week</div></div><div class="kpi"><div class="l">Visit-to-Sale</div><div class="v">21.4%</div><div class="c">Of showroom visits</div></div><div class="kpi"><div class="l">Avg Response</div><div class="v">317</div><div class="c">Minutes</div></div><div class="kpi"><div class="l">No-Show Rate</div><div class="v">57.1%</div><div class="c">Booked appointments</div></div></div>
+
+  <h2>Momentum and Opportunity</h2>
+  <p>This snapshot covers Aug 24, 2026 - Aug 30, 2026 for Tony Serra Ford.</p><p>Your leading opportunity this week: Review how booked appointments are confirmed and reminded. A structured confirmation routine is a practical step to test against next period's recorded show rate.</p><p>Also worth attention: Consider a defined same-day follow-up step for guests who did not arrive, and compare the recorded no-show rate next period.</p>
+
+  <h2>Sales Funnel</h2>
+  <div class="funnel"><div class="row"><div class="name">Leads</div><div class="bar"><div class="fill" style="width:100%"></div></div><div class="val">37</div></div><div class="row"><div class="name">Appointments set</div><div class="bar"><div class="fill" style="width:16%"></div></div><div class="val">6 &middot; 16.2%</div></div><div class="row"><div class="name">Appointments shown</div><div class="bar"><div class="fill" style="width:5%"></div></div><div class="val">2 &middot; 33.3%</div></div><div class="row"><div class="name">Showroom visits</div><div class="bar"><div class="fill" style="width:38%"></div></div><div class="val">14 &middot; 37.8%</div></div><div class="row"><div class="name">Visits sold</div><div class="bar"><div class="fill" style="width:8%"></div></div><div class="val">3 &middot; 21.4%</div></div></div>
+
+  <h2>Appointment Execution</h2>
+  <h3>Counts</h3><div class="grid"><div class="cell"><div class="l">Booked</div><div class="v">7</div></div><div class="cell"><div class="l">Shown</div><div class="v">3</div></div><div class="cell"><div class="l">No-show</div><div class="v">4</div></div><div class="cell"><div class="l">Confirmed</div><div class="v">3</div></div><div class="cell"><div class="l">Cancelled</div><div class="v">0</div></div><div class="cell"><div class="l">Rescheduled</div><div class="v">2</div></div><div class="cell"><div class="l">Completed</div><div class="v">3</div></div></div>
+  <h3>Rates</h3><div class="grid"><div class="cell"><div class="l">Show rate</div><div class="v">42.9%</div></div><div class="cell"><div class="l">No-show rate</div><div class="v">57.1%</div></div><div class="cell"><div class="l">Confirmation rate</div><div class="v">42.9%</div></div><div class="cell"><div class="l">Cancel rate</div><div class="v">0.0%</div></div><div class="cell"><div class="l">Reschedule rate</div><div class="v">28.6%</div></div><div class="cell"><div class="l">Completion rate</div><div class="v">42.9%</div></div></div>
+
+  <h2>Response and Follow-up</h2><div class="grid"><div class="cell"><div class="l">Average response</div><div class="v">317 min</div></div></div><p>Average actual response time this week (dealer-relative).</p>
+
+  <h2>Gross Performance</h2>
+  <div class="grid"><div class="cell"><div class="l">Total gross</div><div class="v">$1,600.99</div></div><div class="cell"><div class="l">Front-gross mix</div><div class="v">-141.6%</div></div><div class="cell"><div class="l">Back-gross mix</div><div class="v">241.6%</div></div></div>
+
+  <h2>Priority Action Plan</h2>
+  
+    <div class="action">
+      <div class="top"><span class="rank">Priority 1</span><span class="focus">Customer Experience</span></div>
+      <div class="t">Smooth the buyer path</div>
+      <div class="msg">Review how booked appointments are confirmed and reminded. A structured confirmation routine is a practical step to test against next period's recorded show rate.</div>
+      <div class="why">In context: This is the share of booked appointments recorded as shown this week; compare it against next period.</div>
+      <dl><dt>Owner</dt><dd>Sales Manager</dd><dt>Follow-up metric</dt><dd>Appointment show rate</dd></dl>
+      <div class="automation"><span class="pill">Not Active - Review Before Activation</span>
+        <strong>Recommended alert:</strong> Notify the Sales Manager when the weekly appointment show rate falls below your dealer-relative target.<br>
+        <strong>Recommended automation:</strong> A guest confirmation-and-reminder cadence.</div>
+    </div>
+    <div class="action">
+      <div class="top"><span class="rank">Priority 2</span><span class="focus">Process</span></div>
+      <div class="t">Tighten your process</div>
+      <div class="msg">Consider a defined same-day follow-up step for guests who did not arrive, and compare the recorded no-show rate next period.</div>
+      <div class="why">In context: This is the share of booked appointments recorded as no-shows this week; compare it against next period.</div>
+      <dl><dt>Owner</dt><dd>Sales Manager</dd><dt>Follow-up metric</dt><dd>Appointment no-show rate</dd></dl>
+      <div class="automation"><span class="pill">Not Active - Review Before Activation</span>
+        <strong>Recommended alert:</strong> Notify the Sales Manager on a same-day appointment no-show so a personal follow-up can go out.<br>
+        <strong>Recommended automation:</strong> A same-day reschedule outreach for guests who did not arrive.</div>
+    </div>
+    <div class="action">
+      <div class="top"><span class="rank">Priority 3</span><span class="focus">Sales &amp; Gross</span></div>
+      <div class="t">Grow sales and gross</div>
+      <div class="msg">Review front-end desking on recent deals; front gross was recorded below zero this period.</div>
+      <div class="why">In context: This is your recorded front/back gross composition this week; review it in deal meetings and compare next period.</div>
+      <dl><dt>Owner</dt><dd>Sales Manager</dd><dt>Follow-up metric</dt><dd>Total gross</dd></dl>
+      <div class="automation"><span class="pill">Not Active - Review Before Activation</span>
+        <strong>Recommended alert:</strong> Send the Sales Manager a weekly front/back gross mix summary.<br>
+        <strong>Recommended automation:</strong> Deal-desk review prompts.</div>
+    </div>
+    <div class="action">
+      <div class="top"><span class="rank">Priority 4</span><span class="focus">Process</span></div>
+      <div class="t">Tighten your process</div>
+      <div class="msg">Align your reports on a single trusted sold count so per-deal and close-rate views match across your reports.</div>
+      <div class="why">In context: Your two sold-count views differ this week; reconcile them so the counts agree.</div>
+      <dl><dt>Owner</dt><dd>General Manager</dd><dt>Follow-up metric</dt><dd>Total gross</dd></dl>
+      <div class="automation"><span class="pill">Not Active - Review Before Activation</span>
+        <strong>Recommended alert:</strong> Flag the General Manager when the two sold-count views differ for the week.<br>
+        <strong>Recommended automation:</strong> A weekly reporting reconciliation checklist.</div>
+    </div>
+    <div class="action">
+      <div class="top"><span class="rank">Priority 5</span><span class="focus">Sales &amp; Gross</span></div>
+      <div class="t">Grow sales and gross</div>
+      <div class="msg">Review your funnel steps together - set, show, and close - alongside your overall lead-to-sale yield, and track each snapshot next period.</div>
+      <div class="why">In context: These are your recorded funnel snapshots this week; review each against next period.</div>
+      <dl><dt>Owner</dt><dd>Sales Manager</dd><dt>Follow-up metric</dt><dd>Lead-to-sale yield</dd></dl>
+      <div class="automation"><span class="pill">Not Active - Review Before Activation</span>
+        <strong>Recommended alert:</strong> Include the weekly funnel snapshot in the Sales Manager's Monday review.<br>
+        <strong>Recommended automation:</strong> A structured weekly funnel-review checklist.</div>
+    </div>
+    <div class="action">
+      <div class="top"><span class="rank">Priority 6</span><span class="focus">Team Efficiency</span></div>
+      <div class="t">Focus your team's effort</div>
+      <div class="msg">Use your recorded no-show count to decide where confirmation effort is worth prioritizing, and review the change next period.</div>
+      <div class="why">In context: This is the count of appointments recorded as no-shows this week; review it against next period.</div>
+      <dl><dt>Owner</dt><dd>Sales Manager</dd><dt>Follow-up metric</dt><dd>Appointment no-show rate</dd></dl>
+      <div class="automation"><span class="pill">Not Active - Review Before Activation</span>
+        <strong>Recommended alert:</strong> Send the Sales Manager a weekly summary of no-show volume for confirmation planning.<br>
+        <strong>Recommended automation:</strong> Prioritized confirmation outreach for the week's bookings.</div>
+    </div>
+    <div class="action">
+      <div class="top"><span class="rank">Priority 7</span><span class="focus">Customer Experience</span></div>
+      <div class="t">Smooth the buyer path</div>
+      <div class="msg">Track your average response time and set a dealer-relative target to review next period.</div>
+      <div class="why">In context: This is your recorded average response time this week; set a dealer-relative target and review next period.</div>
+      <dl><dt>Owner</dt><dd>Sales Manager</dd><dt>Follow-up metric</dt><dd>Average response time (minutes)</dd></dl>
+      <div class="automation"><span class="pill">Not Active - Review Before Activation</span>
+        <strong>Recommended alert:</strong> Notify the Sales Manager when average response time drifts above your dealer-relative target.<br>
+        <strong>Recommended automation:</strong> A lead-response prompt for the team.</div>
+    </div>
+
+  <h2>Recommended Alerts and Automations</h2>
+  <p>Each item below is a suggestion for your team to consider. Nothing here is turned on.</p>
+  <table><colgroup><col style="width:26%"><col style="width:37%"><col style="width:37%"></colgroup>
+  <thead><tr><th>Opportunity</th><th>Recommended alert</th><th>Recommended automation</th></tr></thead>
+  <tbody><tr><td>Smooth the buyer path<br><span style="font-size:9.5px;color:#94a3b8">Not Active - Review Before Activation</span></td><td>Notify the Sales Manager when the weekly appointment show rate falls below your dealer-relative target.</td><td>A guest confirmation-and-reminder cadence.</td></tr><tr><td>Tighten your process<br><span style="font-size:9.5px;color:#94a3b8">Not Active - Review Before Activation</span></td><td>Notify the Sales Manager on a same-day appointment no-show so a personal follow-up can go out.</td><td>A same-day reschedule outreach for guests who did not arrive.</td></tr><tr><td>Grow sales and gross<br><span style="font-size:9.5px;color:#94a3b8">Not Active - Review Before Activation</span></td><td>Send the Sales Manager a weekly front/back gross mix summary.</td><td>Deal-desk review prompts.</td></tr><tr><td>Tighten your process<br><span style="font-size:9.5px;color:#94a3b8">Not Active - Review Before Activation</span></td><td>Flag the General Manager when the two sold-count views differ for the week.</td><td>A weekly reporting reconciliation checklist.</td></tr><tr><td>Grow sales and gross<br><span style="font-size:9.5px;color:#94a3b8">Not Active - Review Before Activation</span></td><td>Include the weekly funnel snapshot in the Sales Manager's Monday review.</td><td>A structured weekly funnel-review checklist.</td></tr><tr><td>Focus your team's effort<br><span style="font-size:9.5px;color:#94a3b8">Not Active - Review Before Activation</span></td><td>Send the Sales Manager a weekly summary of no-show volume for confirmation planning.</td><td>Prioritized confirmation outreach for the week's bookings.</td></tr><tr><td>Smooth the buyer path<br><span style="font-size:9.5px;color:#94a3b8">Not Active - Review Before Activation</span></td><td>Notify the Sales Manager when average response time drifts above your dealer-relative target.</td><td>A lead-response prompt for the team.</td></tr></tbody></table>
+
+  <h2>Metric Appendix</h2>
+  <table><colgroup><col style="width:70%"><col style="width:30%"></colgroup>
+  <thead><tr><th>Measure</th><th style="text-align:right">This week</th></tr></thead>
+  <tbody><tr><th colspan="2" style="background:#eef3f9">Sales Funnel</th></tr><tr><td>Appointment-set rate (set / leads)</td><td style="text-align:right;font-variant-numeric:tabular-nums">16.2%</td></tr><tr><td>Visit rate (visits / leads)</td><td style="text-align:right;font-variant-numeric:tabular-nums">37.8%</td></tr><tr><td>Lead-to-sale yield, end-to-end (sold / leads)</td><td style="text-align:right;font-variant-numeric:tabular-nums">16.2%</td></tr><tr><th colspan="2" style="background:#eef3f9">Appointments</th></tr><tr><td>Shown-through rate (shown / set)</td><td style="text-align:right;font-variant-numeric:tabular-nums">33.3%</td></tr><tr><td>Confirmation rate (confirmed / total)</td><td style="text-align:right;font-variant-numeric:tabular-nums">42.9%</td></tr><tr><td>Confirmation gap (unconfirmed / total)</td><td style="text-align:right;font-variant-numeric:tabular-nums">57.1%</td></tr><tr><td>Show rate (shown / total)</td><td style="text-align:right;font-variant-numeric:tabular-nums">42.9%</td></tr><tr><td>No-show rate (no-show / total)</td><td style="text-align:right;font-variant-numeric:tabular-nums">57.1%</td></tr><tr><td>Cancel rate (cancelled / total)</td><td style="text-align:right;font-variant-numeric:tabular-nums">0.0%</td></tr><tr><td>Reschedule rate (rescheduled / total)</td><td style="text-align:right;font-variant-numeric:tabular-nums">28.6%</td></tr><tr><td>Completion rate (completed / total)</td><td style="text-align:right;font-variant-numeric:tabular-nums">42.9%</td></tr><tr><th colspan="2" style="background:#eef3f9">Showroom</th></tr><tr><td>Visit-to-sale rate (visits-sold / visits)</td><td style="text-align:right;font-variant-numeric:tabular-nums">21.4%</td></tr><tr><th colspan="2" style="background:#eef3f9">Gross</th></tr><tr><td>Total gross (CRM per-deal sum)</td><td style="text-align:right;font-variant-numeric:tabular-nums">$1,600.99</td></tr><tr><td>Front-gross mix (front / total)</td><td style="text-align:right;font-variant-numeric:tabular-nums">-141.6%</td></tr><tr><td>Back-gross mix (back / total)</td><td style="text-align:right;font-variant-numeric:tabular-nums">241.6%</td></tr><tr><th colspan="2" style="background:#eef3f9">Response</th></tr><tr><td>Avg actual response (minutes)</td><td style="text-align:right;font-variant-numeric:tabular-nums">317</td></tr><tr><th colspan="2" style="background:#eef3f9">Cross-metric</th></tr><tr><td>Confirmed-not-shown gap (confirmation rate - show rate)</td><td style="text-align:right;font-variant-numeric:tabular-nums">0.0%</td></tr></tbody></table>
+
+  <h2>Semantic Watchdog</h2>
+  <div class="watchdog">
+    <p>Your dealership is governed by a 295-condition Semantic Watchdog framework. This edition directly evaluates the two ratified appointment rules - show rate and no-show rate - from your current accepted Sales data, and draws on 17 derived measures for broader context.</p>
+    <div class="stats">
+      <div class="s"><div class="n">295</div><div class="l">Governed conditions</div></div>
+      <div class="s"><div class="n">2</div><div class="l">Ratified rules evaluated</div></div>
+      <div class="s"><div class="n">17</div><div class="l">Derived measures</div></div>
+    </div>
+  </div>
+
+  <ul class="footnotes"><li>This is a one-week snapshot; figures reflect the displayed period only.</li><li>Every rate uses the numerator and denominator shown beside it.</li><li>Recommendations are practical steps to test and review next period.</li><li>Sales data only.</li></ul>
+</div></body></html>

@@ -133,7 +133,13 @@ export type ConsultantSynthesis = {
 const BANNED_EXTERNAL = /\b(limitation|limitations|quarantine|quarantined|withheld|missing|issue|issues)\b/i
 // Unsupported causality / intent / magnitude / outcome-promise patterns (scanned on the
 // customer-facing + observation fields; careful hypotheses are allowed only in does_not_prove).
-const PROHIBITED_CLAIM = /\b(because|due to|caused? by|drives?|driven by|leads? to|result(?:s|ed)? in|reliabl\w*|guarantee\w*|paying off|large share|unlikely|more prospects engaged|wins? deals?|speed wins|keeps? more|will (?:lift|increase|reduce|improve|boost|save)|\blifts?\b|\bboosts?\b|biggest (?:lever|opportunity)|weakest stage)\b/i
+/**
+ * Centralized causal/outcome/magnitude claim scanner. Shared by the R3 synthesis post-checks
+ * AND the R4 customer-safety guard so no customer-facing field can reintroduce a claim R3
+ * removed. Extended (R4 shadow) with outcome-promise phrases; every added token is verified
+ * absent from the R3 findings/narrative text so R3 behavior is unchanged.
+ */
+export const PROHIBITED_CLAIM = /\b(because|due to|caused? by|drives?|driven by|leads? to|result(?:s|ed)? in|reliabl\w*|guarantee\w*|paying off|pays? off|large share|unlikely|(?:more |keeps? )?prospects? engaged|wins? deals?|speed wins|keeps? more|will (?:lift|increase|reduce|improve|boost|save)|\blifts?\b|\bboosts?\b|biggest (?:lever|opportunity)|weakest stage|most direct path|(?:additional|into|more) deliveries|\bproductive\b|ready buyers|\bprotects?\b|toward a visit|\bfrees?\b|\bfreeing\b|showroom time|attention will pay|more resilient|\bresilient\b)\b/i
 
 function fmt(value: number, unit: MeasureUnit): string {
   if (unit === 'currency_usd') return value.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })
