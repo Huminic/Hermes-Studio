@@ -17,7 +17,8 @@
     "SW-138",
     "SW-288"
   ],
-  "note": "One explicit row per pending ID. Promotes exactly SW-022/SW-133/SW-137 (semantically exact structural definitions). Baselines are internal operational targets (red-flag rate ideal = 0), NOT industry benchmarks. Missing is never zero.",
+  "promotion_statement": "Promotes exactly SW-022/SW-133; SW-137 held (candidate guard, ambiguous same-minute adjacency)",
+  "note": "One explicit row per pending ID. Promotes exactly SW-022/SW-133; SW-137 held (candidate guard, ambiguous same-minute adjacency) (semantically exact structural definitions). Baselines are internal operational targets (red-flag rate ideal = 0), NOT industry benchmarks. Missing is never zero.",
   "specs": [
     {
       "metric_id": "SW-019",

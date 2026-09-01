@@ -84,9 +84,9 @@ the generator; no raw CSV/JPEG/PII/secret committed; scope limited to comm files
 
 | File | sha256:16 |
 | ---- | --------- |
-| `src/server/reports/comms/comm-metrics.ts` | `9a8377f66109e69a` |
-| `scripts/m1r-comms/build-comm-evaluation.ts` | `21c08696311f4747` |
-| `docs/halo/contract/sw295-comm-metric-specs.json` | `56128aa2b3633d63` |
+| `src/server/reports/comms/comm-metrics.ts` | `32e5933e0951dd2c` |
+| `scripts/m1r-comms/build-comm-evaluation.ts` | `06bafe86c71d7b42` |
+| `docs/halo/contract/sw295-comm-metric-specs.json` | `dcb7fe0699ef73e5` |
 | `docs/halo/evidence/m1r/comms/comm-evaluation-ledger.json` | `4b4ce0875a9373de` |
 | `docs/halo/evidence/m1r/comms/comm-portfolio-reconciliation.json` | `600be55430f87d0a` |
 

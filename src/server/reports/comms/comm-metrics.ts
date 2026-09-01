@@ -641,9 +641,9 @@ function baselineFor(id: CommMetricId, title: string): Baseline {
 }
 
 /**
- * Evaluate the three promoted comm metrics across the (already provenance-validated) rooftops
- * and record the nine held IDs. Rank is computed within the three rooftops per metric. Output
- * is aggregate-only (no PII). Pure + deterministic.
+ * Evaluate the two promoted comm metrics (SW-022, SW-133) across the (already provenance-
+ * validated) rooftops and record the ten held IDs (incl. SW-137). Rank is computed within the
+ * three rooftops per metric. Output is aggregate-only (no PII). Pure + deterministic.
  */
 export function evaluateCommMetrics(
   rooftops: Array<CommRooftopInput>,

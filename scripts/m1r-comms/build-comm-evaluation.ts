@@ -185,7 +185,15 @@ async function main(): Promise<void> {
   if (evaln.held.length !== 10)
     throw new Error(`expected 10 held IDs, got ${evaln.held.length}`)
 
-  // 1. Versioned semantic spec (one explicit row per pending ID).
+  // 1. Versioned semantic spec (one explicit row per pending ID). The promotion statement is
+  //    DERIVED from the spec eligibility (never hardcoded) so it cannot contradict the specs.
+  const eligibleIds = COMM_METRIC_SPECS.filter(
+    (s) => s.eligibility === 'evaluation_eligible',
+  ).map((s) => s.metric_id)
+  const heldSpecIds = COMM_METRIC_SPECS.filter(
+    (s) => s.eligibility === 'held',
+  ).map((s) => s.metric_id)
+  const promotionStatement = `Promotes exactly ${eligibleIds.join('/')}; SW-137 held (candidate guard, ambiguous same-minute adjacency)`
   const specDoc = {
     artifact: 'gate4c2-comm-metric-specs',
     revision: 'comm-metric-spec-v1 (semantically exact; no proxies)',
@@ -193,20 +201,17 @@ async function main(): Promise<void> {
     formula_version: COMM_FORMULA_VERSION,
     catalog_ref:
       'docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json',
-    evaluation_eligible_ids: COMM_METRIC_SPECS.filter(
-      (s) => s.eligibility === 'evaluation_eligible',
-    ).map((s) => s.metric_id),
-    held_ids: COMM_METRIC_SPECS.filter((s) => s.eligibility === 'held').map(
-      (s) => s.metric_id,
-    ),
-    note: 'One explicit row per pending ID. Promotes exactly SW-022/SW-133/SW-137 (semantically exact structural definitions). Baselines are internal operational targets (red-flag rate ideal = 0), NOT industry benchmarks. Missing is never zero.',
+    evaluation_eligible_ids: eligibleIds,
+    held_ids: heldSpecIds,
+    promotion_statement: promotionStatement,
+    note: `One explicit row per pending ID. ${promotionStatement} (semantically exact structural definitions). Baselines are internal operational targets (red-flag rate ideal = 0), NOT industry benchmarks. Missing is never zero.`,
     specs: COMM_METRIC_SPECS,
   }
   fs.mkdirSync(CONTRACT, { recursive: true })
   const specPath = path.join(CONTRACT, 'sw295-comm-metric-specs.json')
   fs.writeFileSync(specPath, await formatJsonFile(specDoc, specPath))
 
-  // 2. Evaluation ledger (9 cells + 9 held).
+  // 2. Evaluation ledger (6 evaluated cells + 10 held).
   const ledger = {
     artifact: 'gate4c2-comm-evaluation-ledger',
     family: COMM_WEEKLY_FAMILY,

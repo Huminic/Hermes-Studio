@@ -408,6 +408,19 @@ describe('committed comm evaluation evidence', () => {
   const recon = rd(
     'docs/halo/evidence/m1r/comms/comm-portfolio-reconciliation.json',
   )
+  const spec = rd('docs/halo/contract/sw295-comm-metric-specs.json')
+
+  it('generated spec promotion statement says SW-022/SW-133 (SW-137 held) — cannot regress', () => {
+    expect(spec.evaluation_eligible_ids).toEqual(['SW-022', 'SW-133'])
+    expect(spec.held_ids).toContain('SW-137')
+    expect(spec.promotion_statement).toBe(
+      'Promotes exactly SW-022/SW-133; SW-137 held (candidate guard, ambiguous same-minute adjacency)',
+    )
+    // the false "SW-022/SW-133/SW-137" promotion claim must never reappear in the note/statement
+    expect(spec.note).toContain('Promotes exactly SW-022/SW-133;')
+    expect(spec.note).not.toContain('SW-022/SW-133/SW-137')
+    expect(spec.promotion_statement).not.toContain('SW-022/SW-133/SW-137')
+  })
 
   it('promotes 6 cells (SW-022 + SW-133 x 3) with the real order-invariant numerators', () => {
     expect(ledger.evaluated_ids).toEqual(['SW-022', 'SW-133'])
