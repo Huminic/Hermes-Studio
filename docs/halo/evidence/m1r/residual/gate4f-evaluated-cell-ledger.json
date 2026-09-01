@@ -1,0 +1,2680 @@
+{
+  "artifact": "gate4f-evaluated-cell-ledger",
+  "acquisition_class": "Scheduled source plus downstream calculation/NLP",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "governed_rooftops": ["21043", "21044", "21047"],
+  "evaluated_ids": [],
+  "evaluated_cells": 0,
+  "held_ids": [
+    "SW-002",
+    "SW-003",
+    "SW-007",
+    "SW-018",
+    "SW-019",
+    "SW-024",
+    "SW-026",
+    "SW-027",
+    "SW-035",
+    "SW-036",
+    "SW-037",
+    "SW-044",
+    "SW-057",
+    "SW-058",
+    "SW-059",
+    "SW-060",
+    "SW-064",
+    "SW-076",
+    "SW-083",
+    "SW-086",
+    "SW-087",
+    "SW-089",
+    "SW-091",
+    "SW-092",
+    "SW-093",
+    "SW-105",
+    "SW-112",
+    "SW-117",
+    "SW-118",
+    "SW-121",
+    "SW-122",
+    "SW-123",
+    "SW-124",
+    "SW-125",
+    "SW-126",
+    "SW-127",
+    "SW-128",
+    "SW-129",
+    "SW-130",
+    "SW-132",
+    "SW-134",
+    "SW-137",
+    "SW-138",
+    "SW-140",
+    "SW-167",
+    "SW-198",
+    "SW-207",
+    "SW-208",
+    "SW-209",
+    "SW-210",
+    "SW-212",
+    "SW-214",
+    "SW-217",
+    "SW-219",
+    "SW-220",
+    "SW-221",
+    "SW-223",
+    "SW-224",
+    "SW-225",
+    "SW-226",
+    "SW-233",
+    "SW-234",
+    "SW-235",
+    "SW-240",
+    "SW-242",
+    "SW-243",
+    "SW-245",
+    "SW-247",
+    "SW-248",
+    "SW-249",
+    "SW-250",
+    "SW-257",
+    "SW-258",
+    "SW-259",
+    "SW-260",
+    "SW-261",
+    "SW-262",
+    "SW-263",
+    "SW-265",
+    "SW-266",
+    "SW-270",
+    "SW-288",
+    "SW-290",
+    "SW-291",
+    "SW-293",
+    "SW-295"
+  ],
+  "held_cells": 258,
+  "note": "Gate 4F evaluated ZERO new cells: none of the 86 residual IDs is definition-exact AND evidence-sufficient under the Contract-2 accepted boundary. No restricted capture was opened (zero PII exposure). The prior 51 evaluated cells are unchanged. Each held cell inherits its row blocker: see the matrix for exact primary_blocker, prerequisites, blocker_class, owner, and next_action.",
+  "held": [
+    {
+      "metric_id": "SW-002",
+      "blocker_class": "unsupported_field",
+      "primary_blocker": "duplicate-lead detection needs phone/email identity absent from the family",
+      "prerequisites": [
+        "missing_inputs: phone/email dedup fields",
+        "capability_requirement: derivative field extension",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: the required field(s) admitted into the accepted Sales-only structured/communication schema (Contract 2); no field extension is authorized in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-003",
+      "blocker_class": "unsupported_field",
+      "primary_blocker": "no phone/email column exists in the 24-col family",
+      "prerequisites": [
+        "missing_inputs: phone + email fields",
+        "capability_requirement: derivative field extension",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: the required field(s) admitted into the accepted Sales-only structured/communication schema (Contract 2); no field extension is authorized in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-007",
+      "blocker_class": "unsupported_field",
+      "primary_blocker": "invalid-phone/disposable-email checks need phone/email data absent from the family",
+      "prerequisites": [
+        "missing_inputs: phone/email validity fields",
+        "capability_requirement: derivative field extension",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: the required field(s) admitted into the accepted Sales-only structured/communication schema (Contract 2); no field extension is authorized in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-018",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "chat abandonment is an external chat-system metric",
+      "prerequisites": [
+        "missing_inputs: external chat transcripts",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-019",
+      "blocker_class": "semantic_definition_pending",
+      "primary_blocker": "outbound Logged Call counts per rep per calendar day exist; \"2 consecutive days\" is WITHIN one week, not multi-week",
+      "prerequisites": [
+        "missing_inputs: zero-activity-day firing + rep population",
+        "capability_requirement: none (ratified semantic definition only)",
+        "minimum_history: 1 governed week containing >= 2 eligible adjacent days",
+        "contract_2_requirement: a ratified semantic/NLP definition or threshold evaluated by an approved in-boundary provider; no approved in-boundary provider exists and no live model may be called (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-024",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "\"open lead untouched >72h\" needs the lead open-status/aging from CRM",
+      "prerequisites": [
+        "missing_inputs: open-lead status + aging",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-026",
+      "blocker_class": "semantic_definition_pending",
+      "primary_blocker": "has_video per rep exists; the media scope and peer comparison are choices",
+      "prerequisites": [
+        "missing_inputs: \"personalized media\" scope + peer basis",
+        "capability_requirement: none (ratified semantic definition only)",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a ratified semantic/NLP definition or threshold evaluated by an approved in-boundary provider; no approved in-boundary provider exists and no live model may be called (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-027",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "BDC-to-floor handoff notes are CRM records, not comm events",
+      "prerequisites": [
+        "missing_inputs: CRM handoff note",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-035",
+      "blocker_class": "insufficient_history",
+      "primary_blocker": "funnel conversion vs 90-day baseline needs history",
+      "prerequisites": [
+        "missing_inputs: 90-day funnel baseline",
+        "capability_requirement: multi-week history",
+        "minimum_history: > 1 week (multi-week history)",
+        "contract_2_requirement: literal history beyond the single accepted week 2026-08-24..2026-08-30 (missing is never zero); no multi-week history is accepted in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-036",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "pipeline aging is a CRM pipeline metric",
+      "prerequisites": [
+        "missing_inputs: pipeline open-lead aging",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-037",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "hot-leads-% of pipeline is a pipeline metric",
+      "prerequisites": [
+        "missing_inputs: pipeline composition",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-044",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "appts outside hours is an appointment metric",
+      "prerequisites": [
+        "missing_inputs: appointment times + operating hours",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-057",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "lead interest on aged units needs inventory + VOI data",
+      "prerequisites": [
+        "missing_inputs: inventory age + vehicle-of-interest",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-058",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "VOI sold-not-marked is an inventory/CRM hygiene metric",
+      "prerequisites": [
+        "missing_inputs: VOI sold vs lead state",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-059",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "demand-vs-inventory is an inventory metric",
+      "prerequisites": [
+        "missing_inputs: inventory on lot",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-060",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "multiple leads same VIN is an inventory/CRM metric",
+      "prerequisites": [
+        "missing_inputs: VIN-level lead coordination",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-064",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "attribution gaps is a marketing/attribution metric",
+      "prerequisites": [
+        "missing_inputs: first-touch attribution",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Capture the enhanced communication schema with stable IDs before causal ordering claims.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-076",
+      "blocker_class": "semantic_definition_pending",
+      "primary_blocker": "within-thread customer->rep latencies exist; the trend definition + wall-clock-vs-business-hours choice are open",
+      "prerequisites": [
+        "missing_inputs: \"grows\" trend definition + latency clock",
+        "capability_requirement: none (ratified semantic definition only)",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a ratified semantic/NLP definition or threshold evaluated by an approved in-boundary provider; no approved in-boundary provider exists and no live model may be called (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-083",
+      "blocker_class": "outside_sales_boundary",
+      "primary_blocker": "declined service work is Service-domain",
+      "prerequisites": [
+        "missing_inputs: Sales boundary",
+        "capability_requirement: separate Service workspace route",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: evidence outside the permanent Sales-only boundary (Service/Parts/complaint); permanently excluded (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-086",
+      "blocker_class": "semantic_definition_pending",
+      "primary_blocker": "outbound Answering-Machine result + thread follow-up timing exist; the definitions are choices",
+      "prerequisites": [
+        "missing_inputs: voicemail definition + follow-up window",
+        "capability_requirement: none (ratified semantic definition only)",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a ratified semantic/NLP definition or threshold evaluated by an approved in-boundary provider; no approved in-boundary provider exists and no live model may be called (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-087",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "set-to-show divergence is an appointment metric",
+      "prerequisites": [
+        "missing_inputs: BDC set-to-show",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the Serra roster and aligned numerator/denominator rules before scoring handoff friction.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-089",
+      "blocker_class": "unsupported_field",
+      "primary_blocker": "\"same number\" cannot be proven: person_token is derived from Global Customer ID, NOT a phone/call-ANI number; a telephony-system join would be required",
+      "prerequisites": [
+        "missing_inputs: phone/call-ANI identifier (a possible phone-system join)",
+        "capability_requirement: derivative field extension",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: the required field(s) admitted into the accepted Sales-only structured/communication schema (Contract 2); no field extension is authorized in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-091",
+      "blocker_class": "unsupported_field",
+      "primary_blocker": "conflicting phone/email across profiles needs contact fields absent from the family",
+      "prerequisites": [
+        "missing_inputs: phone/email fields",
+        "capability_requirement: derivative field extension",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: the required field(s) admitted into the accepted Sales-only structured/communication schema (Contract 2); no field extension is authorized in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-092",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "CRM completeness is a CRM-hygiene metric",
+      "prerequisites": [
+        "missing_inputs: CRM field completeness",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-093",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "sold-no-delivery-date is a deal/CRM metric",
+      "prerequisites": [
+        "missing_inputs: delivery date logging",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-105",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "premium-lead fairness is a routing metric",
+      "prerequisites": [
+        "missing_inputs: lead assignment distribution",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-112",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "falling-gross-rising-volume needs deal gross",
+      "prerequisites": [
+        "missing_inputs: gross + volume composite",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-117",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "handoff friction needs appointment + deal",
+      "prerequisites": [
+        "missing_inputs: BDC set + floor close",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the Serra roster and aligned numerator/denominator rules before scoring handoff friction.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-118",
+      "blocker_class": "outside_sales_boundary",
+      "primary_blocker": "same customer across sales + SERVICE + complaint spans the Service boundary",
+      "prerequisites": [
+        "missing_inputs: Sales boundary",
+        "capability_requirement: separate Service workspace route",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: evidence outside the permanent Sales-only boundary (Service/Parts/complaint); permanently excluded (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-121",
+      "blocker_class": "insufficient_history",
+      "primary_blocker": "2σ move needs the KPI series/baseline",
+      "prerequisites": [
+        "missing_inputs: trailing-30-day KPI mean",
+        "capability_requirement: multi-week history",
+        "minimum_history: > 1 week (multi-week history)",
+        "contract_2_requirement: literal history beyond the single accepted week 2026-08-24..2026-08-30 (missing is never zero); no multi-week history is accepted in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-122",
+      "blocker_class": "insufficient_history",
+      "primary_blocker": "3σ/SLA needs the KPI series",
+      "prerequisites": [
+        "missing_inputs: trailing KPI + hard SLA",
+        "capability_requirement: multi-week history",
+        "minimum_history: > 1 week (multi-week history)",
+        "contract_2_requirement: literal history beyond the single accepted week 2026-08-24..2026-08-30 (missing is never zero); no multi-week history is accepted in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-123",
+      "blocker_class": "insufficient_history",
+      "primary_blocker": "3-consecutive-day drift needs the KPI baseline series",
+      "prerequisites": [
+        "missing_inputs: KPI drift series",
+        "capability_requirement: multi-week history",
+        "minimum_history: > 1 week (multi-week history)",
+        "contract_2_requirement: literal history beyond the single accepted week 2026-08-24..2026-08-30 (missing is never zero); no multi-week history is accepted in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-124",
+      "blocker_class": "insufficient_history",
+      "primary_blocker": "cohort divergence needs prior-cohort history",
+      "prerequisites": [
+        "missing_inputs: cohort baseline",
+        "capability_requirement: multi-week history",
+        "minimum_history: > 1 week (multi-week history)",
+        "contract_2_requirement: literal history beyond the single accepted week 2026-08-24..2026-08-30 (missing is never zero); no multi-week history is accepted in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-125",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "decoupling needs multiple KPI families",
+      "prerequisites": [
+        "missing_inputs: multi-KPI correlation",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-126",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "segment anomaly needs multi-family KPIs",
+      "prerequisites": [
+        "missing_inputs: segment KPI slices",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-127",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "tier alerts are an engine-config concern",
+      "prerequisites": [
+        "missing_inputs: alert-tier engine config",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-128",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "duplicate suppression is an engine concern",
+      "prerequisites": [
+        "missing_inputs: alert dedup engine",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-129",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "context bundling is an engine concern",
+      "prerequisites": [
+        "missing_inputs: alert context bundling",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-130",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "feedback loop is an engine concern",
+      "prerequisites": [
+        "missing_inputs: alert feedback store",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-132",
+      "blocker_class": "semantic_definition_pending",
+      "primary_blocker": "last-inbound + subsequent-outbound timing exists, but the >4 BUSINESS-hours rule needs an external business-hours calendar that this derivative does NOT contain; remains pending ONLY with that external input recorded and no evaluation until configured/ratified",
+      "prerequisites": [
+        "missing_inputs: business-hours calendar (EXTERNAL config) + \"active thread\"",
+        "capability_requirement: none (ratified semantic definition only)",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a ratified semantic/NLP definition or threshold evaluated by an approved in-boundary provider; no approved in-boundary provider exists and no live model may be called (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-134",
+      "blocker_class": "semantic_definition_pending",
+      "primary_blocker": "successive within-thread gaps exist; the widening pattern needs definition",
+      "prerequisites": [
+        "missing_inputs: \"widens\" pattern definition",
+        "capability_requirement: none (ratified semantic definition only)",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a ratified semantic/NLP definition or threshold evaluated by an approved in-boundary provider; no approved in-boundary provider exists and no live model may be called (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-137",
+      "blocker_class": "semantic_definition_pending",
+      "primary_blocker": "inbound Text then rep Email in-thread is structural; the reply adjacency/window is a choice",
+      "prerequisites": [
+        "missing_inputs: \"reply\" adjacency + window",
+        "capability_requirement: none (ratified semantic definition only)",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a ratified semantic/NLP definition or threshold evaluated by an approved in-boundary provider; no approved in-boundary provider exists and no live model may be called (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-138",
+      "blocker_class": "semantic_definition_pending",
+      "primary_blocker": "consecutive rep-outbound runs exist; N and the window are undefined in the catalog",
+      "prerequisites": [
+        "missing_inputs: run count N + rapid-fire window",
+        "capability_requirement: none (ratified semantic definition only)",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a ratified semantic/NLP definition or threshold evaluated by an approved in-boundary provider; no approved in-boundary provider exists and no live model may be called (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-140",
+      "blocker_class": "unsupported_field",
+      "primary_blocker": "a customer-left voicemail is absent: an independent aggregate cross-tab shows Answering Machine ONLY on OUTBOUND Logged Calls (Honda 109 / Nissan 1 / Ford 16) and ZERO inbound Answering Machine across all three rooftops",
+      "prerequisites": [
+        "missing_inputs: inbound voicemail / customer-Answering-Machine event",
+        "capability_requirement: derivative field extension",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: the required field(s) admitted into the accepted Sales-only structured/communication schema (Contract 2); no field extension is authorized in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-167",
+      "blocker_class": "insufficient_history",
+      "primary_blocker": "silence >7 days cannot be observed within a 7-day capture",
+      "prerequisites": [
+        "missing_inputs: >7-day silence window",
+        "capability_requirement: multi-week history",
+        "minimum_history: > 1 week (multi-week history)",
+        "contract_2_requirement: literal history beyond the single accepted week 2026-08-24..2026-08-30 (missing is never zero); no multi-week history is accepted in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-198",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "\"sold customer\" needs the deal outcome to join",
+      "prerequisites": [
+        "missing_inputs: sold-customer state",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-207",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "60-180-day lost leads + in-stock vehicle needs lost-lead history + inventory",
+      "prerequisites": [
+        "missing_inputs: lost-lead history + inventory",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-208",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "\"not now\" timeframe arrival needs aged-lead + stated content",
+      "prerequisites": [
+        "missing_inputs: aged lead + stated timeframe",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-209",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "prior test drives + 90-day gap needs history + appointment",
+      "prerequisites": [
+        "missing_inputs: test-drive history >90 days",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-210",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "6-month-aged credit leads need history + credit",
+      "prerequisites": [
+        "missing_inputs: lost-to-credit history",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-212",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "lost-to-discontinued-unit needs inventory + history",
+      "prerequisites": [
+        "missing_inputs: competitor/inventory history",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-214",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "chat sessions without lead capture come from an external chat system (not the Communication Log); also needs high-intent-language NLP",
+      "prerequisites": [
+        "missing_inputs: external chat transcript source + NLP",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-217",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "leases maturing needs lease data",
+      "prerequisites": [
+        "missing_inputs: lease maturity",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-219",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "model-redesign needs OEM/inventory data",
+      "prerequisites": [
+        "missing_inputs: OEM redesign/inventory",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-220",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "vehicle-appreciated needs market value data",
+      "prerequisites": [
+        "missing_inputs: used-value appreciation",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-221",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "24+-months-financed needs finance data",
+      "prerequisites": [
+        "missing_inputs: finance term tenure",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-223",
+      "blocker_class": "outside_sales_boundary",
+      "primary_blocker": "Service ROs / declined work is Service-domain",
+      "prerequisites": [
+        "missing_inputs: Sales boundary",
+        "capability_requirement: separate Service workspace route",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: evidence outside the permanent Sales-only boundary (Service/Parts/complaint); permanently excluded (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-224",
+      "blocker_class": "outside_sales_boundary",
+      "primary_blocker": "vehicles in Service is Service-domain",
+      "prerequisites": [
+        "missing_inputs: Sales boundary",
+        "capability_requirement: separate Service workspace route",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: evidence outside the permanent Sales-only boundary (Service/Parts/complaint); permanently excluded (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-225",
+      "blocker_class": "outside_sales_boundary",
+      "primary_blocker": "repeat Service customers is Service-domain",
+      "prerequisites": [
+        "missing_inputs: Sales boundary",
+        "capability_requirement: separate Service workspace route",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: evidence outside the permanent Sales-only boundary (Service/Parts/complaint); permanently excluded (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-226",
+      "blocker_class": "outside_sales_boundary",
+      "primary_blocker": "Service customers / safety recalls is Service-domain",
+      "prerequisites": [
+        "missing_inputs: Sales boundary",
+        "capability_requirement: separate Service workspace route",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: evidence outside the permanent Sales-only boundary (Service/Parts/complaint); permanently excluded (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-233",
+      "blocker_class": "unsupported_field",
+      "primary_blocker": "open/click engagement is not a derivative field (\"Email Read\" interaction_result is not open/click tracking)",
+      "prerequisites": [
+        "missing_inputs: email open/click tracking",
+        "capability_requirement: derivative field extension",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: the required field(s) admitted into the accepted Sales-only structured/communication schema (Contract 2); no field extension is authorized in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-234",
+      "blocker_class": "unsupported_field",
+      "primary_blocker": "click tracking is not a derivative field",
+      "prerequisites": [
+        "missing_inputs: email click tracking",
+        "capability_requirement: derivative field extension",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: the required field(s) admitted into the accepted Sales-only structured/communication schema (Contract 2); no field extension is authorized in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-235",
+      "blocker_class": "unsupported_field",
+      "primary_blocker": "video OPENS are an external tool signal; has_video is only whether the rep ATTACHED a video",
+      "prerequisites": [
+        "missing_inputs: video-open tracking (Covideo/BombBomb)",
+        "capability_requirement: derivative field extension",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: the required field(s) admitted into the accepted Sales-only structured/communication schema (Contract 2); no field extension is authorized in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "unsupported_field"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-240",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "multi-driver households needs household data",
+      "prerequisites": [
+        "missing_inputs: household driver data",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-242",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "repeat purchasers needs sold history",
+      "prerequisites": [
+        "missing_inputs: sold purchase history",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-243",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "affinity groups needs OEM/affinity data",
+      "prerequisites": [
+        "missing_inputs: OEM/affinity membership",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-245",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "ZIP overrepresentation needs geo + sold data",
+      "prerequisites": [
+        "missing_inputs: geo/ZIP distribution",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-247",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "segment close rates needs segment + deal data",
+      "prerequisites": [
+        "missing_inputs: age/lifecycle segments",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-248",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "model-swap patterns needs trade history",
+      "prerequisites": [
+        "missing_inputs: trade model-swap history",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-249",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "cross-brand conquest needs trade history",
+      "prerequisites": [
+        "missing_inputs: trade conquest history",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-250",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "inventory-vs-lost needs inventory + history",
+      "prerequisites": [
+        "missing_inputs: aged inventory + lost leads",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-257",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "recent-graduates needs external data",
+      "prerequisites": [
+        "missing_inputs: education/grad program data",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-258",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "military moves needs external data",
+      "prerequisites": [
+        "missing_inputs: military PCS data",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-259",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "SMB owners needs external data",
+      "prerequisites": [
+        "missing_inputs: small-business/fleet data",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-260",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "retirees needs external/segment data",
+      "prerequisites": [
+        "missing_inputs: retiree/downsizer data",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-261",
+      "blocker_class": "insufficient_history",
+      "primary_blocker": "best-time-to-contact model needs historical response times",
+      "prerequisites": [
+        "missing_inputs: multi-week response history",
+        "capability_requirement: multi-week history",
+        "minimum_history: > 1 week (multi-week history)",
+        "contract_2_requirement: literal history beyond the single accepted week 2026-08-24..2026-08-30 (missing is never zero); no multi-week history is accepted in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-262",
+      "blocker_class": "insufficient_history",
+      "primary_blocker": "\"historically responsive to Saturday\" needs multi-week history",
+      "prerequisites": [
+        "missing_inputs: historical responsiveness",
+        "capability_requirement: multi-week history",
+        "minimum_history: > 1 week (multi-week history)",
+        "contract_2_requirement: literal history beyond the single accepted week 2026-08-24..2026-08-30 (missing is never zero); no multi-week history is accepted in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-263",
+      "blocker_class": "outside_sales_boundary",
+      "primary_blocker": "seasonal Service customers is Service-domain",
+      "prerequisites": [
+        "missing_inputs: Sales boundary",
+        "capability_requirement: separate Service workspace route",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: evidence outside the permanent Sales-only boundary (Service/Parts/complaint); permanently excluded (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-265",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "end-of-lease clusters need lease data (another source)",
+      "prerequisites": [
+        "missing_inputs: lease-end dates",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-266",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "model-year-changeover needs inventory/vehicle data",
+      "prerequisites": [
+        "missing_inputs: model-year/inventory",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-270",
+      "blocker_class": "outside_sales_boundary",
+      "primary_blocker": "service-customer cross-marketing is Service-domain",
+      "prerequisites": [
+        "missing_inputs: Sales boundary",
+        "capability_requirement: separate Service workspace route",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: evidence outside the permanent Sales-only boundary (Service/Parts/complaint); permanently excluded (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "outside_sales_boundary"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-288",
+      "blocker_class": "semantic_definition_pending",
+      "primary_blocker": "response times + direction balance + thread momentum are computable; the composite score must be ratified",
+      "prerequisites": [
+        "missing_inputs: composite score definition",
+        "capability_requirement: none (ratified semantic definition only)",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a ratified semantic/NLP definition or threshold evaluated by an approved in-boundary provider; no approved in-boundary provider exists and no live model may be called (Contract 2)"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "semantic_definition_pending"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-290",
+      "blocker_class": "insufficient_history",
+      "primary_blocker": "an escalation/complaint-probability predictor needs labeled historical outcomes + a trained model; not only NLP",
+      "prerequisites": [
+        "missing_inputs: historical labeled outcomes + model data",
+        "capability_requirement: multi-week history",
+        "minimum_history: > 1 week (multi-week history)",
+        "contract_2_requirement: literal history beyond the single accepted week 2026-08-24..2026-08-30 (missing is never zero); no multi-week history is accepted in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-291",
+      "blocker_class": "insufficient_history",
+      "primary_blocker": "re-engagement probability needs labeled history + a model",
+      "prerequisites": [
+        "missing_inputs: dormant-lead reactivation model",
+        "capability_requirement: multi-week history",
+        "minimum_history: > 1 week (multi-week history)",
+        "contract_2_requirement: literal history beyond the single accepted week 2026-08-24..2026-08-30 (missing is never zero); no multi-week history is accepted in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-293",
+      "blocker_class": "other_source_or_join",
+      "primary_blocker": "referral likelihood needs sold history + a model",
+      "prerequisites": [
+        "missing_inputs: referral propensity model",
+        "capability_requirement: join to another family/source",
+        "minimum_history: 1 governed week (2026-08-24..2026-08-30, America/New_York)",
+        "contract_2_requirement: a proved stable same-dealer same-period join key across the required source(s) with explicit row-level reconciliation (Contract 2); quarantined ROI/CAGE and external sources remain excluded"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Define the exact formula and validate on stable-key extracts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "other_source_or_join"
+        }
+      ]
+    },
+    {
+      "metric_id": "SW-295",
+      "blocker_class": "insufficient_history",
+      "primary_blocker": "best-channel/best-time model needs history",
+      "prerequisites": [
+        "missing_inputs: multi-week per-customer history",
+        "capability_requirement: multi-week history",
+        "minimum_history: > 1 week (multi-week history)",
+        "contract_2_requirement: literal history beyond the single accepted week 2026-08-24..2026-08-30 (missing is never zero); no multi-week history is accepted in this gate"
+      ],
+      "owner": "Huminic Semantic Watchdog pipeline",
+      "next_action": "Use an enhanced read-only export with stable IDs before production alerts.",
+      "rooftops": [
+        {
+          "dealer_id": "21043",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21044",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        },
+        {
+          "dealer_id": "21047",
+          "status": "unresolved",
+          "blocker_class": "insufficient_history"
+        }
+      ]
+    }
+  ]
+}
