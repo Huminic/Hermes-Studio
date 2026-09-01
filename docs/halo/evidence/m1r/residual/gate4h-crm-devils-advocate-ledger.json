@@ -1,0 +1,93 @@
+{
+  "artifact": "gate4h-crm-devils-advocate-ledger",
+  "revision": "H1",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "purpose": "A primary-export zero/blank/unavailable value must NOT become a claim that the data does not exist. Before any such value is reported, a same-dealer / same-period / same-definition alternate in-boundary check is REQUIRED.",
+  "states": {
+    "required_not_performed": "The alternate check is required but has not been performed (Gate 4H opens no CRM/browser access).",
+    "verified_present": "An alternate in-boundary source confirms a real value exists; the primary extreme was an extraction artifact.",
+    "verified_absent": "An alternate in-boundary source confirms the value is genuinely absent for this dealer and period.",
+    "not_verifiable": "No alternate in-boundary source can confirm either way."
+  },
+  "rendering_rule": "required_not_performed and not_verifiable render to the customer as \"not verified from available sources\"; a value is NEVER rendered as 0 on the basis of a primary-export blank/zero.",
+  "boundary": "Aggregate-only; Sales-only; no PII; no raw customer values echoed.",
+  "seed_rule": "Seeded deterministically from IDs whose committed Gate 4G matrix row carries observed_evidence (a concrete observed zero/blank/absent extreme). No checks are fabricated or performed.",
+  "seeded_ids": ["SW-034", "SW-049", "SW-050", "SW-111", "SW-114"],
+  "checks": [
+    {
+      "metric_id": "SW-034",
+      "metric": "closed deals ÷ write-ups (write-to-close rate), per rooftop, per week",
+      "relation_to_primary_blocker": "primary — the observed zero/absent denominator is material: the write-up-count denominator is ABSENT from the accepted CRM Sales Gross export at all three rooftops (an absent field, not an observed zero)",
+      "observed_extreme": "Committed structured audit: \"CRM Sales Gross has no write-up count; write-to-close denominator unavailable\" — the write-up-count denominator is absent (an absent field, not an observed zero) at 21043, 21044 and 21047, so the write-to-close rate is uncomputable.",
+      "primary_domain": "sales",
+      "alternate_check_required": {
+        "same_dealer_same_period_same_definition": true,
+        "method": "Re-read the same field for the same dealer and governed week via an alternate in-boundary VinSolutions view (e.g. the deal/desking log or the Sales Gross detail), under the identical metric definition, and compare. Sales-only; aggregate-only; no PII."
+      },
+      "state": "required_not_performed",
+      "performed": false,
+      "renders_as": "not verified from available sources",
+      "never_zero": true
+    },
+    {
+      "metric_id": "SW-049",
+      "metric": "current-week gross-per-unit vs trailing-30-day average gross-per-unit",
+      "relation_to_primary_blocker": "secondary — the PRIMARY blocker is the missing trailing-30-day history (trend_requires_history); the observed current-week new-car deal counts are context only and do not resolve the trend requirement",
+      "observed_extreme": "Committed structured audit: \"requires trailing 30-day gross-per-unit average; single held week insufficient\" — only one governed week is held, so the trailing-30-day trend basis is absent. This is a history blocker, not a zero-denominator blocker.",
+      "primary_domain": "sales",
+      "alternate_check_required": {
+        "same_dealer_same_period_same_definition": true,
+        "method": "Re-read the same field for the same dealer and governed week via an alternate in-boundary VinSolutions view (e.g. the deal/desking log or the Sales Gross detail), under the identical metric definition, and compare. Sales-only; aggregate-only; no PII."
+      },
+      "state": "required_not_performed",
+      "performed": false,
+      "renders_as": "not verified from available sources",
+      "never_zero": true
+    },
+    {
+      "metric_id": "SW-050",
+      "metric": "negative-front-gross new-car deals ÷ eligible new-car deals (per rooftop, per week)",
+      "relation_to_primary_blocker": "primary",
+      "observed_extreme": "Observed eligible denominator per rooftop — 21043: eligible new-car deals 0 (observed 0 eligible new-car deals — ratio undefined (0/0); UNRESOLVED, never value=0 (0 new-car deals in period (denominator 0; missing is not zero))); 21044: eligible new-car deals 0 (observed 0 eligible new-car deals — ratio undefined (0/0); UNRESOLVED, never value=0 (0 new-car deals in period (denominator 0; missing is not zero))); 21047: eligible new-car deals 4 (4 eligible new-car deals but 2 blank Front Gross — denominator integrity fails; UNRESOLVED, missing is never zero (2 of 4 new-car deals have blank Front Gross; denominator integrity fails (missing is not zero))).",
+      "primary_domain": "sales",
+      "alternate_check_required": {
+        "same_dealer_same_period_same_definition": true,
+        "method": "Re-read the same field for the same dealer and governed week via an alternate in-boundary VinSolutions view (e.g. the deal/desking log or the Sales Gross detail), under the identical metric definition, and compare. Sales-only; aggregate-only; no PII."
+      },
+      "state": "required_not_performed",
+      "performed": false,
+      "renders_as": "not verified from available sources",
+      "never_zero": true
+    },
+    {
+      "metric_id": "SW-111",
+      "metric": "composite: lead-volume trend (rising) × close-rate trend (falling)",
+      "relation_to_primary_blocker": "secondary — the PRIMARY blocker is the missing trend/threshold basis for a second-order composite (trend_requires_history); the observed current-week new-car deal counts are context only",
+      "observed_extreme": "Committed structured audit: \"second-order composite requires a trend/threshold basis not defined in held single-week data\" — the composite needs a directional trend basis (rising volume, falling close) that a single held week cannot establish.",
+      "primary_domain": "sales",
+      "alternate_check_required": {
+        "same_dealer_same_period_same_definition": true,
+        "method": "Re-read the same field for the same dealer and governed week via an alternate in-boundary VinSolutions view (e.g. the deal/desking log or the Sales Gross detail), under the identical metric definition, and compare. Sales-only; aggregate-only; no PII."
+      },
+      "state": "required_not_performed",
+      "performed": false,
+      "renders_as": "not verified from available sources",
+      "never_zero": true
+    },
+    {
+      "metric_id": "SW-114",
+      "metric": "composite: show rate (available) × close rate (sold ÷ write-ups)",
+      "relation_to_primary_blocker": "co-primary — an observed zero close-rate denominator (accepted Dashboard write-up TOTAL = 0) AND an unratified high/low composite threshold both block it",
+      "observed_extreme": "Committed structured audit: \"Show rate is available, but \"close rate\" needs sold/write-up and the accepted Dashboard write-up TOTAL is 0 (denominator 0); the composite also has no ratified high/low threshold.\" The close-rate denominator (write-up total) is observed 0 in the accepted week, and no high/low threshold is ratified for the show-vs-close composite.",
+      "primary_domain": "sales",
+      "alternate_check_required": {
+        "same_dealer_same_period_same_definition": true,
+        "method": "Re-read the same field for the same dealer and governed week via an alternate in-boundary VinSolutions view (e.g. the deal/desking log or the Sales Gross detail), under the identical metric definition, and compare. Sales-only; aggregate-only; no PII."
+      },
+      "state": "required_not_performed",
+      "performed": false,
+      "renders_as": "not verified from available sources",
+      "never_zero": true
+    }
+  ]
+}
