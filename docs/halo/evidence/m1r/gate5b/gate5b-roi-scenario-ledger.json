@@ -1,0 +1,92 @@
+{
+  "artifact": "gate5b-roi-scenario-ledger",
+  "revision": "L1",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "note": "Bounded incremental-appointment/show scenarios. Not promises; no causal attribution; no dollars (no accepted store-specific gross with lineage this cycle).",
+  "scenarios": [
+    {
+      "dealer_id": "21043",
+      "target_set_rate": 0.25,
+      "formulas": {
+        "appointment_gap_to_target": "max(0, 0.25 × leads − appointments_set)",
+        "additional_shows": "appointment_gap × current_show_rate",
+        "incremental_units": "additional_shows × show_to_sale_assumption (low/base/high)"
+      },
+      "appointment_gap_to_target": 13,
+      "additional_shows_if_gap_closed": 7.43,
+      "incremental_units": {
+        "low": 1.49,
+        "base": 2.23,
+        "high": 3.05
+      },
+      "assumptions": [
+        "current show rate held at 57.1% (this dealer's measured appointment-show rate over all appointment rows this period)",
+        "show-to-sale range low 20% / base 30% / high 41% — dated Foureyes H2 2023 reference upper bound (Internet+Phone 41% / Used 40%); NOT this dealer’s measured rate",
+        "single governed week; figures are a bounded opportunity scenario, not a forecast"
+      ],
+      "confidence": "low",
+      "sensitivity": "every 1 additional set appointment adds about 0.57 shows and 0.17 base-case units",
+      "warnings": [
+        "This is a scenario, not a promise, and implies no causation: closing the gap requires real appointment and follow-through work.",
+        "No dollar value is included because no accepted store-specific gross figure with lineage is available this cycle."
+      ],
+      "dollars": null
+    },
+    {
+      "dealer_id": "21044",
+      "target_set_rate": 0.25,
+      "formulas": {
+        "appointment_gap_to_target": "max(0, 0.25 × leads − appointments_set)",
+        "additional_shows": "appointment_gap × current_show_rate",
+        "incremental_units": "additional_shows × show_to_sale_assumption (low/base/high)"
+      },
+      "appointment_gap_to_target": 5.5,
+      "additional_shows_if_gap_closed": 1.83,
+      "incremental_units": {
+        "low": 0.37,
+        "base": 0.55,
+        "high": 0.75
+      },
+      "assumptions": [
+        "current show rate held at 33.3% (this dealer's measured appointment-show rate over all appointment rows this period)",
+        "show-to-sale range low 20% / base 30% / high 41% — dated Foureyes H2 2023 reference upper bound (Internet+Phone 41% / Used 40%); NOT this dealer’s measured rate",
+        "single governed week; figures are a bounded opportunity scenario, not a forecast"
+      ],
+      "confidence": "low",
+      "sensitivity": "every 1 additional set appointment adds about 0.33 shows and 0.1 base-case units",
+      "warnings": [
+        "This is a scenario, not a promise, and implies no causation: closing the gap requires real appointment and follow-through work.",
+        "No dollar value is included because no accepted store-specific gross figure with lineage is available this cycle."
+      ],
+      "dollars": null
+    },
+    {
+      "dealer_id": "21047",
+      "target_set_rate": 0.25,
+      "formulas": {
+        "appointment_gap_to_target": "max(0, 0.25 × leads − appointments_set)",
+        "additional_shows": "appointment_gap × current_show_rate",
+        "incremental_units": "additional_shows × show_to_sale_assumption (low/base/high)"
+      },
+      "appointment_gap_to_target": 3.5,
+      "additional_shows_if_gap_closed": 1.5,
+      "incremental_units": {
+        "low": 0.3,
+        "base": 0.45,
+        "high": 0.62
+      },
+      "assumptions": [
+        "current show rate held at 42.9% (this dealer's measured appointment-show rate over all appointment rows this period)",
+        "show-to-sale range low 20% / base 30% / high 41% — dated Foureyes H2 2023 reference upper bound (Internet+Phone 41% / Used 40%); NOT this dealer’s measured rate",
+        "single governed week; figures are a bounded opportunity scenario, not a forecast"
+      ],
+      "confidence": "low",
+      "sensitivity": "every 1 additional set appointment adds about 0.43 shows and 0.13 base-case units",
+      "warnings": [
+        "This is a scenario, not a promise, and implies no causation: closing the gap requires real appointment and follow-through work.",
+        "No dollar value is included because no accepted store-specific gross figure with lineage is available this cycle."
+      ],
+      "dollars": null
+    }
+  ]
+}

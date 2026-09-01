@@ -1,0 +1,501 @@
+{
+  "artifact": "gate5b-dealer-synthesis",
+  "revision": "L1",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "dealer_id": "21044",
+  "dealer": "Serra Nissan of Sylacauga",
+  "executive_narrative": {
+    "what_is_working": "On target this period: Median first-response time (business hours); Be-backs vs fresh-ups balance; Leads unassigned past 2 hours; Unfilled personalization tags in messages.",
+    "largest_controllable_opportunity": "Lead-to-appointment set rate (Appointment conversion) is the largest controllable opportunity, weighing off-target severity, three-store peer position, and evidence confidence.",
+    "how_evidence_connects": "A healthy median response time sits alongside untouched leads and a below-target set rate: fast average speed is not translating into set appointments because some leads are never worked.",
+    "claim_separation": "Facts are measured values; implications are inferences from ≥2 facts; hypotheses need more evidence; actions are recommendations."
+  },
+  "clusters": [
+    {
+      "cluster": "A",
+      "title": "Response consistency",
+      "facts": [
+        {
+          "metric_id": "SW-011",
+          "claim": "fact",
+          "text": "Median first-response time (business hours): 4 min (target at or below 10 min; on target; strongest of the three rooftops).",
+          "rating": "healthy",
+          "rank": 1
+        },
+        {
+          "metric_id": "SW-012",
+          "claim": "fact",
+          "text": "Leads left untouched past 30 minutes: 13.7% (target at or below 0%; off target; middle of the three rooftops).",
+          "rating": "breach",
+          "rank": 2
+        },
+        {
+          "metric_id": "SW-015",
+          "claim": "fact",
+          "text": "Rep first-response outliers vs the store median: 75% (target at or below 0%; off target; weakest of the three rooftops).",
+          "rating": "breach",
+          "rank": 3
+        }
+      ],
+      "peer_rank": [
+        {
+          "metric_id": "SW-011",
+          "rank": 1
+        },
+        {
+          "metric_id": "SW-012",
+          "rank": 2
+        },
+        {
+          "metric_id": "SW-015",
+          "rank": 3
+        }
+      ],
+      "narrative": "The store-average first-response time is 4 min, which reads on target — but that average hides inconsistency: 13.7% of business-hours leads were left untouched past 30 minutes and rep first-response outliers are off target. A healthy median can coexist with leads that never get worked, so average speed alone overstates coverage.",
+      "implication": {
+        "claim": "inference",
+        "text": "Coaching to the store average would miss the real gap; the opportunity is even coverage of every lead, not a faster headline median.",
+        "cites": ["SW-011", "SW-012", "SW-015"]
+      },
+      "hypotheses": [
+        {
+          "claim": "hypothesis",
+          "text": "Untouched leads may concentrate in specific hours, sources, or individual reps rather than being spread evenly; a per-rep/per-hour view would confirm.",
+          "cites": ["SW-012", "SW-015"]
+        }
+      ],
+      "actions": [
+        {
+          "action": "Stand up a daily untouched-lead sweep so no business-hours lead passes 30 minutes without a first response.",
+          "owner": "Sales Manager",
+          "cadence": "daily",
+          "success_measure": "untouched-past-30-minutes rate trending to zero",
+          "effort": "low",
+          "impact": "high"
+        }
+      ]
+    },
+    {
+      "cluster": "B",
+      "title": "Conversation effectiveness",
+      "facts": [
+        {
+          "metric_id": "SW-021",
+          "claim": "fact",
+          "text": "Templated messages with no personalization: 22.2% (target at or below 0%; off target; weakest of the three rooftops).",
+          "rating": "breach",
+          "rank": 3
+        },
+        {
+          "metric_id": "SW-022",
+          "claim": "fact",
+          "text": "Text-vs-call balance (voice avoidance): 33.3% (target at or below 0%; off target; weakest of the three rooftops).",
+          "rating": "breach",
+          "rank": 3
+        },
+        {
+          "metric_id": "SW-133",
+          "claim": "fact",
+          "text": "Customers sending 2+ messages before a reply: 2.3% (target at or below 0%; off target; middle of the three rooftops).",
+          "rating": "breach",
+          "rank": 2
+        },
+        {
+          "metric_id": "SW-142",
+          "claim": "fact",
+          "text": "Unfilled personalization tags in messages: 0% (target at or below 0%; on target; strongest of the three rooftops).",
+          "rating": "healthy",
+          "rank": 1
+        },
+        {
+          "metric_id": "SW-145",
+          "claim": "fact",
+          "text": "Same message reused across many customers: 0.3% (target at or below 0%; off target; strongest of the three rooftops).",
+          "rating": "breach",
+          "rank": 1
+        },
+        {
+          "metric_id": "SW-149",
+          "claim": "fact",
+          "text": "Very short, low-effort replies: 11.1% (target at or below 0%; off target; middle of the three rooftops).",
+          "rating": "breach",
+          "rank": 2
+        },
+        {
+          "metric_id": "SW-150",
+          "claim": "fact",
+          "text": "Link-only replies with no context: 0% (target at or below 0%; on target; strongest of the three rooftops).",
+          "rating": "healthy",
+          "rank": 1
+        }
+      ],
+      "peer_rank": [
+        {
+          "metric_id": "SW-021",
+          "rank": 3
+        },
+        {
+          "metric_id": "SW-022",
+          "rank": 3
+        },
+        {
+          "metric_id": "SW-133",
+          "rank": 2
+        },
+        {
+          "metric_id": "SW-142",
+          "rank": 1
+        },
+        {
+          "metric_id": "SW-145",
+          "rank": 1
+        },
+        {
+          "metric_id": "SW-149",
+          "rank": 2
+        },
+        {
+          "metric_id": "SW-150",
+          "rank": 1
+        }
+      ],
+      "narrative": "Messaging quality shows 5 flagged behaviors this period — Templated messages with no personalization, Text-vs-call balance (voice avoidance), Customers sending 2+ messages before a reply, Same message reused across many customers, Very short, low-effort replies. These are observed message patterns, not proven intent; taken together they point toward template reliance and low-effort or one-way replies.",
+      "implication": {
+        "claim": "inference",
+        "text": "Two or more messaging flags together suggest reps lean on templates and text over personalized, two-way conversation — a coachable quality gap, not a volume gap.",
+        "cites": ["SW-021", "SW-022", "SW-133"]
+      },
+      "hypotheses": [
+        {
+          "claim": "hypothesis",
+          "text": "Template reliance may be driven by workload or CRM shortcuts rather than skill; a short message-quality review with reps would separate cause from symptom.",
+          "cites": ["SW-021", "SW-022"]
+        }
+      ],
+      "actions": [
+        {
+          "action": "Run a weekly message-quality review: personalize the opening, balance text with a call attempt, and replace link-only replies with a question.",
+          "owner": "Sales Manager",
+          "cadence": "weekly",
+          "success_measure": "flagged messaging behaviors trending down week over week",
+          "effort": "medium",
+          "impact": "medium"
+        }
+      ]
+    },
+    {
+      "cluster": "C",
+      "title": "Appointment conversion",
+      "facts": [
+        {
+          "metric_id": "SW-031",
+          "claim": "fact",
+          "text": "Lead-to-appointment set rate: 15.5% (target at or above 25%; off target; middle of the three rooftops).",
+          "rating": "breach",
+          "rank": 2
+        },
+        {
+          "metric_id": "SW-032",
+          "claim": "fact",
+          "text": "Appointment show rate: 33.3% (target at or above 55%; off target; weakest of the three rooftops).",
+          "rating": "breach",
+          "rank": 3
+        },
+        {
+          "metric_id": "SW-033",
+          "claim": "fact",
+          "text": "Show-to-write rate: 0% (target at or above 60%; off target; strongest of the three rooftops).",
+          "rating": "breach",
+          "rank": 1
+        },
+        {
+          "metric_id": "SW-041",
+          "claim": "fact",
+          "text": "Appointment no-show rate: 50% (target at or below 45%; off target; middle of the three rooftops).",
+          "rating": "breach",
+          "rank": 2
+        }
+      ],
+      "peer_rank": [
+        {
+          "metric_id": "SW-031",
+          "rank": 2
+        },
+        {
+          "metric_id": "SW-032",
+          "rank": 3
+        },
+        {
+          "metric_id": "SW-033",
+          "rank": 1
+        },
+        {
+          "metric_id": "SW-041",
+          "rank": 2
+        }
+      ],
+      "narrative": "Across the appointment funnel this period: lead-to-set is 15.5% (off target, target 25%+), show rate is 33.3% (off target), no-show rate is 50% (off target), and show-to-write is 0% (off target). The show rate is measured over every appointment row this period (its accepted formula counts shows over all appointment rows), so it is not the same denominator as an industry appointments-set benchmark.",
+      "implication": {
+        "claim": "inference",
+        "text": "The largest controllable step here is getting more leads to a set appointment; show and write cannot compound on appointments that were never set.",
+        "cites": ["SW-031", "SW-032"]
+      },
+      "hypotheses": [
+        {
+          "claim": "hypothesis",
+          "text": "A low set rate can reflect customer follow-through, appointment-request quality, the confirmation process, or CRM logging of set appointments; these are distinct causes and none is established without a per-appointment review.",
+          "cites": ["SW-031", "SW-033"]
+        },
+        {
+          "claim": "hypothesis",
+          "text": "A weak show or high no-show rate may reflect confirmation cadence rather than lead quality; a confirmation-call audit would separate them.",
+          "cites": ["SW-032", "SW-041"]
+        }
+      ],
+      "actions": [
+        {
+          "action": "Tighten the set-and-confirm routine: a same-day appointment ask on every worked lead and a confirmation touch the day before.",
+          "owner": "Sales Manager",
+          "cadence": "daily",
+          "success_measure": "lead-to-set rate moving toward the 25% target and no-show rate falling",
+          "effort": "medium",
+          "impact": "high"
+        }
+      ]
+    },
+    {
+      "cluster": "D",
+      "title": "Showroom execution and ownership",
+      "facts": [
+        {
+          "metric_id": "SW-045",
+          "claim": "fact",
+          "text": "Be-backs vs fresh-ups balance: 0% (target at or below 100%; on target; strongest of the three rooftops).",
+          "rating": "healthy",
+          "rank": 1
+        },
+        {
+          "metric_id": "SW-046",
+          "claim": "fact",
+          "text": "Test-drive completion rate: 23.5% (target at or above 50%; off target; strongest of the three rooftops).",
+          "rating": "breach",
+          "rank": 1
+        },
+        {
+          "metric_id": "SW-090",
+          "claim": "fact",
+          "text": "Leads unassigned past 2 hours: 0% (target at or below 0%; on target; strongest of the three rooftops).",
+          "rating": "healthy",
+          "rank": 1
+        }
+      ],
+      "peer_rank": [
+        {
+          "metric_id": "SW-045",
+          "rank": 1
+        },
+        {
+          "metric_id": "SW-046",
+          "rank": 1
+        },
+        {
+          "metric_id": "SW-090",
+          "rank": 1
+        }
+      ],
+      "narrative": "Showroom execution this period: be-backs vs fresh-ups is 0% (on target), test-drive completion is 23.5% (off target), and lead assignment past 2 hours is 0% (on target).",
+      "implication": {
+        "claim": "inference",
+        "text": "Lead ownership is clean, so any follow-through gap sits with showroom execution rather than assignment.",
+        "cites": ["SW-090", "SW-046"]
+      },
+      "hypotheses": [
+        {
+          "claim": "hypothesis",
+          "text": "A low or zero test-drive/write value may be a CRM logging habit rather than missing activity; confirm against the showroom log before drawing a performance conclusion.",
+          "cites": ["SW-046", "SW-045"]
+        }
+      ],
+      "actions": [
+        {
+          "action": "Confirm test-drive and visit logging discipline at the desk, then coach to complete a test-drive on every showroom visit.",
+          "owner": "Sales Manager",
+          "cadence": "weekly",
+          "success_measure": "test-drive completion rising and logged consistently",
+          "effort": "medium",
+          "impact": "medium"
+        }
+      ]
+    }
+  ],
+  "cross_cluster_synthesis": [
+    {
+      "id": "speed-masks-then-conversion-gap",
+      "claim": "inference",
+      "text": "A healthy median response time sits alongside untouched leads and a below-target set rate: fast average speed is not translating into set appointments because some leads are never worked.",
+      "cites": ["SW-011", "SW-012", "SW-031"]
+    },
+    {
+      "id": "set-show-conversation",
+      "claim": "inference",
+      "text": "A below-target set rate and a soft show rate coincide with a messaging-quality flag, suggesting the appointment gap is partly a conversation-quality gap, not only volume.",
+      "cites": ["SW-031", "SW-032", "SW-021"]
+    },
+    {
+      "id": "ownership-vs-followthrough",
+      "claim": "inference",
+      "text": "Lead ownership is clean while showroom follow-through is soft, which points the opportunity at execution after assignment rather than at who owns the lead.",
+      "cites": ["SW-090", "SW-046"]
+    }
+  ],
+  "ranked_opportunities": [
+    {
+      "metric_id": "SW-031",
+      "cluster": "C",
+      "label": "Lead-to-appointment set rate",
+      "rating": "breach",
+      "rank": 2,
+      "confidence": "medium",
+      "weight": 6.75,
+      "claim": "recommendation"
+    },
+    {
+      "metric_id": "SW-032",
+      "cluster": "C",
+      "label": "Appointment show rate",
+      "rating": "breach",
+      "rank": 3,
+      "confidence": "low",
+      "weight": 5.625,
+      "claim": "recommendation"
+    },
+    {
+      "metric_id": "SW-012",
+      "cluster": "A",
+      "label": "Leads left untouched past 30 minutes",
+      "rating": "breach",
+      "rank": 2,
+      "confidence": "medium",
+      "weight": 4.5,
+      "claim": "recommendation"
+    },
+    {
+      "metric_id": "SW-041",
+      "cluster": "C",
+      "label": "Appointment no-show rate",
+      "rating": "breach",
+      "rank": 2,
+      "confidence": "low",
+      "weight": 4.5,
+      "claim": "recommendation"
+    },
+    {
+      "metric_id": "SW-015",
+      "cluster": "A",
+      "label": "Rep first-response outliers vs the store median",
+      "rating": "breach",
+      "rank": 3,
+      "confidence": "low",
+      "weight": 3.75,
+      "claim": "recommendation"
+    },
+    {
+      "metric_id": "SW-033",
+      "cluster": "C",
+      "label": "Show-to-write rate",
+      "rating": "breach",
+      "rank": 1,
+      "confidence": "low",
+      "weight": 3.6,
+      "claim": "recommendation"
+    },
+    {
+      "metric_id": "SW-046",
+      "cluster": "D",
+      "label": "Test-drive completion rate",
+      "rating": "breach",
+      "rank": 1,
+      "confidence": "medium",
+      "weight": 3.6,
+      "claim": "recommendation"
+    },
+    {
+      "metric_id": "SW-133",
+      "cluster": "B",
+      "label": "Customers sending 2+ messages before a reply",
+      "rating": "breach",
+      "rank": 2,
+      "confidence": "high",
+      "weight": 3,
+      "claim": "recommendation"
+    },
+    {
+      "metric_id": "SW-145",
+      "cluster": "B",
+      "label": "Same message reused across many customers",
+      "rating": "breach",
+      "rank": 1,
+      "confidence": "high",
+      "weight": 2.4,
+      "claim": "recommendation"
+    },
+    {
+      "metric_id": "SW-021",
+      "cluster": "B",
+      "label": "Templated messages with no personalization",
+      "rating": "breach",
+      "rank": 3,
+      "confidence": "low",
+      "weight": 1.875,
+      "claim": "recommendation"
+    },
+    {
+      "metric_id": "SW-022",
+      "cluster": "B",
+      "label": "Text-vs-call balance (voice avoidance)",
+      "rating": "breach",
+      "rank": 3,
+      "confidence": "low",
+      "weight": 1.875,
+      "claim": "recommendation"
+    },
+    {
+      "metric_id": "SW-149",
+      "cluster": "B",
+      "label": "Very short, low-effort replies",
+      "rating": "breach",
+      "rank": 2,
+      "confidence": "low",
+      "weight": 1.5,
+      "claim": "recommendation"
+    }
+  ],
+  "vehicle_opportunity_scenario": {
+    "dealer_id": "21044",
+    "target_set_rate": 0.25,
+    "formulas": {
+      "appointment_gap_to_target": "max(0, 0.25 × leads − appointments_set)",
+      "additional_shows": "appointment_gap × current_show_rate",
+      "incremental_units": "additional_shows × show_to_sale_assumption (low/base/high)"
+    },
+    "appointment_gap_to_target": 5.5,
+    "additional_shows_if_gap_closed": 1.83,
+    "incremental_units": {
+      "low": 0.37,
+      "base": 0.55,
+      "high": 0.75
+    },
+    "assumptions": [
+      "current show rate held at 33.3% (this dealer's measured appointment-show rate over all appointment rows this period)",
+      "show-to-sale range low 20% / base 30% / high 41% — dated Foureyes H2 2023 reference upper bound (Internet+Phone 41% / Used 40%); NOT this dealer’s measured rate",
+      "single governed week; figures are a bounded opportunity scenario, not a forecast"
+    ],
+    "confidence": "low",
+    "sensitivity": "every 1 additional set appointment adds about 0.33 shows and 0.1 base-case units",
+    "warnings": [
+      "This is a scenario, not a promise, and implies no causation: closing the gap requires real appointment and follow-through work.",
+      "No dollar value is included because no accepted store-specific gross figure with lineage is available this cycle."
+    ],
+    "dollars": null
+  }
+}

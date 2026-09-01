@@ -1,0 +1,38 @@
+{
+  "artifact": "gate5b-notification-automation-ledger",
+  "revision": "L1",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "note": "Candidates built from observed evaluated breach signals only. Nothing is activated or sent. External-action candidates require separate approval.",
+  "candidates": [
+    {
+      "metric_id": "SW-012",
+      "activated": false,
+      "trigger": "a business-hours lead reaches 30 minutes with no first response",
+      "audience": "Sales Manager (and the assigned salesperson)",
+      "timing": "real-time during staffed hours",
+      "payload": "a count and list reference of untouched leads needing an immediate first touch",
+      "guardrails": "business hours only; Sales leads only; no customer contact is sent by the alert",
+      "kind": "notification_only"
+    },
+    {
+      "metric_id": "SW-031",
+      "activated": false,
+      "trigger": "weekly lead-to-set rate stays below the 25% target",
+      "audience": "Sales Manager",
+      "timing": "weekly summary",
+      "payload": "the set-rate trend and the appointment gap to target",
+      "guardrails": "internal summary only; no automated customer outreach",
+      "kind": "notification_only"
+    },
+    {
+      "metric_id": "SW-041",
+      "activated": false,
+      "trigger": "weekly no-show rate exceeds its target",
+      "audience": "Sales Manager / BDC Manager",
+      "timing": "weekly summary",
+      "payload": "no-show trend and confirmation-cadence prompt",
+      "guardrails": "internal only; any customer confirmation messaging is a separate approved action",
+      "kind": "external_action_requires_approval"
+    }
+  ]
+}

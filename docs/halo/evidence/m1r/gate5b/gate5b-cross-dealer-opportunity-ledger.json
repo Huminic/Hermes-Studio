@@ -1,0 +1,308 @@
+{
+  "artifact": "gate5b-cross-dealer-opportunity-ledger",
+  "revision": "L1",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "note": "Opportunities ranked by deterministic evidence weight (severity × cluster leverage × confidence × peer position), not rhetoric.",
+  "opportunities": [
+    {
+      "metric_id": "SW-031",
+      "cluster": "C",
+      "label": "Lead-to-appointment set rate",
+      "by_dealer": [
+        {
+          "dealer_id": "21043",
+          "rating": "breach",
+          "rank": 3,
+          "weight": 8.438
+        },
+        {
+          "dealer_id": "21044",
+          "rating": "breach",
+          "rank": 2,
+          "weight": 6.75
+        },
+        {
+          "dealer_id": "21047",
+          "rating": "breach",
+          "rank": 1,
+          "weight": 5.4
+        }
+      ],
+      "total_weight": 20.588
+    },
+    {
+      "metric_id": "SW-012",
+      "cluster": "A",
+      "label": "Leads left untouched past 30 minutes",
+      "by_dealer": [
+        {
+          "dealer_id": "21043",
+          "rating": "breach",
+          "rank": 3,
+          "weight": 5.625
+        },
+        {
+          "dealer_id": "21044",
+          "rating": "breach",
+          "rank": 2,
+          "weight": 4.5
+        },
+        {
+          "dealer_id": "21047",
+          "rating": "breach",
+          "rank": 1,
+          "weight": 3.6
+        }
+      ],
+      "total_weight": 13.725
+    },
+    {
+      "metric_id": "SW-032",
+      "cluster": "C",
+      "label": "Appointment show rate",
+      "by_dealer": [
+        {
+          "dealer_id": "21043",
+          "rating": "watch",
+          "rank": 1,
+          "weight": 1.2
+        },
+        {
+          "dealer_id": "21044",
+          "rating": "breach",
+          "rank": 3,
+          "weight": 5.625
+        },
+        {
+          "dealer_id": "21047",
+          "rating": "breach",
+          "rank": 2,
+          "weight": 4.5
+        }
+      ],
+      "total_weight": 11.325
+    },
+    {
+      "metric_id": "SW-046",
+      "cluster": "D",
+      "label": "Test-drive completion rate",
+      "by_dealer": [
+        {
+          "dealer_id": "21043",
+          "rating": "breach",
+          "rank": 2,
+          "weight": 4.5
+        },
+        {
+          "dealer_id": "21044",
+          "rating": "breach",
+          "rank": 1,
+          "weight": 3.6
+        },
+        {
+          "dealer_id": "21047",
+          "rating": "breach",
+          "rank": 2,
+          "weight": 3
+        }
+      ],
+      "total_weight": 11.1
+    },
+    {
+      "metric_id": "SW-033",
+      "cluster": "C",
+      "label": "Show-to-write rate",
+      "by_dealer": [
+        {
+          "dealer_id": "21043",
+          "rating": "breach",
+          "rank": 1,
+          "weight": 3.6
+        },
+        {
+          "dealer_id": "21044",
+          "rating": "breach",
+          "rank": 1,
+          "weight": 3.6
+        },
+        {
+          "dealer_id": "21047",
+          "rating": "breach",
+          "rank": 1,
+          "weight": 3.6
+        }
+      ],
+      "total_weight": 10.8
+    },
+    {
+      "metric_id": "SW-041",
+      "cluster": "C",
+      "label": "Appointment no-show rate",
+      "by_dealer": [
+        {
+          "dealer_id": "21044",
+          "rating": "breach",
+          "rank": 2,
+          "weight": 4.5
+        },
+        {
+          "dealer_id": "21047",
+          "rating": "breach",
+          "rank": 3,
+          "weight": 5.625
+        }
+      ],
+      "total_weight": 10.125
+    },
+    {
+      "metric_id": "SW-015",
+      "cluster": "A",
+      "label": "Rep first-response outliers vs the store median",
+      "by_dealer": [
+        {
+          "dealer_id": "21043",
+          "rating": "breach",
+          "rank": 1,
+          "weight": 2.4
+        },
+        {
+          "dealer_id": "21044",
+          "rating": "breach",
+          "rank": 3,
+          "weight": 3.75
+        },
+        {
+          "dealer_id": "21047",
+          "rating": "breach",
+          "rank": 2,
+          "weight": 3
+        }
+      ],
+      "total_weight": 9.15
+    },
+    {
+      "metric_id": "SW-133",
+      "cluster": "B",
+      "label": "Customers sending 2+ messages before a reply",
+      "by_dealer": [
+        {
+          "dealer_id": "21043",
+          "rating": "breach",
+          "rank": 3,
+          "weight": 3.75
+        },
+        {
+          "dealer_id": "21044",
+          "rating": "breach",
+          "rank": 2,
+          "weight": 3
+        },
+        {
+          "dealer_id": "21047",
+          "rating": "breach",
+          "rank": 1,
+          "weight": 2.4
+        }
+      ],
+      "total_weight": 9.15
+    },
+    {
+      "metric_id": "SW-145",
+      "cluster": "B",
+      "label": "Same message reused across many customers",
+      "by_dealer": [
+        {
+          "dealer_id": "21043",
+          "rating": "breach",
+          "rank": 2,
+          "weight": 3
+        },
+        {
+          "dealer_id": "21044",
+          "rating": "breach",
+          "rank": 1,
+          "weight": 2.4
+        },
+        {
+          "dealer_id": "21047",
+          "rating": "breach",
+          "rank": 3,
+          "weight": 3.75
+        }
+      ],
+      "total_weight": 9.15
+    },
+    {
+      "metric_id": "SW-021",
+      "cluster": "B",
+      "label": "Templated messages with no personalization",
+      "by_dealer": [
+        {
+          "dealer_id": "21043",
+          "rating": "breach",
+          "rank": 2,
+          "weight": 1.5
+        },
+        {
+          "dealer_id": "21044",
+          "rating": "breach",
+          "rank": 3,
+          "weight": 1.875
+        },
+        {
+          "dealer_id": "21047",
+          "rating": "breach",
+          "rank": 1,
+          "weight": 1.2
+        }
+      ],
+      "total_weight": 4.575
+    },
+    {
+      "metric_id": "SW-022",
+      "cluster": "B",
+      "label": "Text-vs-call balance (voice avoidance)",
+      "by_dealer": [
+        {
+          "dealer_id": "21043",
+          "rating": "breach",
+          "rank": 1,
+          "weight": 1.2
+        },
+        {
+          "dealer_id": "21044",
+          "rating": "breach",
+          "rank": 3,
+          "weight": 1.875
+        },
+        {
+          "dealer_id": "21047",
+          "rating": "breach",
+          "rank": 2,
+          "weight": 1.5
+        }
+      ],
+      "total_weight": 4.575
+    },
+    {
+      "metric_id": "SW-149",
+      "cluster": "B",
+      "label": "Very short, low-effort replies",
+      "by_dealer": [
+        {
+          "dealer_id": "21043",
+          "rating": "breach",
+          "rank": 3,
+          "weight": 1.875
+        },
+        {
+          "dealer_id": "21044",
+          "rating": "breach",
+          "rank": 2,
+          "weight": 1.5
+        }
+      ],
+      "total_weight": 3.375
+    }
+  ]
+}
