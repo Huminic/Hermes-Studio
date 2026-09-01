@@ -5,51 +5,68 @@ import { describe, expect, it } from 'vitest'
 import type { EvalRow } from '@/server/reports/evaluator/types'
 import type { Gate2Inputs } from '@/server/reports/evaluator/build-from-fresh'
 import type { ValidatorContext } from '@/server/reports/evaluator/semantic-validator'
+import type { EvaluableId } from '@/server/reports/evaluator/evaluators'
 import { assembleGate2Inputs } from '@/server/reports/evaluator/build-from-fresh'
 import { buildSpine } from '@/server/reports/evaluator/spine'
 import { validateEvaluatedRow } from '@/server/reports/evaluator/semantic-validator'
+import { METRIC_SPECS } from '@/server/reports/evaluator/metric-spec'
 
 const REPO = path.resolve(__dirname, '..', '..')
 const FRESH = process.env.HALO_FRESH_DIR ?? '/tmp/halo-295-fresh-20260831'
 const HAVE = fs.existsSync(path.join(FRESH, 'manifest.json'))
+const CONTRACT = JSON.parse(
+  fs.readFileSync(
+    path.join(REPO, 'docs/halo/contract/gate2-evaluator-contract.json'),
+    'utf8',
+  ),
+) as { required_row_fields: Array<string> }
 
 function ctxFor(
   inputs: Gate2Inputs,
   dealerId: string,
-  family: 'appointments' | 'dealership_performance',
+  metricId: EvaluableId,
 ): ValidatorContext {
   const d = inputs.dealers.find((x) => x.dealer_id === dealerId)!
+  const family = METRIC_SPECS[metricId].source_family
   const fl = d.lineage[family]
+  const condition = inputs.catalog.find((c) => c.metric_id === metricId)!
   return {
+    condition,
+    catalog: inputs.catalog,
     bundle: d.bundle,
     cohort: inputs.dealers.map((x) => ({
       dealer_id: x.dealer_id,
       bundle: x.bundle,
     })),
     dealerId: d.dealer_id,
+    profile: d.profile,
     dealerName: d.dealer_name,
     period: d.reporting_period,
     envelope: fl.envelope,
     expectedProof: fl.sales_only_proof,
+    expectedObserved: fl.observed_date_range,
     registry: inputs.registry,
   }
 }
 
 describe.runIf(HAVE)(
-  'Semantic validator — non-vacuous corruption detection (repair req 1)',
+  'Semantic validator — exhaustive binding (repair #2)',
   () => {
     const inputs = assembleGate2Inputs({ freshDir: FRESH, repoRoot: REPO })
     const spine = buildSpine(inputs)
     const authentic = spine.rows.find(
       (r) => r.metric_id === 'SW-032' && r.dealer_id === '21044',
     )!
-    const ctx = ctxFor(inputs, '21044', 'appointments')
+    const ctx = ctxFor(inputs, '21044', 'SW-032')
     const clone = (): EvalRow =>
       JSON.parse(JSON.stringify(authentic)) as EvalRow
 
     it('the authentic evaluated row passes', () => {
       expect(authentic.status).toBe('evaluated')
-      expect(validateEvaluatedRow(clone(), ctx).ok).toBe(true)
+      expect(validateEvaluatedRow(clone(), ctx)).toEqual({
+        ok: true,
+        failed: [],
+      })
     })
 
     const mut: Array<{
@@ -58,6 +75,7 @@ describe.runIf(HAVE)(
       clause: string
       exact?: boolean
     }> = [
+      // value / candidate
       {
         name: 'value',
         mutate: (r) => (r.value = 0.99),
@@ -97,6 +115,7 @@ describe.runIf(HAVE)(
         mutate: (r) => (r.source_family = 'crm_sales_gross'),
         clause: 'source_family_mismatch',
       },
+      // baseline — every field bound
       {
         name: 'baseline.id',
         mutate: (r) => {
@@ -121,7 +140,7 @@ describe.runIf(HAVE)(
         clause: 'baseline_value_unverified',
       },
       {
-        name: 'baseline.basis=industry',
+        name: 'baseline.basis',
         mutate: (r) => {
           if (r.baseline) r.baseline.basis = 'industry_benchmark'
         },
@@ -145,13 +164,63 @@ describe.runIf(HAVE)(
         exact: true,
       },
       {
-        name: 'baseline.definition',
+        name: 'baseline.unit',
         mutate: (r) => {
-          if (r.baseline) r.baseline.definition = ''
+          if (r.baseline) r.baseline.unit = 'percent'
         },
-        clause: 'baseline_definition_blank',
+        clause: 'baseline_unit_mismatch',
         exact: true,
       },
+      {
+        name: 'baseline.definition(nonblank wrong)',
+        mutate: (r) => {
+          if (r.baseline)
+            r.baseline.definition = 'a plausible but wrong definition'
+        },
+        clause: 'baseline_definition_mismatch',
+        exact: true,
+      },
+      {
+        name: 'baseline.label',
+        mutate: (r) => {
+          if (r.baseline) r.baseline.label = 'Wrong Label'
+        },
+        clause: 'baseline_label_mismatch',
+        exact: true,
+      },
+      {
+        name: 'baseline.source',
+        mutate: (r) => {
+          if (r.baseline) r.baseline.source = 'made up source'
+        },
+        clause: 'baseline_source_mismatch',
+        exact: true,
+      },
+      {
+        name: 'baseline.confidence',
+        mutate: (r) => {
+          if (r.baseline) r.baseline.confidence = 'high'
+        },
+        clause: 'baseline_confidence_mismatch',
+        exact: true,
+      },
+      {
+        name: 'baseline.url(insert)',
+        mutate: (r) => {
+          if (r.baseline) r.baseline.url = 'https://evil'
+        },
+        clause: 'baseline_url_mismatch',
+        exact: true,
+      },
+      {
+        name: 'baseline.publication_date(insert)',
+        mutate: (r) => {
+          if (r.baseline) r.baseline.publication_date = '2020'
+        },
+        clause: 'baseline_publication_date_mismatch',
+        exact: true,
+      },
+      // derived
       {
         name: 'variance',
         mutate: (r) => (r.variance = 0),
@@ -171,13 +240,30 @@ describe.runIf(HAVE)(
         exact: true,
       },
       {
-        name: 'confidence',
+        name: 'notification',
+        mutate: (r) =>
+          (r.notification_or_automation_candidate = 'monitor_only'),
+        clause: 'notification_candidate_incorrect',
+        exact: true,
+      },
+      {
+        name: 'confidence.label',
         mutate: (r) => {
           if (r.evaluation_confidence) r.evaluation_confidence.label = 'high'
         },
-        clause: 'confidence_incorrect',
+        clause: 'confidence_label_incorrect',
         exact: true,
       },
+      {
+        name: 'confidence.basis',
+        mutate: (r) => {
+          if (r.evaluation_confidence)
+            r.evaluation_confidence.basis = 'made up basis'
+        },
+        clause: 'confidence_basis_incorrect',
+        exact: true,
+      },
+      // lineage — every field bound
       {
         name: 'lineage.sha',
         mutate: (r) => {
@@ -200,6 +286,14 @@ describe.runIf(HAVE)(
           if (r.source_lineage) r.source_lineage.dealer_id = '99999'
         },
         clause: 'lineage_dealer_id_mismatch',
+        exact: true,
+      },
+      {
+        name: 'lineage.dealer_name',
+        mutate: (r) => {
+          if (r.source_lineage) r.source_lineage.dealer_name = 'Nope'
+        },
+        clause: 'lineage_dealer_name_mismatch',
         exact: true,
       },
       {
@@ -250,6 +344,15 @@ describe.runIf(HAVE)(
         exact: true,
       },
       {
+        name: 'lineage.attachment_id(fabricated)',
+        mutate: (r) => {
+          if (r.source_lineage)
+            r.source_lineage.gmail_attachment_id = 'ANGjdJ-forged'
+        },
+        clause: 'lineage_attachment_id_mismatch',
+        exact: true,
+      },
+      {
         name: 'lineage.period_hint',
         mutate: (r) => {
           if (r.source_lineage)
@@ -259,9 +362,117 @@ describe.runIf(HAVE)(
         exact: true,
       },
       {
-        name: 'row.captured_at',
-        mutate: (r) => (r.captured_at = '2000-01-01T00:00:00Z'),
-        clause: 'row_captured_at_mismatch',
+        name: 'lineage.observed_range(false)',
+        mutate: (r) => {
+          if (r.source_lineage)
+            r.source_lineage.observed_date_range = {
+              start: '2000-01-01',
+              end: '2000-01-02',
+            }
+        },
+        clause: 'lineage_observed_range_mismatch',
+        exact: true,
+      },
+      // catalog / dealer / placement
+      {
+        name: 'metric_id relabel',
+        mutate: (r) => (r.metric_id = 'SW-031'),
+        clause: 'metric_id_mismatch',
+      },
+      {
+        name: 'condition text',
+        mutate: (r) => (r.condition = 'something else'),
+        clause: 'condition_mismatch',
+        exact: true,
+      },
+      {
+        name: 'dealer_id relabel',
+        mutate: (r) => (r.dealer_id = '21043'),
+        clause: 'dealer_id_mismatch',
+        exact: true,
+      },
+      {
+        name: 'profile relabel',
+        mutate: (r) => (r.profile = 'serra-honda'),
+        clause: 'profile_mismatch',
+        exact: true,
+      },
+      {
+        name: 'section',
+        mutate: (r) => (r.section = 'X'),
+        clause: 'section_mismatch',
+        exact: true,
+      },
+      {
+        name: 'subsection',
+        mutate: (r) => (r.subsection = 'X'),
+        clause: 'subsection_mismatch',
+        exact: true,
+      },
+      {
+        name: 'cluster',
+        mutate: (r) => (r.cluster = 'X'),
+        clause: 'cluster_mismatch',
+        exact: true,
+      },
+      {
+        name: 'related_metric_ids',
+        mutate: (r) => (r.related_metric_ids = ['SW-999']),
+        clause: 'related_metric_ids_mismatch',
+        exact: true,
+      },
+      {
+        name: 'evidence_or_inference',
+        mutate: (r) => (r.evidence_or_inference = 'inference'),
+        clause: 'evidence_or_inference_mismatch',
+        exact: true,
+      },
+      {
+        name: 'recommended_owner',
+        mutate: (r) => (r.recommended_owner = 'X'),
+        clause: 'recommended_owner_mismatch',
+        exact: true,
+      },
+      {
+        name: 'recommended_action',
+        mutate: (r) => (r.recommended_action = 'X'),
+        clause: 'recommended_action_mismatch',
+        exact: true,
+      },
+      {
+        name: 'customer_pdf_location',
+        mutate: (r) => (r.customer_pdf_location = 'X'),
+        clause: 'customer_pdf_location_mismatch',
+        exact: true,
+      },
+      {
+        name: 'internal_evidence_location',
+        mutate: (r) => (r.internal_evidence_location = 'X'),
+        clause: 'internal_evidence_location_mismatch',
+        exact: true,
+      },
+      {
+        name: 'unresolved_reason',
+        mutate: (r) => (r.unresolved_reason = 'x'),
+        clause: 'unresolved_reason_must_be_null',
+        exact: true,
+      },
+      {
+        name: 'unresolved_owner',
+        mutate: (r) => (r.unresolved_owner = 'x'),
+        clause: 'unresolved_owner_must_be_null',
+        exact: true,
+      },
+      {
+        name: 'unresolved_next_action',
+        mutate: (r) => (r.unresolved_next_action = 'x'),
+        clause: 'unresolved_next_action_must_be_null',
+        exact: true,
+      },
+      {
+        name: 'status',
+        mutate: (r) => (r.status = 'unresolved'),
+        clause: 'status_not_evaluated',
         exact: true,
       },
     ]
@@ -277,30 +488,86 @@ describe.runIf(HAVE)(
       })
     }
 
+    it('rooftop relabel of BOTH row + lineage still fails against the admitted DealerInput/envelope', () => {
+      // Relabel a nissan row to honda across row + lineage, then validate vs HONDA ctx:
+      // the honda bundle recompute (0.5714) != the carried nissan value (0.3333).
+      const r = clone()
+      r.dealer_id = '21043'
+      r.profile = 'serra-honda'
+      if (r.source_lineage) r.source_lineage.dealer_id = '21043'
+      const hondaCtx = ctxFor(inputs, '21043', 'SW-032')
+      const v = validateEvaluatedRow(r, hondaCtx)
+      expect(v.ok).toBe(false)
+      expect(v.failed).toContain('value_inconsistent_with_source')
+    })
+
     it('a legitimate cohort difference changes ONLY rank (honda rank 1, nissan rank 3), both valid', () => {
       const honda = spine.rows.find(
         (r) => r.metric_id === 'SW-032' && r.dealer_id === '21043',
       )!
-      const hondaCtx = ctxFor(inputs, '21043', 'appointments')
       expect(
         validateEvaluatedRow(
           JSON.parse(JSON.stringify(honda)) as EvalRow,
-          hondaCtx,
+          ctxFor(inputs, '21043', 'SW-032'),
         ).ok,
       ).toBe(true)
-      expect(honda.rank).toBe(1) // highest show rate
-      expect(authentic.rank).toBe(3) // lowest show rate
+      expect(honda.rank).toBe(1)
+      expect(authentic.rank).toBe(3)
       expect(honda.value).not.toBe(authentic.value)
     })
 
-    it('SW-031 dashboard-sourced row also validates and binds to the dashboard envelope', () => {
-      const row = spine.rows.find(
-        (r) => r.metric_id === 'SW-031' && r.dealer_id === '21044',
-      )!
-      const c = ctxFor(inputs, '21044', 'dealership_performance')
-      expect(
-        validateEvaluatedRow(JSON.parse(JSON.stringify(row)) as EvalRow, c).ok,
-      ).toBe(true)
+    it('SW-031 (dashboard) and SW-041 rows validate across dealers', () => {
+      for (const id of ['SW-031', 'SW-041'] as const) {
+        for (const dealer of ['21043', '21044', '21047']) {
+          const row = spine.rows.find(
+            (r) => r.metric_id === id && r.dealer_id === dealer,
+          )!
+          expect(
+            validateEvaluatedRow(
+              JSON.parse(JSON.stringify(row)) as EvalRow,
+              ctxFor(inputs, dealer, id),
+            ).ok,
+            `${id}:${dealer}`,
+          ).toBe(true)
+        }
+      }
+    })
+  },
+)
+
+describe.runIf(HAVE)(
+  'Completeness guard — every required_row_field is semantically bound',
+  () => {
+    const inputs = assembleGate2Inputs({ freshDir: FRESH, repoRoot: REPO })
+    const spine = buildSpine(inputs)
+    const authentic = spine.rows.find(
+      (r) => r.metric_id === 'SW-032' && r.dealer_id === '21044',
+    )!
+    const ctx = ctxFor(inputs, '21044', 'SW-032')
+
+    function corrupt(v: unknown): unknown {
+      if (v === null) return 'X-not-null'
+      if (typeof v === 'string') return v + '-X'
+      if (typeof v === 'number') return v + 1
+      if (typeof v === 'boolean') return !v
+      if (Array.isArray(v)) return v.length ? [] : ['X']
+      if (typeof v === 'object') return {}
+      return 'X'
+    }
+
+    it('mutating ANY single required field flips the verdict to false (no field escapes)', () => {
+      for (const field of CONTRACT.required_row_fields) {
+        const r = JSON.parse(JSON.stringify(authentic)) as Record<
+          string,
+          unknown
+        >
+        r[field] = corrupt(r[field])
+        const v = validateEvaluatedRow(r as unknown as EvalRow, ctx)
+        expect(
+          v.ok,
+          `required field "${field}" is NOT semantically bound`,
+        ).toBe(false)
+      }
     })
   },
 )

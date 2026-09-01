@@ -5,19 +5,32 @@ spine — submitted for review, NOT self-certified. The overall 885-cell goal is
 complete: **9 of 885** dealer-cells are `evaluated`; **876** are `unresolved` (preserved for
 audit, do NOT count toward completion). The literal 885-cell acceptance is unchanged.
 
-## Repair delta (shadow FAIL on commit 8ef112b0d → this repair)
+## Repair delta (repair #1 8ef112b0d→a1edadfff, then shadow FAIL → repair #2)
 
-The prior predicate did presence checks and returned ok after corruption. This repair adds
-a **semantic validator** (`semantic-validator.ts`) that INDEPENDENTLY RECOMPUTES value,
-numerator, denominator, source_fields, formula, baseline, variance, rating, cross-rooftop
-rank, and confidence from the accepted held bundle + cohort + registry + a canonical
-per-metric spec (`metric-spec.ts`), and BINDS every lineage field to a validated delivery
-envelope (`provenance.ts`, SCHEMA_CONTRACT §1). The held readers now ENFORCE the governed
-gates (not string claims): Appt Reason = "Sales Appointment" on every row, unique
-Appointment IDs, Start Date + Start DateTime in period; CRM every Sold Date in the coverage
-window; Dashboard affirmative Service exclusion + Lead Types = {Internet,Phone,Walk-in};
-one rooftop; and each returns a `sales_only_proof` PRODUCED FROM the checks it executed. The
-reporting period is derived + validated from the committed `period_hint`, never hardcoded.
+Repair #1 added the semantic validator + provenance/period binding + enforced Sales-only.
+**Repair #2** makes the binding EXHAUSTIVE — the shadow found fields still unbound:
+
+- **Baseline** — every field bound to the authoritative registry entry (id, basis, value,
+  unit, comparator, direction, source, publication_date, url, confidence, definition). A
+  wrong nonblank definition or an inserted benchmark number now fails.
+- **Confidence** — canonical basis (`denominator sample size`) required exactly, not just
+  nonblank; label recomputed.
+- **Lineage** — now also binds `gmail_attachment_id` (fabricated id fails; explicit
+  `unavailable` valid only when the envelope says so) and `observed_date_range` (false range
+  fails).
+- **Row↔catalog/dealer/placement** (the material defect: a rooftop relabel used to survive)
+  — `metric_id`, `condition`, `dealer_id`, `profile`, `section`, `subsection`, `cluster`,
+  `related_metric_ids`, `evidence_or_inference`, `recommended_owner/action`,
+  `notification_or_automation_candidate`, `customer_pdf_location`,
+  `internal_evidence_location` are recomputed from the `CatalogCondition`/`DealerInput` +
+  shared deterministic derivations (`placement.ts`); `unresolved_*` must be null; `status`
+  must be `evaluated`. A dealer/profile relabel now fails; a coordinated row+lineage relabel
+  fails against the admitted DealerInput/envelope (value recompute diverges).
+- **Proof/format truth** — the generator now emits actual Prettier-clean JSON via a shared
+  serializer (`scripts/m1r-evaluator/serialize.ts`); committed ledger == fresh generation ==
+  Prettier output, all byte-identical.
+- **Completeness guard** — a test enumerates every `required_row_field` and proves mutating
+  any one flips the verdict to false (no field escapes semantic validation).
 
 ## Catalog + scope
 
@@ -74,19 +87,21 @@ exact filename+full-sha256 allowlist; the nine quarantined files are never read.
 | `src/server/reports/evaluator/families.ts`            | `b5b40f5a192271d3` |
 | `src/server/reports/evaluator/provenance.ts`          | `5b59b74ad312a46b` |
 | `src/server/reports/evaluator/metric-spec.ts`         | `a027012716a0dc3d` |
+| `src/server/reports/evaluator/placement.ts`           | `e06e9ab35b06a1cb` |
 | `src/server/reports/evaluator/held-inputs.ts`         | `872c59b1801484bf` |
 | `src/server/reports/evaluator/metrics.ts`             | `c758413b45609a56` |
 | `src/server/reports/evaluator/evaluators.ts`          | `3afa78bb2e52b376` |
 | `src/server/reports/evaluator/strict-predicate.ts`    | `ebc697ab597014c1` |
-| `src/server/reports/evaluator/semantic-validator.ts`  | `f21ea1e584baef6e` |
+| `src/server/reports/evaluator/semantic-validator.ts`  | `0de678e2aa272134` |
 | `src/server/reports/evaluator/baseline-registry.ts`   | `468146e3593e173b` |
-| `src/server/reports/evaluator/spine.ts`               | `1f4b6b48bb343b9e` |
+| `src/server/reports/evaluator/spine.ts`               | `48434828f6507d67` |
 | `src/server/reports/evaluator/build-from-fresh.ts`    | `83576baf82c0357a` |
-| `scripts/m1r-evaluator/build-spine.ts`                | `1004c2716405da06` |
+| `scripts/m1r-evaluator/build-spine.ts`                | `39991844404e267b` |
+| `scripts/m1r-evaluator/serialize.ts`                  | `9c5eff5124a2f242` |
 | `docs/halo/contract/baseline-registry.json`           | `b7d63d6f9fe88dfe` |
 | `docs/halo/contract/gate2-evaluator-contract.json`    | `345043ca3edbb074` |
-| `docs/halo/evidence/m1r/evaluator/spine-ledger.json`  | `5fec99a542e0ea48` |
-| `docs/halo/evidence/m1r/evaluator/spine-summary.json` | `932e5466968c6948` |
+| `docs/halo/evidence/m1r/evaluator/spine-ledger.json`  | `c028e22794dfa58e` |
+| `docs/halo/evidence/m1r/evaluator/spine-summary.json` | `45b2c87b6f29491c` |
 
 Every `sha256:16` above is recomputed from the current committed bytes and compared by
 `src/test/evaluator-evidence-hashes.test.ts`, so a later formatting cycle that desyncs this

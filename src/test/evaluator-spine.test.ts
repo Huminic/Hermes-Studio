@@ -2,6 +2,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { formatJsonFile } from '../../scripts/m1r-evaluator/serialize'
 import type { EvalRow } from '@/server/reports/evaluator/types'
 import { loadCatalog } from '@/server/reports/evaluator/catalog'
 import { buildSpineFromFresh } from '@/server/reports/evaluator/build-from-fresh'
@@ -162,20 +163,21 @@ describe('Gate 2 no synthetic values / PII-free (req 7)', () => {
 describe.runIf(HAVE)(
   'Gate 2 recompute + determinism from held files (req 7,9)',
   () => {
-    it('recompute from held files is byte-identical to the committed ledger (deterministic, no synthetic)', () => {
+    it('recompute from held files is byte-identical to the committed (Prettier-clean) ledger', async () => {
       const a = buildSpineFromFresh({ freshDir: FRESH, repoRoot: REPO })
       const b = buildSpineFromFresh({ freshDir: FRESH, repoRoot: REPO })
       expect(JSON.stringify(a.rows)).toBe(JSON.stringify(b.rows)) // deterministic
+      const ledgerPath = path.join(
+        REPO,
+        'docs/halo/evidence/m1r/evaluator/spine-ledger.json',
+      )
       const committed = {
         artifact: 'gate2-spine-ledger',
         required_cells: 885,
         rows: a.rows,
       }
-      const onDisk = fs.readFileSync(
-        path.join(REPO, 'docs/halo/evidence/m1r/evaluator/spine-ledger.json'),
-        'utf8',
-      )
-      expect(JSON.stringify(committed, null, 2) + '\n').toBe(onDisk)
+      const expected = await formatJsonFile(committed, ledgerPath)
+      expect(expected).toBe(fs.readFileSync(ledgerPath, 'utf8'))
     })
   },
 )

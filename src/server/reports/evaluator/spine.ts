@@ -16,6 +16,14 @@ import {
   rating,
   signedVariance,
 } from './metrics'
+import {
+  CONFIDENCE_BASIS,
+  clusterOf,
+  customerPdfLocation,
+  internalEvidenceLocation,
+  notificationCandidate,
+  relatedMetricIds,
+} from './placement'
 import { evaluateStrictPredicate } from './strict-predicate'
 import { validateEvaluatedRow } from './semantic-validator'
 import type { EvaluableId, HeldBundle } from './evaluators'
@@ -169,23 +177,8 @@ function unresolvedReason(c: CatalogCondition, input: DealerInput): string {
   return `not evaluable from held families under the strict predicate (acquisition_class="${c.acquisition_class}", source="${c.source}")`
 }
 
-function evaluableSiblingsBySection(
-  catalog: Array<CatalogCondition>,
-): Map<string, Array<string>> {
-  const bySection = new Map<string, Array<string>>()
-  for (const c of catalog) {
-    if ((EVALUABLE_IDS as ReadonlyArray<string>).includes(c.metric_id)) {
-      const arr = bySection.get(c.section) ?? []
-      arr.push(c.metric_id)
-      bySection.set(c.section, arr)
-    }
-  }
-  return bySection
-}
-
 export function buildSpine(input: SpineInput): Spine {
   const { catalog, dealers, registry, evaluableBaselineIds } = input
-  const siblings = evaluableSiblingsBySection(catalog)
   const cohort = dealers.map((d) => ({
     dealer_id: d.dealer_id,
     bundle: d.bundle,
@@ -193,13 +186,8 @@ export function buildSpine(input: SpineInput): Spine {
 
   const rows: Array<EvalRow> = []
   for (const c of catalog) {
-    const sectionSiblings = (siblings.get(c.section) ?? []).filter(
-      (x) => x !== c.metric_id,
-    )
     for (const d of dealers) {
-      rows.push(
-        buildRow(c, d, sectionSiblings, registry, evaluableBaselineIds, cohort),
-      )
+      rows.push(buildRow(c, d, catalog, registry, evaluableBaselineIds, cohort))
     }
   }
 
@@ -209,7 +197,7 @@ export function buildSpine(input: SpineInput): Spine {
 function buildRow(
   c: CatalogCondition,
   d: DealerInput,
-  sectionSiblings: Array<string>,
+  catalog: Array<CatalogCondition>,
   registry: BaselineRegistry,
   evaluableBaselineIds: Record<string, string>,
   cohort: Array<{ dealer_id: string; bundle: HeldBundle }>,
@@ -237,14 +225,17 @@ function buildRow(
     rating: null,
     rank: null,
     evaluation_confidence: null,
-    related_metric_ids: sectionSiblings,
-    cluster: c.section,
+    related_metric_ids: relatedMetricIds(catalog, c.section, c.metric_id),
+    cluster: clusterOf(c.section),
     evidence_or_inference: null,
     recommended_owner: c.owner || null,
     recommended_action: c.next_action || null,
     notification_or_automation_candidate: null,
-    customer_pdf_location: `docs/halo/customer/${d.profile}/${c.metric_id}.pdf (Gate 3+, not yet produced)`,
-    internal_evidence_location: `docs/halo/evidence/m1r/evaluator/spine-ledger.json#${c.metric_id}:${d.dealer_id}`,
+    customer_pdf_location: customerPdfLocation(d.profile, c.metric_id),
+    internal_evidence_location: internalEvidenceLocation(
+      c.metric_id,
+      d.dealer_id,
+    ),
     unresolved_reason: null,
     unresolved_owner: null,
     unresolved_next_action: null,
@@ -275,6 +266,7 @@ function buildRow(
     })
   const candidate: EvalRow = {
     ...base,
+    status: 'evaluated',
     source_family: res.source_family,
     source_lineage: lineage,
     source_fields: res.source_fields,
@@ -291,13 +283,12 @@ function buildRow(
     rank: rankByDirection(res.value, peers, dir),
     evaluation_confidence: {
       label: confidenceLabel(res.denominator),
-      basis: 'denominator sample size',
+      basis: CONFIDENCE_BASIS,
     },
     evidence_or_inference: 'evidence',
-    notification_or_automation_candidate:
-      baseline && rating(res.value, baseline) === 'breach'
-        ? 'alert_candidate'
-        : 'monitor_only',
+    notification_or_automation_candidate: notificationCandidate(
+      baseline ? rating(res.value, baseline) : null,
+    ),
   }
 
   // Both gates must pass: structural presence AND semantic recomputation/binding.
@@ -311,13 +302,17 @@ function buildRow(
   }
   const fl = familyLineage(d, res.source_family as keyof DealerInput['lineage'])
   const semantic = validateEvaluatedRow(candidate, {
+    condition: c,
+    catalog,
     bundle: d.bundle,
     cohort,
     dealerId: d.dealer_id,
+    profile: d.profile,
     dealerName: d.dealer_name,
     period: d.reporting_period,
     envelope: fl.envelope,
     expectedProof: fl.sales_only_proof,
+    expectedObserved: fl.observed_date_range,
     registry,
   })
   if (!semantic.ok) {

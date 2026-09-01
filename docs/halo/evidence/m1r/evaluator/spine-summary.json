@@ -25,9 +25,5 @@
     "4. Pipeline Health & Funnel Dynamics": 6,
     "5. Appointment & Showroom Metrics": 3
   },
-  "evaluated_ids": [
-    "SW-031",
-    "SW-032",
-    "SW-041"
-  ]
+  "evaluated_ids": ["SW-031", "SW-032", "SW-041"]
 }

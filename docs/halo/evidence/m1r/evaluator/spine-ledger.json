@@ -3219,9 +3219,7 @@
         "label": "medium",
         "basis": "denominator sample size"
       },
-      "related_metric_ids": [
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": "evidence",
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -3300,9 +3298,7 @@
         "label": "medium",
         "basis": "denominator sample size"
       },
-      "related_metric_ids": [
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": "evidence",
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -3381,9 +3377,7 @@
         "label": "medium",
         "basis": "denominator sample size"
       },
-      "related_metric_ids": [
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": "evidence",
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -3428,10 +3422,7 @@
           "end": "2026-08-29"
         }
       },
-      "source_fields": [
-        "Is Show",
-        "appointment rows (total)"
-      ],
+      "source_fields": ["Is Show", "appointment rows (total)"],
       "formula": "count(Is Show=Yes) / count(appointment rows)",
       "value": 0.5714285714285714,
       "unit": "ratio_0_1",
@@ -3464,9 +3455,7 @@
         "label": "low",
         "basis": "denominator sample size"
       },
-      "related_metric_ids": [
-        "SW-031"
-      ],
+      "related_metric_ids": ["SW-031"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": "evidence",
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -3511,10 +3500,7 @@
           "end": "2026-08-29"
         }
       },
-      "source_fields": [
-        "Is Show",
-        "appointment rows (total)"
-      ],
+      "source_fields": ["Is Show", "appointment rows (total)"],
       "formula": "count(Is Show=Yes) / count(appointment rows)",
       "value": 0.3333333333333333,
       "unit": "ratio_0_1",
@@ -3547,9 +3533,7 @@
         "label": "low",
         "basis": "denominator sample size"
       },
-      "related_metric_ids": [
-        "SW-031"
-      ],
+      "related_metric_ids": ["SW-031"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": "evidence",
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -3594,10 +3578,7 @@
           "end": "2026-08-29"
         }
       },
-      "source_fields": [
-        "Is Show",
-        "appointment rows (total)"
-      ],
+      "source_fields": ["Is Show", "appointment rows (total)"],
       "formula": "count(Is Show=Yes) / count(appointment rows)",
       "value": 0.42857142857142855,
       "unit": "ratio_0_1",
@@ -3630,9 +3611,7 @@
         "label": "low",
         "basis": "denominator sample size"
       },
-      "related_metric_ids": [
-        "SW-031"
-      ],
+      "related_metric_ids": ["SW-031"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": "evidence",
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -3667,10 +3646,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -3705,10 +3681,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -3743,10 +3716,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -3781,10 +3751,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -3819,10 +3786,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -3857,10 +3821,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -3895,10 +3856,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -3933,10 +3891,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -3971,10 +3926,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -4009,10 +3961,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -4047,10 +3996,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -4085,10 +4031,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -4123,10 +4066,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -4161,10 +4101,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -4199,10 +4136,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -4237,10 +4171,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "VinSolutions product/support",
@@ -4275,10 +4206,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "VinSolutions product/support",
@@ -4313,10 +4241,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "VinSolutions product/support",
@@ -4351,10 +4276,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "VinSolutions product/support",
@@ -4389,10 +4311,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "VinSolutions product/support",
@@ -4427,10 +4346,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "VinSolutions product/support",
@@ -4465,10 +4381,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "VinSolutions product/support",
@@ -4503,10 +4416,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "VinSolutions product/support",
@@ -4541,10 +4451,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-031",
-        "SW-032"
-      ],
+      "related_metric_ids": ["SW-031", "SW-032"],
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evidence_or_inference": null,
       "recommended_owner": "VinSolutions product/support",
@@ -4589,10 +4496,7 @@
           "end": "2026-08-29"
         }
       },
-      "source_fields": [
-        "Is No Show",
-        "appointment rows (total)"
-      ],
+      "source_fields": ["Is No Show", "appointment rows (total)"],
       "formula": "count(Is No Show=Yes) / count(appointment rows)",
       "value": 0.35714285714285715,
       "unit": "ratio_0_1",
@@ -4670,10 +4574,7 @@
           "end": "2026-08-29"
         }
       },
-      "source_fields": [
-        "Is No Show",
-        "appointment rows (total)"
-      ],
+      "source_fields": ["Is No Show", "appointment rows (total)"],
       "formula": "count(Is No Show=Yes) / count(appointment rows)",
       "value": 0.5,
       "unit": "ratio_0_1",
@@ -4751,10 +4652,7 @@
           "end": "2026-08-29"
         }
       },
-      "source_fields": [
-        "Is No Show",
-        "appointment rows (total)"
-      ],
+      "source_fields": ["Is No Show", "appointment rows (total)"],
       "formula": "count(Is No Show=Yes) / count(appointment rows)",
       "value": 0.5714285714285714,
       "unit": "ratio_0_1",
@@ -4822,9 +4720,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -4859,9 +4755,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -4896,9 +4790,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -4933,9 +4825,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -4970,9 +4860,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -5007,9 +4895,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -5044,9 +4930,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -5081,9 +4965,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -5118,9 +5000,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -5155,9 +5035,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -5192,9 +5070,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -5229,9 +5105,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Existing VinSolutions schedule / Huminic validator",
@@ -5266,9 +5140,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -5303,9 +5175,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",
@@ -5340,9 +5210,7 @@
       "rating": null,
       "rank": null,
       "evaluation_confidence": null,
-      "related_metric_ids": [
-        "SW-041"
-      ],
+      "related_metric_ids": ["SW-041"],
       "cluster": "5. Appointment & Showroom Metrics",
       "evidence_or_inference": null,
       "recommended_owner": "Huminic Semantic Watchdog pipeline",

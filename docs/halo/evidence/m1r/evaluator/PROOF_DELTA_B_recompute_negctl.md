@@ -1,7 +1,23 @@
 # Gate 2 — Proof Delta B (independent recompute / negative-control outcome)
 
-Independent recomputation + adversarial negative controls for the repaired Gate 2 evaluator
-spine. Gate 2 only; the overall 885-cell goal is **NOT** complete (9 of 885 evaluated).
+Independent recomputation + adversarial negative controls for the Gate 2 evaluator spine
+after repair #2. Gate 2 only; the overall 885-cell goal is **NOT** complete (9 of 885
+evaluated).
+
+## Repair #2 — exhaustive binding (all fields recomputed/bound)
+
+`evaluator-semantic-validator.test.ts` now runs **60 cases**: an authentic row passes
+(`{ok:true, failed:[]}`) and each single corruption fails with the intended clause across
+every field group — value/candidate, all 12 baseline fields (wrong nonblank definition and
+inserted-benchmark-number included), confidence label + canonical basis, all lineage fields
+incl `gmail_attachment_id` (fabricated fails) and `observed_date_range` (false range fails),
+and the full catalog/dealer/placement set (metric_id, condition, dealer_id, profile,
+section, subsection, cluster, related_metric_ids, evidence_or_inference, owner/action,
+notification candidate, pdf/internal locations, unresolved-null invariants, status). A
+**rooftop relabel** of dealer_id/profile now fails; a **coordinated row+lineage relabel**
+fails against the admitted DealerInput/envelope (the value recompute diverges). A
+**completeness guard** enumerates every `required_row_field` and proves mutating any one
+flips the verdict — no field escapes semantic validation.
 
 ## Recompute (evaluated values reproduce from held bytes)
 
@@ -53,7 +69,9 @@ bound by the semantic validator (a falsified proof is rejected).
 
 - `buildSpineFromFresh` twice → identical rows; committed `spine-ledger.json` equals a fresh
   recompute byte-for-byte (asserted in `evaluator-spine.test.ts`, runIf held files).
-- Generator rerun → `spine-ledger.json` sha256:16 `5fec99a542e0ea48` unchanged.
+- Generator rerun → `spine-ledger.json` sha256:16 `c028e22794dfa58e` unchanged.
+- Generated JSON is **actual Prettier-clean** (shared serializer): committed == fresh
+  generation == Prettier output, byte-identical (asserted in `evaluator-spine.test.ts`).
 - No mock/synthetic value: every evaluated numerator/denominator recomputes from held bytes.
 
 ## Completion guard (req 2, 3)
@@ -64,8 +82,9 @@ bound by the semantic validator (a falsified proof is rejected).
 
 ## Validation summary
 
-- Focused Gate 2 suite **95/95** (spine 13, strict-predicate 18, semantic-validator 31,
-  provenance-period 14, negative-controls 12, baseline-registry 6, metric-spec 1) +
-  evidence-hash guard 2 = 97; plus Gate 1 + consumer regressions green.
-- Typecheck 498 == baseline (zero new Gate 2 errors); lint + prettier clean; deterministic
-  byte-identical rerun; no `/srv` write; no raw file / PII committed.
+- Focused Gate 2 suite (spine 13, strict-predicate 18, **semantic-validator 60**,
+  provenance-period 14, negative-controls 12, baseline-registry 6, metric-spec 1,
+  evidence-hash guard 2) + Gate 1 + consumer regressions green.
+- Typecheck 498 == baseline (zero new Gate 2 errors); lint clean; **actual Prettier check
+  clean over every proof-named file**; deterministic byte-identical rerun; no `/srv` write;
+  no raw file / PII / secret committed.
