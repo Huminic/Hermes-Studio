@@ -1,0 +1,243 @@
+{
+  "artifact": "gate4j-crm-reconciliation-ledger",
+  "revision": "J1",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "pass_rooftop": "21047",
+  "pass_rooftop_name": "Tony Serra Ford",
+  "observed_on": "2026-09-01",
+  "supersession": "These five reconciliation records SUPERSEDE the Gate 4H required_not_performed CRM seed states as of 2026-09-01. Gate 4H artifacts are NOT modified; Gate 4H remains a truthful historical snapshot (it opened no CRM access).",
+  "promotion_statement": "Gate 4J promotes NOTHING. Capability was discovered; no data was acquired; no value was measured. Portfolio unchanged: 17 evaluated / 278 unresolved.",
+  "accounting": {
+    "conditions": 295,
+    "evaluated": 17,
+    "unresolved": 278,
+    "evaluated_cells": 51,
+    "unresolved_cells": 834,
+    "total_cells": 885,
+    "change_from_this_gate": "none — Gate 4J promotes nothing; capability was discovered, no data was acquired, no value was measured",
+    "five_checks_remain_unresolved": [
+      "SW-034",
+      "SW-049",
+      "SW-050",
+      "SW-111",
+      "SW-114"
+    ]
+  },
+  "capability_vs_data": "Capability discovered (a report route or schema exists) is strictly distinguished from data acquired (a governed, dated, PII-safe pull). None of the five had data acquired. Missing remains UNKNOWN, never zero.",
+  "gate4j_states": {
+    "performed_candidate_found": "The alternate read-only pass found a concrete in-boundary report route that could supply this check’s evidence, pending a named ratification and/or a dated acquisition. Capability discovered; no data acquired; no value measured.",
+    "performed_schema_only": "The alternate read-only pass found a row-level schema that could support this check, but an exact dated, PII-safe acquisition remains unproved. Capability discovered; no data acquired; no value measured.",
+    "performed_no_route_found": "The alternate read-only pass was performed but found no in-boundary route for this check’s specific signal in the inspected reports. No data acquired; no value measured."
+  },
+  "state_tally": {
+    "performed_candidate_found": 3,
+    "performed_schema_only": 1,
+    "performed_no_route_found": 1
+  },
+  "report_pass": {
+    "rooftop": "21047",
+    "rooftop_name": "Tony Serra Ford",
+    "observed_on": "2026-09-01",
+    "controls_asserted": {
+      "report_exported": false,
+      "customer_row_opened": false,
+      "crm_mutation": false,
+      "parameter_change_saved": false,
+      "pii_retained": false
+    },
+    "desk_log": {
+      "system_report": "Desk Log",
+      "default_date": "2026-09-01",
+      "dealer": "Tony Serra Ford",
+      "type_control": "-- All Sales Leads --",
+      "user": "All",
+      "status": "All",
+      "csv_export_available": true,
+      "visible_columns": [
+        "Type",
+        "Rep",
+        "Time",
+        "Customer",
+        "Status",
+        "Source"
+      ],
+      "safety_leak": "One visible row carried Source = \"Service Dept\" despite the \"-- All Sales Leads --\" Type control. No customer or rep identity was retained.",
+      "exported": false,
+      "conclusion": "Desk Log is NOT Sales-safe by the Type control alone (a Service-Dept-sourced row appeared under an All-Sales-Leads type), does not prove an exact held metric, and was not exported."
+    },
+    "deal_performance": {
+      "system_report": "Deal Performance",
+      "displayed_measures": [
+        "Dealer",
+        "User",
+        "Leads Desked in Timeframe",
+        "Leads Sold",
+        "Close %",
+        "Desking %",
+        "Pencils Desked",
+        "Avg Pencils per Deal",
+        "Deal Assists",
+        "projected and sold average front/back/total gross",
+        "other deal/visit measures"
+      ],
+      "edit_parameters_proved": [
+        "Dealer",
+        "Lead Source include/exclude",
+        "User",
+        "User Activity",
+        "Date Range",
+        "Lead Type",
+        "Lead Status Type",
+        "ADF/XML",
+        "Inventory Type",
+        "Sold Status",
+        "Deal Type",
+        "summary controls"
+      ],
+      "date_range_parameterized": true,
+      "lead_type_selected": [
+        "Internet",
+        "Walk-in",
+        "Phone",
+        "Import",
+        "Website Chat",
+        "Wholesale",
+        "Referral",
+        "Previous Customer"
+      ],
+      "lead_type_unselected": ["Parts Order", "Service", "Unknown"],
+      "default_view": "MTD 2026-09-01 to 2026-09-01",
+      "customer_rows_opened": false,
+      "parameters_changed": false
+    },
+    "dms_sales_flat_export": {
+      "system_report": "DMS Sales Flat Export",
+      "row_level_schema": [
+        "Dealer",
+        "Deal Number",
+        "Created/Updated/Contract/Delivery/Reversal/Deal Status dates",
+        "Deal Status",
+        "Wholesale",
+        "Inventory Type",
+        "Sale Price",
+        "Cost",
+        "Total Gross Profit",
+        "Front Gross Profit",
+        "Back Gross Profit",
+        "salesperson and manager IDs",
+        "many finance fields",
+        "buyer/co-buyer PII fields"
+      ],
+      "dealer_filter_proved": "Tony Serra Ford",
+      "max_rows": 500000,
+      "current_selection_returned_data": false,
+      "date_control_proved": false,
+      "menu_actions_visible": ["Copy"],
+      "pii_heavy": true,
+      "exported": false,
+      "conclusion": "Strong row-level schema candidate for SW-050 and gross-period work, but exact dated acquisition is unproved (no proved date limiter; only a dealer selector and a Copy action were visible). Because it carries extensive PII and lacked a proved date limiter, it was deliberately NOT exported."
+    },
+    "catalog_title_searches": {
+      "searched_titles": ["Sales Log", "Deal Log", "Write Up", "Writeup"],
+      "result": "no system report found for any of these exact titles"
+    }
+  },
+  "safety_observations": [
+    {
+      "id": "desk-log-service-dept-leakage",
+      "severity": "fail_closed",
+      "observation": "Under the \"-- All Sales Leads --\" Type control, a Desk Log row carried Source = \"Service Dept\". The Type control alone does not guarantee a Sales-only population.",
+      "implication": "Any Sales-only use of Desk Log (or any typed lead list) requires an explicit source-level exclusion of Service; a Type label is insufficient. Leaked/absent Service is excluded, never counted; missing is never zero.",
+      "pii_retained": false,
+      "action_taken": "Desk Log was not used as a metric source and was not exported."
+    }
+  ],
+  "reconciliation": [
+    {
+      "metric_id": "SW-034",
+      "metric": "closed deals ÷ write-ups (write-to-close rate), per rooftop, per week",
+      "gate4h_seed_state": "required_not_performed",
+      "gate4j_state": "performed_candidate_found",
+      "supersedes": "Gate 4H required_not_performed seed for SW-034",
+      "capability_discovered": "Deal Performance exposes a candidate write-up-like denominator (\"Leads Desked in Timeframe\"), a closed count (\"Leads Sold\"), a \"Close %\", a parameterized Date Range, and a Sales-only Lead Type selection (Service / Parts Order / Unknown unselected). No native \"Write Up\"/\"Writeup\"/\"Sales Log\"/\"Deal Log\" report exists.",
+      "data_acquired": false,
+      "value_measured": false,
+      "promoted": false,
+      "candidate_source": "Deal Performance",
+      "exact_remaining_requirement": [
+        "semantic ratification: agree that \"Leads Desked\" (or \"Pencils Desked\") is the write-up denominator for write-to-close — the committed frozen_e1_spec numerator/denominator are held and this pass does not resolve them",
+        "window acquisition: a dated Sales-only pull of the governed week at all three rooftops (this pass saw only the current MTD default view)"
+      ],
+      "missing_is_unknown_never_zero": true
+    },
+    {
+      "metric_id": "SW-049",
+      "metric": "current-week gross-per-unit vs trailing-30-day average gross-per-unit",
+      "gate4h_seed_state": "required_not_performed",
+      "gate4j_state": "performed_candidate_found",
+      "supersedes": "Gate 4H required_not_performed seed for SW-049",
+      "capability_discovered": "Deal Performance exposes sold average front/back/total gross and a parameterized Date Range that could produce a current-week window and a trailing-30-day window.",
+      "data_acquired": false,
+      "value_measured": false,
+      "promoted": false,
+      "candidate_source": "Deal Performance",
+      "exact_remaining_requirement": [
+        "semantic ratification: accept \"sold average gross\" as the gross-per-unit (GPU) definition — the committed frozen_e1_spec is held",
+        "window acquisition: both the current-week and the trailing-30-day windows at all three rooftops (the primary committed blocker is missing trailing-30-day history)",
+        "baseline: the trailing-30-day average that the >15%-below comparison is measured against"
+      ],
+      "missing_is_unknown_never_zero": true
+    },
+    {
+      "metric_id": "SW-050",
+      "metric": "negative-front-gross new-car deals ÷ eligible new-car deals (per rooftop, per week)",
+      "gate4h_seed_state": "required_not_performed",
+      "gate4j_state": "performed_schema_only",
+      "supersedes": "Gate 4H required_not_performed seed for SW-050",
+      "capability_discovered": "DMS Sales Flat Export exposes a row-level schema (Front Gross Profit, Inventory Type, Deal Status, deal dates) that could identify negative-front-gross new-car deals and an eligible new-car denominator. Deal Performance does NOT provide a row-level count of negative-front-gross new deals.",
+      "data_acquired": false,
+      "value_measured": false,
+      "promoted": false,
+      "candidate_source": "DMS Sales Flat Export (schema only)",
+      "exact_remaining_requirement": [
+        "window acquisition: a proved, dated, PII-safe export limited to the governed week (no date limiter was proved in the read-only view; the export carries extensive buyer/co-buyer PII and was deliberately not exported)",
+        "join / definition: isolate eligible new-car deals with non-blank Front Gross at ALL THREE rooftops (the committed observed denominator is 0/0 at 21043 and 21044 and integrity-incomplete at 21047 — 2 of 4 Front Gross blank)"
+      ],
+      "missing_is_unknown_never_zero": true
+    },
+    {
+      "metric_id": "SW-111",
+      "metric": "composite: lead-volume trend (rising) × close-rate trend (falling)",
+      "gate4h_seed_state": "required_not_performed",
+      "gate4j_state": "performed_candidate_found",
+      "supersedes": "Gate 4H required_not_performed seed for SW-111",
+      "capability_discovered": "Deal Performance’s parameterized Date Range, lead volume, and Close % could be pulled for two comparable periods to establish a directional trend.",
+      "data_acquired": false,
+      "value_measured": false,
+      "promoted": false,
+      "candidate_source": "Deal Performance",
+      "exact_remaining_requirement": [
+        "window acquisition: at least two comparable periods (multi-week history) at all three rooftops — the primary committed blocker is that a single held week defines no trend direction",
+        "semantic ratification: a ratified composite trend threshold (what \"rising\" volume and \"falling\" close mean) — the committed frozen_e1_spec threshold is held"
+      ],
+      "missing_is_unknown_never_zero": true
+    },
+    {
+      "metric_id": "SW-114",
+      "metric": "composite: show rate (available) × close rate (sold ÷ write-ups)",
+      "gate4h_seed_state": "required_not_performed",
+      "gate4j_state": "performed_no_route_found",
+      "supersedes": "Gate 4H required_not_performed seed for SW-114",
+      "capability_discovered": "No show-rate route was found in the inspected reports — Deal Performance does not itself provide show rate, and the Appointments report was not part of this pass. The close-rate arm still needs a non-zero write-up total joined to sold outcomes.",
+      "data_acquired": false,
+      "value_measured": false,
+      "promoted": false,
+      "candidate_source": null,
+      "exact_remaining_requirement": [
+        "join / source: a show-rate source (appointment shown / appointment outcome) joined to sold outcomes and a non-zero write-up (opportunity) total at all three rooftops — the accepted Dashboard write-up TOTAL is observed 0",
+        "semantic ratification: a ratified high-show / low-close composite threshold — the committed frozen_e1_spec threshold is held"
+      ],
+      "missing_is_unknown_never_zero": true
+    }
+  ]
+}

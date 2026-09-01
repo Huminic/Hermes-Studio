@@ -1,0 +1,15 @@
+{
+  "artifact": "gate4j-customer-safe-summary",
+  "revision": "J1",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "scope_note": "Sales-only, aggregate-only, read-only. Capability findings only — additional CRM report routes were identified; no value was measured. No internal controls, report titles, or PII are exposed.",
+  "summary": {
+    "headline": "Additional in-CRM report routes were identified that could support these follow-up checks once the required data setup and agreed definitions are in place.",
+    "detail": [
+      "No value was measured for any of these checks this period.",
+      "Each check still needs a specific setup step before it can be reported — such as agreeing an exact definition, gathering more than one period of history, or a governed data pull.",
+      "Missing information is treated as unknown, never as zero."
+    ],
+    "claim_layer_note": "These are capability findings (a route exists), not measurements (a value was produced)."
+  }
+}
