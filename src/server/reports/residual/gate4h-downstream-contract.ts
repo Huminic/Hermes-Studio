@@ -297,7 +297,7 @@ export const SECTION_DECISION: Record<string, string> = {
   '3. Sales Rep Activity & Communication Behavior':
     'How reps are coached on outreach quality and consistency.',
   '4. Pipeline Health & Funnel Dynamics':
-    'Where deals stall in the funnel and where to focus follow-up.',
+    'Where deals stall in the sales pipeline and where to focus follow-up.',
   '5. Appointment & Showroom Metrics':
     'How appointments are set, confirmed, and shown.',
   '6. Deal & Desking Signals':
@@ -347,12 +347,97 @@ export function ownerRole(
 }
 
 /**
- * Tokens that must NEVER appear in customer-facing copy: internal jargon and Service/Parts DATA
- * references. Bare incidental words in a committed Sales condition (e.g. "service CSI",
- * "mood-driven service") are intentionally NOT in this list — only Service/Parts DATA phrases are.
+ * Tokens that must NEVER appear in customer-facing copy. Three groups:
+ *   1. internal governance vocabulary (blocker classes, gate/cage codenames, partition terms);
+ *   2. implementation jargon the shadow flagged in Gate 4H-R0 (source-native, privacy-safe joins,
+ *      fail-closed, SLA, business-calendar, stable-key extracts, downstream, supported keys/bridge,
+ *      CRM family); and
+ *   3. data-pipeline / modeling jargon a dealership manager would not use (NLP, KPI, semantics,
+ *      dedup, composite, cohort, baseline, funnel, attribution, latency, classifier, adjacency, ANI).
+ * Every one of these is rewritten to plain language by {@link plainify}; the guard exists so that any
+ * future regression that reintroduces one FAILS the generator (fail-closed) and the tests.
+ *
+ * Bare incidental words in a committed Sales condition (e.g. "service CSI", "mood-driven service")
+ * are intentionally NOT here — only Service/Parts DATA phrases are (see {@link SERVICE_PARTS_DATA}).
  */
 export const INTERNAL_JARGON =
-  /\b(blocker_class|other_source_or_join|unsupported_field|insufficient_history|semantic_definition_pending|nlp_content_capable_pending|capability[_ ]delta|frozen_e1|contract\s*2|acquisition class|quarantin|cage|huminic|gate\s*4[a-h]|cell partition|denominator)\b/i
+  /\b(blocker_class|other_source_or_join|unsupported_field|insufficient_history|semantic_definition_pending|nlp_content_capable_pending|capability[_ ]delta|frozen_e1|contract\s*2|acquisition class|quarantin|cage|huminic|gate\s*4[a-h]|cell partition|denominator|source-native|privacy-safe|fail-closed|stable-key|business-calendar|downstream|supported keys?|supported bridge|CRM family|\bSLA\b|\bKPI\b|\bNLP\b|semantics?|\bdedupe?\b|composite|cohort|baseline|funnels?|attribution|latency|classifier|adjacency|\bANI\b|\bdedupe?\b)\b/i
+
+/**
+ * Rewrite committed technical strings (classification fields, missing-input notes, condition text)
+ * into plain dealership-management language, deterministically. Ordered: multi-word phrases first,
+ * then single tokens, then whitespace/punctuation cleanup. Dealership-native terms (CRM, DMS, BDC,
+ * F&I, PVR, CPO, CSI, VIN, VOI, OEM, SEM, VDP, gross, equity, lease, trade, desking) are preserved.
+ * The word "model" is only rewritten in modeling phrases (e.g. "propensity model"); vehicle senses
+ * ("model-year", "trade model-swap", "feature/model") are left untouched.
+ */
+export function plainify(input: string): string {
+  const RULES: Array<[RegExp, string]> = [
+    // Drop NLP/technical parentheticals entirely (also removes any σ notation inside them).
+    [/\((?:NLP|semantic|EXTERNAL config)[^)]*\)/gi, ''],
+    [/\(CRM family\)/gi, ''],
+    [/\(Covideo\/BombBomb\)/gi, '(your video-email tool)'],
+    // Named source / phrase specifics.
+    [/Enterprise Performance\/CAGE/gi, 'Enterprise Performance'],
+    [
+      /paid-source cost \+ gross/gi,
+      'advertising spend by source, plus that source’s gross and unit sales',
+    ],
+    [/front gross on new deals \(CRM family\)/gi, 'front gross on new deals'],
+    [/business-hours calendar/gi, 'business-hours schedule'],
+    [/reactivation model/gi, 'reactivation scoring'],
+    [/propensity model/gi, 'likelihood scoring'],
+    [/sentiment model/gi, 'tone scoring'],
+    [/\+ model data/gi, 'plus past outcomes'],
+    [/model data/gi, 'past outcomes'],
+    [/labeled outcomes/gi, 'known past outcomes'],
+    [/hard SLA/gi, 'hard response-time limit'],
+    [/response SLA/gi, 'response-time-target'],
+    [/latency clock/gi, 'response timing'],
+    [/alert dedup engine/gi, 'automatic duplicate-alert merging'],
+    [/alert-tier engine config/gi, 'alert-priority setup'],
+    [/phone\/call-ANI identifier/gi, 'phone-call caller-ID'],
+    [/"reply" adjacency \+ window/gi, 'how quickly replies follow each other'],
+    [/peer basis/gi, 'peer comparison'],
+    // Statistical notation → plain.
+    [/(\d+(?:\.\d+)?)\s*σ/g, '$1 standard deviations'],
+    [/σ/g, 'standard deviations'],
+    // Single-token jargon → plain equivalents.
+    [/\bSLA\b/gi, 'response-time target'],
+    [/\bKPI\b/gi, 'performance metric'],
+    [/\bNLP\b/gi, 'message-wording review'],
+    [/\bsemantics\b/gi, 'wording'],
+    [/\bsemantic\b/gi, 'wording'],
+    [/\bdetection\b/gi, 'signals'],
+    [/\bextraction\b/gi, 'details'],
+    [/\bclassification\b/gi, 'categorization'],
+    [/\bclassifier\b/gi, 'categorization'],
+    [/\bsentiment\b/gi, 'tone'],
+    [/\btracker\b/gi, 'tracking'],
+    [/\bcomposite\b/gi, 'combined'],
+    [/\bcohort\b/gi, 'group'],
+    [/\bbaseline\b/gi, 'typical level'],
+    [/\bfunnels\b/gi, 'pipelines'],
+    [/\bfunnel\b/gi, 'pipeline'],
+    [/\bdedupe\b/gi, 'de-duplicate'],
+    [/\battribution\b/gi, 'source-crediting'],
+    [/\blatency\b/gi, 'response time'],
+    [/\badjacency\b/gi, 'timing closeness'],
+    [/\bANI\b/gi, 'caller-ID'],
+    [/\bdedup\b/gi, 'duplicate-matching'],
+    [/\bengine\b/gi, 'process'],
+    [/\bconfig\b/gi, 'setting'],
+    [/\bcurve\b/gi, 'pattern'],
+    // Whitespace / punctuation cleanup after removals.
+    [/\(\s*\)/g, ''],
+    [/\s+([.,;:])/g, '$1'],
+    [/\s{2,}/g, ' '],
+    [/\s+\+\s+$/g, ''],
+  ]
+  let out = input
+  for (const [re, to] of RULES) out = out.replace(re, to)
+  return out.trim()
+}
 export const SERVICE_PARTS_DATA =
   /service department|parts department|repair order|service drive|service\s+ro\b|service-domain|declined service work|safety recall|\bwarranty\b|\bvsc\b/i
 export const ENRICHMENT_RAW =
@@ -368,9 +453,17 @@ export type CustomerCopy = {
   decision_it_improves: string
 }
 
-/** The claim layer each customer field belongs to (observed fact vs inference). */
+/**
+ * The claim layer each customer field belongs to.
+ *
+ * `what_this_watches` is the CATALOG DEFINITION of the metric — what the watchdog WOULD watch if it
+ * could be measured — NOT a value observed in the dealership this period. It is therefore tagged
+ * `metric_definition`, never `observed_fact`, so a renderer can never present an unresolved
+ * definition as a measured fact. `not_measured_this_period` is the one observed fact on an unresolved
+ * row (no value was produced from the accepted data).
+ */
 export const FIELD_CLAIM_LAYER: Record<keyof CustomerCopy, string> = {
-  what_this_watches: 'observed_fact',
+  what_this_watches: 'metric_definition',
   not_measured_this_period: 'observed_fact',
   why_unavailable: 'observed_fact',
   how_to_unlock: 'inference',
@@ -404,27 +497,23 @@ export function assertCustomerSafe(
   }
 }
 
-/** True when a specific unlock detail is safe to surface to the customer (no jargon, no Service/Parts). */
-function unlockDetailSafe(detail: string): boolean {
-  return (
-    detail.length > 0 &&
-    !INTERNAL_JARGON.test(detail) &&
-    !SERVICE_PARTS_DATA.test(detail) &&
-    !ENRICHMENT_RAW.test(detail)
-  )
-}
-
 /**
- * Build the customer copy for one row. `specifics` carries optional committed unlock detail (source /
- * field / missing input) already extracted by the generator; it is appended ONLY when it passes the
- * safety guard, otherwise the row falls back to the jargon-free base template (fail-closed).
+ * Build the customer copy for one row.
+ *
+ * For a `sales` row a metric-SPECIFIC concrete unlock is REQUIRED: `specifics.unlock_detail` (the
+ * committed classification field / missing-input note, gate-framed by the generator) is run through
+ * {@link plainify} and named in `how_to_unlock`. The row fails closed (throws) if that detail is
+ * missing, empty, or still trips the jargon / Service-Parts / enrichment guards after plainify —
+ * there is NO generic-template fallback that would silently drop the specificity. Every customer
+ * string (including the metric-definition `what_this_watches`) is plainified so no implementation
+ * jargon reaches the customer. `next_action` is a plain per-blocker template, never committed
+ * next-action text (which carried the R0 jargon).
  */
 export function buildCustomerCopy(
   row: NormalizedRow,
   domain: CustomerDomain,
   specifics: {
     unlock_detail?: string
-    next_action_raw?: string
     owner_raw?: string
   },
 ): CustomerCopy {
@@ -445,28 +534,35 @@ export function buildCustomerCopy(
     }
   }
 
-  // domain === 'sales'
+  // domain === 'sales' — a plain, metric-specific concrete unlock is mandatory.
+  const detailRaw = (specifics.unlock_detail ?? '').trim()
+  if (!detailRaw)
+    throw new Error(
+      `Gate 4H: ${row.metric_id} (sales) has no concrete unlock detail — every eligible unresolved metric must name the source/field/history/method it needs`,
+    )
+  const detail = plainify(detailRaw)
+  if (
+    !detail ||
+    INTERNAL_JARGON.test(detail) ||
+    SERVICE_PARTS_DATA.test(detail)
+  )
+    throw new Error(
+      `Gate 4H: ${row.metric_id} unlock detail is not customer-safe after plainify: "${detail}"`,
+    )
+
   const why =
     WHY_BY_BLOCKER[row.blocker_class] ??
     'This cannot be produced from the accepted Sales data this week.'
   const howBase =
     HOW_BASE_BY_BLOCKER[row.blocker_class] ??
     'Add the missing capability to the accepted Sales pipeline, then evaluate.'
-  const how =
-    specifics.unlock_detail && unlockDetailSafe(specifics.unlock_detail)
-      ? `${howBase} Specifically: ${specifics.unlock_detail}.`
-      : howBase
-  const nextRaw = (specifics.next_action_raw ?? '').trim()
+  const how = `${howBase} Specifically, this needs: ${detail}.`
   const next =
-    nextRaw &&
-    !INTERNAL_JARGON.test(nextRaw) &&
-    !SERVICE_PARTS_DATA.test(nextRaw)
-      ? nextRaw
-      : (NEXT_BY_BLOCKER[row.blocker_class] ??
-        'Decide the next step with management.')
+    NEXT_BY_BLOCKER[row.blocker_class] ??
+    'Decide the next step with management.'
 
   return {
-    what_this_watches: row.condition,
+    what_this_watches: plainify(row.condition),
     not_measured_this_period:
       'No value was produced from this week’s accepted Sales data.',
     why_unavailable: why,
@@ -485,6 +581,8 @@ export const CLAIM_LAYER_CONTRACT = {
   layers: {
     observed_fact:
       'A value or condition directly present in the accepted Sales evidence for the governed week, stated without interpretation.',
+    metric_definition:
+      'The catalog definition of what a metric WOULD watch — what it means — for an UNRESOLVED metric that produced no value this period. It describes intent, not a measured dealership fact, and must never be rendered as an observed value.',
     inference:
       'A defensible conclusion drawn FROM observed facts (e.g. a recommended unlock method, or the decision a metric would inform). Labeled as interpretation, never as a measurement.',
     hypothesis:

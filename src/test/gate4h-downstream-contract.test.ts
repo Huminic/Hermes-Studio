@@ -8,6 +8,7 @@ import {
   INTERNAL_JARGON,
   SERVICE_PARTS_DATA,
   classifyDomain,
+  plainify,
   renderCrmState,
 } from '@/server/reports/residual/gate4h-downstream-contract'
 
@@ -233,13 +234,108 @@ describe('Gate 4H — customer copy safety (no jargon, no Service/Parts, never z
     }
   })
 
-  it('every customer row declares field claim layers (observed_fact vs inference)', () => {
+  it('every customer row declares field claim layers; what_this_watches is a metric_definition (never observed_fact)', () => {
     for (const cr of customer.rows) {
-      expect(cr.claim_layers.what_this_watches).toBe('observed_fact')
+      // The metric definition of an UNRESOLVED row is intent, not a measured dealership fact.
+      expect(cr.claim_layers.what_this_watches, cr.metric_id).toBe(
+        'metric_definition',
+      )
+      expect(cr.claim_layers.what_this_watches, cr.metric_id).not.toBe(
+        'observed_fact',
+      )
+      // The single observed fact on an unresolved row: no value was produced this period.
+      expect(cr.claim_layers.not_measured_this_period, cr.metric_id).toBe(
+        'observed_fact',
+      )
       expect(cr.claim_layers.why_unavailable).toBe('observed_fact')
       expect(cr.claim_layers.how_to_unlock).toBe('inference')
       expect(cr.claim_layers.decision_it_improves).toBe('inference')
     }
+  })
+})
+
+describe('Gate 4H-R1 — every eligible unresolved metric names a concrete, plain unlock', () => {
+  // The shadow flagged 63/233 Sales rows in R0 whose unlock was generic. Every Sales row must now
+  // name the specific source/field/history/method it needs — not just a shared-key platitude.
+  const salesRows = customer.rows.filter((r) => r.domain === 'sales')
+
+  it('covers all 233 Sales rows, each with a metric-specific "this needs:" unlock', () => {
+    expect(salesRows).toHaveLength(233)
+    for (const cr of salesRows)
+      expect(
+        /Specifically, this needs: .{4,}\.$/.test(cr.customer.how_to_unlock),
+        `${cr.metric_id}: "${cr.customer.how_to_unlock}"`,
+      ).toBe(true)
+  })
+
+  it('unlock specifics are metric-specific, not one shared template (high cardinality)', () => {
+    const specifics = salesRows.map((r) =>
+      r.customer.how_to_unlock.replace(/^.*Specifically, this needs: /, ''),
+    )
+    expect(new Set(specifics).size).toBeGreaterThanOrEqual(150)
+  })
+
+  it('SW-009 names ad spend by source plus source-level gross/sales (the shadow example)', () => {
+    const sw009 = customer.rows.find((r) => r.metric_id === 'SW-009')!
+    expect(sw009.customer.how_to_unlock).toMatch(/advertising spend by source/i)
+    expect(sw009.customer.how_to_unlock).toMatch(/gross/i)
+    expect(sw009.customer.how_to_unlock).toMatch(/unit sales/i)
+  })
+})
+
+describe('Gate 4H-R1 — implementation jargon is rewritten and guarded', () => {
+  // The R0 next_action fields carried implementation jargon from committed next-action passthrough.
+  // The guard must now catch every term the shadow named, across ALL customer fields.
+  const NAMED_JARGON =
+    /source-native|privacy-safe|fail-closed|\bSLA\b|business-calendar|stable-key|downstream|supported key|supported bridge|CRM family|\bNLP\b|\bKPI\b|semantics?|\bdedupe?\b|composite|cohort|baseline|funnels?|attribution|latency|classifier|\bCAGE\b/i
+
+  it('no customer field (any of the seven) contains a shadow-named jargon term', () => {
+    for (const cr of customer.rows)
+      for (const [field, value] of Object.entries(cr.customer))
+        expect(
+          NAMED_JARGON.test(value),
+          `${cr.metric_id}.${field}: "${value}"`,
+        ).toBe(false)
+  })
+
+  it('the expanded INTERNAL_JARGON guard rejects each named term (regression fails closed)', () => {
+    for (const term of [
+      'source-native extract',
+      'privacy-safe joins',
+      'fail-closed gate',
+      'weekend SLA breach',
+      'business-calendar window',
+      'stable-key extracts',
+      'the downstream PDF',
+      'supported keys only',
+      'a supported bridge',
+      'the CRM family',
+      'run NLP over notes',
+      'any KPI moves',
+      'answer semantics',
+      'dedup engine',
+      'trailing baseline',
+      'incomplete funnels',
+      'first-touch attribution',
+    ])
+      expect(INTERNAL_JARGON.test(term), term).toBe(true)
+  })
+
+  it('plainify is deterministic and preserves vehicle "model" senses', () => {
+    expect(plainify('objection detection')).toBe('objection signals')
+    expect(plainify('phone/email dedup fields')).toBe(
+      'phone/email duplicate-matching fields',
+    )
+    // Vehicle senses of "model" must survive (only modeling phrases are rewritten).
+    expect(plainify('model-year/inventory')).toBe('model-year/inventory')
+    expect(plainify('trade model-swap history')).toBe(
+      'trade model-swap history',
+    )
+    expect(plainify('reactivation model')).toBe('reactivation scoring')
+    // Idempotent-enough: plainified output has no named jargon left.
+    expect(INTERNAL_JARGON.test(plainify('trailing KPI + hard SLA'))).toBe(
+      false,
+    )
   })
 })
 
@@ -302,12 +398,16 @@ describe('Gate 4H — CRM devil’s-advocate control fails closed', () => {
 })
 
 describe('Gate 4H — claim-layer contract for future narratives', () => {
-  it('defines observed fact / inference / hypothesis and computes NO ROI in this gate', () => {
+  it('defines observed fact / metric_definition / inference / hypothesis and computes NO ROI in this gate', () => {
     expect(Object.keys(customer.claim_layer_contract.layers).sort()).toEqual([
       'hypothesis',
       'inference',
+      'metric_definition',
       'observed_fact',
     ])
+    expect(customer.claim_layer_contract.layers.metric_definition).toMatch(
+      /never be rendered as an observed value/i,
+    )
     expect(customer.claim_layer_contract.roi_scenario_rules.optional).toBe(true)
     expect(
       customer.claim_layer_contract.roi_scenario_rules.computed_in_this_gate,

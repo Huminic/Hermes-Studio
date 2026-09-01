@@ -1,6 +1,22 @@
 # PROOF DELTA H — Downstream customer contract (all 295, no new evaluations)
 
-**Gate:** 4H (downstream) · **Revision:** H1 · **Accepted week:** 2026-08-24..2026-08-30 (America/New_York)
+**Gate:** 4H (downstream) · **Revision:** H1 (R1 corrective) · **Accepted week:** 2026-08-24..2026-08-30 (America/New_York)
+
+> **R1 corrective pass (customer usability only).** R0 (commit `4e683cf`) passed accounting, safety,
+> determinism, tests, and no-PII, but the impartial shadow held it on customer usability. R1 repairs
+> exactly three things WITHOUT changing the accepted outcome (still 17 evaluated / 278 unresolved,
+> 242 eligible / 36 withheld, identical domains, overrides, and CRM seeds; zero new evaluations):
+> (1) every eligible unresolved Sales metric now names a concrete, metric-specific unlock (source /
+> field / history / method) — e.g. SW-009 names "advertising spend by source, plus that source's
+> gross and unit sales"; (2) all customer-facing copy is rewritten to plain dealership-management
+> language via a deterministic `plainify()` layer, and the jargon guard is expanded to fail closed on
+> every implementation term the shadow named (source-native, privacy-safe joins, fail-closed, SLA,
+> business-calendar, stable-key extracts, downstream, supported keys/bridge, CRM family) plus
+> data-pipeline jargon (NLP, KPI, semantics, dedup, composite, cohort, baseline, funnel, attribution,
+> latency, classifier); (3) `what_this_watches` on an unresolved row is tagged with a new
+> `metric_definition` claim layer so a renderer can never treat a catalog definition as an
+> `observed_fact`. The internal ledger and CRM-check artifacts are byte-identical to R0.
+
 **Rooftops:** 21043 (Honda) · 21044 (Nissan) · 21047 (Ford) · **Boundary:** Sales-only (Service/Parts permanently excluded; missing is never zero)
 
 Gate 4H claims **zero new evaluations**. It does not re-open, promote, or re-audit any metric. It
@@ -85,7 +101,24 @@ measured this period, why the accepted evidence cannot answer it, the exact sour
 method that would unlock it, a concrete next action, an owner (as a role, never an internal codename),
 and the management decision it would improve. Internal blocker vocabulary stays in the internal
 ledger only. `cross_rooftop` / `enrichment_external` rows use sanitized business language with no
-sensitive raw condition. Each field is tagged with its claim layer (observed fact vs inference).
+sensitive raw condition.
+
+**R1 — metric-specific unlocks (no generic boilerplate).** The `how_to_unlock` of every one of the
+233 Sales rows now ends with `Specifically, this needs: …`, naming the committed
+`classification.field` (4G — surfaced for external-source rows too, e.g. SW-009 ad-spend ROI), the
+committed `missing_inputs` note (4F), or the message-content signal to read (4E). The generator fails
+closed if any Sales row lacks a specific, and asserts the specifics are high-cardinality (≥150
+distinct), so a shared platitude cannot pass.
+
+**R1 — plain language + claim layers.** All customer strings pass through a deterministic `plainify()`
+layer that rewrites implementation and data-pipeline jargon into dealership-management language while
+preserving dealership-native terms (CRM, DMS, BDC, F&I, PVR, CPO, CSI, VIN, VOI, OEM, gross, equity,
+lease, trade) and vehicle senses of "model". The committed next-action text (the sole source of the
+R0 jargon) is no longer passed through; plain per-blocker next actions are generated instead. Each
+field is tagged with its claim layer: `what_this_watches` is a **`metric_definition`** (the catalog
+definition of what the metric WOULD watch — never an `observed_fact`), `not_measured_this_period` is
+the single `observed_fact` on an unresolved row, and the unlock / next-action / decision fields are
+`inference`.
 
 Missing is never zero: `not_measured_this_period` states no value was produced; no unresolved metric
 is rendered as `0`.
@@ -109,10 +142,14 @@ verified from available sources"**, never as zero. Aggregate-only, Sales-only, n
 
 ## 5. Controls
 
-- **Focused tests** (`src/test/gate4h-downstream-contract.test.ts`): 20/20 — coverage 295 (17/278),
+- **Focused tests** (`src/test/gate4h-downstream-contract.test.ts`): 26/26 — coverage 295 (17/278),
   eligibility 242/36, zero Service/Parts or compliance customer-eligible, SW-270 override, SW-079/080
   not_applicable→service, incidental-word non-ineligibility, no jargon, no Service/Parts data, never
-  zero, primary-blocker fidelity, CRM fail-closed, claim-layer contract, pure-classifier unit tests.
+  zero, primary-blocker fidelity, CRM fail-closed, claim-layer contract, pure-classifier unit tests,
+  **plus R1**: all 233 Sales rows carry a metric-specific `this needs:` unlock (≥150 distinct;
+  SW-009 names ad spend + gross + unit sales), `what_this_watches` is `metric_definition` on every
+  eligible row, the expanded guard rejects every shadow-named term, and `plainify` is deterministic
+  and preserves vehicle "model" senses.
 - **Hash guard** (`src/test/gate4h-evidence-hashes.test.ts`): recomputes every SHA-256 below from the
   committed bytes.
 - Deterministic (byte-identical rerun); Prettier + ESLint clean; changed-file tsc adds no new errors.
@@ -121,12 +158,12 @@ verified from available sources"**, never as zero. Aggregate-only, Sales-only, n
 
 | File                                                                         | sha256:16          |
 | ---------------------------------------------------------------------------- | ------------------ |
-| `src/server/reports/residual/gate4h-downstream-contract.ts`                  | `4bdc83bc1de208a3` |
-| `scripts/m1r-residual/build-gate4h-downstream-contract.ts`                   | `3bb7a40997a95fbb` |
+| `src/server/reports/residual/gate4h-downstream-contract.ts`                  | `7742823fa58c4810` |
+| `scripts/m1r-residual/build-gate4h-downstream-contract.ts`                   | `c8e9237360086251` |
 | `docs/halo/evidence/m1r/residual/gate4h-internal-accountability-ledger.json` | `7d4d5d09a49dcf15` |
-| `docs/halo/evidence/m1r/residual/gate4h-downstream-customer-contract.json`   | `df23afe7e51bee54` |
+| `docs/halo/evidence/m1r/residual/gate4h-downstream-customer-contract.json`   | `8e71d9ef2790874e` |
 | `docs/halo/evidence/m1r/residual/gate4h-crm-devils-advocate-ledger.json`     | `e39ba84038a616f6` |
-| `src/test/gate4h-downstream-contract.test.ts`                                | `8f0fc06977541be7` |
+| `src/test/gate4h-downstream-contract.test.ts`                                | `f2ac97a84d8c87a0` |
 
 Each `sha256:16` is recomputed from the current committed bytes by
 `src/test/gate4h-evidence-hashes.test.ts`.

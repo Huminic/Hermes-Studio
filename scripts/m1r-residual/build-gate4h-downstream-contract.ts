@@ -200,15 +200,20 @@ async function main(): Promise<void> {
   must(gate4f.rows.length === 86, `gate4f rows ${gate4f.rows.length} != 86`)
   must(gate4g.rows.length === 122, `gate4g rows ${gate4g.rows.length} != 122`)
 
-  // ── Normalize every unresolved ID (278) + carry the unlock specifics/owner/next ──
+  // ── Normalize every unresolved ID (278) + carry the concrete unlock specific + owner ──
+  // The committed `next_safe_action` / `next_action` text is deliberately NOT carried: it was the
+  // sole source of the R0 implementation jargon (source-native / privacy-safe joins / fail-closed /
+  // SLA / stable-key extracts / downstream / supported keys / CRM family). Gate 4H-R1 generates plain
+  // per-blocker next actions from the pure module instead.
   type Extras = {
     unlock_detail?: string
-    next_action_raw?: string
     owner_raw?: string
   }
   const normalized: Array<{ row: NormalizedRow; extras: Extras }> = []
 
   for (const r of contentHold) {
+    // 4E content-HOLD: the concrete unlock is the ability to read message wording for the named signal.
+    const core = (r.missing_inputs || '').trim()
     normalized.push({
       row: {
         metric_id: r.metric_id,
@@ -219,10 +224,15 @@ async function main(): Promise<void> {
         blocker_class: 'nlp_content_capable_pending',
         primary_blocker: `content/tone analysis required (${r.join_or_nlp_required || 'NLP on Message Content'})`,
       },
-      extras: { unlock_detail: r.missing_inputs || undefined },
+      extras: {
+        unlock_detail: core
+          ? `the ability to read message wording for ${core}`
+          : undefined,
+      },
     })
   }
   for (const r of gate4f.rows) {
+    // 4F: the concrete unlock is the committed missing_inputs note for this metric.
     normalized.push({
       row: {
         metric_id: r.metric_id,
@@ -235,21 +245,17 @@ async function main(): Promise<void> {
       },
       extras: {
         unlock_detail: missingInputFromPrereqs(r.prerequisites),
-        next_action_raw: r.next_action,
         owner_raw: r.owner,
       },
     })
   }
   for (const r of gate4g.rows) {
-    const cs = String(r.classification.source || '')
-    const external = /non-vinsolutions|separate external|external source/i.test(
-      cs,
-    )
-    const field = r.classification.field
+    // 4G: the concrete unlock is the committed classification.field — surfaced for EVERY sales row,
+    // including rows whose source is an external/non-VinSolutions system (e.g. SW-009 ad-spend ROI).
+    // The external SOURCE is itself part of the plain answer, not something to hide.
+    const field = String(r.classification.field || '').trim()
     const unlockDetail =
-      !external && field && field !== 'not_applicable (held)'
-        ? field
-        : undefined
+      field && field !== 'not_applicable (held)' ? field : undefined
     normalized.push({
       row: {
         metric_id: r.metric_id,
@@ -263,7 +269,6 @@ async function main(): Promise<void> {
       },
       extras: {
         unlock_detail: unlockDetail,
-        next_action_raw: r.next_safe_action,
         owner_raw: r.owner,
       },
     })
@@ -422,6 +427,33 @@ async function main(): Promise<void> {
     customerRows.length === 242,
     `customer rows ${customerRows.length} != 242`,
   )
+
+  // Every eligible SALES row must name a metric-specific concrete unlock (no generic boilerplate),
+  // and every eligible row's what_this_watches must be a metric_definition (never observed_fact).
+  const salesCustomer = customerRows.filter((r) => r.domain === 'sales')
+  must(
+    salesCustomer.length === 233,
+    `sales customer rows ${salesCustomer.length} != 233`,
+  )
+  for (const cr of salesCustomer)
+    must(
+      /Specifically, this needs: .+\.$/.test(cr.customer.how_to_unlock),
+      `${cr.metric_id} how_to_unlock lacks a metric-specific unlock: "${cr.customer.how_to_unlock}"`,
+    )
+  const distinctUnlocks = new Set(
+    salesCustomer.map((r) =>
+      r.customer.how_to_unlock.replace(/^.*Specifically, this needs: /, ''),
+    ),
+  )
+  must(
+    distinctUnlocks.size >= 150,
+    `sales unlocks not metric-specific enough (${distinctUnlocks.size} distinct < 150)`,
+  )
+  for (const cr of customerRows)
+    must(
+      cr.claim_layers.what_this_watches === 'metric_definition',
+      `${cr.metric_id} what_this_watches claim layer must be metric_definition`,
+    )
 
   // No Service/Parts or compliance-domain metric may be customer-display eligible.
   for (const r of internalRows)
