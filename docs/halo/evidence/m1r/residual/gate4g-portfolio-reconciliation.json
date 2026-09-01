@@ -1,0 +1,49 @@
+{
+  "artifact": "gate4g-portfolio-reconciliation",
+  "required_cells": 885,
+  "conditions": 295,
+  "rooftops": 3,
+  "evaluated": 51,
+  "unresolved": 834,
+  "prior_evaluated": 51,
+  "gate4g_new_evaluated_cells": 0,
+  "gate4g_held_cells": 366,
+  "unaudited_ids": 0,
+  "id_partition": {
+    "evaluated": 17,
+    "gate4e_content_hold": 70,
+    "gate4f_hold": 86,
+    "gate4g_hold": 122,
+    "residual_unaudited": 0
+  },
+  "cell_partition": {
+    "evaluated": 51,
+    "gate4e_content_hold": 210,
+    "gate4f_hold": 258,
+    "gate4g_hold": 366,
+    "residual_unaudited": 0
+  },
+  "id_partition_reconciles_to": 295,
+  "cell_partition_reconciles_to": 885,
+  "by_dealer": {
+    "21043": {
+      "evaluated": 17,
+      "gate4g_new_evaluated": 0,
+      "gate4g_held": 122,
+      "unresolved": 278
+    },
+    "21044": {
+      "evaluated": 17,
+      "gate4g_new_evaluated": 0,
+      "gate4g_held": 122,
+      "unresolved": 278
+    },
+    "21047": {
+      "evaluated": 17,
+      "gate4g_new_evaluated": 0,
+      "gate4g_held": 122,
+      "unresolved": 278
+    }
+  },
+  "note": "Gate 4G dispositions the final 122 residual IDs (366 cells) with explicit blockers but promotes 0, so evaluated stays 51/834 — the prior 51 evaluated cells are byte-preserved. Disjoint ID partition 17 evaluated + 70 Gate-4E-content-HOLD + 86 Gate-4F-HOLD + 122 Gate-4G-HOLD + 0 unaudited = 295 (×3 rooftops = 885 cells). Every ID is now dispositioned."
+}
