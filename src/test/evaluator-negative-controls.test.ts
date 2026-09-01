@@ -237,6 +237,7 @@ describe('Missing is not zero -> NotEvaluable (req 4)', () => {
       },
       crm: null,
       dashboard: null,
+      leads: null,
     }
     expect(evalSW032(b).ok).toBe(false)
   })
@@ -256,6 +257,7 @@ describe('Missing is not zero -> NotEvaluable (req 4)', () => {
         appointments: null,
         crm: null,
         dashboard: { ...base, leads: 0 },
+        leads: null,
       }).ok,
     ).toBe(false)
     expect(
@@ -263,6 +265,7 @@ describe('Missing is not zero -> NotEvaluable (req 4)', () => {
         appointments: null,
         crm: null,
         dashboard: { ...base, leads: null },
+        leads: null,
       }).ok,
     ).toBe(false)
   })
@@ -276,10 +279,12 @@ describe('Quarantined input can never produce an evaluated row (req 5)', () => {
   })
   it('an absent held family yields NotEvaluable (no fabricated evaluation)', () => {
     expect(
-      evalSW031({ appointments: null, crm: null, dashboard: null }).ok,
+      evalSW031({ appointments: null, crm: null, dashboard: null, leads: null })
+        .ok,
     ).toBe(false)
     expect(
-      evalSW032({ appointments: null, crm: null, dashboard: null }).ok,
+      evalSW032({ appointments: null, crm: null, dashboard: null, leads: null })
+        .ok,
     ).toBe(false)
   })
 })

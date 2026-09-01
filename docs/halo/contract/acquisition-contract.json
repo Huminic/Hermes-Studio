@@ -374,11 +374,8 @@
     {
       "acquisition_route": "readonly_browser_capture",
       "candidate_metric_ids": [
-        "SW-011",
-        "SW-012",
         "SW-013",
         "SW-014",
-        "SW-015",
         "SW-016",
         "SW-017",
         "SW-025",
@@ -389,7 +386,7 @@
         "SW-183",
         "SW-211"
       ],
-      "cell_count": 42,
+      "cell_count": 33,
       "route_proof_state": "candidate_unproved",
       "duane_approval_required": false,
       "duane_approval_reason": "read-only browser capture is already authorized by the active goal — no new approval",
@@ -603,7 +600,7 @@
         "Daily Dealer Summary",
         "Leads"
       ],
-      "candidate_cell_count": 187,
+      "candidate_cell_count": 184,
       "duane_approval_required": false,
       "route_proof_state": "candidate_unproved",
       "note": "candidate coverage only; each dataset must still prove exact fields, period, Sales-only filters, and row-level validation before it closes any cell"
@@ -618,7 +615,7 @@
         "Daily Dealer Summary",
         "Leads"
       ],
-      "candidate_cell_count": 187,
+      "candidate_cell_count": 184,
       "duane_approval_required": false,
       "route_proof_state": "candidate_unproved",
       "note": "candidate coverage only; each dataset must still prove exact fields, period, Sales-only filters, and row-level validation before it closes any cell"
@@ -633,7 +630,7 @@
         "Daily Dealer Summary",
         "Leads"
       ],
-      "candidate_cell_count": 187,
+      "candidate_cell_count": 184,
       "duane_approval_required": false,
       "route_proof_state": "candidate_unproved",
       "note": "candidate coverage only; each dataset must still prove exact fields, period, Sales-only filters, and row-level validation before it closes any cell"
@@ -699,18 +696,26 @@
       {
         "acquisition_route": "readonly_browser_capture",
         "dataset": "Leads",
-        "closes_candidate_metric_examples": ["SW-011", "SW-015"],
+        "closes_candidate_metric_examples": ["SW-011", "SW-012", "SW-015"],
         "minimal_fields": [
           "Dealer ID",
           "Actual Response Time (Min)",
           "Adjusted Response Time (Min)",
           "Actionable Response Datetime",
           "Originated After Hours",
-          "Lead Origination Date"
+          "Lead Origination Date",
+          "First Contact Attempt",
+          "First Customer Contact"
         ],
         "join_keys": [
           {
             "field": "Lead ID",
+            "purpose": "dedup_join",
+            "pseudonymize": true,
+            "in_customer_pdf": false
+          },
+          {
+            "field": "Sales Rep",
             "purpose": "dedup_join",
             "pseudonymize": true,
             "in_customer_pdf": false
@@ -722,7 +727,7 @@
           "CoBuyer Full Name",
           "Trade 1/2 fields"
         ],
-        "note": "per-lead response timing + business-hours flag only."
+        "note": "per-lead response timing + business-hours flag + the two touch-timestamp columns (First Contact Attempt / First Customer Contact — timestamps only, never identity) for the untouched-lead rule (SW-012); Sales Rep retained ONLY as an ephemeral pseudonymized in-memory aggregation key for SW-015 and NEVER persisted as a name."
       },
       {
         "acquisition_route": "new_readonly_vinsolutions_export",

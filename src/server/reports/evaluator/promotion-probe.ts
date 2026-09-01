@@ -22,6 +22,21 @@ export const CANONICAL_BINDING: Record<
   EvaluableId,
   { condition: string; threshold: number }
 > = {
+  'SW-011': {
+    condition:
+      'Median time-to-first-touch exceeds 10 minutes during business hours.',
+    threshold: 10,
+  },
+  'SW-012': {
+    condition:
+      'Any lead untouched >30 minutes during staffed hours triggers escalation.',
+    threshold: 0,
+  },
+  'SW-015': {
+    condition:
+      "Sales rep's average first-response time is 2x the store median.",
+    threshold: 0,
+  },
   'SW-031': {
     condition: 'Lead-to-appointment set rate falls below 25%.',
     threshold: 0.25,

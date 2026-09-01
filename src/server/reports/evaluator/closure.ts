@@ -1,5 +1,5 @@
 /**
- * Gate 3 — deterministic 876-cell closure registry (with controller-corrected routing).
+ * Gate 3 — deterministic 867-cell closure registry (with controller-corrected routing).
  *
  * For every UNRESOLVED cell in the Gate 2 ledger, produce one machine-readable closure
  * record: reason category, required raw fields + definition/grain, required source, source

@@ -88,18 +88,25 @@ describe('Gate 2 spine ledger — exact 885 keys (req 1)', () => {
 })
 
 describe('Gate 2 counts + strict predicate coupling (req 2,3,8)', () => {
-  it('summary: evaluated=9, unresolved=876, sum=885; ids = SW-031/032/041', () => {
+  it('summary: evaluated=18, unresolved=867, sum=885; ids = SW-011/012/015/031/032/041', () => {
     expect(SUMMARY.required_cells).toBe(885)
-    expect(SUMMARY.evaluated).toBe(9)
-    expect(SUMMARY.unresolved).toBe(876)
+    expect(SUMMARY.evaluated).toBe(18)
+    expect(SUMMARY.unresolved).toBe(867)
     expect(SUMMARY.evaluated + SUMMARY.unresolved).toBe(885)
-    expect(SUMMARY.evaluated_ids).toEqual(['SW-031', 'SW-032', 'SW-041'])
+    expect(SUMMARY.evaluated_ids).toEqual([
+      'SW-011',
+      'SW-012',
+      'SW-015',
+      'SW-031',
+      'SW-032',
+      'SW-041',
+    ])
     for (const d of DEALERS)
-      expect(SUMMARY.by_dealer[d]).toEqual({ evaluated: 3, unresolved: 292 })
+      expect(SUMMARY.by_dealer[d]).toEqual({ evaluated: 6, unresolved: 289 })
   })
   it('EVERY evaluated row passes the strict predicate', () => {
     const ev = rows.filter((r) => r.status === 'evaluated')
-    expect(ev.length).toBe(9)
+    expect(ev.length).toBe(18)
     for (const r of ev) {
       const v = evaluateStrictPredicate(r)
       expect(
@@ -110,12 +117,12 @@ describe('Gate 2 counts + strict predicate coupling (req 2,3,8)', () => {
   })
   it('EVERY unresolved row FAILS the strict predicate (cannot be silently counted)', () => {
     const un = rows.filter((r) => r.status === 'unresolved')
-    expect(un.length).toBe(876)
+    expect(un.length).toBe(867)
     for (const r of un) expect(evaluateStrictPredicate(r).ok).toBe(false)
   })
-  it('completion requires literally 885 evaluated (old 6 / current 9 cannot pass)', () => {
+  it('completion requires literally 885 evaluated (old 9 / current 18 cannot pass)', () => {
     expect(SUMMARY.evaluated).toBeLessThan(885)
-    expect(6).toBeLessThan(885)
+    expect(18).toBeLessThan(885)
     expect(SUMMARY.evaluated === 885).toBe(false)
   })
 })

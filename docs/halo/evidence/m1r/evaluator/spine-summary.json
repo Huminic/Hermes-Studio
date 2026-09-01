@@ -1,29 +1,31 @@
 {
   "artifact": "gate2-spine-summary",
   "required_cells": 885,
-  "evaluated": 9,
-  "unresolved": 876,
+  "evaluated": 18,
+  "unresolved": 867,
   "by_dealer": {
     "21043": {
-      "evaluated": 3,
-      "unresolved": 292
+      "evaluated": 6,
+      "unresolved": 289
     },
     "21044": {
-      "evaluated": 3,
-      "unresolved": 292
+      "evaluated": 6,
+      "unresolved": 289
     },
     "21047": {
-      "evaluated": 3,
-      "unresolved": 292
+      "evaluated": 6,
+      "unresolved": 289
     }
   },
   "by_source_family": {
+    "vinsolutions_custom_reporting_leads": 9,
     "dealership_performance": 3,
     "appointments": 6
   },
   "by_section_evaluated": {
+    "2. Speed-to-Lead & First Response": 9,
     "4. Pipeline Health & Funnel Dynamics": 6,
     "5. Appointment & Showroom Metrics": 3
   },
-  "evaluated_ids": ["SW-031", "SW-032", "SW-041"]
+  "evaluated_ids": ["SW-011", "SW-012", "SW-015", "SW-031", "SW-032", "SW-041"]
 }

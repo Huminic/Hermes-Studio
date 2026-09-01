@@ -10,12 +10,17 @@
  */
 export const EXPECTED_SCHEDULER_SENDER = 'reportscheduler@motosnap.com'
 
+export const REPORTING_HOST = 'reporting-vinsolutions.app.coxautoinc.com'
+
 export type DeliveryEnvelope = {
   source_type: string
   sender: string
   subject: string
   gmail_message_id: string
   gmail_attachment_id: string
+  // browser_capture (Leads) provenance; '' for gmail_scheduler deliveries.
+  capture_id: string
+  source_url: string
   received_at: string
   filename: string
   sha256: string
@@ -99,7 +104,77 @@ export function buildEnvelope(d: RawDelivery): DeliveryEnvelope {
     subject,
     gmail_message_id: messageId,
     gmail_attachment_id: attachment.length > 0 ? attachment : 'unavailable',
+    capture_id: '',
+    source_url: '',
     received_at: (d.received_at ?? '').trim(),
+    filename,
+    sha256: sha,
+    profile,
+    family,
+    period_hint: (d.period_hint ?? '').trim(),
+    period_start: start,
+    period_end: end,
+  }
+}
+
+type RawCapture = {
+  source_type?: string
+  capture_id?: string
+  source_url?: string
+  captured_at?: string
+  filename?: string
+  sha256?: string
+  profile?: string
+  family?: string
+  period_hint?: string
+}
+
+const CAPTURE_ID_RE = /^VIN-LEADS-\d{8}-\d{5}$/
+
+/**
+ * Validate a committed browser-capture record (Leads) into a typed envelope. Requires a
+ * capture_id + an exact reporting host source_url + filename + full sha256 + range
+ * period_hint; the gmail_* fields are '' (absent). Fail-closed. Never fabricates.
+ */
+export function buildCaptureEnvelope(d: RawCapture): DeliveryEnvelope {
+  const src = (d.source_type ?? '').trim()
+  if (src !== 'browser_capture') {
+    throw new ProvenanceError(
+      `unsupported source_type "${src}" (only browser_capture admitted here)`,
+    )
+  }
+  const captureId = (d.capture_id ?? '').trim()
+  const sourceUrl = (d.source_url ?? '').trim()
+  if (!CAPTURE_ID_RE.test(captureId))
+    throw new ProvenanceError(`invalid capture_id "${captureId}"`)
+  let host = ''
+  try {
+    host = new URL(sourceUrl).hostname
+  } catch {
+    host = ''
+  }
+  if (host !== REPORTING_HOST)
+    throw new ProvenanceError(`source_url host "${host}" != ${REPORTING_HOST}`)
+  const filename = (d.filename ?? '').trim()
+  const sha = (d.sha256 ?? '').trim()
+  const profile = (d.profile ?? '').trim()
+  const family = (d.family ?? '').trim()
+  if (filename.length === 0)
+    throw new ProvenanceError('capture missing filename')
+  if (!/^[0-9a-f]{64}$/.test(sha))
+    throw new ProvenanceError(`capture sha256 is not 64 hex: "${sha}"`)
+  if (profile.length === 0 || family.length === 0)
+    throw new ProvenanceError('capture missing profile/family')
+  const { start, end } = parsePeriodHint(d.period_hint ?? '')
+  return {
+    source_type: src,
+    sender: '',
+    subject: '',
+    gmail_message_id: '',
+    gmail_attachment_id: '',
+    capture_id: captureId,
+    source_url: sourceUrl,
+    received_at: (d.captured_at ?? '').trim(),
     filename,
     sha256: sha,
     profile,

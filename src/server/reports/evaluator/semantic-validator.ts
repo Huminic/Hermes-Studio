@@ -143,10 +143,16 @@ export function validateEvaluatedRow(
   if (row.numerator !== cand.numerator) failed.push('numerator_mismatch')
   if (row.denominator !== cand.denominator) failed.push('denominator_mismatch')
 
-  // 3. Value equals both the recomputed candidate AND numerator/denominator.
+  // 2b. Metric-specific persisted detail (coverage / distributions / footnote) recomputed.
+  if (!jsonEq(row.evaluation_detail, cand.detail))
+    failed.push('evaluation_detail_mismatch')
+
+  // 3. Value equals the recomputed candidate; for RATIO metrics it also equals num/denom.
+  //    A `statistic` value (e.g. a median) is NOT a ratio and is bound only to the candidate.
   if (row.value === null || !close(row.value, cand.value)) {
     failed.push('value_inconsistent_with_source')
   } else if (
+    spec.value_kind === 'ratio' &&
     row.numerator !== null &&
     row.denominator !== null &&
     row.denominator !== 0 &&
@@ -251,6 +257,11 @@ export function validateEvaluatedRow(
       failed.push('lineage_message_id_mismatch')
     if (l.gmail_attachment_id !== env.gmail_attachment_id)
       failed.push('lineage_attachment_id_mismatch')
+    // Browser-capture provenance (Leads); '' on both sides for gmail_scheduler families.
+    if (l.capture_id !== env.capture_id)
+      failed.push('lineage_capture_id_mismatch')
+    if (l.source_url !== env.source_url)
+      failed.push('lineage_source_url_mismatch')
     if (l.period_hint !== env.period_hint)
       failed.push('lineage_period_hint_mismatch')
     if (!jsonEq(l.observed_date_range, ctx.expectedObserved))

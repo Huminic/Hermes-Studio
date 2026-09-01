@@ -50,7 +50,18 @@ const PROHIBITED_FIELD_PATTERNS: Array<RegExp> = [
   /\btrade\b/i,
 ]
 
+// Narrowly authorized non-PII response-TIMING columns whose VinSolutions names contain an
+// otherwise-prohibited token (e.g. "Customer") but which carry ONLY a timestamp — never
+// identity. Required for the business-hours untouched-lead metric (SW-012). This is an
+// explicit, per-name exemption; it does NOT loosen the broad identity patterns for any other
+// field (bare "Customer", "Customer Full Name", "CoBuyer", etc. remain prohibited).
+const TIMING_FIELD_ALLOWLIST = new Set<string>([
+  'First Customer Contact',
+  'First Contact Attempt',
+])
+
 export function isProhibitedField(field: string): boolean {
+  if (TIMING_FIELD_ALLOWLIST.has(field.trim())) return false
   return PROHIBITED_FIELD_PATTERNS.some((re) => re.test(field))
 }
 
@@ -114,7 +125,7 @@ export const ALLOWED_EXPORT_FIELD_SELECTION: Array<AllowedSelection> = [
   {
     acquisition_route: 'readonly_browser_capture',
     dataset: 'Leads',
-    closes_candidate_metric_examples: ['SW-011', 'SW-015'],
+    closes_candidate_metric_examples: ['SW-011', 'SW-012', 'SW-015'],
     minimal_fields: [
       'Dealer ID',
       'Actual Response Time (Min)',
@@ -122,10 +133,12 @@ export const ALLOWED_EXPORT_FIELD_SELECTION: Array<AllowedSelection> = [
       'Actionable Response Datetime',
       'Originated After Hours',
       'Lead Origination Date',
+      'First Contact Attempt',
+      'First Customer Contact',
     ],
-    join_keys: [jk('Lead ID')],
+    join_keys: [jk('Lead ID'), jk('Sales Rep')],
     excluded_pii: ['Customer', 'VIN', 'CoBuyer Full Name', 'Trade 1/2 fields'],
-    note: 'per-lead response timing + business-hours flag only.',
+    note: 'per-lead response timing + business-hours flag + the two touch-timestamp columns (First Contact Attempt / First Customer Contact — timestamps only, never identity) for the untouched-lead rule (SW-012); Sales Rep retained ONLY as an ephemeral pseudonymized in-memory aggregation key for SW-015 and NEVER persisted as a name.',
   },
   {
     acquisition_route: 'new_readonly_vinsolutions_export',

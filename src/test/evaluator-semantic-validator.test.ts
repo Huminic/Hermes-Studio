@@ -28,7 +28,10 @@ function ctxFor(
 ): ValidatorContext {
   const d = inputs.dealers.find((x) => x.dealer_id === dealerId)!
   const family = METRIC_SPECS[metricId].source_family
-  const fl = d.lineage[family]
+  // The Leads source_family slug maps to the 'leads' lineage key (matches spine familyKey).
+  const lineageKey =
+    family === 'vinsolutions_custom_reporting_leads' ? 'leads' : family
+  const fl = d.lineage[lineageKey]
   const condition = inputs.catalog.find((c) => c.metric_id === metricId)!
   return {
     condition,
@@ -530,6 +533,94 @@ describe.runIf(HAVE)(
             `${id}:${dealer}`,
           ).toBe(true)
         }
+      }
+    })
+  },
+)
+
+describe.runIf(HAVE)(
+  'Semantic validator — accepted Leads family (browser_capture + statistic + detail)',
+  () => {
+    const inputs = assembleGate2Inputs({ freshDir: FRESH, repoRoot: REPO })
+    const spine = buildSpine(inputs)
+    const clone = (id: EvaluableId, dealer: string): EvalRow =>
+      JSON.parse(
+        JSON.stringify(
+          spine.rows.find((r) => r.metric_id === id && r.dealer_id === dealer)!,
+        ),
+      ) as EvalRow
+
+    it('the authentic SW-011/012/015 Leads rows pass for all three dealers', () => {
+      for (const id of ['SW-011', 'SW-012', 'SW-015'] as const)
+        for (const dealer of ['21043', '21044', '21047'])
+          expect(
+            validateEvaluatedRow(clone(id, dealer), ctxFor(inputs, dealer, id))
+              .ok,
+            `${id}:${dealer}`,
+          ).toBe(true)
+    })
+
+    it('SW-011 is a statistic: value (median) != numerator/denominator yet still valid', () => {
+      const r = clone('SW-011', '21043')
+      // coverage numerator 27 / business-hours pop 76 ≈ 0.355, NOT the median value 6.
+      expect(r.numerator! / r.denominator!).not.toBeCloseTo(r.value!, 6)
+      expect(
+        validateEvaluatedRow(r, ctxFor(inputs, '21043', 'SW-011')).ok,
+      ).toBe(true)
+    })
+
+    it('mutating the statistic value away from the recomputed median fails', () => {
+      const r = clone('SW-011', '21043')
+      r.value = 999
+      const v = validateEvaluatedRow(r, ctxFor(inputs, '21043', 'SW-011'))
+      expect(v.ok).toBe(false)
+      expect(v.failed).toContain('value_inconsistent_with_source')
+    })
+
+    it('mutating the persisted evaluation_detail fails (non-vacuous detail binding)', () => {
+      const r = clone('SW-015', '21044')
+      ;(r.evaluation_detail as Record<string, unknown>).triggered_rep_count = 99
+      const v = validateEvaluatedRow(r, ctxFor(inputs, '21044', 'SW-015'))
+      expect(v.ok).toBe(false)
+      expect(v.failed).toContain('evaluation_detail_mismatch')
+    })
+
+    it('mutating the browser_capture lineage capture_id fails', () => {
+      const r = clone('SW-012', '21047')
+      if (r.source_lineage)
+        r.source_lineage.capture_id = 'VIN-LEADS-20260831-99999'
+      const v = validateEvaluatedRow(r, ctxFor(inputs, '21047', 'SW-012'))
+      expect(v.ok).toBe(false)
+      expect(v.failed).toContain('lineage_capture_id_mismatch')
+    })
+
+    it('mutating the browser_capture lineage source_url fails', () => {
+      const r = clone('SW-012', '21047')
+      if (r.source_lineage)
+        r.source_lineage.source_url = 'https://evil.example.com/x'
+      const v = validateEvaluatedRow(r, ctxFor(inputs, '21047', 'SW-012'))
+      expect(v.ok).toBe(false)
+      expect(v.failed).toContain('lineage_source_url_mismatch')
+    })
+
+    it('SW-015 persisted detail is structural aggregates only (no rep identity)', () => {
+      const allowed = new Set<string>([
+        'reps_with_numeric',
+        'triggered_rep_count',
+        'triggered_rep_share',
+        'triggered_rep_sample_sizes',
+        'max_rep_mean_min',
+        'store_median_min',
+        'footnote',
+      ])
+      for (const dealer of ['21043', '21044', '21047']) {
+        const d = spine.rows.find(
+          (r) => r.metric_id === 'SW-015' && r.dealer_id === dealer,
+        )!.evaluation_detail as Record<string, unknown>
+        for (const k of Object.keys(d)) expect(allowed.has(k), k).toBe(true)
+        expect(Array.isArray(d.triggered_rep_sample_sizes)).toBe(true)
+        for (const n of d.triggered_rep_sample_sizes as Array<unknown>)
+          expect(typeof n).toBe('number')
       }
     })
   },

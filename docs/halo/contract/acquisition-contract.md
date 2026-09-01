@@ -9,13 +9,15 @@ filters, exportability, history, or baseline compatibility.
 
 Scope: three Sales rooftops — serra-honda (21043), serra-nissan (21044), tony-serra-ford
 (21047). Permanent Sales-only boundary: Service/Parts/cross-rooftop data **never** enters the
-Sales profiles. 9 of 885 cells are evaluated today; the 876 below are unresolved.
+Sales profiles. 18 of 885 cells are evaluated today; the 867 below are unresolved. (Gate 4A
+promoted SW-011/012/015 from the accepted Leads family; the readonly_browser_capture route
+below dropped 42→33 cells accordingly.)
 
 **Approval rule.** `duane_approval_required` marks where a **new material approval** is still
 needed. The active goal already authorizes routine **read-only browser capture + unsaved
 export retrieval + historical accumulation** (so those are `false`). Saved-schedule mutation,
 external feeds, compliance/PII scope, cross-rooftop scope, and separate Service work remain
-`true`. Corrected totals: **603 cells need no new approval; 273 do.**
+`true`. Corrected totals: **594 cells need no new approval; 273 do.**
 
 ## Controller-observed dataset evidence (authorized READ-ONLY inspection)
 
@@ -33,12 +35,12 @@ ingested.** Full field notes + the 26 selectable Sales datasets are in the JSON
 | `new_readonly_vinsolutions_export` | 519   | 173           | **no**        | Read-only UNSAVED Custom Reporting exports: Sales-only reconstruction of the quarantined families (candidate datasets Leads / Daily Communication Summary By User [Sales cols] / Daily Dealer Summary) + missing-field/definition exports. Unproved until fields/filters/rows inspected. |
 | `external_feed`                    | 189   | 63            | yes           | Governed non-VinSolutions feeds (GA / ad-spend / phone / registration / insurance / credit / public-records enrichment).                                                                                                                                                                 |
 | `compliance_authorization`         | 48    | 16            | yes           | Sales-domain compliance/PII conditions — authorization + governed source; stays out of the Service workspace.                                                                                                                                                                            |
-| `readonly_browser_capture`         | 42    | 14            | **no**        | Read-only captures: Leads per-lead response timing (median + business-hours + untouched policy); Customer Contact / Recent Task Detail CRM surfaces.                                                                                                                                     |
+| `readonly_browser_capture`         | 33    | 11            | **no**        | Read-only captures: Customer Contact / Recent Task Detail CRM surfaces (Leads per-lead response timing for SW-011/012/015 is already accepted + evaluated, no longer a pending candidate).                                                                                               |
 | `historical_accumulation`          | 42    | 14            | **no**        | No new source — accumulate the already-accepted families over the stated trailing window; complete composites once components exist.                                                                                                                                                     |
 | `separate_service_workspace`       | 27    | 9             | yes           | GENUINELY Service-domain conditions only — the separately-governed Serra Service workspace, never the Sales profiles.                                                                                                                                                                    |
 | `separate_cross_rooftop_route`     | 9     | 3             | yes           | Cross-rooftop conditions — a separate governed cross-rooftop route; the Sales profile is one-rooftop by design.                                                                                                                                                                          |
 
-Cells total: 519 + 189 + 48 + 42 + 42 + 27 + 9 = **876** (reconciles to the closure registry).
+Cells total: 519 + 189 + 48 + 33 + 42 + 27 + 9 = **867** (reconciles to the closure registry).
 Every group is `route_proof_state = candidate_unproved`.
 
 ## Quarantined dependency buckets — do NOT claim "one pass closes 510"

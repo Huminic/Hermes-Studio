@@ -13,12 +13,14 @@ import path from 'node:path'
 import { createHash } from 'node:crypto'
 import { loadBaselineRegistry } from './baseline-registry'
 import { loadCatalog } from './catalog'
+import { LEADS_FAMILY_SLUG } from './families'
 import {
   readAppointmentsHeld,
   readCrmHeld,
   readDashboardHeld,
 } from './held-inputs'
-import { buildEnvelope } from './provenance'
+import { readLeadsMetrics } from './leads-metrics'
+import { buildCaptureEnvelope, buildEnvelope } from './provenance'
 import { buildSpine } from './spine'
 import type { Period } from './held-inputs'
 import type { DeliveryEnvelope } from './provenance'
@@ -99,9 +101,55 @@ function readJson(p: string): unknown {
   return JSON.parse(fs.readFileSync(p, 'utf8'))
 }
 
+// Committed non-PII Leads golden = the accepted-provenance allowlist (capture_id,
+// filename, full sha256, period). source_url + captured_at live ONLY in the capture
+// manifest and are cross-checked (sha must equal the golden) before admission.
+type LeadsGoldenFile = {
+  capture_id: string
+  profile: string
+  dealer_id: string
+  filename: string
+  sha256: string
+  period: { start: string; end: string }
+}
+type LeadsManifestFile = {
+  capture_id: string
+  profile: string
+  filename: string
+  sha256: string
+  source_url: string
+  captured_at: string
+}
+
+/**
+ * The accepted Leads deliveries (browser_capture family) as a promotion-probe allowlist,
+ * derived from the committed non-PII golden — the same provenance (capture_id/filename/
+ * full sha256/period) the spine binds. Shared by the Gate 3 closure generator + tests so
+ * the probe's accepted-evidence set never diverges from the committed golden.
+ */
+export function leadsAcceptedDeliveries(repoRoot: string): Array<{
+  profile: string
+  family: string
+  sha256: string
+  filename: string
+  period_hint: string
+}> {
+  const golden = readJson(
+    path.join(repoRoot, 'docs/halo/evidence/m1r/leads/leads-real-golden.json'),
+  ) as { files: Array<LeadsGoldenFile> }
+  return golden.files.map((g) => ({
+    profile: g.profile,
+    family: LEADS_FAMILY_SLUG,
+    sha256: g.sha256,
+    filename: g.filename,
+    period_hint: `${g.period.start}/${g.period.end}`,
+  }))
+}
+
 export function buildSpineFromFresh(opts: {
   freshDir: string
   repoRoot: string
+  leadsDir?: string
 }): Spine {
   const inputs = assembleGate2Inputs(opts)
   return buildSpine(inputs)
@@ -110,8 +158,13 @@ export function buildSpineFromFresh(opts: {
 export function assembleGate2Inputs(opts: {
   freshDir: string
   repoRoot: string
+  leadsDir?: string
 }): Gate2Inputs {
   const { freshDir, repoRoot } = opts
+  const leadsDir =
+    opts.leadsDir ??
+    process.env.HALO_LEADS_DIR ??
+    '/tmp/halo-295-leads-20260831'
   const catalog = loadCatalog(
     readJson(
       path.join(
@@ -147,8 +200,8 @@ export function assembleGate2Inputs(opts: {
   }
   // Envelope (fail-closed provenance + period_hint) then sha-verified bytes.
   const envelopeOf = (d: Delivery): DeliveryEnvelope => buildEnvelope(d)
-  const load = (env: DeliveryEnvelope): Buffer => {
-    const buf = fs.readFileSync(path.join(freshDir, env.filename))
+  const loadFrom = (dir: string, env: DeliveryEnvelope): Buffer => {
+    const buf = fs.readFileSync(path.join(dir, env.filename))
     const got = sha256(buf)
     if (got !== env.sha256) {
       throw new Error(
@@ -156,6 +209,39 @@ export function assembleGate2Inputs(opts: {
       )
     }
     return buf
+  }
+  const load = (env: DeliveryEnvelope): Buffer => loadFrom(freshDir, env)
+
+  // Leads (browser_capture) accepted family — committed golden allowlist + capture manifest.
+  const leadsGolden = readJson(
+    path.join(repoRoot, 'docs/halo/evidence/m1r/leads/leads-real-golden.json'),
+  ) as { files: Array<LeadsGoldenFile> }
+  const leadsManifest = readJson(
+    path.join(leadsDir, 'capture-manifest.json'),
+  ) as { files: Array<LeadsManifestFile> }
+  const leadsEnvelopeOf = (profile: string): DeliveryEnvelope => {
+    const g = leadsGolden.files.find((f) => f.profile === profile)
+    if (!g) throw new Error(`no committed leads golden for ${profile}`)
+    const cm = leadsManifest.files.find((f) => f.capture_id === g.capture_id)
+    if (!cm)
+      throw new Error(`no leads capture-manifest entry for ${g.capture_id}`)
+    // Cross-check the manifest against the committed allowlist before trusting its
+    // source_url + captured_at (the only fields not carried in the golden).
+    if (cm.sha256 !== g.sha256)
+      throw new Error(`leads manifest sha != golden sha for ${g.capture_id}`)
+    if (cm.filename !== g.filename)
+      throw new Error(`leads manifest filename != golden for ${g.capture_id}`)
+    return buildCaptureEnvelope({
+      source_type: 'browser_capture',
+      capture_id: g.capture_id,
+      source_url: cm.source_url,
+      captured_at: cm.captured_at,
+      filename: g.filename,
+      sha256: g.sha256,
+      profile,
+      family: LEADS_FAMILY_SLUG,
+      period_hint: `${g.period.start}/${g.period.end}`,
+    })
   }
 
   const dealers: Array<DealerInput> = DEALERS.map((dl) => {
@@ -174,6 +260,16 @@ export function assembleGate2Inputs(opts: {
       end: appEnv.period_end,
     }
 
+    const leadsEnv = leadsEnvelopeOf(dl.profile)
+    // The accepted Leads capture must cover the SAME governed week as the scheduled
+    // families (fail closed if the committed period_hints ever diverge).
+    if (
+      leadsEnv.period_start !== period.start ||
+      leadsEnv.period_end !== period.end
+    ) {
+      throw new Error(`leads period_hint disagreement for ${dl.profile}`)
+    }
+
     const appointments = readAppointmentsHeld(
       load(appEnv),
       dl.dealer_id,
@@ -185,6 +281,7 @@ export function assembleGate2Inputs(opts: {
       periodBeginLabel: dashboardLabel(period.start, 'begin'),
       periodEndLabel: dashboardLabel(period.end, 'end'),
     })
+    const leads = readLeadsMetrics(loadFrom(leadsDir, leadsEnv), dl.dealer_id)
 
     return {
       dealer_id: dl.dealer_id,
@@ -195,7 +292,7 @@ export function assembleGate2Inputs(opts: {
         end: period.end,
         timezone: TIMEZONE,
       },
-      bundle: { appointments, crm, dashboard },
+      bundle: { appointments, crm, dashboard, leads },
       lineage: {
         appointments: {
           envelope: appEnv,
@@ -210,6 +307,11 @@ export function assembleGate2Inputs(opts: {
         dealership_performance: {
           envelope: dashEnv,
           sales_only_proof: dashboard.salesOnlyProof,
+          observed_date_range: null,
+        },
+        leads: {
+          envelope: leadsEnv,
+          sales_only_proof: leads.sales_only_proof,
           observed_date_range: null,
         },
       },

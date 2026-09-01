@@ -166,32 +166,178 @@
       "condition": "Median time-to-first-touch exceeds 10 minutes during business hours.",
       "catalog_source": "Dealer Dashboard Response Times Opportunities CSV",
       "catalog_acquisition_class": "Native manual export",
-      "spec_source_family": null,
-      "canonical_condition": null,
-      "definition_compatible": false,
+      "spec_source_family": "vinsolutions_custom_reporting_leads",
+      "canonical_condition": "Median time-to-first-touch exceeds 10 minutes during business hours.",
+      "definition_compatible": true,
       "governed_dealer_cells": 3,
-      "dealer_cells_with_valid_evidence": 0,
-      "evidence_by_dealer": [],
-      "promoted": false,
-      "verdict": "not_promotable",
-      "reason": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
-      "leads_definition_note": "Leads exposes \"Actual Response Time (Min)\" + \"Originated After Hours\", but the condition needs a MEDIAN during business hours with a defined treatment for untouched leads (blank response time). Excluding blank responders understates the metric and after-hours filtering changes the population — not definition-compatible; the catalog source is the Dashboard aggregate AVERAGE, not a median."
+      "dealer_cells_with_valid_evidence": 3,
+      "evidence_by_dealer": [
+        {
+          "dealer_id": "21043",
+          "status": "evaluated",
+          "source_family": "vinsolutions_custom_reporting_leads",
+          "source_fields": [
+            "Actual Response Time (Min)",
+            "Originated After Hours"
+          ],
+          "formula": "median(Actual Response Time (Min) where Originated After Hours=No, numeric only)",
+          "lineage_sha16": "39f0577400c912b8",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-011",
+          "baseline_value": 10,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21044",
+          "status": "evaluated",
+          "source_family": "vinsolutions_custom_reporting_leads",
+          "source_fields": [
+            "Actual Response Time (Min)",
+            "Originated After Hours"
+          ],
+          "formula": "median(Actual Response Time (Min) where Originated After Hours=No, numeric only)",
+          "lineage_sha16": "6df075f91fd85cce",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-011",
+          "baseline_value": 10,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21047",
+          "status": "evaluated",
+          "source_family": "vinsolutions_custom_reporting_leads",
+          "source_fields": [
+            "Actual Response Time (Min)",
+            "Originated After Hours"
+          ],
+          "formula": "median(Actual Response Time (Min) where Originated After Hours=No, numeric only)",
+          "lineage_sha16": "549a6efecc57486e",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-011",
+          "baseline_value": 10,
+          "strict_predicate_pass": true
+        }
+      ],
+      "promoted": true,
+      "verdict": "promoted",
+      "reason": "promoted: each of the 3 distinct governed dealer cells independently binds to the exact allowlisted delivery SHA + metric-spec source family/fields/formula + canonical threshold + baseline id/basis/comparator/direction + row=lineage period; status=evaluated alone is not sufficient",
+      "leads_definition_note": null
     },
     {
       "metric_id": "SW-012",
       "condition": "Any lead untouched >30 minutes during staffed hours triggers escalation.",
       "catalog_source": "Dealer Dashboard Response Times Opportunities CSV",
       "catalog_acquisition_class": "Native manual export",
-      "spec_source_family": null,
-      "canonical_condition": null,
-      "definition_compatible": false,
+      "spec_source_family": "vinsolutions_custom_reporting_leads",
+      "canonical_condition": "Any lead untouched >30 minutes during staffed hours triggers escalation.",
+      "definition_compatible": true,
       "governed_dealer_cells": 3,
-      "dealer_cells_with_valid_evidence": 0,
-      "evidence_by_dealer": [],
-      "promoted": false,
-      "verdict": "not_promotable",
-      "reason": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
-      "leads_definition_note": "Leads exposes \"Actual Response Time (Min)\" + \"Originated After Hours\", but the condition needs a MEDIAN during business hours with a defined treatment for untouched leads (blank response time). Excluding blank responders understates the metric and after-hours filtering changes the population — not definition-compatible; the catalog source is the Dashboard aggregate AVERAGE, not a median."
+      "dealer_cells_with_valid_evidence": 3,
+      "evidence_by_dealer": [
+        {
+          "dealer_id": "21043",
+          "status": "evaluated",
+          "source_family": "vinsolutions_custom_reporting_leads",
+          "source_fields": [
+            "First Contact Attempt",
+            "First Customer Contact",
+            "Actual Response Time (Min)",
+            "Originated After Hours"
+          ],
+          "formula": "count(First Contact Attempt blank AND First Customer Contact blank AND Actual Response Time blank where Originated After Hours=No) / business_hours_population",
+          "lineage_sha16": "39f0577400c912b8",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-012",
+          "baseline_value": 0,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21044",
+          "status": "evaluated",
+          "source_family": "vinsolutions_custom_reporting_leads",
+          "source_fields": [
+            "First Contact Attempt",
+            "First Customer Contact",
+            "Actual Response Time (Min)",
+            "Originated After Hours"
+          ],
+          "formula": "count(First Contact Attempt blank AND First Customer Contact blank AND Actual Response Time blank where Originated After Hours=No) / business_hours_population",
+          "lineage_sha16": "6df075f91fd85cce",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-012",
+          "baseline_value": 0,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21047",
+          "status": "evaluated",
+          "source_family": "vinsolutions_custom_reporting_leads",
+          "source_fields": [
+            "First Contact Attempt",
+            "First Customer Contact",
+            "Actual Response Time (Min)",
+            "Originated After Hours"
+          ],
+          "formula": "count(First Contact Attempt blank AND First Customer Contact blank AND Actual Response Time blank where Originated After Hours=No) / business_hours_population",
+          "lineage_sha16": "549a6efecc57486e",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-012",
+          "baseline_value": 0,
+          "strict_predicate_pass": true
+        }
+      ],
+      "promoted": true,
+      "verdict": "promoted",
+      "reason": "promoted: each of the 3 distinct governed dealer cells independently binds to the exact allowlisted delivery SHA + metric-spec source family/fields/formula + canonical threshold + baseline id/basis/comparator/direction + row=lineage period; status=evaluated alone is not sufficient",
+      "leads_definition_note": null
     },
     {
       "metric_id": "SW-013",
@@ -230,16 +376,89 @@
       "condition": "Sales rep's average first-response time is 2x the store median.",
       "catalog_source": "Dealer Dashboard Response Times Opportunities CSV",
       "catalog_acquisition_class": "Native manual export",
-      "spec_source_family": null,
-      "canonical_condition": null,
-      "definition_compatible": false,
+      "spec_source_family": "vinsolutions_custom_reporting_leads",
+      "canonical_condition": "Sales rep's average first-response time is 2x the store median.",
+      "definition_compatible": true,
       "governed_dealer_cells": 3,
-      "dealer_cells_with_valid_evidence": 0,
-      "evidence_by_dealer": [],
-      "promoted": false,
-      "verdict": "not_promotable",
-      "reason": "Dashboard provides an AVERAGE (not the definitional median) with no business-hours/per-lead/per-rep filter; definition mismatch",
-      "leads_definition_note": "Leads exposes \"Actual Response Time (Min)\" + \"Originated After Hours\", but the condition needs a MEDIAN during business hours with a defined treatment for untouched leads (blank response time). Excluding blank responders understates the metric and after-hours filtering changes the population — not definition-compatible; the catalog source is the Dashboard aggregate AVERAGE, not a median."
+      "dealer_cells_with_valid_evidence": 3,
+      "evidence_by_dealer": [
+        {
+          "dealer_id": "21043",
+          "status": "evaluated",
+          "source_family": "vinsolutions_custom_reporting_leads",
+          "source_fields": [
+            "Actual Response Time (Min)",
+            "Originated After Hours",
+            "Sales Rep (aggregated, pseudonymized)"
+          ],
+          "formula": "count(rep mean Actual Response Time >= 2 x store median) / reps_with_numeric_response",
+          "lineage_sha16": "39f0577400c912b8",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-015",
+          "baseline_value": 0,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21044",
+          "status": "evaluated",
+          "source_family": "vinsolutions_custom_reporting_leads",
+          "source_fields": [
+            "Actual Response Time (Min)",
+            "Originated After Hours",
+            "Sales Rep (aggregated, pseudonymized)"
+          ],
+          "formula": "count(rep mean Actual Response Time >= 2 x store median) / reps_with_numeric_response",
+          "lineage_sha16": "6df075f91fd85cce",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-015",
+          "baseline_value": 0,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21047",
+          "status": "evaluated",
+          "source_family": "vinsolutions_custom_reporting_leads",
+          "source_fields": [
+            "Actual Response Time (Min)",
+            "Originated After Hours",
+            "Sales Rep (aggregated, pseudonymized)"
+          ],
+          "formula": "count(rep mean Actual Response Time >= 2 x store median) / reps_with_numeric_response",
+          "lineage_sha16": "549a6efecc57486e",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-015",
+          "baseline_value": 0,
+          "strict_predicate_pass": true
+        }
+      ],
+      "promoted": true,
+      "verdict": "promoted",
+      "reason": "promoted: each of the 3 distinct governed dealer cells independently binds to the exact allowlisted delivery SHA + metric-spec source family/fields/formula + canonical threshold + baseline id/basis/comparator/direction + row=lineage period; status=evaluated alone is not sufficient",
+      "leads_definition_note": null
     },
     {
       "metric_id": "SW-016",
@@ -4919,9 +5138,16 @@
   ],
   "summary": {
     "total_conditions": 295,
-    "promoted": 3,
-    "not_promotable": 292,
-    "promoted_ids": ["SW-031", "SW-032", "SW-041"],
+    "promoted": 6,
+    "not_promotable": 289,
+    "promoted_ids": [
+      "SW-011",
+      "SW-012",
+      "SW-015",
+      "SW-031",
+      "SW-032",
+      "SW-041"
+    ],
     "evidence_source": "Gate 2 spine rows computed from SHA-allowlisted accepted bytes (not a hard-coded id list)"
   }
 }

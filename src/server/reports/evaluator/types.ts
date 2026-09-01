@@ -36,12 +36,17 @@ export type SourceLineage = {
   dealer_id: string
   dealer_name: string
   sales_only_proof: string
-  // Governed delivery envelope (SCHEMA_CONTRACT §1) — bound + validated, never hardcoded.
+  // Governed delivery envelope — bound + validated, never hardcoded. gmail_* are populated
+  // for gmail_scheduler families; capture_* for browser_capture families (Leads). Each
+  // family's irrelevant fields are '' on both the row and the envelope, so binding still
+  // holds field-for-field.
   source_type: string
   sender: string
   subject: string
   gmail_message_id: string
   gmail_attachment_id: string
+  capture_id: string
+  source_url: string
   period_hint: string
   observed_date_range: { start: string; end: string } | null
 }
@@ -74,6 +79,9 @@ export type EvalRow = {
   rating: 'healthy' | 'watch' | 'breach' | null
   rank: number | null
   evaluation_confidence: { label: string; basis: string } | null
+  // Metric-specific, NON-PII persisted detail (coverage / distributions / footnote) for
+  // metrics that need it (e.g. SW-011/012/015); null otherwise.
+  evaluation_detail: Record<string, unknown> | null
 
   related_metric_ids: Array<string>
   cluster: string

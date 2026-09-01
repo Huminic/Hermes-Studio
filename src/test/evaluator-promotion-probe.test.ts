@@ -10,7 +10,10 @@ import {
   buildAcceptedEvidence,
   probeConditions,
 } from '@/server/reports/evaluator/promotion-probe'
-import { assembleGate2Inputs } from '@/server/reports/evaluator/build-from-fresh'
+import {
+  assembleGate2Inputs,
+  leadsAcceptedDeliveries,
+} from '@/server/reports/evaluator/build-from-fresh'
 import { buildSpine } from '@/server/reports/evaluator/spine'
 
 const REPO = path.resolve(__dirname, '..', '..')
@@ -60,8 +63,8 @@ const SCHED = JSON.parse(
     validation_state: string
   }>
 }
-const ACCEPTED: AcceptedEvidence = buildAcceptedEvidence(
-  SCHED.deliveries
+const ACCEPTED: AcceptedEvidence = buildAcceptedEvidence([
+  ...SCHED.deliveries
     .filter((d) => d.validation_state === 'held')
     .map((d) => ({
       profile: d.profile,
@@ -70,7 +73,9 @@ const ACCEPTED: AcceptedEvidence = buildAcceptedEvidence(
       filename: d.filename,
       period_hint: d.period_hint,
     })),
-)
+  // Accepted Leads captures (browser_capture) join the allowlist so SW-011/012/015 promote.
+  ...leadsAcceptedDeliveries(REPO),
+])
 
 describe('Gate 3 promotion probe — evidence-derived + allowlist-bound (Defect 1 repair)', () => {
   it('canonical bindings match the LIVE catalog (not stale)', () => {
@@ -83,8 +88,15 @@ describe('Gate 3 promotion probe — evidence-derived + allowlist-bound (Defect 
   it('committed probe recomputes byte-identically from the real spine ledger + allowlist', () => {
     const { records } = probeConditions(details, LEDGER.rows, ACCEPTED)
     expect(JSON.stringify(records)).toBe(JSON.stringify(PROBE.records))
-    expect(PROBE.summary.promoted).toBe(3)
-    expect(PROBE.summary.promoted_ids).toEqual(['SW-031', 'SW-032', 'SW-041'])
+    expect(PROBE.summary.promoted).toBe(6)
+    expect(PROBE.summary.promoted_ids).toEqual([
+      'SW-011',
+      'SW-012',
+      'SW-015',
+      'SW-031',
+      'SW-032',
+      'SW-041',
+    ])
   })
   it('promoted records carry allowlist-bound per-dealer evidence (SHA + period bound)', () => {
     for (const r of PROBE.records.filter((x) => x.promoted === true)) {
@@ -114,10 +126,17 @@ describe.runIf(HAVE)(
     const promotedOf = (rows: Array<EvalRow>, id: string, cat = details) =>
       probe(rows, cat).records.find((r) => r.metric_id === id)!.promoted
 
-    it('POSITIVE: exactly SW-031/032/041 promote from the real byte-backed build', () => {
+    it('POSITIVE: exactly SW-011/012/015/031/032/041 promote from the real byte-backed build', () => {
       const { summary } = probe(spine.rows)
-      expect(summary.promoted).toBe(3)
-      expect(summary.promoted_ids).toEqual(['SW-031', 'SW-032', 'SW-041'])
+      expect(summary.promoted).toBe(6)
+      expect(summary.promoted_ids).toEqual([
+        'SW-011',
+        'SW-012',
+        'SW-015',
+        'SW-031',
+        'SW-032',
+        'SW-041',
+      ])
     })
     it('empty evidence / empty allowlist cannot promote', () => {
       expect(probeConditions(details, [], ACCEPTED).summary.promoted).toBe(0)

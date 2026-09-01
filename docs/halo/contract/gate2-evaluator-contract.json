@@ -17,9 +17,10 @@
   "held_source_families": [
     "appointments",
     "crm_sales_gross",
-    "dealership_performance"
+    "dealership_performance",
+    "vinsolutions_custom_reporting_leads"
   ],
-  "leads_family_landed": "vinsolutions_custom_reporting_leads",
+  "leads_family_status": "ACCEPTED + EVALUATED (browser_capture provenance) — SW-011/012/015 land from this family as of the Gate 4A promotion",
   "quarantined_source_families": [
     "lead_source_roi",
     "cage_kpi",
@@ -48,6 +49,7 @@
     "rating",
     "rank",
     "evaluation_confidence",
+    "evaluation_detail",
     "related_metric_ids",
     "cluster",
     "evidence_or_inference",
@@ -128,6 +130,60 @@
     ]
   },
   "evaluable_conditions": {
+    "SW-011": {
+      "source_family": "vinsolutions_custom_reporting_leads",
+      "metric_slug": "leads.median_first_touch_min",
+      "formula": "median(Actual Response Time (Min) where Originated After Hours=No, numeric only)",
+      "source_fields": ["Actual Response Time (Min)", "Originated After Hours"],
+      "numerator_field": "coverage: count(numeric Actual Response Time within business-hours population)",
+      "denominator_field": "business_hours_population (Originated After Hours=No)",
+      "unit": "minutes",
+      "value_kind": "statistic",
+      "baseline_id": "OT-SW-011",
+      "baseline_basis": "operational_target",
+      "comparator": ">",
+      "reconciliation": "value = median in minutes (NOT a ratio); blanks stay missing and are excluded; coverage numeric + business-hours population + missing count + footnote persisted in evaluation_detail",
+      "direction": "lower_is_better"
+    },
+    "SW-012": {
+      "source_family": "vinsolutions_custom_reporting_leads",
+      "metric_slug": "leads.untouched_strict_rate",
+      "formula": "count(First Contact Attempt blank AND First Customer Contact blank AND Actual Response Time blank where Originated After Hours=No) / business_hours_population",
+      "source_fields": [
+        "First Contact Attempt",
+        "First Customer Contact",
+        "Actual Response Time (Min)",
+        "Originated After Hours"
+      ],
+      "numerator_field": "count(strict-untouched leads within business-hours population)",
+      "denominator_field": "business_hours_population (Originated After Hours=No)",
+      "unit": "ratio_0_1",
+      "value_kind": "ratio",
+      "baseline_id": "OT-SW-012",
+      "baseline_basis": "operational_target",
+      "comparator": ">",
+      "reconciliation": "count/denominator/rate/threshold persisted in evaluation_detail; every source period ended before capture so each qualifying row is >30 min old; trigger any count > 0",
+      "direction": "lower_is_better"
+    },
+    "SW-015": {
+      "source_family": "vinsolutions_custom_reporting_leads",
+      "metric_slug": "leads.rep_response_2x_store_median_share",
+      "formula": "count(rep mean Actual Response Time >= 2 x store median) / reps_with_numeric_response",
+      "source_fields": [
+        "Actual Response Time (Min)",
+        "Originated After Hours",
+        "Sales Rep (aggregated, pseudonymized)"
+      ],
+      "numerator_field": "count(Sales Reps whose mean response >= 2x store median)",
+      "denominator_field": "reps_with_numeric_response",
+      "unit": "ratio_0_1",
+      "value_kind": "ratio",
+      "baseline_id": "OT-SW-015",
+      "baseline_basis": "operational_target",
+      "comparator": ">",
+      "reconciliation": "store median = SW-011 population; reps_with_numeric + triggered count/share + triggered-rep sample-size distribution + max rep mean persisted in evaluation_detail; Sales Rep aggregated in-memory and NEVER persisted as a name; trigger any rep >= 2x",
+      "direction": "lower_is_better"
+    },
     "SW-031": {
       "source_family": "dealership_performance",
       "metric_slug": "dashboard.lead_to_appt_set_rate",
@@ -178,7 +234,7 @@
   "explicitly_unresolved_examples": {
     "SW-050": "Front-gross-negative rate on NEW deals: Honda/Nissan have 0 new deals in period (denominator 0 -> missing != zero); Ford has 4 new deals but 2 blank Front Gross -> denominator integrity fails. Unresolved.",
     "SW-042": "Confirmed appointment rate 'reconfirmed within 24h' — Is Confirmed lacks the within-24h timing basis. Definition mismatch. Unresolved.",
-    "SW-011": "Median time-to-first-touch during business hours — Dashboard provides an AVERAGE (not median) with no business-hours filter. Definition mismatch. Unresolved.",
+    "SW-011_historical_note": "Previously unresolved when the only candidate source was the Dashboard AVERAGE (no median, no business-hours filter). SUPERSEDED: SW-011 now lands from the accepted VinSolutions Custom Reporting Leads family (native median of Actual Response Time within Originated-After-Hours=No). See evaluable_conditions.SW-011.",
     "SW-049": "Gross-per-unit vs trailing 30-day average — single week held; no trailing history. Unresolved.",
     "quarantined_sourced": "Any condition whose only source is lead_source_roi / cage_kpi / sales_comm_log is unresolved (quarantined; hidden Parts/Service Lead Intents).",
     "external_or_manual": "Separate external source / manual CRM inspection / outside governed boundary -> unresolved."

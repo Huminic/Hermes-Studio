@@ -1,5 +1,5 @@
 /**
- * Deterministic Gate 3 generator: 876-cell closure registry, aggregate views, the
+ * Deterministic Gate 3 generator: 867-cell closure registry, aggregate views, the
  * condition-by-condition promotion probe, and the controller acquisition contract.
  * All output is Prettier-clean + byte-identical on rerun; NON-PII; never promotes an
  * unresolved cell to evaluated.
@@ -19,6 +19,7 @@ import {
   buildAcceptedEvidence,
   probeConditions,
 } from '@/server/reports/evaluator/promotion-probe'
+import { leadsAcceptedDeliveries } from '@/server/reports/evaluator/build-from-fresh'
 import {
   ALLOWED_EXPORT_FIELD_SELECTION,
   DATA_MINIMIZATION_POLICY,
@@ -124,7 +125,7 @@ async function main(): Promise<void> {
     buildClosureRecord(r, detailById.get(r.metric_id)!),
   )
 
-  // Aggregate views (reconcile exactly to 876 + the Gate 2 reason distribution).
+  // Aggregate views (reconcile exactly to 867 + the Gate 2 reason distribution).
   const by_category = tally(records, (r) => r.unresolved_reason_category)
   const by_source_family = tally(records, (r) => r.required_source)
   const by_dealer = tally(records, (r) => r.dealer_id)
@@ -149,7 +150,7 @@ async function main(): Promise<void> {
   const views = {
     artifact: 'gate3-closure-views',
     total: records.length,
-    reconciles_to_876: records.length === 876,
+    reconciles_to_867: records.length === 867,
     by_category,
     by_source_family,
     by_dealer,
@@ -197,10 +198,16 @@ async function main(): Promise<void> {
       filename: d.filename,
       period_hint: d.period_hint,
     }))
+  // The accepted Leads captures (browser_capture family) join the allowlist so SW-011/012/015
+  // can promote from the same committed golden provenance the spine bound.
+  const acceptedDeliveries = [
+    ...heldDeliveries,
+    ...leadsAcceptedDeliveries(REPO),
+  ]
   const probe = probeConditions(
     details,
     ledger.rows,
-    buildAcceptedEvidence(heldDeliveries),
+    buildAcceptedEvidence(acceptedDeliveries),
   )
 
   // Acquisition contract (grouped by route; NON-overclaiming — dataset presence is a
@@ -365,7 +372,7 @@ async function main(): Promise<void> {
   await write(path.join(CONTRACT_OUT, 'acquisition-contract.json'), acquisition)
 
   console.log(
-    `closure records=${records.length} reconciles876=${views.reconciles_to_876} reconcilesReasons=${views.reconciles_to_gate2_reason_categories}`,
+    `closure records=${records.length} reconciles867=${views.reconciles_to_867} reconcilesReasons=${views.reconciles_to_gate2_reason_categories}`,
   )
   console.log(`by_category=${JSON.stringify(by_category)}`)
   console.log(

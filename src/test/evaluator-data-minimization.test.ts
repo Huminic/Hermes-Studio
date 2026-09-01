@@ -119,22 +119,22 @@ describe('Gate 3 data-minimization control (addendum)', () => {
     }
   })
 
-  it('invariants preserved: routes 603/273, domains 27/48/9/21, all candidate_unproved', () => {
+  it('invariants preserved: routes 594/273, domains 27/48/9/21, all candidate_unproved', () => {
     const views = JSON.parse(
       fs.readFileSync(
         path.join(REPO, 'docs/halo/evidence/m1r/evaluator/closure-views.json'),
         'utf8',
       ),
     )
-    expect(views.total).toBe(876)
+    expect(views.total).toBe(867)
     expect(views.duane_approval_required_count).toBe(273)
-    expect(views.no_new_approval_count).toBe(603)
+    expect(views.no_new_approval_count).toBe(594)
     expect(views.by_boundary_domain).toEqual({
       service: 27,
       compliance: 48,
       cross_rooftop: 9,
       external_enrichment: 21,
     })
-    expect(views.by_route_proof_state).toEqual({ candidate_unproved: 876 })
+    expect(views.by_route_proof_state).toEqual({ candidate_unproved: 867 })
   })
 })

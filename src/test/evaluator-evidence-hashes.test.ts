@@ -46,10 +46,12 @@ describe('Gate 2 Proof Delta A recorded artifact hashes', () => {
   const recorded = parseRecordedHashes(md)
 
   it('parses the full artifact set (parser did not silently under-match)', () => {
-    // 16 source/script modules + 2 contracts + 2 evidence JSON = 20 recorded artifacts.
-    expect(recorded.length).toBe(20)
+    // 17 source/script modules + 2 contracts + 2 evidence JSON = 21 recorded artifacts
+    // (Gate 4A added the Leads reader src/server/reports/evaluator/leads-metrics.ts).
+    expect(recorded.length).toBe(21)
     for (const req of [
       'src/server/reports/evaluator/spine.ts',
+      'src/server/reports/evaluator/leads-metrics.ts',
       'src/server/reports/evaluator/strict-predicate.ts',
       'docs/halo/evidence/m1r/evaluator/spine-ledger.json',
     ]) {

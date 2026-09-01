@@ -51,10 +51,13 @@ describe.runIf(HAVE)(
         '21047',
       ])
     })
-    it('exposes exact counts (9 evaluated / 876 unresolved), never placeholders', () => {
-      expect(pre.preflight?.evaluated).toBe(9)
-      expect(pre.preflight?.unresolved).toBe(876)
+    it('exposes exact counts (18 evaluated / 867 unresolved), never placeholders', () => {
+      expect(pre.preflight?.evaluated).toBe(18)
+      expect(pre.preflight?.unresolved).toBe(867)
       expect(pre.preflight?.evaluated_ids).toEqual([
+        'SW-011',
+        'SW-012',
+        'SW-015',
         'SW-031',
         'SW-032',
         'SW-041',
@@ -78,7 +81,7 @@ describe.runIf(HAVE)(
       expect(d.preflight?.cells).toBe(REQUIRED_CELLS_PER_DEALER)
       expect(d.preflight?.required_cells).toBe(295)
       expect(d.preflight?.scope.dealer_ids).toEqual(['21043'])
-      expect(d.preflight?.evaluated).toBe(3) // SW-031/032/041 for this one dealer
+      expect(d.preflight?.evaluated).toBe(6) // SW-011/012/015/031/032/041 for this one dealer
     })
   },
 )
@@ -143,7 +146,7 @@ describe.runIf(HAVE)(
         ),
       ).toBe(true)
     })
-    it('customer_final still refused at 9/885 (portfolio) and 3/295 (dealer) — no partial-final PDF', () => {
+    it('customer_final still refused at 18/885 (portfolio) and 6/295 (dealer) — no partial-final PDF', () => {
       const cfPortfolio = runPipeline({
         freshDir: FRESH,
         repoRoot: REPO,

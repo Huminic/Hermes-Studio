@@ -14,14 +14,14 @@
   },
   "required_cells": 885,
   "cells": 885,
-  "evaluated": 9,
-  "unresolved": 876,
-  "evaluated_ids": ["SW-031", "SW-032", "SW-041"],
+  "evaluated": 18,
+  "unresolved": 867,
+  "evaluated_ids": ["SW-011", "SW-012", "SW-015", "SW-031", "SW-032", "SW-041"],
   "unresolved_by_category": {
     "quarantined": 510,
     "missing_field": 6,
     "external_source": 168,
-    "response_time_def_mismatch": 21,
+    "response_time_def_mismatch": 12,
     "unavailable_retention": 24,
     "manual_crm": 21,
     "definition_mismatch": 3,
@@ -31,6 +31,12 @@
     "second_order_composite": 9
   },
   "cluster_synthesis": [
+    {
+      "cluster": "2. Speed-to-Lead & First Response",
+      "evaluated_metric_ids": ["SW-011", "SW-012", "SW-015"],
+      "evaluated_cells": 9,
+      "dealers": ["21043", "21044", "21047"]
+    },
     {
       "cluster": "4. Pipeline Health & Funnel Dynamics",
       "evaluated_metric_ids": ["SW-031", "SW-032"],
@@ -45,7 +51,7 @@
     }
   ],
   "customer_final_allowed": false,
-  "customer_final_refusal_reason": "customer-final PDF refused: evaluated_count=9 != required 885 (portfolio scope); 876 cells unresolved",
+  "customer_final_refusal_reason": "customer-final PDF refused: evaluated_count=18 != required 885 (portfolio scope); 867 cells unresolved",
   "is_customer_deliverable": false,
   "note": "INTERNAL preflight. Technical gaps stay in internal evidence; customer PDFs are produced only after ALL cells in scope are evaluated (portfolio 885/885 or dealer 295/295); the orchestration still requires all three dealer PDFs + portfolio reconciliation."
 }

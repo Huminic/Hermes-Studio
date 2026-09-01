@@ -1,12 +1,12 @@
 # Gate 2 — Proof Delta B (independent recompute / negative-control outcome)
 
 Independent recomputation + adversarial negative controls for the Gate 2 evaluator spine
-after repair #2. Gate 2 only; the overall 885-cell goal is **NOT** complete (9 of 885
-evaluated).
+after repair #2. Gate 2 only; the overall 885-cell goal is **NOT** complete (18 of 885
+evaluated as of Gate 4A — SW-011/012/015 promoted from the accepted Leads family; was 9).
 
 ## Repair #2 — exhaustive binding (all fields recomputed/bound)
 
-`evaluator-semantic-validator.test.ts` now runs **60 cases**: an authentic row passes
+`evaluator-semantic-validator.test.ts` now runs **67 cases**: an authentic row passes
 (`{ok:true, failed:[]}`) and each single corruption fails with the intended clause across
 every field group — value/candidate, all 12 baseline fields (wrong nonblank definition and
 inserted-benchmark-number included), confidence label + canonical basis, all lineage fields
@@ -16,24 +16,38 @@ section, subsection, cluster, related_metric_ids, evidence_or_inference, owner/a
 notification candidate, pdf/internal locations, unresolved-null invariants, status). A
 **rooftop relabel** of dealer_id/profile now fails; a **coordinated row+lineage relabel**
 fails against the admitted DealerInput/envelope (the value recompute diverges). A
-**completeness guard** enumerates every `required_row_field` and proves mutating any one
-flips the verdict — no field escapes semantic validation.
+**completeness guard** enumerates every `required_row_field` (now incl. `evaluation_detail`)
+and proves mutating any one flips the verdict — no field escapes semantic validation. Gate 4A
+added a dedicated **accepted-Leads block** (7 cases): SW-011/012/015 authentic rows pass;
+SW-011's `statistic` value (a median) is valid even though it ≠ numerator/denominator (no
+ratio check); mutating the statistic value, the persisted `evaluation_detail`, or the
+browser_capture `capture_id`/`source_url` each fails; and SW-015's persisted detail is
+structural aggregates only (no Sales Rep identity).
 
 ## Recompute (evaluated values reproduce from held bytes)
 
-| metric_id            | 21043 (honda)  | 21044 (nissan) | 21047 (ford)  | baseline | direction        |
-| -------------------- | -------------- | -------------- | ------------- | -------- | ---------------- |
-| SW-031 lead→appt set | 10/92 = 0.1087 | 9/58 = 0.1552  | 6/38 = 0.1579 | < 0.25   | higher_is_better |
-| SW-032 show rate     | 8/14 = 0.5714  | 2/6 = 0.3333   | 3/7 = 0.4286  | < 0.55   | higher_is_better |
-| SW-041 no-show rate  | 5/14 = 0.3571  | 3/6 = 0.5000   | 4/7 = 0.5714  | > 0.45   | lower_is_better  |
+| metric_id                         | 21043 (honda)         | 21044 (nissan)     | 21047 (ford)       | baseline | direction        |
+| --------------------------------- | --------------------- | ------------------ | ------------------ | -------- | ---------------- |
+| SW-011 median first-touch (min)   | median 6.0 (27/76 BH) | median 4.0 (12/51) | median 4.5 (12/32) | > 10 min | lower_is_better  |
+| SW-012 untouched-strict rate      | 15/76 = 0.1974        | 7/51 = 0.1373      | 1/32 = 0.0313      | > 0      | lower_is_better  |
+| SW-015 rep ≥2× store-median share | 2/4 = 0.5000          | 3/4 = 0.7500       | 2/3 = 0.6667       | > 0      | lower_is_better  |
+| SW-031 lead→appt set              | 10/92 = 0.1087        | 9/58 = 0.1552      | 6/38 = 0.1579      | < 0.25   | higher_is_better |
+| SW-032 show rate                  | 8/14 = 0.5714         | 2/6 = 0.3333       | 3/7 = 0.4286       | < 0.55   | higher_is_better |
+| SW-041 no-show rate               | 5/14 = 0.3571         | 3/6 = 0.5000       | 4/7 = 0.5714       | > 0.45   | lower_is_better  |
 
 - SW-031 reconciles to the source Dashboard "Appts Set %" TOTAL (±1e-6); SW-032/041 match
   the RATIFIED R2 definitions. Confidence honest: low (appts n=6–14), medium (leads 38–92).
+- SW-011/012/015 reproduce the controller-ratified Leads aggregates exactly: business-hours
+  population (Originated After Hours=No) 76/51/32; median first-touch 6.0/4.0/4.5 min (a
+  `statistic`; coverage numeric 27/12/12, remainder MISSING not zero); strict-untouched
+  15/7/1; reps ≥2× store-median 2-of-4 / 3-of-4 / 2-of-3 with sample sizes [7,8]/[2,4,4]/[2,4]
+  and max rep-mean 424.75/469.5/1264.5 min. SW-011 is healthy (median < 10 target);
+  SW-012/015 breach (>0). Sales Rep aggregated in-memory, never persisted as a name.
 
 ## Semantic validator — non-vacuous corruption detection (repair req 1)
 
 `validateEvaluatedRow` recomputes every value + derived field and binds lineage to the
-delivery envelope. Adversarial tests (`evaluator-semantic-validator.test.ts`, 60 cases)
+delivery envelope. Adversarial tests (`evaluator-semantic-validator.test.ts`, 67 cases)
 prove an authentic row passes and each single corruption fails with the intended clause:
 
 | corruption                                                                             | detected                                                       |
@@ -44,6 +58,8 @@ prove an authentic row passes and each single corruption fails with the intended
 | baseline.value=null or basis=industry_benchmark                                        | baseline_value_unverified / baseline_basis_mismatch            |
 | variance / rating / rank / confidence altered                                          | \*\_incorrect (recomputed)                                     |
 | lineage sha / filename / dealer / period / sender / subject / message-id / period_hint | lineage\_\*\_mismatch                                          |
+| browser_capture lineage capture_id / source_url (Leads)                                | lineage_capture_id_mismatch / lineage_source_url_mismatch      |
+| persisted evaluation_detail altered (SW-011/012/015 coverage/distribution)             | evaluation_detail_mismatch                                     |
 | falsified sales_only_proof                                                             | lineage_proof_falsified                                        |
 
 A legitimate cohort difference (honda rank 1 vs nissan rank 3) changes ONLY rank; both
@@ -69,22 +85,22 @@ bound by the semantic validator (a falsified proof is rejected).
 
 - `buildSpineFromFresh` twice → identical rows; committed `spine-ledger.json` equals a fresh
   recompute byte-for-byte (asserted in `evaluator-spine.test.ts`, runIf held files).
-- Generator rerun → `spine-ledger.json` sha256:16 `c028e22794dfa58e` unchanged.
+- Generator rerun → `spine-ledger.json` sha256:16 `c30cee6d7c5d4835` unchanged.
 - Generated JSON is **actual Prettier-clean** (shared serializer): committed == fresh
   generation == Prettier output, byte-identical (asserted in `evaluator-spine.test.ts`).
 - No mock/synthetic value: every evaluated numerator/denominator recomputes from held bytes.
 
 ## Completion guard (req 2, 3)
 
-- `evaluated (9)` < `required_cells (885)` → NOT complete. Old six + current nine both fail.
+- `evaluated (18)` < `required_cells (885)` → NOT complete. Old nine + current eighteen both fail.
 - Every `unresolved` row FAILS the strict predicate; the metric spec is bound to the
   contract (`evaluator-metric-spec.test.ts`), so spec drift is caught.
 
 ## Validation summary
 
-- Focused Gate 2 suite (spine 13, strict-predicate 18, **semantic-validator 60**,
+- Focused Gate 2 suite (spine 13, strict-predicate 18, **semantic-validator 67**,
   provenance-period 14, negative-controls 12, baseline-registry 6, metric-spec 1,
-  evidence-hash guard 2) + Gate 1 + consumer regressions green.
+  leads-metrics reader 9, evidence-hash guard 2) + Gate 1 + consumer regressions green.
 - Typecheck 498 == baseline (zero new Gate 2 errors); lint clean; **actual Prettier check
   clean over every proof-named file**; deterministic byte-identical rerun; no `/srv` write;
   no raw file / PII / secret committed.

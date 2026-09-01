@@ -9,6 +9,48 @@
   },
   "operational_targets": [
     {
+      "id": "OT-SW-011",
+      "metric_id": "SW-011",
+      "basis": "operational_target",
+      "label": "Median time-to-first-touch ceiling (business hours)",
+      "definition": "Median of numeric Actual Response Time (Min) within the native Originated-After-Hours=No population (VinSolutions Custom Reporting Leads). Blank response times remain missing, excluded from the median.",
+      "unit": "minutes",
+      "comparator": ">",
+      "threshold": 10,
+      "direction": "lower_is_better",
+      "source": "Duane-supplied starter condition (catalog threshold_provenance)",
+      "verified_date": "2026-09-01",
+      "confidence": "operator_defined"
+    },
+    {
+      "id": "OT-SW-012",
+      "metric_id": "SW-012",
+      "basis": "operational_target",
+      "label": "Strict-untouched business-hours leads — zero tolerance",
+      "definition": "Rate of strict-untouched leads (First Contact Attempt blank AND First Customer Contact blank AND Actual Response Time blank) within the Originated-After-Hours=No population. Each source period ended before capture, so every qualifying row is >30 minutes old.",
+      "unit": "ratio_0_1",
+      "comparator": ">",
+      "threshold": 0,
+      "direction": "lower_is_better",
+      "source": "Duane-supplied starter condition (trigger any count > 0)",
+      "verified_date": "2026-09-01",
+      "confidence": "operator_defined"
+    },
+    {
+      "id": "OT-SW-015",
+      "metric_id": "SW-015",
+      "basis": "operational_target",
+      "label": "Rep first-response >= 2x store median — zero tolerance",
+      "definition": "Share of Sales Reps whose mean Actual Response Time within the business-hours population is >= 2x the store median (SW-011 population). Sales Rep aggregated in-memory, never persisted as a name.",
+      "unit": "ratio_0_1",
+      "comparator": ">",
+      "threshold": 0,
+      "direction": "lower_is_better",
+      "source": "Duane-supplied starter condition (trigger any rep >= 2x)",
+      "verified_date": "2026-09-01",
+      "confidence": "operator_defined"
+    },
+    {
       "id": "OT-SW-031",
       "metric_id": "SW-031",
       "basis": "operational_target",

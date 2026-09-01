@@ -48,7 +48,22 @@ export type DealerInput = {
     appointments: FamilyLineage
     crm_sales_gross: FamilyLineage
     dealership_performance: FamilyLineage
+    leads: FamilyLineage
   }
+}
+
+const LEADS_FAMILY_SLUG = 'vinsolutions_custom_reporting_leads'
+
+/** Map an evaluator source_family to its DealerInput.lineage key. */
+function familyKey(sourceFamily: string): keyof DealerInput['lineage'] | null {
+  if (
+    sourceFamily === 'appointments' ||
+    sourceFamily === 'crm_sales_gross' ||
+    sourceFamily === 'dealership_performance'
+  )
+    return sourceFamily
+  if (sourceFamily === LEADS_FAMILY_SLUG) return 'leads'
+  return null
 }
 
 export type SpineInput = {
@@ -97,32 +112,29 @@ function familyLineage(
 }
 
 function lineageFor(input: DealerInput, family: string): SourceLineage | null {
-  if (
-    family === 'appointments' ||
-    family === 'crm_sales_gross' ||
-    family === 'dealership_performance'
-  ) {
-    const fl = familyLineage(input, family)
-    const env = fl.envelope
-    return {
-      family,
-      artifact_filename: env.filename,
-      artifact_sha256: env.sha256,
-      captured_at: env.received_at,
-      reporting_period: input.reporting_period,
-      dealer_id: input.dealer_id,
-      dealer_name: input.dealer_name,
-      sales_only_proof: fl.sales_only_proof,
-      source_type: env.source_type,
-      sender: env.sender,
-      subject: env.subject,
-      gmail_message_id: env.gmail_message_id,
-      gmail_attachment_id: env.gmail_attachment_id,
-      period_hint: env.period_hint,
-      observed_date_range: fl.observed_date_range,
-    }
+  const key = familyKey(family)
+  if (key === null) return null
+  const fl = familyLineage(input, key)
+  const env = fl.envelope
+  return {
+    family,
+    artifact_filename: env.filename,
+    artifact_sha256: env.sha256,
+    captured_at: env.received_at,
+    reporting_period: input.reporting_period,
+    dealer_id: input.dealer_id,
+    dealer_name: input.dealer_name,
+    sales_only_proof: fl.sales_only_proof,
+    source_type: env.source_type,
+    sender: env.sender,
+    subject: env.subject,
+    gmail_message_id: env.gmail_message_id,
+    gmail_attachment_id: env.gmail_attachment_id,
+    capture_id: env.capture_id,
+    source_url: env.source_url,
+    period_hint: env.period_hint,
+    observed_date_range: fl.observed_date_range,
   }
-  return null
 }
 
 /** Deterministic unresolved reason from the catalog + (for a few ids) real held data. */
@@ -225,6 +237,7 @@ function buildRow(
     rating: null,
     rank: null,
     evaluation_confidence: null,
+    evaluation_detail: null,
     related_metric_ids: relatedMetricIds(catalog, c.section, c.metric_id),
     cluster: clusterOf(c.section),
     evidence_or_inference: null,
@@ -285,6 +298,7 @@ function buildRow(
       label: confidenceLabel(res.denominator),
       basis: CONFIDENCE_BASIS,
     },
+    evaluation_detail: res.detail,
     evidence_or_inference: 'evidence',
     notification_or_automation_candidate: notificationCandidate(
       baseline ? rating(res.value, baseline) : null,
@@ -300,7 +314,7 @@ function buildRow(
       `strict predicate failed: ${structural.failed.join(', ')}`,
     )
   }
-  const fl = familyLineage(d, res.source_family as keyof DealerInput['lineage'])
+  const fl = familyLineage(d, familyKey(res.source_family)!)
   const semantic = validateEvaluatedRow(candidate, {
     condition: c,
     catalog,

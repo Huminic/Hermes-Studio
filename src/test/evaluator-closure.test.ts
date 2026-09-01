@@ -90,9 +90,9 @@ const NEW_APPROVAL_ROUTES = new Set([
   'compliance_authorization',
 ])
 
-describe('Gate 3 closure registry — 876 exact cells (req 1)', () => {
-  it('exactly 876 records with the exact 876 unresolved keys', () => {
-    expect(REGISTRY.records.length).toBe(876)
+describe('Gate 3 closure registry — 867 exact cells (req 1)', () => {
+  it('exactly 867 records with the exact 867 unresolved keys', () => {
+    expect(REGISTRY.records.length).toBe(867)
     const regKeys = new Set(
       REGISTRY.records.map(
         (r) => `${r.metric_id as string}:${r.dealer_id as string}`,
@@ -101,7 +101,7 @@ describe('Gate 3 closure registry — 876 exact cells (req 1)', () => {
     const ledgerKeys = new Set(
       unresolved.map((r) => `${r.metric_id}:${r.dealer_id}`),
     )
-    expect(regKeys.size).toBe(876)
+    expect(regKeys.size).toBe(867)
     expect([...ledgerKeys].every((k) => regKeys.has(k))).toBe(true)
   })
   it('every record carries every required field (no undefined, no N/A promotion)', () => {
@@ -127,18 +127,18 @@ describe('Gate 3 closure registry — 876 exact cells (req 1)', () => {
   })
 })
 
-describe('Gate 3 closure views — reconcile exactly to 876 + Gate 2 reasons (req 1)', () => {
-  it('views reconcile to 876 and to the ledger reason categories', () => {
-    expect(VIEWS.total).toBe(876)
-    expect(VIEWS.reconciles_to_876).toBe(true)
+describe('Gate 3 closure views — reconcile exactly to 867 + Gate 2 reasons (req 1)', () => {
+  it('views reconcile to 867 and to the ledger reason categories', () => {
+    expect(VIEWS.total).toBe(867)
+    expect(VIEWS.reconciles_to_867).toBe(true)
     expect(VIEWS.reconciles_to_gate2_reason_categories).toBe(true)
     const catSum = Object.values(
       VIEWS.by_category as Record<string, number>,
     ).reduce((a, b) => a + b, 0)
-    expect(catSum).toBe(876)
-    // by_dealer must be 292 unresolved each.
+    expect(catSum).toBe(867)
+    // by_dealer must be 289 unresolved each.
     for (const d of ['21043', '21044', '21047'])
-      expect((VIEWS.by_dealer as Record<string, number>)[d]).toBe(292)
+      expect((VIEWS.by_dealer as Record<string, number>)[d]).toBe(289)
   })
   it('by_category equals an independent recategorization of the ledger', () => {
     const indep: Record<string, number> = {}
