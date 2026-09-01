@@ -1,8 +1,9 @@
 # Gate 2 — Proof Delta B (independent recompute / negative-control outcome)
 
 Independent recomputation + adversarial negative controls for the Gate 2 evaluator spine
-after repair #2. Gate 2 only; the overall 885-cell goal is **NOT** complete (18 of 885
-evaluated as of Gate 4A — SW-011/012/015 promoted from the accepted Leads family; was 9).
+after repair #2. Gate 2 only; the overall 885-cell goal is **NOT** complete (30 of 885
+evaluated as of Gate 4B — SW-011/012/015/090 from Leads + SW-031/032/033/041/045/046 from the
+Dashboard/Appointments; was 9 → 18 → 30).
 
 ## Repair #2 — exhaustive binding (all fields recomputed/bound)
 
@@ -34,6 +35,10 @@ structural aggregates only (no Sales Rep identity).
 | SW-031 lead→appt set              | 10/92 = 0.1087        | 9/58 = 0.1552      | 6/38 = 0.1579      | < 0.25   | higher_is_better |
 | SW-032 show rate                  | 8/14 = 0.5714         | 2/6 = 0.3333       | 3/7 = 0.4286       | < 0.55   | higher_is_better |
 | SW-041 no-show rate               | 5/14 = 0.3571         | 3/6 = 0.5000       | 4/7 = 0.5714       | > 0.45   | lower_is_better  |
+| SW-033 show-to-write rate         | 0/8 = 0.0000          | 0/2 = 0.0000       | 0/2 = 0.0000       | < 0.60   | higher_is_better |
+| SW-045 be-back/fresh-up ratio     | 2/24 = 0.0833         | 0/17 = 0.0000      | 3/11 = 0.2727      | > 1.0    | lower_is_better  |
+| SW-046 test-drive completion      | 0/26 = 0.0000         | 4/17 = 0.2353      | 0/14 = 0.0000      | < 0.50   | higher_is_better |
+| SW-090 unassigned >2h rate        | 0/119 = 0.0000        | 0/68 = 0.0000      | 0/43 = 0.0000      | > 0      | lower_is_better  |
 
 - SW-031 reconciles to the source Dashboard "Appts Set %" TOTAL (±1e-6); SW-032/041 match
   the RATIFIED R2 definitions. Confidence honest: low (appts n=6–14), medium (leads 38–92).
@@ -43,6 +48,14 @@ structural aggregates only (no Sales Rep identity).
   15/7/1; reps ≥2× store-median 2-of-4 / 3-of-4 / 2-of-3 with sample sizes [7,8]/[2,4,4]/[2,4]
   and max rep-mean 424.75/469.5/1264.5 min. SW-011 is healthy (median < 10 target);
   SW-012/015 breach (>0). Sales Rep aggregated in-memory, never persisted as a name.
+- Gate 4B: SW-033/045/046 reproduce the ratified Dashboard primitives exactly (Appts Show
+  8/2/2; Total Visits 26/17/14; Initial Visits 24/17/11; Be Backs 2/0/3; Demo 0/4/0; Writeup
+  0/0/0 — the three columns present in both the Dealership Summary and Visit Summary sections
+  cross-verify equal). SW-033 breach (<0.60 everywhere, writeup 0); SW-045 healthy (all <1.0,
+  unbounded `ratio`); SW-046 breach (<0.50). SW-090 = 0/119, 0/68, 0/43 (zero blank Sales Rep;
+  healthy). SW-090 is future-safe: numerator counts blank AND unassigned >2h — with zero blank
+  rows no age is needed (numerator 0); a nonzero blank count without row-level age evidence
+  fails closed (`unassigned_age_unproved`) and never auto-fires. No Sales Rep name persisted.
 
 ## Semantic validator — non-vacuous corruption detection (repair req 1)
 
@@ -85,22 +98,23 @@ bound by the semantic validator (a falsified proof is rejected).
 
 - `buildSpineFromFresh` twice → identical rows; committed `spine-ledger.json` equals a fresh
   recompute byte-for-byte (asserted in `evaluator-spine.test.ts`, runIf held files).
-- Generator rerun → `spine-ledger.json` sha256:16 `c30cee6d7c5d4835` unchanged.
+- Generator rerun → `spine-ledger.json` sha256:16 `c3f859fa408d12a4` unchanged.
 - Generated JSON is **actual Prettier-clean** (shared serializer): committed == fresh
   generation == Prettier output, byte-identical (asserted in `evaluator-spine.test.ts`).
 - No mock/synthetic value: every evaluated numerator/denominator recomputes from held bytes.
 
 ## Completion guard (req 2, 3)
 
-- `evaluated (18)` < `required_cells (885)` → NOT complete. Old nine + current eighteen both fail.
+- `evaluated (30)` < `required_cells (885)` → NOT complete. Old eighteen + current thirty both fail.
 - Every `unresolved` row FAILS the strict predicate; the metric spec is bound to the
   contract (`evaluator-metric-spec.test.ts`), so spec drift is caught.
 
 ## Validation summary
 
 - Focused Gate 2 suite (spine 13, strict-predicate 18, **semantic-validator 67**,
-  provenance-period 14, negative-controls 12, baseline-registry 6, metric-spec 1,
-  leads-metrics reader 9, evidence-hash guard 2) + Gate 1 + consumer regressions green.
+  provenance-period 14, negative-controls 13, baseline-registry 6, metric-spec 1,
+  leads-metrics reader 14, dashboard-metrics 8, evidence-hash guard 2) + Gate 1 + consumer
+  regressions green.
 - Typecheck 498 == baseline (zero new Gate 2 errors); lint clean; **actual Prettier check
   clean over every proof-named file**; deterministic byte-identical rerun; no `/srv` write;
   no raw file / PII / secret committed.

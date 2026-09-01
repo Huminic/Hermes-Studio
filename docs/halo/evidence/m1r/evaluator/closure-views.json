@@ -1,9 +1,9 @@
 {
   "artifact": "gate3-closure-views",
-  "total": 867,
-  "reconciles_to_867": true,
+  "total": 855,
+  "reconciles_to_855": true,
   "by_category": {
-    "quarantined": 510,
+    "quarantined": 498,
     "missing_field": 6,
     "external_source": 168,
     "response_time_def_mismatch": 12,
@@ -21,22 +21,22 @@
     "Appointments weekly report": 15,
     "Non-VinSolutions source named by the condition": 168,
     "Dealer Dashboard Response Times Opportunities CSV": 12,
-    "Join of Leads, Communication Log, Appointments, CRM Sales, CAGE, and/or ROI": 252,
+    "Join of Leads, Communication Log, Appointments, CRM Sales, CAGE, and/or ROI": 246,
     "Customer Lead Log / current-process Last Edited By (manual only)": 24,
     "Dealer Dashboard, customer Notes/History, Lead Log, or Desking UI": 21,
-    "Enterprise Performance/CAGE weekly report": 12,
     "CRM Sales Gross weekly report": 12,
     "Join of Communication Log/Response Times and CRM Sales Gross": 3,
     "Classification only; no Service/cross-rooftop/compliance/enrichment access authorized": 105,
+    "Enterprise Performance/CAGE weekly report": 6,
     "Join of CAGE/Enterprise Performance, Appointments, and CRM Sales Gross": 6
   },
   "by_dealer": {
-    "21043": 289,
-    "21044": 289,
-    "21047": 289
+    "21043": 285,
+    "21044": 285,
+    "21047": 285
   },
   "by_owner": {
-    "Huminic validator (unsaved export) / Duane (saved-schedule repair)": 510,
+    "Huminic validator (unsaved export) / Duane (saved-schedule repair)": 498,
     "Huminic validator": 21,
     "Duane / external data owner": 189,
     "Huminic Semantic Watchdog pipeline": 42,
@@ -46,7 +46,7 @@
     "Duane / group data governance": 9
   },
   "by_acquisition_route": {
-    "new_readonly_vinsolutions_export": 519,
+    "new_readonly_vinsolutions_export": 507,
     "external_feed": 189,
     "readonly_browser_capture": 33,
     "historical_accumulation": 42,
@@ -55,8 +55,8 @@
     "separate_cross_rooftop_route": 9
   },
   "by_baseline_route": {
-    "operational_target": 240,
-    "missing": 588,
+    "operational_target": 231,
+    "missing": 585,
     "dealer_history": 30,
     "cohort_comparison": 9
   },
@@ -67,10 +67,10 @@
     "cross_rooftop": 9
   },
   "by_route_proof_state": {
-    "candidate_unproved": 867
+    "candidate_unproved": 855
   },
   "duane_approval_required_count": 273,
-  "no_new_approval_count": 594,
+  "no_new_approval_count": 582,
   "sales_only_boundary_conflicts": {
     "count": 45,
     "metric_ids": [

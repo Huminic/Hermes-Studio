@@ -49,6 +49,22 @@ export const CANONICAL_BINDING: Record<
     condition: 'Appointment no-show rate exceeds 45%.',
     threshold: 0.45,
   },
+  'SW-033': {
+    condition: 'Show-to-write rate below 60%.',
+    threshold: 0.6,
+  },
+  'SW-045': {
+    condition: 'Ratio of "be-backs" to fresh ups inverted (retention symptom).',
+    threshold: 1,
+  },
+  'SW-046': {
+    condition: 'Test drive completion rate <50% of showroom visits.',
+    threshold: 0.5,
+  },
+  'SW-090': {
+    condition: 'Lead has no assigned salesperson >2 hours after creation.',
+    threshold: 0,
+  },
 }
 
 // Acquisition classes that are NOT a held/native VinSolutions path — incompatible with a

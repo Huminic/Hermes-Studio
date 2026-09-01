@@ -332,6 +332,15 @@ export type DashboardHeld = {
   apptsSet: number | null
   apptsSetPct: number | null
   soldInPeriod: number | null
+  // Gate 4B primitives. apptsShow from the Dealership Summary TOTAL; totalVisits /
+  // initialVisits / beBacks / demo / writeup from the Visit Summary TOTAL. The three
+  // overlapping columns are cross-verified equal between the two sections (fail-closed).
+  apptsShow: number | null
+  totalVisits: number | null
+  initialVisits: number | null
+  beBacks: number | null
+  demo: number | null
+  writeup: number | null
   salesOnlyProof: string
   dealerName: string
   periodBegin: string
@@ -429,11 +438,19 @@ export function readDashboardHeld(
   const iApptsSet = col('Appts Set')
   const iApptsSetPct = col('Appts Set %')
   const iSold = col('Sold in Period')
+  const iApptsShow = col('Appts Show')
+  const iDsTotalVisits = col('Total Visits')
+  const iDsInitialVisits = col('Initial Visits')
+  const iDsBeBacks = col('Be Backs')
   const req: Record<string, number> = {
     Leads: iLeads,
     'Appts Set': iApptsSet,
     'Appts Set %': iApptsSetPct,
     'Sold in Period': iSold,
+    'Appts Show': iApptsShow,
+    'Total Visits': iDsTotalVisits,
+    'Initial Visits': iDsInitialVisits,
+    'Be Backs': iDsBeBacks,
   }
   const miss = Object.entries(req)
     .filter(([, i]) => i < 0)
@@ -455,12 +472,74 @@ export function readDashboardHeld(
       'dashboard: Dealership Summary TOTAL row not found',
     )
 
+  // Visit Summary section — governs Demo/Writeup + the fresh-up (Initial Visits) denominator.
+  const vsIdx = rows.findIndex((r) =>
+    r.some((c) => c.trim() === 'Visit Summary'),
+  )
+  if (vsIdx < 0 || !rows[vsIdx + 1])
+    throw new HeldInputError('dashboard: Visit Summary section not found')
+  const vsHeader = rows[vsIdx + 1]
+  const vcol = (name: string) => vsHeader.indexOf(name)
+  const iVsTotalVisits = vcol('Total Visits')
+  const iVsInitialVisits = vcol('Initial Visits')
+  const iVsBeBacks = vcol('Be Backs')
+  const iDemo = vcol('Demo')
+  const iWriteup = vcol('Writeup')
+  const vreq: Record<string, number> = {
+    'Total Visits': iVsTotalVisits,
+    'Initial Visits': iVsInitialVisits,
+    'Be Backs': iVsBeBacks,
+    Demo: iDemo,
+    Writeup: iWriteup,
+  }
+  const vmiss = Object.entries(vreq)
+    .filter(([, i]) => i < 0)
+    .map(([k]) => k)
+  if (vmiss.length)
+    throw new HeldInputError(
+      `dashboard Visit Summary missing columns: ${vmiss.join(', ')}`,
+    )
+  const vsSection: Array<Array<string>> = []
+  for (let i = vsIdx + 2; i < rows.length; i++) {
+    if (rows[i].length <= 1) break
+    vsSection.push(rows[i])
+  }
+  for (const r of vsSection)
+    assertNoServiceParts(r, 'dashboard Visit Summary data row')
+  const vsTotalRow = vsSection.find(
+    (r) => (r[0] ?? '').toUpperCase() === 'TOTAL',
+  )
+  if (!vsTotalRow)
+    throw new HeldInputError('dashboard: Visit Summary TOTAL row not found')
+
+  // Cross-verify the three columns present in BOTH sections agree (fail-closed).
+  const totalVisits = num(vsTotalRow[iVsTotalVisits] ?? '')
+  const initialVisits = num(vsTotalRow[iVsInitialVisits] ?? '')
+  const beBacks = num(vsTotalRow[iVsBeBacks] ?? '')
+  const overlap: Array<[string, number | null, number | null]> = [
+    ['Total Visits', num(totalRow[iDsTotalVisits] ?? ''), totalVisits],
+    ['Initial Visits', num(totalRow[iDsInitialVisits] ?? ''), initialVisits],
+    ['Be Backs', num(totalRow[iDsBeBacks] ?? ''), beBacks],
+  ]
+  for (const [name, ds, vs] of overlap) {
+    if (ds !== vs)
+      throw new HeldInputError(
+        `dashboard: ${name} disagreement between Dealership Summary (${ds}) and Visit Summary (${vs})`,
+      )
+  }
+
   return {
     family: 'dealership_performance',
     leads: num(totalRow[iLeads] ?? ''),
     apptsSet: num(totalRow[iApptsSet] ?? ''),
     apptsSetPct: num(totalRow[iApptsSetPct] ?? ''),
     soldInPeriod: num(totalRow[iSold] ?? ''),
+    apptsShow: num(totalRow[iApptsShow] ?? ''),
+    totalVisits,
+    initialVisits,
+    beBacks,
+    demo: num(vsTotalRow[iDemo] ?? ''),
+    writeup: num(vsTotalRow[iWriteup] ?? ''),
     salesOnlyProof:
       `Lead Sources Excluded includes Service; Appointment Reasons="${apptReasons}"; ` +
       `Lead Types={Internet,Phone,Walk-in}; one dealer="${dealer}"; ` +

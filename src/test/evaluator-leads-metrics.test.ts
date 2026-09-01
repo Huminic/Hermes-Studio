@@ -26,6 +26,8 @@ type Ratified = {
   triggered: number
   samples: Array<number>
   maxMean: number
+  totalRows: number
+  unassigned: number
 }
 
 const RATIFIED: Record<string, Ratified> = {
@@ -39,6 +41,8 @@ const RATIFIED: Record<string, Ratified> = {
     triggered: 2,
     samples: [7, 8],
     maxMean: 424.75,
+    totalRows: 119,
+    unassigned: 0,
   },
   '21044': {
     pop: 51,
@@ -50,6 +54,8 @@ const RATIFIED: Record<string, Ratified> = {
     triggered: 3,
     samples: [2, 4, 4],
     maxMean: 469.5,
+    totalRows: 68,
+    unassigned: 0,
   },
   '21047': {
     pop: 32,
@@ -61,6 +67,8 @@ const RATIFIED: Record<string, Ratified> = {
     triggered: 2,
     samples: [2, 4],
     maxMean: 1264.5,
+    totalRows: 43,
+    unassigned: 0,
   },
 }
 
@@ -83,6 +91,8 @@ describe.runIf(HAVE)(
         expect(L.response_numeric + L.response_missing).toBe(
           L.business_hours_population,
         )
+        expect(L.total_rows).toBe(x.totalRows)
+        expect(L.unassigned_sales_rep).toBe(x.unassigned)
         expect(L.median_response_min).toBe(x.median)
         expect(L.store_median_min).toBe(x.median)
         expect(L.untouched_strict).toBe(x.untouched)
@@ -129,6 +139,20 @@ describe.runIf(HAVE)(
         }
       })
 
+      it(`${dealer}: SW-090 unassigned-salesperson rate binds value + detail (no names)`, () => {
+        const s90 = EVALUATORS['SW-090'](d.bundle)
+        expect(s90.ok).toBe(true)
+        if (s90.ok) {
+          expect(s90.numerator).toBe(x.unassigned)
+          expect(s90.denominator).toBe(x.totalRows)
+          expect(s90.value).toBe(x.unassigned / x.totalRows)
+          expect(s90.detail).toMatchObject({
+            unassigned_sales_rep: x.unassigned,
+            total_rows: x.totalRows,
+          })
+        }
+      })
+
       it(`${dealer}: persisted Leads detail is aggregates only (no Sales Rep name)`, () => {
         const s15 = EVALUATORS['SW-015'](d.bundle)
         expect(s15.ok).toBe(true)
@@ -149,5 +173,28 @@ describe.runIf(HAVE)(
         }
       })
     }
+
+    it('ADVERSARIAL: a nonzero blank Sales Rep count does NOT auto-fire (unassigned_age_unproved)', () => {
+      const d = inputs.dealers.find((y) => y.dealer_id === '21043')!
+      // Inject unassigned rows WITHOUT any row-level age evidence: the condition is
+      // ">2 hours after creation", so a blank Sales Rep count alone must NOT fire.
+      const bundle = {
+        ...d.bundle,
+        leads: { ...d.bundle.leads!, unassigned_sales_rep: 5 },
+      }
+      const r = EVALUATORS['SW-090'](bundle)
+      expect(r.ok).toBe(false)
+      if (!r.ok) expect(r.reason).toMatch(/^unassigned_age_unproved/)
+    })
+
+    it('the authentic zero-unassigned SW-090 is evaluated with numerator 0 (no age needed)', () => {
+      const d = inputs.dealers.find((y) => y.dealer_id === '21043')!
+      const r = EVALUATORS['SW-090'](d.bundle)
+      expect(r.ok).toBe(true)
+      if (r.ok) {
+        expect(r.numerator).toBe(0)
+        expect(r.value).toBe(0)
+      }
+    })
   },
 )

@@ -1,5 +1,5 @@
 /**
- * Deterministic Gate 3 generator: 867-cell closure registry, aggregate views, the
+ * Deterministic Gate 3 generator: 855-cell closure registry, aggregate views, the
  * condition-by-condition promotion probe, and the controller acquisition contract.
  * All output is Prettier-clean + byte-identical on rerun; NON-PII; never promotes an
  * unresolved cell to evaluated.
@@ -125,7 +125,7 @@ async function main(): Promise<void> {
     buildClosureRecord(r, detailById.get(r.metric_id)!),
   )
 
-  // Aggregate views (reconcile exactly to 867 + the Gate 2 reason distribution).
+  // Aggregate views (reconcile exactly to 855 + the Gate 2 reason distribution).
   const by_category = tally(records, (r) => r.unresolved_reason_category)
   const by_source_family = tally(records, (r) => r.required_source)
   const by_dealer = tally(records, (r) => r.dealer_id)
@@ -150,7 +150,7 @@ async function main(): Promise<void> {
   const views = {
     artifact: 'gate3-closure-views',
     total: records.length,
-    reconciles_to_867: records.length === 867,
+    reconciles_to_855: records.length === 855,
     by_category,
     by_source_family,
     by_dealer,
@@ -268,7 +268,7 @@ async function main(): Promise<void> {
       bySourceReportFamily[r.source_report_family] =
         (bySourceReportFamily[r.source_report_family] ?? 0) + 1
   const quarantined_reconstruction = {
-    note: 'The 510 quarantined cells decompose into MUTUALLY EXCLUSIVE DEPENDENCY buckets: THREE single source-provenance report families (lead_source_roi, cage_kpi, sales_comm_log) PLUS ONE multi-family dependency bucket (multiple_quarantined) for conditions that JOIN more than one quarantined family. multiple_quarantined is a DEPENDENCY bucket, NOT a report family. Exact decomposition: 4 dependency buckets × 3 dealers = 12 bucket×dealer entries (NOT nine non-overlapping single-family buckets). PRIMARY candidate: read-only UNSAVED Sales-only Custom Reporting reconstruction/export (no new approval). ALTERNATIVE: saved-schedule repair (mutation + hidden Lead Intent control, new approval). BOTH candidate_unproved until exact fields/filters/rows are inspected. NOT claimed as "one pass closes 510".',
+    note: 'The 498 quarantined cells decompose into MUTUALLY EXCLUSIVE DEPENDENCY buckets: THREE single source-provenance report families (lead_source_roi, cage_kpi, sales_comm_log) PLUS ONE multi-family dependency bucket (multiple_quarantined) for conditions that JOIN more than one quarantined family. multiple_quarantined is a DEPENDENCY bucket, NOT a report family. Exact decomposition: 4 dependency buckets × 3 dealers = 12 bucket×dealer entries (NOT nine non-overlapping single-family buckets). Gate 4B moved 12 cells out of quarantine (SW-033/045 from cage_kpi, SW-046/090 from multiple_quarantined) via the ratified definition-compatible Dashboard/Leads substitution — evaluated from ACCEPTED families, never from the quarantined workbooks. PRIMARY candidate for the remainder: read-only UNSAVED Sales-only Custom Reporting reconstruction/export (no new approval). ALTERNATIVE: saved-schedule repair (mutation + hidden Lead Intent control, new approval). BOTH candidate_unproved until exact fields/filters/rows are inspected. NOT claimed as "one pass closes 498".',
     source_provenance_report_families: [
       'lead_source_roi',
       'cage_kpi',
@@ -280,7 +280,7 @@ async function main(): Promise<void> {
     bucket_count: by_dependency_bucket_dealer.length,
     by_dependency_bucket,
     by_dependency_bucket_dealer,
-    reconciles_to_510: quarantined.length === 510,
+    reconciles_to_498: quarantined.length === 498,
   }
 
   // Fewest honest read-only browser passes: one Custom Reporting session per dealer covering
@@ -372,7 +372,7 @@ async function main(): Promise<void> {
   await write(path.join(CONTRACT_OUT, 'acquisition-contract.json'), acquisition)
 
   console.log(
-    `closure records=${records.length} reconciles867=${views.reconciles_to_867} reconcilesReasons=${views.reconciles_to_gate2_reason_categories}`,
+    `closure records=${records.length} reconciles855=${views.reconciles_to_855} reconcilesReasons=${views.reconciles_to_gate2_reason_categories}`,
   )
   console.log(`by_category=${JSON.stringify(by_category)}`)
   console.log(

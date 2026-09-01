@@ -88,14 +88,18 @@ describe('Gate 3 promotion probe — evidence-derived + allowlist-bound (Defect 
   it('committed probe recomputes byte-identically from the real spine ledger + allowlist', () => {
     const { records } = probeConditions(details, LEDGER.rows, ACCEPTED)
     expect(JSON.stringify(records)).toBe(JSON.stringify(PROBE.records))
-    expect(PROBE.summary.promoted).toBe(6)
+    expect(PROBE.summary.promoted).toBe(10)
     expect(PROBE.summary.promoted_ids).toEqual([
       'SW-011',
       'SW-012',
       'SW-015',
       'SW-031',
       'SW-032',
+      'SW-033',
       'SW-041',
+      'SW-045',
+      'SW-046',
+      'SW-090',
     ])
   })
   it('promoted records carry allowlist-bound per-dealer evidence (SHA + period bound)', () => {
@@ -126,16 +130,20 @@ describe.runIf(HAVE)(
     const promotedOf = (rows: Array<EvalRow>, id: string, cat = details) =>
       probe(rows, cat).records.find((r) => r.metric_id === id)!.promoted
 
-    it('POSITIVE: exactly SW-011/012/015/031/032/041 promote from the real byte-backed build', () => {
+    it('POSITIVE: exactly SW-011/012/015/031/032/033/041/045/046/090 promote from the real byte-backed build', () => {
       const { summary } = probe(spine.rows)
-      expect(summary.promoted).toBe(6)
+      expect(summary.promoted).toBe(10)
       expect(summary.promoted_ids).toEqual([
         'SW-011',
         'SW-012',
         'SW-015',
         'SW-031',
         'SW-032',
+        'SW-033',
         'SW-041',
+        'SW-045',
+        'SW-046',
+        'SW-090',
       ])
     })
     it('empty evidence / empty allowlist cannot promote', () => {

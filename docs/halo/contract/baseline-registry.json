@@ -91,6 +91,62 @@
       "source": "Duane-supplied starter condition (catalog threshold_provenance); ratified in R2 accepted-facts",
       "verified_date": "2026-09-01",
       "confidence": "operator_defined"
+    },
+    {
+      "id": "OT-SW-033",
+      "metric_id": "SW-033",
+      "basis": "operational_target",
+      "label": "Show-to-write rate floor",
+      "definition": "Writeup / Appts Show from the Dealership Performance Dashboard (Writeup = Visit Summary TOTAL; Appts Show = Dealership Summary TOTAL). Definition-compatible substitution for the quarantined CAGE source. If Appts Show=0 the cell stays unresolved (missing is not zero).",
+      "unit": "ratio_0_1",
+      "comparator": "<",
+      "threshold": 0.6,
+      "direction": "higher_is_better",
+      "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+      "verified_date": "2026-09-01",
+      "confidence": "operator_defined"
+    },
+    {
+      "id": "OT-SW-045",
+      "metric_id": "SW-045",
+      "basis": "operational_target",
+      "label": "Be-backs to fresh-ups ratio — inverted when > 1.0",
+      "definition": "Be Backs / Initial Visits from the Dashboard Visit Summary TOTAL (Initial Visits is the governed fresh-up denominator). Unbounded ratio: Be Backs may exceed Initial Visits so the value can be > 1.0. 'Inverted' (retention symptom) means the ratio exceeds 1.0. If Initial Visits=0 and Be Backs>0 it is an inverted/infinite firing signal not representable as a finite evaluated ratio; if both are zero the cell stays unresolved.",
+      "unit": "ratio",
+      "comparator": ">",
+      "threshold": 1,
+      "direction": "lower_is_better",
+      "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+      "verified_date": "2026-09-01",
+      "confidence": "operator_defined"
+    },
+    {
+      "id": "OT-SW-046",
+      "metric_id": "SW-046",
+      "basis": "operational_target",
+      "label": "Test-drive completion rate floor",
+      "definition": "Demo / Total Visits from the Dashboard Visit Summary TOTAL (Demo is the test-drive-completion count). Definition-compatible substitution for the multi-family quarantined source. If Total Visits=0 the cell stays unresolved (missing is not zero).",
+      "unit": "ratio_0_1",
+      "comparator": "<",
+      "threshold": 0.5,
+      "direction": "higher_is_better",
+      "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+      "verified_date": "2026-09-01",
+      "confidence": "operator_defined"
+    },
+    {
+      "id": "OT-SW-090",
+      "metric_id": "SW-090",
+      "basis": "operational_target",
+      "label": "Unassigned-salesperson leads — zero tolerance",
+      "definition": "Rate of accepted Leads rows with a BLANK Sales Rep over all accepted rows. All three accepted period files have zero blank Sales Rep rows, so the '>2 hours after creation' condition is false without an age calculation. Sales Rep name never persisted. Trigger any count > 0.",
+      "unit": "ratio_0_1",
+      "comparator": ">",
+      "threshold": 0,
+      "direction": "lower_is_better",
+      "source": "Duane-supplied starter condition (trigger any unassigned lead); Gate 4B ratified Leads substitution",
+      "verified_date": "2026-09-01",
+      "confidence": "operator_defined"
     }
   ],
   "industry_benchmarks": [

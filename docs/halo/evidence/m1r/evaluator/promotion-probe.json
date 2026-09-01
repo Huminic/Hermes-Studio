@@ -871,15 +871,85 @@
       "condition": "Show-to-write rate below 60%.",
       "catalog_source": "Enterprise Performance/CAGE weekly report",
       "catalog_acquisition_class": "Vin-native scheduled",
-      "spec_source_family": null,
-      "canonical_condition": null,
-      "definition_compatible": false,
+      "spec_source_family": "dealership_performance",
+      "canonical_condition": "Show-to-write rate below 60%.",
+      "definition_compatible": true,
       "governed_dealer_cells": 3,
-      "dealer_cells_with_valid_evidence": 0,
-      "evidence_by_dealer": [],
-      "promoted": false,
-      "verdict": "not_promotable",
-      "reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "dealer_cells_with_valid_evidence": 3,
+      "evidence_by_dealer": [
+        {
+          "dealer_id": "21043",
+          "status": "evaluated",
+          "source_family": "dealership_performance",
+          "source_fields": [
+            "Writeup (Visit Summary TOTAL)",
+            "Appts Show (Dealership Summary TOTAL)"
+          ],
+          "formula": "writeup / appts_show",
+          "lineage_sha16": "749affb3085b2836",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-033",
+          "baseline_value": 0.6,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21044",
+          "status": "evaluated",
+          "source_family": "dealership_performance",
+          "source_fields": [
+            "Writeup (Visit Summary TOTAL)",
+            "Appts Show (Dealership Summary TOTAL)"
+          ],
+          "formula": "writeup / appts_show",
+          "lineage_sha16": "d5f3e04f9a2eda9d",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-033",
+          "baseline_value": 0.6,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21047",
+          "status": "evaluated",
+          "source_family": "dealership_performance",
+          "source_fields": [
+            "Writeup (Visit Summary TOTAL)",
+            "Appts Show (Dealership Summary TOTAL)"
+          ],
+          "formula": "writeup / appts_show",
+          "lineage_sha16": "5307027daa57b7b1",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-033",
+          "baseline_value": 0.6,
+          "strict_predicate_pass": true
+        }
+      ],
+      "promoted": true,
+      "verdict": "promoted",
+      "reason": "promoted: each of the 3 distinct governed dealer cells independently binds to the exact allowlisted delivery SHA + metric-spec source family/fields/formula + canonical threshold + baseline id/basis/comparator/direction + row=lineage period; status=evaluated alone is not sufficient",
       "leads_definition_note": null
     },
     {
@@ -1124,15 +1194,85 @@
       "condition": "Ratio of \"be-backs\" to fresh ups inverted (retention symptom).",
       "catalog_source": "Enterprise Performance/CAGE weekly report",
       "catalog_acquisition_class": "Vin-native scheduled",
-      "spec_source_family": null,
-      "canonical_condition": null,
-      "definition_compatible": false,
+      "spec_source_family": "dealership_performance",
+      "canonical_condition": "Ratio of \"be-backs\" to fresh ups inverted (retention symptom).",
+      "definition_compatible": true,
       "governed_dealer_cells": 3,
-      "dealer_cells_with_valid_evidence": 0,
-      "evidence_by_dealer": [],
-      "promoted": false,
-      "verdict": "not_promotable",
-      "reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "dealer_cells_with_valid_evidence": 3,
+      "evidence_by_dealer": [
+        {
+          "dealer_id": "21043",
+          "status": "evaluated",
+          "source_family": "dealership_performance",
+          "source_fields": [
+            "Be Backs (Visit Summary TOTAL)",
+            "Initial Visits (Visit Summary TOTAL)"
+          ],
+          "formula": "be_backs / initial_visits",
+          "lineage_sha16": "749affb3085b2836",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-045",
+          "baseline_value": 1,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21044",
+          "status": "evaluated",
+          "source_family": "dealership_performance",
+          "source_fields": [
+            "Be Backs (Visit Summary TOTAL)",
+            "Initial Visits (Visit Summary TOTAL)"
+          ],
+          "formula": "be_backs / initial_visits",
+          "lineage_sha16": "d5f3e04f9a2eda9d",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-045",
+          "baseline_value": 1,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21047",
+          "status": "evaluated",
+          "source_family": "dealership_performance",
+          "source_fields": [
+            "Be Backs (Visit Summary TOTAL)",
+            "Initial Visits (Visit Summary TOTAL)"
+          ],
+          "formula": "be_backs / initial_visits",
+          "lineage_sha16": "5307027daa57b7b1",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-045",
+          "baseline_value": 1,
+          "strict_predicate_pass": true
+        }
+      ],
+      "promoted": true,
+      "verdict": "promoted",
+      "reason": "promoted: each of the 3 distinct governed dealer cells independently binds to the exact allowlisted delivery SHA + metric-spec source family/fields/formula + canonical threshold + baseline id/basis/comparator/direction + row=lineage period; status=evaluated alone is not sufficient",
       "leads_definition_note": null
     },
     {
@@ -1140,15 +1280,85 @@
       "condition": "Test drive completion rate <50% of showroom visits.",
       "catalog_source": "Join of Leads, Communication Log, Appointments, CRM Sales, CAGE, and/or ROI",
       "catalog_acquisition_class": "Scheduled source plus downstream calculation/NLP",
-      "spec_source_family": null,
-      "canonical_condition": null,
-      "definition_compatible": false,
+      "spec_source_family": "dealership_performance",
+      "canonical_condition": "Test drive completion rate <50% of showroom visits.",
+      "definition_compatible": true,
       "governed_dealer_cells": 3,
-      "dealer_cells_with_valid_evidence": 0,
-      "evidence_by_dealer": [],
-      "promoted": false,
-      "verdict": "not_promotable",
-      "reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "dealer_cells_with_valid_evidence": 3,
+      "evidence_by_dealer": [
+        {
+          "dealer_id": "21043",
+          "status": "evaluated",
+          "source_family": "dealership_performance",
+          "source_fields": [
+            "Demo (Visit Summary TOTAL)",
+            "Total Visits (Visit Summary TOTAL)"
+          ],
+          "formula": "demo / total_visits",
+          "lineage_sha16": "749affb3085b2836",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-046",
+          "baseline_value": 0.5,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21044",
+          "status": "evaluated",
+          "source_family": "dealership_performance",
+          "source_fields": [
+            "Demo (Visit Summary TOTAL)",
+            "Total Visits (Visit Summary TOTAL)"
+          ],
+          "formula": "demo / total_visits",
+          "lineage_sha16": "d5f3e04f9a2eda9d",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-046",
+          "baseline_value": 0.5,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21047",
+          "status": "evaluated",
+          "source_family": "dealership_performance",
+          "source_fields": [
+            "Demo (Visit Summary TOTAL)",
+            "Total Visits (Visit Summary TOTAL)"
+          ],
+          "formula": "demo / total_visits",
+          "lineage_sha16": "5307027daa57b7b1",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-046",
+          "baseline_value": 0.5,
+          "strict_predicate_pass": true
+        }
+      ],
+      "promoted": true,
+      "verdict": "promoted",
+      "reason": "promoted: each of the 3 distinct governed dealer cells independently binds to the exact allowlisted delivery SHA + metric-spec source family/fields/formula + canonical threshold + baseline id/basis/comparator/direction + row=lineage period; status=evaluated alone is not sufficient",
       "leads_definition_note": null
     },
     {
@@ -1844,15 +2054,76 @@
       "condition": "Lead has no assigned salesperson >2 hours after creation.",
       "catalog_source": "Join of Leads, Communication Log, Appointments, CRM Sales, CAGE, and/or ROI",
       "catalog_acquisition_class": "Scheduled source plus downstream calculation/NLP",
-      "spec_source_family": null,
-      "canonical_condition": null,
-      "definition_compatible": false,
+      "spec_source_family": "vinsolutions_custom_reporting_leads",
+      "canonical_condition": "Lead has no assigned salesperson >2 hours after creation.",
+      "definition_compatible": true,
       "governed_dealer_cells": 3,
-      "dealer_cells_with_valid_evidence": 0,
-      "evidence_by_dealer": [],
-      "promoted": false,
-      "verdict": "not_promotable",
-      "reason": "source is (or joins) a quarantined family (lead_source_roi / cage_kpi / sales_comm_log) with hidden Parts/Service Lead Intents; excluded from values, baselines, scoring, and narrative",
+      "dealer_cells_with_valid_evidence": 3,
+      "evidence_by_dealer": [
+        {
+          "dealer_id": "21043",
+          "status": "evaluated",
+          "source_family": "vinsolutions_custom_reporting_leads",
+          "source_fields": ["Sales Rep", "Lead ID (accepted row count)"],
+          "formula": "count(Sales Rep blank AND unassigned >2h after creation) / total_accepted_leads_rows",
+          "lineage_sha16": "39f0577400c912b8",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-090",
+          "baseline_value": 0,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21044",
+          "status": "evaluated",
+          "source_family": "vinsolutions_custom_reporting_leads",
+          "source_fields": ["Sales Rep", "Lead ID (accepted row count)"],
+          "formula": "count(Sales Rep blank AND unassigned >2h after creation) / total_accepted_leads_rows",
+          "lineage_sha16": "6df075f91fd85cce",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-090",
+          "baseline_value": 0,
+          "strict_predicate_pass": true
+        },
+        {
+          "dealer_id": "21047",
+          "status": "evaluated",
+          "source_family": "vinsolutions_custom_reporting_leads",
+          "source_fields": ["Sales Rep", "Lead ID (accepted row count)"],
+          "formula": "count(Sales Rep blank AND unassigned >2h after creation) / total_accepted_leads_rows",
+          "lineage_sha16": "549a6efecc57486e",
+          "sha_allowlisted": true,
+          "filename_allowlisted": true,
+          "reporting_period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30",
+            "timezone": "America/New_York"
+          },
+          "period_bound_to_accepted": true,
+          "row_period_equals_lineage": true,
+          "baseline_id": "OT-SW-090",
+          "baseline_value": 0,
+          "strict_predicate_pass": true
+        }
+      ],
+      "promoted": true,
+      "verdict": "promoted",
+      "reason": "promoted: each of the 3 distinct governed dealer cells independently binds to the exact allowlisted delivery SHA + metric-spec source family/fields/formula + canonical threshold + baseline id/basis/comparator/direction + row=lineage period; status=evaluated alone is not sufficient",
       "leads_definition_note": null
     },
     {
@@ -5138,15 +5409,19 @@
   ],
   "summary": {
     "total_conditions": 295,
-    "promoted": 6,
-    "not_promotable": 289,
+    "promoted": 10,
+    "not_promotable": 285,
     "promoted_ids": [
       "SW-011",
       "SW-012",
       "SW-015",
       "SW-031",
       "SW-032",
-      "SW-041"
+      "SW-033",
+      "SW-041",
+      "SW-045",
+      "SW-046",
+      "SW-090"
     ],
     "evidence_source": "Gate 2 spine rows computed from SHA-allowlisted accepted bytes (not a hard-coded id list)"
   }

@@ -5,7 +5,7 @@
  *   ingest → validate → transform → calculate → baseline → rank → cross-analyze →
  *   synthesize → render-preflight → verify
  *
- * It generates machine-readable INTERNAL preflight artifacts for the 18 evaluated + 867
+ * It generates machine-readable INTERNAL preflight artifacts for the 30 evaluated + 855
  * unresolved cells and exposes exact counts. It REFUSES 'customer_final' mode unless
  * evaluated_count === 885 — it never renders or labels a partial report as the customer
  * deliverable, and never replaces unresolved counts with placeholders. Pure orchestration
@@ -296,7 +296,7 @@ export function runPipeline(opts: {
   )
   record('rank', true, 'cross-rooftop rank recomputed per evaluated metric')
 
-  // 7. cross-analyze — the 867-cell closure registry (never promotes).
+  // 7. cross-analyze — the 855-cell closure registry (never promotes).
   const details = loadCatalogDetail(
     JSON.parse(
       fs.readFileSync(

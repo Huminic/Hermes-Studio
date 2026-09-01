@@ -14,11 +14,22 @@
   },
   "required_cells": 885,
   "cells": 885,
-  "evaluated": 18,
-  "unresolved": 867,
-  "evaluated_ids": ["SW-011", "SW-012", "SW-015", "SW-031", "SW-032", "SW-041"],
+  "evaluated": 30,
+  "unresolved": 855,
+  "evaluated_ids": [
+    "SW-011",
+    "SW-012",
+    "SW-015",
+    "SW-031",
+    "SW-032",
+    "SW-033",
+    "SW-041",
+    "SW-045",
+    "SW-046",
+    "SW-090"
+  ],
   "unresolved_by_category": {
-    "quarantined": 510,
+    "quarantined": 498,
     "missing_field": 6,
     "external_source": 168,
     "response_time_def_mismatch": 12,
@@ -39,19 +50,25 @@
     },
     {
       "cluster": "4. Pipeline Health & Funnel Dynamics",
-      "evaluated_metric_ids": ["SW-031", "SW-032"],
-      "evaluated_cells": 6,
+      "evaluated_metric_ids": ["SW-031", "SW-032", "SW-033"],
+      "evaluated_cells": 9,
       "dealers": ["21043", "21044", "21047"]
     },
     {
       "cluster": "5. Appointment & Showroom Metrics",
-      "evaluated_metric_ids": ["SW-041"],
+      "evaluated_metric_ids": ["SW-041", "SW-045", "SW-046"],
+      "evaluated_cells": 9,
+      "dealers": ["21043", "21044", "21047"]
+    },
+    {
+      "cluster": "12. Data Integrity & CRM Hygiene",
+      "evaluated_metric_ids": ["SW-090"],
       "evaluated_cells": 3,
       "dealers": ["21043", "21044", "21047"]
     }
   ],
   "customer_final_allowed": false,
-  "customer_final_refusal_reason": "customer-final PDF refused: evaluated_count=18 != required 885 (portfolio scope); 867 cells unresolved",
+  "customer_final_refusal_reason": "customer-final PDF refused: evaluated_count=30 != required 885 (portfolio scope); 855 cells unresolved",
   "is_customer_deliverable": false,
   "note": "INTERNAL preflight. Technical gaps stay in internal evidence; customer PDFs are produced only after ALL cells in scope are evaluated (portfolio 885/885 or dealer 295/295); the orchestration still requires all three dealer PDFs + portfolio reconciliation."
 }

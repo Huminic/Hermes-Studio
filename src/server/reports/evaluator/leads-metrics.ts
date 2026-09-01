@@ -35,6 +35,10 @@ export type LeadsMetrics = {
   triggered_reps: number
   triggered_rep_sample_sizes: Array<number>
   max_rep_mean_min: number | null
+  // SW-090 — total accepted Leads rows + rows with a BLANK Sales Rep (no assigned
+  // salesperson). Aggregate counts only; a Sales Rep NAME is never retained.
+  total_rows: number
+  unassigned_sales_rep: number
   dealer_ids: Array<string>
   sales_only_proof: string
 }
@@ -154,6 +158,9 @@ export function readLeadsMetrics(
     ? Math.max(...repMeans.map((x) => x.mean))
     : null
 
+  // SW-090 — leads with no assigned salesperson (blank Sales Rep) over ALL accepted rows.
+  const unassignedSalesRep = data.filter((r) => isBlank(r[iRep])).length
+
   return {
     family: 'leads',
     business_hours_population: pop.length,
@@ -166,6 +173,8 @@ export function readLeadsMetrics(
     triggered_reps: triggered.length,
     triggered_rep_sample_sizes: triggered.map((x) => x.n).sort((a, b) => a - b),
     max_rep_mean_min: maxRepMean,
+    total_rows: data.length,
+    unassigned_sales_rep: unassignedSalesRep,
     dealer_ids: ids,
     sales_only_proof:
       `${data.length} rows: one rooftop Dealer ID=${expectedDealerId}; zero Service/Parts tokens in ` +

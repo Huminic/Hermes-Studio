@@ -90,9 +90,9 @@ const NEW_APPROVAL_ROUTES = new Set([
   'compliance_authorization',
 ])
 
-describe('Gate 3 closure registry — 867 exact cells (req 1)', () => {
-  it('exactly 867 records with the exact 867 unresolved keys', () => {
-    expect(REGISTRY.records.length).toBe(867)
+describe('Gate 3 closure registry — 855 exact cells (req 1)', () => {
+  it('exactly 855 records with the exact 855 unresolved keys', () => {
+    expect(REGISTRY.records.length).toBe(855)
     const regKeys = new Set(
       REGISTRY.records.map(
         (r) => `${r.metric_id as string}:${r.dealer_id as string}`,
@@ -101,7 +101,7 @@ describe('Gate 3 closure registry — 867 exact cells (req 1)', () => {
     const ledgerKeys = new Set(
       unresolved.map((r) => `${r.metric_id}:${r.dealer_id}`),
     )
-    expect(regKeys.size).toBe(867)
+    expect(regKeys.size).toBe(855)
     expect([...ledgerKeys].every((k) => regKeys.has(k))).toBe(true)
   })
   it('every record carries every required field (no undefined, no N/A promotion)', () => {
@@ -127,18 +127,18 @@ describe('Gate 3 closure registry — 867 exact cells (req 1)', () => {
   })
 })
 
-describe('Gate 3 closure views — reconcile exactly to 867 + Gate 2 reasons (req 1)', () => {
-  it('views reconcile to 867 and to the ledger reason categories', () => {
-    expect(VIEWS.total).toBe(867)
-    expect(VIEWS.reconciles_to_867).toBe(true)
+describe('Gate 3 closure views — reconcile exactly to 855 + Gate 2 reasons (req 1)', () => {
+  it('views reconcile to 855 and to the ledger reason categories', () => {
+    expect(VIEWS.total).toBe(855)
+    expect(VIEWS.reconciles_to_855).toBe(true)
     expect(VIEWS.reconciles_to_gate2_reason_categories).toBe(true)
     const catSum = Object.values(
       VIEWS.by_category as Record<string, number>,
     ).reduce((a, b) => a + b, 0)
-    expect(catSum).toBe(867)
-    // by_dealer must be 289 unresolved each.
+    expect(catSum).toBe(855)
+    // by_dealer must be 285 unresolved each.
     for (const d of ['21043', '21044', '21047'])
-      expect((VIEWS.by_dealer as Record<string, number>)[d]).toBe(289)
+      expect((VIEWS.by_dealer as Record<string, number>)[d]).toBe(285)
   })
   it('by_category equals an independent recategorization of the ledger', () => {
     const indep: Record<string, number> = {}
@@ -187,7 +187,7 @@ describe('Gate 3 controller corrections — approval / domain / dataset (materia
     const q = REGISTRY.records.filter(
       (r) => r.unresolved_reason_category === 'quarantined',
     )
-    expect(q.length).toBe(510)
+    expect(q.length).toBe(498)
     for (const r of q) {
       expect(r.acquisition_route).toBe('new_readonly_vinsolutions_export')
       expect(r.duane_approval_required).toBe(false)
@@ -238,12 +238,12 @@ describe('Gate 3 controller corrections — approval / domain / dataset (materia
       expect(r.controller_observed_dataset).not.toBe('Service')
       expect(r.controller_observed_dataset).not.toBe('Service Appointments')
     }
-    // The 510 quarantined block is presented by dependency bucket × dealer, not "one pass".
+    // The 498 quarantined block is presented by dependency bucket × dealer, not "one pass".
     expect(
       ACQ.quarantined_reconstruction.by_dependency_bucket_dealer.length,
     ).toBe(12)
     expect(String(ACQ.quarantined_reconstruction.note)).toMatch(
-      /NOT claimed as "one pass closes 510"/,
+      /NOT claimed as "one pass closes 498"/,
     )
     // Browser passes are per-dealer, candidate-unproved, no approval.
     for (const p of ACQ.browser_passes) {
@@ -260,11 +260,11 @@ describe('Gate 3 quarantine decomposition — precise mutually-exclusive buckets
       'utf8',
     ),
   )
-  it('reconciles: 4 dependency buckets × 3 dealers = 12 entries, sum 510; multiple_quarantined is NOT a report family', () => {
+  it('reconciles: 4 dependency buckets × 3 dealers = 12 entries, sum 498; multiple_quarantined is NOT a report family', () => {
     const q = REGISTRY.records.filter(
       (r) => r.unresolved_reason_category === 'quarantined',
     )
-    expect(q.length).toBe(510)
+    expect(q.length).toBe(498)
     // Mutually exclusive: each quarantined cell belongs to exactly one dependency bucket.
     const byBucket: Record<string, number> = {}
     for (const r of q) {
@@ -273,7 +273,7 @@ describe('Gate 3 quarantine decomposition — precise mutually-exclusive buckets
     }
     const qr = ACQ.quarantined_reconstruction
     expect(qr.by_dependency_bucket).toEqual(byBucket)
-    expect(Object.values(byBucket).reduce((a: number, b) => a + b, 0)).toBe(510)
+    expect(Object.values(byBucket).reduce((a: number, b) => a + b, 0)).toBe(498)
     // The multi-family DEPENDENCY bucket exists and is NOT one of the report families.
     expect(Object.keys(byBucket)).toContain('multiple_quarantined')
     expect(qr.multi_family_dependency_bucket).toBe('multiple_quarantined')
@@ -291,7 +291,7 @@ describe('Gate 3 quarantine decomposition — precise mutually-exclusive buckets
         expect(r.source_report_family).toBeNull()
       else expect(r.source_report_family).toBe(r.dependency_bucket)
     }
-    // 12 dependency-bucket × dealer entries reconciling to 510.
+    // 12 dependency-bucket × dealer entries reconciling to 498.
     expect(qr.bucket_count).toBe(12)
     expect(qr.by_dependency_bucket_dealer.length).toBe(12)
     expect(
@@ -299,8 +299,8 @@ describe('Gate 3 quarantine decomposition — precise mutually-exclusive buckets
         (a: number, b: { cell_count: number }) => a + b.cell_count,
         0,
       ),
-    ).toBe(510)
-    expect(qr.reconciles_to_510).toBe(true)
+    ).toBe(498)
+    expect(qr.reconciles_to_498).toBe(true)
     // Wording calls them dependency buckets, not report families.
     expect(String(qr.note)).toMatch(/DEPENDENCY bucket/)
     expect(String(qr.note)).not.toMatch(/4 report-family buckets/)

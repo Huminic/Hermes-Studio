@@ -88,10 +88,10 @@ describe('Gate 2 spine ledger — exact 885 keys (req 1)', () => {
 })
 
 describe('Gate 2 counts + strict predicate coupling (req 2,3,8)', () => {
-  it('summary: evaluated=18, unresolved=867, sum=885; ids = SW-011/012/015/031/032/041', () => {
+  it('summary: evaluated=30, unresolved=855, sum=885; ids = SW-011/012/015/031/032/033/041/045/046/090', () => {
     expect(SUMMARY.required_cells).toBe(885)
-    expect(SUMMARY.evaluated).toBe(18)
-    expect(SUMMARY.unresolved).toBe(867)
+    expect(SUMMARY.evaluated).toBe(30)
+    expect(SUMMARY.unresolved).toBe(855)
     expect(SUMMARY.evaluated + SUMMARY.unresolved).toBe(885)
     expect(SUMMARY.evaluated_ids).toEqual([
       'SW-011',
@@ -99,14 +99,18 @@ describe('Gate 2 counts + strict predicate coupling (req 2,3,8)', () => {
       'SW-015',
       'SW-031',
       'SW-032',
+      'SW-033',
       'SW-041',
+      'SW-045',
+      'SW-046',
+      'SW-090',
     ])
     for (const d of DEALERS)
-      expect(SUMMARY.by_dealer[d]).toEqual({ evaluated: 6, unresolved: 289 })
+      expect(SUMMARY.by_dealer[d]).toEqual({ evaluated: 10, unresolved: 285 })
   })
   it('EVERY evaluated row passes the strict predicate', () => {
     const ev = rows.filter((r) => r.status === 'evaluated')
-    expect(ev.length).toBe(18)
+    expect(ev.length).toBe(30)
     for (const r of ev) {
       const v = evaluateStrictPredicate(r)
       expect(
@@ -117,12 +121,12 @@ describe('Gate 2 counts + strict predicate coupling (req 2,3,8)', () => {
   })
   it('EVERY unresolved row FAILS the strict predicate (cannot be silently counted)', () => {
     const un = rows.filter((r) => r.status === 'unresolved')
-    expect(un.length).toBe(867)
+    expect(un.length).toBe(855)
     for (const r of un) expect(evaluateStrictPredicate(r).ok).toBe(false)
   })
-  it('completion requires literally 885 evaluated (old 9 / current 18 cannot pass)', () => {
+  it('completion requires literally 885 evaluated (old 18 / current 30 cannot pass)', () => {
     expect(SUMMARY.evaluated).toBeLessThan(885)
-    expect(18).toBeLessThan(885)
+    expect(30).toBeLessThan(885)
     expect(SUMMARY.evaluated === 885).toBe(false)
   })
 })

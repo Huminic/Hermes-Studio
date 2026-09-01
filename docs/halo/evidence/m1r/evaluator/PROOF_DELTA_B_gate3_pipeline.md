@@ -12,22 +12,22 @@ the 10 stages in order over **all 885 cells**:
 render-preflight → verify`
 
 - **ingest** reads ONLY accepted held bytes (filename+sha allowlist); **validate** applies
-  the Gate 2 strict predicate + semantic validator; **cross-analyze** builds the 867-cell
+  the Gate 2 strict predicate + semantic validator; **cross-analyze** builds the 855-cell
   closure registry; **synthesize** clusters the evaluated cells; **render-preflight** emits an
-  INTERNAL artifact for 18 evaluated + 867 unresolved; **verify** enforces the no-partial gate.
+  INTERNAL artifact for 30 evaluated + 855 unresolved; **verify** enforces the no-partial gate.
 - It generates machine-readable INTERNAL preflight only (`pipeline-preflight.json`,
-  `is_customer_deliverable=false`), exposes exact counts (18 / 867, by category summing to
-  867), and **never** replaces unresolved counts with placeholders.
+  `is_customer_deliverable=false`), exposes exact counts (30 / 855, by category summing to
+  855), and **never** replaces unresolved counts with placeholders.
 - **Customer-final refusal:** `runPipeline({mode:'customer_final'})` returns `ok=false`,
-  `preflight=null` (nothing rendered), and `refusal_reason` = "evaluated_count=18 != required
-  885; 867 cells unresolved". Refuses unless `evaluated === 885`.
+  `preflight=null` (nothing rendered), and `refusal_reason` = "evaluated_count=30 != required
+  885; 855 cells unresolved". Refuses unless `evaluated === 885`.
 
 ## Adversarial + negative tests (`evaluator-pipeline.test.ts`, closure, probe)
 
 | guard                                                                                     | result |
 | ----------------------------------------------------------------------------------------- | ------ |
 | 10 stages in exact order over 885 cells                                                   | pass   |
-| exposes exact 18/867 counts, category sum = 867, not placeholders                         | pass   |
+| exposes exact 30/855 counts, category sum = 855, not placeholders                         | pass   |
 | **no-partial-final**: customer_final refused, nothing rendered                            | pass   |
 | deterministic: two runs → identical preflight; generators byte-identical on rerun         | pass   |
 | no-quarantine: no evaluated cell sourced from ROI/CAGE/Comm                               | pass   |
@@ -54,7 +54,7 @@ mapped; the 510 quarantined block is 4 dependency buckets × 3 dealers, never "o
 PII-minimal (no prohibited field; join keys pseudonymized + never in customer PDFs); a
 regression test fails a read-only selection that includes a prohibited field without a
 compliance route; a compliance route MAY retain PII with authorization; observed capability
-is distinct from allowed selection; invariants (routes 594/273, domains 27/48/9/21, all
+is distinct from allowed selection; invariants (routes 582/273, domains 27/48/9/21, all
 candidate_unproved) preserved. `data_minimization.validation.ok=true`. Not a new approval gate.
 
 ## Shadow FAIL repair — adversarial coverage (Defects 1–3 + provenance tightening)

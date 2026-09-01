@@ -9,15 +9,16 @@ filters, exportability, history, or baseline compatibility.
 
 Scope: three Sales rooftops — serra-honda (21043), serra-nissan (21044), tony-serra-ford
 (21047). Permanent Sales-only boundary: Service/Parts/cross-rooftop data **never** enters the
-Sales profiles. 18 of 885 cells are evaluated today; the 867 below are unresolved. (Gate 4A
-promoted SW-011/012/015 from the accepted Leads family; the readonly_browser_capture route
-below dropped 42→33 cells accordingly.)
+Sales profiles. 30 of 885 cells are evaluated today; the 855 below are unresolved. (Gate 4A
+promoted SW-011/012/015 from the accepted Leads family; Gate 4B promoted SW-033/045/046 from
+the accepted Dashboard and SW-090 from the accepted Leads via ratified definition-compatible
+substitution — 12 cells left the quarantined new_readonly route, 519→507.)
 
 **Approval rule.** `duane_approval_required` marks where a **new material approval** is still
 needed. The active goal already authorizes routine **read-only browser capture + unsaved
 export retrieval + historical accumulation** (so those are `false`). Saved-schedule mutation,
 external feeds, compliance/PII scope, cross-rooftop scope, and separate Service work remain
-`true`. Corrected totals: **594 cells need no new approval; 273 do.**
+`true`. Corrected totals: **582 cells need no new approval; 273 do.**
 
 ## Controller-observed dataset evidence (authorized READ-ONLY inspection)
 
@@ -32,7 +33,7 @@ ingested.** Full field notes + the 26 selectable Sales datasets are in the JSON
 
 | Route                              | Cells | Candidate IDs | New approval? | What to acquire                                                                                                                                                                                                                                                                          |
 | ---------------------------------- | ----- | ------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `new_readonly_vinsolutions_export` | 519   | 173           | **no**        | Read-only UNSAVED Custom Reporting exports: Sales-only reconstruction of the quarantined families (candidate datasets Leads / Daily Communication Summary By User [Sales cols] / Daily Dealer Summary) + missing-field/definition exports. Unproved until fields/filters/rows inspected. |
+| `new_readonly_vinsolutions_export` | 507   | 169           | **no**        | Read-only UNSAVED Custom Reporting exports: Sales-only reconstruction of the quarantined families (candidate datasets Leads / Daily Communication Summary By User [Sales cols] / Daily Dealer Summary) + missing-field/definition exports. Unproved until fields/filters/rows inspected. |
 | `external_feed`                    | 189   | 63            | yes           | Governed non-VinSolutions feeds (GA / ad-spend / phone / registration / insurance / credit / public-records enrichment).                                                                                                                                                                 |
 | `compliance_authorization`         | 48    | 16            | yes           | Sales-domain compliance/PII conditions — authorization + governed source; stays out of the Service workspace.                                                                                                                                                                            |
 | `readonly_browser_capture`         | 33    | 11            | **no**        | Read-only captures: Customer Contact / Recent Task Detail CRM surfaces (Leads per-lead response timing for SW-011/012/015 is already accepted + evaluated, no longer a pending candidate).                                                                                               |
@@ -40,16 +41,18 @@ ingested.** Full field notes + the 26 selectable Sales datasets are in the JSON
 | `separate_service_workspace`       | 27    | 9             | yes           | GENUINELY Service-domain conditions only — the separately-governed Serra Service workspace, never the Sales profiles.                                                                                                                                                                    |
 | `separate_cross_rooftop_route`     | 9     | 3             | yes           | Cross-rooftop conditions — a separate governed cross-rooftop route; the Sales profile is one-rooftop by design.                                                                                                                                                                          |
 
-Cells total: 519 + 189 + 48 + 33 + 42 + 27 + 9 = **867** (reconciles to the closure registry).
+Cells total: 507 + 189 + 48 + 33 + 42 + 27 + 9 = **855** (reconciles to the closure registry).
 Every group is `route_proof_state = candidate_unproved`.
 
-## Quarantined dependency buckets — do NOT claim "one pass closes 510"
+## Quarantined dependency buckets — do NOT claim "one pass closes 498"
 
-The 510 quarantined cells decompose into **4 mutually-exclusive DEPENDENCY buckets × 3
+The 498 quarantined cells decompose into **4 mutually-exclusive DEPENDENCY buckets × 3
 dealers = 12 entries** (`quarantined_reconstruction` in the JSON): the **three
-source-provenance report families** — `lead_source_roi` (12), `cage_kpi` (12),
+source-provenance report families** — `lead_source_roi` (12), `cage_kpi` (6),
 `sales_comm_log` (225) — **plus one multi-family dependency bucket** `multiple_quarantined`
-(261) for conditions that JOIN more than one quarantined family. `multiple_quarantined` is a
+(255) for conditions that JOIN more than one quarantined family. Gate 4B moved 12 cells out of
+quarantine via the ratified Dashboard/Leads substitution (SW-033/045 from cage_kpi 12→6;
+SW-046/090 from multiple_quarantined 261→255). `multiple_quarantined` is a
 dependency bucket, **not** a report family. Two candidate routes, both **unproved** until
 exact fields/filters/rows are inspected:
 

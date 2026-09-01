@@ -229,6 +229,75 @@
       "comparator": ">",
       "reconciliation": "matches RATIFIED R2 appt.no_show_rate definition",
       "direction": "lower_is_better"
+    },
+    "SW-033": {
+      "source_family": "dealership_performance",
+      "metric_slug": "dashboard.show_to_write_rate",
+      "formula": "writeup / appts_show",
+      "source_fields": [
+        "Writeup (Visit Summary TOTAL)",
+        "Appts Show (Dealership Summary TOTAL)"
+      ],
+      "numerator_field": "Writeup (Visit Summary TOTAL)",
+      "denominator_field": "Appts Show (Dealership Summary TOTAL)",
+      "unit": "ratio_0_1",
+      "value_kind": "ratio",
+      "baseline_id": "OT-SW-033",
+      "baseline_basis": "operational_target",
+      "comparator": "<",
+      "reconciliation": "Gate 4B ratified definition-compatible Dashboard substitution for the quarantined CAGE source; trigger when rate < 0.60; if Appts Show=0 stays unresolved",
+      "direction": "higher_is_better"
+    },
+    "SW-045": {
+      "source_family": "dealership_performance",
+      "metric_slug": "dashboard.beback_to_freshup_ratio",
+      "formula": "be_backs / initial_visits",
+      "source_fields": [
+        "Be Backs (Visit Summary TOTAL)",
+        "Initial Visits (Visit Summary TOTAL)"
+      ],
+      "numerator_field": "Be Backs (Visit Summary TOTAL)",
+      "denominator_field": "Initial Visits (Visit Summary TOTAL)",
+      "unit": "ratio",
+      "value_kind": "ratio",
+      "baseline_id": "OT-SW-045",
+      "baseline_basis": "operational_target",
+      "comparator": ">",
+      "reconciliation": "Gate 4B ratified Dashboard substitution; Initial Visits is the governed fresh-up denominator; inverted = ratio > 1.0; Initial Visits=0 & Be Backs>0 is an inverted/infinite firing signal not representable as a finite evaluated ratio (absent in the accepted period); both zero stays unresolved",
+      "direction": "lower_is_better"
+    },
+    "SW-046": {
+      "source_family": "dealership_performance",
+      "metric_slug": "dashboard.test_drive_completion_rate",
+      "formula": "demo / total_visits",
+      "source_fields": [
+        "Demo (Visit Summary TOTAL)",
+        "Total Visits (Visit Summary TOTAL)"
+      ],
+      "numerator_field": "Demo (Visit Summary TOTAL)",
+      "denominator_field": "Total Visits (Visit Summary TOTAL)",
+      "unit": "ratio_0_1",
+      "value_kind": "ratio",
+      "baseline_id": "OT-SW-046",
+      "baseline_basis": "operational_target",
+      "comparator": "<",
+      "reconciliation": "Gate 4B ratified definition-compatible Dashboard substitution; Demo is the test-drive-completion count; trigger when rate < 0.50; if Total Visits=0 stays unresolved",
+      "direction": "higher_is_better"
+    },
+    "SW-090": {
+      "source_family": "vinsolutions_custom_reporting_leads",
+      "metric_slug": "leads.unassigned_over_2h_rate",
+      "formula": "count(Sales Rep blank AND unassigned >2h after creation) / total_accepted_leads_rows",
+      "source_fields": ["Sales Rep", "Lead ID (accepted row count)"],
+      "numerator_field": "count(Sales Rep blank AND unassigned >2h after creation)",
+      "denominator_field": "total accepted Leads rows",
+      "unit": "ratio_0_1",
+      "value_kind": "ratio",
+      "baseline_id": "OT-SW-090",
+      "baseline_basis": "operational_target",
+      "comparator": ">",
+      "reconciliation": "Gate 4B ratified Leads substitution. The catalog condition is unassigned for >2 HOURS after creation, NOT any blank Sales Rep. All three accepted files have zero blank Sales Rep rows so no age determination is required and the >2h condition is false (numerator 0). A nonzero blank count without accepted row-level age evidence fails closed as unresolved (unassigned_age_unproved) — it never auto-fires. Sales Rep name never persisted; trigger only on a proven unassigned-over-2h count > 0",
+      "direction": "lower_is_better"
     }
   },
   "explicitly_unresolved_examples": {

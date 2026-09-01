@@ -205,15 +205,12 @@
         "SW-026",
         "SW-027",
         "SW-029",
-        "SW-033",
         "SW-034",
         "SW-035",
         "SW-036",
         "SW-037",
         "SW-042",
         "SW-044",
-        "SW-045",
-        "SW-046",
         "SW-057",
         "SW-058",
         "SW-059",
@@ -233,7 +230,6 @@
         "SW-086",
         "SW-087",
         "SW-089",
-        "SW-090",
         "SW-091",
         "SW-092",
         "SW-093",
@@ -363,7 +359,7 @@
         "SW-293",
         "SW-295"
       ],
-      "cell_count": 519,
+      "cell_count": 507,
       "route_proof_state": "candidate_unproved",
       "duane_approval_required": false,
       "duane_approval_reason": "read-only UNSAVED Custom Reporting export is already authorized by the active goal — no new approval",
@@ -428,7 +424,7 @@
     }
   ],
   "quarantined_reconstruction": {
-    "note": "The 510 quarantined cells decompose into MUTUALLY EXCLUSIVE DEPENDENCY buckets: THREE single source-provenance report families (lead_source_roi, cage_kpi, sales_comm_log) PLUS ONE multi-family dependency bucket (multiple_quarantined) for conditions that JOIN more than one quarantined family. multiple_quarantined is a DEPENDENCY bucket, NOT a report family. Exact decomposition: 4 dependency buckets × 3 dealers = 12 bucket×dealer entries (NOT nine non-overlapping single-family buckets). PRIMARY candidate: read-only UNSAVED Sales-only Custom Reporting reconstruction/export (no new approval). ALTERNATIVE: saved-schedule repair (mutation + hidden Lead Intent control, new approval). BOTH candidate_unproved until exact fields/filters/rows are inspected. NOT claimed as \"one pass closes 510\".",
+    "note": "The 498 quarantined cells decompose into MUTUALLY EXCLUSIVE DEPENDENCY buckets: THREE single source-provenance report families (lead_source_roi, cage_kpi, sales_comm_log) PLUS ONE multi-family dependency bucket (multiple_quarantined) for conditions that JOIN more than one quarantined family. multiple_quarantined is a DEPENDENCY bucket, NOT a report family. Exact decomposition: 4 dependency buckets × 3 dealers = 12 bucket×dealer entries (NOT nine non-overlapping single-family buckets). Gate 4B moved 12 cells out of quarantine (SW-033/045 from cage_kpi, SW-046/090 from multiple_quarantined) via the ratified definition-compatible Dashboard/Leads substitution — evaluated from ACCEPTED families, never from the quarantined workbooks. PRIMARY candidate for the remainder: read-only UNSAVED Sales-only Custom Reporting reconstruction/export (no new approval). ALTERNATIVE: saved-schedule repair (mutation + hidden Lead Intent control, new approval). BOTH candidate_unproved until exact fields/filters/rows are inspected. NOT claimed as \"one pass closes 498\".",
     "source_provenance_report_families": [
       "lead_source_roi",
       "cage_kpi",
@@ -437,7 +433,7 @@
     "by_source_report_family": {
       "lead_source_roi": 12,
       "sales_comm_log": 225,
-      "cage_kpi": 12
+      "cage_kpi": 6
     },
     "dependency_buckets": [
       "cage_kpi",
@@ -450,15 +446,15 @@
     "by_dependency_bucket": {
       "lead_source_roi": 12,
       "sales_comm_log": 225,
-      "multiple_quarantined": 261,
-      "cage_kpi": 12
+      "multiple_quarantined": 255,
+      "cage_kpi": 6
     },
     "by_dependency_bucket_dealer": [
       {
         "dependency_bucket": "cage_kpi",
         "is_multi_family_dependency": false,
         "dealer_id": "21043",
-        "cell_count": 4,
+        "cell_count": 2,
         "primary_route": "new_readonly_vinsolutions_export",
         "primary_duane_approval_required": false,
         "alternative_route": "existing_scheduled_report",
@@ -469,7 +465,7 @@
         "dependency_bucket": "cage_kpi",
         "is_multi_family_dependency": false,
         "dealer_id": "21044",
-        "cell_count": 4,
+        "cell_count": 2,
         "primary_route": "new_readonly_vinsolutions_export",
         "primary_duane_approval_required": false,
         "alternative_route": "existing_scheduled_report",
@@ -480,7 +476,7 @@
         "dependency_bucket": "cage_kpi",
         "is_multi_family_dependency": false,
         "dealer_id": "21047",
-        "cell_count": 4,
+        "cell_count": 2,
         "primary_route": "new_readonly_vinsolutions_export",
         "primary_duane_approval_required": false,
         "alternative_route": "existing_scheduled_report",
@@ -524,7 +520,7 @@
         "dependency_bucket": "multiple_quarantined",
         "is_multi_family_dependency": true,
         "dealer_id": "21043",
-        "cell_count": 87,
+        "cell_count": 85,
         "primary_route": "new_readonly_vinsolutions_export",
         "primary_duane_approval_required": false,
         "alternative_route": "existing_scheduled_report",
@@ -535,7 +531,7 @@
         "dependency_bucket": "multiple_quarantined",
         "is_multi_family_dependency": true,
         "dealer_id": "21044",
-        "cell_count": 87,
+        "cell_count": 85,
         "primary_route": "new_readonly_vinsolutions_export",
         "primary_duane_approval_required": false,
         "alternative_route": "existing_scheduled_report",
@@ -546,7 +542,7 @@
         "dependency_bucket": "multiple_quarantined",
         "is_multi_family_dependency": true,
         "dealer_id": "21047",
-        "cell_count": 87,
+        "cell_count": 85,
         "primary_route": "new_readonly_vinsolutions_export",
         "primary_duane_approval_required": false,
         "alternative_route": "existing_scheduled_report",
@@ -587,7 +583,7 @@
         "route_proof_state": "candidate_unproved"
       }
     ],
-    "reconciles_to_510": true
+    "reconciles_to_498": true
   },
   "browser_passes": [
     {
@@ -600,7 +596,7 @@
         "Daily Dealer Summary",
         "Leads"
       ],
-      "candidate_cell_count": 184,
+      "candidate_cell_count": 180,
       "duane_approval_required": false,
       "route_proof_state": "candidate_unproved",
       "note": "candidate coverage only; each dataset must still prove exact fields, period, Sales-only filters, and row-level validation before it closes any cell"
@@ -615,7 +611,7 @@
         "Daily Dealer Summary",
         "Leads"
       ],
-      "candidate_cell_count": 184,
+      "candidate_cell_count": 180,
       "duane_approval_required": false,
       "route_proof_state": "candidate_unproved",
       "note": "candidate coverage only; each dataset must still prove exact fields, period, Sales-only filters, and row-level validation before it closes any cell"
@@ -630,7 +626,7 @@
         "Daily Dealer Summary",
         "Leads"
       ],
-      "candidate_cell_count": 184,
+      "candidate_cell_count": 180,
       "duane_approval_required": false,
       "route_proof_state": "candidate_unproved",
       "note": "candidate coverage only; each dataset must still prove exact fields, period, Sales-only filters, and row-level validation before it closes any cell"

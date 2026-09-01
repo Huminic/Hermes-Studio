@@ -1,6 +1,6 @@
 /**
  * Gate 3 — deterministic pipeline runner (preflight). Writes the INTERNAL preflight
- * artifact for the 18 evaluated + 867 unresolved cells. Prettier-clean + byte-identical on
+ * artifact for the 30 evaluated + 855 unresolved cells. Prettier-clean + byte-identical on
  * rerun; NON-PII. Refuses 'customer_final' mode (evaluated_count != 885) — never renders a
  * partial customer PDF.
  *

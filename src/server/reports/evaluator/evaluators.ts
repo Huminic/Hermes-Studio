@@ -47,11 +47,16 @@ export const EVALUABLE_IDS = [
   'SW-015',
   'SW-031',
   'SW-032',
+  'SW-033',
   'SW-041',
+  'SW-045',
+  'SW-046',
+  'SW-090',
 ] as const
 export type EvaluableId = (typeof EVALUABLE_IDS)[number]
 
 const LEADS_FAMILY = 'vinsolutions_custom_reporting_leads'
+const DASH_FAMILY = 'dealership_performance'
 
 /** SW-011 — median time-to-first-touch during business hours (accepted Leads). */
 export function evalSW011(b: HeldBundle): EvaluatorResult {
@@ -290,6 +295,184 @@ export function evalSW041(b: HeldBundle): EvaluatorResult {
   }
 }
 
+/** SW-033 — show-to-write rate (Dashboard). Writeup / Appts Show; target 0.60, fires < 0.60. */
+export function evalSW033(b: HeldBundle): EvaluatorResult {
+  const d = b.dashboard
+  if (!d)
+    return {
+      ok: false,
+      source_family: DASH_FAMILY,
+      reason: 'dealership_performance held family unavailable',
+    }
+  if (d.writeup === null || d.apptsShow === null)
+    return {
+      ok: false,
+      source_family: DASH_FAMILY,
+      reason: 'Writeup or Appts Show blank in Dashboard (missing is not zero)',
+    }
+  if (d.apptsShow <= 0)
+    return {
+      ok: false,
+      source_family: DASH_FAMILY,
+      reason: `Appts Show denominator is ${d.apptsShow} (not a positive integer)`,
+    }
+  return {
+    ok: true,
+    metric_slug: 'dashboard.show_to_write_rate',
+    source_family: DASH_FAMILY,
+    source_fields: [
+      'Writeup (Visit Summary TOTAL)',
+      'Appts Show (Dealership Summary TOTAL)',
+    ],
+    formula: 'writeup / appts_show',
+    unit: 'ratio_0_1',
+    numerator: d.writeup,
+    denominator: d.apptsShow,
+    value: d.writeup / d.apptsShow,
+    detail: null,
+  }
+}
+
+/** SW-045 — be-backs to fresh-ups ratio (Dashboard). Be Backs / Initial Visits; inverted = > 1. */
+export function evalSW045(b: HeldBundle): EvaluatorResult {
+  const d = b.dashboard
+  if (!d)
+    return {
+      ok: false,
+      source_family: DASH_FAMILY,
+      reason: 'dealership_performance held family unavailable',
+    }
+  if (d.beBacks === null || d.initialVisits === null)
+    return {
+      ok: false,
+      source_family: DASH_FAMILY,
+      reason:
+        'Be Backs or Initial Visits blank in Dashboard (missing is not zero)',
+    }
+  if (d.initialVisits <= 0)
+    return {
+      ok: false,
+      source_family: DASH_FAMILY,
+      // Both-zero => genuinely unresolved. Initial Visits=0 with Be Backs>0 is an
+      // inverted/infinite firing signal, but an infinite ratio is not representable as a
+      // finite evaluated row under the strict predicate (value must be finite, denominator a
+      // positive integer). It does not occur in the accepted period (Initial Visits 24/17/11).
+      reason:
+        d.beBacks > 0
+          ? 'Initial Visits=0 with Be Backs>0 is an inverted/infinite ratio (firing signal) not representable as a finite evaluated row; absent in the accepted period (see issues.md)'
+          : 'Initial Visits denominator is 0 (missing is not zero)',
+    }
+  return {
+    ok: true,
+    metric_slug: 'dashboard.beback_to_freshup_ratio',
+    source_family: DASH_FAMILY,
+    source_fields: [
+      'Be Backs (Visit Summary TOTAL)',
+      'Initial Visits (Visit Summary TOTAL)',
+    ],
+    formula: 'be_backs / initial_visits',
+    // Unbounded ratio: Be Backs may exceed Initial Visits, so the value can be > 1.0
+    // (that is exactly the "inverted" firing case). Not a 0..1 ratio.
+    unit: 'ratio',
+    numerator: d.beBacks,
+    denominator: d.initialVisits,
+    value: d.beBacks / d.initialVisits,
+    detail: null,
+  }
+}
+
+/** SW-046 — test-drive completion rate (Dashboard). Demo / Total Visits; target 0.50, fires < 0.50. */
+export function evalSW046(b: HeldBundle): EvaluatorResult {
+  const d = b.dashboard
+  if (!d)
+    return {
+      ok: false,
+      source_family: DASH_FAMILY,
+      reason: 'dealership_performance held family unavailable',
+    }
+  if (d.demo === null || d.totalVisits === null)
+    return {
+      ok: false,
+      source_family: DASH_FAMILY,
+      reason: 'Demo or Total Visits blank in Dashboard (missing is not zero)',
+    }
+  if (d.totalVisits <= 0)
+    return {
+      ok: false,
+      source_family: DASH_FAMILY,
+      reason: `Total Visits denominator is ${d.totalVisits} (not a positive integer)`,
+    }
+  return {
+    ok: true,
+    metric_slug: 'dashboard.test_drive_completion_rate',
+    source_family: DASH_FAMILY,
+    source_fields: [
+      'Demo (Visit Summary TOTAL)',
+      'Total Visits (Visit Summary TOTAL)',
+    ],
+    formula: 'demo / total_visits',
+    unit: 'ratio_0_1',
+    numerator: d.demo,
+    denominator: d.totalVisits,
+    value: d.demo / d.totalVisits,
+    detail: null,
+  }
+}
+
+/**
+ * SW-090 — leads with no assigned salesperson >2 HOURS after creation (accepted Leads).
+ *
+ * The catalog condition is "no assigned salesperson >2 hours after creation" — NOT "any
+ * blank Sales Rep". The accepted aggregate carries only the blank-Sales-Rep COUNT, not the
+ * per-row age. So:
+ *   - unassigned_sales_rep === 0 -> zero rows require an age determination; the >2h condition
+ *     is vacuously false; evaluated with numerator 0 (no qualifying leads).
+ *   - unassigned_sales_rep > 0 -> the aggregate cannot prove age >2h; fail CLOSED as
+ *     unresolved (`unassigned_age_unproved`). It must NOT auto-fire an alert/rating/breach.
+ */
+export function evalSW090(b: HeldBundle): EvaluatorResult {
+  const l = b.leads
+  if (!l)
+    return {
+      ok: false,
+      source_family: LEADS_FAMILY,
+      reason: 'leads family unavailable',
+    }
+  if (l.total_rows <= 0)
+    return {
+      ok: false,
+      source_family: LEADS_FAMILY,
+      reason: 'no accepted Leads rows (denominator 0)',
+    }
+  if (l.unassigned_sales_rep > 0)
+    return {
+      ok: false,
+      source_family: LEADS_FAMILY,
+      reason: `unassigned_age_unproved: ${l.unassigned_sales_rep} of ${l.total_rows} accepted Leads rows have a blank Sales Rep, but the accepted aggregate cannot prove age >2h after creation; the condition requires unassigned for >2 hours, so it does not auto-fire without row-level age evidence`,
+    }
+  // Zero unassigned rows: nothing needs an age determination; the >2h condition is false.
+  return {
+    ok: true,
+    metric_slug: 'leads.unassigned_over_2h_rate',
+    source_family: LEADS_FAMILY,
+    source_fields: ['Sales Rep', 'Lead ID (accepted row count)'],
+    formula:
+      'count(Sales Rep blank AND unassigned >2h after creation) / total_accepted_leads_rows',
+    unit: 'ratio_0_1',
+    numerator: 0,
+    denominator: l.total_rows,
+    value: 0,
+    detail: {
+      unassigned_sales_rep: l.unassigned_sales_rep,
+      unassigned_over_2h: 0,
+      total_rows: l.total_rows,
+      rate: 0,
+      footnote:
+        'Leads with a BLANK Sales Rep >2 hours after creation, over all accepted Leads rows; a Sales Rep name is never persisted. With zero blank Sales Rep rows no age determination is required and the ">2 hours after creation" condition is false. Operational target 0; triggers only on a proven unassigned-over-2h count > 0 (a nonzero blank count without row-level age evidence stays unresolved: unassigned_age_unproved).',
+    },
+  }
+}
+
 export const EVALUATORS: Record<
   EvaluableId,
   (b: HeldBundle) => EvaluatorResult
@@ -299,5 +482,9 @@ export const EVALUATORS: Record<
   'SW-015': evalSW015,
   'SW-031': evalSW031,
   'SW-032': evalSW032,
+  'SW-033': evalSW033,
   'SW-041': evalSW041,
+  'SW-045': evalSW045,
+  'SW-046': evalSW046,
+  'SW-090': evalSW090,
 }

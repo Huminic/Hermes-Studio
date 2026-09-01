@@ -80,10 +80,23 @@ function dashboard(opts: {
       name: 'Report',
       rows: [
         ['Dealership Summary'],
-        ['', 'Leads', 'Appts Set', 'Appts Set %', 'Sold in Period'],
-        ['New', '10', '1', '0.1', '0'],
-        ['TOTAL', '20', '5', '0.25', '2'],
+        [
+          '',
+          'Leads',
+          'Appts Set',
+          'Appts Set %',
+          'Appts Show',
+          'Total Visits',
+          'Initial Visits',
+          'Be Backs',
+          'Sold in Period',
+        ],
+        ['New', '10', '1', '0.1', '2', '6', '5', '1', '0'],
+        ['TOTAL', '20', '5', '0.25', '4', '12', '10', '3', '2'],
         ['Lead Type & Inventory Type Summary'],
+        ['', 'Visit Summary'],
+        ['', 'Total Visits', 'Initial Visits', 'Be Backs', 'Demo', 'Writeup'],
+        ['TOTAL', '12', '10', '3', '1', '6'],
       ],
     },
     {
@@ -141,10 +154,23 @@ describe('Fail-closed on Service/Parts token in DATA rows (req 6)', () => {
         name: 'Report',
         rows: [
           ['Dealership Summary'],
-          ['', 'Leads', 'Appts Set', 'Appts Set %', 'Sold in Period'],
-          ['Service', '10', '1', '0.1', '0'],
-          ['TOTAL', '20', '5', '0.25', '2'],
+          [
+            '',
+            'Leads',
+            'Appts Set',
+            'Appts Set %',
+            'Appts Show',
+            'Total Visits',
+            'Initial Visits',
+            'Be Backs',
+            'Sold in Period',
+          ],
+          ['Service', '10', '1', '0.1', '2', '6', '5', '1', '0'],
+          ['TOTAL', '20', '5', '0.25', '4', '12', '10', '3', '2'],
           ['Lead Type & Inventory Type Summary'],
+          ['', 'Visit Summary'],
+          ['', 'Total Visits', 'Initial Visits', 'Be Backs', 'Demo', 'Writeup'],
+          ['TOTAL', '12', '10', '3', '1', '6'],
         ],
       },
       {
@@ -177,6 +203,55 @@ describe('Dashboard Filters must AFFIRMATIVELY prove Sales-only (req 6)', () => 
     )
     expect(d.leads).toBe(20)
     expect(d.apptsSet).toBe(5)
+    // Gate 4B primitives: Appts Show from Dealership Summary; visit metrics from Visit
+    // Summary; the overlapping columns agree across both sections (cross-verified).
+    expect(d.apptsShow).toBe(4)
+    expect(d.totalVisits).toBe(12)
+    expect(d.initialVisits).toBe(10)
+    expect(d.beBacks).toBe(3)
+    expect(d.demo).toBe(1)
+    expect(d.writeup).toBe(6)
+  })
+  it('throws when the two sections disagree on an overlapping column (Be Backs)', () => {
+    const buf = makeXlsxSheets([
+      {
+        name: 'Report',
+        rows: [
+          ['Dealership Summary'],
+          [
+            '',
+            'Leads',
+            'Appts Set',
+            'Appts Set %',
+            'Appts Show',
+            'Total Visits',
+            'Initial Visits',
+            'Be Backs',
+            'Sold in Period',
+          ],
+          ['TOTAL', '20', '5', '0.25', '4', '12', '10', '3', '2'],
+          ['Lead Type & Inventory Type Summary'],
+          ['', 'Visit Summary'],
+          ['', 'Total Visits', 'Initial Visits', 'Be Backs', 'Demo', 'Writeup'],
+          ['TOTAL', '12', '10', '9', '1', '6'],
+        ],
+      },
+      {
+        name: 'Filters',
+        rows: [
+          ['Filter Name', 'Number Selected', 'Selected Values'],
+          ['Dealers', '1', WINDOW.dealerName],
+          ['Date Range Begin', '1', 'Aug 24 2026 12:00AM'],
+          ['Date Range End', '1', 'Aug 30 2026 11:59PM'],
+          ['Lead Sources Excluded', '5', 'Service, Service Dept'],
+          ['Appointment Reasons', '1', 'Sales Appointment'],
+          ['Lead Types', '3', 'Internet, Phone, Walk-in'],
+          ['Inventory Types', '4', 'Certified, New, Unknown, Used'],
+          ['Lead Status Types', '3', 'Active, Lost, Sold'],
+        ],
+      },
+    ])
+    expect(() => readDashboardHeld(buf, WINDOW)).toThrow(/disagreement/)
   })
   it('throws when Service is NOT affirmatively excluded', () => {
     expect(() =>
@@ -247,6 +322,12 @@ describe('Missing is not zero -> NotEvaluable (req 4)', () => {
       apptsSet: 5,
       apptsSetPct: null,
       soldInPeriod: 0,
+      apptsShow: null,
+      totalVisits: null,
+      initialVisits: null,
+      beBacks: null,
+      demo: null,
+      writeup: null,
       salesOnlyProof: 'x',
       dealerName: 'x',
       periodBegin: 'x',
