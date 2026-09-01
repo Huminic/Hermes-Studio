@@ -82,15 +82,19 @@ swapped input.
 
 ## Scope of this gate
 
-Admission + a **field-backed** machine-readable capability delta
-(`sw295-comm-capability-delta.json`, one row per metric, none evaluated) + seven proposed
-structured rules (`enhanced-comm-structured-candidates.json`, all flagged for controller
-ratification). The delta is bounded by the ADMITTED derivative's actual fields + the single
-7-day week (not condition keywords): a metric is `definition_compatible_now` only when its
-current value is fully computable + fully specified from those fields (threshold-only choices
-remain a ratification flag but cannot cure unavailable inputs); `semantic_definition_pending`
-means the events are supported but a numerator/population/window/event-semantic is unresolved.
-At admission **zero** rows are `definition_compatible_now` and **14** are
-`semantic_definition_pending`; everything else needs message content, an absent field, a join,
-longer history, or lies outside the Sales boundary. **No SW metric is promoted; the family is
-not wired into the evaluator spine.**
+Admission + a machine-readable capability delta (`sw295-comm-capability-delta.json`, one row per
+metric, none evaluated) + seven proposed structured rules
+(`enhanced-comm-structured-candidates.json`, all flagged for controller ratification). Every one
+of the 295 rows is an EXPLICIT hand-authored decision in a checked-in decision table
+(`scripts/m1r-comms/comm-capability-decisions.ts`, enumerating exactly SW-001..SW-295); the
+generator only joins it to the catalog to copy/verify the condition + metadata (no regex /
+section / acquisition_class inference, no catch-all — the build fails on any missing / duplicate
+/ extra id or non-schema field), and `admitted_fields_satisfying` lists ONLY exact fields from
+the derivative schema (`DERIVATIVE_SCHEMA_FIELDS`). A metric is `definition_compatible_now` only
+when its current value is fully computable + fully specified from those fields (threshold-only
+choices remain a ratification flag but cannot cure unavailable inputs);
+`semantic_definition_pending` means the events are supported but a numerator/population/window/
+event-semantic is unresolved. At admission **zero** rows are `definition_compatible_now` and
+**12** are `semantic_definition_pending`; everything else needs message content, an absent field,
+a join, longer history, or lies outside the Sales boundary. **No SW metric is promoted; the
+family is not wired into the evaluator spine.**

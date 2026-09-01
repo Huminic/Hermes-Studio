@@ -188,6 +188,37 @@ export const PERMITTED_DERIVED_COLUMNS: ReadonlyArray<string> = [
   'Text Video',
 ]
 
+/**
+ * The EXACT set of fields the privacy-minimized derivative emits (CommDerivedRow). This is the
+ * authoritative capability schema: a capability-delta row may only claim an admitted field that
+ * appears here. `content_length`/`content_present` are structural-only signals — message MEANING
+ * is never derivable from them, so a capability decision must not treat them as content.
+ */
+export const DERIVATIVE_SCHEMA_FIELDS: ReadonlyArray<string> = [
+  'comm_token',
+  'thread_token',
+  'rep_token',
+  'person_token',
+  'user_group',
+  'direction',
+  'channel',
+  'comm_type',
+  'interaction_result',
+  'lead_type',
+  'lead_status_type',
+  'lead_status',
+  'lead_source_group',
+  'lead_source',
+  'make',
+  'activity_iso',
+  'activity_date',
+  'has_attachment',
+  'has_image',
+  'has_video',
+  'content_length',
+  'content_present',
+]
+
 /** Columns used by the reader/validator (all must exist in COMM_HEADERS). */
 export const COMM_KEY_COLUMNS = {
   dealer: 'Dealer',

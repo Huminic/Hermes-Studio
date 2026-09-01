@@ -42,11 +42,12 @@ describe('Gate 4C1 comm proof delta recorded artifact hashes', () => {
   const md = fs.readFileSync(PROOF, 'utf8')
   const recorded = parseRecordedHashes(md)
 
-  it('parses the full artifact set (5 modules/scripts + 3 contract + 1 contract md + 1 evidence = 10)', () => {
-    expect(recorded.length).toBe(10)
+  it('parses the full artifact set (6 modules/scripts + 3 contract + 1 contract md + 1 evidence = 11)', () => {
+    expect(recorded.length).toBe(11)
     for (const req of [
       'src/server/reports/comms/comm-family-contract.ts',
       'src/server/reports/comms/comm-reader.ts',
+      'scripts/m1r-comms/comm-capability-decisions.ts',
       'docs/halo/evidence/m1r/comms/comm-admission-aggregates.json',
     ])
       expect(

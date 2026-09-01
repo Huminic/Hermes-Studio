@@ -55,31 +55,40 @@ never committed. Lineage binds raw SHA + manifest SHA + capture id + rooftop + p
 version/hash. **Adversarial tests** prove raw names/customer/message cannot appear in the
 derivative, and that swapping rooftop / period / hash / capture / count fails closed.
 
-## 5. Capability delta (FIELD-BACKED repair; one row per metric, NONE evaluated)
+## 5. Capability delta (AUTHORITATIVE per-ID decision table; one row per metric, NONE evaluated)
 
-`sw295-comm-capability-delta.json` (`field-backed-v2`) — 295 rows, `evaluated_count: 0`,
-reconciles to 295. The keyword-heuristic v1 over-optimistically marked **54** rows
-`definition_compatible_now`; the shadow found ≥37 clearly incompatible. The decision is now
-bounded by the ADMITTED derivative's ACTUAL fields + the single 7-day week, with a per-row
-record (required_inputs, admitted_fields_satisfying, missing_inputs, minimum_history,
-join/NLP requirement, rationale). Seven honest categories (added `semantic_definition_pending`).
+`sw295-comm-capability-delta.json` (`authoritative-per-id-decision-table-v4`) — 295 rows,
+`evaluated_count: 0`, `all_rows_decided_by_explicit: true`, reconciles to 295. The keyword-
+heuristic v1 over-optimistically marked **54** rows `definition_compatible_now`; the shadow found
+≥37 clearly incompatible, then required an explicit per-ID mapping for all 295 with no fallback.
+Every row is now an EXPLICIT hand-authored decision in a checked-in decision table
+(`scripts/m1r-comms/comm-capability-decisions.ts`, enumerating exactly SW-001..SW-295); the
+generator only joins it to the catalog to copy/verify the condition + metadata (no regex /
+section / acquisition_class inference; the build fails on any missing/duplicate/extra id or
+non-schema field). Each row records `required_inputs`, an exact `admitted_fields_satisfying`
+list (only real derivative fields; `[]` when none), `missing_inputs`, `minimum_history`,
+`join_or_nlp_required`, `rationale`, and `decided_by: "explicit"`.
 
-**Before → after:** `definition_compatible_now` **54 → 0**; new `semantic_definition_pending`
-**14**; `nlp_content_capable_pending` 45 → **76**; `unsupported_field` 39 → **57**;
-`other_source_or_join` 95 → **112**; `insufficient_history` 12 → **9**; `outside_sales_boundary`
-50 → **27**.
+**Final category counts:** `definition_compatible_now` **0**; `semantic_definition_pending`
+**12**; `nlp_content_capable_pending` **75**; `unsupported_field` **15**; `insufficient_history`
+**16**; `other_source_or_join` **132**; `outside_sales_boundary` **45** (sum 295).
 
 - **`definition_compatible_now` = 0** — no catalog metric is fully specified from this family
-  alone (every one leaves a numerator/population/window/event-semantic open, and none is only a
-  threshold away). The genuinely-ready ID list is therefore empty.
-- **`semantic_definition_pending` = 14** (SW-019/022/026/076/084/086/089/132/133/134/137/138/140/288)
-  — the derivative supports the EVENTS within the week but each needs a ratified semantic choice.
-- Representative repairs: SW-003/007/091 (no phone/email field) → unsupported; SW-025 (CRM
-  login) → unsupported; SW-233/234/235 (opens/clicks/video-opens) → unsupported; SW-015
-  (already evaluated via Leads) → other_source (this family does not supersede it); SW-176
-  (Sales-domain sentiment, wrongly pushed outside Sales by the word "service") → nlp;
-  SW-056/094/180 (DMS deps) → other_source; message-semantics rows → nlp; sold/status/vehicle
-  joins → other_source. Message meaning is NEVER inferred from `content_length`/`presence`.
+  alone. The genuinely-ready ID list is empty.
+- **`semantic_definition_pending` = 12** (SW-019/022/026/076/084/086/132/133/134/137/138/288) —
+  the derivative supports the EVENTS within one governed week but each needs a ratified semantic
+  choice; each lists its exact admitted fields.
+- Second-repair corrections: **SW-019** minimum history is now truthful (one governed week with
+  ≥2 eligible adjacent days — "2 consecutive days" is not multi-week); **SW-089** cannot prove
+  "same number" (person_token is Global-Customer-ID-derived, not a phone/call-ANI) → unsupported;
+  **SW-140** has NO inbound customer-voicemail event (independent cross-tab: Answering Machine is
+  OUTBOUND only — Honda 109 / Nissan 1 / Ford 16; zero inbound) → unsupported; **SW-132** stays
+  pending only with its EXTERNAL business-hours calendar recorded. **SW-012** (lead origination +
+  staffing; Leads-evaluated) → other_source; **SW-179/239/256** → nlp; **SW-033/034/057/214** →
+  other_source (appointment/deal/inventory/external-chat joins); **SW-290** → insufficient_history
+  (labeled outcomes + model); Service-bearing **SW-118/199/223–227/263** and compliance
+  **SW-188–192** → outside_sales_boundary. Message meaning is NEVER inferred from
+  `content_length`/`presence`.
 
 ## 6. Seven structured candidates — proposed, NONE promoted
 
@@ -103,14 +112,15 @@ Content/name/phone/email persisted.
 
 | File                                                                       | sha256:16          |
 | -------------------------------------------------------------------------- | ------------------ |
-| `src/server/reports/comms/comm-family-contract.ts`                         | `dbf0e6d1c212807f` |
+| `src/server/reports/comms/comm-family-contract.ts`                         | `5934b72189677d1c` |
 | `src/server/reports/comms/comm-reader.ts`                                  | `94c42935d2b5aa90` |
 | `scripts/m1r-comms/build-comm-admission.ts`                                | `7b1173ef2e10fcd3` |
 | `scripts/m1r-comms/build-comm-contract.ts`                                 | `b0ccf2eeae772a45` |
-| `scripts/m1r-comms/build-comm-capability-delta.ts`                         | `9475acc7b1fe644b` |
+| `scripts/m1r-comms/build-comm-capability-delta.ts`                         | `4e389e58fa91ec90` |
+| `scripts/m1r-comms/comm-capability-decisions.ts`                           | `a49e3679089b0688` |
 | `docs/halo/contract/enhanced-sales-communication-log-weekly-contract.json` | `40fe56e0eb1156a1` |
-| `docs/halo/contract/enhanced-sales-communication-log-weekly-contract.md`   | `f02a8d2969f663e3` |
-| `docs/halo/contract/sw295-comm-capability-delta.json`                      | `0c9e3ea75b0c2d3f` |
+| `docs/halo/contract/enhanced-sales-communication-log-weekly-contract.md`   | `47d21eda4c9f0b2a` |
+| `docs/halo/contract/sw295-comm-capability-delta.json`                      | `771bec6eed729f6c` |
 | `docs/halo/contract/enhanced-comm-structured-candidates.json`              | `764ef9b10b00f812` |
 | `docs/halo/evidence/m1r/comms/comm-admission-aggregates.json`              | `3c0f6855d895c522` |
 

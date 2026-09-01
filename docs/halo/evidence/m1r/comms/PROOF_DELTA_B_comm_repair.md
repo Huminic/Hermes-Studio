@@ -7,38 +7,47 @@ Sales-only scope, counts (Honda 1530/386, Nissan 760/237, Ford 526/199), privacy
 distinct-family admission, **portfolio 30 evaluated / 855 unresolved**, customer-final refusal.
 **Zero promotions.** No production / Gmail / VinSolutions / schedule / service-parts / raw-PII.
 
-## A. Capability map — field-backed (was keyword-heuristic, over-optimistic)
+## A. Capability map — authoritative per-ID decision table (was keyword-heuristic + fallback)
 
-The v1 map marked **54** rows `definition_compatible_now` (each merely flagged
-`requires_ratified_threshold`). The shadow found ≥37 clearly incompatible. The v2 classifier
-decides against the ADMITTED derivative's ACTUAL emitted fields + the single 7-day week, with a
-per-row record (required_inputs / admitted_fields_satisfying / missing_inputs / minimum_history /
-join-or-NLP requirement / rationale). Taxonomy split: added **`semantic_definition_pending`**
-(events supported but numerator/population/window/event-semantics unresolved) so `…_now` has a
-literal meaning. A threshold/baseline may remain a ratification flag but **cannot cure an
-unavailable input**.
+The v1 map marked **54** rows `definition_compatible_now` (keyword heuristic); the first shadow
+found ≥37 incompatible; the second shadow rejected any section/acquisition_class fallback and
+required an EXPLICIT per-ID decision for all 295. The map is now generated from a checked-in
+decision table (`scripts/m1r-comms/comm-capability-decisions.ts`) that enumerates exactly
+SW-001..SW-295; the generator only joins it to the catalog to copy/verify condition + metadata
+(no regex/section/acquisition_class inference; the build fails on any missing/duplicate/extra id
+or non-schema field). Every row carries `required_inputs`, an exact `admitted_fields_satisfying`
+list (only real derivative fields; `[]` when none), `missing_inputs`, `minimum_history`,
+`join_or_nlp_required`, `rationale`, and `decided_by: "explicit"`. Taxonomy split adds
+`semantic_definition_pending` so `…_now` has a literal meaning; a threshold flag can never cure
+an unavailable input.
 
-**Before → after category counts:**
+**Before (v1 keyword heuristic) → after (v4 authoritative table):**
 
 | category                    | before | after |
 | --------------------------- | ------ | ----- |
 | definition_compatible_now   | 54     | 0     |
-| semantic_definition_pending | (new)  | 14    |
-| nlp_content_capable_pending | 45     | 76    |
-| unsupported_field           | 39     | 57    |
-| insufficient_history        | 12     | 9     |
-| other_source_or_join        | 95     | 112   |
-| outside_sales_boundary      | 50     | 27    |
+| semantic_definition_pending | (new)  | 12    |
+| nlp_content_capable_pending | 45     | 75    |
+| unsupported_field           | 39     | 15    |
+| insufficient_history        | 12     | 16    |
+| other_source_or_join        | 95     | 132   |
+| outside_sales_boundary      | 50     | 45    |
 | **total**                   | 295    | 295   |
 
 - **Genuinely `definition_compatible_now` IDs: NONE** — no catalog metric is fully specified
-  from this family alone (every one leaves a numerator/population/window/event-semantic open).
-- **`semantic_definition_pending` (14):** SW-019, SW-022, SW-026, SW-076, SW-084, SW-086,
-  SW-089, SW-132, SW-133, SW-134, SW-137, SW-138, SW-140, SW-288.
+  from this family alone.
+- **`semantic_definition_pending` (12):** SW-019, SW-022, SW-026, SW-076, SW-084, SW-086,
+  SW-132, SW-133, SW-134, SW-137, SW-138, SW-288 (each with its exact admitted field list).
+- Second-shadow corrections: **SW-019** one governed week (>=2 adjacent days, not multi-week);
+  **SW-089** → unsupported (person_token is Global-Customer-ID-derived, NOT a phone/call-ANI);
+  **SW-140** → unsupported (cross-tab: Answering Machine is OUTBOUND only — Honda 109 / Nissan 1 /
+  Ford 16; ZERO inbound); **SW-132** pending only with its EXTERNAL business-hours calendar
+  recorded; **SW-012** → other_source (origination+staffing; Leads-evaluated); **SW-179/239/256**
+  → nlp; **SW-033/034/057/214** → other_source; **SW-290** → insufficient_history; Service-bearing
+  **SW-118/199/223–227/263** + compliance **SW-188–192** → outside_sales_boundary.
 - The admitted derivative emits NO `Lead Created Date`, phone/email, opens/clicks, CRM login,
-  sold/vehicle/deal outcome, or content meaning — so lead-origination first-response, contact
-  validity, engagement-open, login, and outcome-join metrics are all not-ready. Message meaning
-  is NEVER inferred from `content_length`/`presence`.
+  sold/vehicle/deal outcome, or content meaning. Message meaning is NEVER inferred from
+  `content_length`/`presence`.
 
 ## B. Provenance hardening (shadow findings)
 
@@ -54,11 +63,15 @@ unavailable input**.
 
 ## Adversarial tests proving each repaired case fails closed
 
-`src/test/comm-capability-delta.test.ts` (sentinels — every named false-ready class):
-`definition_compatible_now == []`; `semantic_definition_pending` is exactly the 14; SW-003/007/
-091 → unsupported; SW-025/233/234/235 → unsupported; SW-021/075/153/157/185/206/287 → nlp;
-SW-056/094/180/182/198 → other_source; SW-261/262/295 → insufficient_history; SW-015 →
-other_source (not superseding Leads); **SW-176 is NOT outside_sales_boundary** (→ nlp).
+`src/test/comm-capability-delta.test.ts`: the decision table enumerates exactly SW-001..SW-295
+(sequential, unique); every row is `decided_by: "explicit"` (no fallback path); every
+`admitted_fields_satisfying` value is a real `DERIVATIVE_SCHEMA_FIELDS` field and not-ready rows
+list none. Sentinels — `definition_compatible_now == []`; `semantic_definition_pending` is
+exactly the 12; SW-019 uses one governed week; SW-089 has empty fields (person_token is not a
+phone identity); SW-140 rationale cites the 109/1/16 outbound-only cross-tab; SW-132 records its
+external business-hours calendar; SW-012 → other_source; SW-179/239/256 → nlp; SW-033/034/057/214
+→ other_source; SW-290 → insufficient_history; SW-118/199/223–227/263/188–192 →
+outside_sales_boundary; plus all first-shadow sentinels; **SW-176 is NOT outside_sales_boundary**.
 
 `src/test/comm-reader.test.ts` (provenance — each mutation throws): explicit `:443` source/report
 URL rejected + `hasExplicitPort` true; capture-ID rooftop mutation → `capture_id rooftop`;
