@@ -1,0 +1,73 @@
+{
+  "artifact": "gate4i-customer-safe-observations",
+  "revision": "I1",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "governed_rooftops": ["21043", "21044", "21047"],
+  "scope_note": "Sales-only, aggregate-only, read-only. These are supplemental measured observations for the governed week — NOT scored or ranked watchdog metrics. They describe recoverable lead-response opportunity only; no cars-sold or ROI estimate is made (no accepted same-period close-rate denominator or formula exists). No rep names or customer identities are included.",
+  "claim_layer_separation": {
+    "observed_fact": "A figure computed directly from accepted read-only evidence for the governed week that is NOT a scored or ranked watchdog result, because the metric’s committed spec is unresolved (held) and no ratified baseline/rank exists. It is real measured evidence, reported transparently, but is never presented as an evaluated metric, a score, a rank, or a variance-versus-target.",
+    "inference": "A defensible conclusion drawn FROM the observed facts (e.g. a recoverable opportunity). Interpretation, never a measurement or a promise.",
+    "hypothesis": "A plausible but unverified explanation that needs more evidence before action. Never presented as fact."
+  },
+  "withheld": {
+    "score_rank_variance": "Withheld pending a ratified baseline / minimum-sample / rank rule for SW-013, SW-016 and SW-017. Missing baseline is not missing data and is never zero."
+  },
+  "observations": [
+    {
+      "dealer_id": "21043",
+      "dealer": "Serra Honda of Sylacauga",
+      "status": "measured this period; supplemental context, NOT a scored watchdog metric",
+      "observed_fact": [
+        "Average first response to good Sales leads was 6 minutes 9 seconds this period.",
+        "57% of good Sales leads were first answered more than 30 minutes after they became actionable.",
+        "33% were first answered within 15 minutes.",
+        "Among good Sales leads that arrived after hours and were later answered, 25.9% were first answered more than 15 minutes into the next business window.",
+        "Every good Sales lead received a response this period; none went unanswered."
+      ],
+      "inference": [
+        "A majority of good Sales leads waited more than 30 minutes for a first response, which is a recoverable lead-response opportunity within the team’s control."
+      ],
+      "hypothesis": []
+    },
+    {
+      "dealer_id": "21044",
+      "dealer": "Serra Nissan of Sylacauga",
+      "status": "measured this period; supplemental context, NOT a scored watchdog metric",
+      "observed_fact": [
+        "Average first response to good Sales leads was 7 minutes 27 seconds this period.",
+        "55% of good Sales leads were first answered more than 30 minutes after they became actionable.",
+        "41% were first answered within 15 minutes.",
+        "Among good Sales leads that arrived after hours and were later answered, 70% were first answered more than 15 minutes into the next business window.",
+        "Every good Sales lead received a response this period; none went unanswered."
+      ],
+      "inference": [
+        "A majority of good Sales leads waited more than 30 minutes for a first response, which is a recoverable lead-response opportunity within the team’s control.",
+        "Average first-response time was slower than the previous 30 days (7 minutes 27 seconds versus 7 minutes 9 seconds), a deterioration worth attention."
+      ],
+      "hypothesis": [
+        "Response speed looks split: many leads are answered quickly while a majority still wait more than 30 minutes. Confirming this pattern needs a fuller per-lead timing view.",
+        "Strong within-15-minute performance alongside a high after-hours late-answer share may point to an after-hours coverage gap rather than overall slowness; confirming this needs after-hours coverage evidence.",
+        "A slower average than the prior period may reflect a recent staffing or process change; confirming a trend needs more than one week of comparable history."
+      ]
+    },
+    {
+      "dealer_id": "21047",
+      "dealer": "Tony Serra Ford",
+      "status": "measured this period; supplemental context, NOT a scored watchdog metric",
+      "observed_fact": [
+        "Average first response to good Sales leads was 8 minutes 24 seconds this period.",
+        "63% of good Sales leads were first answered more than 30 minutes after they became actionable.",
+        "37% were first answered within 15 minutes.",
+        "Among good Sales leads that arrived after hours and were later answered, 42.9% were first answered more than 15 minutes into the next business window.",
+        "Every good Sales lead received a response this period; none went unanswered."
+      ],
+      "inference": [
+        "A majority of good Sales leads waited more than 30 minutes for a first response, which is a recoverable lead-response opportunity within the team’s control.",
+        "Average first-response time was slower than the previous 30 days (8 minutes 24 seconds versus 6 minutes 21 seconds), a deterioration worth attention."
+      ],
+      "hypothesis": [
+        "A slower average than the prior period may reflect a recent staffing or process change; confirming a trend needs more than one week of comparable history."
+      ]
+    }
+  ]
+}
