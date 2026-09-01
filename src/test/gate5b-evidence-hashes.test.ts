@@ -34,8 +34,8 @@ function parseRecordedHashes(): Array<{ file: string; hash: string }> {
 describe('Gate 5B evidence hashes', () => {
   const recorded = parseRecordedHashes()
 
-  it('records twelve artifact/source hashes', () => {
-    expect(recorded).toHaveLength(12)
+  it('records sixteen artifact/source hashes', () => {
+    expect(recorded).toHaveLength(16)
     for (const r of recorded) expect(r.hash).toMatch(HASH16)
   })
 

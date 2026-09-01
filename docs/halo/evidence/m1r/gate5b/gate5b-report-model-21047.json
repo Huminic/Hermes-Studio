@@ -1,0 +1,2346 @@
+{
+  "artifact": "gate5b-report-model",
+  "revision": "L2",
+  "accepted_week": "2026-08-24..2026-08-30",
+  "built_from": [
+    "gate5b-synthesis-21047.json",
+    "gate5b-customer-appendix-295x3.json (this dealer partition)"
+  ],
+  "built_without": [
+    "gate5b-internal-audit.json",
+    "Gate 5A ledgers",
+    "raw evidence"
+  ],
+  "dealer_id": "21047",
+  "coverage": 295,
+  "evaluated": [
+    {
+      "claim": "fact",
+      "metric_id": "SW-011",
+      "label": "Median first-response time (business hours)",
+      "value": 4.5,
+      "value_display": "4.5 min",
+      "unit": "minutes",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 10,
+        "value_display": "10 min",
+        "comparator": ">",
+        "direction": "lower_is_better"
+      },
+      "variance": {
+        "native": -5.5,
+        "display": "-5.5 min"
+      },
+      "rating": "healthy",
+      "peer_rank": {
+        "rank": 2,
+        "tie": false,
+        "of": 3
+      },
+      "confidence": "medium",
+      "evidence": {
+        "source": "CRM lead report",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 12,
+        "denominator": 32
+      },
+      "industry_reference": {
+        "publisher": "Pied Piper",
+        "usage": "reference_only",
+        "note": "shown for context only; not used to score this metric"
+      },
+      "text": "Median first-response time (business hours): 4.5 min (target at or below 10 min; on target; middle of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-012",
+      "label": "Leads with no tracked response within 30 minutes",
+      "value": 0.03125,
+      "value_display": "3.1%",
+      "unit": "ratio_0_1",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0,
+        "value_display": "0%",
+        "comparator": ">",
+        "direction": "lower_is_better"
+      },
+      "variance": {
+        "native": 0.03125,
+        "display": "+3.1 pp"
+      },
+      "rating": "breach",
+      "peer_rank": {
+        "rank": 1,
+        "tie": false,
+        "of": 3
+      },
+      "confidence": "medium",
+      "evidence": {
+        "source": "CRM lead report",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 1,
+        "denominator": 32
+      },
+      "industry_reference": null,
+      "text": "Leads with no tracked response within 30 minutes: 3.1% (target at or below 0%; off target; strongest of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-015",
+      "label": "Rep first-response outliers vs the store median",
+      "value": 0.6666666666666666,
+      "value_display": "66.7%",
+      "unit": "ratio_0_1",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0,
+        "value_display": "0%",
+        "comparator": ">",
+        "direction": "lower_is_better"
+      },
+      "variance": {
+        "native": 0.6666666666666666,
+        "display": "+66.7 pp"
+      },
+      "rating": "breach",
+      "peer_rank": {
+        "rank": 2,
+        "tie": false,
+        "of": 3
+      },
+      "confidence": "low",
+      "evidence": {
+        "source": "CRM lead report",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 2,
+        "denominator": 3
+      },
+      "industry_reference": null,
+      "text": "Rep first-response outliers vs the store median: 66.7% (target at or below 0%; off target; middle of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-021",
+      "label": "Templated messages with no personalization",
+      "value": 0.125,
+      "value_display": "12.5%",
+      "unit": "ratio",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0,
+        "value_display": "0%",
+        "comparator": ">",
+        "direction": "lower_is_better"
+      },
+      "variance": {
+        "native": 0.125,
+        "display": "+12.5 pp"
+      },
+      "rating": "breach",
+      "peer_rank": {
+        "rank": 1,
+        "tie": false,
+        "of": 3
+      },
+      "confidence": "low",
+      "evidence": {
+        "source": "CRM messaging log",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 1,
+        "denominator": 8
+      },
+      "industry_reference": null,
+      "text": "Templated messages with no personalization: 12.5% (target at or below 0%; off target; strongest of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-022",
+      "label": "Text-vs-call balance (voice avoidance)",
+      "value": 0.2857142857142857,
+      "value_display": "28.6%",
+      "unit": "ratio",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0,
+        "value_display": "0%",
+        "comparator": ">",
+        "direction": "lower_is_better"
+      },
+      "variance": {
+        "native": 0.2857142857142857,
+        "display": "+28.6 pp"
+      },
+      "rating": "breach",
+      "peer_rank": {
+        "rank": 2,
+        "tie": false,
+        "of": 3
+      },
+      "confidence": "low",
+      "evidence": {
+        "source": "CRM messaging log",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 2,
+        "denominator": 7
+      },
+      "industry_reference": null,
+      "text": "Text-vs-call balance (voice avoidance): 28.6% (target at or below 0%; off target; middle of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-133",
+      "label": "Customers sending 2+ messages before a reply",
+      "value": 0.01694915254237288,
+      "value_display": "1.7%",
+      "unit": "ratio",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0,
+        "value_display": "0%",
+        "comparator": ">",
+        "direction": "lower_is_better"
+      },
+      "variance": {
+        "native": 0.01694915254237288,
+        "display": "+1.7 pp"
+      },
+      "rating": "breach",
+      "peer_rank": {
+        "rank": 1,
+        "tie": false,
+        "of": 3
+      },
+      "confidence": "high",
+      "evidence": {
+        "source": "CRM messaging log",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 2,
+        "denominator": 118
+      },
+      "industry_reference": null,
+      "text": "Customers sending 2+ messages before a reply: 1.7% (target at or below 0%; off target; strongest of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-142",
+      "label": "Unfilled personalization tags in messages",
+      "value": 0,
+      "value_display": "0%",
+      "unit": "ratio",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0,
+        "value_display": "0%",
+        "comparator": ">",
+        "direction": "lower_is_better"
+      },
+      "variance": {
+        "native": 0,
+        "display": "0 pp"
+      },
+      "rating": "healthy",
+      "peer_rank": {
+        "rank": 1,
+        "tie": true,
+        "of": 3
+      },
+      "confidence": "high",
+      "evidence": {
+        "source": "CRM messaging log",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 0,
+        "denominator": 250
+      },
+      "industry_reference": null,
+      "text": "Unfilled personalization tags in messages: 0% (target at or below 0%; on target; strongest of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-145",
+      "label": "Same message reused across many customers",
+      "value": 0.004310344827586207,
+      "value_display": "0.4%",
+      "unit": "ratio",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0,
+        "value_display": "0%",
+        "comparator": ">",
+        "direction": "lower_is_better"
+      },
+      "variance": {
+        "native": 0.004310344827586207,
+        "display": "+0.4 pp"
+      },
+      "rating": "breach",
+      "peer_rank": {
+        "rank": 3,
+        "tie": false,
+        "of": 3
+      },
+      "confidence": "high",
+      "evidence": {
+        "source": "CRM messaging log",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 1,
+        "denominator": 232
+      },
+      "industry_reference": null,
+      "text": "Same message reused across many customers: 0.4% (target at or below 0%; off target; weakest of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-149",
+      "label": "Very short, low-effort replies",
+      "value": 0,
+      "value_display": "0%",
+      "unit": "ratio",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0,
+        "value_display": "0%",
+        "comparator": ">",
+        "direction": "lower_is_better"
+      },
+      "variance": {
+        "native": 0,
+        "display": "0 pp"
+      },
+      "rating": "healthy",
+      "peer_rank": {
+        "rank": 1,
+        "tie": false,
+        "of": 3
+      },
+      "confidence": "low",
+      "evidence": {
+        "source": "CRM messaging log",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 0,
+        "denominator": 8
+      },
+      "industry_reference": null,
+      "text": "Very short, low-effort replies: 0% (target at or below 0%; on target; strongest of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-150",
+      "label": "Link-only replies with no context",
+      "value": 0,
+      "value_display": "0%",
+      "unit": "ratio",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0,
+        "value_display": "0%",
+        "comparator": ">",
+        "direction": "lower_is_better"
+      },
+      "variance": {
+        "native": 0,
+        "display": "0 pp"
+      },
+      "rating": "healthy",
+      "peer_rank": {
+        "rank": 1,
+        "tie": true,
+        "of": 3
+      },
+      "confidence": "low",
+      "evidence": {
+        "source": "CRM messaging log",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 0,
+        "denominator": 8
+      },
+      "industry_reference": null,
+      "text": "Link-only replies with no context: 0% (target at or below 0%; on target; strongest of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-031",
+      "label": "Lead-to-appointment set rate",
+      "value": 0.15789473684210525,
+      "value_display": "15.8%",
+      "unit": "ratio_0_1",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0.25,
+        "value_display": "25%",
+        "comparator": "<",
+        "direction": "higher_is_better"
+      },
+      "variance": {
+        "native": -0.09210526315789475,
+        "display": "-9.2 pp"
+      },
+      "rating": "breach",
+      "peer_rank": {
+        "rank": 1,
+        "tie": false,
+        "of": 3
+      },
+      "confidence": "medium",
+      "evidence": {
+        "source": "CRM Sales report",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 6,
+        "denominator": 38
+      },
+      "industry_reference": {
+        "publisher": "Foureyes",
+        "usage": "reference_only",
+        "note": "shown for context only; not used to score this metric"
+      },
+      "text": "Lead-to-appointment set rate: 15.8% (target at or above 25%; off target; strongest of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-032",
+      "label": "Appointment show rate",
+      "value": 0.42857142857142855,
+      "value_display": "42.9%",
+      "unit": "ratio_0_1",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0.55,
+        "value_display": "55%",
+        "comparator": "<",
+        "direction": "higher_is_better"
+      },
+      "variance": {
+        "native": -0.1214285714285715,
+        "display": "-12.1 pp"
+      },
+      "rating": "breach",
+      "peer_rank": {
+        "rank": 2,
+        "tie": false,
+        "of": 3
+      },
+      "confidence": "low",
+      "evidence": {
+        "source": "CRM appointment report",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 3,
+        "denominator": 7
+      },
+      "industry_reference": {
+        "publisher": "Foureyes",
+        "usage": "reference_only",
+        "note": "shown for context only; not used to score this metric"
+      },
+      "text": "Appointment show rate: 42.9% (target at or above 55%; off target; middle of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-033",
+      "label": "Show-to-write rate",
+      "value": 0,
+      "value_display": "0%",
+      "unit": "ratio_0_1",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0.6,
+        "value_display": "60%",
+        "comparator": "<",
+        "direction": "higher_is_better"
+      },
+      "variance": {
+        "native": -0.6,
+        "display": "-60 pp"
+      },
+      "rating": "breach",
+      "peer_rank": {
+        "rank": 1,
+        "tie": true,
+        "of": 3
+      },
+      "confidence": "low",
+      "evidence": {
+        "source": "CRM Sales report",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 0,
+        "denominator": 2
+      },
+      "industry_reference": null,
+      "text": "Show-to-write rate: 0% (target at or above 60%; off target; strongest of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-041",
+      "label": "Appointment no-show rate",
+      "value": 0.5714285714285714,
+      "value_display": "57.1%",
+      "unit": "ratio_0_1",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0.45,
+        "value_display": "45%",
+        "comparator": ">",
+        "direction": "lower_is_better"
+      },
+      "variance": {
+        "native": 0.12142857142857139,
+        "display": "+12.1 pp"
+      },
+      "rating": "breach",
+      "peer_rank": {
+        "rank": 3,
+        "tie": false,
+        "of": 3
+      },
+      "confidence": "low",
+      "evidence": {
+        "source": "CRM appointment report",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 4,
+        "denominator": 7
+      },
+      "industry_reference": null,
+      "text": "Appointment no-show rate: 57.1% (target at or below 45%; off target; weakest of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-045",
+      "label": "Be-backs vs fresh-ups balance",
+      "value": 0.2727272727272727,
+      "value_display": "27.3%",
+      "unit": "ratio",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 1,
+        "value_display": "100%",
+        "comparator": ">",
+        "direction": "lower_is_better"
+      },
+      "variance": {
+        "native": -0.7272727272727273,
+        "display": "-72.7 pp"
+      },
+      "rating": "healthy",
+      "peer_rank": {
+        "rank": 3,
+        "tie": false,
+        "of": 3
+      },
+      "confidence": "low",
+      "evidence": {
+        "source": "CRM Sales report",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 3,
+        "denominator": 11
+      },
+      "industry_reference": null,
+      "text": "Be-backs vs fresh-ups balance: 27.3% (target at or below 100%; on target; weakest of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-046",
+      "label": "Test-drive completion rate",
+      "value": 0,
+      "value_display": "0%",
+      "unit": "ratio_0_1",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0.5,
+        "value_display": "50%",
+        "comparator": "<",
+        "direction": "higher_is_better"
+      },
+      "variance": {
+        "native": -0.5,
+        "display": "-50 pp"
+      },
+      "rating": "breach",
+      "peer_rank": {
+        "rank": 2,
+        "tie": true,
+        "of": 3
+      },
+      "confidence": "low",
+      "evidence": {
+        "source": "CRM Sales report",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 0,
+        "denominator": 14
+      },
+      "industry_reference": null,
+      "text": "Test-drive completion rate: 0% (target at or above 50%; off target; middle of the three rooftops)."
+    },
+    {
+      "claim": "fact",
+      "metric_id": "SW-090",
+      "label": "Leads unassigned past 2 hours",
+      "value": 0,
+      "value_display": "0%",
+      "unit": "ratio_0_1",
+      "operational_target": {
+        "kind": "operational_target",
+        "value": 0,
+        "value_display": "0%",
+        "comparator": ">",
+        "direction": "lower_is_better"
+      },
+      "variance": {
+        "native": 0,
+        "display": "0 pp"
+      },
+      "rating": "healthy",
+      "peer_rank": {
+        "rank": 1,
+        "tie": true,
+        "of": 3
+      },
+      "confidence": "medium",
+      "evidence": {
+        "source": "CRM lead report",
+        "period": {
+          "start": "2026-08-24",
+          "end": "2026-08-30"
+        },
+        "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+        "numerator": 0,
+        "denominator": 43
+      },
+      "industry_reference": null,
+      "text": "Leads unassigned past 2 hours: 0% (target at or below 0%; on target; strongest of the three rooftops)."
+    }
+  ],
+  "not_measured": [
+    {
+      "metric_id": "SW-001",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-002",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-003",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-004",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-005",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-006",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-007",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-008",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-009",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-010",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-013",
+      "measure": "Faster, fuller response coverage",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-014",
+      "measure": "Faster, fuller response coverage",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-016",
+      "measure": "Faster, fuller response coverage",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-017",
+      "measure": "Faster, fuller response coverage",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-018",
+      "measure": "Faster, fuller response coverage",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-019",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: an agreed exact rule and cut-off."
+    },
+    {
+      "metric_id": "SW-020",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-023",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-024",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-025",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-026",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: an agreed exact rule and cut-off."
+    },
+    {
+      "metric_id": "SW-027",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-028",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-029",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-030",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-034",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-035",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-036",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-037",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-038",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-039",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-040",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-042",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-043",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-044",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-047",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-048",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-049",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-050",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-051",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-052",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-053",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-054",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-055",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-056",
+      "measure": "Appointments, showroom, and deals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-057",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-058",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-059",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-060",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-061",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-062",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-063",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-064",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-065",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-066",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-067",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-068",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-069",
+      "measure": "Lead sources and marketing",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-070",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-071",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-072",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-073",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-074",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-075",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-076",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: an agreed exact rule and cut-off."
+    },
+    {
+      "metric_id": "SW-077",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-078",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-079",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-080",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-081",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-082",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-083",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-084",
+      "measure": "Compliance and call-center coverage",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: an agreed exact rule and cut-off."
+    },
+    {
+      "metric_id": "SW-085",
+      "measure": "Compliance and call-center coverage",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-086",
+      "measure": "Compliance and call-center coverage",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: an agreed exact rule and cut-off."
+    },
+    {
+      "metric_id": "SW-087",
+      "measure": "Compliance and call-center coverage",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-088",
+      "measure": "Compliance and call-center coverage",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-089",
+      "measure": "Compliance and call-center coverage",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-091",
+      "measure": "Data and CRM hygiene",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-092",
+      "measure": "Data and CRM hygiene",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-093",
+      "measure": "Data and CRM hygiene",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-094",
+      "measure": "Data and CRM hygiene",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-095",
+      "measure": "Data and CRM hygiene",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-096",
+      "measure": "Data and CRM hygiene",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-097",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-098",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-099",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-100",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-101",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-102",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-103",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-104",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-105",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-106",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-107",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-108",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-109",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-110",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-111",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-112",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-113",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-114",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-115",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-116",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-117",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-118",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-119",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-120",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-121",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-122",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-123",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-124",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-125",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-126",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-127",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-128",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-129",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-130",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-131",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-132",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: an agreed exact rule and cut-off."
+    },
+    {
+      "metric_id": "SW-134",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: an agreed exact rule and cut-off."
+    },
+    {
+      "metric_id": "SW-135",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-136",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-137",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: an agreed exact rule and cut-off."
+    },
+    {
+      "metric_id": "SW-138",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: an agreed exact rule and cut-off."
+    },
+    {
+      "metric_id": "SW-139",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-140",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-141",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-143",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-144",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-146",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-147",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-148",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-151",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-152",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-153",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-154",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-155",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-156",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-157",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-158",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-159",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-160",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-161",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-162",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-163",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-164",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-165",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-166",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-167",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-168",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-169",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-170",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-171",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-172",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-173",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-174",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-175",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-176",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-177",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-178",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-179",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-180",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-181",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-182",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-183",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-184",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-185",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-186",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-187",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-188",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-189",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-190",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-191",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-192",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-193",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-194",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-195",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-196",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-197",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-198",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-199",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-200",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-201",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-202",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-203",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-204",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-205",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-206",
+      "measure": "Conversation quality",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-207",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-208",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-209",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-210",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-211",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-212",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-213",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-214",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-215",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-216",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-217",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-218",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-219",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-220",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-221",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-222",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-223",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-224",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-225",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-226",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-227",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-228",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-229",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-230",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-231",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-232",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-233",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-234",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-235",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: one added data field in the weekly Sales export."
+    },
+    {
+      "metric_id": "SW-236",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-237",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-238",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-239",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-240",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-241",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-242",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-243",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-244",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-245",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-246",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-247",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-248",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-249",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-250",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-251",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-252",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-253",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-254",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-255",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-256",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-257",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-258",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-259",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-260",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-261",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-262",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-263",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-264",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
+    },
+    {
+      "metric_id": "SW-265",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-266",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-267",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
+    },
+    {
+      "metric_id": "SW-268",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
+    },
+    {
+      "metric_id": "SW-269",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
+    },
+    {
+      "metric_id": "SW-270",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-271",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-272",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
+    },
+    {
+      "metric_id": "SW-273",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
+    },
+    {
+      "metric_id": "SW-274",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
+    },
+    {
+      "metric_id": "SW-275",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
+    },
+    {
+      "metric_id": "SW-276",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a further addition to the accepted weekly Sales export."
+    },
+    {
+      "metric_id": "SW-277",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-278",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-279",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-280",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-281",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-282",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-283",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-284",
+      "measure": "Customer reactivation and opportunity mining",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-285",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-286",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-287",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-288",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: an agreed exact rule and cut-off."
+    },
+    {
+      "metric_id": "SW-289",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: adding message wording and tone review to the accepted Sales feed."
+    },
+    {
+      "metric_id": "SW-290",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-291",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    },
+    {
+      "metric_id": "SW-292",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-293",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: a second Sales report combined with the current one."
+    },
+    {
+      "metric_id": "SW-294",
+      "measure": "Separate operational domain",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: separate-domain reporting would require a separately governed analysis."
+    },
+    {
+      "metric_id": "SW-295",
+      "measure": "Cross-functional and advanced signals",
+      "note": "Not measured this cycle",
+      "next_visibility_unlock": "Next visibility unlock: more than one week of accepted Sales history."
+    }
+  ]
+}

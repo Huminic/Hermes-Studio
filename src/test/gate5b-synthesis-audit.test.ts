@@ -8,6 +8,7 @@ import {
   assertRoleSafe,
   roiScenario,
 } from '@/server/reports/gate5b/synthesis'
+import { assembleCustomerReport } from '@/server/reports/gate5b/customer-report'
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url)
 const read = (p: string) => JSON.parse(fs.readFileSync(url(p), 'utf8'))
@@ -26,6 +27,7 @@ const AUDIT = read(`${G}/gate5b-internal-audit.json`)
 const COMPARISON = read(
   'docs/halo/evidence/m1r/gate5a/gate5a-evaluated-cell-comparison-ledger.json',
 )
+const RANK = read('docs/halo/evidence/m1r/gate5a/gate5a-peer-rank-ledger.json')
 
 const EVAL_17 = CLUSTERS.flatMap((c) => c.metric_ids)
 
@@ -301,5 +303,184 @@ describe('Gate 5B R1 — Sales-only boundary + narrowed SW-012 / SW-090 claims',
 
   it('internal audit is intentionally excluded from the customer scan', () => {
     expect(AUDIT.artifact).toBe('gate5b-internal-audit')
+  })
+})
+
+describe('Gate 5B R2 — standalone fact contract + typed claims', () => {
+  const clone = (x: any) => JSON.parse(JSON.stringify(x))
+  const partitionOf = (d: string) =>
+    APPENDIX.cells.filter((c: any) => c.dealer_id === d)
+
+  it('the reader module imports no Gate 5A / internal-audit / raw evidence', () => {
+    const src = fs.readFileSync(
+      url('src/server/reports/gate5b/customer-report.ts'),
+      'utf8',
+    )
+    expect(src).not.toMatch(/gate5a/i)
+    expect(src).not.toMatch(/internal-audit/i)
+    expect(src).not.toMatch(/spine-ledger|comparison-ledger|import .*residual/i)
+  })
+
+  it('assembles 17 structured evaluated facts + 278 not-measured per dealer from customer artifacts alone', () => {
+    for (const d of DEALERS) {
+      const model = assembleCustomerReport(BUNDLE[d], partitionOf(d))
+      expect(model.dealer_id).toBe(d)
+      expect(model.coverage).toBe(295)
+      expect(model.evaluated).toHaveLength(17)
+      expect(model.not_measured).toHaveLength(278)
+      // every evaluated fact is fully structured
+      for (const f of model.evaluated) {
+        expect(f.claim).toBe('fact')
+        expect(typeof f.value).toBe('number')
+        expect(f.value_display).toBeTruthy()
+        expect(f.operational_target.comparator).toBeTruthy()
+        expect(['higher_is_better', 'lower_is_better']).toContain(
+          f.operational_target.direction,
+        )
+        expect(typeof f.variance.native).toBe('number')
+        expect(typeof f.peer_rank.tie).toBe('boolean')
+        expect(['low', 'medium', 'high']).toContain(f.confidence)
+        expect(f.evidence.source).toMatch(/^CRM /)
+        expect(f.evidence.period.start).toBe('2026-08-24')
+        expect(f.evidence.freshness).toMatch(/weekly/)
+        expect(typeof f.evidence.numerator).toBe('number')
+      }
+      // not-measured stay missing (never zero) + retain friendly fields
+      for (const n of model.not_measured) {
+        expect(n.note).toBe('Not measured this cycle')
+        expect(n.next_visibility_unlock).toBeTruthy()
+        expect(Object.prototype.hasOwnProperty.call(n, 'value')).toBe(false)
+      }
+    }
+  })
+
+  it('the committed report-model artifacts match the reader output', () => {
+    for (const d of DEALERS) {
+      const committed = read(`${G}/gate5b-report-model-${d}.json`)
+      const model = assembleCustomerReport(BUNDLE[d], partitionOf(d))
+      expect(committed.evaluated).toEqual(model.evaluated)
+      expect(committed.not_measured).toEqual(model.not_measured)
+      expect(committed.coverage).toBe(295)
+    }
+  })
+
+  it('unchanged-value join: report-model values equal the committed Gate 5A values', () => {
+    const compBy = Object.fromEntries(
+      COMPARISON.records.map((r: any) => [`${r.metric_id}:${r.dealer_id}`, r]),
+    )
+    for (const d of DEALERS) {
+      const model = assembleCustomerReport(BUNDLE[d], partitionOf(d))
+      for (const f of model.evaluated) {
+        const c = compBy[`${f.metric_id}:${d}`]
+        expect(f.value).toBe(c.value)
+        expect(f.variance.native).toBe(c.native_variance)
+        expect(f.operational_target.value).toBe(c.comparison_basis.threshold)
+        expect(f.peer_rank.rank).toBe(
+          RANK.records
+            .find((r: any) => r.metric_id === f.metric_id)
+            .ranking.find((x: any) => x.dealer_id === d).rank,
+        )
+      }
+    }
+  })
+
+  it('the reader rejects duplicates, missing IDs, non-295 coverage, and incomplete facts', () => {
+    const d = '21043'
+    // missing one evaluated fact (16)
+    const short = clone(BUNDLE[d])
+    short.clusters[0].facts.pop()
+    expect(() => assembleCustomerReport(short, partitionOf(d))).toThrow()
+    // duplicate an evaluated fact
+    const dup = clone(BUNDLE[d])
+    dup.clusters[1].facts.push(dup.clusters[0].facts[0])
+    expect(() => assembleCustomerReport(dup, partitionOf(d))).toThrow()
+    // non-295 coverage (drop a not-measured cell)
+    const part = partitionOf(d)
+    const shortPart = part.filter(
+      (c: any, i: number) =>
+        !(c.status === 'not_measured' && i === part.length - 1),
+    )
+    expect(() => assembleCustomerReport(BUNDLE[d], shortPart)).toThrow()
+    // incomplete fact (strip operational_target)
+    const bad = clone(BUNDLE[d])
+    delete bad.clusters[0].facts[0].operational_target
+    expect(() => assembleCustomerReport(bad, partitionOf(d))).toThrow(
+      /not fully structured/i,
+    )
+    // not-measured carrying a value
+    const withVal = clone(partitionOf(d))
+    const nm = withVal.find((c: any) => c.status === 'not_measured')
+    nm.value = 0
+    expect(() => assembleCustomerReport(BUNDLE[d], withVal)).toThrow(
+      /never zero/i,
+    )
+  })
+
+  it('narratives and actions are typed claim objects; no untyped strings', () => {
+    for (const d of DEALERS) {
+      const ex = BUNDLE[d].executive_narrative
+      for (const k of [
+        'what_is_working',
+        'largest_controllable_opportunity',
+        'how_evidence_connects',
+      ]) {
+        expect(['fact', 'inference', 'hypothesis', 'recommendation']).toContain(
+          ex[k].claim,
+        )
+        expect(typeof ex[k].text).toBe('string')
+        expect(Array.isArray(ex[k].cites)).toBe(true)
+      }
+      for (const c of BUNDLE[d].clusters) {
+        expect(['inference', 'hypothesis']).toContain(c.narrative.claim)
+        expect(Array.isArray(c.narrative.cites)).toBe(true)
+        for (const a of c.actions) {
+          expect(a.claim).toBe('recommendation')
+          for (const k of [
+            'owner',
+            'cadence',
+            'success_measure',
+            'effort',
+            'impact',
+          ])
+            expect(a[k]).toBeTruthy()
+        }
+      }
+    }
+  })
+
+  it('every inference/hypothesis cites ≥2 metrics (or notes single-metric) and only evaluated IDs', () => {
+    for (const d of DEALERS) {
+      const evalIds = new Set<string>(
+        BUNDLE[d].clusters.flatMap((c: any) =>
+          c.facts.map((f: any) => f.metric_id),
+        ),
+      )
+      const claims = [
+        BUNDLE[d].executive_narrative.what_is_working,
+        BUNDLE[d].executive_narrative.largest_controllable_opportunity,
+        BUNDLE[d].executive_narrative.how_evidence_connects,
+        ...BUNDLE[d].clusters.map((c: any) => c.narrative),
+        ...BUNDLE[d].clusters.map((c: any) => c.implication),
+        ...BUNDLE[d].clusters.flatMap((c: any) => c.hypotheses),
+        ...BUNDLE[d].cross_cluster_synthesis,
+      ]
+      for (const cl of claims) {
+        for (const id of cl.cites) expect(evalIds.has(id)).toBe(true)
+        if (cl.claim === 'inference' || cl.claim === 'hypothesis')
+          expect(cl.cites.length >= 2 || /single-metric/i.test(cl.text)).toBe(
+            true,
+          )
+      }
+    }
+  })
+
+  it('the D hypothesis no longer says "write" (SW-033 not cited there)', () => {
+    for (const d of DEALERS) {
+      const dHyp = BUNDLE[d].clusters[3].hypotheses
+      for (const h of dHyp) {
+        if (!h.cites.includes('SW-033'))
+          expect(h.text.toLowerCase()).not.toContain('write')
+      }
+    }
   })
 })

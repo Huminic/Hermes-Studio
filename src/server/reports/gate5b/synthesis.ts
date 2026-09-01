@@ -117,8 +117,11 @@ export type MetricFact = {
   display_variance: string
   confidence: string
   rank: number
+  tie: boolean
   numerator: number
   denominator: number
+  reporting_period: { start: string; end: string }
+  source_family: string | null
   industry_reference_id: string | null
 }
 
@@ -129,6 +132,106 @@ export function valueDisplay(value: number, unit: string): string {
   if (unit === 'minutes') return `${Math.round(value * 10) / 10} min`
   if (unit.startsWith('ratio')) return pct(value)
   return String(Math.round(value * 1000) / 1000)
+}
+
+/** Map an internal source-family id to a customer-safe source label (no internal/CRM system names). */
+export function sourceLabel(family: string | null): string {
+  const f = (family ?? '').toLowerCase()
+  if (f.includes('communication') || f.includes('comm'))
+    return 'CRM messaging log'
+  if (f.includes('content')) return 'CRM message-content review'
+  if (f.includes('appointment')) return 'CRM appointment report'
+  if (f.includes('lead')) return 'CRM lead report'
+  return 'CRM Sales report'
+}
+
+/** Customer-safe freshness note for the accepted week. */
+export function freshnessNote(period: { start: string; end: string }): string {
+  return `weekly; accepted period ${period.start}..${period.end}`
+}
+
+const PUBLISHER_OF: Record<string, string> = {
+  'IB-FOUREYES-FUNNEL-Q1-2026': 'Foureyes',
+  'IB-FOUREYES-APPT-H2-2023': 'Foureyes',
+  'IB-FOUREYES-BENCH-2026': 'Foureyes',
+  'IB-PIEDPIPER-ILE-2026': 'Pied Piper',
+  'IB-NADA-DATA-2025': 'NADA',
+}
+
+/**
+ * The complete, standalone customer-safe fact for one evaluated metric-cell. This is the fact contract
+ * the report consumer reads WITHOUT joining Gate 5A or the internal audit. Values are the exact
+ * committed Gate 5A values.
+ */
+export type CustomerFact = {
+  claim: 'fact'
+  metric_id: string
+  label: string
+  value: number
+  value_display: string
+  unit: string
+  operational_target: {
+    kind: 'operational_target'
+    value: number
+    value_display: string
+    comparator: string
+    direction: 'higher_is_better' | 'lower_is_better'
+  }
+  variance: { native: number; display: string }
+  rating: Rating
+  peer_rank: { rank: number; tie: boolean; of: number }
+  confidence: string
+  evidence: {
+    source: string
+    period: { start: string; end: string }
+    freshness: string
+    numerator: number
+    denominator: number
+  }
+  industry_reference: {
+    publisher: string
+    usage: 'reference_only'
+    note: string
+  } | null
+  text: string
+}
+
+export function buildCustomerFact(f: MetricFact): CustomerFact {
+  return {
+    claim: 'fact',
+    metric_id: f.metric_id,
+    label: f.label,
+    value: f.value,
+    value_display: f.value_display,
+    unit: f.unit,
+    operational_target: {
+      kind: 'operational_target',
+      value: f.threshold,
+      value_display: f.threshold_display,
+      comparator: f.comparator,
+      direction: f.direction,
+    },
+    variance: { native: f.native_variance, display: f.display_variance },
+    rating: f.rating,
+    peer_rank: { rank: f.rank, tie: f.tie, of: 3 },
+    confidence: f.confidence,
+    evidence: {
+      source: sourceLabel(f.source_family),
+      period: f.reporting_period,
+      freshness: freshnessNote(f.reporting_period),
+      numerator: f.numerator,
+      denominator: f.denominator,
+    },
+    industry_reference: f.industry_reference_id
+      ? {
+          publisher:
+            PUBLISHER_OF[f.industry_reference_id] ?? 'industry publisher',
+          usage: 'reference_only',
+          note: 'shown for context only; not used to score this metric',
+        }
+      : null,
+    text: factLine(f),
+  }
 }
 
 /** A plain measured-fact sentence for one metric (the `fact` claim layer). */
@@ -158,6 +261,7 @@ export function ratingWord(r: Rating): string {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type Action = {
+  claim: 'recommendation'
   action: string
   owner: string
   cadence: string
@@ -165,18 +269,18 @@ export type Action = {
   effort: 'low' | 'medium' | 'high'
   impact: 'low' | 'medium' | 'high'
 }
+/** A typed customer-safe claim (fact / inference / hypothesis / recommendation). */
+export type TypedClaim = {
+  claim: 'fact' | 'inference' | 'hypothesis' | 'recommendation'
+  text: string
+  cites: Array<string>
+}
 export type ClusterBlock = {
   cluster: ClusterKey
   title: string
-  facts: Array<{
-    metric_id: string
-    claim: 'fact'
-    text: string
-    rating: Rating
-    rank: number
-  }>
+  facts: Array<CustomerFact>
   peer_rank: Array<{ metric_id: string; rank: number }>
-  narrative: string
+  narrative: TypedClaim
   implication: {
     claim: 'inference' | 'hypothesis'
     text: string
@@ -197,13 +301,7 @@ export function buildClusterBlock(
   clusterFacts: Array<MetricFact>,
 ): ClusterBlock {
   const m = byId(clusterFacts)
-  const facts = cluster.metric_ids.map((id) => ({
-    metric_id: id,
-    claim: 'fact' as const,
-    text: factLine(m[id]),
-    rating: m[id].rating,
-    rank: m[id].rank,
-  }))
+  const facts = cluster.metric_ids.map((id) => buildCustomerFact(m[id]))
   const built =
     cluster.key === 'A'
       ? clusterA(m)
@@ -221,10 +319,18 @@ export function buildClusterBlock(
       metric_id: id,
       rank: m[id].rank,
     })),
-    narrative: built.narrative,
+    // The cluster narrative is a bounded interpretation of the cluster's own measured facts.
+    narrative: {
+      claim: 'inference',
+      text: built.narrative,
+      cites: [...cluster.metric_ids],
+    },
     implication: built.implication,
     hypotheses: built.hypotheses,
-    actions: built.actions,
+    actions: built.actions.map((a) => ({
+      claim: 'recommendation' as const,
+      ...a,
+    })),
   }
 }
 
@@ -232,7 +338,7 @@ type Built = {
   narrative: string
   implication: ClusterBlock['implication']
   hypotheses: ClusterBlock['hypotheses']
-  actions: Array<Action>
+  actions: Array<Omit<Action, 'claim'>>
 }
 
 function clusterA(m: Record<string, MetricFact>): Built {
@@ -406,7 +512,7 @@ function clusterD(m: Record<string, MetricFact>): Built {
     hypotheses: [
       {
         claim: 'hypothesis',
-        text: 'A low or zero test-drive/write value may be a CRM logging habit rather than missing activity; confirm against the showroom log before drawing a performance conclusion.',
+        text: 'A low or zero test-drive value may be a CRM logging habit rather than missing showroom follow-through; confirm against the showroom log before drawing a performance conclusion.',
         cites: ['SW-046', 'SW-045'],
       },
     ],

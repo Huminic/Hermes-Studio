@@ -5,10 +5,22 @@
   "dealer_id": "21043",
   "dealer": "Serra Honda of Sylacauga",
   "executive_narrative": {
-    "what_is_working": "On target this period: Median first-response time (business hours); Appointment no-show rate; Be-backs vs fresh-ups balance; Leads unassigned past 2 hours.",
-    "largest_controllable_opportunity": "Lead-to-appointment set rate (Appointment conversion) is the largest controllable opportunity, weighing off-target severity, three-store peer position, and evidence confidence.",
-    "how_evidence_connects": "A healthy median response time sits alongside leads with no tracked response within the first 30 minutes and a below-target set rate: fast average speed is not translating into set appointments while some leads get no tracked response in the first 30 minutes.",
-    "claim_separation": "Facts are measured values; implications are inferences from ≥2 facts; hypotheses need more evidence; actions are recommendations."
+    "what_is_working": {
+      "claim": "inference",
+      "text": "On target this period: Median first-response time (business hours); Appointment no-show rate; Be-backs vs fresh-ups balance; Leads unassigned past 2 hours.",
+      "cites": ["SW-011", "SW-041", "SW-045", "SW-090"]
+    },
+    "largest_controllable_opportunity": {
+      "claim": "recommendation",
+      "text": "Lead-to-appointment set rate (Appointment conversion) is the largest controllable opportunity, weighing off-target severity, three-store peer position, and evidence confidence.",
+      "cites": ["SW-031"]
+    },
+    "how_evidence_connects": {
+      "claim": "inference",
+      "text": "A healthy median response time sits alongside leads with no tracked response within the first 30 minutes and a below-target set rate: fast average speed is not translating into set appointments while some leads get no tracked response in the first 30 minutes.",
+      "cites": ["SW-011", "SW-012", "SW-031"]
+    },
+    "claim_layers_legend": "fact = a measured value; inference = a bounded reading of the cited measurements; hypothesis = a testable explanation needing more evidence; recommendation = an action."
   },
   "clusters": [
     {
@@ -16,25 +28,122 @@
       "title": "Response consistency",
       "facts": [
         {
+          "claim": "fact",
           "metric_id": "SW-011",
-          "claim": "fact",
-          "text": "Median first-response time (business hours): 6 min (target at or below 10 min; on target; weakest of the three rooftops).",
+          "label": "Median first-response time (business hours)",
+          "value": 6,
+          "value_display": "6 min",
+          "unit": "minutes",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 10,
+            "value_display": "10 min",
+            "comparator": ">",
+            "direction": "lower_is_better"
+          },
+          "variance": {
+            "native": -4,
+            "display": "-4 min"
+          },
           "rating": "healthy",
-          "rank": 3
+          "peer_rank": {
+            "rank": 3,
+            "tie": false,
+            "of": 3
+          },
+          "confidence": "medium",
+          "evidence": {
+            "source": "CRM lead report",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 27,
+            "denominator": 76
+          },
+          "industry_reference": {
+            "publisher": "Pied Piper",
+            "usage": "reference_only",
+            "note": "shown for context only; not used to score this metric"
+          },
+          "text": "Median first-response time (business hours): 6 min (target at or below 10 min; on target; weakest of the three rooftops)."
         },
         {
+          "claim": "fact",
           "metric_id": "SW-012",
-          "claim": "fact",
-          "text": "Leads with no tracked response within 30 minutes: 19.7% (target at or below 0%; off target; weakest of the three rooftops).",
+          "label": "Leads with no tracked response within 30 minutes",
+          "value": 0.19736842105263158,
+          "value_display": "19.7%",
+          "unit": "ratio_0_1",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0,
+            "value_display": "0%",
+            "comparator": ">",
+            "direction": "lower_is_better"
+          },
+          "variance": {
+            "native": 0.19736842105263158,
+            "display": "+19.7 pp"
+          },
           "rating": "breach",
-          "rank": 3
+          "peer_rank": {
+            "rank": 3,
+            "tie": false,
+            "of": 3
+          },
+          "confidence": "medium",
+          "evidence": {
+            "source": "CRM lead report",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 15,
+            "denominator": 76
+          },
+          "industry_reference": null,
+          "text": "Leads with no tracked response within 30 minutes: 19.7% (target at or below 0%; off target; weakest of the three rooftops)."
         },
         {
-          "metric_id": "SW-015",
           "claim": "fact",
-          "text": "Rep first-response outliers vs the store median: 50% (target at or below 0%; off target; strongest of the three rooftops).",
+          "metric_id": "SW-015",
+          "label": "Rep first-response outliers vs the store median",
+          "value": 0.5,
+          "value_display": "50%",
+          "unit": "ratio_0_1",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0,
+            "value_display": "0%",
+            "comparator": ">",
+            "direction": "lower_is_better"
+          },
+          "variance": {
+            "native": 0.5,
+            "display": "+50 pp"
+          },
           "rating": "breach",
-          "rank": 1
+          "peer_rank": {
+            "rank": 1,
+            "tie": false,
+            "of": 3
+          },
+          "confidence": "low",
+          "evidence": {
+            "source": "CRM lead report",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 2,
+            "denominator": 4
+          },
+          "industry_reference": null,
+          "text": "Rep first-response outliers vs the store median: 50% (target at or below 0%; off target; strongest of the three rooftops)."
         }
       ],
       "peer_rank": [
@@ -51,7 +160,11 @@
           "rank": 1
         }
       ],
-      "narrative": "The store-average first-response time is 6 min, which reads on target — but that average hides inconsistency: 19.7% of business-hours leads had no tracked response within the first 30 minutes and rep first-response outliers are off target. A healthy median can coexist with leads that get no tracked response within the first 30 minutes, so average speed alone overstates coverage.",
+      "narrative": {
+        "claim": "inference",
+        "text": "The store-average first-response time is 6 min, which reads on target — but that average hides inconsistency: 19.7% of business-hours leads had no tracked response within the first 30 minutes and rep first-response outliers are off target. A healthy median can coexist with leads that get no tracked response within the first 30 minutes, so average speed alone overstates coverage.",
+        "cites": ["SW-011", "SW-012", "SW-015"]
+      },
       "implication": {
         "claim": "inference",
         "text": "Coaching to the store average would miss the real gap; the opportunity is even coverage of every lead, not a faster headline median.",
@@ -66,6 +179,7 @@
       ],
       "actions": [
         {
+          "claim": "recommendation",
           "action": "Stand up a daily sweep of leads with no tracked response yet, so no business-hours lead passes 30 minutes without a tracked first response.",
           "owner": "Sales Manager",
           "cadence": "daily",
@@ -80,53 +194,270 @@
       "title": "Conversation effectiveness",
       "facts": [
         {
+          "claim": "fact",
           "metric_id": "SW-021",
-          "claim": "fact",
-          "text": "Templated messages with no personalization: 18.2% (target at or below 0%; off target; middle of the three rooftops).",
+          "label": "Templated messages with no personalization",
+          "value": 0.18181818181818182,
+          "value_display": "18.2%",
+          "unit": "ratio",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0,
+            "value_display": "0%",
+            "comparator": ">",
+            "direction": "lower_is_better"
+          },
+          "variance": {
+            "native": 0.18181818181818182,
+            "display": "+18.2 pp"
+          },
           "rating": "breach",
-          "rank": 2
+          "peer_rank": {
+            "rank": 2,
+            "tie": false,
+            "of": 3
+          },
+          "confidence": "low",
+          "evidence": {
+            "source": "CRM messaging log",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 2,
+            "denominator": 11
+          },
+          "industry_reference": null,
+          "text": "Templated messages with no personalization: 18.2% (target at or below 0%; off target; middle of the three rooftops)."
         },
         {
+          "claim": "fact",
           "metric_id": "SW-022",
-          "claim": "fact",
-          "text": "Text-vs-call balance (voice avoidance): 10% (target at or below 0%; off target; strongest of the three rooftops).",
+          "label": "Text-vs-call balance (voice avoidance)",
+          "value": 0.1,
+          "value_display": "10%",
+          "unit": "ratio",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0,
+            "value_display": "0%",
+            "comparator": ">",
+            "direction": "lower_is_better"
+          },
+          "variance": {
+            "native": 0.1,
+            "display": "+10 pp"
+          },
           "rating": "breach",
-          "rank": 1
+          "peer_rank": {
+            "rank": 1,
+            "tie": false,
+            "of": 3
+          },
+          "confidence": "low",
+          "evidence": {
+            "source": "CRM messaging log",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 1,
+            "denominator": 10
+          },
+          "industry_reference": null,
+          "text": "Text-vs-call balance (voice avoidance): 10% (target at or below 0%; off target; strongest of the three rooftops)."
         },
         {
+          "claim": "fact",
           "metric_id": "SW-133",
-          "claim": "fact",
-          "text": "Customers sending 2+ messages before a reply: 3.6% (target at or below 0%; off target; weakest of the three rooftops).",
+          "label": "Customers sending 2+ messages before a reply",
+          "value": 0.03571428571428571,
+          "value_display": "3.6%",
+          "unit": "ratio",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0,
+            "value_display": "0%",
+            "comparator": ">",
+            "direction": "lower_is_better"
+          },
+          "variance": {
+            "native": 0.03571428571428571,
+            "display": "+3.6 pp"
+          },
           "rating": "breach",
-          "rank": 3
+          "peer_rank": {
+            "rank": 3,
+            "tie": false,
+            "of": 3
+          },
+          "confidence": "high",
+          "evidence": {
+            "source": "CRM messaging log",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 10,
+            "denominator": 280
+          },
+          "industry_reference": null,
+          "text": "Customers sending 2+ messages before a reply: 3.6% (target at or below 0%; off target; weakest of the three rooftops)."
         },
         {
+          "claim": "fact",
           "metric_id": "SW-142",
-          "claim": "fact",
-          "text": "Unfilled personalization tags in messages: 0% (target at or below 0%; on target; strongest of the three rooftops).",
+          "label": "Unfilled personalization tags in messages",
+          "value": 0,
+          "value_display": "0%",
+          "unit": "ratio",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0,
+            "value_display": "0%",
+            "comparator": ">",
+            "direction": "lower_is_better"
+          },
+          "variance": {
+            "native": 0,
+            "display": "0 pp"
+          },
           "rating": "healthy",
-          "rank": 1
+          "peer_rank": {
+            "rank": 1,
+            "tie": true,
+            "of": 3
+          },
+          "confidence": "high",
+          "evidence": {
+            "source": "CRM messaging log",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 0,
+            "denominator": 800
+          },
+          "industry_reference": null,
+          "text": "Unfilled personalization tags in messages: 0% (target at or below 0%; on target; strongest of the three rooftops)."
         },
         {
+          "claim": "fact",
           "metric_id": "SW-145",
-          "claim": "fact",
-          "text": "Same message reused across many customers: 0.4% (target at or below 0%; off target; middle of the three rooftops).",
+          "label": "Same message reused across many customers",
+          "value": 0.004103967168262654,
+          "value_display": "0.4%",
+          "unit": "ratio",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0,
+            "value_display": "0%",
+            "comparator": ">",
+            "direction": "lower_is_better"
+          },
+          "variance": {
+            "native": 0.004103967168262654,
+            "display": "+0.4 pp"
+          },
           "rating": "breach",
-          "rank": 2
+          "peer_rank": {
+            "rank": 2,
+            "tie": false,
+            "of": 3
+          },
+          "confidence": "high",
+          "evidence": {
+            "source": "CRM messaging log",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 3,
+            "denominator": 731
+          },
+          "industry_reference": null,
+          "text": "Same message reused across many customers: 0.4% (target at or below 0%; off target; middle of the three rooftops)."
         },
         {
+          "claim": "fact",
           "metric_id": "SW-149",
-          "claim": "fact",
-          "text": "Very short, low-effort replies: 18.2% (target at or below 0%; off target; weakest of the three rooftops).",
+          "label": "Very short, low-effort replies",
+          "value": 0.18181818181818182,
+          "value_display": "18.2%",
+          "unit": "ratio",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0,
+            "value_display": "0%",
+            "comparator": ">",
+            "direction": "lower_is_better"
+          },
+          "variance": {
+            "native": 0.18181818181818182,
+            "display": "+18.2 pp"
+          },
           "rating": "breach",
-          "rank": 3
+          "peer_rank": {
+            "rank": 3,
+            "tie": false,
+            "of": 3
+          },
+          "confidence": "low",
+          "evidence": {
+            "source": "CRM messaging log",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 2,
+            "denominator": 11
+          },
+          "industry_reference": null,
+          "text": "Very short, low-effort replies: 18.2% (target at or below 0%; off target; weakest of the three rooftops)."
         },
         {
-          "metric_id": "SW-150",
           "claim": "fact",
-          "text": "Link-only replies with no context: 0% (target at or below 0%; on target; strongest of the three rooftops).",
+          "metric_id": "SW-150",
+          "label": "Link-only replies with no context",
+          "value": 0,
+          "value_display": "0%",
+          "unit": "ratio",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0,
+            "value_display": "0%",
+            "comparator": ">",
+            "direction": "lower_is_better"
+          },
+          "variance": {
+            "native": 0,
+            "display": "0 pp"
+          },
           "rating": "healthy",
-          "rank": 1
+          "peer_rank": {
+            "rank": 1,
+            "tie": true,
+            "of": 3
+          },
+          "confidence": "low",
+          "evidence": {
+            "source": "CRM messaging log",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 0,
+            "denominator": 11
+          },
+          "industry_reference": null,
+          "text": "Link-only replies with no context: 0% (target at or below 0%; on target; strongest of the three rooftops)."
         }
       ],
       "peer_rank": [
@@ -159,7 +490,19 @@
           "rank": 1
         }
       ],
-      "narrative": "Messaging quality shows 5 flagged behaviors this period — Templated messages with no personalization, Text-vs-call balance (voice avoidance), Customers sending 2+ messages before a reply, Same message reused across many customers, Very short, low-effort replies. These are observed message patterns, not proven intent; taken together they point toward template reliance and low-effort or one-way replies.",
+      "narrative": {
+        "claim": "inference",
+        "text": "Messaging quality shows 5 flagged behaviors this period — Templated messages with no personalization, Text-vs-call balance (voice avoidance), Customers sending 2+ messages before a reply, Same message reused across many customers, Very short, low-effort replies. These are observed message patterns, not proven intent; taken together they point toward template reliance and low-effort or one-way replies.",
+        "cites": [
+          "SW-021",
+          "SW-022",
+          "SW-133",
+          "SW-142",
+          "SW-145",
+          "SW-149",
+          "SW-150"
+        ]
+      },
       "implication": {
         "claim": "inference",
         "text": "Two or more messaging flags together suggest reps lean on templates and text over personalized, two-way conversation — a coachable quality gap, not a volume gap.",
@@ -174,6 +517,7 @@
       ],
       "actions": [
         {
+          "claim": "recommendation",
           "action": "Run a weekly message-quality review: personalize the opening, balance text with a call attempt, and replace link-only replies with a question.",
           "owner": "Sales Manager",
           "cadence": "weekly",
@@ -188,32 +532,164 @@
       "title": "Appointment conversion",
       "facts": [
         {
+          "claim": "fact",
           "metric_id": "SW-031",
-          "claim": "fact",
-          "text": "Lead-to-appointment set rate: 10.9% (target at or above 25%; off target; weakest of the three rooftops).",
+          "label": "Lead-to-appointment set rate",
+          "value": 0.10869565217391304,
+          "value_display": "10.9%",
+          "unit": "ratio_0_1",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0.25,
+            "value_display": "25%",
+            "comparator": "<",
+            "direction": "higher_is_better"
+          },
+          "variance": {
+            "native": -0.14130434782608697,
+            "display": "-14.1 pp"
+          },
           "rating": "breach",
-          "rank": 3
+          "peer_rank": {
+            "rank": 3,
+            "tie": false,
+            "of": 3
+          },
+          "confidence": "medium",
+          "evidence": {
+            "source": "CRM Sales report",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 10,
+            "denominator": 92
+          },
+          "industry_reference": {
+            "publisher": "Foureyes",
+            "usage": "reference_only",
+            "note": "shown for context only; not used to score this metric"
+          },
+          "text": "Lead-to-appointment set rate: 10.9% (target at or above 25%; off target; weakest of the three rooftops)."
         },
         {
+          "claim": "fact",
           "metric_id": "SW-032",
-          "claim": "fact",
-          "text": "Appointment show rate: 57.1% (target at or above 55%; near the target line; strongest of the three rooftops).",
+          "label": "Appointment show rate",
+          "value": 0.5714285714285714,
+          "value_display": "57.1%",
+          "unit": "ratio_0_1",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0.55,
+            "value_display": "55%",
+            "comparator": "<",
+            "direction": "higher_is_better"
+          },
+          "variance": {
+            "native": 0.021428571428571352,
+            "display": "+2.1 pp"
+          },
           "rating": "watch",
-          "rank": 1
+          "peer_rank": {
+            "rank": 1,
+            "tie": false,
+            "of": 3
+          },
+          "confidence": "low",
+          "evidence": {
+            "source": "CRM appointment report",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 8,
+            "denominator": 14
+          },
+          "industry_reference": {
+            "publisher": "Foureyes",
+            "usage": "reference_only",
+            "note": "shown for context only; not used to score this metric"
+          },
+          "text": "Appointment show rate: 57.1% (target at or above 55%; near the target line; strongest of the three rooftops)."
         },
         {
+          "claim": "fact",
           "metric_id": "SW-033",
-          "claim": "fact",
-          "text": "Show-to-write rate: 0% (target at or above 60%; off target; strongest of the three rooftops).",
+          "label": "Show-to-write rate",
+          "value": 0,
+          "value_display": "0%",
+          "unit": "ratio_0_1",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0.6,
+            "value_display": "60%",
+            "comparator": "<",
+            "direction": "higher_is_better"
+          },
+          "variance": {
+            "native": -0.6,
+            "display": "-60 pp"
+          },
           "rating": "breach",
-          "rank": 1
+          "peer_rank": {
+            "rank": 1,
+            "tie": true,
+            "of": 3
+          },
+          "confidence": "low",
+          "evidence": {
+            "source": "CRM Sales report",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 0,
+            "denominator": 8
+          },
+          "industry_reference": null,
+          "text": "Show-to-write rate: 0% (target at or above 60%; off target; strongest of the three rooftops)."
         },
         {
-          "metric_id": "SW-041",
           "claim": "fact",
-          "text": "Appointment no-show rate: 35.7% (target at or below 45%; on target; strongest of the three rooftops).",
+          "metric_id": "SW-041",
+          "label": "Appointment no-show rate",
+          "value": 0.35714285714285715,
+          "value_display": "35.7%",
+          "unit": "ratio_0_1",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0.45,
+            "value_display": "45%",
+            "comparator": ">",
+            "direction": "lower_is_better"
+          },
+          "variance": {
+            "native": -0.09285714285714286,
+            "display": "-9.3 pp"
+          },
           "rating": "healthy",
-          "rank": 1
+          "peer_rank": {
+            "rank": 1,
+            "tie": false,
+            "of": 3
+          },
+          "confidence": "low",
+          "evidence": {
+            "source": "CRM appointment report",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 5,
+            "denominator": 14
+          },
+          "industry_reference": null,
+          "text": "Appointment no-show rate: 35.7% (target at or below 45%; on target; strongest of the three rooftops)."
         }
       ],
       "peer_rank": [
@@ -234,7 +710,11 @@
           "rank": 1
         }
       ],
-      "narrative": "Across the appointment funnel this period: lead-to-set is 10.9% (off target, target 25%+), show rate is 57.1% (near the target line), no-show rate is 35.7% (on target), and show-to-write is 0% (off target). The show rate is measured over every appointment row this period (its accepted formula counts shows over all appointment rows), so it is not the same denominator as an industry appointments-set benchmark.",
+      "narrative": {
+        "claim": "inference",
+        "text": "Across the appointment funnel this period: lead-to-set is 10.9% (off target, target 25%+), show rate is 57.1% (near the target line), no-show rate is 35.7% (on target), and show-to-write is 0% (off target). The show rate is measured over every appointment row this period (its accepted formula counts shows over all appointment rows), so it is not the same denominator as an industry appointments-set benchmark.",
+        "cites": ["SW-031", "SW-032", "SW-033", "SW-041"]
+      },
       "implication": {
         "claim": "inference",
         "text": "The largest controllable step here is getting more leads to a set appointment; show and write cannot compound on appointments that were never set.",
@@ -254,6 +734,7 @@
       ],
       "actions": [
         {
+          "claim": "recommendation",
           "action": "Tighten the set-and-confirm routine: a same-day appointment ask on every worked lead and a confirmation touch the day before.",
           "owner": "Sales Manager",
           "cadence": "daily",
@@ -268,25 +749,118 @@
       "title": "Showroom execution and ownership",
       "facts": [
         {
+          "claim": "fact",
           "metric_id": "SW-045",
-          "claim": "fact",
-          "text": "Be-backs vs fresh-ups balance: 8.3% (target at or below 100%; on target; middle of the three rooftops).",
+          "label": "Be-backs vs fresh-ups balance",
+          "value": 0.08333333333333333,
+          "value_display": "8.3%",
+          "unit": "ratio",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 1,
+            "value_display": "100%",
+            "comparator": ">",
+            "direction": "lower_is_better"
+          },
+          "variance": {
+            "native": -0.9166666666666666,
+            "display": "-91.7 pp"
+          },
           "rating": "healthy",
-          "rank": 2
+          "peer_rank": {
+            "rank": 2,
+            "tie": false,
+            "of": 3
+          },
+          "confidence": "medium",
+          "evidence": {
+            "source": "CRM Sales report",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 2,
+            "denominator": 24
+          },
+          "industry_reference": null,
+          "text": "Be-backs vs fresh-ups balance: 8.3% (target at or below 100%; on target; middle of the three rooftops)."
         },
         {
+          "claim": "fact",
           "metric_id": "SW-046",
-          "claim": "fact",
-          "text": "Test-drive completion rate: 0% (target at or above 50%; off target; middle of the three rooftops).",
+          "label": "Test-drive completion rate",
+          "value": 0,
+          "value_display": "0%",
+          "unit": "ratio_0_1",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0.5,
+            "value_display": "50%",
+            "comparator": "<",
+            "direction": "higher_is_better"
+          },
+          "variance": {
+            "native": -0.5,
+            "display": "-50 pp"
+          },
           "rating": "breach",
-          "rank": 2
+          "peer_rank": {
+            "rank": 2,
+            "tie": true,
+            "of": 3
+          },
+          "confidence": "medium",
+          "evidence": {
+            "source": "CRM Sales report",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 0,
+            "denominator": 26
+          },
+          "industry_reference": null,
+          "text": "Test-drive completion rate: 0% (target at or above 50%; off target; middle of the three rooftops)."
         },
         {
-          "metric_id": "SW-090",
           "claim": "fact",
-          "text": "Leads unassigned past 2 hours: 0% (target at or below 0%; on target; strongest of the three rooftops).",
+          "metric_id": "SW-090",
+          "label": "Leads unassigned past 2 hours",
+          "value": 0,
+          "value_display": "0%",
+          "unit": "ratio_0_1",
+          "operational_target": {
+            "kind": "operational_target",
+            "value": 0,
+            "value_display": "0%",
+            "comparator": ">",
+            "direction": "lower_is_better"
+          },
+          "variance": {
+            "native": 0,
+            "display": "0 pp"
+          },
           "rating": "healthy",
-          "rank": 1
+          "peer_rank": {
+            "rank": 1,
+            "tie": true,
+            "of": 3
+          },
+          "confidence": "high",
+          "evidence": {
+            "source": "CRM lead report",
+            "period": {
+              "start": "2026-08-24",
+              "end": "2026-08-30"
+            },
+            "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+            "numerator": 0,
+            "denominator": 119
+          },
+          "industry_reference": null,
+          "text": "Leads unassigned past 2 hours: 0% (target at or below 0%; on target; strongest of the three rooftops)."
         }
       ],
       "peer_rank": [
@@ -303,7 +877,11 @@
           "rank": 1
         }
       ],
-      "narrative": "Showroom execution this period: be-backs vs fresh-ups is 8.3% (on target), test-drive completion is 0% (off target), and lead assignment past 2 hours is 0% (on target). A zero test-drive value may reflect logging rather than activity — it does not prove no test-drives happened.",
+      "narrative": {
+        "claim": "inference",
+        "text": "Showroom execution this period: be-backs vs fresh-ups is 8.3% (on target), test-drive completion is 0% (off target), and lead assignment past 2 hours is 0% (on target). A zero test-drive value may reflect logging rather than activity — it does not prove no test-drives happened.",
+        "cites": ["SW-045", "SW-046", "SW-090"]
+      },
       "implication": {
         "claim": "inference",
         "text": "Assignment timeliness passed this specific two-hour check this period; later ownership and execution quality remain separate questions this report does not measure, so a soft follow-through signal is not attributed to any single cause here.",
@@ -312,12 +890,13 @@
       "hypotheses": [
         {
           "claim": "hypothesis",
-          "text": "A low or zero test-drive/write value may be a CRM logging habit rather than missing activity; confirm against the showroom log before drawing a performance conclusion.",
+          "text": "A low or zero test-drive value may be a CRM logging habit rather than missing showroom follow-through; confirm against the showroom log before drawing a performance conclusion.",
           "cites": ["SW-046", "SW-045"]
         }
       ],
       "actions": [
         {
+          "claim": "recommendation",
           "action": "Confirm test-drive and visit logging discipline at the desk, then coach to complete a test-drive on every showroom visit.",
           "owner": "Sales Manager",
           "cadence": "weekly",

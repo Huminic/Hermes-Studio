@@ -23,6 +23,7 @@ import { formatJsonFile } from '../m1r-evaluator/serialize'
 import type {
   MetricFact,
   RoiOperands,
+  TypedClaim,
   UnresolvedRow,
 } from '@/server/reports/gate5b/synthesis'
 import {
@@ -35,12 +36,15 @@ import {
   coverageExpansion,
   crossClusterInteractions,
   dealerName,
+  freshnessNote,
   notificationCandidates,
   pct,
   rankOpportunities,
   roiScenario,
+  sourceLabel,
   valueDisplay,
 } from '@/server/reports/gate5b/synthesis'
+import { assembleCustomerReport } from '@/server/reports/gate5b/customer-report'
 
 const REPO = process.cwd()
 const EV = path.join(REPO, 'docs/halo/evidence/m1r')
@@ -84,8 +88,13 @@ type CompRec = {
   display_variance: string
   rating: 'healthy' | 'watch' | 'breach'
   confidence: string
+  period: { start: string; end: string }
   industry_reference: { benchmark_id: string } | null
-  evidence_lineage: { numerator: number; denominator: number }
+  evidence_lineage: {
+    source_family: string | null
+    numerator: number
+    denominator: number
+  }
 }
 
 async function main(): Promise<void> {
@@ -122,6 +131,13 @@ async function main(): Promise<void> {
     for (const x of r.ranking)
       rankOf.set(`${r.metric_id}:${x.dealer_id}`, x.rank)
 
+  // Peer-rank tie per metric: a metric is tied when its three dealer ranks are not all distinct.
+  const tieOf = new Map<string, boolean>()
+  for (const r of rank.records) {
+    const ranks = r.ranking.map((x) => x.rank)
+    tieOf.set(r.metric_id, new Set(ranks).size !== ranks.length)
+  }
+
   // ── Build MetricFact per (metric, dealer) from committed comparison + rank (nothing recomputed) ──
   const factOf = new Map<string, MetricFact>()
   for (const c of comparison.records) {
@@ -142,8 +158,11 @@ async function main(): Promise<void> {
       display_variance: c.display_variance,
       confidence: c.confidence,
       rank: rankOf.get(`${c.metric_id}:${c.dealer_id}`)!,
+      tie: tieOf.get(c.metric_id) ?? false,
       numerator: c.evidence_lineage.numerator,
       denominator: c.evidence_lineage.denominator,
+      reporting_period: { start: c.period.start, end: c.period.end },
+      source_family: c.evidence_lineage.source_family ?? null,
       industry_reference_id: c.industry_reference?.benchmark_id ?? null,
     })
   }
@@ -210,27 +229,57 @@ async function main(): Promise<void> {
     roiScenarios.push(roi)
     for (const n of notificationCandidates(facts)) allNotif.set(n.metric_id, n)
 
-    // Executive narrative (deterministic; fact/inference separation).
-    const working = facts
-      .filter((f) => f.rating === 'healthy')
-      .map((f) => f.label)
+    // Executive narrative (deterministic; every entry is a typed claim with cited metric IDs).
+    const workingFacts = facts.filter((f) => f.rating === 'healthy')
+    const workingIds = workingFacts.map((f) => f.metric_id)
     const topOpp = opportunities[0]
     const topInteraction = interactions[0]
+    const opp2 = opportunities.slice(0, 2).map((o) => o.metric_id)
+    const whatIsWorking: TypedClaim =
+      workingFacts.length >= 2
+        ? {
+            claim: 'inference',
+            text: `On target this period: ${workingFacts
+              .slice(0, 4)
+              .map((f) => f.label)
+              .join('; ')}.`,
+            cites: workingIds.slice(0, 4),
+          }
+        : workingFacts.length === 1
+          ? {
+              claim: 'fact',
+              text: `${workingFacts[0].label} is on target this period (single-metric observation).`,
+              cites: workingIds,
+            }
+          : {
+              claim: 'inference',
+              text: 'No metric is fully on target this period; the fastest controllable wins are in response coverage and appointment setting.',
+              cites: opp2,
+            }
     const exec = {
-      what_is_working:
-        working.length > 0
-          ? `On target this period: ${working.slice(0, 4).join('; ')}.`
-          : 'No metric is fully on target this period; the fastest wins are in response coverage and appointment setting.',
-      largest_controllable_opportunity:
-        opportunities.length > 0
-          ? `${topOpp.label} (${clusterTitle(topOpp.cluster)}) is the largest controllable opportunity, weighing off-target severity, three-store peer position, and evidence confidence.`
-          : 'Maintain current performance; no off-target signal dominates.',
+      what_is_working: whatIsWorking,
+      largest_controllable_opportunity: {
+        claim: 'recommendation',
+        text:
+          opportunities.length > 0
+            ? `${topOpp.label} (${clusterTitle(topOpp.cluster)}) is the largest controllable opportunity, weighing off-target severity, three-store peer position, and evidence confidence.`
+            : 'Maintain current performance; no off-target signal dominates.',
+        cites: opportunities.length > 0 ? [topOpp.metric_id] : [],
+      } as TypedClaim,
       how_evidence_connects:
         interactions.length > 0
-          ? topInteraction.text
-          : 'The four clusters move together this period without a dominant cross-cluster interaction.',
-      claim_separation:
-        'Facts are measured values; implications are inferences from ≥2 facts; hypotheses need more evidence; actions are recommendations.',
+          ? {
+              claim: topInteraction.claim,
+              text: topInteraction.text,
+              cites: topInteraction.cites,
+            }
+          : {
+              claim: 'inference',
+              text: 'The four clusters move together this period without a dominant cross-cluster interaction.',
+              cites: opp2,
+            },
+      claim_layers_legend:
+        'fact = a measured value; inference = a bounded reading of the cited measurements; hypothesis = a testable explanation needing more evidence; recommendation = an action.',
     }
 
     // Cross-dealer opportunity aggregation.
@@ -318,12 +367,16 @@ async function main(): Promise<void> {
           target: f.threshold_display,
           variance: f.display_variance,
           peer_rank: f.rank,
+          peer_tie: f.tie,
           standing:
             f.rating === 'healthy'
               ? 'on target'
               : f.rating === 'watch'
                 ? 'near target'
                 : 'off target',
+          confidence: f.confidence,
+          source: sourceLabel(f.source_family),
+          freshness: freshnessNote(f.reporting_period),
           evidence: { count: f.numerator, of: f.denominator },
         })
       } else {
@@ -448,6 +501,39 @@ async function main(): Promise<void> {
       cells: appendixCells,
     }),
   )
+  // Standalone-consumer proof: build each dealer's full report model from the customer bundle + that
+  // dealer's appendix partition ALONE (via the exported reader that imports no Gate 5A / internal file).
+  for (const d of DEALERS) {
+    const partition = appendixCells.filter((c) => c.dealer_id === d)
+    const model = assembleCustomerReport(
+      bundles[d],
+      partition as Parameters<typeof assembleCustomerReport>[1],
+    )
+    must(
+      model.coverage === 295 &&
+        model.evaluated.length === 17 &&
+        model.not_measured.length === 278,
+      `${d} report model coverage ${model.coverage} / ${model.evaluated.length} / ${model.not_measured.length}`,
+    )
+    paths.push(
+      await write(`gate5b-report-model-${d}.json`, {
+        artifact: 'gate5b-report-model',
+        revision: 'L2',
+        accepted_week: ACCEPTED_WEEK,
+        built_from: [
+          `gate5b-synthesis-${d}.json`,
+          'gate5b-customer-appendix-295x3.json (this dealer partition)',
+        ],
+        built_without: [
+          'gate5b-internal-audit.json',
+          'Gate 5A ledgers',
+          'raw evidence',
+        ],
+        ...model,
+      }),
+    )
+  }
+
   // Internal audit (retains technical lineage; NOT customer-facing).
   paths.push(
     await write('gate5b-internal-audit.json', {

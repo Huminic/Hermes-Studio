@@ -1,6 +1,29 @@
 # PROOF DELTA L — Gate 5B customer-facing consultant synthesis
 
-**Gate:** 5B · **Revision:** L2 (R1 corrective) · **Accepted week:** 2026-08-24..2026-08-30 (America/New_York)
+**Gate:** 5B · **Revision:** L3 (R2 corrective) · **Accepted week:** 2026-08-24..2026-08-30 (America/New_York)
+
+> **R2 corrective (standalone consumer contract + typed claims).** (3) **Standalone complete fact
+> contract.** Each dealer bundle's `clusters[].facts[]` is now a full `CustomerFact` (metric_id,
+> customer label, exact Gate 5A value + display, unit, operational target with comparator/direction,
+> native + display variance, rating, peer rank + tie, confidence, customer-safe source + freshness +
+> period, numerator/denominator, and reference-only industry context when present). The 295×3 appendix
+> evaluated cells add confidence + customer-safe source + freshness; not-measured cells stay missing
+> (no value) with friendly reason/unlock. A new **standalone reader** (`customer-report.ts`) assembles
+> the full per-dealer model from the bundle + that dealer's appendix partition ALONE — it imports no
+> Gate 5A / internal-audit / raw evidence — returning 17 fully-structured evaluated facts + 278
+> not-measured, and failing closed on duplicates / missing IDs / non-295 coverage / incomplete facts /
+> a not-measured value. Three `gate5b-report-model-<dealer>.json` artifacts are emitted by that reader
+> as standalone-consumer evidence; this is the only input contract the PDF generator will consume.
+> (4) **Typed claim layers.** The executive narrative and every cluster narrative are now typed claim
+> objects (claim / text / cites); actions carry `claim: recommendation` with owner/cadence/
+> success_measure/effort/impact. Every inference/hypothesis cites ≥2 evaluated metrics or explicitly
+> notes a single-metric observation, and every cited ID is present in that dealer's evaluated fact set.
+> The Cluster-D hypothesis no longer says "write" (SW-033 is not cited there) and uses bounded
+> "showroom follow-through" language for its SW-045/SW-046 citations. **No metric value, classification,
+> rank, target, benchmark mapping, ROI operand/arithmetic, notification activation, or the 51/834/885
+> accounting changed** (unchanged-value join proven in tests); Gate 5A and Gate 4H/4I/4J artifacts are
+> byte-identical; the `cross-dealer`, `notification`, `roi`, and `coverage` ledger bytes are unchanged
+> from R1. R1's Sales-only boundary and narrowed SW-012/SW-090 claims are preserved.
 
 > **R1 corrective (two customer-projection acceptance defects).** (1) **Permanent Sales-only boundary
 > in customer projection.** All customer-facing artifacts (per-dealer synthesis, coverage-expansion,
@@ -46,7 +69,7 @@ metrics, each metric appearing **exactly once**:
   Distinguishes observed message flags from inferred causes.
 - **C. Appointment conversion** — SW-031, SW-032, SW-033, SW-041. Connects set → show → no-show →
   write; separates follow-through / rep-quality / confirmation / logging as **hypotheses**, not faults.
-- **D. Showroom execution & ownership** — SW-045, SW-046, SW-090. A zero test-drive/write value is
+- **D. Showroom execution & ownership** — SW-045, SW-046, SW-090. A zero test-drive value is
   labeled a possible logging effect, never proof that no activity occurred.
 
 Each cluster carries measured facts (value, operational-target comparison, three-store peer rank),
@@ -104,18 +127,22 @@ each exactly once: **51 evaluated** (value / basis / variance / peer rank / evid
 
 | File                                                                        | sha256:16          |
 | --------------------------------------------------------------------------- | ------------------ |
-| `src/server/reports/gate5b/synthesis.ts`                                    | `3ca4599fb5c0d921` |
-| `scripts/m1r-gate5b/build-gate5b-synthesis.ts`                              | `46b3a7d43909b7a9` |
-| `src/test/gate5b-synthesis-audit.test.ts`                                   | `26813aa001d4d6fe` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21043.json`                 | `53a11256a53a2c75` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21044.json`                 | `2481cf069ccf8026` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21047.json`                 | `c76b57ebbf99a51c` |
+| `src/server/reports/gate5b/synthesis.ts`                                    | `f9cb51534be04690` |
+| `src/server/reports/gate5b/customer-report.ts`                              | `b600fdbec194756d` |
+| `scripts/m1r-gate5b/build-gate5b-synthesis.ts`                              | `0e7aad1783fd0578` |
+| `src/test/gate5b-synthesis-audit.test.ts`                                   | `e08d4fe39dbf9df4` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21043.json`                 | `b374c9b5ef00e0b0` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21044.json`                 | `8363881701a55bf3` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-synthesis-21047.json`                 | `5ae62ecdf34df5e5` |
 | `docs/halo/evidence/m1r/gate5b/gate5b-cross-dealer-opportunity-ledger.json` | `5367fb8b36b01a61` |
 | `docs/halo/evidence/m1r/gate5b/gate5b-notification-automation-ledger.json`  | `87f7cdc13bdd3537` |
 | `docs/halo/evidence/m1r/gate5b/gate5b-roi-scenario-ledger.json`             | `6a4e045c7f6a78e4` |
 | `docs/halo/evidence/m1r/gate5b/gate5b-coverage-expansion-plan.json`         | `d8787db62973be99` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-customer-appendix-295x3.json`         | `3f9dc793c30aba9a` |
-| `docs/halo/evidence/m1r/gate5b/gate5b-internal-audit.json`                  | `2a3ddf8e9e34de32` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-customer-appendix-295x3.json`         | `9ab999d645c00318` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-report-model-21043.json`              | `14cc22a0ffd57b9e` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-report-model-21044.json`              | `021bd8c87a57d091` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-report-model-21047.json`              | `38cadf50c53481be` |
+| `docs/halo/evidence/m1r/gate5b/gate5b-internal-audit.json`                  | `23b1306d7a789d34` |
 
 Each `sha256:16` is recomputed from the current committed bytes by
 `src/test/gate5b-evidence-hashes.test.ts`.

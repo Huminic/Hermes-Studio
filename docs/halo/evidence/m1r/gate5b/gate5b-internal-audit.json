@@ -20,8 +20,14 @@
       "display_variance": "-4 min",
       "confidence": "medium",
       "rank": 3,
+      "tie": false,
       "numerator": 27,
       "denominator": 76,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "vinsolutions_custom_reporting_leads",
       "industry_reference_id": "IB-PIEDPIPER-ILE-2026"
     },
     {
@@ -40,8 +46,14 @@
       "display_variance": "-6 min",
       "confidence": "medium",
       "rank": 1,
+      "tie": false,
       "numerator": 12,
       "denominator": 51,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "vinsolutions_custom_reporting_leads",
       "industry_reference_id": "IB-PIEDPIPER-ILE-2026"
     },
     {
@@ -60,8 +72,14 @@
       "display_variance": "-5.5 min",
       "confidence": "medium",
       "rank": 2,
+      "tie": false,
       "numerator": 12,
       "denominator": 32,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "vinsolutions_custom_reporting_leads",
       "industry_reference_id": "IB-PIEDPIPER-ILE-2026"
     },
     {
@@ -80,8 +98,14 @@
       "display_variance": "+19.7 pp",
       "confidence": "medium",
       "rank": 3,
+      "tie": false,
       "numerator": 15,
       "denominator": 76,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "vinsolutions_custom_reporting_leads",
       "industry_reference_id": null
     },
     {
@@ -100,8 +124,14 @@
       "display_variance": "+13.7 pp",
       "confidence": "medium",
       "rank": 2,
+      "tie": false,
       "numerator": 7,
       "denominator": 51,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "vinsolutions_custom_reporting_leads",
       "industry_reference_id": null
     },
     {
@@ -120,8 +150,14 @@
       "display_variance": "+3.1 pp",
       "confidence": "medium",
       "rank": 1,
+      "tie": false,
       "numerator": 1,
       "denominator": 32,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "vinsolutions_custom_reporting_leads",
       "industry_reference_id": null
     },
     {
@@ -140,8 +176,14 @@
       "display_variance": "+50 pp",
       "confidence": "low",
       "rank": 1,
+      "tie": false,
       "numerator": 2,
       "denominator": 4,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "vinsolutions_custom_reporting_leads",
       "industry_reference_id": null
     },
     {
@@ -160,8 +202,14 @@
       "display_variance": "+75 pp",
       "confidence": "low",
       "rank": 3,
+      "tie": false,
       "numerator": 3,
       "denominator": 4,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "vinsolutions_custom_reporting_leads",
       "industry_reference_id": null
     },
     {
@@ -180,8 +228,14 @@
       "display_variance": "+66.7 pp",
       "confidence": "low",
       "rank": 2,
+      "tie": false,
       "numerator": 2,
       "denominator": 3,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "vinsolutions_custom_reporting_leads",
       "industry_reference_id": null
     },
     {
@@ -200,8 +254,14 @@
       "display_variance": "+18.2 pp",
       "confidence": "low",
       "rank": 2,
+      "tie": false,
       "numerator": 2,
       "denominator": 11,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -220,8 +280,14 @@
       "display_variance": "+22.2 pp",
       "confidence": "low",
       "rank": 3,
+      "tie": false,
       "numerator": 2,
       "denominator": 9,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -240,8 +306,14 @@
       "display_variance": "+12.5 pp",
       "confidence": "low",
       "rank": 1,
+      "tie": false,
       "numerator": 1,
       "denominator": 8,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -260,8 +332,14 @@
       "display_variance": "+10 pp",
       "confidence": "low",
       "rank": 1,
+      "tie": false,
       "numerator": 1,
       "denominator": 10,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -280,8 +358,14 @@
       "display_variance": "+33.3 pp",
       "confidence": "low",
       "rank": 3,
+      "tie": false,
       "numerator": 3,
       "denominator": 9,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -300,8 +384,14 @@
       "display_variance": "+28.6 pp",
       "confidence": "low",
       "rank": 2,
+      "tie": false,
       "numerator": 2,
       "denominator": 7,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -320,8 +410,14 @@
       "display_variance": "-14.1 pp",
       "confidence": "medium",
       "rank": 3,
+      "tie": false,
       "numerator": 10,
       "denominator": 92,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "dealership_performance",
       "industry_reference_id": "IB-FOUREYES-FUNNEL-Q1-2026"
     },
     {
@@ -340,8 +436,14 @@
       "display_variance": "-9.5 pp",
       "confidence": "medium",
       "rank": 2,
+      "tie": false,
       "numerator": 9,
       "denominator": 58,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "dealership_performance",
       "industry_reference_id": "IB-FOUREYES-FUNNEL-Q1-2026"
     },
     {
@@ -360,8 +462,14 @@
       "display_variance": "-9.2 pp",
       "confidence": "medium",
       "rank": 1,
+      "tie": false,
       "numerator": 6,
       "denominator": 38,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "dealership_performance",
       "industry_reference_id": "IB-FOUREYES-FUNNEL-Q1-2026"
     },
     {
@@ -380,8 +488,14 @@
       "display_variance": "+2.1 pp",
       "confidence": "low",
       "rank": 1,
+      "tie": false,
       "numerator": 8,
       "denominator": 14,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "appointments",
       "industry_reference_id": "IB-FOUREYES-FUNNEL-Q1-2026"
     },
     {
@@ -400,8 +514,14 @@
       "display_variance": "-21.7 pp",
       "confidence": "low",
       "rank": 3,
+      "tie": false,
       "numerator": 2,
       "denominator": 6,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "appointments",
       "industry_reference_id": "IB-FOUREYES-FUNNEL-Q1-2026"
     },
     {
@@ -420,8 +540,14 @@
       "display_variance": "-12.1 pp",
       "confidence": "low",
       "rank": 2,
+      "tie": false,
       "numerator": 3,
       "denominator": 7,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "appointments",
       "industry_reference_id": "IB-FOUREYES-FUNNEL-Q1-2026"
     },
     {
@@ -440,8 +566,14 @@
       "display_variance": "-60 pp",
       "confidence": "low",
       "rank": 1,
+      "tie": true,
       "numerator": 0,
       "denominator": 8,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "dealership_performance",
       "industry_reference_id": null
     },
     {
@@ -460,8 +592,14 @@
       "display_variance": "-60 pp",
       "confidence": "low",
       "rank": 1,
+      "tie": true,
       "numerator": 0,
       "denominator": 2,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "dealership_performance",
       "industry_reference_id": null
     },
     {
@@ -480,8 +618,14 @@
       "display_variance": "-60 pp",
       "confidence": "low",
       "rank": 1,
+      "tie": true,
       "numerator": 0,
       "denominator": 2,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "dealership_performance",
       "industry_reference_id": null
     },
     {
@@ -500,8 +644,14 @@
       "display_variance": "-9.3 pp",
       "confidence": "low",
       "rank": 1,
+      "tie": false,
       "numerator": 5,
       "denominator": 14,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "appointments",
       "industry_reference_id": null
     },
     {
@@ -520,8 +670,14 @@
       "display_variance": "+5 pp",
       "confidence": "low",
       "rank": 2,
+      "tie": false,
       "numerator": 3,
       "denominator": 6,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "appointments",
       "industry_reference_id": null
     },
     {
@@ -540,8 +696,14 @@
       "display_variance": "+12.1 pp",
       "confidence": "low",
       "rank": 3,
+      "tie": false,
       "numerator": 4,
       "denominator": 7,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "appointments",
       "industry_reference_id": null
     },
     {
@@ -560,8 +722,14 @@
       "display_variance": "-91.7 pp",
       "confidence": "medium",
       "rank": 2,
+      "tie": false,
       "numerator": 2,
       "denominator": 24,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "dealership_performance",
       "industry_reference_id": null
     },
     {
@@ -580,8 +748,14 @@
       "display_variance": "-100 pp",
       "confidence": "medium",
       "rank": 1,
+      "tie": false,
       "numerator": 0,
       "denominator": 17,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "dealership_performance",
       "industry_reference_id": null
     },
     {
@@ -600,8 +774,14 @@
       "display_variance": "-72.7 pp",
       "confidence": "low",
       "rank": 3,
+      "tie": false,
       "numerator": 3,
       "denominator": 11,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "dealership_performance",
       "industry_reference_id": null
     },
     {
@@ -620,8 +800,14 @@
       "display_variance": "-50 pp",
       "confidence": "medium",
       "rank": 2,
+      "tie": true,
       "numerator": 0,
       "denominator": 26,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "dealership_performance",
       "industry_reference_id": null
     },
     {
@@ -640,8 +826,14 @@
       "display_variance": "-26.5 pp",
       "confidence": "medium",
       "rank": 1,
+      "tie": true,
       "numerator": 4,
       "denominator": 17,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "dealership_performance",
       "industry_reference_id": null
     },
     {
@@ -660,8 +852,14 @@
       "display_variance": "-50 pp",
       "confidence": "low",
       "rank": 2,
+      "tie": true,
       "numerator": 0,
       "denominator": 14,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "dealership_performance",
       "industry_reference_id": null
     },
     {
@@ -680,8 +878,14 @@
       "display_variance": "0 pp",
       "confidence": "high",
       "rank": 1,
+      "tie": true,
       "numerator": 0,
       "denominator": 119,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "vinsolutions_custom_reporting_leads",
       "industry_reference_id": null
     },
     {
@@ -700,8 +904,14 @@
       "display_variance": "0 pp",
       "confidence": "medium",
       "rank": 1,
+      "tie": true,
       "numerator": 0,
       "denominator": 68,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "vinsolutions_custom_reporting_leads",
       "industry_reference_id": null
     },
     {
@@ -720,8 +930,14 @@
       "display_variance": "0 pp",
       "confidence": "medium",
       "rank": 1,
+      "tie": true,
       "numerator": 0,
       "denominator": 43,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "vinsolutions_custom_reporting_leads",
       "industry_reference_id": null
     },
     {
@@ -740,8 +956,14 @@
       "display_variance": "+3.6 pp",
       "confidence": "high",
       "rank": 3,
+      "tie": false,
       "numerator": 10,
       "denominator": 280,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -760,8 +982,14 @@
       "display_variance": "+2.3 pp",
       "confidence": "high",
       "rank": 2,
+      "tie": false,
       "numerator": 3,
       "denominator": 130,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -780,8 +1008,14 @@
       "display_variance": "+1.7 pp",
       "confidence": "high",
       "rank": 1,
+      "tie": false,
       "numerator": 2,
       "denominator": 118,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -800,8 +1034,14 @@
       "display_variance": "0 pp",
       "confidence": "high",
       "rank": 1,
+      "tie": true,
       "numerator": 0,
       "denominator": 800,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -820,8 +1060,14 @@
       "display_variance": "0 pp",
       "confidence": "high",
       "rank": 1,
+      "tie": true,
       "numerator": 0,
       "denominator": 386,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -840,8 +1086,14 @@
       "display_variance": "0 pp",
       "confidence": "high",
       "rank": 1,
+      "tie": true,
       "numerator": 0,
       "denominator": 250,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -860,8 +1112,14 @@
       "display_variance": "+0.4 pp",
       "confidence": "high",
       "rank": 2,
+      "tie": false,
       "numerator": 3,
       "denominator": 731,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -880,8 +1138,14 @@
       "display_variance": "+0.3 pp",
       "confidence": "high",
       "rank": 1,
+      "tie": false,
       "numerator": 1,
       "denominator": 360,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -900,8 +1164,14 @@
       "display_variance": "+0.4 pp",
       "confidence": "high",
       "rank": 3,
+      "tie": false,
       "numerator": 1,
       "denominator": 232,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -920,8 +1190,14 @@
       "display_variance": "+18.2 pp",
       "confidence": "low",
       "rank": 3,
+      "tie": false,
       "numerator": 2,
       "denominator": 11,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -940,8 +1216,14 @@
       "display_variance": "+11.1 pp",
       "confidence": "low",
       "rank": 2,
+      "tie": false,
       "numerator": 1,
       "denominator": 9,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -960,8 +1242,14 @@
       "display_variance": "0 pp",
       "confidence": "low",
       "rank": 1,
+      "tie": false,
       "numerator": 0,
       "denominator": 8,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -980,8 +1268,14 @@
       "display_variance": "0 pp",
       "confidence": "low",
       "rank": 1,
+      "tie": true,
       "numerator": 0,
       "denominator": 11,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -1000,8 +1294,14 @@
       "display_variance": "0 pp",
       "confidence": "low",
       "rank": 1,
+      "tie": true,
       "numerator": 0,
       "denominator": 9,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     },
     {
@@ -1020,8 +1320,14 @@
       "display_variance": "0 pp",
       "confidence": "low",
       "rank": 1,
+      "tie": true,
       "numerator": 0,
       "denominator": 8,
+      "reporting_period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "source_family": "enhanced_sales_communication_log_weekly",
       "industry_reference_id": null
     }
   ],
