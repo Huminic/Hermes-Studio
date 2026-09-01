@@ -12,7 +12,11 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { formatJsonFile } from '../m1r-evaluator/serialize'
-import { DECISIONS, ONE_WEEK } from './comm-capability-decisions'
+import {
+  DECISIONS_TABLE,
+  ONE_WEEK,
+  validateAndIndex,
+} from './comm-capability-decisions'
 import type { Category } from './comm-capability-decisions'
 import {
   COMM_WEEKLY_FAMILY,
@@ -51,26 +55,14 @@ async function main(): Promise<void> {
   if (!Array.isArray(catalog) || catalog.length !== 295)
     throw new Error(`expected 295 catalog rows, got ${catalog.length}`)
 
-  // ── Coverage validation: the decision table must enumerate EXACTLY SW-001..SW-295 ──────────
-  const decidedIds = Object.keys(DECISIONS)
-  if (decidedIds.length !== 295)
-    throw new Error(
-      `decision table has ${decidedIds.length} entries, expected 295`,
-    )
+  // ── Fail-closed coverage: the literal tuple table must be exactly SW-001..SW-295 (no dup /
+  //    missing / extra / out-of-range). validateAndIndex is the SAME exported validator the
+  //    adversarial test exercises; it detects duplicate literal tuples the array preserves. ────
+  const decisions = validateAndIndex(DECISIONS_TABLE)
   const expected = Array.from(
     { length: 295 },
     (_, i) => `SW-${String(i + 1).padStart(3, '0')}`,
   )
-  const decidedSet = new Set(decidedIds)
-  for (const id of expected)
-    if (!decidedSet.has(id)) throw new Error(`decision table MISSING ${id}`)
-  for (const id of decidedIds)
-    if (
-      !/^SW-\d{3}$/.test(id) ||
-      Number(id.slice(3)) < 1 ||
-      Number(id.slice(3)) > 295
-    )
-      throw new Error(`decision table has out-of-range/extra id ${id}`)
   const catalogIds = new Set(catalog.map((c) => c.metric_id))
   for (const id of expected)
     if (!catalogIds.has(id)) throw new Error(`catalog missing ${id}`)
@@ -78,7 +70,7 @@ async function main(): Promise<void> {
   const schema = new Set(DERIVATIVE_SCHEMA_FIELDS)
   const byId = new Map(catalog.map((c) => [c.metric_id, c]))
   const rows = expected.map((id) => {
-    const d = DECISIONS[id]
+    const d = decisions.get(id)!
     const c = byId.get(id)!
     const fields = d.fields ?? []
     if (!CATEGORIES.includes(d.c))

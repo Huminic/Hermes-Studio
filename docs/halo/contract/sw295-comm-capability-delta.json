@@ -1265,7 +1265,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "Service equity customers is Service-domain (Service-to-Sales)",
       "decided_by": "explicit"
     },
@@ -1280,7 +1280,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "lease maturity + service sourcing is Service-to-Sales",
       "decided_by": "explicit"
     },
@@ -1295,7 +1295,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "Service RO customer is Service-domain",
       "decided_by": "explicit"
     },
@@ -1310,7 +1310,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "warranty/VSC is Service-domain",
       "decided_by": "explicit"
     },
@@ -1325,7 +1325,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "declined service work is Service-domain",
       "decided_by": "explicit"
     },
@@ -1546,7 +1546,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "Do-Not-Call/Do-Not-Contact is a compliance condition",
       "decided_by": "explicit"
     },
@@ -1561,7 +1561,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "TCPA consent is a compliance condition",
       "decided_by": "explicit"
     },
@@ -1576,7 +1576,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "adverse-action notice is a compliance condition",
       "decided_by": "explicit"
     },
@@ -1591,7 +1591,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "OFAC/Red-Flags is a compliance condition",
       "decided_by": "explicit"
     },
@@ -1606,7 +1606,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "driver-license-on-file is a compliance condition",
       "decided_by": "explicit"
     },
@@ -1621,7 +1621,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "privacy-policy consent is a compliance condition",
       "decided_by": "explicit"
     },
@@ -1636,7 +1636,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "underage/ID-mismatch is a compliance condition",
       "decided_by": "explicit"
     },
@@ -1651,7 +1651,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "Safeguards-Rule access log is a compliance condition",
       "decided_by": "explicit"
     },
@@ -1861,7 +1861,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "same customer across sales + SERVICE + complaint spans the Service boundary",
       "decided_by": "explicit"
     },
@@ -2903,7 +2903,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "outbound SMS TCPA consent is a compliance condition",
       "decided_by": "explicit"
     },
@@ -2918,7 +2918,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "message to a DNC number is a compliance condition",
       "decided_by": "explicit"
     },
@@ -2933,7 +2933,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "legal contact-hours is a compliance condition",
       "decided_by": "explicit"
     },
@@ -2948,7 +2948,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "APR/terms disclosure is a compliance condition",
       "decided_by": "explicit"
     },
@@ -2963,7 +2963,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "discriminatory-language flag is a compliance condition",
       "decided_by": "explicit"
     },
@@ -2978,7 +2978,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "SSN/DOB request via unsecured channel is a compliance condition",
       "decided_by": "explicit"
     },
@@ -2993,7 +2993,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "compliance authorization route",
       "rationale": "plain-text PII in message body is a compliance condition",
       "decided_by": "explicit"
     },
@@ -3098,7 +3098,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "Service advisor coordination is Service-domain",
       "decided_by": "explicit"
     },
@@ -3383,8 +3383,8 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
-      "rationale": "warranty-expiration CPO prospecting is classed outside the governed boundary",
+      "join_or_nlp_required": "separate external governed source/route",
+      "rationale": "warranty-expiration CPO prospecting needs external warranty/OEM data (outside governed boundary)",
       "decided_by": "explicit"
     },
     {
@@ -3443,8 +3443,8 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
-      "rationale": "multi-vehicle-household service is Service/cross-domain (outside governed boundary)",
+      "join_or_nlp_required": "separate Service workspace route",
+      "rationale": "multi-vehicle-household service is Service-domain (outside governed boundary)",
       "decided_by": "explicit"
     },
     {
@@ -3458,7 +3458,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "Service ROs / declined work is Service-domain",
       "decided_by": "explicit"
     },
@@ -3473,7 +3473,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "vehicles in Service is Service-domain",
       "decided_by": "explicit"
     },
@@ -3488,7 +3488,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "repeat Service customers is Service-domain",
       "decided_by": "explicit"
     },
@@ -3503,7 +3503,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "Service customers / safety recalls is Service-domain",
       "decided_by": "explicit"
     },
@@ -3518,7 +3518,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "Service-advisor notes is Service-domain",
       "decided_by": "explicit"
     },
@@ -3533,7 +3533,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "service waiting-room prospecting is Service-domain (outside governed boundary)",
       "decided_by": "explicit"
     },
@@ -3548,8 +3548,8 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
-      "rationale": "totaled/major-repair vehicle is Service-domain (outside governed boundary)",
+      "join_or_nlp_required": "separate Service workspace route",
+      "rationale": "totaled/major-repair vehicle is a Service-repair signal (outside governed boundary)",
       "decided_by": "explicit"
     },
     {
@@ -4058,7 +4058,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "seasonal Service customers is Service-domain",
       "decided_by": "explicit"
     },
@@ -4073,8 +4073,8 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
-      "rationale": "tax-refund prospecting is classed outside the governed boundary",
+      "join_or_nlp_required": "separate external governed source/route",
+      "rationale": "tax-refund-window prospecting needs an external tax/finance-calendar source (outside governed boundary)",
       "decided_by": "explicit"
     },
     {
@@ -4118,8 +4118,8 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
-      "rationale": "cross-rooftop introduction is outside the single-rooftop boundary",
+      "join_or_nlp_required": "separate cross-rooftop governed route",
+      "rationale": "cross-rooftop customer introduction needs a separate cross-rooftop governed route",
       "decided_by": "explicit"
     },
     {
@@ -4133,8 +4133,8 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
-      "rationale": "cross-rooftop trade/wish-list is outside the single-rooftop boundary",
+      "join_or_nlp_required": "separate cross-rooftop governed route",
+      "rationale": "cross-rooftop trade/wish-list matching needs a separate cross-rooftop governed route",
       "decided_by": "explicit"
     },
     {
@@ -4148,8 +4148,8 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
-      "rationale": "cross-brand switching is classed outside the governed boundary",
+      "join_or_nlp_required": "separate cross-rooftop governed route",
+      "rationale": "cross-brand/group switching needs a separate cross-rooftop governed route",
       "decided_by": "explicit"
     },
     {
@@ -4163,7 +4163,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "service-customer cross-marketing is Service-domain",
       "decided_by": "explicit"
     },
@@ -4178,8 +4178,8 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
-      "rationale": "shared DNC/DNS list is a compliance/cross-rooftop concern",
+      "join_or_nlp_required": "compliance authorization route",
+      "rationale": "shared DNC/DNS list is a compliance condition",
       "decided_by": "explicit"
     },
     {
@@ -4193,8 +4193,8 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
-      "rationale": "appended home-purchase records is an external/boundary data source",
+      "join_or_nlp_required": "separate external governed source/route",
+      "rationale": "appended home-purchase / new-mover records are an external governed data source",
       "decided_by": "explicit"
     },
     {
@@ -4208,8 +4208,8 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
-      "rationale": "credit-tier refresh is classed outside the governed boundary",
+      "join_or_nlp_required": "separate external governed source/route",
+      "rationale": "credit-tier refresh needs an external credit-bureau governed source",
       "decided_by": "explicit"
     },
     {
@@ -4223,8 +4223,8 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
-      "rationale": "vehicle-registration data is an external/boundary source",
+      "join_or_nlp_required": "separate external governed source/route",
+      "rationale": "vehicle-registration data is an external governed source",
       "decided_by": "explicit"
     },
     {
@@ -4238,8 +4238,8 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
-      "rationale": "insurance-total-loss feed is an external/boundary source",
+      "join_or_nlp_required": "separate external governed source/route",
+      "rationale": "insurance-total-loss feed is an external governed source",
       "decided_by": "explicit"
     },
     {
@@ -4253,8 +4253,8 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
-      "rationale": "public LinkedIn signals is an external/boundary source",
+      "join_or_nlp_required": "separate external governed source/route",
+      "rationale": "public LinkedIn job-change signals are an external governed source",
       "decided_by": "explicit"
     },
     {
@@ -4298,7 +4298,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "service visit + no sales touch is Service-domain (outside governed boundary)",
       "decided_by": "explicit"
     },
@@ -4528,7 +4528,7 @@
       "admitted_fields_satisfying": [],
       "missing_inputs": "Sales boundary",
       "minimum_history": "1 governed week (2026-08-24..2026-08-30, America/New_York)",
-      "join_or_nlp_required": "separate Service / compliance route",
+      "join_or_nlp_required": "separate Service workspace route",
       "rationale": "service-to-sales / sales-to-F&I cross-sell spans the Service/F&I boundary",
       "decided_by": "explicit"
     },

@@ -116,11 +116,11 @@ Content/name/phone/email persisted.
 | `src/server/reports/comms/comm-reader.ts`                                  | `94c42935d2b5aa90` |
 | `scripts/m1r-comms/build-comm-admission.ts`                                | `7b1173ef2e10fcd3` |
 | `scripts/m1r-comms/build-comm-contract.ts`                                 | `b0ccf2eeae772a45` |
-| `scripts/m1r-comms/build-comm-capability-delta.ts`                         | `4e389e58fa91ec90` |
-| `scripts/m1r-comms/comm-capability-decisions.ts`                           | `a49e3679089b0688` |
+| `scripts/m1r-comms/build-comm-capability-delta.ts`                         | `d0c97fc27441903a` |
+| `scripts/m1r-comms/comm-capability-decisions.ts`                           | `8a04f807927f2d80` |
 | `docs/halo/contract/enhanced-sales-communication-log-weekly-contract.json` | `40fe56e0eb1156a1` |
 | `docs/halo/contract/enhanced-sales-communication-log-weekly-contract.md`   | `47d21eda4c9f0b2a` |
-| `docs/halo/contract/sw295-comm-capability-delta.json`                      | `771bec6eed729f6c` |
+| `docs/halo/contract/sw295-comm-capability-delta.json`                      | `883897dc3a8f0663` |
 | `docs/halo/contract/enhanced-comm-structured-candidates.json`              | `764ef9b10b00f812` |
 | `docs/halo/evidence/m1r/comms/comm-admission-aggregates.json`              | `3c0f6855d895c522` |
 

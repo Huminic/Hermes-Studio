@@ -2,7 +2,10 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { DECISIONS } from '../../scripts/m1r-comms/comm-capability-decisions'
+import {
+  DECISIONS_TABLE,
+  validateAndIndex,
+} from '../../scripts/m1r-comms/comm-capability-decisions'
 import { DERIVATIVE_SCHEMA_FIELDS } from '@/server/reports/comms/comm-family-contract'
 
 const REPO = path.resolve(__dirname, '..', '..')
@@ -85,30 +88,72 @@ const PENDING = [
   'SW-288',
 ]
 
-describe('Comm capability decision table — authoritative, exhaustive, no fallback', () => {
-  it('the checked-in decision table enumerates EXACTLY SW-001..SW-295 (sequential, unique)', () => {
-    const ids = Object.keys(DECISIONS)
-    expect(ids.length).toBe(295)
-    expect(new Set(ids).size).toBe(295)
+describe('Comm capability decision table — literal tuple array + fail-closed validator', () => {
+  it('is a LITERAL TUPLE ARRAY of exactly 295 rows covering SW-001..SW-295 (unique, sequential)', () => {
+    expect(Array.isArray(DECISIONS_TABLE)).toBe(true)
+    expect(DECISIONS_TABLE.length).toBe(295)
+    const ids = DECISIONS_TABLE.map(([id]) => id)
+    expect(new Set(ids).size).toBe(295) // array length vs Set → no duplicate literal tuple
     for (let i = 1; i <= 295; i++)
-      expect(
-        Object.prototype.hasOwnProperty.call(
-          DECISIONS,
-          `SW-${String(i).padStart(3, '0')}`,
-        ),
-      ).toBe(true)
-    // no out-of-range / extra ids
-    for (const id of ids) {
-      expect(/^SW-\d{3}$/.test(id)).toBe(true)
-      const n = Number(id.slice(3))
-      expect(n >= 1 && n <= 295).toBe(true)
-    }
+      expect(ids).toContain(`SW-${String(i).padStart(3, '0')}`)
+    // the shared validator accepts the real table and returns a 295-entry lookup
+    const map = validateAndIndex(DECISIONS_TABLE)
+    expect(map.size).toBe(295)
+  })
+
+  it('ADVERSARIAL: the SAME exported validator rejects an injected duplicate / missing / extra tuple', () => {
+    const dec = DECISIONS_TABLE[0][1]
+    // duplicate literal tuple (would be silently overwritten by a Record) — 296 rows, dup SW-001
+    expect(() =>
+      validateAndIndex([...DECISIONS_TABLE, ['SW-001', dec]]),
+    ).toThrow()
+    // duplicate that keeps length 295 (replace SW-295 with a second SW-001): dup + missing
+    const dupKeepLen: Array<[string, typeof dec]> = [
+      ...DECISIONS_TABLE.slice(0, 294),
+      ['SW-001', dec],
+    ]
+    expect(() => validateAndIndex(dupKeepLen)).toThrow(/duplicate/i)
+    // missing (drop the last row → 294)
+    expect(() => validateAndIndex(DECISIONS_TABLE.slice(0, 294))).toThrow()
+    // extra / out-of-range id
+    expect(() =>
+      validateAndIndex([...DECISIONS_TABLE.slice(0, 294), ['SW-999', dec]]),
+    ).toThrow()
   })
 
   it('every emitted row is decided_by "explicit" (no regex/section/acquisition_class fallback path)', () => {
     expect(DELTA.all_rows_decided_by_explicit).toBe(true)
     for (const r of DELTA.rows)
       expect(r.decided_by, r.metric_id).toBe('explicit')
+  })
+
+  it('A1: boundary routing is TRUTHFUL per id (external / cross-rooftop rows never say Service/compliance)', () => {
+    const route = (id: string) => row[id].join_or_nlp_required
+    // external governed-source boundary rows
+    for (const id of [
+      'SW-264',
+      'SW-272',
+      'SW-273',
+      'SW-274',
+      'SW-275',
+      'SW-276',
+      'SW-218',
+    ]) {
+      expect(cat(id), id).toBe('outside_sales_boundary')
+      expect(route(id), id).toMatch(/external governed source/i)
+      expect(route(id), id).not.toMatch(/Service|compliance/i)
+    }
+    // cross-rooftop boundary rows
+    for (const id of ['SW-267', 'SW-268', 'SW-269']) {
+      expect(cat(id), id).toBe('outside_sales_boundary')
+      expect(route(id), id).toMatch(/cross-rooftop governed route/i)
+      expect(route(id), id).not.toMatch(/Service|compliance/i)
+    }
+    // Service/compliance boundary rows are NOT weakened
+    for (const id of ['SW-079', 'SW-081', 'SW-118', 'SW-199', 'SW-263'])
+      expect(route(id), id).toMatch(/Service/i)
+    for (const id of ['SW-097', 'SW-098', 'SW-188', 'SW-192', 'SW-271'])
+      expect(route(id), id).toMatch(/compliance/i)
   })
 })
 

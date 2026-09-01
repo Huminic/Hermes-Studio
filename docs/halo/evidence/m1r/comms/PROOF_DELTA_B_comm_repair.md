@@ -49,6 +49,28 @@ an unavailable input.
   sold/vehicle/deal outcome, or content meaning. Message meaning is NEVER inferred from
   `content_length`/`presence`.
 
+### A1. Truthful boundary routing (per-ID route, not a hard-coded string)
+
+The shared `bound()` helper previously hard-coded `join_or_nlp_required = "separate Service /
+compliance route"` for ALL boundary rows. Routes are now truthful per id via narrow helpers:
+Service rows → "separate Service workspace route"; compliance rows → "compliance authorization
+route"; cross-rooftop rows → "separate cross-rooftop governed route"; external-data rows →
+"separate external governed source/route". Categories are unchanged (all still
+`outside_sales_boundary`). Corrected + tested: **SW-264** (tax-refund), **SW-272–276** (home-
+purchase, credit-tier, registration, insurance-total-loss, LinkedIn) and **SW-218** →
+external governed source; **SW-267–269** (cross-rooftop / cross-brand) → cross-rooftop governed
+route — none says Service/compliance. Service/compliance rows are NOT weakened (asserted).
+
+### B1. Duplicate-fail-closed is now real (literal tuple array + shared validator)
+
+The authoritative source is a LITERAL TUPLE ARRAY `DECISIONS_TABLE: Array<[id, Dec]>` (295 rows)
+— NOT a `Record` (whose duplicate literal keys are silently overwritten before `Object.keys`).
+An exported `validateAndIndex(table)` validates the RAW tuples BEFORE building the lookup: exact
+length 295; duplicate detection via array length vs Set + explicit duplicate identification;
+reject missing/extra/out-of-range; then construct the Map. The generator uses this same
+validator, and an adversarial test proves an injected duplicate / missing / extra tuple fails
+through it. No source-text-only pretense; no reliance on tsc TS1117.
+
 ## B. Provenance hardening (shadow findings)
 
 1. **Explicit ports** (incl. `:443`, which `URL.port` normalizes to empty) are now rejected by
