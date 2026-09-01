@@ -1,0 +1,39 @@
+{
+  "artifact": "gmail-scheduler-provenance-contract",
+  "version": 2,
+  "status": "durable provenance contract for native VinSolutions scheduled deliveries arriving by Gmail",
+  "source_type": "gmail_scheduler",
+  "expected_sender": "reportscheduler@motosnap.com",
+  "sender_proof": {
+    "method": "read-only Gmail metadata read for the exact 18 message IDs",
+    "result": "every message independently reports from=reportscheduler@motosnap.com",
+    "binding": "sender is bound per-delivery from the SHA-verified sender-proof ledger, never hard-coded/invented"
+  },
+  "required_provenance_fields": [
+    "source_type",
+    "sender",
+    "subject",
+    "gmail_message_id",
+    "received_at",
+    "filename",
+    "bytes",
+    "sha256",
+    "profile",
+    "family",
+    "period_hint"
+  ],
+  "unavailable_fields": {
+    "gmail_attachment_id": "not captured; recorded as unavailable, never inferred"
+  },
+  "prohibited_persisted_fields": [
+    "signed_download_url",
+    "raw_xlsx_bytes",
+    "row_level_pii"
+  ],
+  "notes": [
+    "The earlier temporary capture manifest (/tmp) omitted per-message sender; this durable contract requires sender and proves it via the read-only Gmail metadata ledger.",
+    "Signed/time-limited Gmail download URLs must never be persisted to Git or logs.",
+    "Raw XLSX and any row-level PII stay outside Git; only non-PII provenance + verdicts are durable.",
+    "Held here means classifier accepted-eligible only; it is NOT promotion into analytics."
+  ]
+}

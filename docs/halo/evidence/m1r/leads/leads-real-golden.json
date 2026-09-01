@@ -1,0 +1,228 @@
+{
+  "artifact": "m1r-leads-real-golden",
+  "family": "vinsolutions_custom_reporting_leads",
+  "note": "Non-PII structural golden recomputed from the three real governed Leads exports. No customer names/VINs/PII. SHA-256 anchors the exact real bytes; source files are NOT committed.",
+  "reporting_period": {
+    "start": "2026-08-24",
+    "end": "2026-08-30"
+  },
+  "header_count": 57,
+  "headers": [
+    "Lead ID",
+    "Dealer",
+    "Customer",
+    "Lead Source",
+    "Lead Type",
+    "Lead Source Group",
+    "Lead Status",
+    "Lead Status Custom",
+    "Lead Status Type",
+    "Actual Response Time (Min)",
+    "Adjusted Response Time (Min)",
+    "Actionable Response Datetime",
+    "Contacted Indicator",
+    "ADF/XML Indicator",
+    "Has Vehicle Of Interest",
+    "Sales Rep",
+    "Sales Rep - User Group",
+    "BD Agent",
+    "BD Agent - User Group",
+    "Created User",
+    "Created User - User Group",
+    "Last Modified User",
+    "Last Modified User - User Group",
+    "Originated After Hours",
+    "Inventory Type",
+    "Stock Number",
+    "VIN",
+    "Year",
+    "Make",
+    "Model",
+    "Trim",
+    "Vehicle Memo",
+    "Initial Vehicle Year",
+    "Initial Vehicle Make",
+    "Initial Vehicle Model",
+    "Lead Origination Date",
+    "Dealer ID",
+    "Lead Last Modified Date",
+    "First Contact Attempt",
+    "Last Attempted Contact",
+    "Last Attempted Email Contact",
+    "Last Attempted Phone Contact",
+    "Last Attempted Text Contact Datetime",
+    "Last Customer Contact",
+    "Last Attempted or Actual Contact",
+    "First Customer Contact",
+    "Hot Lead",
+    "Trade 1 Year",
+    "Trade 1 Make",
+    "Trade 1 Model",
+    "Trade 1 Memo",
+    "Trade 2 Year",
+    "Trade 2 Make",
+    "Trade 2 Model",
+    "Trade 2 Memo",
+    "Sold Datetime",
+    "CoBuyer Full Name"
+  ],
+  "files": [
+    {
+      "capture_id": "VIN-LEADS-20260831-21043",
+      "profile": "serra-honda",
+      "dealer_id": "21043",
+      "dealer_name": "Serra Honda of Sylacauga",
+      "filename": "serra-honda-21043_leads_2026-08-24_2026-08-30.xlsx",
+      "bytes": 46940,
+      "sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae",
+      "column_count": 57,
+      "data_rows": 119,
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "lead_id_populated": 119,
+      "lead_id_unique": 119,
+      "service_parts_leakage_rows": 0,
+      "by_lead_type": {
+        "Internet": 83,
+        "Phone": 20,
+        "Walk-in": 16
+      },
+      "by_lead_status_type": {
+        "Active": 84,
+        "Bad": 29,
+        "Lost": 2,
+        "Sold": 4
+      },
+      "sold_count": 4,
+      "sold_datetime_populated": 4,
+      "contacted": {
+        "Yes": 56,
+        "No": 63,
+        "missing": 0
+      },
+      "first_customer_contact_blanks": 63,
+      "actual_response": {
+        "populated": 54,
+        "blanks": 65,
+        "zeros": 1,
+        "sum_min": 19925,
+        "min_min": 0,
+        "max_min": 2395
+      },
+      "adjusted_response": {
+        "populated": 54,
+        "blanks": 65,
+        "zeros": 11,
+        "sum_min": 6388,
+        "min_min": 0,
+        "max_min": 2395
+      }
+    },
+    {
+      "capture_id": "VIN-LEADS-20260831-21044",
+      "profile": "serra-nissan",
+      "dealer_id": "21044",
+      "dealer_name": "Serra Nissan of Sylacauga",
+      "filename": "serra-nissan-21044_leads_2026-08-24_2026-08-30.xlsx",
+      "bytes": 30547,
+      "sha256": "6df075f91fd85ccef2d1c1d68eeec26582a4672549349ff5fb746c1c4194f634",
+      "column_count": 57,
+      "data_rows": 68,
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "lead_id_populated": 68,
+      "lead_id_unique": 68,
+      "service_parts_leakage_rows": 0,
+      "by_lead_type": {
+        "Internet": 32,
+        "Phone": 20,
+        "Walk-in": 16
+      },
+      "by_lead_status_type": {
+        "Active": 54,
+        "Bad": 10,
+        "Sold": 4
+      },
+      "sold_count": 4,
+      "sold_datetime_populated": 4,
+      "contacted": {
+        "Yes": 45,
+        "No": 23,
+        "missing": 0
+      },
+      "first_customer_contact_blanks": 23,
+      "actual_response": {
+        "populated": 22,
+        "blanks": 46,
+        "zeros": 1,
+        "sum_min": 9842,
+        "min_min": 0,
+        "max_min": 2128
+      },
+      "adjusted_response": {
+        "populated": 22,
+        "blanks": 46,
+        "zeros": 1,
+        "sum_min": 1509,
+        "min_min": 0,
+        "max_min": 938
+      }
+    },
+    {
+      "capture_id": "VIN-LEADS-20260831-21047",
+      "profile": "tony-serra-ford",
+      "dealer_id": "21047",
+      "dealer_name": "Tony Serra Ford",
+      "filename": "tony-serra-ford-21047_leads_2026-08-24_2026-08-30.xlsx",
+      "bytes": 23422,
+      "sha256": "549a6efecc57486e86787e0fc5d73667b97313b06a850a78a8d98426add8f53b",
+      "column_count": 57,
+      "data_rows": 43,
+      "period": {
+        "start": "2026-08-24",
+        "end": "2026-08-30"
+      },
+      "lead_id_populated": 43,
+      "lead_id_unique": 43,
+      "service_parts_leakage_rows": 0,
+      "by_lead_type": {
+        "Internet": 24,
+        "Phone": 13,
+        "Walk-in": 6
+      },
+      "by_lead_status_type": {
+        "Active": 37,
+        "Bad": 5,
+        "Sold": 1
+      },
+      "sold_count": 1,
+      "sold_datetime_populated": 1,
+      "contacted": {
+        "Yes": 27,
+        "No": 16,
+        "missing": 0
+      },
+      "first_customer_contact_blanks": 16,
+      "actual_response": {
+        "populated": 19,
+        "blanks": 24,
+        "zeros": 0,
+        "sum_min": 9569,
+        "min_min": 1,
+        "max_min": 3324
+      },
+      "adjusted_response": {
+        "populated": 19,
+        "blanks": 24,
+        "zeros": 3,
+        "sum_min": 6022,
+        "min_min": 0,
+        "max_min": 3246
+      }
+    }
+  ]
+}

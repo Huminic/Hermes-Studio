@@ -1,3 +1,10 @@
+> **SUPERSEDED FOR ACCEPTANCE (2026-09-01).** This R5 checkpoint directly evaluated
+> only SW-032 and SW-041 across three rooftops — **6 evaluated dealer-cells of 885**,
+> not 885. The ACTIVE unshrinkable goal (`docs/halo/contract/active-295-acceptance.json`)
+> requires all 885 cells CALCULATED (baseline/variance/rank/confidence); cataloged /
+> accounted / withheld does NOT count. This R5 PASS **cannot** satisfy the active goal.
+> A regression guard (`src/test/active-acceptance-guard.test.ts`) enforces this.
+
 # M2R Gate R5 — Final M1R/M2R end-to-end verification (checkpoint)
 
 **Bounded gate:** R5 only — verify the complete governed R1→R4 chain after commit

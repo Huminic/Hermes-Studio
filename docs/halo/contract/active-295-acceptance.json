@@ -1,0 +1,29 @@
+{
+  "artifact": "active-295-acceptance",
+  "version": 2,
+  "status": "ACTIVE — supersedes the SW295 R5 checkpoint for acceptance purposes",
+  "goal": "Evaluate exactly SW-001 through SW-295 for each of the three Serra rooftops — all 885 dealer-cells CALCULATED with baseline, variance, rank, and confidence — plus cluster synthesis, three customer PDFs, a repeatable run, and separate internal evidence.",
+  "conditions": 295,
+  "dealers": 3,
+  "required_cells": 885,
+  "dealer_ids": ["21043", "21044", "21047"],
+  "completion_rule": {
+    "unshrinkable": true,
+    "withheld_counts_toward_completion": false,
+    "cataloged_or_accounted_counts_toward_completion": false,
+    "uncalculable_or_unbaselineable_is_unresolved": true,
+    "note": "Cataloged / accounted / withheld is NOT evaluated. A metric that cannot be calculated or baselined remains an UNRESOLVED acceptance item unless Duane explicitly changes scope. Withheld rows must still be preserved for audit, but they do NOT count toward the 885-cell completion."
+  },
+  "superseded_checkpoint": {
+    "checkpoint": "SW295 R5",
+    "commit": "28dd17f857ba64faeec2fbe45ad1a8ca68c37993",
+    "directly_evaluated_conditions": 2,
+    "directly_evaluated_ids": ["SW-032", "SW-041"],
+    "evaluated_dealer_cells": 6,
+    "why_insufficient": "R5 directly evaluated only 2 of 295 conditions (the two ratified appointment rules) across 3 rooftops = 6 evaluated dealer-cells of 885. The other 293 conditions were coverage/accounting language, not evaluation. 6 of 885 cannot satisfy this active acceptance."
+  },
+  "input_gates": {
+    "note": "Landing an input family (e.g. vinsolutions_custom_reporting_leads) is necessary but NOT sufficient. No input gate, and no combination short of all 885 cells CALCULATED, satisfies the active acceptance.",
+    "landed_families": ["vinsolutions_custom_reporting_leads"]
+  }
+}

@@ -61,7 +61,8 @@ function readZipEntries(buf: Buffer, limits: XlsxLimits): Array<ZipEntry> {
   }
   if (eocd < 0) throw new XlsxError('not a zip/xlsx (no EOCD)')
   const count = buf.readUInt16LE(eocd + 10)
-  if (count > limits.maxEntries) throw new XlsxError(`too many zip entries (${count})`)
+  if (count > limits.maxEntries)
+    throw new XlsxError(`too many zip entries (${count})`)
   let ptr = buf.readUInt32LE(eocd + 16)
   const entries: Array<ZipEntry> = []
   for (let n = 0; n < count; n++) {
@@ -83,10 +84,18 @@ function readZipEntries(buf: Buffer, limits: XlsxLimits): Array<ZipEntry> {
 
 type Budget = { total: number }
 
-function readEntry(buf: Buffer, e: ZipEntry, limits: XlsxLimits, budget: Budget): Buffer {
+function readEntry(
+  buf: Buffer,
+  e: ZipEntry,
+  limits: XlsxLimits,
+  budget: Budget,
+): Buffer {
   if (e.uncompSize > limits.maxEntryBytes)
     throw new XlsxError(`entry ${e.name} too large (${e.uncompSize})`)
-  if (e.localOffset + 30 > buf.length || buf.readUInt32LE(e.localOffset) !== 0x04034b50)
+  if (
+    e.localOffset + 30 > buf.length ||
+    buf.readUInt32LE(e.localOffset) !== 0x04034b50
+  )
     throw new XlsxError('bad local header')
   const nameLen = buf.readUInt16LE(e.localOffset + 26)
   const extraLen = buf.readUInt16LE(e.localOffset + 28)
@@ -97,10 +106,13 @@ function readEntry(buf: Buffer, e: ZipEntry, limits: XlsxLimits, budget: Budget)
   else if (e.method === 8) {
     // maxOutputLength makes zlib itself fail-closed on a decompression bomb,
     // not relying on the (spoofable) central-directory size field.
-    out = zlib.inflateRawSync(comp, { maxOutputLength: limits.maxEntryBytes }) as Buffer
+    out = zlib.inflateRawSync(comp, {
+      maxOutputLength: limits.maxEntryBytes,
+    }) as Buffer
   } else throw new XlsxError(`unsupported zip method ${e.method}`)
   budget.total += out.length
-  if (budget.total > limits.maxTotalBytes) throw new XlsxError('total inflated size cap exceeded')
+  if (budget.total > limits.maxTotalBytes)
+    throw new XlsxError('total inflated size cap exceeded')
   return out
 }
 
@@ -123,7 +135,9 @@ function decodeXml(s: string): string {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&apos;/g, "'")
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) =>
+      String.fromCodePoint(parseInt(h, 16)),
+    )
     .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(parseInt(d, 10)))
     .replace(/&amp;/g, '&')
 }
@@ -143,7 +157,9 @@ function parseSharedStrings(xml: string | null): Array<string> {
   return out
 }
 
-const BUILTIN_DATE_FMT_IDS = new Set([14, 15, 16, 17, 18, 19, 20, 21, 22, 45, 46, 47])
+const BUILTIN_DATE_FMT_IDS = new Set([
+  14, 15, 16, 17, 18, 19, 20, 21, 22, 45, 46, 47,
+])
 
 function parseDateStyleIndices(stylesXml: string | null): Set<number> {
   const dateStyles = new Set<number>()
@@ -152,13 +168,15 @@ function parseDateStyleIndices(stylesXml: string | null): Set<number> {
   for (const nf of stylesXml.match(/<numFmt\b[^>]*\/>/g) ?? []) {
     const id = Number(attr(nf, 'numFmtId'))
     const code = attr(nf, 'formatCode') ?? ''
-    if (Number.isFinite(id) && /(yy|mm|dd|d\/|\/m|h:mm|mmm)/i.test(code)) customDateFmtIds.add(id)
+    if (Number.isFinite(id) && /(yy|mm|dd|d\/|\/m|h:mm|mmm)/i.test(code))
+      customDateFmtIds.add(id)
   }
   const cellXfs = stylesXml.match(/<cellXfs\b[\s\S]*?<\/cellXfs>/)?.[0] ?? ''
   const xfs = cellXfs.match(/<xf\b[^>]*\/?>/g) ?? []
   xfs.forEach((xf, i) => {
     const fmtId = Number(attr(xf, 'numFmtId'))
-    if (BUILTIN_DATE_FMT_IDS.has(fmtId) || customDateFmtIds.has(fmtId)) dateStyles.add(i)
+    if (BUILTIN_DATE_FMT_IDS.has(fmtId) || customDateFmtIds.has(fmtId))
+      dateStyles.add(i)
   })
   return dateStyles
 }
@@ -182,13 +200,19 @@ function parseSheet(
   shared: Array<string>,
   dateStyles: Set<number>,
   maxCells: number,
-): Array<Array<string>> {
+  rawDates: boolean,
+): { rows: Array<Array<string>>; formulaCount: number } {
   const rows: Array<Array<string>> = []
   let cellCount = 0
-  for (const rowXml of xml.match(/<row\b[\s\S]*?<\/row>|<row\b[^>]*\/>/g) ?? []) {
+  let formulaCount = 0
+  for (const rowXml of xml.match(/<row\b[\s\S]*?<\/row>|<row\b[^>]*\/>/g) ??
+    []) {
     const cells: Array<string> = []
-    for (const cm of rowXml.match(/<c\b[^>]*>[\s\S]*?<\/c>|<c\b[^>]*\/>/g) ?? []) {
+    for (const cm of rowXml.match(/<c\b[^>]*>[\s\S]*?<\/c>|<c\b[^>]*\/>/g) ??
+      []) {
       if (++cellCount > maxCells) throw new XlsxError('cell-count cap exceeded')
+      // A formula cell carries an <f> element (e.g. <c ...><f>SUM(..)</f><v>..</v></c>).
+      if (/<f\b[^>]*>|<f\b[^>]*\/>/.test(cm)) formulaCount++
       const openTag = cm.match(/<c\b[^>]*>/)?.[0] ?? cm
       const ref = attr(openTag, 'r') ?? ''
       const type = attr(openTag, 't')
@@ -203,8 +227,14 @@ function parseSheet(
         if (type === 's') value = shared[Number(raw)] ?? ''
         else if (type === 'str') value = decodeXml(raw)
         else if (type === 'b') value = raw === '1' ? 'TRUE' : 'FALSE'
-        else if (raw !== '' && dateStyles.has(style) && Number.isFinite(Number(raw)))
-          value = excelSerialToISO(Number(raw))
+        else if (
+          raw !== '' &&
+          dateStyles.has(style) &&
+          Number.isFinite(Number(raw))
+        )
+          // rawDates: keep the raw Excel serial so a caller can apply its own
+          // (timezone-correct) date interpretation instead of the UTC-based ISO.
+          value = rawDates ? raw : excelSerialToISO(Number(raw))
         else value = raw
       }
       const col = colToIndex(ref)
@@ -213,24 +243,38 @@ function parseSheet(
     }
     rows.push(cells)
   }
-  return rows
+  return { rows, formulaCount }
 }
 
-export type XlsxSheet = { name: string; rows: Array<Array<string>> }
+export type XlsxSheet = {
+  name: string
+  rows: Array<Array<string>>
+  formulaCount?: number
+}
+
+export type XlsxReadOptions = {
+  /** When true, date-styled numeric cells are returned as their raw Excel serial
+   *  string instead of a UTC-derived ISO date. Default false (unchanged behavior). */
+  rawDates?: boolean
+}
 
 export function readXlsx(
   buf: Buffer,
   limitOverrides: Partial<XlsxLimits> = {},
+  options: XlsxReadOptions = {},
 ): { sheets: Array<XlsxSheet> } {
   const limits = { ...DEFAULT_LIMITS, ...limitOverrides }
-  if (!Buffer.isBuffer(buf) || buf.length < 22) throw new XlsxError('empty/short input')
-  if (buf.length > limits.maxInputBytes) throw new XlsxError(`input too large (${buf.length})`)
+  if (!Buffer.isBuffer(buf) || buf.length < 22)
+    throw new XlsxError('empty/short input')
+  if (buf.length > limits.maxInputBytes)
+    throw new XlsxError(`input too large (${buf.length})`)
 
   const budget: Budget = { total: 0 }
   const entries = readZipEntries(buf, limits)
   const wb = fileText(buf, entries, 'xl/workbook.xml', limits, budget)
   if (!wb) throw new XlsxError('missing xl/workbook.xml')
-  const rels = fileText(buf, entries, 'xl/_rels/workbook.xml.rels', limits, budget) ?? ''
+  const rels =
+    fileText(buf, entries, 'xl/_rels/workbook.xml.rels', limits, budget) ?? ''
   const shared = parseSharedStrings(
     fileText(buf, entries, 'xl/sharedStrings.xml', limits, budget),
   )
@@ -242,7 +286,8 @@ export function readXlsx(
   for (const r of rels.match(/<Relationship\b[^>]*\/>/g) ?? []) {
     const id = attr(r, 'Id')
     const target = attr(r, 'Target')
-    if (id && target) relTarget.set(id, target.replace(/^\/?xl\//, '').replace(/^\.\//, ''))
+    if (id && target)
+      relTarget.set(id, target.replace(/^\/?xl\//, '').replace(/^\.\//, ''))
   }
 
   const sheetTags = wb.match(/<sheet\b[^>]*\/>/g) ?? []
@@ -255,12 +300,20 @@ export function readXlsx(
     const name = decodeXml(attr(s, 'name') ?? `Sheet${sheets.length + 1}`)
     const rid = attr(s, 'r:id') ?? attr(s, 'id')
     const target = rid ? relTarget.get(rid) : undefined
-    const path = target ? `xl/${target}` : `xl/worksheets/sheet${sheets.length + 1}.xml`
+    const path = target
+      ? `xl/${target}`
+      : `xl/worksheets/sheet${sheets.length + 1}.xml`
     const sheetXml = fileText(buf, entries, path, limits, budget)
-    sheets.push({
-      name,
-      rows: sheetXml ? parseSheet(sheetXml, shared, dateStyles, limits.maxCells) : [],
-    })
+    const parsed = sheetXml
+      ? parseSheet(
+          sheetXml,
+          shared,
+          dateStyles,
+          limits.maxCells,
+          options.rawDates ?? false,
+        )
+      : { rows: [], formulaCount: 0 }
+    sheets.push({ name, rows: parsed.rows, formulaCount: parsed.formulaCount })
   }
   return { sheets }
 }

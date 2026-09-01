@@ -1,0 +1,163 @@
+{
+  "artifact": "m1r-leads-hold-proof",
+  "family": "vinsolutions_custom_reporting_leads",
+  "promoted": false,
+  "wrote_srv": false,
+  "wrote_brain": false,
+  "capture_evidence_note": "Capture-evidence JPEGs (filter + per-store table) contain customer PII: verified by existence + SHA-256 only, never committed or read.",
+  "capture_evidence": [
+    {
+      "filename": "VIN-LEADS-20260831-filter-evidence.jpeg",
+      "sha256": "699777b364be84d48d787f17edd408cb98dec02e70f6c23defa967a55fe11e57",
+      "present": true,
+      "hash_match": true,
+      "description": "Authenticated Custom Reporting filter editor showing the Lead Type/date controls and the added Lead Source exclusion gate."
+    },
+    {
+      "filename": "VIN-LEADS-20260831-honda-table-evidence.jpeg",
+      "sha256": "752201718c213a0e220cdf9004da7ae6c315d3cf365374310592c24c6e03aa35",
+      "present": true,
+      "hash_match": true,
+      "description": "Authenticated Serra Honda filtered Leads result."
+    },
+    {
+      "filename": "VIN-LEADS-20260831-nissan-table-evidence.jpeg",
+      "sha256": "9a23826588a5a50fd30203bc0fbc9c4223ae396747558aa757692e2b35d8fd6f",
+      "present": true,
+      "hash_match": true,
+      "description": "Authenticated Serra Nissan filtered Leads result."
+    },
+    {
+      "filename": "VIN-LEADS-20260831-ford-table-evidence.jpeg",
+      "sha256": "03d8aa9c36591bbf78c2a09eb11a26b05cc25d48f9f8b8f335edfe57c5f0451d",
+      "present": true,
+      "hash_match": true,
+      "description": "Authenticated Tony Serra Ford filtered Leads result."
+    }
+  ],
+  "results": [
+    {
+      "profile": "serra-honda",
+      "filename": "serra-honda-21043_leads_2026-08-24_2026-08-30.xlsx",
+      "sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae",
+      "status": "held",
+      "captured_at": "2026-08-31T23:37:47-04:00",
+      "source_url_host": "reporting-vinsolutions.app.coxautoinc.com",
+      "declared_report_kind": "vinsolutions_custom_reporting_leads",
+      "filter_evidence": {
+        "filename": "VIN-LEADS-20260831-filter-evidence.jpeg",
+        "sha256": "699777b364be84d48d787f17edd408cb98dec02e70f6c23defa967a55fe11e57"
+      },
+      "filter_evidence_verified": true,
+      "checks_passed": [
+        "magic_bytes",
+        "declared_sha256",
+        "profile",
+        "dealer_identity",
+        "capture_id",
+        "source_url_host",
+        "declared_report_kind",
+        "captured_at_timezone",
+        "reporting_window",
+        "filename_period",
+        "single_sheet",
+        "sheet_name",
+        "no_formulas",
+        "schema",
+        "extra_columns",
+        "row_count",
+        "one_rooftop",
+        "dealer_name",
+        "lead_id",
+        "period_rows",
+        "sales_only_lead_type",
+        "sales_only_source",
+        "sales_only_scan"
+      ],
+      "provenance_gaps": [],
+      "provenance_needed": {}
+    },
+    {
+      "profile": "serra-nissan",
+      "filename": "serra-nissan-21044_leads_2026-08-24_2026-08-30.xlsx",
+      "sha256": "6df075f91fd85ccef2d1c1d68eeec26582a4672549349ff5fb746c1c4194f634",
+      "status": "held",
+      "captured_at": "2026-08-31T23:41:45-04:00",
+      "source_url_host": "reporting-vinsolutions.app.coxautoinc.com",
+      "declared_report_kind": "vinsolutions_custom_reporting_leads",
+      "filter_evidence": {
+        "filename": "VIN-LEADS-20260831-filter-evidence.jpeg",
+        "sha256": "699777b364be84d48d787f17edd408cb98dec02e70f6c23defa967a55fe11e57"
+      },
+      "filter_evidence_verified": true,
+      "checks_passed": [
+        "magic_bytes",
+        "declared_sha256",
+        "profile",
+        "dealer_identity",
+        "capture_id",
+        "source_url_host",
+        "declared_report_kind",
+        "captured_at_timezone",
+        "reporting_window",
+        "filename_period",
+        "single_sheet",
+        "sheet_name",
+        "no_formulas",
+        "schema",
+        "extra_columns",
+        "row_count",
+        "one_rooftop",
+        "dealer_name",
+        "lead_id",
+        "period_rows",
+        "sales_only_lead_type",
+        "sales_only_source",
+        "sales_only_scan"
+      ],
+      "provenance_gaps": [],
+      "provenance_needed": {}
+    },
+    {
+      "profile": "tony-serra-ford",
+      "filename": "tony-serra-ford-21047_leads_2026-08-24_2026-08-30.xlsx",
+      "sha256": "549a6efecc57486e86787e0fc5d73667b97313b06a850a78a8d98426add8f53b",
+      "status": "held",
+      "captured_at": "2026-08-31T23:43:33-04:00",
+      "source_url_host": "reporting-vinsolutions.app.coxautoinc.com",
+      "declared_report_kind": "vinsolutions_custom_reporting_leads",
+      "filter_evidence": {
+        "filename": "VIN-LEADS-20260831-filter-evidence.jpeg",
+        "sha256": "699777b364be84d48d787f17edd408cb98dec02e70f6c23defa967a55fe11e57"
+      },
+      "filter_evidence_verified": true,
+      "checks_passed": [
+        "magic_bytes",
+        "declared_sha256",
+        "profile",
+        "dealer_identity",
+        "capture_id",
+        "source_url_host",
+        "declared_report_kind",
+        "captured_at_timezone",
+        "reporting_window",
+        "filename_period",
+        "single_sheet",
+        "sheet_name",
+        "no_formulas",
+        "schema",
+        "extra_columns",
+        "row_count",
+        "one_rooftop",
+        "dealer_name",
+        "lead_id",
+        "period_rows",
+        "sales_only_lead_type",
+        "sales_only_source",
+        "sales_only_scan"
+      ],
+      "provenance_gaps": [],
+      "provenance_needed": {}
+    }
+  ]
+}
