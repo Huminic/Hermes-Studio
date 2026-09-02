@@ -1,46 +1,49 @@
-# Two-delta evidence — PKT-02-01 (design-time)
+# Two-delta evidence — PKT-02-01 (corrected)
 
 **Packet:** PKT-02-01, module 2, SW-011..015. **Question:** Are new Sales leads being contacted
 promptly and consistently, and which response gaps need management action?
-**Design-only:** no values computed; no Vin/UI action. This records the two-delta *plan* and its
-pinned inputs; the deltas are executed in Phase 5/6 under the frozen contracts.
+**Design-only:** no new calculation/acquisition/persistence. SW-011/012/015 carry forward the prior
+**ACCEPTED + EVALUATED** Honda truth (Gate 4A promotion; `gate2-evaluator-contract.json`); SW-013/014
+remain `source_investigation_pending`.
 
-## Evidence delta (immutable raw → normalized rows)
+## Evidence delta (immutable raw → normalized rows) — already proven at Gate 4A
 
 | Control | Pinned value |
 |---|---|
-| Source family | `vinsolutions_custom_reporting_leads` (REUSE of existing accepted artifact) |
-| Artifact | `serra-honda-21043_leads_2026-08-24_2026-08-30.xlsx` (46940 bytes) |
-| Source sha256 | `39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae` |
+| Source | `vinsolutions_custom_reporting_leads` (REUSE; ACCEPTED+EVALUATED, `admitted_promoted`) |
+| Artifact / sha256 | `serra-honda-21043_leads_2026-08-24_2026-08-30.xlsx` / `39f05774…` (46940 bytes) |
 | Schema | 57-col contract `7d446696…`; sheet `Export` |
-| Receipt | `leads-real-golden.json` `68f845a5…` (Honda: 119 rows; service_parts_leakage_rows=0) |
-| Row key | `Lead ID` (119 populated, 119 unique); row-key-set hash computed at normalized-dataset creation (Phase 5), **not fabricated here** |
-| Dealer / period | `21043` / `2026-08-24..2026-08-30` |
-| Sales-only | lead_type ∈ Sales list; lead_source ∉ Service list; `\b(service\|parts)\b` scan clean |
-| Missing rule | blanks preserved (First Customer Contact blanks=63; Actual Response blanks=65) — **missing is never zero** |
+| Receipt | `leads-real-golden.json` `68f845a5…` (119 rows; service_parts_leakage_rows=0) |
+| Row key | `Lead ID` (119 unique); row-key-set hash computed at normalized-dataset creation, **not fabricated** |
+| Dealer / period / Sales-only | `21043` / `2026-08-24..2026-08-30` / lead-type∈Sales, lead-source∉Service, `\b(service\|parts)\b` clean |
+| Missing rule | blanks preserved — **missing is never zero** |
 
-Proven at execution: checksum, dealer/period, schema, Sales-only/PII controls, blank preservation,
-row reconciliation. **Reuse, not re-acquisition** — fresh acquisition is a separate governed Phase 5
-action.
+## Meaning delta (normalized rows → metric/grade) — corrected/frozen meanings
 
-## Meaning delta (normalized rows → metric/grade/narrative)
-
-| ID | Disposition | Definition (design) | Direct fields | Pipeline |
+| ID | State | Definition (frozen; gate2-evaluator-contract.json) | Unit | Grade target |
 |---|---|---|---|---|
-| SW-011 | data_acquired_calculation_pending | median Actual Response Time where Originated After Hours=No; blanks excluded | Actual Response Time (Min), Originated After Hours | value/baseline/grade only after accepted_measured |
-| SW-012 | data_acquired_calculation_pending | share of business-hours leads with any of 3 blanks (First Contact Attempt, First Customer Contact, Actual Response Time) | those 3 + Originated After Hours | value only after accepted_measured |
-| SW-015 | data_acquired_calculation_pending | per-rep mean vs store median; **Sales Rep pseudonymized/ephemeral, never persisted as a name**; customer/VIN/body excluded | Sales Rep, Actual Response Time (Min) | value only after accepted_measured |
-| SW-013 | **source_investigation_pending** | requires authoritative opening boundary + first-human timestamp — **absent**; no proxy from generic hours / Adjusted Response Time | — | open; no value/grade/customer projection |
-| SW-014 | **source_investigation_pending** | requires direct system/auto-vs-human actor classification + timestamps — **absent**; no proxy from channel/direction | — | open; no value/grade/customer projection |
+| SW-011 | **accepted_measured** (measured_validated/graded) | `median(Actual Response Time (Min) where Originated After Hours == No, numeric)`; blanks excluded | minutes | **OT-SW-011 `> 10 min`** (approved, active, compatible) |
+| SW-012 | **accepted_measured** | `count(First Contact Attempt blank AND First Customer Contact blank AND Actual Response Time blank where After Hours==No) / business_hours_population`; **strict AND (never OR/ANY)**; each qualifying row aged **>30 min** (ended-period proof) | ratio_0_1 | **OT-SW-012 `> 0`** (approved) |
+| SW-015 | **accepted_measured** | `count(rep mean Actual Response Time >= 2 x store median) / reps_with_numeric_response`; store median = SW-011 population; **share, not a minutes difference**; Sales Rep pseudonymized/ephemeral, **never persisted as a name**; customer/VIN/body excluded | ratio_0_1 | **OT-SW-015 `> 0`** (approved) |
+| SW-013 | **source_investigation_pending** | AFTER-HOURS-originated leads (Originated After Hours==Yes) with no HUMAN response by the authoritative **next opening + 15 min** — held: opening schedule + first-human timestamp absent; **no proxy** from generic hours / Adjusted Response Time | — | pending |
+| SW-014 | **source_investigation_pending** | **event count** predicate: first response **auto-reply only AND no human touch within two hours** (no business-hours restriction) — held: direct auto-vs-human actor classification + timestamps absent; **no channel/direction inference** | leads | pending |
 
-Lifecycle partition (design-time): `calculation_pending = {SW-011, SW-012, SW-015}`,
-`source_investigation_pending = {SW-013, SW-014}`, `accepted_measured / accepted_disposition_only /
-rejected = {}`. SW-013/014 stay open (owner=codex, evidence_as_of, next_action = one finite
-help-contract + read-only UI + controlled probe, review_point = investigation close); they block only
-module 2 and final completion, never unrelated packets. `source_investigation_pending` is nonterminal
-and never accepted_disposition_only.
+Lifecycle partition: `accepted_measured = {SW-011, SW-012, SW-015}`,
+`source_investigation_pending = {SW-013, SW-014}`, `accepted_disposition_only / rejected /
+calculation_pending = {}`. Only accepted_measured feed value/grade/customer output; SW-013/014 are
+open (no value/grade/customer projection), block only module 2 + final completion, never unrelated
+packets. `source_investigation_pending` is nonterminal and never accepted_disposition_only.
+
+## Carry-forward truth (item 6)
+
+The master ledger carries forward all **17** authoritative accepted+evaluated Honda metrics
+(SW-011,012,015,021,022,031,032,033,041,045,046,090,133,142,145,149,150; `gate5b-report-model-21043.json`).
+These are NOT reset to `not_measured`/`admitted_held`. All other non-overlay rows are explicitly
+**non-authoritative provisional planning placeholders**; the 18-ID Service overlay is
+`outside_sales_domain` (appendix ID+label only, no customer value).
 
 ## Boundaries
 
 Sales-only; no Service/Parts. No proxy/inference where direct data is absent. Rep identity
-pseudonymized-ephemeral, never persisted as a name. No Vin/Gmail/runtime/DB/vault/INGEST action.
+pseudonymized-ephemeral, never persisted. No Vin/Gmail/runtime/DB/vault/INGEST action; no new
+calculation/acquisition/persistence/report generation.

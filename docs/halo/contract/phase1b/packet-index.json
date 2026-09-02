@@ -1,7 +1,9 @@
 {
   "artifact": "honda-watchdog-phase1b-packet-index",
-  "pinned_at_utc": "2026-09-02T06:27:10Z",
-  "note": "Full packet assignment is planning-only; only PKT-02-01 is active/authored in detail.",
+  "pinned_at_utc": "2026-09-02T06:51:10Z",
+  "assignment_kind": "mechanically_balanced_provisional",
+  "note": "Packet assignments are PROVISIONAL PLANNING assignments (mechanically balanced by module: 5-12 IDs, union == exact 295, no overlap). They are NOT yet logically grouped: each packet's management question and metric cohesion is authored/reviewed only on activation. Only PKT-02-01 is active/authored. Any reassignment must be versioned and preserve the exact 295 union.",
+  "version": 2,
   "packets": [
     {
       "packet_id": "PKT-01-01",
@@ -19,7 +21,7 @@
         "SW-010"
       ],
       "size": 10,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -37,7 +39,7 @@
         "SW-119"
       ],
       "size": 9,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -55,7 +57,7 @@
         "SW-237"
       ],
       "size": 9,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -90,7 +92,7 @@
         "SW-134"
       ],
       "size": 12,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -110,7 +112,7 @@
         "SW-295"
       ],
       "size": 11,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -131,7 +133,7 @@
         "SW-042"
       ],
       "size": 12,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -152,7 +154,7 @@
         "SW-154"
       ],
       "size": 12,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -172,7 +174,7 @@
         "SW-057"
       ],
       "size": 11,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -192,7 +194,7 @@
         "SW-292"
       ],
       "size": 11,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -210,7 +212,7 @@
         "SW-027"
       ],
       "size": 9,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -228,7 +230,7 @@
         "SW-110"
       ],
       "size": 9,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -245,7 +247,7 @@
         "SW-204"
       ],
       "size": 8,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -266,7 +268,7 @@
         "SW-144"
       ],
       "size": 12,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -287,7 +289,7 @@
         "SW-157"
       ],
       "size": 12,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -308,7 +310,7 @@
         "SW-289"
       ],
       "size": 12,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -326,7 +328,7 @@
         "SW-169"
       ],
       "size": 9,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -344,7 +346,7 @@
         "SW-178"
       ],
       "size": 9,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -361,7 +363,7 @@
         "SW-290"
       ],
       "size": 8,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -379,7 +381,7 @@
         "SW-098"
       ],
       "size": 9,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -397,7 +399,7 @@
         "SW-129"
       ],
       "size": 9,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -415,7 +417,7 @@
         "SW-192"
       ],
       "size": 9,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -434,7 +436,7 @@
         "SW-219"
       ],
       "size": 10,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -453,7 +455,7 @@
         "SW-291"
       ],
       "size": 10,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -473,7 +475,7 @@
         "SW-220"
       ],
       "size": 11,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -493,7 +495,7 @@
         "SW-240"
       ],
       "size": 11,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -512,7 +514,7 @@
         "SW-294"
       ],
       "size": 10,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -530,7 +532,7 @@
         "SW-258"
       ],
       "size": 9,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -548,7 +550,7 @@
         "SW-269"
       ],
       "size": 9,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     },
     {
@@ -565,7 +567,7 @@
         "SW-284"
       ],
       "size": 8,
-      "status": "planned",
+      "status": "provisional_planning",
       "management_question": null
     }
   ]

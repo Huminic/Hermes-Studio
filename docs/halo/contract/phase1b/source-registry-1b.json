@@ -13,10 +13,10 @@
       "schema_revision": "leads-v1-57col",
       "source_type": "manual",
       "source_existence_state": "acquired_local",
-      "acquisition_admission_state": "admitted_held",
-      "provenance_ref": "capture_id VIN-LEADS-20260831-21043; receipt docs/halo/evidence/m1r/leads/leads-real-golden.json",
+      "acquisition_admission_state": "admitted_promoted",
+      "provenance_ref": "capture_id VIN-LEADS-20260831-21043; receipt docs/halo/evidence/m1r/leads/leads-real-golden.json; ACCEPTED+EVALUATED (Gate 4A promotion; gate2-evaluator-contract.json)",
       "sales_only_receipt": "leads-real-golden.json Honda file: service_parts_leakage_rows=0; sales_only_filters per vinsolutions-custom-reporting-leads-contract.json",
-      "dependent_metric_ids": ["SW-011", "SW-012", "SW-015"],
+      "dependent_metric_ids": ["SW-011", "SW-012", "SW-015", "SW-090"],
       "dependent_candidate_ids": []
     }
   ],

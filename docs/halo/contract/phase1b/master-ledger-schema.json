@@ -7,8 +7,10 @@
   "row_key": "metric_id",
   "row_schema": {
     "type": "object", "additionalProperties": false,
-    "required": ["metric_id", "module", "packet_id", "boundary_class", "definition_version", "disposition", "source_existence_state", "acquisition_admission_state", "evaluation_state", "report_acceptance_state", "owner", "evidence_as_of", "evidence_ref", "next_action", "review_point", "source_dependency_ids", "transitions"],
+    "required": ["metric_id", "module", "packet_id", "boundary_class", "definition_version", "disposition", "source_existence_state", "acquisition_admission_state", "evaluation_state", "report_acceptance_state", "owner", "evidence_as_of", "evidence_ref", "next_action", "review_point", "source_dependency_ids", "authoritative", "transitions"],
     "properties": {
+      "authoritative": {"type": "boolean"},
+      "current_truth_ref": {"type": "string", "nonempty": true},
       "metric_id": {"type": "string", "pattern": "^SW-\\d{3}$"},
       "module": {"type": "integer", "minimum": 1, "maximum": 11},
       "packet_id": {"type": "string", "pattern": "^PKT-\\d{2}[A-Z]?-\\d{2}$"},
@@ -48,8 +50,9 @@
     "boundary_class != 'sales' => evaluation_state in ['not_measured','measured_unscored'] (disposition-only).",
     "disposition == 'source_investigation_pending' => source_existence_state in ['unproved','investigation_pending'] AND evaluation_state == 'not_measured' AND owner/evidence_as_of/next_action/review_point present.",
     "(disposition, source_existence_state) obeys frozen source_existence_state.disposition_consistency; (disposition, evaluation_state) obeys frozen disposition_evaluation_consistency; (source_existence_state, acquisition_admission_state) obeys the frozen allowed-pair matrix.",
-    "transitions are append-only and versioned: transitions[-1].to == row.disposition; each transition.to draws from the frozen disposition adjacency (or is the initial ledger-init entry with from=null).",
-    "measurable rows (disposition in ['measured_validated','data_acquired_calculation_pending']) have nonempty source_dependency_ids, each a registered source_id in the source registry.",
+    "transitions are append-only, versioned, and CHAINED: transitions[0].from == null (init); for i>0 transitions[i].from == transitions[i-1].to; each non-init (from,to) is in the frozen disposition adjacency (NO self-transition, e.g. source_investigation_pending -> source_investigation_pending is forbidden); at timestamps are non-decreasing; transitions[-1].to == row.disposition; a terminal disposition (genuinely_not_available / outside_sales_domain) has no outgoing transition.",
+    "authoritative carry-forward: authoritative==true requires current_truth_ref; a row that carries a prior accepted/evaluated Honda state (disposition measured_validated) MUST keep evaluation_state in ['measured_graded','measured_unscored'] and MUST NOT be reset to not_measured or to an acquisition_admission_state weaker than its accepted state (promoted must not become held; evaluated must not become not_measured). Planning placeholders MUST be authoritative==false and MUST NOT overwrite any authoritative row.",
+    "measurable rows (disposition in ['measured_validated','data_acquired_calculation_pending']) have nonempty source_dependency_ids each registered in the source registry, UNLESS the row is authoritative carry-forward from the accepted M1R bundle (then current_truth_ref cites the accepted evidence and non-leads families may omit a Phase-1B SRC id).",
     "A packet acceptance produces an acceptance hash over its accepted partitions + an independent receipt (packet artifact); the ledger row's report_acceptance_state advances only via a recorded transition."
   ],
   "closing_rules_ref": "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_SPEC_AMENDMENT_002.md §2-§3"

@@ -6,7 +6,9 @@ active objective, `HONDA_SEMANTIC_WATCHDOG_EXECUTION_SPEC.md`, the frozen 295 ca
 Phase 0 / Phase 1A contracts. All Phase 0/1A rules (exact 295, 11-module frozen owner, 18-ID Service
 overlay, closed vocabularies + transitions, relational Phase 0 authority anchor, fail-closed stops)
 are preserved and remain enforceable.
-**Status:** APPROVED (pre-Phase-1B impartial preflight, with the corrections below implemented).
+**Status:** DRAFT / HOLD — **not approved**. Awaiting a fresh impartial-shadow PASS. A preflight
+existed; a preflight is **not** an approval. This amendment and the Phase 1B gate remain DRAFT/HOLD
+until a fresh impartial review issues a binding PASS.
 
 ## 1. Vertical packets
 

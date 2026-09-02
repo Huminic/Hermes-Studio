@@ -3,18 +3,18 @@
   "phase": "Phase 1B — packetized execution instances (design-only)",
   "reuses": "scripts/halo-phase1/validate_phase1_contracts.py (Phase 1A generic engine, unmodified)",
   "instance_files": {
-    "master-ledger-schema.json": "b9f0749ed86183b2ea7af948965478feac31429cd223537673c15dad1d82e6d4",
-    "master-ledger-295.json": "c21b56748a714568532282fd79df4ad7fc4e374959efd4475ca3ec590ff9e4ec",
-    "packet-index.json": "3005a738d1ea43ea5f84d42c6cc24b0a56d512dc850d77adbbff2a30a436a16d",
+    "master-ledger-schema.json": "33c4fbbc6757e21cd2545411e04a33fe6a59ff78532da9ef312fa3b03309fadb",
+    "master-ledger-295.json": "3406ca4ff8d90ce94e5f08f8929e393b34cb246267dc2ed942dc7a7d878fc7b8",
+    "packet-index.json": "dd7a5cb1946ccc5345264acd39fc63d5b80cca3eb89a2f3df9d974d61caac542",
     "packet-schema-1b.json": "db5970d09a8c0614264cf3b6582eb30bc51f020d000ef2d837a27a30dc898d58",
-    "source-registry-1b.json": "e297101c55d3bde125628b950803fb6b30467b66296a9f02aa216e98612839e8",
-    "packets/PKT-02-01.json": "b05453de9187b7e3bfd5d4082044f8894bb917fa374ad84788dac4edfabb77d6"
+    "source-registry-1b.json": "ab613382d74bac77a0e58bd809a44a91cbef923d82849eb2a04599852aae131f",
+    "packets/PKT-02-01.json": "f96d7004d7d61dd7e12746f49173f0b059bee3763bf2cb4f1859d4a137850284"
   },
   "ledger_metrics": 295,
   "packets": 30,
   "authored_packet": "PKT-02-01 (SW-011..015)",
   "two_delta_present": true,
-  "adversarial_probes_total": 8,
+  "adversarial_probes_total": 15,
   "adversarial_probes_failed": 0,
   "adversarial_probes": [
     {
@@ -30,8 +30,8 @@
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "n_errors": 1,
-      "sample_error": "packet: metric SW-013 claims source SRC-vinsolutions_custom_reporting_leads-0001 but source does not declare it (fan-out mismatch / proxy attach)"
+      "n_errors": 8,
+      "sample_error": "packet: lifecycle partitions overlap"
     },
     {
       "probe": "C_overlay_customer_full",
@@ -63,7 +63,7 @@
       "got": "reject",
       "pass": true,
       "n_errors": 1,
-      "sample_error": "ledger SW-011: transitions[-1].to != disposition (append-only)"
+      "sample_error": "ledger SW-013: forbidden self-transition 'source_investigation_pending'->'source_investigation_pending'"
     },
     {
       "probe": "G_ledger_sip_bad_evaluation",
@@ -78,8 +78,64 @@
       "expected": "reject",
       "got": "reject",
       "pass": true,
+      "n_errors": 2,
+      "sample_error": "packet: SW-011 in SIP bucket but metric disposition != source_investigation_pending"
+    },
+    {
+      "probe": "I_sw012_OR_for_AND",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "semantic SW-012: OR/ANY forbidden — numerator is a strict AND of three blanks"
+    },
+    {
+      "probe": "J_sw013_business_hours_for_after_hours",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
       "n_errors": 1,
-      "sample_error": "packet: SW-013 in calculation_pending bucket but disposition mismatch"
+      "sample_error": "semantic SW-013: population must be AFTER-HOURS-originated"
+    },
+    {
+      "probe": "K_sw014_duration_for_two_hour_event",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "semantic SW-014: must be an event count/rate predicate, not duration"
+    },
+    {
+      "probe": "L_sw015_minutes_difference_for_2x_share",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "semantic SW-015: must be share of reps >= 2x store median"
+    },
+    {
+      "probe": "M_sw011_target_replacement",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "semantic SW-011: grade target must be the approved OT-SW-011 (not a proposed/TBD)"
+    },
+    {
+      "probe": "N_prior_accepted_state_regression",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 4,
+      "sample_error": "ledger SW-011: evaluation inconsistent with disposition"
+    },
+    {
+      "probe": "O_cross_packet_overlap_blocking_leak",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "cross-packet: SW-013 in both PKT-02-01 and PKT-02-02 (blocking would leak across packets)"
     }
   ],
   "errors": [],

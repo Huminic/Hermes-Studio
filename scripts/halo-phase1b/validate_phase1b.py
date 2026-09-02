@@ -43,11 +43,109 @@ p1.DEFS["lifecycle_partition"] = PKT1B_SCHEMA["lifecycle_partition_schema"]
 DISP_SES = p1.FV["source_existence_state"]["disposition_consistency"]
 DISP_EVAL = p1.FV["disposition_evaluation_consistency"]["map"]
 SES_ACQ = p1.FV["source_existence_acquisition_matrix"]["allowed_pairs"]
+DISP_ADJ = p1.FV["disposition"]["transitions"]
+TERMINAL = set(p1.FV["disposition"]["invariants"]["terminal_states"])
 ACCEPTED_DISP_ONLY = {"external_source_required", "additional_history_required", "genuinely_not_available", "outside_sales_domain"}
+# Authoritative prior Honda truth (must be carried forward, not reset)
+EVALUATED_17 = {11, 12, 15, 21, 22, 31, 32, 33, 41, 45, 46, 90, 133, 142, 145, 149, 150}
+LEADS_PROMOTED = {11, 12, 15, 90}
+GATE2 = p1.load(os.path.join(REPO, "docs", "halo", "contract", "gate2-evaluator-contract.json"))
 
 
 def _num(mid):
     return int(mid.split("-")[1])
+
+
+def check_transitions(r, mid, errs):
+    """Complete from/to adjacency, chaining, timestamp order, terminal consistency, append-only."""
+    tr = r.get("transitions") or []
+    if not tr:
+        errs.append(f"ledger {mid}: no transitions"); return
+    if tr[0].get("from") is not None:
+        errs.append(f"ledger {mid}: first transition.from must be null (init)")
+    prev_to, prev_at = None, None
+    for i, t in enumerate(tr):
+        frm, to, at = t.get("from"), t.get("to"), t.get("at")
+        if i > 0:
+            if frm != prev_to:
+                errs.append(f"ledger {mid}: transition {i} from '{frm}' != previous to '{prev_to}'")
+            if frm == to:
+                errs.append(f"ledger {mid}: forbidden self-transition '{frm}'->'{to}'")
+            elif to not in DISP_ADJ.get(frm, []):
+                errs.append(f"ledger {mid}: transition {i} '{frm}'->'{to}' not in disposition adjacency")
+        if prev_at is not None and at is not None and at < prev_at:
+            errs.append(f"ledger {mid}: transition {i} timestamp decreases")
+        if i < len(tr) - 1 and to in TERMINAL:
+            errs.append(f"ledger {mid}: transition into terminal '{to}' then continues")
+        prev_to, prev_at = to, at
+    if tr[-1].get("to") != r.get("disposition"):
+        errs.append(f"ledger {mid}: transitions[-1].to != disposition")
+
+
+def check_semantic_immutability(pkt, errs):
+    """Bind PKT-02-01 SW-011/012/013/014/015 to their frozen accepted meanings (gate2 + baseline)."""
+    md = {m.get("metric_id"): m for m in pkt.get("metric_definitions", [])}
+    G = GATE2.get("evaluable_conditions", {})
+
+    def f(mid):
+        return str(md.get(mid, {}).get("formula", "")).lower()
+
+    def pop(mid):
+        return str(md.get(mid, {}).get("population", "")).lower()
+
+    def gt(mid):
+        return (md.get(mid, {}).get("grade_target_contract") or {})
+    # SW-011: minutes median, After Hours=No, approved OT-SW-011
+    if md.get("SW-011", {}).get("unit") != "minutes":
+        errs.append("semantic SW-011: unit must be minutes")
+    if "median" not in f("SW-011") or "after hours == no" not in f("SW-011"):
+        errs.append("semantic SW-011: formula must be median where Originated After Hours == No")
+    if "OT-SW-011" not in str(gt("SW-011").get("grade_target_id")) or gt("SW-011").get("approval_state") != "approved":
+        errs.append("semantic SW-011: grade target must be the approved OT-SW-011 (not a proposed/TBD)")
+    # SW-012: strict AND (never OR/ANY), ratio_0_1, approved OT-SW-012
+    s12 = f("SW-012")
+    if " or " in s12 or "any of" in s12 or "any " in s12:
+        errs.append("semantic SW-012: OR/ANY forbidden — numerator is a strict AND of three blanks")
+    if " and " not in s12:
+        errs.append("semantic SW-012: formula must use AND across the three blanks")
+    if md.get("SW-012", {}).get("unit") != "ratio_0_1":
+        errs.append("semantic SW-012: unit must be ratio_0_1")
+    if "OT-SW-012" not in str(gt("SW-012").get("grade_target_id")):
+        errs.append("semantic SW-012: grade target must be OT-SW-012")
+    # SW-013: after-hours population, remains SIP, no business-hours relabel
+    if "after hours == yes" not in pop("SW-013") and "after-hours" not in pop("SW-013"):
+        errs.append("semantic SW-013: population must be AFTER-HOURS-originated")
+    if "business-hours" in pop("SW-013") and "after" not in pop("SW-013"):
+        errs.append("semantic SW-013: must not be business-hours")
+    if md.get("SW-013", {}).get("disposition") != "source_investigation_pending":
+        errs.append("semantic SW-013: must remain source_investigation_pending")
+    # SW-014: event count/rate predicate (not duration), no business-hours restriction, remains SIP
+    if md.get("SW-014", {}).get("calculation_kind") not in ("count", "rate"):
+        errs.append("semantic SW-014: must be an event count/rate predicate, not duration")
+    if "no business-hours" not in pop("SW-014") and "business-hours" in pop("SW-014"):
+        errs.append("semantic SW-014: must not impose a business-hours restriction")
+    if md.get("SW-014", {}).get("disposition") != "source_investigation_pending":
+        errs.append("semantic SW-014: must remain source_investigation_pending")
+    # SW-015: 2x store-median SHARE (ratio), never a minutes difference, approved OT-SW-015
+    s15 = f("SW-015")
+    if "2 x store median" not in s15 and ">= 2" not in s15:
+        errs.append("semantic SW-015: must be share of reps >= 2x store median")
+    if "minus" in s15 or "difference" in s15:
+        errs.append("semantic SW-015: must not be a minutes difference")
+    if md.get("SW-015", {}).get("unit") != "ratio_0_1":
+        errs.append("semantic SW-015: unit must be ratio_0_1")
+    if "OT-SW-015" not in str(gt("SW-015").get("grade_target_id")):
+        errs.append("semantic SW-015: grade target must be OT-SW-015")
+
+
+def check_cross_packet_independence(idx, errs):
+    """Packets are disjoint, so an open/blocked id in one packet cannot block another packet."""
+    seen = {}
+    for p in idx["packets"]:
+        for t in p["target_ids"]:
+            if t in seen:
+                errs.append(f"cross-packet: {t} in both {seen[t]} and {p['packet_id']} (blocking would leak across packets)")
+            seen[t] = p["packet_id"]
 
 
 def check_packet_index(idx, errs):
@@ -108,15 +206,31 @@ def check_ledger(led, idx, errs):
         se = r.get("source_existence_state")
         if se in SES_ACQ and r.get("acquisition_admission_state") not in SES_ACQ[se]:
             errs.append(f"ledger {mid}: source_existence/acquisition pair invalid")
-        tr = r.get("transitions") or []
-        if not tr or tr[-1].get("to") != disp:
-            errs.append(f"ledger {mid}: transitions[-1].to != disposition (append-only)")
+        check_transitions(r, mid, errs)
+        # carry-forward / no-regression of authoritative accepted+evaluated truth
+        auth = r.get("authoritative")
+        if auth is True and not r.get("current_truth_ref"):
+            errs.append(f"ledger {mid}: authoritative requires current_truth_ref")
+        if auth is True and disp not in ("measured_validated", "outside_sales_domain"):
+            errs.append(f"ledger {mid}: authoritative row must be measured_validated or outside_sales_domain")
+        if disp == "measured_validated":
+            if auth is not True:
+                errs.append(f"ledger {mid}: measured_validated row must be authoritative (no reset)")
+            if r.get("evaluation_state") not in ("measured_graded", "measured_unscored", "measurement_rejected"):
+                errs.append(f"ledger {mid}: accepted/evaluated row reset to non-measured evaluation")
+        if num in EVALUATED_17:
+            if disp != "measured_validated" or r.get("evaluation_state") != "measured_graded":
+                errs.append(f"ledger {mid}: prior accepted+evaluated Honda metric reset (must stay measured_validated/measured_graded)")
+            if num in LEADS_PROMOTED and r.get("acquisition_admission_state") != "admitted_promoted":
+                errs.append(f"ledger {mid}: promoted leads metric regressed from admitted_promoted")
+        # measurable rows need a registered source UNLESS authoritative carry-forward (source cited)
         if disp in ("measured_validated", "data_acquired_calculation_pending"):
-            if not r.get("source_dependency_ids"):
-                errs.append(f"ledger {mid}: measurable needs nonempty source_dependency_ids")
-            for s in r.get("source_dependency_ids") or []:
-                if s not in CTX_SRC["source_ids"]:
-                    errs.append(f"ledger {mid}: source {s} not registered")
+            if r.get("source_dependency_ids"):
+                for s in r["source_dependency_ids"]:
+                    if s not in CTX_SRC["source_ids"]:
+                        errs.append(f"ledger {mid}: source {s} not registered")
+            elif not (auth is True and r.get("current_truth_ref")):
+                errs.append(f"ledger {mid}: measurable needs a registered source or an authoritative current_truth_ref")
 
 
 def check_packet(pkt, reg, errs):
@@ -150,6 +264,13 @@ def check_packet(pkt, reg, errs):
     for cid in buckets["calculation_pending_ids"]:
         if mdmap.get(cid, {}).get("disposition") not in ("data_acquired_calculation_pending", "crm_available_acquisition_pending"):
             errs.append(f"packet: {cid} in calculation_pending bucket but disposition mismatch")
+    for aid in buckets["accepted_measured_ids"]:
+        m = mdmap.get(aid, {})
+        if m.get("disposition") != "measured_validated" or m.get("evaluation_state") not in ("measured_graded", "measured_unscored"):
+            errs.append(f"packet: {aid} in accepted_measured but metric is not measured_validated/graded")
+        gt = m.get("grade_target_contract") or {}
+        if m.get("gradable") is not True or gt.get("approval_state") != "approved" or gt.get("status") != "active" or gt.get("compatibility_result") != "compatible":
+            errs.append(f"packet: {aid} accepted_measured requires an approved+active+compatible grade target")
     # bidirectional source fan-out: a metric's source dep must list that metric as dependent (no proxy attach)
     dep_of = {n["source_id"]: set(n.get("dependent_metric_ids", [])) for n in reg.get("nodes", [])}
     for md in pkt.get("metric_definitions", []):
@@ -225,8 +346,8 @@ def run_probes(led, idx, pkt, reg):
     def led_appendonly():
         m = copy.deepcopy(led)
         for r in m["rows"]:
-            if r["metric_id"] == "SW-011":
-                r["transitions"][-1]["to"] = "measured_validated"  # disagrees with disposition
+            if r["metric_id"] == "SW-013":
+                r["transitions"].append({"from": "source_investigation_pending", "to": "source_investigation_pending", "at": "2026-09-02T07:00:00Z", "by": "codex", "reason": "forbidden self-transition"})
         return m
     rec("F_ledger_append_only_violation", lambda: led_mut(led_appendonly()))
     # G: ledger SIP row with non-not_measured evaluation -> reject
@@ -240,10 +361,45 @@ def run_probes(led, idx, pkt, reg):
     # H: packet lifecycle bucket disposition mismatch (SIP id put in calculation_pending) -> reject
     def pkt_bucket_mismatch():
         m = copy.deepcopy(pkt)
-        m["lifecycle_partition"]["source_investigation_pending_ids"] = ["SW-014"]
-        m["lifecycle_partition"]["calculation_pending_ids"] = ["SW-011", "SW-012", "SW-013", "SW-015"]
+        m["lifecycle_partition"]["source_investigation_pending_ids"] = ["SW-011", "SW-014"]
+        m["lifecycle_partition"]["accepted_measured_ids"] = ["SW-012", "SW-015"]
+        m["lifecycle_partition"]["calculation_pending_ids"] = ["SW-013"]
         return m
     rec("H_packet_bucket_disposition_mismatch", lambda: pkt_mut(pkt_bucket_mismatch()))
+
+    def sem(mutator):
+        m = copy.deepcopy(pkt); mutator(m)
+        e = []; check_semantic_immutability(m, e); return e
+
+    def _def(m, mid):
+        return next(d for d in m["metric_definitions"] if d["metric_id"] == mid)
+    # item 9 semantic adversarial probes
+    rec("I_sw012_OR_for_AND", lambda: sem(lambda m: _def(m, "SW-012").update({"formula": "count(First Contact Attempt blank OR First Customer Contact blank OR Actual Response Time blank where Originated After Hours == No) / business_hours_population"})))
+    rec("J_sw013_business_hours_for_after_hours", lambda: sem(lambda m: _def(m, "SW-013").update({"population": "Serra Honda 21043 business-hours Sales leads (Originated After Hours == No)"})))
+    rec("K_sw014_duration_for_two_hour_event", lambda: sem(lambda m: _def(m, "SW-014").update({"calculation_kind": "duration"})))
+    rec("L_sw015_minutes_difference_for_2x_share", lambda: sem(lambda m: _def(m, "SW-015").update({"formula": "per-rep mean Actual Response Time minus store median (minutes difference)"})))
+    rec("M_sw011_target_replacement", lambda: sem(lambda m: _def(m, "SW-011").__setitem__("grade_target_contract", {"grade_target_id": "TH-011", "approval_state": "proposed", "status": "draft"})))
+    # regression of a prior accepted/evaluated state (ledger)
+    def led_regress():
+        m = copy.deepcopy(led)
+        for r in m["rows"]:
+            if r["metric_id"] == "SW-011":
+                r["evaluation_state"] = "not_measured"; r["acquisition_admission_state"] = "admitted_held"
+        return m
+    rec("N_prior_accepted_state_regression", lambda: led_mut(led_regress()))
+    # cross-packet independence: overlap between two packets (blocking would leak) rejects
+    def idx_overlap():
+        m = copy.deepcopy(idx)
+        # inject PKT-02-01's blocked SW-013 into an unrelated packet
+        for p in m["packets"]:
+            if p["packet_id"] != "PKT-02-01" and p["module"] == 2:
+                p["target_ids"] = p["target_ids"] + ["SW-013"]
+                break
+        return m
+
+    def cross_mut(m):
+        e = []; check_cross_packet_independence(m, e); return e
+    rec("O_cross_packet_overlap_blocking_leak", lambda: cross_mut(idx_overlap()))
     return probes
 
 
@@ -279,8 +435,10 @@ def main():
 
     errs = []
     check_packet_index(idx, errs)
+    check_cross_packet_independence(idx, errs)
     check_ledger(led, idx, errs)
     check_packet(pkt, reg, errs)
+    check_semantic_immutability(pkt, errs)
     check_source(reg, errs)
     probes = run_probes(led, idx, pkt, reg)
     failed_probes = [p for p in probes if not p["pass"]]

@@ -2,15 +2,12 @@
 """
 Phase 1B — deterministic generator for the master 295 ledger instance + packet assignment.
 
-Design-only. Produces:
-  docs/halo/contract/phase1b/master-ledger-295.json   (SW-001..295 exactly once; frozen module owner;
-                                                        unique packet assignment; init states)
-  docs/halo/contract/phase1b/packet-index.json         (packet_id -> module, target_ids, status)
-
-Packet assignment: each module's frozen IDs are chunked into vertical packets of 5-12 IDs, one module
-per packet, union == 295, no overlap. Module 2's first packet is exactly SW-011..015 = PKT-02-01
-(the only packet authored in detail this phase). Everything is derived from the frozen Phase 0 module
-map; nothing is invented. No metric definitions are authored here (planning-level ledger only).
+Design-only. Carries forward AUTHORITATIVE prior Honda truth (does NOT reset accepted/evaluated
+metrics): the 17 evaluated Honda metrics from gate5b-report-model-21043.json remain measured; the
+Service overlay (18) stays outside_sales_domain; everything else is an EXPLICITLY NON-AUTHORITATIVE
+provisional planning placeholder. Packet assignment is mechanically balanced (5-12 IDs, one module,
+union == exact 295, no overlap) and labelled PROVISIONAL. Only PKT-02-01 is authored in detail.
+No metric definitions authored here (planning-level ledger only).
 """
 from __future__ import annotations
 
@@ -23,21 +20,21 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, os.path.join(REPO, "scripts", "halo-phase0"))
 import validate_phase0_catalog as p0  # noqa: E402
 
-# Frozen Service overlay (SPEC §3) — these 18 are disposition-only, outside Honda Sales.
 OVERLAY = {79, 81, 83, 115, 118, 199, 222, 223, 224, 225, 226, 227, 228, 229, 263, 270, 279, 294}
-AS_OF = "2026-09-02T06:27:10Z"  # pinned ledger-init stamp (real build time)
+# Authoritative accepted+evaluated Honda metrics (gate5b-report-model-21043.json coverage.evaluated=17)
+EVALUATED_17 = {11, 12, 15, 21, 22, 31, 32, 33, 41, 45, 46, 90, 133, 142, 145, 149, 150}
+LEADS_PROMOTED = {11, 12, 15, 90}   # vinsolutions_custom_reporting_leads: ACCEPTED+EVALUATED (Gate 4A promotion)
+SRC_LEADS = "SRC-vinsolutions_custom_reporting_leads-0001"
+AS_OF = "2026-09-02T06:51:10Z"
+TRUTH_REF = "gate5b-report-model-21043.json (evaluated); gate2-evaluator-contract.json; baseline-registry.json"
 
 
 def module_ids():
-    m = {}
-    for num, _t, _dc, ranges in p0.MODULES:
-        m[num] = sorted(p0.expand(ranges))
-    return m
+    return {num: sorted(p0.expand(ranges)) for num, _t, _dc, ranges in p0.MODULES}
 
 
 def balanced_chunk(ids):
-    n = len(ids)
-    k = max(1, math.ceil(n / 12))
+    n = len(ids); k = max(1, math.ceil(n / 12))
     while k > 1 and n / k < 5:
         k -= 1
     base, rem = divmod(n, k)
@@ -52,94 +49,6 @@ def sw(n):
     return f"SW-{n:03d}"
 
 
-def build():
-    mods = module_ids()
-    assignment = {}  # packet_id -> {module, ids}
-    for mod in range(1, 12):
-        ids = mods[mod]
-        if mod == 2:
-            groups = [ids[:5]] + balanced_chunk(ids[5:])   # PKT-02-01 = SW-011..015 fixed
-        else:
-            groups = balanced_chunk(ids)
-        for seq, grp in enumerate(groups, start=1):
-            pid = f"PKT-{mod:02d}-{seq:02d}"
-            assignment[pid] = {"module": mod, "ids": grp}
-
-    # invariants (build-time asserts)
-    all_ids = [i for a in assignment.values() for i in a["ids"]]
-    assert sorted(all_ids) == list(range(1, 296)), "union != 295 / overlap"
-    for pid, a in assignment.items():
-        assert 5 <= len(a["ids"]) <= 12, f"{pid} size {len(a['ids'])} out of 5..12"
-        assert all(p0_owner(i) == a["module"] for i in a["ids"]), f"{pid} module mismatch"
-
-    id_to_packet = {i: pid for pid, a in assignment.items() for i in a["ids"]}
-
-    # master ledger rows
-    rows = []
-    for n in range(1, 296):
-        pid = id_to_packet[n]
-        mod = assignment[pid]["module"]
-        overlay = n in OVERLAY
-        if overlay:
-            row = _row(n, mod, pid, boundary="separate_serra_service", disp="outside_sales_domain",
-                       ses="proved_outside_sales_domain", evidence="SPEC §3 separate-Service overlay (18 IDs)",
-                       next_action="internal disposition-only; appendix ID+label only", review="terminal (governance)")
-        else:
-            row = _row(n, mod, pid, boundary="sales", disp="source_investigation_pending",
-                       ses="unproved", evidence="ledger-init; existence unproved pending packet investigation",
-                       next_action="scheduled under " + pid + " (planning)", review="on packet activation")
-        rows.append(row)
-
-    # PKT-02-01 detailed init (SW-011..015): source reuse vs investigation
-    reuse = {11, 12, 15}  # measurable from the reused Leads artifact -> data_acquired_calculation_pending
-    invest = {13, 14}     # require finite investigation -> source_investigation_pending
-    src_id = "SRC-vinsolutions_custom_reporting_leads-0001"
-    for r in rows:
-        num = int(r["metric_id"].split("-")[1])
-        if num in reuse:
-            r.update({"disposition": "data_acquired_calculation_pending", "source_existence_state": "acquired_local",
-                      "acquisition_admission_state": "admitted_held", "evaluation_state": "not_measured",
-                      "source_dependency_ids": [src_id], "definition_version": "0.1.0",
-                      "evidence_ref": "PKT-02-01 (reuse of accepted vinsolutions_custom_reporting_leads Honda 21043 artifact)",
-                      "next_action": "recompute value from normalized rows (Phase 6); independent test",
-                      "review_point": "PKT-02-01 acceptance"})
-            r["transitions"].append(_t("source_investigation_pending", "data_acquired_calculation_pending",
-                                        "PKT-02-01 authoring: existing accepted Leads source reused"))
-        elif num in invest:
-            r.update({"disposition": "source_investigation_pending", "source_existence_state": "investigation_pending",
-                      "definition_version": "0.1.0",
-                      "evidence_ref": "PKT-02-01 (finite investigation packet; direct field absent in current source)",
-                      "next_action": "finite help-contract + read-only UI + one controlled probe (no Vin/UI action this step)",
-                      "review_point": "PKT-02-01 investigation close"})
-            r["transitions"].append(_t("source_investigation_pending", "source_investigation_pending",
-                                        "PKT-02-01 authoring: opened finite investigation (no direct field yet)"))
-
-    ledger = {
-        "artifact": "honda-watchdog-phase1b-master-ledger-295",
-        "schema": "docs/halo/contract/phase1b/master-ledger-schema.json",
-        "built_by": "scripts/halo-phase1b/build_ledger.py (deterministic; frozen Phase 0 module map)",
-        "pinned_at_utc": AS_OF,
-        "profile": "serra-honda", "dealer_id": "21043",
-        "catalog_sha256_expected": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
-        "counts": {"metrics": len(rows), "packets": len(assignment), "overlay": len(OVERLAY)},
-        "rows": rows,
-    }
-    index = {
-        "artifact": "honda-watchdog-phase1b-packet-index",
-        "pinned_at_utc": AS_OF,
-        "note": "Full packet assignment is planning-only; only PKT-02-01 is active/authored in detail.",
-        "packets": [
-            {"packet_id": pid, "module": a["module"], "target_ids": [sw(i) for i in a["ids"]],
-             "size": len(a["ids"]), "status": ("active_authored" if pid == "PKT-02-01" else "planned"),
-             "management_question": ("Are new Sales leads being contacted promptly and consistently, and which response gaps need management action?" if pid == "PKT-02-01" else None)}
-            for pid, a in sorted(assignment.items())
-        ],
-    }
-    _write("docs/halo/contract/phase1b/master-ledger-295.json", ledger)
-    _write("docs/halo/contract/phase1b/packet-index.json", index)
-    print(f"wrote master-ledger-295.json ({len(rows)} rows) + packet-index.json ({len(assignment)} packets)")
-
-
 def p0_owner(i):
     for num, _t, _dc, ranges in p0.MODULES:
         if i in p0.expand(ranges):
@@ -147,20 +56,94 @@ def p0_owner(i):
     return None
 
 
-def _t(frm, to, reason):
-    return {"from": frm, "to": to, "at": AS_OF, "by": "codex", "reason": reason}
+def build():
+    mods = module_ids()
+    assignment = {}
+    for mod in range(1, 12):
+        ids = mods[mod]
+        groups = ([ids[:5]] + balanced_chunk(ids[5:])) if mod == 2 else balanced_chunk(ids)
+        for seq, grp in enumerate(groups, start=1):
+            assignment[f"PKT-{mod:02d}-{seq:02d}"] = {"module": mod, "ids": grp}
 
+    all_ids = [i for a in assignment.values() for i in a["ids"]]
+    assert sorted(all_ids) == list(range(1, 296))
+    for pid, a in assignment.items():
+        assert 5 <= len(a["ids"]) <= 12 and all(p0_owner(i) == a["module"] for i in a["ids"])
+    id_to_packet = {i: pid for pid, a in assignment.items() for i in a["ids"]}
 
-def _row(n, mod, pid, boundary, disp, ses, evidence, next_action, review):
-    return {
-        "metric_id": sw(n), "module": mod, "packet_id": pid, "boundary_class": boundary,
-        "definition_version": "0.0.0", "disposition": disp, "source_existence_state": ses,
-        "acquisition_admission_state": "not_acquired", "evaluation_state": "not_measured",
-        "report_acceptance_state": "draft", "owner": "codex", "evidence_as_of": AS_OF,
-        "evidence_ref": evidence, "next_action": next_action, "review_point": review,
-        "source_dependency_ids": [],
-        "transitions": [{"from": None, "to": disp, "at": AS_OF, "by": "codex", "reason": "ledger init from frozen 295->11 map"}],
+    rows = [row_for(n, id_to_packet[n], assignment[id_to_packet[n]]["module"]) for n in range(1, 296)]
+
+    ledger = {
+        "artifact": "honda-watchdog-phase1b-master-ledger-295",
+        "schema": "docs/halo/contract/phase1b/master-ledger-schema.json",
+        "built_by": "scripts/halo-phase1b/build_ledger.py (deterministic; frozen Phase 0 map; carry-forward of authoritative Honda truth)",
+        "pinned_at_utc": AS_OF, "profile": "serra-honda", "dealer_id": "21043",
+        "catalog_sha256_expected": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+        "authoritative_current_truth": {
+            "evaluated_17": [sw(n) for n in sorted(EVALUATED_17)],
+            "source": "gate5b-report-model-21043.json coverage.evaluated=17",
+            "note": "These 17 rows carry forward current accepted/evaluated truth and are NOT reset. All other non-overlay rows are explicitly non-authoritative provisional planning placeholders."
+        },
+        "counts": {"metrics": len(rows), "packets": len(assignment), "overlay": len(OVERLAY), "authoritative_evaluated": len(EVALUATED_17)},
+        "rows": rows,
     }
+    index = {
+        "artifact": "honda-watchdog-phase1b-packet-index",
+        "pinned_at_utc": AS_OF,
+        "assignment_kind": "mechanically_balanced_provisional",
+        "note": "Packet assignments are PROVISIONAL PLANNING assignments (mechanically balanced by module: 5-12 IDs, union == exact 295, no overlap). They are NOT yet logically grouped: each packet's management question and metric cohesion is authored/reviewed only on activation. Only PKT-02-01 is active/authored. Any reassignment must be versioned and preserve the exact 295 union.",
+        "version": 2,
+        "packets": [
+            {"packet_id": pid, "module": a["module"], "target_ids": [sw(i) for i in a["ids"]], "size": len(a["ids"]),
+             "status": ("active_authored" if pid == "PKT-02-01" else "provisional_planning"),
+             "management_question": ("Are new Sales leads being contacted promptly and consistently, and which response gaps need management action?" if pid == "PKT-02-01" else None)}
+            for pid, a in sorted(assignment.items())
+        ],
+    }
+    _write("docs/halo/contract/phase1b/master-ledger-295.json", ledger)
+    _write("docs/halo/contract/phase1b/packet-index.json", index)
+    print(f"wrote ledger ({len(rows)} rows; {len(EVALUATED_17)} authoritative evaluated) + packet-index ({len(assignment)} provisional packets)")
+
+
+def _init(to, reason):
+    return [{"from": None, "to": to, "at": AS_OF, "by": "codex", "reason": reason}]
+
+
+def row_for(n, pid, mod):
+    mid = sw(n)
+    base = {"metric_id": mid, "module": mod, "packet_id": pid, "boundary_class": "sales",
+            "definition_version": "0.0.0", "owner": "codex", "evidence_as_of": AS_OF,
+            "source_dependency_ids": [], "authoritative": False}
+    if n in OVERLAY:
+        base.update({"boundary_class": "separate_serra_service", "definition_version": "1.0.0",
+                     "disposition": "outside_sales_domain", "source_existence_state": "proved_outside_sales_domain",
+                     "acquisition_admission_state": "not_acquired", "evaluation_state": "not_measured",
+                     "report_acceptance_state": "draft", "authoritative": True,
+                     "current_truth_ref": "SPEC §3 separate-Service overlay (18 IDs) — frozen",
+                     "evidence_ref": "SPEC §3 overlay; internal disposition-only; appendix ID+label only",
+                     "next_action": "internal disposition-only (no Honda value/narrative/grade)", "review_point": "terminal (governance)",
+                     "transitions": _init("outside_sales_domain", "ledger init: frozen Service overlay")})
+    elif n in EVALUATED_17:
+        leads = n in LEADS_PROMOTED
+        base.update({"definition_version": "1.0.0", "disposition": "measured_validated",
+                     "source_existence_state": "acquired_local",
+                     "acquisition_admission_state": ("admitted_promoted" if leads else "admitted_held"),
+                     "evaluation_state": "measured_graded", "report_acceptance_state": "accepted", "authoritative": True,
+                     "current_truth_ref": TRUTH_REF,
+                     "source_dependency_ids": ([SRC_LEADS] if leads else []),
+                     "evidence_ref": "carry-forward of authoritative accepted+evaluated Honda state (" + TRUTH_REF + ")",
+                     "next_action": "none (accepted/evaluated); recompute on next period",
+                     "review_point": "next accepted period",
+                     "transitions": _init("measured_validated", "carry-forward authoritative accepted+evaluated Honda truth (not reset)")})
+    else:
+        base.update({"disposition": "source_investigation_pending", "source_existence_state": "unproved",
+                     "acquisition_admission_state": "not_acquired", "evaluation_state": "not_measured",
+                     "report_acceptance_state": "draft", "authoritative": False,
+                     "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
+                     "next_action": "provisional; investigated when packet " + pid + " is activated",
+                     "review_point": "on packet activation",
+                     "transitions": _init("source_investigation_pending", "ledger init: provisional non-authoritative placeholder")})
+    return base
 
 
 def _write(rel, obj):
