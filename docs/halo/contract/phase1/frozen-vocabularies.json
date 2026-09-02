@@ -151,6 +151,34 @@
         "abstained_only_for_protected_content_envelope": true
       }
     },
+    "disposition_evaluation_consistency": {
+      "spec_ref": "SPEC §3/§6 — frozen exact disposition -> allowed evaluation_state map (only measured_validated / data_acquired_calculation_pending may leave not_measured)",
+      "closed": true,
+      "map": {
+        "measured_validated": ["measured_graded", "measured_unscored", "measurement_rejected"],
+        "data_acquired_calculation_pending": ["not_measured", "measured_unscored", "measured_abstained", "measurement_rejected"],
+        "crm_available_acquisition_pending": ["not_measured"],
+        "additional_history_required": ["not_measured"],
+        "external_source_required": ["not_measured"],
+        "genuinely_not_available": ["not_measured"],
+        "outside_sales_domain": ["not_measured"],
+        "source_investigation_pending": ["not_measured"]
+      }
+    },
+    "source_existence_acquisition_matrix": {
+      "spec_ref": "SPEC §5/§7.1 — frozen allowed (source_existence_state, acquisition_admission_state) pairs; all others reject",
+      "closed": true,
+      "allowed_pairs": {
+        "unproved": ["not_acquired"],
+        "investigation_pending": ["not_acquired", "acquisition_pending"],
+        "proved_available_in_crm": ["not_acquired", "acquisition_pending"],
+        "acquired_local": ["acquired_pending_admission", "admitted_held", "admitted_promoted"],
+        "proved_requires_external": ["not_acquired", "acquisition_pending", "acquisition_exception"],
+        "proved_requires_more_history": ["not_acquired", "acquisition_pending", "admitted_held"],
+        "proved_outside_sales_domain": ["not_acquired", "quarantined"],
+        "proved_not_available": ["not_acquired", "acquisition_exception"]
+      }
+    },
     "acquisition_admission_state": {
       "spec_ref": "SPEC §5, §7.1, §7.3 — frozen closed set (per source artifact)",
       "closed": true,

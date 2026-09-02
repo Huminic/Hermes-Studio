@@ -1,9 +1,9 @@
 {
   "artifact": "honda-watchdog-phase1-fail-closed-stops",
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "frozen": true,
-  "phase": "Phase 1A — freeze the canonical fail-closed stop conditions. Design-only.",
-  "spec_ref": "SPEC §9 stop conditions",
+  "phase": "Phase 1A — freeze the canonical fail-closed stop conditions with machine-semantic blast-radius + vault admission gate. Design-only.",
+  "spec_ref": "SPEC §9 stop conditions; Phase 0 C-02 vault policy",
   "principle": "Fail-closed: on any stop condition, STOP — do not guess, infer, substitute, or proceed. Record the stop with evidence, owner, next action, and review point.",
   "canonical_stops": {
     "wrong_dealer": "Any artifact/row not bound to Serra Honda dealer 21043.",
@@ -24,19 +24,39 @@
     "formula_or_denominator_ambiguity", "incompatible_baseline", "source_substitution_or_skip",
     "dirty_or_competing_writer", "production_or_customer_behavior_change"
   ],
+  "count": 11,
   "blast_radius_rule": {
-    "one_source_failure_blocks": "only the dependent metric IDs of that source",
-    "does_not_block": "unrelated modules or independent metrics",
-    "module_rule": "a failed/blocked ID never erases the rest of its module; a rejected ID blocks only FINAL completion until corrected or converted to an evidence-backed allowed disposition"
+    "one_source_failure_scope": "dependent_ids_only",
+    "blocks_unrelated_modules": false,
+    "blocks_independent_metrics": false,
+    "rejected_id_blocks_final_completion_only": true,
+    "human_note": "One source failure blocks only the dependent metric IDs of that source; never unrelated modules or independent metrics. A rejected ID blocks only FINAL completion until corrected or converted to an evidence-backed allowed disposition."
+  },
+  "blast_radius_expected": {
+    "one_source_failure_scope": "dependent_ids_only",
+    "blocks_unrelated_modules": false,
+    "blocks_independent_metrics": false,
+    "rejected_id_blocks_final_completion_only": true
   },
   "inherited_admission_gates": {
     "vault_policy_nonconformance_admission_gate": {
-      "source": "Phase 0 evidence — 09_conflict_register.json C-02; 07_vault_vs_brain_topology.md §4.3",
+      "fail_closed": true,
+      "required_dir_mode": "0700",
+      "required_file_mode": "0600",
+      "current_conformance": "nonconforming",
+      "gate_phase": "phase3_admission_gate",
+      "source_ref": "Phase 0 09_conflict_register.json C-02; 07_vault_vs_brain_topology.md §4.3",
       "rule": "New protected raw admission FAILS CLOSED until vault dirs are 0700 / files 0600 (or a documented dedicated service identity). Current runtime is NONCONFORMING (0750/0775/0755; files 0444).",
-      "enforced_by": "packet admission_contract must mechanically inherit this gate; a packet cannot admit new protected raw while nonconforming.",
       "status": "PINNED / ENFORCEMENT NONCONFORMING -> Phase 3 fail-closed admission gate"
     }
   },
-  "count": 11,
-  "inheritance_rule": "A packet's stop_conditions.inherited_canonical MUST equal canonical_stop_names EXACTLY (mechanical inheritance, not any string), and its admission_contract MUST inherit inherited_admission_gates.vault_policy_nonconformance_admission_gate."
+  "vault_gate_expected": {
+    "fail_closed": true,
+    "required_dir_mode": "0700",
+    "required_file_mode": "0600",
+    "current_conformance": "nonconforming",
+    "gate_phase": "phase3_admission_gate",
+    "status_must_contain": "NONCONFORMING"
+  },
+  "inheritance_rule": "A packet's stop_conditions.inherited_canonical MUST equal canonical_stop_names EXACTLY (mechanical inheritance, not any string); its admission_contract MUST inherit inherited_admission_gates.vault_policy_nonconformance_admission_gate; blast_radius_rule MUST match blast_radius_expected exactly (weakening/removal rejects); the vault gate MUST match vault_gate_expected (empty/weakened rejects)."
 }

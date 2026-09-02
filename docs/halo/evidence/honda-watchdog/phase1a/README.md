@@ -24,12 +24,19 @@ Amendment (`docs/halo/planning/`): `HONDA_SEMANTIC_WATCHDOG_SPEC_AMENDMENT_001.m
 amendment of SPEC §3; the reviewed SPEC bytes are unchanged so the Phase 0 authority hash stays
 valid.
 
-Validator (item 8): `scripts/halo-phase1/validate_phase1_contracts.py` — **schema-driven**: reads
-required fields/enums/patterns/transitions from the frozen contracts (single source of truth) and
-reuses the Phase 0 module map (295/11/18). Runs **201 exhaustive mutation self-tests** (one per
-required field / enum / conditional / sub-contract field / transition / context-receipt / stop /
-partition / DAG / candidate rule) plus **5 named malformed probes** (sparse SIP metric, GNA missing
-affirmative evidence, sparse packet, sparse source, sparse candidate) that must reject. Reproduce:
+Machine-enforceable schema (item 3/4/5/6): `docs/halo/contract/phase1/record-schemas.json` —
+JSON-Schema-like definitions for `metric_row`, the 3 sub-contracts, `packet` + nested contracts,
+`source_node`, `candidate` (type/enum/const/pattern/format/items/minItems/required/
+additionalProperties=false/$vocab/$ref).
+
+Validator (item 8): `scripts/halo-phase1/validate_phase1_contracts.py` — a **generic recursive
+JSON-Schema engine** that validates instances against `record-schemas.json`, plus explicit
+cross-record invariants (module ownership, overlay strictness, disposition↔evaluation +
+disposition↔source_existence consistency, SIP/GNA rules, registered source/candidate-ID resolution +
+frozen-catalog membership, source_existence↔acquisition pair matrix, exact stop inheritance,
+machine-semantic blast-radius + vault gate). Mutations are generated **recursively** from the schemas
+(drop each required field at any depth; inject a violation at each leaf): **784 self-tests** plus the
+**17** reviewer-reproduced false-positive probes, all rejecting. Reproduce:
 `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write`.
 
 ## Evidence (`docs/halo/evidence/honda-watchdog/phase1a/`)
@@ -45,15 +52,15 @@ affirmative evidence, sparse packet, sparse source, sparse candidate) that must 
 - Structure **295/11/18 preserved**; six closed vocabularies frozen; disposition amended to 8 with
   the approved nonterminal `source_investigation_pending` (restricted transitions; no direct
   acquired/measured).
-- Schema-driven validator + **201/201 self-tests + 5/5 named probes PASS**; deterministic; imports
-  the Phase 0 map so 295/11/18 cannot silently drift.
-- Independent non-author re-verification of the deepened validator: **PASS on all checks, reject-tests
-  non-tautological**.
+- Generic recursive validator + **784/784 self-tests + 17/17 named probes PASS**; deterministic;
+  imports the Phase 0 map so 295/11/18 cannot silently drift.
+- Independent non-author re-verification of the generic engine: **PASS on all checks**, including
+  fresh malformed instances the reviewer built itself — all rejected (enforcement generalizes).
 - **No metric rows or packets authored** (Phase 1 remains design-only).
 
-**Re-review note:** the first submission (`60c519966`) was HOLD (validator too shallow); this packet
-reissues a deepened, exhaustive, schema-driven validator (see `02_phase1a_gate_receipt.md` §Shadow
-re-review correction for the ten fixes).
+**Re-review history:** `60c519966` HOLD (too shallow) → `59e97d289` HOLD (still accepted 17 malformed
+contracts, example-based) → this packet replaces example-checks with a generic recursive JSON-Schema
+engine (see `02_phase1a_gate_receipt.md` §Second shadow re-review correction).
 
 **Mechanical checks PASS; overall Phase 1A is HOLD pending impartial-shadow re-review.** This gate
 does not authorize Phase 1B/2+; downstream gates and fail-closed stops remain enforceable.

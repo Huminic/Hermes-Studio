@@ -1,0 +1,260 @@
+{
+  "artifact": "honda-watchdog-phase1-record-schemas",
+  "schema_version": "1.0.0",
+  "frozen": true,
+  "phase": "Phase 1A — machine-enforceable JSON-Schema-like definitions for every record type. Consumed by a GENERIC recursive validator (scripts/halo-phase1/validate_phase1_contracts.py). Design-only: no records authored.",
+  "keywords_supported": ["type", "enum", "const", "pattern", "format(semver|iso_datetime)", "items", "minItems", "nonempty", "minimum", "maximum", "properties", "required", "additionalProperties(false)", "$vocab", "$ref"],
+  "vocab_ref": "docs/halo/contract/phase1/frozen-vocabularies.json ($vocab resolves enum members from closed_vocabularies.<name>.values)",
+  "local_enums": {
+    "polarity": ["higher_is_better", "lower_is_better", "target_band", "neutral_control"],
+    "cadence": ["daily", "weekly", "monthly", "manual", "on_demand"],
+    "impact_method": ["incremental_units_dollars", "operational_only", "none"],
+    "impact_status": ["not_estimated", "range_estimated", "assumption_labeled", "not_applicable"],
+    "sensitivity_class": ["none", "pii", "protected_content", "compliance"],
+    "authorization": ["none_required", "duane_required", "compliance_required", "cross_rooftop_required", "external_required"],
+    "owner": ["codex", "claude_studio", "duane", "impartial_shadow"],
+    "customer_visibility": ["full", "appendix_id_label_only", "hidden"],
+    "confidence": ["high", "medium", "low", "abstain", "not_applicable"],
+    "null_missing_behavior": ["missing_not_zero", "explicit_null", "not_applicable"],
+    "zero_denominator_behavior": ["undefined_withheld", "reported_as_no_denominator"],
+    "basis": ["dealer_history", "capability_normalized", "published_industry", "peer_cohort", "operator_potential"],
+    "threshold_approval": ["proposed", "approved", "retired"],
+    "comparison_approval": ["proposed", "approved", "reference_only", "retired"],
+    "grade_approval": ["proposed", "approved", "unresolved", "retired"],
+    "record_status": ["active", "draft", "inactive"],
+    "compatibility": ["compatible", "incompatible", "unresolved"],
+    "family": ["lead_source_roi", "cage_kpi", "sales_comm_log", "crm_sales_gross", "appointments", "dealership_performance", "response_times", "custom_reporting", "manual_crm", "external"],
+    "source_type": ["native_xlsx", "browser_csv", "manual", "external"],
+    "relationship_to_295": ["net_new", "refines_existing"],
+    "candidate_state": ["candidate_review_pending", "accepted_for_future_catalog", "rejected"],
+    "candidate_owner": ["codex", "claude_studio", "duane"]
+  },
+  "definitions": {
+    "metric_row": {
+      "type": "object", "additionalProperties": false,
+      "required": ["metric_id", "definition_version", "module", "business_question", "boundary_class", "population", "calculation_kind", "null_missing_behavior", "unit", "polarity", "window", "timezone", "cadence", "impact_method", "impact_status", "gradable", "sensitivity_class", "protected_content", "authorization", "disposition", "source_existence_state", "evaluation_state", "source_dependency_ids", "evidence_ref", "evidence_as_of", "owner", "internal_visibility", "customer_visibility", "confidence", "explainability_ref", "evidence_index_ref", "detection_threshold_contract", "comparison_reference_contract", "grade_target_contract"],
+      "properties": {
+        "metric_id": {"type": "string", "pattern": "^SW-\\d{3}$"},
+        "definition_version": {"type": "string", "format": "semver"},
+        "module": {"type": "integer", "minimum": 1, "maximum": 11},
+        "business_question": {"type": "string", "nonempty": true},
+        "boundary_class": {"$vocab": "boundary_class"},
+        "population": {"type": "string", "nonempty": true},
+        "calculation_kind": {"$vocab": "calculation_kind"},
+        "null_missing_behavior": {"type": "string", "enum": ["missing_not_zero", "explicit_null", "not_applicable"]},
+        "unit": {"type": "string", "nonempty": true},
+        "polarity": {"type": "string", "enum": ["higher_is_better", "lower_is_better", "target_band", "neutral_control"]},
+        "window": {"type": "string", "nonempty": true},
+        "timezone": {"const": "America/New_York"},
+        "cadence": {"type": "string", "enum": ["daily", "weekly", "monthly", "manual", "on_demand"]},
+        "impact_method": {"type": "string", "enum": ["incremental_units_dollars", "operational_only", "none"]},
+        "impact_status": {"type": "string", "enum": ["not_estimated", "range_estimated", "assumption_labeled", "not_applicable"]},
+        "gradable": {"type": "boolean"},
+        "sensitivity_class": {"type": "string", "enum": ["none", "pii", "protected_content", "compliance"]},
+        "protected_content": {"type": "boolean"},
+        "authorization": {"type": "string", "enum": ["none_required", "duane_required", "compliance_required", "cross_rooftop_required", "external_required"]},
+        "disposition": {"$vocab": "disposition"},
+        "source_existence_state": {"$vocab": "source_existence_state"},
+        "evaluation_state": {"$vocab": "metric_evaluation_state"},
+        "source_dependency_ids": {"type": "array", "items": {"type": "string", "pattern": "^SRC-[a-z_]+-\\d{4}$"}},
+        "evidence_ref": {"type": "string", "nonempty": true},
+        "evidence_as_of": {"type": "string", "format": "iso_datetime"},
+        "owner": {"type": "string", "enum": ["codex", "claude_studio", "duane", "impartial_shadow"]},
+        "internal_visibility": {"type": "boolean"},
+        "customer_visibility": {"type": "string", "enum": ["full", "appendix_id_label_only", "hidden"]},
+        "confidence": {"type": "string", "enum": ["high", "medium", "low", "abstain", "not_applicable"]},
+        "explainability_ref": {"type": "string", "nonempty": true},
+        "evidence_index_ref": {"type": "string", "nonempty": true},
+        "detection_threshold_contract": {"$ref": "threshold_contract"},
+        "comparison_reference_contract": {"$ref": "comparison_contract"},
+        "grade_target_contract": {"$ref": "grade_target_contract"},
+        "numerator": {"type": "string", "nonempty": true},
+        "denominator": {"type": "string", "nonempty": true},
+        "formula": {"type": "string", "nonempty": true},
+        "direct_source_fields": {"type": "array", "minItems": 1, "items": {"type": "string", "nonempty": true}},
+        "zero_denominator_behavior": {"type": "string", "enum": ["undefined_withheld", "reported_as_no_denominator"]},
+        "next_action": {"type": "string", "nonempty": true},
+        "review_point": {"type": "string", "nonempty": true},
+        "finite_investigation_ref": {"type": "string", "nonempty": true},
+        "affirmative_investigation_evidence_ref": {"type": "string", "nonempty": true},
+        "envelope_authorized": {"type": "boolean"}
+      }
+    },
+    "threshold_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["threshold_id", "version", "rule", "provenance", "effective_dates", "approval_state", "status"],
+      "properties": {
+        "threshold_id": {"type": "string", "pattern": "^TH-[A-Za-z0-9-]+$"},
+        "version": {"type": "string", "format": "semver"},
+        "rule": {"type": "string", "nonempty": true},
+        "provenance": {"type": "string", "nonempty": true},
+        "effective_dates": {"type": "string", "nonempty": true},
+        "approval_state": {"type": "string", "enum": ["proposed", "approved", "retired"]},
+        "status": {"type": "string", "enum": ["active", "draft", "inactive"]}
+      }
+    },
+    "comparison_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["reference_id", "version", "basis", "formula", "provenance", "publication_date", "valid_period", "compatibility_result", "assumptions", "confidence", "approval_state", "status"],
+      "properties": {
+        "reference_id": {"type": "string", "pattern": "^CR-[A-Za-z0-9-]+$"},
+        "version": {"type": "string", "format": "semver"},
+        "basis": {"type": "string", "enum": ["dealer_history", "capability_normalized", "published_industry", "peer_cohort", "operator_potential"]},
+        "formula": {"type": "string", "nonempty": true},
+        "provenance": {"type": "string", "nonempty": true},
+        "publication_date": {"type": "string", "nonempty": true},
+        "valid_period": {"type": "string", "nonempty": true},
+        "compatibility_result": {"type": "string", "enum": ["compatible", "incompatible", "unresolved"]},
+        "assumptions": {"type": "string", "nonempty": true},
+        "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+        "approval_state": {"type": "string", "enum": ["proposed", "approved", "reference_only", "retired"]},
+        "status": {"type": "string", "enum": ["active", "draft", "inactive"]}
+      }
+    },
+    "grade_target_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["grade_target_id", "version", "basis", "value_or_range", "provenance", "effective_dates", "compatibility_result", "approval_state", "status"],
+      "properties": {
+        "grade_target_id": {"type": "string", "pattern": "^GT-[A-Za-z0-9-]+$"},
+        "version": {"type": "string", "format": "semver"},
+        "basis": {"type": "string", "enum": ["dealer_history", "capability_normalized", "published_industry", "peer_cohort", "operator_potential"]},
+        "value_or_range": {"type": "string", "nonempty": true},
+        "provenance": {"type": "string", "nonempty": true},
+        "effective_dates": {"type": "string", "nonempty": true},
+        "compatibility_result": {"type": "string", "enum": ["compatible", "incompatible", "unresolved"]},
+        "approval_state": {"type": "string", "enum": ["proposed", "approved", "unresolved", "retired"]},
+        "status": {"type": "string", "enum": ["active", "draft", "inactive"]}
+      }
+    },
+    "packet": {
+      "type": "object", "additionalProperties": false,
+      "required": ["packet_id", "module", "target_ids", "management_question", "prerequisites", "source_dependencies", "admission_contract", "transform_contract", "persist_contract", "test_contract", "report_fragment_contract", "stop_conditions", "two_delta_proof", "partitions_target"],
+      "properties": {
+        "packet_id": {"type": "string", "pattern": "^PKT-\\d{2}[A-Z]?-\\d{2}$"},
+        "module": {"type": "integer", "minimum": 1, "maximum": 11},
+        "target_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^SW-\\d{3}$"}},
+        "size_reason": {"type": "string", "nonempty": true},
+        "management_question": {"type": "string", "nonempty": true},
+        "prerequisites": {"type": "array", "items": {"type": "string", "nonempty": true}},
+        "source_dependencies": {"type": "array", "items": {"type": "string", "pattern": "^SRC-[a-z_]+-\\d{4}$"}},
+        "admission_contract": {"$ref": "admission_contract"},
+        "transform_contract": {"$ref": "transform_contract"},
+        "persist_contract": {"$ref": "persist_contract"},
+        "test_contract": {"$ref": "test_contract"},
+        "report_fragment_contract": {"$ref": "report_fragment_contract"},
+        "stop_conditions": {"$ref": "stop_conditions"},
+        "two_delta_proof": {"$ref": "two_delta_proof"},
+        "partitions_target": {"$ref": "partitions_target"}
+      }
+    },
+    "admission_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["family", "dedupe_key", "sales_only_receipt", "expected_admission_state", "inherited_admission_gates"],
+      "properties": {
+        "family": {"type": "string", "enum": ["lead_source_roi", "cage_kpi", "sales_comm_log", "crm_sales_gross", "appointments", "dealership_performance", "response_times", "custom_reporting", "manual_crm", "external"]},
+        "dedupe_key": {"type": "string", "nonempty": true},
+        "sales_only_receipt": {"type": "string", "nonempty": true},
+        "expected_admission_state": {"$vocab": "acquisition_admission_state"},
+        "inherited_admission_gates": {"type": "array", "minItems": 1, "items": {"type": "string", "nonempty": true}}
+      }
+    },
+    "transform_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["normalized_spec", "row_key_set_hash_method", "join_keys", "reconciliation"],
+      "properties": {
+        "normalized_spec": {"type": "string", "nonempty": true},
+        "row_key_set_hash_method": {"type": "string", "nonempty": true},
+        "join_keys": {"type": "array", "minItems": 1, "items": {"type": "string", "nonempty": true}},
+        "reconciliation": {"type": "string", "nonempty": true}
+      }
+    },
+    "persist_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["target_tables", "append_only", "idempotent_key"],
+      "properties": {
+        "target_tables": {"type": "array", "minItems": 1, "items": {"type": "string", "nonempty": true}},
+        "append_only": {"type": "boolean"},
+        "idempotent_key": {"type": "string", "nonempty": true}
+      }
+    },
+    "test_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["positive_golden", "negative_tests", "missing_is_not_zero_test"],
+      "properties": {
+        "positive_golden": {"type": "string", "nonempty": true},
+        "negative_tests": {"type": "array", "minItems": 1, "items": {"type": "string", "nonempty": true}},
+        "missing_is_not_zero_test": {"type": "string", "nonempty": true}
+      }
+    },
+    "report_fragment_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["subsection_outputs", "customer_language_scope", "internal_companion_scope"],
+      "properties": {
+        "subsection_outputs": {"type": "array", "minItems": 1, "items": {"type": "string", "nonempty": true}},
+        "customer_language_scope": {"type": "string", "nonempty": true},
+        "internal_companion_scope": {"type": "string", "nonempty": true}
+      }
+    },
+    "stop_conditions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["inherited_canonical", "packet_specific"],
+      "properties": {
+        "inherited_canonical": {"type": "array", "minItems": 11, "items": {"type": "string", "nonempty": true}},
+        "packet_specific": {"type": "array", "minItems": 1, "items": {"type": "string", "nonempty": true}}
+      }
+    },
+    "two_delta_proof": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidence_delta", "meaning_delta"],
+      "properties": {
+        "evidence_delta": {"type": "string", "nonempty": true},
+        "meaning_delta": {"type": "string", "nonempty": true}
+      }
+    },
+    "partitions_target": {
+      "type": "object", "additionalProperties": false,
+      "required": ["accepted_measured_ids", "accepted_disposition_only_ids", "rejected_ids"],
+      "properties": {
+        "accepted_measured_ids": {"type": "array", "items": {"type": "string", "pattern": "^SW-\\d{3}$"}},
+        "accepted_disposition_only_ids": {"type": "array", "items": {"type": "string", "pattern": "^SW-\\d{3}$"}},
+        "rejected_ids": {"type": "array", "items": {"type": "string", "pattern": "^SW-\\d{3}$"}}
+      }
+    },
+    "source_node": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_id", "profile", "family", "period", "schema_revision", "source_type", "source_existence_state", "acquisition_admission_state", "provenance_ref", "sales_only_receipt", "dependent_metric_ids", "dependent_candidate_ids"],
+      "properties": {
+        "source_id": {"type": "string", "pattern": "^SRC-[a-z_]+-\\d{4}$"},
+        "profile": {"const": "serra-honda"},
+        "family": {"type": "string", "enum": ["lead_source_roi", "cage_kpi", "sales_comm_log", "crm_sales_gross", "appointments", "dealership_performance", "response_times", "custom_reporting", "manual_crm", "external"]},
+        "period": {"type": "string", "nonempty": true},
+        "schema_revision": {"type": "string", "nonempty": true},
+        "source_type": {"type": "string", "enum": ["native_xlsx", "browser_csv", "manual", "external"]},
+        "source_existence_state": {"$vocab": "source_existence_state"},
+        "acquisition_admission_state": {"$vocab": "acquisition_admission_state"},
+        "provenance_ref": {"type": "string", "nonempty": true},
+        "sales_only_receipt": {"type": "string", "nonempty": true},
+        "dependent_metric_ids": {"type": "array", "items": {"type": "string", "pattern": "^SW-\\d{3}$"}},
+        "dependent_candidate_ids": {"type": "array", "items": {"type": "string", "pattern": "^CAND-\\d{4}$"}}
+      }
+    },
+    "candidate": {
+      "type": "object", "additionalProperties": false,
+      "required": ["candidate_id", "proposed_name", "description", "observed_source", "rationale", "boundary_class", "relationship_to_295", "candidate_state", "authorization_required", "owner", "evidence_ref"],
+      "properties": {
+        "candidate_id": {"type": "string", "pattern": "^CAND-\\d{4}$"},
+        "proposed_name": {"type": "string", "nonempty": true},
+        "description": {"type": "string", "nonempty": true},
+        "observed_source": {"type": "string", "nonempty": true},
+        "rationale": {"type": "string", "nonempty": true},
+        "boundary_class": {"$vocab": "boundary_class"},
+        "relationship_to_295": {"type": "string", "enum": ["net_new", "refines_existing"]},
+        "related_sw_id": {"type": "string", "pattern": "^SW-\\d{3}$"},
+        "candidate_state": {"type": "string", "enum": ["candidate_review_pending", "accepted_for_future_catalog", "rejected"]},
+        "authorization_required": {"type": "boolean"},
+        "owner": {"type": "string", "enum": ["codex", "claude_studio", "duane"]},
+        "evidence_ref": {"type": "string", "nonempty": true}
+      }
+    }
+  }
+}
