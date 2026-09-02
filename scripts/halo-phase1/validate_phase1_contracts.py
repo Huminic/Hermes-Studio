@@ -103,7 +103,25 @@ PHASE0_AUTHORITY = {
     P09: "0357992bcc60b7a085ceb2f2b7d83b8c4549941de26d8dbb68d43af5490d2504",
     PSPEC: "fedd957b9431521591155763327147d86c25fe3da11e2996470c134eaf9d785e",
 }
-AUTH_SHA = "2e8bdb60da09faf02bd88dcf3bd3485356f4868833884e260a78f71fe05a1827"
+AUTH_SHA = "edfc410f7d0c33d5c2d3f86c09d3f3bb225d9480d56b1aee09e2e1d81a324dc0"
+
+# EXACT canonical key -> SPEC phrase mapping (structural expectation, ordered). The KEY IDENTIFIERS
+# are integrity-pinned (AUTH_SHA) and structurally enforced here; the PHRASES are relationally bound
+# to the unchanged SPEC. Renaming a key (even keeping its phrase), duplicating a key, or dropping a
+# key all reject.
+EXPECTED_CANON = [
+    ("wrong_dealer", "wrong dealer"),
+    ("service_parts_in_sales", "Service/Parts"),
+    ("ambiguous_period", "ambiguous period"),
+    ("schema_drift", "schema drift"),
+    ("missing_provenance", "provenance"),
+    ("protected_content_or_pii_outside_envelope", "PII outside the approved envelope"),
+    ("formula_or_denominator_ambiguity", "formula/denominator ambiguity"),
+    ("incompatible_baseline", "incompatible baseline"),
+    ("source_substitution_or_skip", "skipped/substituted"),
+    ("dirty_or_competing_writer", "competing writer"),
+    ("production_or_customer_behavior_change", "production/customer behavior"),
+]
 
 
 def _read_text(path):
@@ -111,48 +129,78 @@ def _read_text(path):
         return f.read()
 
 
+def _authget(auth, path):
+    cur = auth
+    for p in path:
+        if not isinstance(cur, dict) or p not in cur:
+            return KeyError
+        cur = cur[p]
+    return cur
+
+
+# INDEPENDENT expected bindings (validator constant). The authority file's binding metadata is NOT
+# trusted as its own expectation: it must match this list EXACTLY before any dereference, so a
+# swapped value PLUS co-mutated equals/phrase/source cannot self-validate. Each phrase is role-specific
+# (e.g. "`0700` on directories") so a dir/file mode swap fails both the value check and the role phrase.
+EXPECTED_BINDINGS = [
+    {"id": "vault.required_dir_mode", "value_path": ["vault", "value", "required_dir_mode"], "equals": "0700", "phrase": "`0700` on directories", "source": "vault_topology_07"},
+    {"id": "vault.required_file_mode", "value_path": ["vault", "value", "required_file_mode"], "equals": "0600", "phrase": "`0600` on files", "source": "vault_topology_07"},
+    {"id": "vault.fail_closed", "value_path": ["vault", "value", "fail_closed"], "equals": True, "phrase": "fail closed", "source": "vault_topology_07"},
+    {"id": "vault.current_conformance", "value_path": ["vault", "value", "current_conformance"], "equals": "nonconforming", "phrase": "NONCONFORMING", "source": "conflict_register_09"},
+    {"id": "vault.gate_phase", "value_path": ["vault", "value", "gate_phase"], "equals": "phase3_admission_gate", "phrase": "Phase 3 admission gate", "source": "conflict_register_09"},
+    {"id": "vault.status_must_contain", "value_path": ["vault", "value", "status_must_contain"], "equals": "NONCONFORMING", "phrase": "NONCONFORMING", "source": "conflict_register_09"},
+    {"id": "blast.one_source_failure_scope", "value_path": ["blast", "value", "one_source_failure_scope"], "equals": "dependent_ids_only", "phrase": "blocks only its dependent IDs", "source": "spec"},
+    {"id": "blast.blocks_unrelated_modules", "value_path": ["blast", "value", "blocks_unrelated_modules"], "equals": False, "phrase": "cannot block unrelated modules", "source": "spec"},
+    {"id": "blast.blocks_independent_metrics", "value_path": ["blast", "value", "blocks_independent_metrics"], "equals": False, "phrase": "blocks only its dependent IDs", "source": "spec"},
+    {"id": "blast.rejected_id_blocks_final_completion_only", "value_path": ["blast", "value", "rejected_id_blocks_final_completion_only"], "equals": True, "phrase": "prevents final completion", "source": "spec"},
+]
+ENFORCED_BINDING_IDS = [b["id"] for b in EXPECTED_BINDINGS] + ["canonical_stops.exact_11_key_to_spec_phrase"]
+
+
 def _relational_derive(auth, src):
-    """Validate an authority payload against immutable source TEXT; derive canon/blast/vault.
-    A value is accepted only if its token/phrase literally appears in the unchanged text, so a
-    co-mutated (weakened) payload fails here even when Phase 0 files are untouched."""
+    """Derive canon/blast/vault ONLY if:
+    (0) the authority binding DEFINITIONS equal the INDEPENDENT EXPECTED_BINDINGS constant (so a
+        co-mutated equals/phrase/source cannot self-validate);
+    (a) for each EXPECTED binding, the authority value at value_path equals the EXPECTED value AND the
+        EXPECTED (role-specific) phrase appears literally in the unchanged Phase 0/SPEC source; and
+    (b) the canonical stops are EXACTLY the 11 EXPECTED key->phrase pairs, unique, each phrase in SPEC.
+    Weakened / renamed / swapped payloads fail here even when Phase 0 is untouched."""
     if not isinstance(auth, dict):
         return None, ["authority payload not an object"]
     errs = []
-    try:
-        v = auth["vault"]["value"]
-        for f, toks in auth["vault"]["relational_tokens"].items():
-            for tok in toks:
-                if tok not in src.get(f, ""):
-                    errs.append(f"vault token {tok!r} not in {f}")
-        if ("`%s`" % v.get("required_dir_mode")) not in src.get("vault_topology_07", ""):
-            errs.append("vault required_dir_mode not backed by Phase 0 07")
-        if ("`%s`" % v.get("required_file_mode")) not in src.get("vault_topology_07", ""):
-            errs.append("vault required_file_mode not backed by Phase 0 07")
-        if v.get("status_must_contain", "\0") not in src.get("conflict_register_09", ""):
-            errs.append("vault status token not backed by Phase 0 09")
-        if v.get("fail_closed") is not True or "fail closed" not in src.get("vault_topology_07", ""):
-            errs.append("vault fail_closed not backed by Phase 0 07")
-        blast = auth["blast"]["value"]
-        for tok in auth["blast"]["relational_tokens"].get("spec", []):
-            if tok not in src.get("spec", ""):
-                errs.append(f"blast token {tok!r} not in SPEC")
-        if "cannot block unrelated modules" in src.get("spec", "") and blast.get("blocks_unrelated_modules") is not False:
-            errs.append("blast blocks_unrelated_modules must be false per SPEC")
-        if "blocks only its dependent IDs" in src.get("spec", "") and blast.get("one_source_failure_scope") != "dependent_ids_only":
-            errs.append("blast one_source_failure_scope must be dependent_ids_only per SPEC")
-        canon = []
-        for st in auth["canonical_stops"]:
-            ph = st.get("spec_phrase")
-            if not ph or ph not in src.get("spec", ""):
+    # (0) authority binding metadata must match the independent expectation EXACTLY (not self-trusted)
+    if auth.get("bindings") != EXPECTED_BINDINGS:
+        errs.append("authority bindings != independent EXPECTED_BINDINGS (metadata co-mutation attempt)")
+    # (a) dereference using the EXPECTED binding (value + role-specific phrase), never authority-supplied
+    for b in EXPECTED_BINDINGS:
+        val = _authget(auth, b["value_path"])
+        if val is KeyError:
+            errs.append(f"binding {b['id']}: value_path not found")
+        elif val != b["equals"]:
+            errs.append(f"binding {b['id']}: value {val!r} != expected {b['equals']!r}")
+        if b["phrase"] not in src.get(b["source"], ""):
+            errs.append(f"binding {b['id']}: expected phrase {b['phrase']!r} not in {b['source']}")
+    # (b) EXACT canonical key->phrase set, unique, phrases present in SPEC
+    stops = auth.get("canonical_stops")
+    if not isinstance(stops, list):
+        errs.append("canonical_stops not a list")
+    else:
+        pairs = [(s.get("key"), s.get("spec_phrase")) for s in stops if isinstance(s, dict)]
+        keys = [k for k, _ in pairs]
+        if len(keys) != len(set(keys)):
+            errs.append("canonical_stops has duplicate keys")
+        if pairs != EXPECTED_CANON:
+            errs.append("canonical_stops != exact expected 11 key->phrase mapping (rename/reorder/drop/retained-phrase)")
+        for _k, ph in EXPECTED_CANON:
+            if ph not in src.get("spec", ""):
                 errs.append(f"canonical stop phrase {ph!r} not in SPEC")
-            canon.append(st.get("key"))
-        if len(canon) != 11:
-            errs.append("authority canonical stops != 11")
-    except (KeyError, TypeError, AttributeError) as ex:
-        return None, [f"authority payload malformed: {ex}"]
     if errs:
         return None, errs
-    return {"vault": v, "blast": blast, "canon": canon}, errs
+    v = _authget(auth, ["vault", "value"])
+    blast = _authget(auth, ["blast", "value"])
+    if v is KeyError or blast is KeyError:
+        return None, ["authority missing vault/blast value"]
+    return {"vault": v, "blast": blast, "canon": [k for k, _ in EXPECTED_CANON]}, errs
 
 
 def _load_phase0_src():
@@ -742,7 +790,7 @@ def run_self_tests():
     # RELATIONAL anti-tautology: co-mutate the authority PAYLOAD in memory (as if code+contract were
     # weakened together) and confirm it fails against the UNCHANGED Phase 0 source text.
     _p0src = _load_phase0_src()
-    _wv = copy.deepcopy(load(AUTH_PATH)); _wv["vault"]["value"]["required_dir_mode"] = "0777"; _wv["vault"]["relational_tokens"]["vault_topology_07"] = ["`0777`"]
+    _wv = copy.deepcopy(load(AUTH_PATH)); _wv["vault"]["value"]["required_dir_mode"] = "0777"
     rec("anchor.relational_vault_comutation_rejected", False, _relational_derive(_wv, _p0src)[1])
     _wb = copy.deepcopy(load(AUTH_PATH)); _wb["blast"]["value"]["blocks_unrelated_modules"] = True
     rec("anchor.relational_blast_comutation_rejected", False, _relational_derive(_wb, _p0src)[1])
@@ -840,13 +888,32 @@ def run_probes():
     rec("35_root_sourcedag_list_of_list", lambda: validate_source_dag([[]], CTX))
     rec("36_packet_source_deps_dict_item", lambda: validate_packet(dict(good_packet(), source_dependencies=[{}]), CTX))
     rec("37_packet_partition_dict_item", lambda: validate_packet(dict(good_packet(), partitions_target={"accepted_measured_ids": [{}], "accepted_disposition_only_ids": [], "rejected_ids": []}), CTX))
-    # --- reviewer #4 relational co-mutation adversarial (code+contract weakened, Phase 0 unchanged) ---
+    # --- relational co-mutation adversarial (authority payload weakened in memory, Phase 0 unchanged) ---
     _src = _load_phase0_src()
+
     def _mut(mutator):
         payload = copy.deepcopy(load(AUTH_PATH)); mutator(payload); return _relational_derive(payload, _src)[1]
-    rec("38_relational_vault_comutation", lambda: _mut(lambda a: (a["vault"]["value"].update({"required_dir_mode": "0777"}), a["vault"]["relational_tokens"].update({"vault_topology_07": ["`0777`"]}))))
+    rec("38_relational_vault_comutation", lambda: _mut(lambda a: a["vault"]["value"].update({"required_dir_mode": "0777"})))
     rec("39_relational_blast_comutation", lambda: _mut(lambda a: a["blast"]["value"].update({"blocks_unrelated_modules": True})))
     rec("40_relational_canon_comutation", lambda: _mut(lambda a: a["canonical_stops"][0].update({"spec_phrase": "absent from spec"})))
+    # --- shadow #5 exact adversarial cases (all must fail with UNCHANGED Phase 0/SPEC) ---
+    rec("41_renamed_key_retained_phrase", lambda: _mut(lambda a: a["canonical_stops"][0].update({"key": "renamed_wrong_dealer"})))
+    rec("42_duplicate_canonical_key", lambda: _mut(lambda a: a["canonical_stops"].__setitem__(1, copy.deepcopy(a["canonical_stops"][0]))))
+    rec("43_blocks_independent_metrics_true", lambda: _mut(lambda a: a["blast"]["value"].update({"blocks_independent_metrics": True})))
+    rec("44_rejected_blocks_final_false", lambda: _mut(lambda a: a["blast"]["value"].update({"rejected_id_blocks_final_completion_only": False})))
+    rec("45_conforming_gatephase_none", lambda: _mut(lambda a: a["vault"]["value"].update({"current_conformance": "conforming", "gate_phase": "none"})))
+    rec("46_swapped_dir_file_modes", lambda: _mut(lambda a: a["vault"]["value"].update({"required_dir_mode": "0600", "required_file_mode": "0700"})))
+
+    # --- shadow #6: swap the vault VALUE *and* co-mutate its binding metadata to the swapped role;
+    #     must still reject because binding definitions are checked against independent EXPECTED_BINDINGS.
+    def _swap_value_and_metadata(a):
+        a["vault"]["value"].update({"required_dir_mode": "0600", "required_file_mode": "0700"})
+        for b in a["bindings"]:
+            if b["id"] == "vault.required_dir_mode":
+                b.update({"equals": "0600", "phrase": "`0600` on files"})
+            if b["id"] == "vault.required_file_mode":
+                b.update({"equals": "0700", "phrase": "`0700` on directories"})
+    rec("47_swapped_value_plus_binding_metadata", lambda: _mut(_swap_value_and_metadata))
     return probes
 
 
@@ -1018,6 +1085,8 @@ def main():
         "engine": "generic JSON-Schema-like recursive validator (record-schemas.json) + cross-record invariants; canon/blast/vault semantics RELATIONALLY derived from immutable Phase 0 authority (07/09/SPEC)",
         "contract_files": contract_hashes,
         "phase0_authority_derived": bool(DERIVED),
+        "relational_bindings_enforced": ENFORCED_BINDING_IDS,
+        "relational_bindings_note": "Each vault/blast field VALUE is bound to an independent EXPECTED_BINDINGS entry (value + role-specific phrase) verified against immutable Phase 0 07/09 + SPEC; canonical stops are the exact 11 key->phrase pairs. Authority binding metadata must equal EXPECTED_BINDINGS before dereference (no self-validation). Machine key identifiers are integrity-pinned by AUTH_SHA; their values/meanings are relationally bound.",
         "structure_295_11_18": "PASS" if not any(e.startswith("STRUCTURE") for e in errors) else "FAIL",
         "vocab_closure": "PASS" if not any(e.startswith("VOCAB") for e in errors) else "FAIL",
         "self_tests_total": len(self_tests),

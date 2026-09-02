@@ -1,22 +1,16 @@
 {
   "artifact": "honda-watchdog-phase1-phase0-derived-authority",
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "frozen": true,
   "phase": "Phase 1A — machine-readable representation of the Phase 0 / SPEC authority semantics used to anchor fail-closed-stops.",
-  "how_this_is_anchored": "The Phase 1A validator (a) verifies the pinned sha256 of the immutable Phase 0 evidence (07/09) + reviewed SPEC AND of this file; then (b) RELATIONALLY verifies every value below by requiring its token/phrase to appear literally in the pinned immutable source; then (c) DERIVES the canonical stops / blast-radius / vault-gate semantics FROM this file. Because the accepted values must match tokens in the unchanged Phase 0 authority, co-mutating validator + contract (and even this file) fails while Phase 0 authority is unchanged.",
+  "integrity_vs_meaning": "PRECISE CLAIM: the machine KEY IDENTIFIERS in this file (snake_case field names and value tokens such as `phase3_admission_gate`, `dependent_ids_only`) are integrity-pinned by this file's sha256 (AUTH_SHA in the validator) — they do NOT necessarily appear verbatim in Phase 0. Their MEANINGS/VALUES are RELATIONALLY BOUND: the validator requires each binding's `phrase` to appear literally in the immutable, hash-pinned Phase 0 evidence (07/09) or reviewed SPEC (§8/§9), AND the bound value to equal `equals`. So values cannot be weakened without either changing the immutable Phase 0 text (hash-pinned) or the value/phrase mismatching.",
   "phase0_sources": {
     "vault_topology_07": {"path": "docs/halo/evidence/honda-watchdog/phase0/07_vault_vs_brain_topology.md", "sha256": "9d3bb62894701d5f973b275ad8f68ebc47863aa45abf9f88c34cde22e7d74b2d"},
     "conflict_register_09": {"path": "docs/halo/evidence/honda-watchdog/phase0/09_conflict_register.json", "sha256": "0357992bcc60b7a085ceb2f2b7d83b8c4549941de26d8dbb68d43af5490d2504"},
     "spec": {"path": "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_EXECUTION_SPEC.md", "sha256": "fedd957b9431521591155763327147d86c25fe3da11e2996470c134eaf9d785e"}
   },
-  "vault": {
-    "value": {"fail_closed": true, "required_dir_mode": "0700", "required_file_mode": "0600", "current_conformance": "nonconforming", "gate_phase": "phase3_admission_gate", "status_must_contain": "NONCONFORMING"},
-    "relational_tokens": {"vault_topology_07": ["`0700`", "`0600`", "fail closed"], "conflict_register_09": ["NONCONFORMING"]}
-  },
-  "blast": {
-    "value": {"one_source_failure_scope": "dependent_ids_only", "blocks_unrelated_modules": false, "blocks_independent_metrics": false, "rejected_id_blocks_final_completion_only": true},
-    "relational_tokens": {"spec": ["blocks only its dependent IDs", "cannot block unrelated modules", "prevents final completion"]}
-  },
+  "vault": {"value": {"fail_closed": true, "required_dir_mode": "0700", "required_file_mode": "0600", "current_conformance": "nonconforming", "gate_phase": "phase3_admission_gate", "status_must_contain": "NONCONFORMING"}},
+  "blast": {"value": {"one_source_failure_scope": "dependent_ids_only", "blocks_unrelated_modules": false, "blocks_independent_metrics": false, "rejected_id_blocks_final_completion_only": true}},
   "canonical_stops": [
     {"key": "wrong_dealer", "spec_phrase": "wrong dealer"},
     {"key": "service_parts_in_sales", "spec_phrase": "Service/Parts"},
@@ -29,5 +23,17 @@
     {"key": "source_substitution_or_skip", "spec_phrase": "skipped/substituted"},
     {"key": "dirty_or_competing_writer", "spec_phrase": "competing writer"},
     {"key": "production_or_customer_behavior_change", "spec_phrase": "production/customer behavior"}
+  ],
+  "bindings": [
+    {"id": "vault.required_dir_mode", "value_path": ["vault", "value", "required_dir_mode"], "equals": "0700", "phrase": "`0700` on directories", "source": "vault_topology_07"},
+    {"id": "vault.required_file_mode", "value_path": ["vault", "value", "required_file_mode"], "equals": "0600", "phrase": "`0600` on files", "source": "vault_topology_07"},
+    {"id": "vault.fail_closed", "value_path": ["vault", "value", "fail_closed"], "equals": true, "phrase": "fail closed", "source": "vault_topology_07"},
+    {"id": "vault.current_conformance", "value_path": ["vault", "value", "current_conformance"], "equals": "nonconforming", "phrase": "NONCONFORMING", "source": "conflict_register_09"},
+    {"id": "vault.gate_phase", "value_path": ["vault", "value", "gate_phase"], "equals": "phase3_admission_gate", "phrase": "Phase 3 admission gate", "source": "conflict_register_09"},
+    {"id": "vault.status_must_contain", "value_path": ["vault", "value", "status_must_contain"], "equals": "NONCONFORMING", "phrase": "NONCONFORMING", "source": "conflict_register_09"},
+    {"id": "blast.one_source_failure_scope", "value_path": ["blast", "value", "one_source_failure_scope"], "equals": "dependent_ids_only", "phrase": "blocks only its dependent IDs", "source": "spec"},
+    {"id": "blast.blocks_unrelated_modules", "value_path": ["blast", "value", "blocks_unrelated_modules"], "equals": false, "phrase": "cannot block unrelated modules", "source": "spec"},
+    {"id": "blast.blocks_independent_metrics", "value_path": ["blast", "value", "blocks_independent_metrics"], "equals": false, "phrase": "blocks only its dependent IDs", "source": "spec"},
+    {"id": "blast.rejected_id_blocks_final_completion_only", "value_path": ["blast", "value", "rejected_id_blocks_final_completion_only"], "equals": true, "phrase": "prevents final completion", "source": "spec"}
   ]
 }

@@ -18,7 +18,7 @@ recipients, or customer changes. INGEST `src/routeTree.gen.ts` untouched.
 | P1A.5 | Source registry/DAG schema frozen (dedupe key (profile,family,period,schema_revision); no per-metric duplicate acquisition; source→metric fan-out) (item 5) | **PASS** | `source-registry-dag-schema.json` |
 | P1A.6 | Separate beyond-295 candidate-intake schema; cannot alter the 295 (item 6) | **PASS** | `beyond-295-candidate-intake-schema.json` (CAND-#### key; hard invariants) |
 | P1A.7 | Canonical fail-closed stops defined; one source failure blocks only dependent IDs (item 7) | **PASS** | `fail-closed-stops.json` (11 stops + blast_radius_rule) |
-| P1A.8 | **Generic recursive JSON-Schema engine** (`record-schemas.json`) + cross-record invariants; recursively-generated mutations for every field at every depth (metric rows, 3 sub-contracts, packets + nested contracts, source/DAG, candidates) + transitions/context-receipts/stops/partitions/DAG/privacy/two-delta/change-scope; **no metric rows/packets populated** (item 8) | **PASS** | `validate_phase1_contracts.py` → `PHASE1A_CONTRACT_CHECKS.json`: structure PASS, vocab PASS, **956/956 self-tests + 45/45 named probes reject + recursive crash-fuzz (universe 2118, 0 exceptions)**, overall_pass=true |
+| P1A.8 | **Generic recursive JSON-Schema engine** (`record-schemas.json`) + cross-record invariants; recursively-generated mutations for every field at every depth (metric rows, 3 sub-contracts, packets + nested contracts, source/DAG, candidates) + transitions/context-receipts/stops/partitions/DAG/privacy/two-delta/change-scope; **no metric rows/packets populated** (item 8) | **PASS** | `validate_phase1_contracts.py` → `PHASE1A_CONTRACT_CHECKS.json`: structure PASS, vocab PASS, **956/956 self-tests + 52/52 named probes reject + recursive crash-fuzz (universe 2118, 0 exceptions) + 11 relational bindings enforced**, overall_pass=true |
 | P1A.9 | Design-only boundary honored | **PASS** | Only additive docs/contracts/validator/evidence written; catalog `29c7ac06…` unchanged; reviewed SPEC `fedd957b…` unchanged; INGEST routeTree ` M` untouched |
 
 ## Shadow re-review correction (impartial Phase 1A HOLD → deepened)
@@ -142,7 +142,39 @@ exceptions)**.
 
 ## Tests run (read-only / deterministic)
 
-- `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write` → **RESULT: PASS** (exit 0); `structure_295_11_18=PASS`, `vocab_closure=PASS`, `phase0_authority_derived=true`, `self_tests_total=956`, `self_tests_failed=0`, `named_probes_total=45`, `named_probes_failed=0`, `crash_fuzz.tested_universe=2118`, `crash_fuzz.exceptions=0`.
+- `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write` → **RESULT: PASS** (exit 0); `structure_295_11_18=PASS`, `vocab_closure=PASS`, `phase0_authority_derived=true`, `self_tests_total=956`, `self_tests_failed=0`, `named_probes_total=52`, `named_probes_failed=0`, `crash_fuzz.tested_universe=2118`, `crash_fuzz.exceptions=0`, `relational_bindings_enforced=11`.
+
+### Finite relational bindings enforced (named)
+
+Each is bound to an **independent** validator-side `EXPECTED_BINDINGS` entry (value + role-specific
+exact phrase), verified against the immutable, hash-pinned Phase 0 07/09 + SPEC; the authority binding
+metadata must equal `EXPECTED_BINDINGS` **before** dereference (so a swapped value + co-mutated
+`equals`/`phrase` cannot self-validate):
+
+| Binding id | Value | Role phrase (immutable source) |
+|---|---|---|
+| `vault.required_dir_mode` | `0700` | `` `0700` on directories `` (07) |
+| `vault.required_file_mode` | `0600` | `` `0600` on files `` (07) |
+| `vault.fail_closed` | `true` | "fail closed" (07) |
+| `vault.current_conformance` | `nonconforming` | `NONCONFORMING` (09) |
+| `vault.gate_phase` | `phase3_admission_gate` | "Phase 3 admission gate" (09) |
+| `vault.status_must_contain` | `NONCONFORMING` | `NONCONFORMING` (09) |
+| `blast.one_source_failure_scope` | `dependent_ids_only` | "blocks only its dependent IDs" (SPEC) |
+| `blast.blocks_unrelated_modules` | `false` | "cannot block unrelated modules" (SPEC) |
+| `blast.blocks_independent_metrics` | `false` | "blocks only its dependent IDs" (SPEC) |
+| `blast.rejected_id_blocks_final_completion_only` | `true` | "prevents final completion" (SPEC) |
+| `canonical_stops` | exact 11 key→phrase pairs (unique) | each phrase in SPEC §9 |
+
+**Note (precise):** machine key identifiers (snake_case field names, value tokens like
+`phase3_admission_gate`/`dependent_ids_only`) are **integrity-pinned** by the authority file sha256
+(`AUTH_SHA`); their **values/meanings** are relationally bound to the phrases above. We do not claim
+every key literally appears in Phase 0 — only the bound phrases do.
+
+Shadow adversarial probes 41–47 all reject with **unchanged Phase 0/SPEC**: renamed key + retained
+phrase; duplicate canonical key; `blocks_independent_metrics=true`;
+`rejected_id_blocks_final_completion_only=false`; `current_conformance=conforming`+`gate_phase=none`;
+swapped dir/file modes; and **swapped value + co-mutated binding metadata** (rejects via
+`authority bindings != independent EXPECTED_BINDINGS`).
 - `python3 scripts/halo-phase0/validate_phase0_catalog.py --no-write` → **PASS** (295/11/18 preserved; generated `03` unchanged).
 - JSON parse: all six `docs/halo/contract/phase1/*.json` + `01_phase1a_contract_manifest.json` + `PHASE1A_CONTRACT_CHECKS.json` load OK.
 - Active-objective sha256 unchanged (`7c8e622b…`).

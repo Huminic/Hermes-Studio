@@ -36,15 +36,22 @@ disposition↔source_existence consistency, SIP/GNA rules, registered source/can
 frozen-catalog membership, source_existence↔acquisition pair matrix, exact stop inheritance,
 machine-semantic blast-radius + vault gate). Mutations are generated **recursively** from the schemas
 (drop each required field at any depth; inject a violation at each leaf): **956 self-tests** plus
-**45 named probes** (reviewer-reproduced false positives + real-ISO-datetime, protected-content
-abstention, crash-resistance, anti-tautology, and fresh cases) plus a **recursive crash-fuzz over a
-finite stated universe of 2118** (every reachable nested path × 12 hostile JSON values + hostile-item
-appends into every list) with **0 exceptions** (counted separately from expected semantic rejections).
+**52 named probes** (reviewer-reproduced false positives + real-ISO-datetime, protected-content
+abstention, crash-resistance, anti-tautology, shadow adversarial, and fresh cases) plus a **recursive
+crash-fuzz over a finite stated universe of 2118** (every reachable nested path × 12 hostile JSON
+values + hostile-item appends into every list) with **0 exceptions** (counted separately from expected
+semantic rejections).
 
-**Relational Phase 0 anchor:** canonical stops / blast-radius / vault-gate are **derived** from
-`phase0-derived-authority.json`, whose every value the validator verifies to appear literally in the
-immutable, hash-pinned Phase 0 evidence (`07` modes `0700`/`0600` + fail-closed; `09` NONCONFORMING)
-and reviewed SPEC (§8/§9 phrases). Co-mutating validator + contract fails while Phase 0 is unchanged.
+**Relational Phase 0 anchor (complete):** canonical stops / blast-radius / vault-gate are **derived**
+from `phase0-derived-authority.json`. All **11** vault/blast fields are bound to an **independent
+validator-side `EXPECTED_BINDINGS`** (value + role-specific phrase); the authority binding metadata
+must equal that constant **before** dereference, so a swapped value + co-mutated `equals`/`phrase`
+cannot self-validate. Each bound value must equal the expected and its role phrase must appear
+literally in the immutable Phase 0 07/09 + SPEC (`` `0700` on directories ``/`` `0600` on files `` +
+"fail closed" in 07; `NONCONFORMING` + "Phase 3 admission gate" in 09; blast phrases in SPEC).
+Canonical stops are the **exact 11 key→phrase pairs** (unique; renamed-key-with-retained-phrase and
+duplicate-key reject). Machine key identifiers are integrity-pinned by `AUTH_SHA`; their values are
+relationally bound. Shadow probes 41–47 all reject with unchanged Phase 0/SPEC.
 Real calendar-valid tz-aware ISO parsing. Reproduce:
 `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write`.
 
@@ -54,7 +61,7 @@ Real calendar-valid tz-aware ISO parsing. Reproduce:
 |---|---|
 | `01_phase1a_contract_manifest.json` | sha256 of every contract/validator/amendment/checks artifact + scope statement |
 | `02_phase1a_gate_receipt.md` | Gate criteria P1A.1–P1A.9 (mechanical PASS), tests, independent verification, rollback, approval PENDING |
-| `PHASE1A_CONTRACT_CHECKS.json` | Deterministic validator output (structure PASS, vocab PASS, phase0_authority_derived=true, 956/956 self-tests, 45/45 named probes, crash-fuzz universe 2118 / 0 exceptions) |
+| `PHASE1A_CONTRACT_CHECKS.json` | Deterministic validator output (structure PASS, vocab PASS, phase0_authority_derived=true, 956/956 self-tests, 52/52 named probes, crash-fuzz universe 2118 / 0 exceptions, 11 relational bindings) |
 | `../../../contract/phase1/phase0-derived-authority.json` | Machine-readable Phase 0/SPEC authority payload; canon/blast/vault derived from it after relational verification against immutable Phase 0 |
 
 ## Result
@@ -62,7 +69,7 @@ Real calendar-valid tz-aware ISO parsing. Reproduce:
 - Structure **295/11/18 preserved**; six closed vocabularies frozen; disposition amended to 8 with
   the approved nonterminal `source_investigation_pending` (restricted transitions; no direct
   acquired/measured).
-- Generic recursive validator + **956/956 self-tests + 45/45 named probes PASS + recursive crash-fuzz
+- Generic recursive validator + **956/956 self-tests + 52/52 named probes PASS + recursive crash-fuzz
   (universe 2118, 0 exceptions)**; deterministic; imports the Phase 0 map so 295/11/18 cannot drift.
 - Canon/blast/vault semantics are **relationally derived** from immutable Phase 0 authority; the
   adversarial co-mutation test confirms code+contract weakening fails while Phase 0 is unchanged.
