@@ -3,8 +3,8 @@
   "packet_id": "PKT-02-01",
   "frozen_binding_sha256": "1c1c98a2e7b3be8d10eea9495861b7a33e65a00020ab7c9e756da363b69f2082",
   "frozen_source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae",
-  "checks_run": 38,
-  "checks_passed": 38,
+  "checks_run": 42,
+  "checks_passed": 42,
   "errors": [],
   "checks": [
     {
@@ -193,7 +193,27 @@
       "detail": ""
     },
     {
+      "name": "customer_measured_only_no_sip",
+      "pass": true,
+      "detail": ""
+    },
+    {
       "name": "customer_states_period",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "customer_has_measured",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "internal_companion_present",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "internal_retains_sip_fields",
       "pass": true,
       "detail": ""
     }

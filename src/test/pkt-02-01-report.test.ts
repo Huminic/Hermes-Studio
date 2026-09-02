@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest'
 import { executePacket } from '@/server/reports/packet/engine'
 import {
   CUSTOMER_FORBIDDEN,
+  SIP_FORBIDDEN,
   buildCustomerReport,
   buildInternalCompanion,
 } from '@/server/reports/packet/report'
@@ -34,22 +35,44 @@ describe.runIf(HAVE)('PKT-02-01 customer mini-report', () => {
     expect(md).toContain('50%')
   })
 
-  it('explains the unavailable checks plainly WITHOUT internal control jargon', () => {
+  it('contains ONLY measured findings — no source-investigation-pending content (Amendment 002 / sales-document boundary)', () => {
     const md = buildCustomerReport(makeRun())
-    // plain-language explanation of what is not covered
-    expect(md.toLowerCase()).toMatch(/not (included|available)/)
-    expect(md.toLowerCase()).toContain('opening hours')
-    expect(md.toLowerCase()).toMatch(/automat/)
-    // no quarantine mechanics / control jargon / raw identifiers leak to the customer
-    for (const re of CUSTOMER_FORBIDDEN) {
+    // No "not included / unavailable" section header of any kind.
+    expect(md.toLowerCase()).not.toMatch(
+      /not included|not available|unavailable/,
+    )
+    // Semantic rejection of ANY paraphrase of the two SIP checks + their required
+    // fields + future-export language (not just metric ids / internal jargon).
+    for (const re of SIP_FORBIDDEN) {
       expect(md).not.toMatch(re)
     }
   })
 
-  it('never leaks a metric id or a Sales Rep name to the customer', () => {
+  it('leaks no control jargon, metric id, or Sales Rep name to the customer', () => {
     const md = buildCustomerReport(makeRun())
+    for (const re of CUSTOMER_FORBIDDEN) expect(md).not.toMatch(re)
     expect(md).not.toMatch(/SW-0\d\d/)
     expect(md.toLowerCase()).not.toContain('sales rep ')
+  })
+})
+
+describe.runIf(HAVE)('PKT-02-01 SIP semantic patterns (self-check)', () => {
+  it('SIP_FORBIDDEN rejects paraphrases of the held checks and required fields', () => {
+    const paraphrases = [
+      'Did after-hours leads get a first reply within 15 minutes of the store opening?',
+      'whether the first response came from a real person or a human agent',
+      'was the first reply an automated message or auto-reply?',
+      'these will be added to a future lead export once captured',
+      'the report does not yet capture opening hours',
+    ]
+    for (const p of paraphrases) {
+      expect(SIP_FORBIDDEN.some((re) => re.test(p))).toBe(true)
+    }
+    // must NOT reject legitimate measured-finding copy
+    const measuredCopy =
+      'Median first-response time during business hours is 6 min; 19.7% of ' +
+      'business-hours leads had no tracked response; 50% of sales reps were slower.'
+    expect(SIP_FORBIDDEN.some((re) => re.test(measuredCopy))).toBe(false)
   })
 })
 
@@ -64,8 +87,10 @@ describe.runIf(HAVE)('PKT-02-01 internal evidence companion', () => {
     )
     expect(md.toLowerCase()).toMatch(/reconcil/)
     expect(md).toMatch(/UNSENT|SIMULATED/)
-    // pending metrics record their exact missing fields
+    // the SIP checks + their exact missing fields live ONLY in the internal companion
     expect(md).toContain('authoritative_opening_schedule')
     expect(md).toContain('first_response_actor_classification')
+    expect(md).toContain('first_human_response_timestamp')
+    expect(md).toContain('human_touch_event_timestamps')
   })
 })

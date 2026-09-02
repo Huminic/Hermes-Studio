@@ -31,6 +31,30 @@ export const CUSTOMER_FORBIDDEN: Array<RegExp> = [
   /SW-0\d\d/,
 ]
 
+/**
+ * Semantic patterns for source-investigation-pending (SIP) content that must NEVER
+ * appear in customer copy. Under Amendment 002 and the sales-document boundary, the
+ * two held checks (SW-013 after-hours first-human reply by opening + 15 min; SW-014
+ * auto-reply-vs-human first response), their required fields, and any future-export
+ * ask are INTERNAL-COMPANION ONLY. These reject paraphrases, not just metric ids or
+ * internal jargon.
+ */
+export const SIP_FORBIDDEN: Array<RegExp> = [
+  /after[-\s]?hours?/i, // after-hours-originated leads (SW-013)
+  /opening/i, // store opening / opening hours
+  /next opens?/i,
+  /(\+\s*15|\b15\s*min)/i, // opening + 15 minutes
+  /\bhuman\b/i, // first HUMAN reply marker
+  /(from|by)\s+a\s+(real\s+)?person/i, // reply from/by a person
+  /automat/i, // automated / automatic reply
+  /auto[-\s]?repl/i, // auto-reply
+  /not\s+(yet\s+)?captur/i, // "does not (yet) capture"
+  /future\s+.*export|lead\s+export|\bexport\b/i, // future / lead export ask
+  /flagged\s+(these|them|to)/i,
+  /added\s+to\s+a\b/i,
+  /not\s+included|not\s+available|\bunavailable\b/i,
+]
+
 /** Plain, customer-facing labels — metric ids never appear in customer copy. */
 const CUSTOMER_LABEL: Record<string, string> = {
   'SW-011': 'Median first-response time (business hours)',
@@ -80,27 +104,9 @@ export function buildCustomerReport(run: PacketRun): string {
       'coverage — so every lead gets a timely first touch — is the opportunity here.',
   )
   lines.push('')
-  lines.push('## Not included in this summary')
-  lines.push('')
-  lines.push(
-    'Two further response checks are **not included** in this summary because the current ' +
-      'lead export does not yet capture the information they need:',
-  )
-  lines.push('')
-  lines.push(
-    '- Whether after-hours leads get a first reply shortly after the store next opens — this ' +
-      'needs the dealership’s **opening hours** and a marker for the first reply from a person.',
-  )
-  lines.push(
-    '- Whether a lead’s first reply was an **automated** message with no follow-up from a ' +
-      'person — this needs a marker showing whether each reply was automated or sent by a person.',
-  )
-  lines.push('')
-  lines.push(
-    'We have flagged these to be added to a future lead export so they can be reported ' +
-      'accurately. We do not estimate or guess these figures from data we do not have.',
-  )
-  lines.push('')
+  // Customer copy carries MEASURED findings only. Source-investigation-pending
+  // checks (SW-013/014), their required fields, and any future-export ask are
+  // internal-companion only under Amendment 002 / the sales-document boundary.
   return lines.join('\n')
 }
 

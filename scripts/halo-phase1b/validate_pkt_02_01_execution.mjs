@@ -50,7 +50,11 @@ const canonicalJson = (v) => JSON.stringify(canonicalize(v))
 
 // 1. Frozen binding sha + packet authority pointer.
 const bindingBytes = fs.readFileSync(path.join(REPO, CANONICAL_BINDING_REF))
-ok('binding_frozen_sha', sha256(bindingBytes) === FROZEN_BINDING_SHA, sha256(bindingBytes))
+ok(
+  'binding_frozen_sha',
+  sha256(bindingBytes) === FROZEN_BINDING_SHA,
+  sha256(bindingBytes),
+)
 const packet = readJson(
   path.join(REPO, 'docs/halo/contract/phase1b/packets/PKT-02-01.json'),
 )
@@ -87,15 +91,25 @@ if (fs.existsSync(manPath)) {
 
   // measured values (exact)
   ok('SW-011_value', obs['SW-011'].value === 6)
-  ok('SW-011_num_den', obs['SW-011'].numerator === 27 && obs['SW-011'].denominator === 76)
+  ok(
+    'SW-011_num_den',
+    obs['SW-011'].numerator === 27 && obs['SW-011'].denominator === 76,
+  )
   ok(
     'SW-011_missing_not_zero',
-    obs['SW-011'].numerator + obs['SW-011'].missing === obs['SW-011'].denominator,
+    obs['SW-011'].numerator + obs['SW-011'].missing ===
+      obs['SW-011'].denominator,
   )
   ok('SW-012_value', obs['SW-012'].value === 0.19736842105263158)
-  ok('SW-012_num_den', obs['SW-012'].numerator === 15 && obs['SW-012'].denominator === 76)
+  ok(
+    'SW-012_num_den',
+    obs['SW-012'].numerator === 15 && obs['SW-012'].denominator === 76,
+  )
   ok('SW-015_value', obs['SW-015'].value === 0.5)
-  ok('SW-015_num_den', obs['SW-015'].numerator === 2 && obs['SW-015'].denominator === 4)
+  ok(
+    'SW-015_num_den',
+    obs['SW-015'].numerator === 2 && obs['SW-015'].denominator === 4,
+  )
 
   // ratings
   ok('SW-011_healthy', evl['SW-011'].rating === 'healthy')
@@ -106,7 +120,10 @@ if (fs.existsSync(manPath)) {
   for (const id of ['SW-013', 'SW-014']) {
     ok(`${id}_pending`, obs[id].status === 'source_investigation_pending')
     ok(`${id}_value_null`, obs[id].value === null)
-    ok(`${id}_withheld`, evl[id].gradable_state === 'withheld' && evl[id].rating === 'withheld')
+    ok(
+      `${id}_withheld`,
+      evl[id].gradable_state === 'withheld' && evl[id].rating === 'withheld',
+    )
     ok(
       `${id}_missing_fields`,
       Array.isArray(obs[id].source_investigation?.missing_fields) &&
@@ -119,24 +136,38 @@ if (fs.existsSync(manPath)) {
   for (const m of c.reconciliation.metrics) {
     ok(
       `reconcile_${m.metric_id}`,
-      m.independent === m.evaluator && m.independent === m.persisted_accepted && m.match,
+      m.independent === m.evaluator &&
+        m.independent === m.persisted_accepted &&
+        m.match,
     )
   }
 
   // alert simulations: measured only, none delivered, none for pending
   const alertIds = c.alert_simulations.map((a) => a.metric_id).sort()
-  ok('alerts_measured_only', JSON.stringify(alertIds) === JSON.stringify(['SW-011', 'SW-012', 'SW-015']))
-  ok('alerts_unsent', c.alert_simulations.every((a) => a.delivered === false && a.unsent === true))
+  ok(
+    'alerts_measured_only',
+    JSON.stringify(alertIds) === JSON.stringify(['SW-011', 'SW-012', 'SW-015']),
+  )
+  ok(
+    'alerts_unsent',
+    c.alert_simulations.every(
+      (a) => a.delivered === false && a.unsent === true,
+    ),
+  )
 
   // lifecycle partition equals the packet
   ok(
     'lifecycle_partition_matches_packet',
-    canonicalJson(c.lifecycle_partition) === canonicalJson(packet.lifecycle_partition),
+    canonicalJson(c.lifecycle_partition) ===
+      canonicalJson(packet.lifecycle_partition),
   )
 
   // no Sales Rep name persisted (structural: no name/identity keys in SW-015 detail)
   const s15keys = Object.keys(obs['SW-015'].detail ?? {})
-  ok('no_rep_identity_key', !s15keys.some((k) => /name|rep_id|identity/i.test(k)))
+  ok(
+    'no_rep_identity_key',
+    !s15keys.some((k) => /name|rep_id|identity/i.test(k)),
+  )
 }
 
 // 3. Customer report is free of internal control jargon.
@@ -155,13 +186,58 @@ const CUSTOMER_FORBIDDEN = [
   /disposition/i,
   /SW-0\d\d/,
 ]
+// SIP content (held checks + required fields + future-export ask) is internal-only.
+const SIP_FORBIDDEN = [
+  /after[-\s]?hours?/i,
+  /opening/i,
+  /next opens?/i,
+  /(\+\s*15|\b15\s*min)/i,
+  /\bhuman\b/i,
+  /(from|by)\s+a\s+(real\s+)?person/i,
+  /automat/i,
+  /auto[-\s]?repl/i,
+  /not\s+(yet\s+)?captur/i,
+  /future\s+.*export|lead\s+export|\bexport\b/i,
+  /flagged\s+(these|them|to)/i,
+  /added\s+to\s+a\b/i,
+  /not\s+included|not\s+available|\bunavailable\b/i,
+]
 const custPath = path.join(EVID, 'PKT-02-01_customer_mini_report.md')
 ok('customer_report_present', fs.existsSync(custPath))
 if (fs.existsSync(custPath)) {
   const md = fs.readFileSync(custPath, 'utf8')
-  const leaks = CUSTOMER_FORBIDDEN.filter((re) => re.test(md)).map((re) => re.source)
+  const leaks = CUSTOMER_FORBIDDEN.filter((re) => re.test(md)).map(
+    (re) => re.source,
+  )
   ok('customer_no_jargon', leaks.length === 0, leaks.join(', '))
-  ok('customer_states_period', md.includes('2026-08-24') && md.includes('2026-08-30'))
+  const sipLeaks = SIP_FORBIDDEN.filter((re) => re.test(md)).map(
+    (re) => re.source,
+  )
+  ok(
+    'customer_measured_only_no_sip',
+    sipLeaks.length === 0,
+    sipLeaks.join(', '),
+  )
+  ok(
+    'customer_states_period',
+    md.includes('2026-08-24') && md.includes('2026-08-30'),
+  )
+  ok(
+    'customer_has_measured',
+    md.includes('6 min') && md.includes('19.7%') && md.includes('50%'),
+  )
+}
+
+// Internal companion RETAINS the SIP facts (they moved here, not deleted).
+const compPath = path.join(EVID, 'PKT-02-01_internal_companion.md')
+ok('internal_companion_present', fs.existsSync(compPath))
+if (fs.existsSync(compPath)) {
+  const md = fs.readFileSync(compPath, 'utf8')
+  ok(
+    'internal_retains_sip_fields',
+    md.includes('authoritative_opening_schedule') &&
+      md.includes('first_response_actor_classification'),
+  )
 }
 
 const overall_pass = errors.length === 0
