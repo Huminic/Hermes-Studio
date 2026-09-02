@@ -138,6 +138,20 @@ def _authget(auth, path):
     return cur
 
 
+def _strict_eq(a, b):
+    """Strict recursive type-AND-value equality. type() identity means bool never equals int
+    (0 != False, 1 != True), and recurses through lists/dicts. Scalars must be the same type."""
+    if type(a) is not type(b):
+        return False
+    if isinstance(a, dict):
+        if set(a.keys()) != set(b.keys()):
+            return False
+        return all(_strict_eq(a[k], b[k]) for k in a)
+    if isinstance(a, (list, tuple)):
+        return len(a) == len(b) and all(_strict_eq(x, y) for x, y in zip(a, b))
+    return a == b
+
+
 # INDEPENDENT expected bindings (validator constant). The authority file's binding metadata is NOT
 # trusted as its own expectation: it must match this list EXACTLY before any dereference, so a
 # swapped value PLUS co-mutated equals/phrase/source cannot self-validate. Each phrase is role-specific
@@ -168,16 +182,18 @@ def _relational_derive(auth, src):
     if not isinstance(auth, dict):
         return None, ["authority payload not an object"]
     errs = []
-    # (0) authority binding metadata must match the independent expectation EXACTLY (not self-trusted)
-    if auth.get("bindings") != EXPECTED_BINDINGS:
+    # (0) authority binding metadata must match the independent expectation EXACTLY (STRICT type+value,
+    #     so a co-mutated equals of int 0/1 cannot masquerade as bool False/True), not self-trusted
+    if not _strict_eq(auth.get("bindings"), EXPECTED_BINDINGS):
         errs.append("authority bindings != independent EXPECTED_BINDINGS (metadata co-mutation attempt)")
-    # (a) dereference using the EXPECTED binding (value + role-specific phrase), never authority-supplied
+    # (a) dereference using the EXPECTED binding (value + role-specific phrase), never authority-supplied.
+    #     STRICT equality: int 0/1 never satisfies a bool False/True expectation.
     for b in EXPECTED_BINDINGS:
         val = _authget(auth, b["value_path"])
         if val is KeyError:
             errs.append(f"binding {b['id']}: value_path not found")
-        elif val != b["equals"]:
-            errs.append(f"binding {b['id']}: value {val!r} != expected {b['equals']!r}")
+        elif not _strict_eq(val, b["equals"]):
+            errs.append(f"binding {b['id']}: value {val!r} ({type(val).__name__}) != expected {b['equals']!r} ({type(b['equals']).__name__})")
         if b["phrase"] not in src.get(b["source"], ""):
             errs.append(f"binding {b['id']}: expected phrase {b['phrase']!r} not in {b['source']}")
     # (b) EXACT canonical key->phrase set, unique, phrases present in SPEC
@@ -189,7 +205,7 @@ def _relational_derive(auth, src):
         keys = [k for k, _ in pairs]
         if len(keys) != len(set(keys)):
             errs.append("canonical_stops has duplicate keys")
-        if pairs != EXPECTED_CANON:
+        if not _strict_eq(pairs, EXPECTED_CANON):
             errs.append("canonical_stops != exact expected 11 key->phrase mapping (rename/reorder/drop/retained-phrase)")
         for _k, ph in EXPECTED_CANON:
             if ph not in src.get("spec", ""):
@@ -914,6 +930,19 @@ def run_probes():
             if b["id"] == "vault.required_file_mode":
                 b.update({"equals": "0700", "phrase": "`0700` on directories"})
     rec("47_swapped_value_plus_binding_metadata", lambda: _mut(_swap_value_and_metadata))
+    # --- shadow #7: Python int/bool exactness (0 != False, 1 != True) in VALUES and binding metadata ---
+    rec("48_int_blocks_unrelated_zero", lambda: _mut(lambda a: a["blast"]["value"].update({"blocks_unrelated_modules": 0})))
+    rec("49_int_blocks_independent_zero", lambda: _mut(lambda a: a["blast"]["value"].update({"blocks_independent_metrics": 0})))
+    rec("50_int_rejected_final_one", lambda: _mut(lambda a: a["blast"]["value"].update({"rejected_id_blocks_final_completion_only": 1})))
+    rec("51_int_vault_fail_closed_one", lambda: _mut(lambda a: a["vault"]["value"].update({"fail_closed": 1})))
+
+    def _int_value_and_metadata(a, bid, valpath_last, section):
+        a[section]["value"].update({valpath_last: 0})
+        for b in a["bindings"]:
+            if b["id"] == bid:
+                b.update({"equals": 0})
+    rec("52_int_value_and_binding_metadata_comutation", lambda: _mut(lambda a: _int_value_and_metadata(a, "blast.blocks_unrelated_modules", "blocks_unrelated_modules", "blast")))
+    rec("53_int_one_value_and_binding_metadata_comutation", lambda: _mut(lambda a: (a["vault"]["value"].update({"fail_closed": 1}), [b.update({"equals": 1}) for b in a["bindings"] if b["id"] == "vault.fail_closed"])))
     return probes
 
 

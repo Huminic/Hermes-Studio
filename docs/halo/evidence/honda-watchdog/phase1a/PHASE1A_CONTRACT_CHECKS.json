@@ -31,7 +31,7 @@
   "vocab_closure": "PASS",
   "self_tests_total": 956,
   "self_tests_failed": 0,
-  "named_probes_total": 52,
+  "named_probes_total": 58,
   "named_probes_failed": 0,
   "crash_fuzz": {
     "tested_universe": 2118,
@@ -382,7 +382,7 @@
       "got": "reject",
       "pass": true,
       "n_errors": 1,
-      "sample_error": "binding vault.required_dir_mode: value '0777' != expected '0700'"
+      "sample_error": "binding vault.required_dir_mode: value '0777' (str) != expected '0700' (str)"
     },
     {
       "probe": "39_relational_blast_comutation",
@@ -390,7 +390,7 @@
       "got": "reject",
       "pass": true,
       "n_errors": 1,
-      "sample_error": "binding blast.blocks_unrelated_modules: value True != expected False"
+      "sample_error": "binding blast.blocks_unrelated_modules: value True (bool) != expected False (bool)"
     },
     {
       "probe": "40_relational_canon_comutation",
@@ -422,7 +422,7 @@
       "got": "reject",
       "pass": true,
       "n_errors": 1,
-      "sample_error": "binding blast.blocks_independent_metrics: value True != expected False"
+      "sample_error": "binding blast.blocks_independent_metrics: value True (bool) != expected False (bool)"
     },
     {
       "probe": "44_rejected_blocks_final_false",
@@ -430,7 +430,7 @@
       "got": "reject",
       "pass": true,
       "n_errors": 1,
-      "sample_error": "binding blast.rejected_id_blocks_final_completion_only: value False != expected True"
+      "sample_error": "binding blast.rejected_id_blocks_final_completion_only: value False (bool) != expected True (bool)"
     },
     {
       "probe": "45_conforming_gatephase_none",
@@ -438,7 +438,7 @@
       "got": "reject",
       "pass": true,
       "n_errors": 2,
-      "sample_error": "binding vault.current_conformance: value 'conforming' != expected 'nonconforming'"
+      "sample_error": "binding vault.current_conformance: value 'conforming' (str) != expected 'nonconforming' (str)"
     },
     {
       "probe": "46_swapped_dir_file_modes",
@@ -446,7 +446,7 @@
       "got": "reject",
       "pass": true,
       "n_errors": 2,
-      "sample_error": "binding vault.required_dir_mode: value '0600' != expected '0700'"
+      "sample_error": "binding vault.required_dir_mode: value '0600' (str) != expected '0700' (str)"
     },
     {
       "probe": "47_swapped_value_plus_binding_metadata",
@@ -454,6 +454,54 @@
       "got": "reject",
       "pass": true,
       "n_errors": 3,
+      "sample_error": "authority bindings != independent EXPECTED_BINDINGS (metadata co-mutation attempt)"
+    },
+    {
+      "probe": "48_int_blocks_unrelated_zero",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "binding blast.blocks_unrelated_modules: value 0 (int) != expected False (bool)"
+    },
+    {
+      "probe": "49_int_blocks_independent_zero",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "binding blast.blocks_independent_metrics: value 0 (int) != expected False (bool)"
+    },
+    {
+      "probe": "50_int_rejected_final_one",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "binding blast.rejected_id_blocks_final_completion_only: value 1 (int) != expected True (bool)"
+    },
+    {
+      "probe": "51_int_vault_fail_closed_one",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "binding vault.fail_closed: value 1 (int) != expected True (bool)"
+    },
+    {
+      "probe": "52_int_value_and_binding_metadata_comutation",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "authority bindings != independent EXPECTED_BINDINGS (metadata co-mutation attempt)"
+    },
+    {
+      "probe": "53_int_one_value_and_binding_metadata_comutation",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
       "sample_error": "authority bindings != independent EXPECTED_BINDINGS (metadata co-mutation attempt)"
     }
   ],
@@ -7001,14 +7049,14 @@
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "sample_error": "binding vault.required_dir_mode: value '0777' != expected '0700'"
+      "sample_error": "binding vault.required_dir_mode: value '0777' (str) != expected '0700' (str)"
     },
     {
       "test": "anchor.relational_blast_comutation_rejected",
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "sample_error": "binding blast.blocks_unrelated_modules: value True != expected False"
+      "sample_error": "binding blast.blocks_unrelated_modules: value True (bool) != expected False (bool)"
     },
     {
       "test": "anchor.relational_canon_comutation_rejected",

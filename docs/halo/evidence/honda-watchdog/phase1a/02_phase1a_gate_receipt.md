@@ -18,7 +18,7 @@ recipients, or customer changes. INGEST `src/routeTree.gen.ts` untouched.
 | P1A.5 | Source registry/DAG schema frozen (dedupe key (profile,family,period,schema_revision); no per-metric duplicate acquisition; source→metric fan-out) (item 5) | **PASS** | `source-registry-dag-schema.json` |
 | P1A.6 | Separate beyond-295 candidate-intake schema; cannot alter the 295 (item 6) | **PASS** | `beyond-295-candidate-intake-schema.json` (CAND-#### key; hard invariants) |
 | P1A.7 | Canonical fail-closed stops defined; one source failure blocks only dependent IDs (item 7) | **PASS** | `fail-closed-stops.json` (11 stops + blast_radius_rule) |
-| P1A.8 | **Generic recursive JSON-Schema engine** (`record-schemas.json`) + cross-record invariants; recursively-generated mutations for every field at every depth (metric rows, 3 sub-contracts, packets + nested contracts, source/DAG, candidates) + transitions/context-receipts/stops/partitions/DAG/privacy/two-delta/change-scope; **no metric rows/packets populated** (item 8) | **PASS** | `validate_phase1_contracts.py` → `PHASE1A_CONTRACT_CHECKS.json`: structure PASS, vocab PASS, **956/956 self-tests + 52/52 named probes reject + recursive crash-fuzz (universe 2118, 0 exceptions) + 11 relational bindings enforced**, overall_pass=true |
+| P1A.8 | **Generic recursive JSON-Schema engine** (`record-schemas.json`) + cross-record invariants; recursively-generated mutations for every field at every depth (metric rows, 3 sub-contracts, packets + nested contracts, source/DAG, candidates) + transitions/context-receipts/stops/partitions/DAG/privacy/two-delta/change-scope; **no metric rows/packets populated** (item 8) | **PASS** | `validate_phase1_contracts.py` → `PHASE1A_CONTRACT_CHECKS.json`: structure PASS, vocab PASS, **956/956 self-tests + 58/58 named probes reject + recursive crash-fuzz (universe 2118, 0 exceptions) + 11 relational bindings enforced (strict type+value)**, overall_pass=true |
 | P1A.9 | Design-only boundary honored | **PASS** | Only additive docs/contracts/validator/evidence written; catalog `29c7ac06…` unchanged; reviewed SPEC `fedd957b…` unchanged; INGEST routeTree ` M` untouched |
 
 ## Shadow re-review correction (impartial Phase 1A HOLD → deepened)
@@ -142,7 +142,7 @@ exceptions)**.
 
 ## Tests run (read-only / deterministic)
 
-- `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write` → **RESULT: PASS** (exit 0); `structure_295_11_18=PASS`, `vocab_closure=PASS`, `phase0_authority_derived=true`, `self_tests_total=956`, `self_tests_failed=0`, `named_probes_total=52`, `named_probes_failed=0`, `crash_fuzz.tested_universe=2118`, `crash_fuzz.exceptions=0`, `relational_bindings_enforced=11`.
+- `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write` → **RESULT: PASS** (exit 0); `structure_295_11_18=PASS`, `vocab_closure=PASS`, `phase0_authority_derived=true`, `self_tests_total=956`, `self_tests_failed=0`, `named_probes_total=58`, `named_probes_failed=0`, `crash_fuzz.tested_universe=2118`, `crash_fuzz.exceptions=0`, `relational_bindings_enforced=11`.
 
 ### Finite relational bindings enforced (named)
 
@@ -174,7 +174,10 @@ Shadow adversarial probes 41–47 all reject with **unchanged Phase 0/SPEC**: re
 phrase; duplicate canonical key; `blocks_independent_metrics=true`;
 `rejected_id_blocks_final_completion_only=false`; `current_conformance=conforming`+`gate_phase=none`;
 swapped dir/file modes; and **swapped value + co-mutated binding metadata** (rejects via
-`authority bindings != independent EXPECTED_BINDINGS`).
+`authority bindings != independent EXPECTED_BINDINGS`). Probes 48–53 add Python int/bool exactness:
+`_relational_derive` uses **strict recursive type+value equality** (`_strict_eq`), so `blocks_unrelated_modules=0`,
+`blocks_independent_metrics=0`, `rejected_id_blocks_final_completion_only=1`, `vault.fail_closed=1`, and
+integer value+metadata co-mutations all reject (`0` is not `false`, `1` is not `true`).
 - `python3 scripts/halo-phase0/validate_phase0_catalog.py --no-write` → **PASS** (295/11/18 preserved; generated `03` unchanged).
 - JSON parse: all six `docs/halo/contract/phase1/*.json` + `01_phase1a_contract_manifest.json` + `PHASE1A_CONTRACT_CHECKS.json` load OK.
 - Active-objective sha256 unchanged (`7c8e622b…`).
