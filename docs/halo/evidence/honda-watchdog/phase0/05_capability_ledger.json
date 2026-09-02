@@ -1,0 +1,130 @@
+{
+  "artifact": "honda-watchdog-phase0-capability-ledger",
+  "phase": "Phase 0 — recover current truth",
+  "purpose": "Re-pin each SPEC §2 capability claim to current code with reproduction results. Runtime call sites were inspected; a claim proved only by a test or comment is downgraded. Unreproduced external facts are reported_pending_phase0_verification.",
+  "verified_at_utc": "2026-09-02",
+  "verifier": "Phase 0 evidence writer (read-only code inspection via Explore subagents + direct hashing); NOT the approving reviewer",
+  "state_vocabulary": {
+    "implemented_wired": "Exists AND invoked by a runtime call site (not only tests/comments).",
+    "implemented_manual_only": "Exists and works, but only invoked by a manual dev CLI / one-off — no scheduler/cron/webhook/route wiring found.",
+    "test_or_comment_only": "Referenced only by tests or comments; production wiring UNVERIFIED.",
+    "absent": "Not present in code/schema.",
+    "reported_pending_phase0_verification": "Requires prohibited external access (Gmail/Vin/live) to confirm; cannot be reproduced in Phase 0."
+  },
+  "repo_heads": {
+    "MAIN": "9ac76c58beec657b132a1f30130a41c0a4a270b8",
+    "INGEST": "4c41df11dc48c3bc954ffdd45cdf125b2d67c2d5"
+  },
+  "ledger": [
+    {
+      "claim": "Six-family native XLSX classifier + Sales-only fail-closed admission",
+      "state": "implemented_wired",
+      "repo": "INGEST",
+      "commit": "4c41df11dc48c3bc954ffdd45cdf125b2d67c2d5",
+      "path": "src/server/ingest/vin-contracts.ts; src/server/ingest/hold-store.ts",
+      "call_site": "hold-store.ts landXlsx() -> evaluateDelivery(sheets,...) (~line 478); Sales-only filter/row gates ~lines 418-425,475-476",
+      "artifact_or_test_hash": "vin-contracts.ts git_blob=f6009a8facfaa6afca2d34054a58fbb8d32709db; hold-store.ts git_blob=13f8f6b4cf40fa195382901afb15b4c23a79323a",
+      "evidence_ref": "06_schedule_source_fingerprints.md; 07_vault_vs_brain_topology.md; GATE3_HIDDEN_LEAD_INTENT_BLOCKER_2026-08-30.md",
+      "reproduction_result": "reproduced (code+call-site confirmed; quarantine behavior proven by 15/15 targeted tests)"
+    },
+    {
+      "claim": "Raw delivery persistence (ingest_delivery, ingest_row tables)",
+      "state": "implemented_wired",
+      "repo": "INGEST",
+      "commit": "4c41df11dc48c3bc954ffdd45cdf125b2d67c2d5",
+      "path": "src/server/ingest/ingest-delivery-store.ts (tables ~lines 65-87; recordDelivery ~92-144)",
+      "call_site": "recordDelivery() invoked by promote-held-to-analytics.ts (~line 181, dev path)",
+      "artifact_or_test_hash": "ingest-delivery-store.ts git_blob=9a6fa9dae52d86cb3c52db39bf79e2c0a3053c41",
+      "evidence_ref": "07_vault_vs_brain_topology.md",
+      "reproduction_result": "reproduced (schema + writer confirmed; quarantined rows write zero ingest_row per store guard)"
+    },
+    {
+      "claim": "Hold-to-analytics promotion is a MANUAL development CLI (not automated)",
+      "state": "implemented_manual_only",
+      "repo": "INGEST",
+      "commit": "4c41df11dc48c3bc954ffdd45cdf125b2d67c2d5",
+      "path": "scripts/promote-held-to-analytics.ts; src/server/analytics/promote-held-to-analytics.ts",
+      "call_site": "CLI-only (requires INGEST_HOLD_ROOT/DEV_ANALYTICS_ROOT env + args). No cron/scheduler/webhook/route invocation found; only referenced by its test.",
+      "artifact_or_test_hash": "src/server/analytics/promote-held-to-analytics.ts git_blob=d94ab2d50b0f5ec32dd5e5a83256a4d98a910359",
+      "evidence_ref": "07_vault_vs_brain_topology.md; test: src/test/promote-held-to-analytics.test.ts (12/12 PASS 2026-09-02)",
+      "reproduction_result": "reproduced (no automation wiring; promotion guard requires validation_state=='held')"
+    },
+    {
+      "claim": "Native readers — MAIN reads Appointments+Dashboard+Gross; INGEST vin-metrics has six-family readers",
+      "state": "implemented_wired",
+      "repo": "MAIN + INGEST",
+      "commit": "MAIN 9ac76c58b / INGEST 4c41df11d",
+      "path": "MAIN src/server/ingest-native-metrics.ts (readDealershipPerformance ~166, readAppointments ~290, readCrmSalesGross ~386, readResponseTimes ~473); INGEST src/server/watchdog/vin-metrics.ts (BUILDERS ~467-473)",
+      "call_site": "MAIN readers consumed by metric-values.ts / reports/*; INGEST vin-metrics runVinWatchdog invoked by promote CLI (dev) + tests",
+      "artifact_or_test_hash": "MAIN ingest-native-metrics.ts git_blob=37960ae2ca0acf5a82103bee03a5370f258cecc6; INGEST vin-metrics.ts git_blob=d33bc597b7577ed2422260ac92680536b7837eaf",
+      "evidence_ref": "08_architecture_ownership_notouch_map.md",
+      "reproduction_result": "reproduced (MAIN readers wired into report path; INGEST wider readers exist, dev-invoked). SPEC §2 'consolidate one canonical reader path' remains future work."
+    },
+    {
+      "claim": "Exact SW evaluation: 17 of 295 evaluated in current one-week artifact; 278 not_measured",
+      "state": "implemented_wired",
+      "repo": "MAIN",
+      "commit": "9ac76c58beec657b132a1f30130a41c0a4a270b8",
+      "path": "docs/halo/evidence/m1r/gate5b/gate5b-report-model-21043.json; constants src/server/reports/gate5b/customer-report.ts (~lines 28-30)",
+      "call_site": "artifact coverage object: {\"evaluated\":17,\"not_measured\":278,\"total\":295}; accepted period 2026-08-24..2026-08-30",
+      "artifact_or_test_hash": "gate5b-report-model-21043.json git_blob=1e214af712fd2ccdc55dfe929d78b88ebe594359; customer-report.ts git_blob=6513343d2a3b396add8e574ebb37f847a50fd3a5",
+      "evidence_ref": "direct read: coverage {evaluated:17, not_measured:278, total:295}",
+      "reproduction_result": "reproduced (count read directly from committed artifact and code constants)"
+    },
+    {
+      "claim": "Durable metric/trend storage (watchdog_metric_* tables) is ABSENT",
+      "state": "absent",
+      "repo": "MAIN + INGEST",
+      "commit": "MAIN 9ac76c58b / INGEST 4c41df11d",
+      "path": "src/server/brain-schema.ts (both repos share blob f31b28fd3e333a3e110cb899a639c5f136c974d0)",
+      "call_site": "grep 'watchdog_metric' across src/server -> no results; no CREATE TABLE watchdog_metric_* in schema",
+      "artifact_or_test_hash": "brain-schema.ts git_blob=f31b28fd3e333a3e110cb899a639c5f136c974d0",
+      "evidence_ref": "SPEC §7 defines the 12 additive tables to be built; none exist yet",
+      "reproduction_result": "reproduced (absence confirmed by grep + schema scan)"
+    },
+    {
+      "claim": "Alerts/notifications: config/storage exists but operational evaluation + dispatch NOT wired to the scheduler",
+      "state": "implemented_manual_only",
+      "repo": "MAIN",
+      "commit": "9ac76c58beec657b132a1f30130a41c0a4a270b8",
+      "path": "src/server/watchdog/alert-engine.ts (evaluateProfileAlerts ~54); alert-dispatch.ts (dispatchFiringAlerts ~57); scripts/watchdog-cron.ts (~14-62)",
+      "call_site": "watchdog-cron.ts calls runWatchdogPass()->upsertFinding() but NEVER calls evaluateProfileAlerts/dispatchFiringAlerts; dispatch off-by-default (send:true) and only exercised in tests",
+      "artifact_or_test_hash": "alert-engine.ts git_blob=97fa11426a8808dc9f778e1c8b04304668ede514; alert-dispatch.ts git_blob=a66681dc91ac90d0d4f1e827b79dacd638614e22; watchdog-cron.ts git_blob=5fd3f6b43eecd33b2741500cfdcf624b7545f853",
+      "evidence_ref": "08_architecture_ownership_notouch_map.md (watchdog-cron listed but does not dispatch alerts)",
+      "reproduction_result": "reproduced (functions defined but uncalled from cron; dispatch test/flag-only). Operational dispatch NOT connected."
+    },
+    {
+      "claim": "PDF generation: deterministic 34-page one-week prototype for the 17 measured metrics",
+      "state": "implemented_manual_only",
+      "repo": "MAIN",
+      "commit": "9ac76c58beec657b132a1f30130a41c0a4a270b8",
+      "path": "scripts/halo-report-card/build_report_cards.py; src/server/reports/gate5b/customer-report.ts (assembleCustomerReport)",
+      "call_site": "build_report_cards.py is command-line only; assembleCustomerReport not called from any server route/scheduler",
+      "artifact_or_test_hash": "build_report_cards.py git_blob=06a3c99459b1dfbb0197e361e6e430644837cf8e; customer-report.ts git_blob=6513343d2a3b396add8e574ebb37f847a50fd3a5",
+      "evidence_ref": "Gate 6 PDF work referenced in recent MAIN commits (f94f9da28, 5d9ca6d2f, 4356e9e6a)",
+      "reproduction_result": "reproduced (generator + model exist, manual-only; not wired to scheduler/route). Page-count '34' recorded per SPEC §2; not re-rendered in Phase 0."
+    },
+    {
+      "claim": "Hold-to-analytics has run end-to-end for Honda accepted families (promotion actually executed)",
+      "state": "reported_pending_phase0_verification",
+      "repo": "N/A (runtime state)",
+      "commit": "N/A",
+      "path": "N/A",
+      "call_site": "native-scheduled-evidence.json shows Honda Gross/Appointments/Dashboard = HELD, NOT promoted; whether any promotion has since run cannot be confirmed without inspecting live analytics stores/schedules",
+      "artifact_or_test_hash": "native-scheduled-evidence.json sha256=13c0fca11241c5608d7da1e434383a4e881c886ecbd696414bebdd5a8db636c6",
+      "evidence_ref": "06_schedule_source_fingerprints.md",
+      "reproduction_result": "not reproduced in Phase 0 — no live/analytics access permitted; committed evidence shows HELD (not promoted)"
+    },
+    {
+      "claim": "Live VinSolutions scheduled definitions for ROI/CAGE/Communication are currently active/unchanged",
+      "state": "reported_pending_phase0_verification",
+      "repo": "N/A (external)",
+      "commit": "N/A",
+      "path": "N/A",
+      "call_site": "requires Gmail/Vin access (prohibited in Phase 0)",
+      "artifact_or_test_hash": "N/A",
+      "evidence_ref": "06_schedule_source_fingerprints.md; GATE3 blocker doc",
+      "reproduction_result": "not reproduced — Gmail/Vin access prohibited. Last committed delivery timestamps ~2026-08-31 recorded in native-scheduled-evidence.json."
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "artifact": "honda-watchdog-phase0-authority-source-hashes",
+  "phase": "Phase 0 — freeze scope and recover current truth",
+  "purpose": "Pin the exact authority/source bytes this Phase 0 packet is built against, with byte-equivalence proof (on-disk sha256 vs committed git blob).",
+  "pinned_at_utc": "2026-09-02T03:25:49Z",
+  "pinned_on_branch": "codex/halo-295-unshrinkable-inputs",
+  "pinned_at_head": "9ac76c58beec657b132a1f30130a41c0a4a270b8",
+  "hash_algorithms": {
+    "content_sha256": "sha256 of the raw file bytes on disk (sha256sum)",
+    "git_blob_id": "git object id of the file content (git hash-object / git rev-parse HEAD:<path>)"
+  },
+  "authorities": [
+    {
+      "role": "execution_goal",
+      "repo": "hs-m1r-isolated-20260830 (MAIN)",
+      "path": "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_EXECUTION_GOAL.md",
+      "content_sha256": "80e2ad71e6e4d0225fb480eaaa522629645309a6e59141ab6c090d0976c0ed64",
+      "git_blob_id_at_head": "98869a373c379db4cc90c08c43dbb84ffd627139"
+    },
+    {
+      "role": "execution_spec",
+      "repo": "hs-m1r-isolated-20260830 (MAIN)",
+      "path": "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_EXECUTION_SPEC.md",
+      "content_sha256": "fedd957b9431521591155763327147d86c25fe3da11e2996470c134eaf9d785e",
+      "git_blob_id_at_head": "54a1774a6dcf79ba037cf5916e74e579118cd08e"
+    },
+    {
+      "role": "feasibility_matrix_295",
+      "repo": "hs-m1r-isolated-20260830 (MAIN)",
+      "path": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json",
+      "content_sha256": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+      "git_blob_id_at_head": "acee2dbae019e1c8d20e9bf90249473d0160f06d",
+      "byte_equivalence_proof": {
+        "method": "git hash-object of working-tree file == git rev-parse HEAD:<path>",
+        "working_tree_hash_object": "acee2dbae019e1c8d20e9bf90249473d0160f06d",
+        "head_blob_id": "acee2dbae019e1c8d20e9bf90249473d0160f06d",
+        "equal": true,
+        "note": "On-disk bytes are byte-identical to the committed authority; no uncommitted drift."
+      }
+    },
+    {
+      "role": "schema_contract_native_six_family",
+      "repo": "hs-ingest-dev (INGEST, read-only reference)",
+      "repo_head": "4c41df11dc48c3bc954ffdd45cdf125b2d67c2d5",
+      "repo_branch": "dev/ingest-endpoint",
+      "path": "docs/watchdog-platform/SCHEMA_CONTRACT.md",
+      "content_sha256": "49354bdc89184454db23e4eed8f8ed037d8de2698966573fb9a2c198f1d3284f",
+      "git_blob_id_at_head": "17293ad6edd42615a846bbeb58dfca5c8f365079"
+    },
+    {
+      "role": "schema_contract_browser_extension",
+      "repo": "hs-ingest-dev (INGEST, read-only reference)",
+      "repo_head": "4c41df11dc48c3bc954ffdd45cdf125b2d67c2d5",
+      "repo_branch": "dev/ingest-endpoint",
+      "path": "docs/watchdog-platform/SCHEMA_CONTRACT_BROWSER_EXTENSION.md",
+      "content_sha256": "8813f1fb349585b43c393963d24c4778f00ca5dfbfa44941c5aa4d7f7db16c84",
+      "git_blob_id_at_head": "d760f7e555f3d80dffd213ebf34187362b15d637"
+    }
+  ],
+  "generated_machine_check": {
+    "path": "docs/halo/evidence/honda-watchdog/phase0/03_catalog_module_overlay_checks.json",
+    "content_sha256": "d3cf0e9989b2ea08ec595f270eaadc430f24364e8f4f64322f07519ff951814b",
+    "produced_by": "scripts/halo-phase0/validate_phase0_catalog.py",
+    "input_matrix_sha256": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+    "overall_pass": true,
+    "reproduce": "python3 scripts/halo-phase0/validate_phase0_catalog.py"
+  },
+  "prohibited_access_confirmation": "No VinSolutions, Gmail, network, schedule, ingest, or production access was used to produce these hashes. All hashes are local-file computations."
+}

@@ -1,0 +1,101 @@
+{
+  "artifact": "honda-watchdog-phase0-conflict-register",
+  "phase": "Phase 0",
+  "compiled_at_utc": "2026-09-02",
+  "freshness_basis": "As of MAIN HEAD 9ac76c58b / INGEST HEAD 4c41df11d, committed evidence through ~2026-08-31",
+  "note": "Conflicts/open conditions. None is a Phase 0 pinning blocker unless marked blocks_phase0=true. Live/external facts are reported_pending_phase0_verification because Gmail/Vin access is prohibited.",
+  "conflicts": [
+    {
+      "id": "C-01",
+      "title": "INGEST unrelated dirty file src/routeTree.gen.ts",
+      "detail": "Generated route tree modified (+63) by another writer; committed blob c17054c9, dirty blob 27579e26.",
+      "owner": "INGEST-repo writer (not this Honda goal)",
+      "next_action": "Leave untouched. Do not stage/commit/revert/absorb. That writer resolves it separately.",
+      "freshness": "observed 2026-09-02",
+      "blocks_phase0": false,
+      "disposition": "QUARANTINED / NO-TOUCH"
+    },
+    {
+      "id": "C-02",
+      "title": "Vault vs Brain access-control & retention policy not documented",
+      "detail": "Technical isolation is code-proved, but no explicit access/deletion/retention policy exists in repo files.",
+      "owner": "Codex + Duane",
+      "next_action": "Author vault access/retention policy; then pin as proved. Tracked for a later phase.",
+      "freshness": "as of 2026-09-02",
+      "blocks_phase0": false,
+      "disposition": "UNRESOLVED / reported_pending_phase0_verification"
+    },
+    {
+      "id": "C-03",
+      "title": "Live VinSolutions schedule currency unverifiable in Phase 0",
+      "detail": "Whether ROI/CAGE/Communication definitions are currently active/unchanged cannot be confirmed without Gmail/Vin (prohibited).",
+      "owner": "Codex (read-only Vin, when authorized)",
+      "next_action": "Confirm live definitions during Phase 4 source investigation. Do not change schedules.",
+      "freshness": "last committed deliveries ~2026-08-31",
+      "blocks_phase0": false,
+      "disposition": "reported_pending_phase0_verification"
+    },
+    {
+      "id": "C-04",
+      "title": "Gate 3 Hidden Lead Intent blocker (ROI/CAGE/Communication quarantined)",
+      "detail": "Filters carry hidden Lead Intent = [Parts, Sales, Service, Unknown]; whole-delivery quarantine. Three Honda families unavailable until a source/authority remedy.",
+      "owner": "Duane (authority) + Codex (source remedy investigation)",
+      "next_action": "Investigate field-minimized Sales-only Custom Reporting alternative or Cox admin source fix. No classifier/contract weakening.",
+      "freshness": "GATE3 doc 2026-08-30 (+2026-08-31 addendum); state unchanged 9 held / 9 quarantined",
+      "blocks_phase0": false,
+      "disposition": "HOLD/PENDING (pre-existing; blocks dependent metrics only, not Phase 0 pinning)"
+    },
+    {
+      "id": "C-05",
+      "title": "Honda accepted families HELD but not promoted into analytics",
+      "detail": "Gross/Appointments/Dashboard are classifier-held; promotion (manual dev CLI) has not been run for them per committed evidence.",
+      "owner": "Codex (acceptance) + Claude/Studio (promotion after tests)",
+      "next_action": "Connect promotion only after idempotence/current-period/end-to-end tests (Phase 3/5).",
+      "freshness": "as of native-scheduled-evidence.json (sha 13c0fca1…)",
+      "blocks_phase0": false,
+      "disposition": "reported_pending_phase0_verification"
+    },
+    {
+      "id": "C-06",
+      "title": "Durable watchdog_metric_* storage absent",
+      "detail": "None of the 12 SPEC §7 additive tables exist yet.",
+      "owner": "Claude/Studio",
+      "next_action": "Design + migrate in Phase 3. Not required for Phase 0.",
+      "freshness": "as of 2026-09-02",
+      "blocks_phase0": false,
+      "disposition": "ABSENT (planned future work)"
+    },
+    {
+      "id": "C-07",
+      "title": "Two reader/landing/promotion implementations not yet consolidated",
+      "detail": "MAIN readers (Appointments/Dashboard/Gross) vs INGEST wider six-family readers; one canonical path is Phase 3 work.",
+      "owner": "Claude/Studio",
+      "next_action": "Consolidate one canonical path with real Honda golden + negative controls (Phase 3).",
+      "freshness": "as of 2026-09-02",
+      "blocks_phase0": false,
+      "disposition": "OPEN (planned future work)"
+    },
+    {
+      "id": "C-08",
+      "title": "SPEC §2 MAIN anchor HEAD delta",
+      "detail": "SPEC lists planning anchor MAIN HEAD 4356e9e6a; current HEAD 9ac76c58b is +1 docs commit ('memorialize').",
+      "owner": "Phase 0 writer",
+      "next_action": "None — expected forward motion; Phase 0 pins current HEAD 9ac76c58b.",
+      "freshness": "as of 2026-09-02",
+      "blocks_phase0": false,
+      "disposition": "RESOLVED (informational)"
+    },
+    {
+      "id": "C-09",
+      "title": "Response Times SW-013/SW-016/SW-017 unresolved",
+      "detail": "Measured-unscored capture exists; three metrics held against frozen spec (definition mismatch / missing holiday calendar / phone-origin not identifiable).",
+      "owner": "Codex + Claude/Studio",
+      "next_action": "Re-contract definitions in Phase 1/4; do not score until resolved.",
+      "freshness": "gate4i ledger sha 3d3e0ae2…",
+      "blocks_phase0": false,
+      "disposition": "HOLD/PENDING (dependent metrics only)"
+    }
+  ],
+  "phase0_blocking_conflicts": [],
+  "summary": "0 conflicts block Phase 0 pinning. 9 open/quarantined/pending conditions recorded for downstream phases; 2 are reported_pending_phase0_verification due to the Gmail/Vin prohibition; 1 (C-08) is resolved informational."
+}

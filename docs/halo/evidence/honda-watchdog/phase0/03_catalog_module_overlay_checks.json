@@ -1,0 +1,179 @@
+{
+  "check": "honda_watchdog_phase0_catalog_module_overlay",
+  "purpose": "Phase 0 pinning only — no per-metric definitions authored",
+  "matrix_path": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json",
+  "matrix_sha256": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+  "catalog": {
+    "entries": 295,
+    "expected_entries": 295,
+    "unique_ids": 295,
+    "malformed_ids": [],
+    "duplicate_ids": [],
+    "contiguous_1_to_295": true,
+    "first_id": "SW-001",
+    "last_id": "SW-295",
+    "pass": true
+  },
+  "modules": {
+    "module_count": 11,
+    "grand_total_enumerated": 295,
+    "declared_grand_total": 295,
+    "grand_total_match": true,
+    "each_id_exactly_once": true,
+    "overlaps": [],
+    "coverage_gaps": [],
+    "extra_ids": [],
+    "per_module": [
+      {
+        "module": 1,
+        "title": "Demand, source quality, and paid-media ROI",
+        "declared_count": 28,
+        "enumerated_count": 28,
+        "count_match": true,
+        "out_of_catalog": [],
+        "intra_module_duplicates": []
+      },
+      {
+        "module": 2,
+        "title": "Speed-to-lead, contact coverage, and BDC cadence",
+        "declared_count": 28,
+        "enumerated_count": 28,
+        "count_match": true,
+        "out_of_catalog": [],
+        "intra_module_duplicates": []
+      },
+      {
+        "module": 3,
+        "title": "Funnel, appointment, and showroom conversion",
+        "declared_count": 24,
+        "enumerated_count": 24,
+        "count_match": true,
+        "out_of_catalog": [],
+        "intra_module_duplicates": []
+      },
+      {
+        "module": 4,
+        "title": "Deal economics, desking, F&I, and inventory velocity",
+        "declared_count": 22,
+        "enumerated_count": 22,
+        "count_match": true,
+        "out_of_catalog": [],
+        "intra_module_duplicates": []
+      },
+      {
+        "module": 5,
+        "title": "Rep productivity, coaching, routing, and workforce health",
+        "declared_count": 26,
+        "enumerated_count": 26,
+        "count_match": true,
+        "out_of_catalog": [],
+        "intra_module_duplicates": []
+      },
+      {
+        "module": 6,
+        "title": "Conversation discovery, personalization, and objection handling",
+        "declared_count": 36,
+        "enumerated_count": 36,
+        "count_match": true,
+        "out_of_catalog": [],
+        "intra_module_duplicates": []
+      },
+      {
+        "module": 7,
+        "title": "Customer experience, trust, sentiment, and escalation",
+        "declared_count": 26,
+        "enumerated_count": 26,
+        "count_match": true,
+        "out_of_catalog": [],
+        "intra_module_duplicates": []
+      },
+      {
+        "module": 8,
+        "title": "CRM data quality, compliance, and control integrity",
+        "declared_count": 27,
+        "enumerated_count": 27,
+        "count_match": true,
+        "out_of_catalog": [],
+        "intra_module_duplicates": []
+      },
+      {
+        "module": 9,
+        "title": "Pipeline recovery and lifecycle reactivation",
+        "declared_count": 20,
+        "enumerated_count": 20,
+        "count_match": true,
+        "out_of_catalog": [],
+        "intra_module_duplicates": []
+      },
+      {
+        "module": 10,
+        "title": "Sales-owned owner-base, loyalty, referral, and equity",
+        "declared_count": 32,
+        "enumerated_count": 32,
+        "count_match": true,
+        "out_of_catalog": [],
+        "intra_module_duplicates": []
+      },
+      {
+        "module": 11,
+        "title": "Audience, territory, conquest, and lifecycle growth",
+        "declared_count": 26,
+        "enumerated_count": 26,
+        "count_match": true,
+        "out_of_catalog": [],
+        "intra_module_duplicates": []
+      }
+    ],
+    "pass": true
+  },
+  "service_overlay": {
+    "expected_count": 18,
+    "actual_count": 18,
+    "ids": [
+      "SW-079",
+      "SW-081",
+      "SW-083",
+      "SW-115",
+      "SW-118",
+      "SW-199",
+      "SW-222",
+      "SW-223",
+      "SW-224",
+      "SW-225",
+      "SW-226",
+      "SW-227",
+      "SW-228",
+      "SW-229",
+      "SW-263",
+      "SW-270",
+      "SW-279",
+      "SW-294"
+    ],
+    "all_in_catalog": true,
+    "out_of_catalog": [],
+    "owning_module_by_id": {
+      "SW-079": 10,
+      "SW-081": 10,
+      "SW-083": 10,
+      "SW-115": 10,
+      "SW-118": 10,
+      "SW-199": 7,
+      "SW-222": 10,
+      "SW-223": 10,
+      "SW-224": 10,
+      "SW-225": 10,
+      "SW-226": 10,
+      "SW-227": 10,
+      "SW-228": 10,
+      "SW-229": 10,
+      "SW-263": 11,
+      "SW-270": 10,
+      "SW-279": 10,
+      "SW-294": 10
+    },
+    "each_owned_by_one_module": true,
+    "pass": true
+  },
+  "errors": [],
+  "overall_pass": true
+}
