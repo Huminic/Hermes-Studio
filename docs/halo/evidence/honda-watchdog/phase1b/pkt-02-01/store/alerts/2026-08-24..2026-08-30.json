@@ -1,0 +1,26 @@
+[
+  {
+    "channel": "simulated_none",
+    "delivered": false,
+    "message": "[SIMULATED — NOT SENT] SW-011 within target; no trigger (value 6 minutes).",
+    "metric_id": "SW-011",
+    "unsent": true,
+    "would_fire": false
+  },
+  {
+    "channel": "simulated_none",
+    "delivered": false,
+    "message": "[SIMULATED — NOT SENT] SW-012 would trigger: strict_untouched_rate > 0 (value 0.19736842105263158 ratio_0_1).",
+    "metric_id": "SW-012",
+    "unsent": true,
+    "would_fire": true
+  },
+  {
+    "channel": "simulated_none",
+    "delivered": false,
+    "message": "[SIMULATED — NOT SENT] SW-015 would trigger: rep_2x_store_median_share > 0 (value 0.5 ratio_0_1).",
+    "metric_id": "SW-015",
+    "unsent": true,
+    "would_fire": true
+  }
+]

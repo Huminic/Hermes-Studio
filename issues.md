@@ -2,6 +2,16 @@
 
 **Last verified:** 2026-07-17
 
+### [PKT-02-01 dev execution — NOTES/DEBT recorded 2026-09-02] Packet-execution machinery for SW-011..015 (Honda 21043 Sales)
+
+- **What:** Additive dev-only packet-execution layer under `src/server/reports/packet/` (binding loader, sha-verified Honda-21043 leads input, finite SW-013/014 source inventory, engine, deterministic filesystem store, customer/internal reports) + CLI `scripts/halo-phase1b/run_pkt_02_01.ts` + validator `scripts/halo-phase1b/validate_pkt_02_01_execution.mjs`. Reuses the accepted immutable Leads evidence (sha `39f05774…`); frozen binding (`1c1c98a2…`), Phase 0/1A/1B artifacts, packet meanings all UNCHANGED. SW-011=6 min (healthy), SW-012=15/76 breach, SW-015=2/4 breach; SW-013/014 held `source_investigation_pending` with exact missing fields (no proxy).
+- **Debt/limitations recorded:**
+  1. **Mini-report is Markdown only — no PDF renderer added.** The required customer-safe mini-report is produced as Markdown (`PKT-02-01_customer_mini_report.md`); a PDF was conditional ("if a PDF is produced") and no in-repo deterministic PDF pipeline exists. Impact: low (Markdown is the deliverable + it is deterministic). Follow-up: add a deterministic renderer only if a customer-facing PDF is required (prior provisional PDFs were non-reproducible due to embedded timestamps).
+  2. **`as_of` provenance rewrites on re-run.** The dev store's `runs/<key>/provenance.json` records the REAL execution wall-clock (honest chronology); re-running the CLI updates it while the deterministic content of record (`manifest.json`, `content_sha256`) stays byte-identical (idempotent). By design; noted so a provenance-only diff is not mistaken for a content change.
+  3. **Dev-only filesystem store, not a production DB.** Persistence is committed evidence files under `docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/store/`; rollback = git/directory removal + deterministic regeneration. No production DB, schedule, email, or delivery touched.
+- **Privacy:** aggregate values + shas + schema column-name labels only (the 57-header `searched_universe` lists field labels such as `VIN`/`CoBuyer Full Name`, already public in the committed golden — NOT customer values). Sales Rep aggregated in-memory, never persisted as a name. No PII.
+- **Owner:** dev implementation owner (this run). **Status:** OPEN — execution delivered; frozen authorities unchanged; SW-013/014 remain pending source acquisition (a separate governed action).
+
 ### [M1R Gate 4B — DEBT recorded 2026-09-01] SW-045 inverted/infinite ratio is not representable as a finite evaluated row
 
 - **What:** SW-045 = `Be Backs / Initial Visits` (Dashboard Visit Summary). The ratified rule says "if Initial Visits=0 and Be Backs>0, trigger as an infinite/inverted ratio." The Gate 2 strict predicate requires a FINITE value and a POSITIVE-INTEGER denominator, so an infinite ratio (denominator 0) cannot be represented as an `evaluated` row; `evalSW045` returns `NotEvaluable` for that degenerate case with a reason that distinguishes it from the both-zero (genuinely unresolved) case.

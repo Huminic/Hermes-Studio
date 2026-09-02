@@ -1,0 +1,14 @@
+{
+  "comparator": ">",
+  "detection_fired": false,
+  "detection_rule": "median_business_hours_response_min > 10",
+  "gradable_state": "graded",
+  "grade_target_id": "GT-OT-SW-011",
+  "metric_id": "SW-011",
+  "period": "2026-08-24..2026-08-30",
+  "rating": "healthy",
+  "reason": null,
+  "reference_id": "CR-OT-SW-011",
+  "threshold": 10,
+  "threshold_id": "TH-OT-SW-011"
+}

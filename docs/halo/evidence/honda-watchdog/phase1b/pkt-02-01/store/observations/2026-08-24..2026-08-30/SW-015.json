@@ -1,0 +1,41 @@
+{
+  "calculation_kind": "rate",
+  "confidence": "medium",
+  "denominator": 4,
+  "detail": {
+    "footnote": "Per-rep mean Actual Response Time within the business-hours population vs the store median (SW-011 population); a rep triggers at >= 2x. Sales Rep is aggregated in-memory and never persisted as a name. Operational target 0; triggers on any triggered rep.",
+    "max_rep_mean_min": 424.75,
+    "reps_with_numeric": 4,
+    "store_median_min": 6,
+    "triggered_rep_count": 2,
+    "triggered_rep_sample_sizes": [
+      7,
+      8
+    ],
+    "triggered_rep_share": 0.5
+  },
+  "formula": "count(rep mean Actual Response Time >= 2 x store median) / reps_with_numeric_response",
+  "gradable": true,
+  "metric_id": "SW-015",
+  "missing": null,
+  "numerator": 2,
+  "period": "2026-08-24..2026-08-30",
+  "source_fields": [
+    "Actual Response Time (Min)",
+    "Originated After Hours",
+    "Sales Rep (aggregated, pseudonymized)"
+  ],
+  "source_investigation": null,
+  "source_lineage": {
+    "dealer_id": "21043",
+    "period": "2026-08-24..2026-08-30",
+    "receipt_sha256": "68f845a528623c3799e52c2bb45ba25551450314c5b69ac5fbde2b6e2b6521f2",
+    "row_key": "Lead ID (119 unique)",
+    "schema_contract_sha256": "7d446696d9be66b917308cad68e27fb8dfaf40ca6e08064afde16031c172eeb1",
+    "source_id": "SRC-vinsolutions_custom_reporting_leads-0001",
+    "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae"
+  },
+  "status": "measured",
+  "unit": "ratio_0_1",
+  "value": 0.5
+}

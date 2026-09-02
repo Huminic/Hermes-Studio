@@ -1,0 +1,14 @@
+{
+  "comparator": ">",
+  "detection_fired": true,
+  "detection_rule": "rep_2x_store_median_share > 0",
+  "gradable_state": "graded",
+  "grade_target_id": "GT-OT-SW-015",
+  "metric_id": "SW-015",
+  "period": "2026-08-24..2026-08-30",
+  "rating": "breach",
+  "reason": null,
+  "reference_id": "CR-OT-SW-015",
+  "threshold": 0,
+  "threshold_id": "TH-OT-SW-015"
+}

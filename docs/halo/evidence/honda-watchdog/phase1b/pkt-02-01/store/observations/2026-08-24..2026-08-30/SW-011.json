@@ -1,0 +1,34 @@
+{
+  "calculation_kind": "duration",
+  "confidence": "medium",
+  "denominator": 76,
+  "detail": {
+    "business_hours_population": 76,
+    "coverage_numeric": 27,
+    "footnote": "Median over the numeric Actual Response Time (Min) within the native Originated-After-Hours=No population; blank response times remain MISSING and are excluded from the median (missing is not zero). Operational target 10 min; triggers when median > 10.",
+    "missing": 49
+  },
+  "formula": "median(Actual Response Time (Min) where Originated After Hours=No, numeric only)",
+  "gradable": true,
+  "metric_id": "SW-011",
+  "missing": 49,
+  "numerator": 27,
+  "period": "2026-08-24..2026-08-30",
+  "source_fields": [
+    "Actual Response Time (Min)",
+    "Originated After Hours"
+  ],
+  "source_investigation": null,
+  "source_lineage": {
+    "dealer_id": "21043",
+    "period": "2026-08-24..2026-08-30",
+    "receipt_sha256": "68f845a528623c3799e52c2bb45ba25551450314c5b69ac5fbde2b6e2b6521f2",
+    "row_key": "Lead ID (119 unique)",
+    "schema_contract_sha256": "7d446696d9be66b917308cad68e27fb8dfaf40ca6e08064afde16031c172eeb1",
+    "source_id": "SRC-vinsolutions_custom_reporting_leads-0001",
+    "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae"
+  },
+  "status": "measured",
+  "unit": "minutes",
+  "value": 6
+}

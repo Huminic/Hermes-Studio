@@ -1,0 +1,37 @@
+[
+  {
+    "detail": "How quickly are new business-hours Sales leads receiving their first response (median)? value=6 minutes; numerator=27; denominator=76.",
+    "headline": "SW-011 within OT-SW-011 target",
+    "metric_id": "SW-011",
+    "period": "2026-08-24..2026-08-30",
+    "severity": "healthy"
+  },
+  {
+    "detail": "What is the strict-untouched rate: business-hours leads with NO first contact attempt AND NO first customer contact AND NO actual response time? value=0.19736842105263158 ratio_0_1; numerator=15; denominator=76.",
+    "headline": "SW-012 breaches OT-SW-012 (> 0 ratio_0_1)",
+    "metric_id": "SW-012",
+    "period": "2026-08-24..2026-08-30",
+    "severity": "breach"
+  },
+  {
+    "detail": "What share of Sales reps have a mean first-response at least 2x the store median (business-hours population)? value=0.5 ratio_0_1; numerator=2; denominator=4.",
+    "headline": "SW-015 breaches OT-SW-015 (> 0 ratio_0_1)",
+    "metric_id": "SW-015",
+    "period": "2026-08-24..2026-08-30",
+    "severity": "breach"
+  },
+  {
+    "detail": "Searched the 57 accepted Leads headers for the exact authoritative fields of SW-013. Absent: authoritative_opening_schedule, first_human_response_timestamp. No proxy/inference used (forbidden proxies present but rejected: Originated After Hours, Actionable Response Datetime, Actual Response Time (Min), Adjusted Response Time (Min), First Contact Attempt). Held open as source_investigation_pending; no value derived.",
+    "headline": "SW-013 held open — required source fields absent",
+    "metric_id": "SW-013",
+    "period": "2026-08-24..2026-08-30",
+    "severity": "pending"
+  },
+  {
+    "detail": "Searched the 57 accepted Leads headers for the exact authoritative fields of SW-014. Absent: first_response_actor_classification, human_touch_event_timestamps. No proxy/inference used (forbidden proxies present but rejected: Lead Source, Contacted Indicator, ADF/XML Indicator, Actual Response Time (Min), Actionable Response Datetime). Held open as source_investigation_pending; no value derived.",
+    "headline": "SW-014 held open — required source fields absent",
+    "metric_id": "SW-014",
+    "period": "2026-08-24..2026-08-30",
+    "severity": "pending"
+  }
+]

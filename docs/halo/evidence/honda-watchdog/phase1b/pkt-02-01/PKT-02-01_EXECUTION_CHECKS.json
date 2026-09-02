@@ -1,0 +1,203 @@
+{
+  "artifact": "honda-watchdog-pkt-02-01-execution-checks",
+  "packet_id": "PKT-02-01",
+  "frozen_binding_sha256": "1c1c98a2e7b3be8d10eea9495861b7a33e65a00020ab7c9e756da363b69f2082",
+  "frozen_source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae",
+  "checks_run": 38,
+  "checks_passed": 38,
+  "errors": [],
+  "checks": [
+    {
+      "name": "binding_frozen_sha",
+      "pass": true,
+      "detail": "1c1c98a2e7b3be8d10eea9495861b7a33e65a00020ab7c9e756da363b69f2082"
+    },
+    {
+      "name": "packet_authority_ref",
+      "pass": true,
+      "detail": "docs/halo/contract/phase1b/pkt-02-01-binding.json"
+    },
+    {
+      "name": "packet_authority_sha",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "run_manifest_present",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "manifest_packet_id",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "manifest_period",
+      "pass": true,
+      "detail": "2026-08-24..2026-08-30"
+    },
+    {
+      "name": "manifest_binding_sha",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "manifest_source_sha",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "content_sha256_integrity",
+      "pass": true,
+      "detail": "ae30c07ab4a6e9ae85461dc183c32b94e1ae50c11c5004ab2b51e4d9b965eba1 vs ae30c07ab4a6e9ae85461dc183c32b94e1ae50c11c5004ab2b51e4d9b965eba1"
+    },
+    {
+      "name": "SW-011_value",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-011_num_den",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-011_missing_not_zero",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-012_value",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-012_num_den",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-015_value",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-015_num_den",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-011_healthy",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-012_breach",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-015_breach",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-013_pending",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-013_value_null",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-013_withheld",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-013_missing_fields",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-014_pending",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-014_value_null",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-014_withheld",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "SW-014_missing_fields",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "reconciliation_ok",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "reconcile_SW-011",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "reconcile_SW-012",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "reconcile_SW-015",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "alerts_measured_only",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "alerts_unsent",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "lifecycle_partition_matches_packet",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_rep_identity_key",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "customer_report_present",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "customer_no_jargon",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "customer_states_period",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "adversarial_probe_suite": "src/test/pkt-02-01-adversarial.test.ts (9 probes: Service/Parts, dealer isolation, strict-AND, reps_with_numeric denom, missing-not-zero, withholding, frozen thresholds, binding tamper, source tamper)",
+  "overall_pass": true
+}

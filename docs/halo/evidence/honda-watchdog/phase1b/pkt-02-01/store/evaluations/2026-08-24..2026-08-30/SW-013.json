@@ -1,0 +1,14 @@
+{
+  "comparator": null,
+  "detection_fired": null,
+  "detection_rule": null,
+  "gradable_state": "withheld",
+  "grade_target_id": "GT-013",
+  "metric_id": "SW-013",
+  "period": "2026-08-24..2026-08-30",
+  "rating": "withheld",
+  "reason": "source_investigation_pending: missing direct fields [authoritative_opening_schedule, first_human_response_timestamp]; no proxy/derivation; incompatible target (no approved OT).",
+  "reference_id": null,
+  "threshold": null,
+  "threshold_id": null
+}

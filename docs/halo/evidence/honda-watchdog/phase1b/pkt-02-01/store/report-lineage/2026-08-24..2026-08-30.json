@@ -1,0 +1,56 @@
+{
+  "evidence_delta": {
+    "bytes": 46940,
+    "dealer_id": "21043",
+    "missing_rule": "blanks preserved as missing (never zero); coverage_numeric + missing == business-hours population",
+    "period": "2026-08-24..2026-08-30",
+    "receipt_sha256": "68f845a528623c3799e52c2bb45ba25551450314c5b69ac5fbde2b6e2b6521f2",
+    "row_reconciliation": "119 of 119",
+    "sales_only_proof": "119 rows: one rooftop Dealer ID=21043; zero Service/Parts tokens in categorical columns; business-hours population (Originated After Hours=No)=76; Sales Rep aggregated in-memory, no names retained",
+    "schema_contract_sha256": "7d446696d9be66b917308cad68e27fb8dfaf40ca6e08064afde16031c172eeb1",
+    "source_id": "SRC-vinsolutions_custom_reporting_leads-0001",
+    "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae"
+  },
+  "meaning_delta": [
+    {
+      "grade": "GT-OT-SW-011: > 10 -> healthy",
+      "metric_id": "SW-011",
+      "narrative": "Median first-response minutes for business-hours leads; blanks excluded (never zero). Graded against the approved OT-SW-011 ceiling (>10 min = breach).",
+      "normalized": "numeric primitives from 119 rows (business-hours population 76; missing preserved)",
+      "state": "measured",
+      "value": "6 minutes (numerator 27 / denominator 76)"
+    },
+    {
+      "grade": "GT-OT-SW-012: > 0 -> breach",
+      "metric_id": "SW-012",
+      "narrative": "Strict-untouched rate: only leads blank on ALL THREE contact/response fields (never ANY/OR); aged >30 min; graded against zero-tolerance OT-SW-012 (>0 = breach).",
+      "normalized": "numeric primitives from 119 rows (business-hours population 76; missing preserved)",
+      "state": "measured",
+      "value": "0.19736842105263158 ratio_0_1 (numerator 15 / denominator 76)"
+    },
+    {
+      "grade": "GT-OT-SW-015: > 0 -> breach",
+      "metric_id": "SW-015",
+      "narrative": "Share of reps whose mean response is at least 2x the store median (NOT a minutes difference). Sales Rep aggregated in-memory and pseudonymized to an ephemeral tenant id, NEVER persisted as a name; customer/VIN/body excluded. Graded against zero-tolerance OT-SW-015 (>0 = breach).",
+      "normalized": "numeric primitives from 119 rows (business-hours population 76; missing preserved)",
+      "state": "measured",
+      "value": "0.5 ratio_0_1 (numerator 2 / denominator 4)"
+    },
+    {
+      "grade": "withheld (no approved target; incompatible)",
+      "metric_id": "SW-013",
+      "narrative": "After-hours SLA: first human response by next opening + 15 min. Held open — opening boundary + first-human timestamp absent; no proxy.",
+      "normalized": "searched 57 accepted Leads headers",
+      "state": "source_investigation_pending",
+      "value": "withheld (no value derived)"
+    },
+    {
+      "grade": "withheld (no approved target; incompatible)",
+      "metric_id": "SW-014",
+      "narrative": "Auto-reply-only event predicate (auto-reply first AND no human touch within 2h); count, not duration; no business-hours restriction. Held open — direct actor classification absent; no channel/direction proxy.",
+      "normalized": "searched 57 accepted Leads headers",
+      "state": "source_investigation_pending",
+      "value": "withheld (no value derived)"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "calculation_kind": "rate",
+  "confidence": "medium",
+  "denominator": 76,
+  "detail": {
+    "count": 15,
+    "denominator": 76,
+    "footnote": "Strict untouched = all three touch signals blank within the business-hours population. Each source period ended before captured_at, so every qualifying row is >30 minutes old. Operational target 0; triggers on any count > 0.",
+    "rate": 0.19736842105263158
+  },
+  "formula": "count(First Contact Attempt blank AND First Customer Contact blank AND Actual Response Time blank where Originated After Hours=No) / business_hours_population",
+  "gradable": true,
+  "metric_id": "SW-012",
+  "missing": null,
+  "numerator": 15,
+  "period": "2026-08-24..2026-08-30",
+  "source_fields": [
+    "First Contact Attempt",
+    "First Customer Contact",
+    "Actual Response Time (Min)",
+    "Originated After Hours"
+  ],
+  "source_investigation": null,
+  "source_lineage": {
+    "dealer_id": "21043",
+    "period": "2026-08-24..2026-08-30",
+    "receipt_sha256": "68f845a528623c3799e52c2bb45ba25551450314c5b69ac5fbde2b6e2b6521f2",
+    "row_key": "Lead ID (119 unique)",
+    "schema_contract_sha256": "7d446696d9be66b917308cad68e27fb8dfaf40ca6e08064afde16031c172eeb1",
+    "source_id": "SRC-vinsolutions_custom_reporting_leads-0001",
+    "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae"
+  },
+  "status": "measured",
+  "unit": "ratio_0_1",
+  "value": 0.19736842105263158
+}

@@ -1,0 +1,598 @@
+{
+  "binding_sha256": "1c1c98a2e7b3be8d10eea9495861b7a33e65a00020ab7c9e756da363b69f2082",
+  "content": {
+    "alert_simulations": [
+      {
+        "channel": "simulated_none",
+        "delivered": false,
+        "message": "[SIMULATED — NOT SENT] SW-011 within target; no trigger (value 6 minutes).",
+        "metric_id": "SW-011",
+        "unsent": true,
+        "would_fire": false
+      },
+      {
+        "channel": "simulated_none",
+        "delivered": false,
+        "message": "[SIMULATED — NOT SENT] SW-012 would trigger: strict_untouched_rate > 0 (value 0.19736842105263158 ratio_0_1).",
+        "metric_id": "SW-012",
+        "unsent": true,
+        "would_fire": true
+      },
+      {
+        "channel": "simulated_none",
+        "delivered": false,
+        "message": "[SIMULATED — NOT SENT] SW-015 would trigger: rep_2x_store_median_share > 0 (value 0.5 ratio_0_1).",
+        "metric_id": "SW-015",
+        "unsent": true,
+        "would_fire": true
+      }
+    ],
+    "binding_sha256": "1c1c98a2e7b3be8d10eea9495861b7a33e65a00020ab7c9e756da363b69f2082",
+    "dealer_id": "21043",
+    "engine_version": "pkt-exec-1",
+    "evaluations": [
+      {
+        "comparator": ">",
+        "detection_fired": false,
+        "detection_rule": "median_business_hours_response_min > 10",
+        "gradable_state": "graded",
+        "grade_target_id": "GT-OT-SW-011",
+        "metric_id": "SW-011",
+        "period": "2026-08-24..2026-08-30",
+        "rating": "healthy",
+        "reason": null,
+        "reference_id": "CR-OT-SW-011",
+        "threshold": 10,
+        "threshold_id": "TH-OT-SW-011"
+      },
+      {
+        "comparator": ">",
+        "detection_fired": true,
+        "detection_rule": "strict_untouched_rate > 0",
+        "gradable_state": "graded",
+        "grade_target_id": "GT-OT-SW-012",
+        "metric_id": "SW-012",
+        "period": "2026-08-24..2026-08-30",
+        "rating": "breach",
+        "reason": null,
+        "reference_id": "CR-OT-SW-012",
+        "threshold": 0,
+        "threshold_id": "TH-OT-SW-012"
+      },
+      {
+        "comparator": ">",
+        "detection_fired": true,
+        "detection_rule": "rep_2x_store_median_share > 0",
+        "gradable_state": "graded",
+        "grade_target_id": "GT-OT-SW-015",
+        "metric_id": "SW-015",
+        "period": "2026-08-24..2026-08-30",
+        "rating": "breach",
+        "reason": null,
+        "reference_id": "CR-OT-SW-015",
+        "threshold": 0,
+        "threshold_id": "TH-OT-SW-015"
+      },
+      {
+        "comparator": null,
+        "detection_fired": null,
+        "detection_rule": null,
+        "gradable_state": "withheld",
+        "grade_target_id": "GT-013",
+        "metric_id": "SW-013",
+        "period": "2026-08-24..2026-08-30",
+        "rating": "withheld",
+        "reason": "source_investigation_pending: missing direct fields [authoritative_opening_schedule, first_human_response_timestamp]; no proxy/derivation; incompatible target (no approved OT).",
+        "reference_id": null,
+        "threshold": null,
+        "threshold_id": null
+      },
+      {
+        "comparator": null,
+        "detection_fired": null,
+        "detection_rule": null,
+        "gradable_state": "withheld",
+        "grade_target_id": "GT-014",
+        "metric_id": "SW-014",
+        "period": "2026-08-24..2026-08-30",
+        "rating": "withheld",
+        "reason": "source_investigation_pending: missing direct fields [first_response_actor_classification, human_touch_event_timestamps]; no proxy/derivation; incompatible target (no approved OT).",
+        "reference_id": null,
+        "threshold": null,
+        "threshold_id": null
+      }
+    ],
+    "findings": [
+      {
+        "detail": "How quickly are new business-hours Sales leads receiving their first response (median)? value=6 minutes; numerator=27; denominator=76.",
+        "headline": "SW-011 within OT-SW-011 target",
+        "metric_id": "SW-011",
+        "period": "2026-08-24..2026-08-30",
+        "severity": "healthy"
+      },
+      {
+        "detail": "What is the strict-untouched rate: business-hours leads with NO first contact attempt AND NO first customer contact AND NO actual response time? value=0.19736842105263158 ratio_0_1; numerator=15; denominator=76.",
+        "headline": "SW-012 breaches OT-SW-012 (> 0 ratio_0_1)",
+        "metric_id": "SW-012",
+        "period": "2026-08-24..2026-08-30",
+        "severity": "breach"
+      },
+      {
+        "detail": "What share of Sales reps have a mean first-response at least 2x the store median (business-hours population)? value=0.5 ratio_0_1; numerator=2; denominator=4.",
+        "headline": "SW-015 breaches OT-SW-015 (> 0 ratio_0_1)",
+        "metric_id": "SW-015",
+        "period": "2026-08-24..2026-08-30",
+        "severity": "breach"
+      },
+      {
+        "detail": "Searched the 57 accepted Leads headers for the exact authoritative fields of SW-013. Absent: authoritative_opening_schedule, first_human_response_timestamp. No proxy/inference used (forbidden proxies present but rejected: Originated After Hours, Actionable Response Datetime, Actual Response Time (Min), Adjusted Response Time (Min), First Contact Attempt). Held open as source_investigation_pending; no value derived.",
+        "headline": "SW-013 held open — required source fields absent",
+        "metric_id": "SW-013",
+        "period": "2026-08-24..2026-08-30",
+        "severity": "pending"
+      },
+      {
+        "detail": "Searched the 57 accepted Leads headers for the exact authoritative fields of SW-014. Absent: first_response_actor_classification, human_touch_event_timestamps. No proxy/inference used (forbidden proxies present but rejected: Lead Source, Contacted Indicator, ADF/XML Indicator, Actual Response Time (Min), Actionable Response Datetime). Held open as source_investigation_pending; no value derived.",
+        "headline": "SW-014 held open — required source fields absent",
+        "metric_id": "SW-014",
+        "period": "2026-08-24..2026-08-30",
+        "severity": "pending"
+      }
+    ],
+    "lifecycle_partition": {
+      "accepted_disposition_only_ids": [],
+      "accepted_measured_ids": [
+        "SW-011",
+        "SW-012",
+        "SW-015"
+      ],
+      "calculation_pending_ids": [],
+      "rejected_ids": [],
+      "source_investigation_pending_ids": [
+        "SW-013",
+        "SW-014"
+      ]
+    },
+    "module": 2,
+    "observations": [
+      {
+        "calculation_kind": "duration",
+        "confidence": "medium",
+        "denominator": 76,
+        "detail": {
+          "business_hours_population": 76,
+          "coverage_numeric": 27,
+          "footnote": "Median over the numeric Actual Response Time (Min) within the native Originated-After-Hours=No population; blank response times remain MISSING and are excluded from the median (missing is not zero). Operational target 10 min; triggers when median > 10.",
+          "missing": 49
+        },
+        "formula": "median(Actual Response Time (Min) where Originated After Hours=No, numeric only)",
+        "gradable": true,
+        "metric_id": "SW-011",
+        "missing": 49,
+        "numerator": 27,
+        "period": "2026-08-24..2026-08-30",
+        "source_fields": [
+          "Actual Response Time (Min)",
+          "Originated After Hours"
+        ],
+        "source_investigation": null,
+        "source_lineage": {
+          "dealer_id": "21043",
+          "period": "2026-08-24..2026-08-30",
+          "receipt_sha256": "68f845a528623c3799e52c2bb45ba25551450314c5b69ac5fbde2b6e2b6521f2",
+          "row_key": "Lead ID (119 unique)",
+          "schema_contract_sha256": "7d446696d9be66b917308cad68e27fb8dfaf40ca6e08064afde16031c172eeb1",
+          "source_id": "SRC-vinsolutions_custom_reporting_leads-0001",
+          "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae"
+        },
+        "status": "measured",
+        "unit": "minutes",
+        "value": 6
+      },
+      {
+        "calculation_kind": "rate",
+        "confidence": "medium",
+        "denominator": 76,
+        "detail": {
+          "count": 15,
+          "denominator": 76,
+          "footnote": "Strict untouched = all three touch signals blank within the business-hours population. Each source period ended before captured_at, so every qualifying row is >30 minutes old. Operational target 0; triggers on any count > 0.",
+          "rate": 0.19736842105263158
+        },
+        "formula": "count(First Contact Attempt blank AND First Customer Contact blank AND Actual Response Time blank where Originated After Hours=No) / business_hours_population",
+        "gradable": true,
+        "metric_id": "SW-012",
+        "missing": null,
+        "numerator": 15,
+        "period": "2026-08-24..2026-08-30",
+        "source_fields": [
+          "First Contact Attempt",
+          "First Customer Contact",
+          "Actual Response Time (Min)",
+          "Originated After Hours"
+        ],
+        "source_investigation": null,
+        "source_lineage": {
+          "dealer_id": "21043",
+          "period": "2026-08-24..2026-08-30",
+          "receipt_sha256": "68f845a528623c3799e52c2bb45ba25551450314c5b69ac5fbde2b6e2b6521f2",
+          "row_key": "Lead ID (119 unique)",
+          "schema_contract_sha256": "7d446696d9be66b917308cad68e27fb8dfaf40ca6e08064afde16031c172eeb1",
+          "source_id": "SRC-vinsolutions_custom_reporting_leads-0001",
+          "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae"
+        },
+        "status": "measured",
+        "unit": "ratio_0_1",
+        "value": 0.19736842105263158
+      },
+      {
+        "calculation_kind": "rate",
+        "confidence": "medium",
+        "denominator": 4,
+        "detail": {
+          "footnote": "Per-rep mean Actual Response Time within the business-hours population vs the store median (SW-011 population); a rep triggers at >= 2x. Sales Rep is aggregated in-memory and never persisted as a name. Operational target 0; triggers on any triggered rep.",
+          "max_rep_mean_min": 424.75,
+          "reps_with_numeric": 4,
+          "store_median_min": 6,
+          "triggered_rep_count": 2,
+          "triggered_rep_sample_sizes": [
+            7,
+            8
+          ],
+          "triggered_rep_share": 0.5
+        },
+        "formula": "count(rep mean Actual Response Time >= 2 x store median) / reps_with_numeric_response",
+        "gradable": true,
+        "metric_id": "SW-015",
+        "missing": null,
+        "numerator": 2,
+        "period": "2026-08-24..2026-08-30",
+        "source_fields": [
+          "Actual Response Time (Min)",
+          "Originated After Hours",
+          "Sales Rep (aggregated, pseudonymized)"
+        ],
+        "source_investigation": null,
+        "source_lineage": {
+          "dealer_id": "21043",
+          "period": "2026-08-24..2026-08-30",
+          "receipt_sha256": "68f845a528623c3799e52c2bb45ba25551450314c5b69ac5fbde2b6e2b6521f2",
+          "row_key": "Lead ID (119 unique)",
+          "schema_contract_sha256": "7d446696d9be66b917308cad68e27fb8dfaf40ca6e08064afde16031c172eeb1",
+          "source_id": "SRC-vinsolutions_custom_reporting_leads-0001",
+          "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae"
+        },
+        "status": "measured",
+        "unit": "ratio_0_1",
+        "value": 0.5
+      },
+      {
+        "calculation_kind": "rate",
+        "confidence": "not_applicable",
+        "denominator": null,
+        "detail": null,
+        "formula": null,
+        "gradable": false,
+        "metric_id": "SW-013",
+        "missing": null,
+        "numerator": null,
+        "period": "2026-08-24..2026-08-30",
+        "source_fields": [],
+        "source_investigation": {
+          "disposition": "source_investigation_pending",
+          "evidence": "Searched the 57 accepted Leads headers for the exact authoritative fields of SW-013. Absent: authoritative_opening_schedule, first_human_response_timestamp. No proxy/inference used (forbidden proxies present but rejected: Originated After Hours, Actionable Response Datetime, Actual Response Time (Min), Adjusted Response Time (Min), First Contact Attempt). Held open as source_investigation_pending; no value derived.",
+          "metric_id": "SW-013",
+          "missing_fields": [
+            "authoritative_opening_schedule",
+            "first_human_response_timestamp"
+          ],
+          "required": [
+            {
+              "description": "Authoritative Serra Honda 21043 opening-hours schedule to compute the next opening + 15 minutes (America/New_York).",
+              "forbidden_proxies_present": [
+                "Originated After Hours",
+                "Actionable Response Datetime"
+              ],
+              "key": "authoritative_opening_schedule",
+              "present": false,
+              "satisfied_by": null
+            },
+            {
+              "description": "Timestamp of the first HUMAN response (requires a human-actor classification, not any response event).",
+              "forbidden_proxies_present": [
+                "Actual Response Time (Min)",
+                "Adjusted Response Time (Min)",
+                "First Contact Attempt"
+              ],
+              "key": "first_human_response_timestamp",
+              "present": false,
+              "satisfied_by": null
+            }
+          ],
+          "searched_universe": [
+            "Lead ID",
+            "Dealer",
+            "Customer",
+            "Lead Source",
+            "Lead Type",
+            "Lead Source Group",
+            "Lead Status",
+            "Lead Status Custom",
+            "Lead Status Type",
+            "Actual Response Time (Min)",
+            "Adjusted Response Time (Min)",
+            "Actionable Response Datetime",
+            "Contacted Indicator",
+            "ADF/XML Indicator",
+            "Has Vehicle Of Interest",
+            "Sales Rep",
+            "Sales Rep - User Group",
+            "BD Agent",
+            "BD Agent - User Group",
+            "Created User",
+            "Created User - User Group",
+            "Last Modified User",
+            "Last Modified User - User Group",
+            "Originated After Hours",
+            "Inventory Type",
+            "Stock Number",
+            "VIN",
+            "Year",
+            "Make",
+            "Model",
+            "Trim",
+            "Vehicle Memo",
+            "Initial Vehicle Year",
+            "Initial Vehicle Make",
+            "Initial Vehicle Model",
+            "Lead Origination Date",
+            "Dealer ID",
+            "Lead Last Modified Date",
+            "First Contact Attempt",
+            "Last Attempted Contact",
+            "Last Attempted Email Contact",
+            "Last Attempted Phone Contact",
+            "Last Attempted Text Contact Datetime",
+            "Last Customer Contact",
+            "Last Attempted or Actual Contact",
+            "First Customer Contact",
+            "Hot Lead",
+            "Trade 1 Year",
+            "Trade 1 Make",
+            "Trade 1 Model",
+            "Trade 1 Memo",
+            "Trade 2 Year",
+            "Trade 2 Make",
+            "Trade 2 Model",
+            "Trade 2 Memo",
+            "Sold Datetime",
+            "CoBuyer Full Name"
+          ]
+        },
+        "source_lineage": {
+          "dealer_id": "21043",
+          "period": "2026-08-24..2026-08-30",
+          "receipt_sha256": null,
+          "row_key": null,
+          "schema_contract_sha256": "7d446696d9be66b917308cad68e27fb8dfaf40ca6e08064afde16031c172eeb1",
+          "source_id": "SRC-vinsolutions_custom_reporting_leads-0001",
+          "source_sha256": null
+        },
+        "status": "source_investigation_pending",
+        "unit": "ratio_0_1",
+        "value": null
+      },
+      {
+        "calculation_kind": "count",
+        "confidence": "not_applicable",
+        "denominator": null,
+        "detail": null,
+        "formula": null,
+        "gradable": false,
+        "metric_id": "SW-014",
+        "missing": null,
+        "numerator": null,
+        "period": "2026-08-24..2026-08-30",
+        "source_fields": [],
+        "source_investigation": {
+          "disposition": "source_investigation_pending",
+          "evidence": "Searched the 57 accepted Leads headers for the exact authoritative fields of SW-014. Absent: first_response_actor_classification, human_touch_event_timestamps. No proxy/inference used (forbidden proxies present but rejected: Lead Source, Contacted Indicator, ADF/XML Indicator, Actual Response Time (Min), Actionable Response Datetime). Held open as source_investigation_pending; no value derived.",
+          "metric_id": "SW-014",
+          "missing_fields": [
+            "first_response_actor_classification",
+            "human_touch_event_timestamps"
+          ],
+          "required": [
+            {
+              "description": "Direct actor classification of the first response as auto-reply vs human (no channel/direction inference).",
+              "forbidden_proxies_present": [
+                "Lead Source",
+                "Contacted Indicator",
+                "ADF/XML Indicator"
+              ],
+              "key": "first_response_actor_classification",
+              "present": false,
+              "satisfied_by": null
+            },
+            {
+              "description": "Response event timestamps sufficient to test that no HUMAN touch occurred within two hours of the first response.",
+              "forbidden_proxies_present": [
+                "Actual Response Time (Min)",
+                "Actionable Response Datetime"
+              ],
+              "key": "human_touch_event_timestamps",
+              "present": false,
+              "satisfied_by": null
+            }
+          ],
+          "searched_universe": [
+            "Lead ID",
+            "Dealer",
+            "Customer",
+            "Lead Source",
+            "Lead Type",
+            "Lead Source Group",
+            "Lead Status",
+            "Lead Status Custom",
+            "Lead Status Type",
+            "Actual Response Time (Min)",
+            "Adjusted Response Time (Min)",
+            "Actionable Response Datetime",
+            "Contacted Indicator",
+            "ADF/XML Indicator",
+            "Has Vehicle Of Interest",
+            "Sales Rep",
+            "Sales Rep - User Group",
+            "BD Agent",
+            "BD Agent - User Group",
+            "Created User",
+            "Created User - User Group",
+            "Last Modified User",
+            "Last Modified User - User Group",
+            "Originated After Hours",
+            "Inventory Type",
+            "Stock Number",
+            "VIN",
+            "Year",
+            "Make",
+            "Model",
+            "Trim",
+            "Vehicle Memo",
+            "Initial Vehicle Year",
+            "Initial Vehicle Make",
+            "Initial Vehicle Model",
+            "Lead Origination Date",
+            "Dealer ID",
+            "Lead Last Modified Date",
+            "First Contact Attempt",
+            "Last Attempted Contact",
+            "Last Attempted Email Contact",
+            "Last Attempted Phone Contact",
+            "Last Attempted Text Contact Datetime",
+            "Last Customer Contact",
+            "Last Attempted or Actual Contact",
+            "First Customer Contact",
+            "Hot Lead",
+            "Trade 1 Year",
+            "Trade 1 Make",
+            "Trade 1 Model",
+            "Trade 1 Memo",
+            "Trade 2 Year",
+            "Trade 2 Make",
+            "Trade 2 Model",
+            "Trade 2 Memo",
+            "Sold Datetime",
+            "CoBuyer Full Name"
+          ]
+        },
+        "source_lineage": {
+          "dealer_id": "21043",
+          "period": "2026-08-24..2026-08-30",
+          "receipt_sha256": null,
+          "row_key": null,
+          "schema_contract_sha256": "7d446696d9be66b917308cad68e27fb8dfaf40ca6e08064afde16031c172eeb1",
+          "source_id": "SRC-vinsolutions_custom_reporting_leads-0001",
+          "source_sha256": null
+        },
+        "status": "source_investigation_pending",
+        "unit": "leads",
+        "value": null
+      }
+    ],
+    "packet_id": "PKT-02-01",
+    "period": "2026-08-24..2026-08-30",
+    "reconciliation": {
+      "metrics": [
+        {
+          "denominator": 76,
+          "evaluator": 6,
+          "independent": 6,
+          "match": true,
+          "metric_id": "SW-011",
+          "numerator": 27,
+          "persisted_accepted": 6
+        },
+        {
+          "denominator": 76,
+          "evaluator": 0.19736842105263158,
+          "independent": 0.19736842105263158,
+          "match": true,
+          "metric_id": "SW-012",
+          "numerator": 15,
+          "persisted_accepted": 0.19736842105263158
+        },
+        {
+          "denominator": 4,
+          "evaluator": 0.5,
+          "independent": 0.5,
+          "match": true,
+          "metric_id": "SW-015",
+          "numerator": 2,
+          "persisted_accepted": 0.5
+        }
+      ],
+      "ok": true
+    },
+    "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae",
+    "two_delta": {
+      "evidence_delta": {
+        "bytes": 46940,
+        "dealer_id": "21043",
+        "missing_rule": "blanks preserved as missing (never zero); coverage_numeric + missing == business-hours population",
+        "period": "2026-08-24..2026-08-30",
+        "receipt_sha256": "68f845a528623c3799e52c2bb45ba25551450314c5b69ac5fbde2b6e2b6521f2",
+        "row_reconciliation": "119 of 119",
+        "sales_only_proof": "119 rows: one rooftop Dealer ID=21043; zero Service/Parts tokens in categorical columns; business-hours population (Originated After Hours=No)=76; Sales Rep aggregated in-memory, no names retained",
+        "schema_contract_sha256": "7d446696d9be66b917308cad68e27fb8dfaf40ca6e08064afde16031c172eeb1",
+        "source_id": "SRC-vinsolutions_custom_reporting_leads-0001",
+        "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae"
+      },
+      "meaning_delta": [
+        {
+          "grade": "GT-OT-SW-011: > 10 -> healthy",
+          "metric_id": "SW-011",
+          "narrative": "Median first-response minutes for business-hours leads; blanks excluded (never zero). Graded against the approved OT-SW-011 ceiling (>10 min = breach).",
+          "normalized": "numeric primitives from 119 rows (business-hours population 76; missing preserved)",
+          "state": "measured",
+          "value": "6 minutes (numerator 27 / denominator 76)"
+        },
+        {
+          "grade": "GT-OT-SW-012: > 0 -> breach",
+          "metric_id": "SW-012",
+          "narrative": "Strict-untouched rate: only leads blank on ALL THREE contact/response fields (never ANY/OR); aged >30 min; graded against zero-tolerance OT-SW-012 (>0 = breach).",
+          "normalized": "numeric primitives from 119 rows (business-hours population 76; missing preserved)",
+          "state": "measured",
+          "value": "0.19736842105263158 ratio_0_1 (numerator 15 / denominator 76)"
+        },
+        {
+          "grade": "GT-OT-SW-015: > 0 -> breach",
+          "metric_id": "SW-015",
+          "narrative": "Share of reps whose mean response is at least 2x the store median (NOT a minutes difference). Sales Rep aggregated in-memory and pseudonymized to an ephemeral tenant id, NEVER persisted as a name; customer/VIN/body excluded. Graded against zero-tolerance OT-SW-015 (>0 = breach).",
+          "normalized": "numeric primitives from 119 rows (business-hours population 76; missing preserved)",
+          "state": "measured",
+          "value": "0.5 ratio_0_1 (numerator 2 / denominator 4)"
+        },
+        {
+          "grade": "withheld (no approved target; incompatible)",
+          "metric_id": "SW-013",
+          "narrative": "After-hours SLA: first human response by next opening + 15 min. Held open — opening boundary + first-human timestamp absent; no proxy.",
+          "normalized": "searched 57 accepted Leads headers",
+          "state": "source_investigation_pending",
+          "value": "withheld (no value derived)"
+        },
+        {
+          "grade": "withheld (no approved target; incompatible)",
+          "metric_id": "SW-014",
+          "narrative": "Auto-reply-only event predicate (auto-reply first AND no human touch within 2h); count, not duration; no business-hours restriction. Held open — direct actor classification absent; no channel/direction proxy.",
+          "normalized": "searched 57 accepted Leads headers",
+          "state": "source_investigation_pending",
+          "value": "withheld (no value derived)"
+        }
+      ]
+    }
+  },
+  "content_sha256": "ae30c07ab4a6e9ae85461dc183c32b94e1ae50c11c5004ab2b51e4d9b965eba1",
+  "period": "2026-08-24..2026-08-30",
+  "run_key": "119f77056b73c2c9a2a2a6d9ac9aa91afc63205ec674df9d01effe660e774aa7",
+  "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae"
+}
