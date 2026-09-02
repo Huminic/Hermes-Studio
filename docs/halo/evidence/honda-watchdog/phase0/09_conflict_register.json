@@ -17,13 +17,13 @@
     },
     {
       "id": "C-02",
-      "title": "Vault vs Brain access-control & retention policy not documented",
-      "detail": "Technical isolation is code-proved, but no explicit access/deletion/retention policy exists in repo files.",
+      "title": "Vault access-control & retention POLICY pinned; current enforcement NONCONFORMING",
+      "detail": "Concrete policy pinned in 07 §4.2: new protected raw admission fails closed until dirs 0700 / files 0600 (or a documented dedicated service identity); raw access limited to the ingest service + Codex acceptance controller via an audited operator path; Claude gets only minimized derivatives/receipts unless separately authorized; audit fields = SHA/profile/period/actor/time/action/reason; no automatic deletion, legal hold wins, deletion needs separate approval + manifest/tombstone. Current runtime (observed read-only 2026-09-02, NOT changed) is NONCONFORMING: /srv/ingest-dev/hold=0750 ubuntu:ubuntu; held/quarantine/analytics children 0775 (some 0755); raw files 0444; single shared ubuntu identity. Least privilege not enforced.",
       "owner": "Codex + Duane",
-      "next_action": "Author vault access/retention policy; then pin as proved. Tracked for a later phase.",
+      "next_action": "Enforce 0700/0600 (or a dedicated service identity) as a fail-closed Phase 3 admission gate BEFORE any new protected raw admission. Runtime permissions intentionally not changed in this Phase 0 evidence correction.",
       "freshness": "as of 2026-09-02",
       "blocks_phase0": false,
-      "disposition": "UNRESOLVED / reported_pending_phase0_verification"
+      "disposition": "POLICY PINNED / ENFORCEMENT NONCONFORMING -> Phase 3 admission gate"
     },
     {
       "id": "C-03",
@@ -94,8 +94,38 @@
       "freshness": "gate4i ledger sha 3d3e0ae2…",
       "blocks_phase0": false,
       "disposition": "HOLD/PENDING (dependent metrics only)"
+    },
+    {
+      "id": "C-10",
+      "title": "Active objective added requirements to reconcile downstream",
+      "detail": "The full active objective (docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_ACTIVE_OBJECTIVE.md, sha256 7c8e622b…) adds: PE-grade multimodal + blue-collar-readable customer report (AI-found insights/causal connections a daily sales manager would miss; usable by PE due-diligence, a blue-collar sales manager, and an owner); a deep supporting-data index across the 200+/295 metrics (see problems/strengths fast, then drill in); explain how data was used and disclose confidence where confidence varies; temporal/further-evaluation follow-up; candidate intake for useful data beyond the fixed 295 (err toward inclusion); impartial-watchdog consultation before each phase/milestone. Phase 0 pins the objective only; none of these are authored or executed here.",
+      "owner": "Claude/Studio (report + index + confidence + temporal) + Codex (candidate intake/acquisition) + Duane (authority) + impartial watchdog (pre-phase consult)",
+      "next_action": "Carry as design inputs into Phase 1+ module/report build. Current truth: the 34-page one-week prototype covers the 17 measured metrics; the multimodal/index/confidence/temporal report layer is not yet built.",
+      "freshness": "as of 2026-09-02 (objective pinned this correction)",
+      "blocks_phase0": false,
+      "disposition": "OPEN (objective reconciliation; downstream)"
+    },
+    {
+      "id": "C-11",
+      "title": "Item-3 schedule-definition source artifacts external to local trees",
+      "detail": "Schedule-definition facts (VinSolutions saved-report name, ET schedule time, period rule, Guinan recipient binding) are sourced from the Codex acceptance-controller checkpoint (sha256 78f203e1fa7fd523a390b662b38af33a10b4a7bfaba399a6b4850f80e6d94888) and report catalog (sha256 a31b3879fefc2ba1cad8c5d0ede851e0fb64de34b9416561a8a8ee8d0346840a). Delivery evidence (subject/filename/bytes/sha256/state/data_row_total/received_at/mailbox) is from the committed anchor native-scheduled-evidence.json (sha256 13c0fca1…, locally verified). The two controller/catalog artifacts are NOT present in MAIN/INGEST working trees or the local vault; their bytes were not independently re-hashed in this correction.",
+      "owner": "Codex (acceptance controller)",
+      "next_action": "Hand off the controller checkpoint + report catalog for local byte verification when authorized; until then provenance is operator/Codex-attested.",
+      "freshness": "as of 2026-09-02",
+      "blocks_phase0": false,
+      "disposition": "reported_pending_phase0_verification (external source artifact)"
+    },
+    {
+      "id": "C-12",
+      "title": "Communication daily delivery: data_row_total=28 is a parser artifact; zero real rows",
+      "detail": "Artifact-tool inspection of Report-5649.xlsx (sha256 1eddd6ec…): sheet 'Report' is A1:O3 — row1 title, row2 the 15 column headers (A-O), row3 the single notice 'Current selections did not return any data. Review the filter settings.' Zero communication data rows. The anchor's data_row_total=28 is a parser/counting artifact (cross-sheet tally: Report 3 rows + Filters 26 rows), NOT 28 communication records. The delivery is independently whole-delivery quarantined because the Filters tab positively selects hidden Lead Intents = Parts, Service. Both facts preserved (06 §2).",
+      "owner": "Codex (acquisition/evidence) + Claude/Studio (parser row-count semantics)",
+      "next_action": "Downstream: treat sales_comm_log daily as zero-data + quarantined; correct any row-count semantics that surface 28 as records. Do not promote or calculate.",
+      "freshness": "as of 2026-09-02 (artifact re-inspected this correction)",
+      "blocks_phase0": false,
+      "disposition": "RECONCILED (both facts recorded); dependent metrics remain held"
     }
   ],
   "phase0_blocking_conflicts": [],
-  "summary": "0 conflicts block Phase 0 pinning. 9 open/quarantined/pending conditions recorded for downstream phases; 2 are reported_pending_phase0_verification due to the Gmail/Vin prohibition; 1 (C-08) is resolved informational."
+  "summary": "0 conflicts block Phase 0 pinning. 12 open/quarantined/pending/reconciled conditions recorded for downstream phases; C-03/C-05/C-11 are reported_pending_phase0_verification (Gmail/Vin prohibition or external Codex-controller source); C-02 is POLICY PINNED but enforcement NONCONFORMING (Phase 3 admission gate); C-08 is resolved informational; C-12 reconciles the Communication 28-vs-zero facts; C-10 carries the active-objective added requirements downstream."
 }

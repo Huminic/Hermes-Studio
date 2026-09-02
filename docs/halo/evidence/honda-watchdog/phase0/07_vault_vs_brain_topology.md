@@ -45,17 +45,51 @@ deliveries) live in a separate quarantine subtree, write no rows, are excluded f
 queries, and cannot be promoted (guard requires `validation_state == 'held'`). Quarantine is
 terminal for that artifact — it cannot be sanitized downstream into acceptance.
 
-## 4. Ownership / access / retention — UNRESOLVED
+## 4. Ownership / access / retention — POLICY PINNED; current enforcement NONCONFORMING
 
-- **Technical isolation is proven** (above). **Raw retention is lossless** regardless of
-  parse/quarantine outcome (`src/routes/api/ingest/report.ts` comment: "Lossless raw retention
-  regardless of parse/quarantine outcome").
-- **NOT provable from repo files:** an explicit access-control policy (who may read the vault vs
-  the Brain), deletion criteria, and retention windows. No such policy document was found in either
-  repo.
-- **Disposition:** `UNRESOLVED / reported_pending_phase0_verification` — the vault-vs-Brain
-  access-control and retention policy must be authored (owner: Codex/Duane) before it can be pinned
-  as proved. Recorded in `09_conflict_register.json`.
+Technical isolation is proven (§§1–3). **Raw retention is lossless** regardless of parse/quarantine
+outcome (`src/routes/api/ingest/report.ts` comment: "Lossless raw retention regardless of
+parse/quarantine outcome"). This section pins the concrete access-control / retention **policy**.
+Per Phase 0 rule and the shadow-correction directive, **no runtime permission was changed** in this
+evidence correction; only the current state is recorded and the target policy is pinned.
+
+### 4.1 Current runtime state (observed read-only 2026-09-02, NOT changed)
+
+| Path | Mode | Owner | Conformance |
+|---|---|---|---|
+| `/srv/ingest-dev/hold` | `0750` (`drwxr-x---`) | `ubuntu:ubuntu` | not 0700 |
+| `/srv/ingest-dev/hold/serra-honda` and most `held/`,`quarantine/` children | `0775` (`drwxrwxr-x`) | `ubuntu:ubuntu` | group/other-permissive |
+| some children (e.g. `held/crm_sales_gross`) | `0755` (`drwxr-xr-x`) | `ubuntu:ubuntu` | other-readable |
+| `/srv/ingest-dev/analytics`, `analytics/serra-honda`, `analytics/brain` | `0775` (`drwxrwxr-x`) | `ubuntu:ubuntu` | group/other-permissive |
+| held/quarantine files (`manifest.json`, `original.xlsx`) | `0444` (`-r--r--r--`) | `ubuntu:ubuntu` | world-readable |
+
+**Finding:** least privilege is **NOT** yet enforced — dirs are 0750/0775/0755 (not 0700) and raw
+files are 0444 (not 0600), under a single shared `ubuntu` identity with no dedicated service account.
+
+### 4.2 Pinned vault policy (target; authored here, enforced downstream)
+
+1. **Fail-closed admission.** New protected raw admission MUST fail closed until the vault subtree is
+   **`0700` on directories and `0600` on files**, OR an equivalent **dedicated service identity**
+   (separate service account owning the vault, non-`ubuntu`) is documented and in force. Until then,
+   no new protected raw admission is authorized.
+2. **Access limitation.** Raw bytes are accessible only to (a) the ingest service identity and
+   (b) the Codex acceptance controller, through an **audited operator path**. Claude/Studio receives
+   only **minimized derivatives / receipts** (no raw rows, no signed URLs) unless separately
+   authorized by Duane.
+3. **Audit.** Every raw access is recorded as an audit artifact carrying: **SHA, profile, period,
+   actor, time, action, reason.**
+4. **Retention (no automatic deletion).** Artifacts are retained **unchanged in dev** pending a
+   Duane-approved retention / legal direction. **Legal hold wins** over any retention window.
+   Deletion requires **separate explicit approval** and a **manifest / tombstone** record; no silent
+   or automatic deletion is permitted.
+
+### 4.3 Disposition
+
+`POLICY PINNED / ENFORCEMENT NONCONFORMING`. The policy above is pinned now; current runtime
+(4.1) does not conform to 4.2(1). This gap is carried as a **Phase 3 admission gate** (enforce
+`0700`/`0600` or a dedicated service identity before any new protected raw admission) in
+`09_conflict_register.json` C-02. Runtime permissions are intentionally left unchanged in this
+Phase 0 evidence correction.
 
 ## 5. Prohibited-access confirmation
 

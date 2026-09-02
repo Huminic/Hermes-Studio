@@ -5,6 +5,12 @@
   "pinned_at_utc": "2026-09-02T03:25:49Z",
   "pinned_on_branch": "codex/halo-295-unshrinkable-inputs",
   "pinned_at_head": "9ac76c58beec657b132a1f30130a41c0a4a270b8",
+  "shadow_correction": {
+    "amended_at_utc": "2026-09-02T04:03:32Z",
+    "reason": "Phase 0 impartial-shadow HOLD corrections (items 1-5): pin the full active objective + its required SHA; pin a concrete vault policy (enforcement nonconforming, no runtime perm change); complete per-family schedule fingerprints; Communication zero-real-row correction; split manual-only capabilities.",
+    "correction_commit_parent": "321487ac061c6aef183d38ee812acde071e8df82",
+    "overall_phase0_status": "HOLD pending impartial-shadow re-review (mechanical checks may PASS)"
+  },
   "hash_algorithms": {
     "content_sha256": "sha256 of the raw file bytes on disk (sha256sum)",
     "git_blob_id": "git object id of the file content (git hash-object / git rev-parse HEAD:<path>)"
@@ -15,7 +21,29 @@
       "repo": "hs-m1r-isolated-20260830 (MAIN)",
       "path": "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_EXECUTION_GOAL.md",
       "content_sha256": "80e2ad71e6e4d0225fb480eaaa522629645309a6e59141ab6c090d0976c0ed64",
-      "git_blob_id_at_head": "98869a373c379db4cc90c08c43dbb84ffd627139"
+      "git_blob_id_at_head": "98869a373c379db4cc90c08c43dbb84ffd627139",
+      "note": "Prior pinned artifact (shorter execution goal). Retained. Superseded/extended by the active_objective entry below."
+    },
+    {
+      "role": "active_objective",
+      "repo": "hs-m1r-isolated-20260830 (MAIN)",
+      "path": "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_ACTIVE_OBJECTIVE.md",
+      "content_sha256": "7c8e622b44308090baf494efb120880950a125cd7ba9174f2514ff30f7acaf0d",
+      "required_sha256": "7c8e622b44308090baf494efb120880950a125cd7ba9174f2514ff30f7acaf0d",
+      "sha256_match": true,
+      "git_blob_id": "5478a53a677a98bf703b7b1d4a0eeee3eec62bcb",
+      "byte_size": 5601,
+      "supersedes": "execution_goal",
+      "added_requirements": [
+        "PE-grade multimodal + blue-collar-readable customer report (AI-found insights/causal connections a daily sales manager would miss; usable by PE due-diligence, blue-collar sales manager, and owner)",
+        "deep supporting-data index across the 200+/295 metrics (see problems/strengths fast, then drill into supporting data)",
+        "explain how the data was used; disclose confidence levels where confidence varies",
+        "temporal/further-evaluation follow-up when evaluation must continue over time",
+        "candidate intake for useful data beyond the fixed 295 (err toward inclusion; keep moving)",
+        "impartial-watchdog consultation before each phase/milestone"
+      ],
+      "note": "Full active objective, pinned byte-for-byte; on-disk sha256 equals the reviewer-required 7c8e622b… exactly. git_blob_id is the working-tree object that becomes the HEAD blob on the Phase 0 shadow-correction commit. Added-requirements reconciliation carried in README.md and 09_conflict_register.json C-10 (Phase 0 pins the objective; it authors/executes none of these requirements).",
+      "reconciled_requirements_ref": "README.md (Objective reconciliation); 09_conflict_register.json C-10"
     },
     {
       "role": "execution_spec",
