@@ -31,7 +31,7 @@
   "vocab_closure": "PASS",
   "self_tests_total": 956,
   "self_tests_failed": 0,
-  "named_probes_total": 58,
+  "named_probes_total": 61,
   "named_probes_failed": 0,
   "crash_fuzz": {
     "tested_universe": 2118,
@@ -166,7 +166,7 @@
       "got": "reject",
       "pass": true,
       "n_errors": 1,
-      "sample_error": "blast_radius blocks_independent_metrics != False (Phase 0-derived)"
+      "sample_error": "blast_radius blocks_independent_metrics True != False (Phase 0-derived, strict type+value)"
     },
     {
       "probe": "17_empty_vault_gate",
@@ -262,7 +262,7 @@
       "got": "reject",
       "pass": true,
       "n_errors": 4,
-      "sample_error": "blast_radius one_source_failure_scope != 'dependent_ids_only' (Phase 0-derived)"
+      "sample_error": "blast_radius one_source_failure_scope 'all' != 'dependent_ids_only' (Phase 0-derived, strict type+value)"
     },
     {
       "probe": "29_vault_actual_and_expected_coweakened",
@@ -503,6 +503,30 @@
       "pass": true,
       "n_errors": 2,
       "sample_error": "authority bindings != independent EXPECTED_BINDINGS (metadata co-mutation attempt)"
+    },
+    {
+      "probe": "54_fcs_blast_blocks_unrelated_int0",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "blast_radius blocks_unrelated_modules 0 != False (Phase 0-derived, strict type+value)"
+    },
+    {
+      "probe": "55_fcs_blast_blocks_independent_int0",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "blast_radius blocks_independent_metrics 0 != False (Phase 0-derived, strict type+value)"
+    },
+    {
+      "probe": "56_fcs_blast_rejected_final_int1",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "blast_radius rejected_id_blocks_final_completion_only 1 != True (Phase 0-derived, strict type+value)"
     }
   ],
   "self_tests": [
@@ -7028,7 +7052,7 @@
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "sample_error": "blast_radius one_source_failure_scope != 'dependent_ids_only' (Phase 0-derived)"
+      "sample_error": "blast_radius one_source_failure_scope 'all' != 'dependent_ids_only' (Phase 0-derived, strict type+value)"
     },
     {
       "test": "anchor.vault_weakened_rejected",
@@ -7175,7 +7199,7 @@
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "sample_error": "blast_radius blocks_unrelated_modules != False (Phase 0-derived)"
+      "sample_error": "blast_radius blocks_unrelated_modules True != False (Phase 0-derived, strict type+value)"
     },
     {
       "test": "fcs.vault_gate_ok",

@@ -536,8 +536,8 @@ def validate_blast_radius(br):
         return ["blast_radius not an object"]
     e = []
     for k, v in BLAST_SEM.items():
-        if br.get(k) != v:
-            e.append(f"blast_radius {k} != {v!r} (Phase 0-derived)")
+        if not _strict_eq(br.get(k), v):
+            e.append(f"blast_radius {k} {br.get(k)!r} != {v!r} (Phase 0-derived, strict type+value)")
     return e
 
 
@@ -943,6 +943,18 @@ def run_probes():
                 b.update({"equals": 0})
     rec("52_int_value_and_binding_metadata_comutation", lambda: _mut(lambda a: _int_value_and_metadata(a, "blast.blocks_unrelated_modules", "blocks_unrelated_modules", "blast")))
     rec("53_int_one_value_and_binding_metadata_comutation", lambda: _mut(lambda a: (a["vault"]["value"].update({"fail_closed": 1}), [b.update({"equals": 1}) for b in a["bindings"] if b["id"] == "vault.fail_closed"])))
+    # --- shadow #8: FCS blast_radius ACTUAL + embedded EXPECTED integer substitution (unchanged authority) ---
+    def _fcs_blast_int(field, intval):
+        base = {"one_source_failure_scope": "dependent_ids_only", "blocks_unrelated_modules": False, "blocks_independent_metrics": False, "rejected_id_blocks_final_completion_only": True}
+        actual = dict(base); actual[field] = intval          # validate_blast_radius(actual) must reject
+        expected = dict(base); expected[field] = intval       # check_vocab's FCS.blast_radius_expected vs BLAST_SEM must reject
+        errs = validate_blast_radius(actual)
+        if not _strict_eq(expected, BLAST_SEM):
+            errs = errs + [f"FCS blast_radius_expected {field}={intval!r} != Phase 0-derived (strict)"]
+        return errs
+    rec("54_fcs_blast_blocks_unrelated_int0", lambda: _fcs_blast_int("blocks_unrelated_modules", 0))
+    rec("55_fcs_blast_blocks_independent_int0", lambda: _fcs_blast_int("blocks_independent_metrics", 0))
+    rec("56_fcs_blast_rejected_final_int1", lambda: _fcs_blast_int("rejected_id_blocks_final_completion_only", 1))
     return probes
 
 
@@ -1069,8 +1081,8 @@ def check_vocab(errors):
             errors.append("VOCAB: canonical_stops keys != Phase 0-derived authority (rename attempt)")
         if validate_blast_radius(FCS.get("blast_radius_rule", {})):
             errors.append("VOCAB: blast_radius_rule actual != Phase 0-derived")
-        if FCS.get("blast_radius_expected") != BLAST_SEM:
-            errors.append("VOCAB: blast_radius_expected (embedded) != Phase 0-derived (co-weakening attempt)")
+        if not _strict_eq(FCS.get("blast_radius_expected"), BLAST_SEM):
+            errors.append("VOCAB: blast_radius_expected (embedded) != Phase 0-derived (strict type+value co-weakening attempt)")
         vg = FCS.get("inherited_admission_gates", {}).get("vault_policy_nonconformance_admission_gate", {})
         if validate_vault_gate(vg):
             errors.append("VOCAB: vault admission gate actual != Phase 0-derived")
