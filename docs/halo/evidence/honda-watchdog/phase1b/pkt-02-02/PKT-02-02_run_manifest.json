@@ -1,0 +1,62 @@
+{
+  "artifact": "PKT-02-02_run_manifest",
+  "packet_id": "PKT-02-02",
+  "module": 2,
+  "scope": "authority_binding_and_validation_gate_only",
+  "dealer": {
+    "profile": "serra-honda",
+    "dealer_id": "21043",
+    "domain": "Sales",
+    "service_parts_admitted": 0
+  },
+  "period": "2026-08-24..2026-08-30",
+  "target_ids": [
+    "SW-016",
+    "SW-017",
+    "SW-018",
+    "SW-084",
+    "SW-085",
+    "SW-086",
+    "SW-087",
+    "SW-088",
+    "SW-089",
+    "SW-132",
+    "SW-133",
+    "SW-134"
+  ],
+  "files": {
+    "docs/halo/contract/phase1b/pkt-02-02-binding.json": "7307e6039363fa421c217ff9c1beb1ca606dfcbcfbe083c503a65d5371c16f44",
+    "scripts/halo-phase1b/build_pkt_02_02_binding.py": "acf9d98bb5d29fc2b862bf6ae90c470af7086d0c756a78e50d2a51a0e005801f",
+    "scripts/halo-phase1b/validate_pkt_02_02_binding.py": "1044cadcf28312f7e5eaff8516d07ce7913faf348e5a91bca1cc87ccb082b142",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-02/PKT-02-02_BINDING_CHECKS.json": "13e2b5c841a393e2ac5bc1234dcaa249f1d634ba807d0fc8b7d439d2c1930cce"
+  },
+  "frozen_untouched": {
+    "docs/halo/contract/phase1b/pkt-02-01-binding.json": "1c1c98a2e7b3be8d10eea9495861b7a33e65a00020ab7c9e756da363b69f2082",
+    "docs/halo/contract/phase1b/packets/PKT-02-01.json": "89de72da33a5459d1aedd69cbc92a1fc347f3d589d8cbfd1ecf13bad1890d97d",
+    "docs/halo/contract/phase1b/packet-index.json": "dd7a5cb1946ccc5345264acd39fc63d5b80cca3eb89a2f3df9d974d61caac542",
+    "docs/halo/contract/phase1b/master-ledger-295.json": "3406ca4ff8d90ce94e5f08f8929e393b34cb246267dc2ed942dc7a7d878fc7b8"
+  },
+  "validators_run": [
+    {
+      "cmd": "python3 scripts/halo-phase0/validate_phase0_catalog.py",
+      "result": "PASS (exit 0)"
+    },
+    {
+      "cmd": "python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write",
+      "result": "PASS self_tests 956/956, probes 61/61, fuzz 2118/2118"
+    },
+    {
+      "cmd": "python3 scripts/halo-phase1b/validate_phase1b.py --no-write",
+      "result": "PASS errors 0, probes 25/25"
+    },
+    {
+      "cmd": "node scripts/halo-phase1b/validate_pkt_02_01_execution.mjs",
+      "result": "PASS checks 42/42"
+    },
+    {
+      "cmd": "python3 scripts/halo-phase1b/validate_pkt_02_02_binding.py",
+      "result": "PASS errors 0, probes 17/17"
+    }
+  ],
+  "note": "Binding + validation gate only. No calculate/persist/grade/alert/report/acquire. No Vin/Gmail/browser/DB/INGEST/production action. PKT-02-01 and packet-index/master-ledger unchanged."
+}

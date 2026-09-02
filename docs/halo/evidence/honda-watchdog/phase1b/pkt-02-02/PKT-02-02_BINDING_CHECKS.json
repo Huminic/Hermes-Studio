@@ -1,0 +1,235 @@
+{
+  "check": "honda_watchdog_phase1b_pkt_02_02_binding",
+  "phase": "Phase 1B — PKT-02-02 authority binding + validation gate (design-only, additive)",
+  "scope": "authority_binding_and_validation_gate_only (no calculate/persist/grade/alert/report/acquire)",
+  "reuses": "scripts/halo-phase1/validate_phase1_contracts.py (frozen vocabularies + sha256 only; unmodified)",
+  "binding_file": "docs/halo/contract/phase1b/pkt-02-02-binding.json",
+  "binding_sha256": "7307e6039363fa421c217ff9c1beb1ca606dfcbcfbe083c503a65d5371c16f44",
+  "target_ids": [
+    "SW-016",
+    "SW-017",
+    "SW-018",
+    "SW-084",
+    "SW-085",
+    "SW-086",
+    "SW-087",
+    "SW-088",
+    "SW-089",
+    "SW-132",
+    "SW-133",
+    "SW-134"
+  ],
+  "id_count": 12,
+  "source_family_slices": {
+    "slice_response_times": [
+      "SW-016",
+      "SW-017"
+    ],
+    "slice_cage_appointments_gross": [
+      "SW-084",
+      "SW-087"
+    ],
+    "slice_communication": [
+      "SW-018",
+      "SW-086",
+      "SW-089",
+      "SW-132",
+      "SW-133",
+      "SW-134"
+    ],
+    "slice_external_phone": [
+      "SW-085",
+      "SW-088"
+    ]
+  },
+  "lifecycle_partition": {
+    "accepted_measured_ids": [],
+    "accepted_disposition_only_ids": [
+      "SW-085",
+      "SW-088"
+    ],
+    "rejected_ids": [],
+    "source_investigation_pending_ids": [
+      "SW-017",
+      "SW-018",
+      "SW-084",
+      "SW-087",
+      "SW-089"
+    ],
+    "calculation_pending_ids": [
+      "SW-016",
+      "SW-086",
+      "SW-132",
+      "SW-133",
+      "SW-134"
+    ]
+  },
+  "authority_absence_proof": {
+    "gate2_evaluable_overlap": [],
+    "baseline_operational_target_overlap": [],
+    "meaning": "empty overlaps ⇒ none of the 12 has an accepted meaning or an approved target ⇒ none is measured/gradable"
+  },
+  "service_parts_zero_admission": {
+    "leads_source": "leads-real-golden.json Honda file: service_parts_leakage_rows=0 (Sales-only)",
+    "communication_source": "comm-admission-aggregates.json 21043: service_parts_signal_rows=0, wrong_dealer_rows=0 (Sales-only), but promotes NO metric",
+    "quarantined_families": [
+      "cage_kpi",
+      "lead_source_roi",
+      "sales_comm_log"
+    ],
+    "quarantine_cause": "positively select hidden Lead Intents of Parts and Service; clean visible rows + Lead-Sources-Excluded filter do NOT cure; TERMINAL — never promote or calculate"
+  },
+  "packet_accounting": {
+    "conditions": 295,
+    "modules": 11,
+    "packets": 30
+  },
+  "pkt_02_01_frozen": {
+    "binding_sha256": "1c1c98a2e7b3be8d10eea9495861b7a33e65a00020ab7c9e756da363b69f2082",
+    "packet_sha256": "89de72da33a5459d1aedd69cbc92a1fc347f3d589d8cbfd1ecf13bad1890d97d",
+    "unchanged": true
+  },
+  "adversarial_probes_total": 17,
+  "adversarial_probes_failed": 0,
+  "adversarial_probes": [
+    {
+      "probe": "A_condition_tamper",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-016: canonical_condition != matrix condition (exact)"
+    },
+    {
+      "probe": "B_inject_formula",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-132: formula must be null (no authority resolves it — no synthetic value)"
+    },
+    {
+      "probe": "C_inject_grade_target",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 3,
+      "sample_error": "SW-084: grade_approval 'approved' forbidden (no accepted target exists)"
+    },
+    {
+      "probe": "D_mark_measured_validated",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 4,
+      "sample_error": "SW-133: disposition 'measured_validated' not allowed for bucket 'calculation_pending_ids'"
+    },
+    {
+      "probe": "E_move_to_accepted_measured",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "accepted_measured_ids must be EMPTY (no ID has an accepted target)"
+    },
+    {
+      "probe": "F_slice_misassignment",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 3,
+      "sample_error": "slice slice_response_times != expected exact membership"
+    },
+    {
+      "probe": "G_promote_via_quarantined_cage",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 5,
+      "sample_error": "SW-084: disposition 'data_acquired_calculation_pending' not allowed for bucket 'source_investigation_pending_ids'"
+    },
+    {
+      "probe": "H_gradable_true_no_target",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-085: gradable must be False (no accepted target)"
+    },
+    {
+      "probe": "I_promote_sw133_measured_unscored_true",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "SW-133: measured_unscored observation must be promoted=False"
+    },
+    {
+      "probe": "J_drop_one_id",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 3,
+      "sample_error": "metrics keys != exact 12 target ids (got ['SW-016', 'SW-017', 'SW-018', 'SW-084', 'SW-085', 'SW-086', 'SW-087', 'SW-088', 'SW-132', 'SW-133', 'SW-134'])"
+    },
+    {
+      "probe": "K_duplicate_slice_member",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "source_family_slices overlap (an id in >1 slice)"
+    },
+    {
+      "probe": "L_pin_sha_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "binding pins.pkt_02_01_binding_sha256 != pinned PKT-02-01 binding sha"
+    },
+    {
+      "probe": "M_vocab_violation",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "SW-018: disposition 'totally_made_up_state' not allowed for bucket 'source_investigation_pending_ids'"
+    },
+    {
+      "probe": "N_ses_disposition_inconsistent",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "SW-017: source_existence 'acquired_local' inconsistent with disposition 'source_investigation_pending'"
+    },
+    {
+      "probe": "O_accounting_assertion_break",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "packet_accounting_assertion != {295,11,30}"
+    },
+    {
+      "probe": "P_external_boundary_measured",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 3,
+      "sample_error": "SW-085: evaluation_state measured_graded forbidden (no accepted target)"
+    },
+    {
+      "probe": "Q_rejected_bucket_nonempty",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "rejected_ids must be EMPTY (nothing rejected in this binding)"
+    }
+  ],
+  "errors": [],
+  "overall_pass": true,
+  "note": "Binding-only: NO metric definition, value, grade, or customer projection is authored. No Vin/Gmail/runtime/DB/vault/INGEST/browser action."
+}
