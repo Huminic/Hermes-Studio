@@ -64,6 +64,7 @@ SEMANTIC_PROVENANCE = {
     "binding": "docs/halo/contract/phase1b/pkt-02-01-binding.json — versioned exact per-metric record; packet must EQUAL each field (no substring/keyword logic); sha pinned in packet + manifest"
 }
 G2 = GATE2["evaluable_conditions"]
+CANONICAL_BINDING_REF = "docs/halo/contract/phase1b/pkt-02-01-binding.json"
 BINDING_PATH = os.path.join(C1B, "pkt-02-01-binding.json")
 BINDING = p1.load(BINDING_PATH)
 
@@ -147,7 +148,12 @@ def check_binding_anchoring(errs):
 def check_semantic_immutability(pkt, errs):
     """EXACT field-for-field equality: each PKT-02-01 metric def must EQUAL its binding record.
     No substring/keyword logic. The binding is sha-pinned in the packet and anchored to authority."""
-    if p1.sha256_file(BINDING_PATH) != (pkt.get("authority_binding") or {}).get("sha256"):
+    ab = pkt.get("authority_binding") or {}
+    # Pointer integrity FIRST: the packet's declared ref must equal the exact canonical binding path,
+    # independent of the loader path — a wrong/missing ref is a defect even if the loader would resolve it.
+    if ab.get("ref") != CANONICAL_BINDING_REF:
+        errs.append(f"packet authority_binding.ref != canonical binding path ({CANONICAL_BINDING_REF})")
+    if p1.sha256_file(BINDING_PATH) != ab.get("sha256"):
         errs.append("packet authority_binding.sha256 != binding file sha (unpinned/altered binding)")
     check_binding_anchoring(errs)
     md = {m.get("metric_id"): m for m in pkt.get("metric_definitions", [])}
@@ -486,6 +492,35 @@ def run_probes(led, idx, pkt, reg):
             {"from": "data_acquired_calculation_pending", "to": "measured_validated", "at": "2026-09-02T07:00:00+14:00", "by": "codex", "reason": "valid adjacency but chronologically earlier"}]}
         e = []; check_transitions(r, "SW-TS", e); return e
     rec("U_timestamp_chronological_reversal_offset", ts_reversal)
+
+    # --- pointer integrity: authority_binding ref must be exact (schema const + explicit pointer check) ---
+    # W: wrong ref -> rejected by BOTH the schema const AND the explicit pointer check.
+    def wrong_ref():
+        m = copy.deepcopy(pkt)
+        m["authority_binding"] = dict(m["authority_binding"], ref="docs/halo/contract/phase1b/rogue-binding.json")
+        e_schema = []; check_packet(m, reg, e_schema)
+        e_ptr = []; check_semantic_immutability(m, e_ptr)
+        schema_ok = any("authority_binding.ref" in x and "const" in x for x in e_schema)
+        ptr_ok = any("authority_binding.ref" in x for x in e_ptr)
+        return (e_schema + e_ptr) if (schema_ok and ptr_ok) else []
+    rec("W_authority_binding_wrong_ref", wrong_ref)
+    # X: missing ref -> rejected by BOTH the schema required AND the explicit pointer check.
+    def missing_ref():
+        m = copy.deepcopy(pkt)
+        ab = dict(m["authority_binding"]); ab.pop("ref", None); m["authority_binding"] = ab
+        e_schema = []; check_packet(m, reg, e_schema)
+        e_ptr = []; check_semantic_immutability(m, e_ptr)
+        schema_ok = any("authority_binding.ref" in x and "required property missing" in x for x in e_schema)
+        ptr_ok = any("authority_binding.ref" in x for x in e_ptr)
+        return (e_schema + e_ptr) if (schema_ok and ptr_ok) else []
+    rec("X_authority_binding_missing_ref", missing_ref)
+    # Y: bad hash (structurally valid 64-hex, wrong digest) -> retained hash-integrity check rejects.
+    def bad_hash():
+        m = copy.deepcopy(pkt)
+        m["authority_binding"] = dict(m["authority_binding"], sha256="0" * 64)
+        e_ptr = []; check_semantic_immutability(m, e_ptr)
+        return e_ptr if any("sha256 != binding file sha" in x for x in e_ptr) else []
+    rec("Y_authority_binding_bad_hash", bad_hash)
     return probes
 
 

@@ -25,7 +25,16 @@
       "stop_conditions": {"type": "object", "required": ["inherited_canonical", "packet_specific"]},
       "two_delta_proof": {"type": "object", "required": ["evidence_delta", "meaning_delta"]},
       "acceptance": {"type": "object"},
-      "authority_binding": {"type": "object", "required_keys": ["ref", "sha256"], "note": "Pins the exact per-metric semantic binding artifact (pkt-02-01-binding.json). Each metric def must EQUAL its binding record field-for-field; the binding is anchored to the immutable catalog/gate2/baseline authorities."},
+      "authority_binding": {
+        "type": "object",
+        "required": ["ref", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "ref": {"type": "string", "const": "docs/halo/contract/phase1b/pkt-02-01-binding.json"},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "note": "Pins the exact per-metric semantic binding artifact. ref MUST equal the canonical binding path (const); sha256 MUST be a lowercase 64-hex digest. Each metric def must EQUAL its binding record field-for-field; the binding is anchored to the immutable catalog/gate2/baseline authorities."
+      },
       "status": {"type": "string", "enum": ["active_authored", "planned"]}
     }
   },

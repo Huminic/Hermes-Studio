@@ -1,9 +1,9 @@
 # Phase 1B gate receipt — Honda Semantic Watchdog
 
-**Issued at (UTC):** 2026-09-02T07:31Z
-**Branch / parent HEAD:** `codex/halo-295-unshrinkable-inputs` @ `33f743c55` (prior Phase 1B submission,
-returned HOLD — Codex reproduced a semantic-validator bypass). **Status: DRAFT / HOLD — not approved;
-awaiting a fresh impartial-shadow PASS.**
+**Issued at (UTC):** 2026-09-02T07:46Z
+**Branch / parent HEAD:** `codex/halo-295-unshrinkable-inputs` @ `2b0d982ec` (prior Phase 1B submission,
+returned HOLD — one narrow authority_binding pointer-integrity defect). **Status: DRAFT / HOLD — not
+approved; awaiting a fresh impartial-shadow PASS.**
 **Scope:** Phase 1B only — packetized execution, **design-only**. Additive; the pinned objective,
 `EXECUTION_SPEC`, the frozen 295, and all Phase 0/1A contracts are unchanged. No calculation,
 acquisition, persistence, or report generation.
@@ -48,6 +48,19 @@ expected keywords were retained while the meaning changed.
 | 4 | Added `authority_binding{ref,sha256}` to packet schema + packet, and `canonical_condition` into each binding record, machine-binding the exact catalog meaning | `packet-schema-1b.json`; `PKT-02-01.json` |
 | 5 | Rewrote probes **P–T** to reject each mutation for an exact field mismatch even with keywords present; added probe **V** performing all five mutations at once and asserting a semantic error for EACH affected metric (6 errors). Demoted the claim that token checks prove semantic immutability | probes P–V |
 
+### Pointer-integrity HOLD (on 2b0d982ec) — 1 defect, corrected
+
+The packet `authority_binding.ref` was not integrity-checked (validator loaded the binding from a
+hardcoded canonical path, verifying only the sha256), and the schema used a non-standard `required_keys`
+construct the generic engine silently ignored — so a wrong/missing `ref` would pass.
+
+| # | Fix | Where |
+|---|---|---|
+| 1 | `authority_binding` is now **standard JSON Schema**: `type object`, `required [ref, sha256]`, `additionalProperties false`, `ref` **const** == canonical binding path, `sha256` **pattern** `^[0-9a-f]{64}$`. `required_keys` removed | `packet-schema-1b.json` |
+| 2 | Validator **explicitly checks** `authority_binding.ref == CANONICAL_BINDING_REF` before/independent of the loader path; sha-pin hash check retained | `check_semantic_immutability` |
+| 3 | Added probes **W** (wrong ref — rejected by BOTH schema `const` AND explicit pointer check), **X** (missing ref — rejected by BOTH schema `required` AND pointer check), **Y** (bad but valid-hex hash — rejected by retained hash check). P–V semantic-bypass + main-run bad-hash coverage retained | probes W/X/Y |
+| 4 | Exact binding **content + hash preserved** (`pkt-02-01-binding.json` `1c1c98a2…`; `PKT-02-01.json` `89de72da…` unchanged) | — |
+
 ## Gate criteria — mechanical evaluation
 
 | # | Criterion | Result | Evidence |
@@ -56,15 +69,15 @@ expected keywords were retained while the meaning changed.
 | P1B.2 | Packet union == 295, no overlap; each 5–12; one module; PKT-02-01 = SW-011..015; provisional labels | **PASS** | `check_packet_index`, `check_cross_packet_independence` |
 | P1B.3 | Five closed vocabularies + consistency + matrix + **strengthened chained transitions (no self-transition)** | **PASS** | `check_transitions` |
 | P1B.4 | Lifecycle partition exact/disjoint/union; SIP never accepted_disposition_only; **accepted_measured require measured + approved target** | **PASS** | `check_packet` |
-| P1B.5 | PKT-02-01 SW-011..015 validate against the Phase 1A metric-row schema; **semantic immutability = EXACT equality** to the authority-anchored binding (packet == `pkt-02-01-binding.json` field-for-field; binding == catalog/gate2/baseline) | **PASS** | `validate_metric_row` + `check_semantic_immutability` + `check_binding_anchoring` |
+| P1B.5 | PKT-02-01 SW-011..015 validate against the Phase 1A metric-row schema; **semantic immutability = EXACT equality** to the authority-anchored binding (packet == `pkt-02-01-binding.json` field-for-field; binding == catalog/gate2/baseline); **authority_binding.ref == canonical path (const + explicit check) and sha256 == binding file** | **PASS** | `validate_metric_row` + `check_semantic_immutability` + `check_binding_anchoring` |
 | P1B.6 | Single reused+promoted source fans out (011/012/015/090); no per-packet reacquisition; reuse labelled | **PASS** | `check_source` |
 | P1B.7 | Two-delta evidence present (corrected) | **PASS** | `TWO_DELTA_PKT-02-01.md` |
-| P1B.8 | Adversarial controls fire (incl. per-field coordinated-bypass, all-five-mutation, chronological reversal) | **PASS** | **22/22** probes reject (A–V) |
+| P1B.8 | Adversarial controls fire (incl. per-field coordinated-bypass, all-five-mutation, chronological reversal, authority_binding pointer wrong/missing-ref + bad-hash) | **PASS** | **25/25** probes reject (A–Y) |
 | P1B.9 | Design-only; Phase 0/1A immutable | **PASS** | Phase 1A/0 regressions PASS; immutable hashes unchanged; INGEST untouched |
 
 ## Tests run (read-only / deterministic)
 
-- `python3 scripts/halo-phase1b/validate_phase1b.py --no-write` → **RESULT: PASS** (0 errors; **22/22** adversarial probes reject: A sip-as-disposition-only, B proxy-attach, C overlay-projection, D union≠295, E per-packet-reacquisition, F transition self-transition/append-only, G SIP-eval, H bucket-mismatch, I OR-for-AND, J business-hours-for-after-hours, K duration-for-event, L minutes-diff-for-share, M target-replacement, N accepted-state-regression, O cross-packet-overlap, **P sw012-two-of-three-blanks (numerator != binding), Q sw013-unrelated-after-hours (population != binding), R sw014-unrelated-count (business_question != binding), S sw015-all-leads-denominator (denominator != binding), T sw011-threshold-999 (grade value != binding), V coordinated-five-mutation-all-keywords (semantic error for EACH of SW-011..015, 6 errors)**, U timestamp-chronological-reversal). Each P–V rejection is an EXACT field mismatch against `pkt-02-01-binding.json`, not a substring/keyword miss.
+- `python3 scripts/halo-phase1b/validate_phase1b.py --no-write` → **RESULT: PASS** (0 errors; **25/25** adversarial probes reject: A sip-as-disposition-only, B proxy-attach, C overlay-projection, D union≠295, E per-packet-reacquisition, F transition self-transition/append-only, G SIP-eval, H bucket-mismatch, I OR-for-AND, J business-hours-for-after-hours, K duration-for-event, L minutes-diff-for-share, M target-replacement, N accepted-state-regression, O cross-packet-overlap, **P sw012-two-of-three-blanks (numerator != binding), Q sw013-unrelated-after-hours (population != binding), R sw014-unrelated-count (business_question != binding), S sw015-all-leads-denominator (denominator != binding), T sw011-threshold-999 (grade value != binding), V coordinated-five-mutation-all-keywords (semantic error for EACH of SW-011..015, 6 errors)**, U timestamp-chronological-reversal, **W authority_binding-wrong-ref (schema const + pointer, 2 errors), X authority_binding-missing-ref (schema required + pointer, 2 errors), Y authority_binding-bad-hash (hash-integrity, 1 error)**). Each P–V rejection is an EXACT field mismatch against `pkt-02-01-binding.json`; W/X/Y prove authority_binding pointer + hash integrity.
 - Regressions: `validate_phase1_contracts.py --no-write` → **PASS** (956/956, 61/61, unchanged); `validate_phase0_catalog.py --no-write` → **PASS**.
 - Immutable: objective `7c8e622b`, SPEC `fedd957b`, matrix `29c7ac06`, Phase 0 `07/09`, all Phase 1A artifacts, `gate2-evaluator-contract.json`, `baseline-registry.json`, catalog unchanged; INGEST `routeTree.gen.ts` untouched (blob `7dae2a4a`).
 

@@ -1,9 +1,9 @@
 {
   "artifact": "honda-watchdog-phase1b-manifest",
   "phase": "Phase 1B — packetized execution (design-only). Additive; preserves Phase 0/1A.",
-  "pinned_at_utc": "2026-09-02T07:31Z",
+  "pinned_at_utc": "2026-09-02T07:46Z",
   "pinned_on_branch": "codex/halo-295-unshrinkable-inputs",
-  "parent_head_at_authoring": "33f743c55f916b1c193ca74ca6df5be459de04a4",
+  "parent_head_at_authoring": "2b0d982ec6ee7c8966bb85c16e198de445b4a2f5",
   "phase1a_predecessor": "Phase 1A PASS (binding) at bf8ee705d",
   "scope_statement": "Design-only. Additive packetized-execution layer. Does NOT modify the pinned objective, HONDA_SEMANTIC_WATCHDOG_EXECUTION_SPEC, the frozen 295, or any Phase 0/1A contract. Carries forward the 17 authoritative accepted+evaluated Honda metrics (not reset); the 18-ID Service overlay is disposition-only; all other rows are explicitly NON-AUTHORITATIVE provisional planning placeholders. Only PKT-02-01 authored in detail. No Vin/Gmail, ingest, runtime, DB schema, vault permissions, schedules, production, recipients, or INGEST changes; no NEW calculation/acquisition/persistence/report generation.",
   "preserved_immutable": {
@@ -47,8 +47,8 @@
     },
     "packet_schema_1b": {
       "path": "docs/halo/contract/phase1b/packet-schema-1b.json",
-      "sha256": "51c9e25ce7f2ee381d233c52e488cbbbb8483479d4e68cf4b0bd16810634e29c",
-      "note": "lifecycle partitions + partition-conditional pipeline; SIP never accepted_disposition_only; accepted_measured requires measured+approved target; adds required authority_binding{ref,sha256} pinning the exact per-metric semantic binding."
+      "sha256": "1ad99f58afe59fcf33237e98379ec169e0eeaa91a1e194aad67294b83ff6bc70",
+      "note": "lifecycle partitions + partition-conditional pipeline; SIP never accepted_disposition_only; accepted_measured requires measured+approved target; authority_binding is now standard JSON Schema (required[ref,sha256], additionalProperties=false, ref const == canonical binding path, sha256 lowercase-64-hex pattern) — the prior unsupported required_keys construct is removed."
     },
     "pkt_02_01_binding": {
       "path": "docs/halo/contract/phase1b/pkt-02-01-binding.json",
@@ -77,13 +77,13 @@
     },
     "validator": {
       "path": "scripts/halo-phase1b/validate_phase1b.py",
-      "sha256": "851a6da60ff8fe5ccd78861bbe42021c179b63af236f804cabbe1ac700dd67e4",
-      "note": "reuses Phase 1A engine; validates ledger/packet/metric/source-DAG + carry-forward/no-regression + strengthened tz-aware chained transitions + EXACT-EQUALITY semantic immutability (packet == pkt-02-01-binding field-for-field; binding re-anchored to catalog/gate2/baseline; no substring/keyword logic) + 22 adversarial controls (incl. per-field coordinated-bypass P–T, the single all-five-mutation probe V, and chronological-reversal U)."
+      "sha256": "178e11a5bd65d9d1371d62ceff4fae8b04e897525694107b9abe346f4acbff6d",
+      "note": "reuses Phase 1A engine; validates ledger/packet/metric/source-DAG + carry-forward/no-regression + strengthened tz-aware chained transitions + EXACT-EQUALITY semantic immutability (packet == pkt-02-01-binding field-for-field; binding re-anchored to catalog/gate2/baseline; no substring/keyword logic) + explicit authority_binding.ref pointer-integrity check (ref == canonical path, not loader-derived) + retained sha-pin hash check + 25 adversarial controls (per-field coordinated-bypass P–T, all-five-mutation V, chronological-reversal U, pointer wrong-ref W / missing-ref X / bad-hash Y)."
     },
     "checks_output": {
       "path": "docs/halo/evidence/honda-watchdog/phase1b/PHASE1B_CHECKS.json",
-      "sha256": "d10a91a27efcc24699d010d53374d73baa61bd0e89fe64f014241637b21dac8a",
-      "note": "overall_pass=true; 0 errors; 22/22 adversarial probes reject; two_delta_present=true; semantic immutability is EXACT equality against pkt-02-01-binding (sha pinned in packet+manifest); tz-aware transition timestamps; acquisition truth (promoted leads vs held) recorded."
+      "sha256": "3311b4a3abf376bf9787f7ee620188e077ae62e6df32a936bcafe547b0ce51be",
+      "note": "overall_pass=true; 0 errors; 25/25 adversarial probes reject; two_delta_present=true; semantic immutability is EXACT equality against pkt-02-01-binding (sha pinned in packet+manifest); authority_binding.ref/sha256 pointer-integrity probed (W/X/Y); tz-aware transition timestamps; acquisition truth (promoted leads vs held) recorded."
     }
   },
   "prohibited_action_confirmation": "No VinSolutions, Gmail, network, schedule, ingest, DB-schema, product/runtime, vault-permission, production, recipient, or customer action. No NEW values/grades computed here; the 17 authoritative evaluated metrics carry forward prior accepted state (computed at Gate 4A, not recomputed). SW-013/014 opened as finite investigations with NO Vin/UI action. INGEST src/routeTree.gen.ts untouched.",
@@ -156,6 +156,17 @@
       "4: added authority_binding{ref,sha256} to the packet schema + packet, and canonical_condition into each binding record, so the exact catalog meaning is machine-bound. Prior correct definitions unchanged.",
       "5: rewrote probes P–T so each coordinated mutation is rejected for an EXACT field mismatch even with keywords present, and added probe V that performs ALL FIVE mutations at once and asserts a semantic error for EACH affected metric (6 errors). Removed the claim that token checks prove semantic immutability.",
       "6: preserved everything prior — tz-aware transition logic/probe U, acquisition-vs-analytics wording, the other 21 controls (now 22 total), exact 295/30/5–12/no-overlap, 17 evaluated, Leads promotion for 011/012/015/090, 13 evaluated held, 18 Service overlay outside Sales, DRAFT/HOLD status, provisional packets, Phase-1B-only scope."
+    ]
+  },
+  "shadow_correction_4": {
+    "prior_commit": "2b0d982ec6ee7c8966bb85c16e198de445b4a2f5",
+    "verdict": "impartial shadow HOLD — one narrow pointer-integrity defect",
+    "defect": "The packet authority_binding.ref pointer was not integrity-checked: the validator loaded the binding from a hardcoded canonical path and verified only the sha256, so a wrong/missing ref would still pass; and the packet schema used a non-standard 'required_keys' construct that the generic engine silently ignored (no ref/sha enforcement).",
+    "fix": [
+      "1: packet-schema-1b.json authority_binding is now standard JSON Schema — type object, required [ref, sha256], additionalProperties false, properties.ref const == 'docs/halo/contract/phase1b/pkt-02-01-binding.json', properties.sha256 pattern '^[0-9a-f]{64}$'. The unsupported required_keys construct is removed.",
+      "2: validate_phase1b.py explicitly checks pkt.authority_binding.ref == the exact canonical path (CANONICAL_BINDING_REF) before/independent of the loader path, and retains the sha-pin hash check.",
+      "3: added adversarial probes W (wrong ref — rejected by BOTH schema const AND the explicit pointer check), X (missing ref — rejected by BOTH schema required AND the pointer check), and Y (bad but structurally valid 64-hex hash — rejected by the retained hash-integrity check). Existing bad-hash (main-run) and semantic-bypass (P–V) coverage retained; probes now 25.",
+      "4: exact binding CONTENT and HASH preserved unchanged (pkt-02-01-binding.json sha 1c1c98a2…; PKT-02-01.json sha 89de72da…). Only packet-schema-1b.json, validate_phase1b.py, PHASE1B_CHECKS.json, and evidence were updated. DRAFT/HOLD retained until independent PASS."
     ]
   }
 }
