@@ -13,7 +13,9 @@ import argparse
 import copy
 import json
 import os
+import re
 import sys
+from datetime import datetime
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(REPO, "scripts", "halo-phase1"))
@@ -49,7 +51,31 @@ ACCEPTED_DISP_ONLY = {"external_source_required", "additional_history_required",
 # Authoritative prior Honda truth (must be carried forward, not reset)
 EVALUATED_17 = {11, 12, 15, 21, 22, 31, 32, 33, 41, 45, 46, 90, 133, 142, 145, 149, 150}
 LEADS_PROMOTED = {11, 12, 15, 90}
+# Authoritative structured sources (pinned; read-only). Semantic bindings derive from THESE, not paraphrase.
 GATE2 = p1.load(os.path.join(REPO, "docs", "halo", "contract", "gate2-evaluator-contract.json"))
+CATALOG = {e["metric_id"]: e for e in p1.load(os.path.join(REPO, "docs", "halo", "contract", "semantic-watchdog-feasibility-matrix-295.json"))}
+_BR = p1.load(os.path.join(REPO, "docs", "halo", "contract", "baseline-registry.json"))
+_OTS = _BR["operational_targets"] if isinstance(_BR["operational_targets"], list) else list(_BR["operational_targets"].values())
+OT = {e["id"]: e for e in _OTS if isinstance(e, dict) and "id" in e}
+SEMANTIC_PROVENANCE = {
+    "catalog": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json (29c7ac06…) — condition per metric",
+    "gate2": "docs/halo/contract/gate2-evaluator-contract.json — evaluable_conditions formula/source_fields/numerator/denominator/unit/baseline_id/comparator",
+    "baseline_registry": "docs/halo/contract/baseline-registry.json — OT-SW-011/012/015 comparator/threshold/unit/direction/basis"
+}
+
+
+def _dt(s):
+    """Parse a timezone-AWARE ISO datetime to an aware instant; None if malformed or naive."""
+    if not p1.valid_iso_datetime(s):
+        return None
+    t = s.strip()
+    if t.endswith("Z"):
+        t = t[:-1] + "+00:00"
+    try:
+        d = datetime.fromisoformat(t)
+    except ValueError:
+        return None
+    return d if d.tzinfo is not None else None
 
 
 def _num(mid):
@@ -63,7 +89,7 @@ def check_transitions(r, mid, errs):
         errs.append(f"ledger {mid}: no transitions"); return
     if tr[0].get("from") is not None:
         errs.append(f"ledger {mid}: first transition.from must be null (init)")
-    prev_to, prev_at = None, None
+    prev_to, prev_dt = None, None
     for i, t in enumerate(tr):
         frm, to, at = t.get("from"), t.get("to"), t.get("at")
         if i > 0:
@@ -73,69 +99,120 @@ def check_transitions(r, mid, errs):
                 errs.append(f"ledger {mid}: forbidden self-transition '{frm}'->'{to}'")
             elif to not in DISP_ADJ.get(frm, []):
                 errs.append(f"ledger {mid}: transition {i} '{frm}'->'{to}' not in disposition adjacency")
-        if prev_at is not None and at is not None and at < prev_at:
-            errs.append(f"ledger {mid}: transition {i} timestamp decreases")
+        cur_dt = _dt(at) if at is not None else None
+        if cur_dt is None:
+            errs.append(f"ledger {mid}: transition {i} malformed/naive timestamp {at!r}")
+        elif prev_dt is not None and cur_dt < prev_dt:
+            errs.append(f"ledger {mid}: transition {i} chronologically before previous instant ({at})")
         if i < len(tr) - 1 and to in TERMINAL:
             errs.append(f"ledger {mid}: transition into terminal '{to}' then continues")
-        prev_to, prev_at = to, at
+        prev_to = to
+        if cur_dt is not None:
+            prev_dt = cur_dt
     if tr[-1].get("to") != r.get("disposition"):
         errs.append(f"ledger {mid}: transitions[-1].to != disposition")
 
 
+def _numtok(text, val):
+    return re.search(r"(?<![\d.])%d(?![\d.])" % int(val), str(text)) is not None
+
+
+def _expected_semantics():
+    """Derive per-metric expected structured facts from the PINNED authority (catalog + gate2 + OT)."""
+    g = GATE2["evaluable_conditions"]
+    E = {
+        "SW-011": {"unit": g["SW-011"]["unit"], "calc": "duration", "disposition": "measured_validated",
+                   "ses": "acquired_local", "bucket": "accepted_measured_ids", "direct_fields": set(g["SW-011"]["source_fields"]),
+                   "formula_must": ["median", "after hours == no"],
+                   "grade_ref": "OT-SW-011", "comparator": OT["OT-SW-011"]["comparator"], "threshold": OT["OT-SW-011"]["threshold"]},
+        "SW-012": {"unit": g["SW-012"]["unit"], "calc": "rate", "disposition": "measured_validated",
+                   "ses": "acquired_local", "bucket": "accepted_measured_ids", "direct_fields": set(g["SW-012"]["source_fields"]),
+                   "numerator_all_blank": ["first contact attempt", "first customer contact", "actual response time"],
+                   "numerator_forbid": [" or ", "any of", "any "], "denominator_must": "business_hours_population",
+                   "grade_ref": "OT-SW-012", "comparator": OT["OT-SW-012"]["comparator"], "threshold": OT["OT-SW-012"]["threshold"]},
+        "SW-015": {"unit": g["SW-015"]["unit"], "calc": "rate", "disposition": "measured_validated",
+                   "ses": "acquired_local", "bucket": "accepted_measured_ids", "direct_fields": {"Sales Rep", "Actual Response Time (Min)"},
+                   "numerator_must": ["store median"], "numerator_2x": ["2 x store median", ">= 2"],
+                   "numerator_forbid": ["minus", "difference"], "denominator_exact": "reps_with_numeric_response",
+                   "grade_ref": "OT-SW-015", "comparator": OT["OT-SW-015"]["comparator"], "threshold": OT["OT-SW-015"]["threshold"]},
+        "SW-013": {"disposition": "source_investigation_pending", "ses": "investigation_pending", "bucket": "source_investigation_pending_ids",
+                   "population_must": ["after", "opening", "15"], "no_business_only": True, "catalog": CATALOG["SW-013"]["condition"]},
+        "SW-014": {"disposition": "source_investigation_pending", "calc": "count", "bucket": "source_investigation_pending_ids",
+                   "predicate_must": ["auto-reply", "no human", "hour"], "no_business_hours": True, "catalog": CATALOG["SW-014"]["condition"]},
+    }
+    return E
+
+
 def check_semantic_immutability(pkt, errs):
-    """Bind PKT-02-01 SW-011/012/013/014/015 to their frozen accepted meanings (gate2 + baseline)."""
+    """Bind SW-011..015 field-by-field to the derived authoritative structured facts (not paraphrase)."""
     md = {m.get("metric_id"): m for m in pkt.get("metric_definitions", [])}
-    G = GATE2.get("evaluable_conditions", {})
-
-    def f(mid):
-        return str(md.get(mid, {}).get("formula", "")).lower()
-
-    def pop(mid):
-        return str(md.get(mid, {}).get("population", "")).lower()
-
-    def gt(mid):
-        return (md.get(mid, {}).get("grade_target_contract") or {})
-    # SW-011: minutes median, After Hours=No, approved OT-SW-011
-    if md.get("SW-011", {}).get("unit") != "minutes":
-        errs.append("semantic SW-011: unit must be minutes")
-    if "median" not in f("SW-011") or "after hours == no" not in f("SW-011"):
-        errs.append("semantic SW-011: formula must be median where Originated After Hours == No")
-    if "OT-SW-011" not in str(gt("SW-011").get("grade_target_id")) or gt("SW-011").get("approval_state") != "approved":
-        errs.append("semantic SW-011: grade target must be the approved OT-SW-011 (not a proposed/TBD)")
-    # SW-012: strict AND (never OR/ANY), ratio_0_1, approved OT-SW-012
-    s12 = f("SW-012")
-    if " or " in s12 or "any of" in s12 or "any " in s12:
-        errs.append("semantic SW-012: OR/ANY forbidden — numerator is a strict AND of three blanks")
-    if " and " not in s12:
-        errs.append("semantic SW-012: formula must use AND across the three blanks")
-    if md.get("SW-012", {}).get("unit") != "ratio_0_1":
-        errs.append("semantic SW-012: unit must be ratio_0_1")
-    if "OT-SW-012" not in str(gt("SW-012").get("grade_target_id")):
-        errs.append("semantic SW-012: grade target must be OT-SW-012")
-    # SW-013: after-hours population, remains SIP, no business-hours relabel
-    if "after hours == yes" not in pop("SW-013") and "after-hours" not in pop("SW-013"):
-        errs.append("semantic SW-013: population must be AFTER-HOURS-originated")
-    if "business-hours" in pop("SW-013") and "after" not in pop("SW-013"):
-        errs.append("semantic SW-013: must not be business-hours")
-    if md.get("SW-013", {}).get("disposition") != "source_investigation_pending":
-        errs.append("semantic SW-013: must remain source_investigation_pending")
-    # SW-014: event count/rate predicate (not duration), no business-hours restriction, remains SIP
-    if md.get("SW-014", {}).get("calculation_kind") not in ("count", "rate"):
-        errs.append("semantic SW-014: must be an event count/rate predicate, not duration")
-    if "no business-hours" not in pop("SW-014") and "business-hours" in pop("SW-014"):
-        errs.append("semantic SW-014: must not impose a business-hours restriction")
-    if md.get("SW-014", {}).get("disposition") != "source_investigation_pending":
-        errs.append("semantic SW-014: must remain source_investigation_pending")
-    # SW-015: 2x store-median SHARE (ratio), never a minutes difference, approved OT-SW-015
-    s15 = f("SW-015")
-    if "2 x store median" not in s15 and ">= 2" not in s15:
-        errs.append("semantic SW-015: must be share of reps >= 2x store median")
-    if "minus" in s15 or "difference" in s15:
-        errs.append("semantic SW-015: must not be a minutes difference")
-    if md.get("SW-015", {}).get("unit") != "ratio_0_1":
-        errs.append("semantic SW-015: unit must be ratio_0_1")
-    if "OT-SW-015" not in str(gt("SW-015").get("grade_target_id")):
-        errs.append("semantic SW-015: grade target must be OT-SW-015")
+    lp = pkt.get("lifecycle_partition", {})
+    bucket_of = {i: b for b, ids in lp.items() for i in ids}
+    E = _expected_semantics()
+    for mid, ex in E.items():
+        m = md.get(mid, {})
+        f = str(m.get("formula", "")).lower()
+        num = str(m.get("numerator", "")).lower() + " " + f
+        den = str(m.get("denominator", "")).lower()
+        pop = str(m.get("population", "")).lower()
+        gt = m.get("grade_target_contract") or {}
+        dt = m.get("detection_threshold_contract") or {}
+        blob = " ".join(str(m.get(k, "")) for k in ("business_question", "population", "explainability_ref", "evidence_ref", "formula")).lower()
+        if "unit" in ex and m.get("unit") != ex["unit"]:
+            errs.append(f"semantic {mid}: unit {m.get('unit')!r} != authority {ex['unit']!r}")
+        if "calc" in ex and m.get("calculation_kind") != ex["calc"]:
+            errs.append(f"semantic {mid}: calculation_kind {m.get('calculation_kind')!r} != authority {ex['calc']!r}")
+        if m.get("disposition") != ex["disposition"]:
+            errs.append(f"semantic {mid}: disposition != {ex['disposition']}")
+        if "ses" in ex and m.get("source_existence_state") != ex["ses"]:
+            errs.append(f"semantic {mid}: source_existence_state != {ex['ses']}")
+        if bucket_of.get(mid) != ex["bucket"]:
+            errs.append(f"semantic {mid}: lifecycle bucket {bucket_of.get(mid)} != {ex['bucket']}")
+        if "direct_fields" in ex:
+            missing = {x for x in ex["direct_fields"] if x not in (m.get("direct_source_fields") or [])}
+            if missing:
+                errs.append(f"semantic {mid}: missing required direct fields {sorted(missing)}")
+        for tok in ex.get("formula_must", []):
+            if tok not in f:
+                errs.append(f"semantic {mid}: formula missing required token '{tok}'")
+        if "numerator_all_blank" in ex:
+            for fld in ex["numerator_all_blank"]:
+                if fld not in num:
+                    errs.append(f"semantic {mid}: numerator must include ALL THREE blank fields (missing '{fld}')")
+            if " and " not in num:
+                errs.append(f"semantic {mid}: numerator must AND (not OR/ANY) across the three blanks")
+        for bad in ex.get("numerator_forbid", []):
+            if bad in num:
+                errs.append(f"semantic {mid}: numerator/formula must not contain '{bad.strip()}'")
+        for tok in ex.get("numerator_must", []):
+            if tok not in num:
+                errs.append(f"semantic {mid}: numerator must contain '{tok}'")
+        if "numerator_2x" in ex and not any(t in num for t in ex["numerator_2x"]):
+            errs.append(f"semantic {mid}: numerator must express >= 2x store median")
+        if "denominator_exact" in ex and ex["denominator_exact"] not in den:
+            errs.append(f"semantic {mid}: denominator must be exactly '{ex['denominator_exact']}'")
+        if "denominator_must" in ex and ex["denominator_must"] not in den and ex["denominator_must"] not in f:
+            errs.append(f"semantic {mid}: denominator must reference '{ex['denominator_must']}'")
+        if "grade_ref" in ex:
+            if ex["grade_ref"] not in str(gt.get("grade_target_id")):
+                errs.append(f"semantic {mid}: grade target must reference {ex['grade_ref']}")
+            if gt.get("approval_state") != "approved" or gt.get("status") != "active":
+                errs.append(f"semantic {mid}: grade target must be approved+active")
+            th_text = str(dt.get("rule", "")) + " " + str(gt.get("value_or_range", ""))
+            if ex["comparator"] not in th_text:
+                errs.append(f"semantic {mid}: threshold comparator '{ex['comparator']}' not bound")
+            if not _numtok(th_text, ex["threshold"]):
+                errs.append(f"semantic {mid}: threshold value {ex['threshold']} not bound (authority OT-{mid[3:]})")
+        for tok in ex.get("population_must", []):
+            if tok not in pop:
+                errs.append(f"semantic {mid}: population missing required token '{tok}'")
+        if ex.get("no_business_only") and "business-hours" in pop and "after" not in pop:
+            errs.append(f"semantic {mid}: population must be after-hours, not business-hours")
+        if ex.get("no_business_hours") and "business-hours" in pop and "no business-hours" not in pop:
+            errs.append(f"semantic {mid}: must not impose a business-hours restriction")
+        for tok in ex.get("predicate_must", []):
+            if tok not in blob:
+                errs.append(f"semantic {mid}: predicate missing required token '{tok}'")
 
 
 def check_cross_packet_independence(idx, errs):
@@ -400,6 +477,28 @@ def run_probes(led, idx, pkt, reg):
     def cross_mut(m):
         e = []; check_cross_packet_independence(m, e); return e
     rec("O_cross_packet_overlap_blocking_leak", lambda: cross_mut(idx_overlap()))
+
+    # --- coordinated-bypass semantic probes: multiple wrong fields that still contain expected keywords ---
+    rec("P_sw012_two_fields_present_not_all_three", lambda: sem(lambda m: _def(m, "SW-012").update({
+        "numerator": "count of business-hours leads where First Contact Attempt is blank AND First Customer Contact is blank (Originated After Hours == No)",
+        "formula": "count(First Contact Attempt blank AND First Customer Contact blank where Originated After Hours == No) / business_hours_population"})))
+    rec("Q_sw013_unrelated_after_hours_event", lambda: sem(lambda m: _def(m, "SW-013").update({
+        "population": "Serra Honda 21043 after-hours Sales leads that were sold in the period"})))
+    rec("R_sw014_unrelated_count_question", lambda: sem(lambda m: _def(m, "SW-014").update({
+        "business_question": "How many Sales leads were contacted in the period?",
+        "population": "Serra Honda 21043 Sales leads contacted in the period",
+        "explainability_ref": "count of contacted leads", "evidence_ref": "count of contacted leads", "formula": "count of contacted leads"})))
+    rec("S_sw015_denominator_all_leads", lambda: sem(lambda m: _def(m, "SW-015").update({
+        "denominator": "all accepted leads rows"})))
+    rec("T_sw011_threshold_999", lambda: sem(lambda m: (_def(m, "SW-011").__setitem__("detection_threshold_contract", dict(_def(m, "SW-011")["detection_threshold_contract"], rule="median_business_hours_response_min > 999")),
+                                                        _def(m, "SW-011").__setitem__("grade_target_contract", dict(_def(m, "SW-011")["grade_target_contract"], value_or_range="> 999 minutes (breach); comparator '>' lower_is_better")))))
+    # --- chronological (tz-aware) timestamp reversal across offsets ---
+    def ts_reversal():
+        r = {"disposition": "measured_validated", "transitions": [
+            {"from": None, "to": "data_acquired_calculation_pending", "at": "2026-09-02T06:51:10Z", "by": "codex", "reason": "init"},
+            {"from": "data_acquired_calculation_pending", "to": "measured_validated", "at": "2026-09-02T07:00:00+14:00", "by": "codex", "reason": "valid adjacency but chronologically earlier"}]}
+        e = []; check_transitions(r, "SW-TS", e); return e
+    rec("U_timestamp_chronological_reversal_offset", ts_reversal)
     return probes
 
 
@@ -458,6 +557,8 @@ def main():
         "packets": len(idx["packets"]),
         "authored_packet": "PKT-02-01 (SW-011..015)",
         "two_delta_present": bool(pkt.get("two_delta_proof", {}).get("evidence_delta") and pkt.get("two_delta_proof", {}).get("meaning_delta")),
+        "semantic_bindings_provenance": SEMANTIC_PROVENANCE,
+        "acquisition_truth": {"admitted_promoted_leads": ["SW-011", "SW-012", "SW-015", "SW-090"], "admitted_held_other_evaluated_count": 13, "note": "All 17 preserve evaluated/report state; analytical evaluation is not acquisition promotion."},
         "adversarial_probes_total": len(probes),
         "adversarial_probes_failed": len(failed_probes),
         "adversarial_probes": probes,

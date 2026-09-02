@@ -67,13 +67,13 @@
     },
     "validator": {
       "path": "scripts/halo-phase1b/validate_phase1b.py",
-      "sha256": "7eed66932ebe01b0c56db480a73ad6d3c5a36a719c46358afe5be9af402c607a",
-      "note": "reuses Phase 1A engine; validates ledger/packet/metric/source-DAG + carry-forward/no-regression + strengthened transitions + semantic immutability + 15 adversarial controls."
+      "sha256": "a4e26dab81bd36b1838a4cc6ac300d97bd56be80325de96280050ec4badc7459",
+      "note": "reuses Phase 1A engine; validates ledger/packet/metric/source-DAG + carry-forward/no-regression + strengthened tz-aware chained transitions + STRUCTURED semantic bindings (catalog/gate2/baseline, not paraphrase) + 21 adversarial controls (incl. coordinated-bypass + chronological-reversal)."
     },
     "checks_output": {
       "path": "docs/halo/evidence/honda-watchdog/phase1b/PHASE1B_CHECKS.json",
-      "sha256": "bd949637ae094e973e2e4644ab38c2e679d1db03811ccba4b772398c93208fd3",
-      "note": "overall_pass=true; 0 errors; 15/15 adversarial probes reject; two_delta_present=true; carry-forward of 17 authoritative evaluated preserved."
+      "sha256": "2bf91c3284d6d1ead33ca84fd139dd052813b48560985731ec39a7e3d951fa3f",
+      "note": "overall_pass=true; 0 errors; 21/21 adversarial probes reject; two_delta_present=true; semantic bindings derived from catalog/gate2/baseline; tz-aware transition timestamps; acquisition truth (promoted leads vs held) recorded."
     }
   },
   "prohibited_action_confirmation": "No VinSolutions, Gmail, network, schedule, ingest, DB-schema, product/runtime, vault-permission, production, recipient, or customer action. No NEW values/grades computed here; the 17 authoritative evaluated metrics carry forward prior accepted state (computed at Gate 4A, not recomputed). SW-013/014 opened as finite investigations with NO Vin/UI action. INGEST src/routeTree.gen.ts untouched.",
@@ -81,7 +81,7 @@
   "shadow_correction": {
     "prior_commit": "8dd773df8712a5d12aca43e0c3864312b3ee437c",
     "verdict": "impartial shadow HOLD (12 corrections)",
-    "summary": "Carry forward all 17 authoritative accepted+evaluated Honda metrics (no reset to not_measured/admitted_held); bind approved operational targets OT-SW-011(>10min)/OT-SW-012(>0)/OT-SW-015(>0); correct SW-012 strict-AND numerator (ratio_0_1, ended-period >30min); SW-013 after-hours population + first-human by next-opening+15min (SIP, no proxy); SW-014 auto-reply-only event count predicate, no business-hours restriction (SIP, no channel/direction inference); SW-015 2x store-median rep SHARE (ratio_0_1, not minutes difference); remove SIP->SIP self-transitions and strengthen transition adjacency/timestamp/terminal checks; add semantic-immutability + 7 adversarial probes (OR-for-AND, business-hours-for-after-hours, duration-for-event, minutes-diff-for-share, target replacement, accepted-state regression, cross-packet overlap); label provisional planning packets; amendment + receipt DRAFT/HOLD.",
+    "summary": "Carry forward all 17 authoritative accepted+evaluated Honda metrics (evaluated/report state preserved, not reset to not_measured); acquisition preserved truthfully — only SW-011/012/015/090 keep admitted_promoted (Leads), the other 13 remain admitted_held (evaluation is NOT acquisition promotion); bind approved operational targets OT-SW-011(>10min)/OT-SW-012(>0)/OT-SW-015(>0); correct SW-012 strict-AND numerator (ratio_0_1, ended-period >30min); SW-013 after-hours population + first-human by next-opening+15min (SIP, no proxy); SW-014 auto-reply-only event count predicate, no business-hours restriction (SIP, no channel/direction inference); SW-015 2x store-median rep SHARE (ratio_0_1, not minutes difference); remove SIP->SIP self-transitions and strengthen transition adjacency/timestamp/terminal checks; add semantic-immutability + 7 adversarial probes (OR-for-AND, business-hours-for-after-hours, duration-for-event, minutes-diff-for-share, target replacement, accepted-state regression, cross-packet overlap); label provisional planning packets; amendment + receipt DRAFT/HOLD.",
     "carry_forward_authoritative_evaluated_17": [
       "SW-011",
       "SW-012",
@@ -100,6 +100,39 @@
       "SW-145",
       "SW-149",
       "SW-150"
+    ],
+    "acquisition_truth": {
+      "admitted_promoted_leads": [
+        "SW-011",
+        "SW-012",
+        "SW-015",
+        "SW-090"
+      ],
+      "admitted_held_other_evaluated": [
+        "SW-021",
+        "SW-022",
+        "SW-031",
+        "SW-032",
+        "SW-033",
+        "SW-041",
+        "SW-045",
+        "SW-046",
+        "SW-133",
+        "SW-142",
+        "SW-145",
+        "SW-149",
+        "SW-150"
+      ],
+      "note": "All 17 preserve prior evaluated/report state. Analytical evaluation is NOT acquisition promotion; only the four Leads-sourced metrics are admitted_promoted."
+    }
+  },
+  "shadow_correction_2": {
+    "prior_commit": "b9f0ee232986c5bc4fe23f0d5192c822862143ec",
+    "verdict": "impartial shadow HOLD — 3 proof defects (definitions correct)",
+    "fixes": [
+      "1: corrected false acquisition-vs-analytics wording (TWO_DELTA, receipt, manifest): all 17 preserve evaluated/report state; only SW-011/012/015/090 preserve admitted_promoted; the other 13 remain admitted_held (evaluation is not promotion).",
+      "2: replaced loose substring semantic checks with STRUCTURED bindings derived from the pinned catalog condition + gate2 evaluable_conditions + baseline-registry OT records (unit/calc/numerator/denominator/formula/direct-fields/threshold comparator+value/approval/reference/disposition/source-state/lifecycle-bucket); added coordinated-bypass probes P-T (SW-012 two-of-three blanks, SW-013 unrelated after-hours, SW-014 unrelated count, SW-015 all-leads denominator, SW-011 threshold >999) that reject for the semantic binding.",
+      "3: replaced lexical timestamp ordering with tz-aware chronological parsing (reject malformed/naive; reject reversed instants across offsets); probe U proves rejection for 2026-09-02T07:00:00+14:00 after 06:51:10Z."
     ]
   }
 }

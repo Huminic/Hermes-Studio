@@ -14,7 +14,22 @@
   "packets": 30,
   "authored_packet": "PKT-02-01 (SW-011..015)",
   "two_delta_present": true,
-  "adversarial_probes_total": 15,
+  "semantic_bindings_provenance": {
+    "catalog": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json (29c7ac06…) — condition per metric",
+    "gate2": "docs/halo/contract/gate2-evaluator-contract.json — evaluable_conditions formula/source_fields/numerator/denominator/unit/baseline_id/comparator",
+    "baseline_registry": "docs/halo/contract/baseline-registry.json — OT-SW-011/012/015 comparator/threshold/unit/direction/basis"
+  },
+  "acquisition_truth": {
+    "admitted_promoted_leads": [
+      "SW-011",
+      "SW-012",
+      "SW-015",
+      "SW-090"
+    ],
+    "admitted_held_other_evaluated_count": 13,
+    "note": "All 17 preserve evaluated/report state; analytical evaluation is not acquisition promotion."
+  },
+  "adversarial_probes_total": 21,
   "adversarial_probes_failed": 0,
   "adversarial_probes": [
     {
@@ -86,16 +101,16 @@
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "n_errors": 2,
-      "sample_error": "semantic SW-012: OR/ANY forbidden — numerator is a strict AND of three blanks"
+      "n_errors": 1,
+      "sample_error": "semantic SW-012: numerator/formula must not contain 'or'"
     },
     {
       "probe": "J_sw013_business_hours_for_after_hours",
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "n_errors": 1,
-      "sample_error": "semantic SW-013: population must be AFTER-HOURS-originated"
+      "n_errors": 2,
+      "sample_error": "semantic SW-013: population missing required token 'opening'"
     },
     {
       "probe": "K_sw014_duration_for_two_hour_event",
@@ -103,7 +118,7 @@
       "got": "reject",
       "pass": true,
       "n_errors": 1,
-      "sample_error": "semantic SW-014: must be an event count/rate predicate, not duration"
+      "sample_error": "semantic SW-014: calculation_kind 'duration' != authority 'count'"
     },
     {
       "probe": "L_sw015_minutes_difference_for_2x_share",
@@ -111,15 +126,15 @@
       "got": "reject",
       "pass": true,
       "n_errors": 2,
-      "sample_error": "semantic SW-015: must be share of reps >= 2x store median"
+      "sample_error": "semantic SW-015: numerator/formula must not contain 'minus'"
     },
     {
       "probe": "M_sw011_target_replacement",
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "n_errors": 1,
-      "sample_error": "semantic SW-011: grade target must be the approved OT-SW-011 (not a proposed/TBD)"
+      "n_errors": 2,
+      "sample_error": "semantic SW-011: grade target must reference OT-SW-011"
     },
     {
       "probe": "N_prior_accepted_state_regression",
@@ -136,6 +151,54 @@
       "pass": true,
       "n_errors": 1,
       "sample_error": "cross-packet: SW-013 in both PKT-02-01 and PKT-02-02 (blocking would leak across packets)"
+    },
+    {
+      "probe": "P_sw012_two_fields_present_not_all_three",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "semantic SW-012: numerator must include ALL THREE blank fields (missing 'actual response time')"
+    },
+    {
+      "probe": "Q_sw013_unrelated_after_hours_event",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "semantic SW-013: population missing required token 'opening'"
+    },
+    {
+      "probe": "R_sw014_unrelated_count_question",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 3,
+      "sample_error": "semantic SW-014: predicate missing required token 'auto-reply'"
+    },
+    {
+      "probe": "S_sw015_denominator_all_leads",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "semantic SW-015: denominator must be exactly 'reps_with_numeric_response'"
+    },
+    {
+      "probe": "T_sw011_threshold_999",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "semantic SW-011: threshold value 10 not bound (authority OT-011)"
+    },
+    {
+      "probe": "U_timestamp_chronological_reversal_offset",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "ledger SW-TS: transition 1 chronologically before previous instant (2026-09-02T07:00:00+14:00)"
     }
   ],
   "errors": [],

@@ -21,7 +21,7 @@ no calculation/acquisition/persistence/report generation.
 
 Scripts: `scripts/halo-phase1b/build_ledger.py` (deterministic ledger/assignment generator + carry-forward);
 `scripts/halo-phase1b/validate_phase1b.py` (reuses the Phase 1A engine; ledger/packet/metric/source +
-carry-forward/no-regression + strengthened transitions + semantic immutability + 15 adversarial controls).
+carry-forward/no-regression + strengthened transitions + semantic immutability + 21 adversarial controls (structured semantic bindings + coordinated-bypass + tz-aware chronological transitions)).
 Reproduce: `python3 scripts/halo-phase1b/validate_phase1b.py --no-write`.
 
 ## PKT-02-01 (SW-011..015) — corrected/frozen meanings
@@ -45,7 +45,7 @@ block only module 2 + final completion, never unrelated packets.
 
 ## Result
 
-- Validator **PASS** (0 errors; **15/15 adversarial probes reject**); ledger 295 / 30 provisional
+- Validator **PASS** (0 errors; **21/21 adversarial probes reject**); ledger 295 / 30 provisional
   packets; **17 authoritative accepted+evaluated carried forward (not reset)**; two-delta present.
 - Phase 1A regression **PASS** (956/956, 61/61, unchanged); Phase 0 **PASS**.
 - Immutable objective/SPEC/matrix/Phase 0 07/09 and all Phase 1A artifacts unchanged; INGEST untouched.

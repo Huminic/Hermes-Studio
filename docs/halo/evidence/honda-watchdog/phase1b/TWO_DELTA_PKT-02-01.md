@@ -38,9 +38,12 @@ packets. `source_investigation_pending` is nonterminal and never accepted_dispos
 
 The master ledger carries forward all **17** authoritative accepted+evaluated Honda metrics
 (SW-011,012,015,021,022,031,032,033,041,045,046,090,133,142,145,149,150; `gate5b-report-model-21043.json`).
-These are NOT reset to `not_measured`/`admitted_held`. All other non-overlay rows are explicitly
-**non-authoritative provisional planning placeholders**; the 18-ID Service overlay is
-`outside_sales_domain` (appendix ID+label only, no customer value).
+All 17 preserve their prior evaluated/report state (evaluation_state stays measured_graded; not reset
+to `not_measured`). Acquisition state is preserved separately and truthfully: only **SW-011/012/015/090**
+preserve `admitted_promoted` (through the promoted Leads source); the other **13** evaluated metrics
+truthfully remain `admitted_held` — analytical evaluation is NOT acquisition promotion. All non-overlay,
+non-evaluated rows are explicitly **non-authoritative provisional planning placeholders**; the 18-ID
+Service overlay is `outside_sales_domain` (appendix ID+label only, no customer value).
 
 ## Boundaries
 
