@@ -77,14 +77,15 @@ Real calendar-valid tz-aware ISO parsing. Reproduce:
   malformed instances built by the reviewer — all rejected (enforcement generalizes).
 - **No metric rows or packets authored** (Phase 1 remains design-only).
 
-**Re-review history:** `60c519966` HOLD (too shallow) → `59e97d289` HOLD (accepted 17 malformed,
-example-based) → `a57c5aa13` HOLD (4 issues + canonical anti-tautology) → `e9d315428` HOLD (incomplete
-crash-resistance + non-relational anchor) → this packet completes crash-resistance (recursive fuzz,
-type-guarded roots/collections) and makes the Phase 0 anchor relational (see
-`02_phase1a_gate_receipt.md` §Fourth shadow re-review correction).
+**Re-review history:** `60c519966` HOLD → `59e97d289` HOLD → `a57c5aa13` HOLD → `e9d315428` HOLD →
+`fd219439d` (relational completeness) → `53ba14bdb` (strict authority equality) → `bf8ee705d`
+(strict downstream blast) — **binding PASS**.
 
-**Mechanical checks PASS; overall Phase 1A is HOLD pending impartial-shadow re-review.** This gate
-does not authorize Phase 1B/2+; downstream gates and fail-closed stops remain enforceable.
+**Phase 1A verdict: PASS (binding).** The impartial shadow returned a binding **PASS** for evidence
+commit `bf8ee705dc986df428bf6614be4727a287258221` (memorialized 2026-09-02T06:19:33Z; see
+`02_phase1a_gate_receipt.md`). This PASS is **design-only pinning** — it does **not** authorize
+Phase 1B/2+, and downstream/runtime gates and fail-closed stops (incl. the vault-policy Phase 3
+admission gate, C-02) remain **enforceable**.
 
 ## Boundaries honored
 

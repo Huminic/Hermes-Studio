@@ -212,10 +212,34 @@ evidence remains valid.
 ## Separation of duties / approval
 
 - **Implementation:** Phase 1A design writer (author).
-- **Independent code-fact verification:** fresh non-author agent — result recorded above.
-- **Governance approval:** the **impartial shadow** (non-author, non-deployer) must review this
-  pinned Phase 1A packet and issue the binding PASS/HOLD. **Approval state: PENDING impartial-shadow
-  review.** Mechanical checks PASS; the author does not self-approve.
+- **Independent code-fact verification:** fresh non-author agents across rounds — results recorded above.
+- **Governance approval:** the **impartial shadow** (non-author, non-deployer) reviewed the pinned
+  Phase 1A packet and issued the binding verdict. **Approval state: PASS (binding).** The author did
+  not self-approve; implementation, verification, and approval remained separated (Core Value #5).
+
+## Phase 1A verdict — binding PASS
+
+**Impartial shadow PASS (binding)** for evidence commit
+`bf8ee705dc986df428bf6614be4727a287258221`, memorialized (UTC) **2026-09-02T06:19:33Z**.
+
+- **Two-delta (evidence):** validator **956/956** self-tests, **61/61** probes, crash-fuzz universe
+  **2118 / 0 exceptions**; independent replay confirmed all three FCS actual+embedded-expected `0`/`1`
+  substitutions reject on **both** blast checks, authority value+metadata co-mutations reject, and
+  representative prior attacks reject without crash.
+- **Two-delta (meaning):** integers cannot impersonate required booleans at the authority or the
+  downstream FCS boundaries.
+- **Integrity:** HEAD clean == upstream; exact 5-file Phase 1A scope; Phase 0 exact 295/11/18;
+  immutable hashes unchanged; INGEST routeTree untouched.
+
+**Re-review chain:** `60c519966` HOLD → `59e97d289` HOLD → `a57c5aa13` HOLD → `e9d315428` HOLD →
+`fd219439d` (relational completeness) → `53ba14bdb` (strict authority equality) →
+`bf8ee705d` (strict downstream blast) — **binding PASS**.
+
+**Residual (runtime gates remain):** this PASS is **design-only pinning**. It does **not** authorize
+Phase 1B or relax any downstream/runtime gate. Fail-closed stops, the vault-policy **Phase 3
+fail-closed admission gate** (C-02, enforcement still nonconforming), and all carried-forward
+conditions remain enforceable. No acquisition, ingest, schedule, product-code, runtime, or production
+change is authorized by this receipt.
 
 ## Prohibited-action confirmation
 
