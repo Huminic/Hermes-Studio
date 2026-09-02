@@ -29,6 +29,7 @@ import json
 import os
 import re
 import sys
+from datetime import datetime
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CONTRACT_DIR = os.path.join(REPO_ROOT, "docs", "halo", "contract", "phase1")
@@ -38,7 +39,21 @@ DEFAULT_OUT = os.path.join(REPO_ROOT, "docs", "halo", "evidence", "honda-watchdo
 SW = re.compile(r"^SW-\d{3}$")
 CAND = re.compile(r"^CAND-\d{4}$")
 SEMVER = re.compile(r"^\d+\.\d+\.\d+$")
-ISO = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$")
+
+
+def valid_iso_datetime(s):
+    """Calendar-valid, timezone-AWARE ISO-8601 (not just regex shape).
+    Rejects impossible dates/times (e.g. 2026-13-40T25:61:61Z) and naive (tz-less) timestamps."""
+    if not isinstance(s, str):
+        return False
+    t = s.strip()
+    if t.endswith("Z"):
+        t = t[:-1] + "+00:00"
+    try:
+        d = datetime.fromisoformat(t)
+    except ValueError:
+        return False
+    return d.tzinfo is not None  # contract requires timezone-aware
 
 sys.path.insert(0, os.path.join(REPO_ROOT, "scripts", "halo-phase0"))
 import validate_phase0_catalog as p0  # noqa: E402
@@ -70,10 +85,54 @@ DISP_EVAL = FV["disposition_evaluation_consistency"]["map"]
 DISP_SES = FV["source_existence_state"]["disposition_consistency"]
 SES_ACQ = FV["source_existence_acquisition_matrix"]["allowed_pairs"]
 CATALOG = set(range(1, 296))
-CANON_STOPS = FCS["canonical_stop_names"]
-BLAST_EXPECTED = FCS["blast_radius_expected"]
-VAULT_EXPECTED = FCS["vault_gate_expected"]
 SRC_DEP_FIELDS = {"direct_source_fields", "numerator", "denominator", "formula", "zero_denominator_behavior"}
+
+# --- IMMUTABLE canonical fail-closed stop identifiers (validator constant, NOT read from the mutable
+#     fail-closed-stops.json). Anti-tautology: renaming all 11 in the contract (even consistently)
+#     rejects because comparison is against this constant and the reviewed SPEC §9 authority.
+CANON_CONST = [
+    "wrong_dealer", "service_parts_in_sales", "ambiguous_period", "schema_drift",
+    "missing_provenance", "protected_content_or_pii_outside_envelope",
+    "formula_or_denominator_ambiguity", "incompatible_baseline", "source_substitution_or_skip",
+    "dirty_or_competing_writer", "production_or_customer_behavior_change",
+]
+CANON_STOPS = CANON_CONST  # authoritative basis for all comparisons (not the mutable file)
+
+# --- IMMUTABLE validator constants (NOT read from fail-closed-stops.json). Anti-tautology anchor:
+#     the contract's blast-radius / vault-gate ACTUALS and its embedded EXPECTED are both compared
+#     against these constants, so weakening the contract (even actual+expected together) rejects.
+BLAST_CONST = {
+    "one_source_failure_scope": "dependent_ids_only",
+    "blocks_unrelated_modules": False,
+    "blocks_independent_metrics": False,
+    "rejected_id_blocks_final_completion_only": True,
+}
+VAULT_CONST = {
+    "fail_closed": True,
+    "required_dir_mode": "0700",
+    "required_file_mode": "0600",
+    "current_conformance": "nonconforming",
+    "gate_phase": "phase3_admission_gate",
+    "status_must_contain": "NONCONFORMING",
+}
+# Phase 0 authority is immutable: pin its evidence-file hashes so the vault-policy semantics are
+# anchored to Phase 0 (07 vault topology / 09 conflict register C-02), not self-declared here.
+PHASE0_AUTHORITY = {
+    os.path.join(REPO_ROOT, "docs/halo/evidence/honda-watchdog/phase0/07_vault_vs_brain_topology.md"):
+        "9d3bb62894701d5f973b275ad8f68ebc47863aa45abf9f88c34cde22e7d74b2d",
+    os.path.join(REPO_ROOT, "docs/halo/evidence/honda-watchdog/phase0/09_conflict_register.json"):
+        "0357992bcc60b7a085ceb2f2b7d83b8c4549941de26d8dbb68d43af5490d2504",
+    # reviewed SPEC (byte-pinned in Phase 0 authority hashes) — §9 is the source of the 11 stops
+    os.path.join(REPO_ROOT, "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_EXECUTION_SPEC.md"):
+        "fedd957b9431521591155763327147d86c25fe3da11e2996470c134eaf9d785e",
+}
+
+
+def validate_canon_list(lst):
+    """Compare a canonical-stop list to the IMMUTABLE validator constant (defeats wholesale rename)."""
+    if lst != CANON_CONST:
+        return ["canonical_stop_names != validator constant (wholesale rename / co-mutation attempt)"]
+    return []
 
 
 def owner_map():
@@ -98,6 +157,9 @@ def validate_instance(obj, schema, path, errs):
     schema = resolve(schema)
     if "$vocab" in schema:
         allowed = set(FV[schema["$vocab"]]["values"].keys())
+        if not isinstance(obj, str):
+            errs.append(f"{path}: vocab value must be a string, got {type(obj).__name__}")
+            return
         if obj not in allowed:
             errs.append(f"{path}: '{obj}' not in vocab {schema['$vocab']}")
         return
@@ -142,8 +204,8 @@ def validate_instance(obj, schema, path, errs):
         fmt = schema.get("format")
         if fmt == "semver" and not SEMVER.match(obj):
             errs.append(f"{path}: not semver")
-        if fmt == "iso_datetime" and not ISO.match(obj):
-            errs.append(f"{path}: not ISO datetime")
+        if fmt == "iso_datetime" and not valid_iso_datetime(obj):
+            errs.append(f"{path}: not a calendar-valid timezone-aware ISO datetime")
         return
     if t == "integer":
         if isinstance(obj, bool) or not isinstance(obj, int):
@@ -157,8 +219,9 @@ def validate_instance(obj, schema, path, errs):
         if not isinstance(obj, bool):
             errs.append(f"{path}: not boolean")
         return
-    if "enum" in schema and obj not in schema["enum"]:
-        errs.append(f"{path}: '{obj}' not in enum")
+    if "enum" in schema:
+        if not isinstance(obj, (str, int, bool)) or obj not in schema["enum"]:
+            errs.append(f"{path}: '{obj}' not in enum")
 
 
 # ----------------------------------------------------------------- cross-record invariants
@@ -170,6 +233,16 @@ def _measurable(r):
 def cross_metric(r, ctx, e):
     disp, es, bc = r.get("disposition"), r.get("evaluation_state"), r.get("boundary_class")
     mid, ck = r.get("metric_id"), r.get("calculation_kind")
+    # membership-safety: only string values participate in vocab-map lookups (type errors are
+    # already reported by the generic schema engine; cross-checks must never raise on bad types)
+    if not isinstance(disp, str):
+        disp = None
+    if not isinstance(es, str):
+        es = None
+    if not isinstance(bc, str):
+        bc = None
+    if not isinstance(ck, str):
+        ck = None
     if isinstance(mid, str) and SW.match(mid):
         n = int(mid.split("-")[1])
         if n not in CATALOG:
@@ -213,8 +286,9 @@ def cross_metric(r, ctx, e):
         e.append("semantic calc_kind requires sensitivity_class=protected_content + protected_content=true")
     if _measurable(r) and not r.get("source_dependency_ids"):
         e.append("measurable metric requires nonempty source_dependency_ids")
-    for s in r.get("source_dependency_ids") or []:
-        if ctx is not None and s not in ctx.get("source_ids", set()):
+    sdi = r.get("source_dependency_ids")
+    for s in sdi if isinstance(sdi, list) else []:
+        if ctx is not None and isinstance(s, str) and s not in ctx.get("source_ids", set()):
             e.append(f"source_dependency '{s}' not a registered source id")
     if es == "measured_graded":
         gt = r.get("grade_target_contract") or {}
@@ -224,8 +298,13 @@ def cross_metric(r, ctx, e):
             e.append("measured_graded requires approved+active+compatible grade_target")
     if r.get("gradable") is False and es == "measured_graded":
         e.append("gradable=false cannot be measured_graded")
-    if r.get("protected_content") is True and not r.get("envelope_authorized") and es not in ("not_measured", "measured_unscored", "measured_abstained"):
-        e.append("protected content without envelope cannot be measured_graded")
+    # protected-content envelope: measured_abstained iff fully authorized envelope
+    env_ok = (r.get("protected_content") is True and r.get("sensitivity_class") == "protected_content"
+              and bool(r.get("protected_content_envelope_ref")) and r.get("envelope_authorization") == "approved")
+    if es == "measured_abstained" and not env_ok:
+        e.append("measured_abstained requires protected_content=true, sensitivity_class=protected_content, an envelope reference, and envelope_authorization=approved")
+    if r.get("protected_content") is True and not env_ok and es not in ("not_measured", "measured_unscored"):
+        e.append("protected content without an approved envelope can only be not_measured/measured_unscored")
     ids = [(r.get("detection_threshold_contract") or {}).get("threshold_id"),
            (r.get("comparison_reference_contract") or {}).get("reference_id"),
            (r.get("grade_target_contract") or {}).get("grade_target_id")]
@@ -242,14 +321,16 @@ def validate_metric_row(r, ctx=None):
 
 
 def cross_source_node(n, ctx, e):
-    for m in n.get("dependent_metric_ids") or []:
-        if SW.match(str(m)) and int(m.split("-")[1]) not in CATALOG:
+    dmi = n.get("dependent_metric_ids")
+    for m in dmi if isinstance(dmi, list) else []:
+        if isinstance(m, str) and SW.match(m) and int(m.split("-")[1]) not in CATALOG:
             e.append(f"dependent_metric_id {m} not in frozen 295")
-    for c in n.get("dependent_candidate_ids") or []:
-        if ctx is not None and c not in ctx.get("candidate_ids", set()):
+    dci = n.get("dependent_candidate_ids")
+    for c in dci if isinstance(dci, list) else []:
+        if ctx is not None and isinstance(c, str) and c not in ctx.get("candidate_ids", set()):
             e.append(f"dependent_candidate_id {c} not a registered candidate")
     se, aq = n.get("source_existence_state"), n.get("acquisition_admission_state")
-    if se in SES_ACQ and aq not in SES_ACQ[se]:
+    if isinstance(se, str) and isinstance(aq, str) and se in SES_ACQ and aq not in SES_ACQ[se]:
         e.append(f"source_existence/admission pair ({se},{aq}) not allowed")
 
 
@@ -259,7 +340,9 @@ def validate_source_dag(nodes, ctx=None):
     for n in nodes:
         validate_instance(n, {"$ref": "source_node"}, "source", e)
         cross_source_node(n, ctx, e)
-        key = (n.get("profile"), n.get("family"), n.get("period"), n.get("schema_revision"))
+        # hashable dedupe key even if a component is a bad (non-scalar) type (schema flags the type)
+        key = tuple(x if isinstance(x, (str, int, float, bool, type(None))) else repr(x)
+                    for x in (n.get("profile"), n.get("family"), n.get("period"), n.get("schema_revision")))
         if key in seen:
             e.append(f"duplicate acquisition dedupe key {key}")
         seen.add(key)
@@ -286,16 +369,22 @@ def validate_packet(p, ctx=None):
             e.append(f"{t} not owned by module {p.get('module')}")
     if not (5 <= len(tids) <= 12) and not p.get("size_reason"):
         e.append("target_ids out of 5..12 without size_reason")
-    part = p.get("partitions_target") or {}
-    a, b, c = set(part.get("accepted_measured_ids", [])), set(part.get("accepted_disposition_only_ids", [])), set(part.get("rejected_ids", []))
+    part = p.get("partitions_target")
+    part = part if isinstance(part, dict) else {}
+
+    def _idset(v):
+        return set(v) if isinstance(v, list) else set()
+    a, b, c = _idset(part.get("accepted_measured_ids")), _idset(part.get("accepted_disposition_only_ids")), _idset(part.get("rejected_ids"))
     if (a & b) or (a & c) or (b & c):
         e.append("partitions not mutually exclusive")
-    if (a | b | c) != set(tids):
+    if isinstance(tids, list) and (a | b | c) != set(tids):
         e.append("partitions union != target_ids")
-    sc = p.get("stop_conditions") or {}
+    sc = p.get("stop_conditions")
+    sc = sc if isinstance(sc, dict) else {}
     if sc.get("inherited_canonical") != CANON_STOPS:
         e.append("stop_conditions.inherited_canonical must equal canonical_stop_names exactly")
-    adm = p.get("admission_contract") or {}
+    adm = p.get("admission_contract")
+    adm = adm if isinstance(adm, dict) else {}
     if "vault_policy_nonconformance_admission_gate" not in (adm.get("inherited_admission_gates") or []):
         e.append("admission_contract must inherit vault_policy_nonconformance_admission_gate")
     for s in p.get("source_dependencies") or []:
@@ -305,26 +394,32 @@ def validate_packet(p, ctx=None):
 
 
 def validate_blast_radius(br):
+    """Compare against the IMMUTABLE validator constant (not the contract's embedded expected)."""
+    if not isinstance(br, dict):
+        return ["blast_radius not an object"]
     e = []
-    for k, v in BLAST_EXPECTED.items():
+    for k, v in BLAST_CONST.items():
         if br.get(k) != v:
-            e.append(f"blast_radius {k} != {v!r}")
+            e.append(f"blast_radius {k} != {v!r} (validator constant)")
     return e
 
 
 def validate_vault_gate(vg):
+    """Compare against the IMMUTABLE validator constant (not the contract's embedded expected)."""
+    if not isinstance(vg, dict):
+        return ["vault gate not an object"]
     e = []
     if vg.get("fail_closed") is not True:
         e.append("vault gate fail_closed must be true")
-    if vg.get("required_dir_mode") != VAULT_EXPECTED["required_dir_mode"]:
+    if vg.get("required_dir_mode") != VAULT_CONST["required_dir_mode"]:
         e.append("vault gate required_dir_mode must be 0700")
-    if vg.get("required_file_mode") != VAULT_EXPECTED["required_file_mode"]:
+    if vg.get("required_file_mode") != VAULT_CONST["required_file_mode"]:
         e.append("vault gate required_file_mode must be 0600")
-    if vg.get("current_conformance") != VAULT_EXPECTED["current_conformance"]:
+    if vg.get("current_conformance") != VAULT_CONST["current_conformance"]:
         e.append("vault gate current_conformance must be nonconforming")
-    if vg.get("gate_phase") != VAULT_EXPECTED["gate_phase"]:
+    if vg.get("gate_phase") != VAULT_CONST["gate_phase"]:
         e.append("vault gate gate_phase must be phase3_admission_gate")
-    if VAULT_EXPECTED["status_must_contain"] not in str(vg.get("status", "")):
+    if VAULT_CONST["status_must_contain"] not in str(vg.get("status", "")):
         e.append("vault gate status must state NONCONFORMING")
     if not vg.get("rule"):
         e.append("vault gate rule required")
@@ -332,7 +427,7 @@ def validate_vault_gate(vg):
 
 
 # ----------------------------------------------------------------- fixtures + registries
-CTX = {"source_ids": {"SRC-cage_kpi-0001", "SRC-appointments-0001"}, "candidate_ids": {"CAND-0001"}}
+CTX = {"source_ids": {"SRC-cage_kpi-0001", "SRC-appointments-0001", "SRC-sales_comm_log-0001"}, "candidate_ids": {"CAND-0001"}}
 
 
 def _sub(pfx, approved=True):
@@ -401,6 +496,24 @@ def good_overlay():
          "customer_visibility": "appendix_id_label_only", "confidence": "not_applicable",
          "explainability_ref": "x", "evidence_index_ref": "x"}
     r.update(_sub("079", approved=False))
+    return r
+
+
+def good_abstained():
+    r = {"metric_id": "SW-142", "definition_version": "1.0.0", "module": OWNER[142][0],
+         "business_question": "Objection resolution quality", "boundary_class": "sales",
+         "population": "objection threads", "calculation_kind": "semantic", "null_missing_behavior": "missing_not_zero",
+         "unit": "pct", "polarity": "higher_is_better", "window": "prev_week", "timezone": "America/New_York",
+         "cadence": "weekly", "impact_method": "operational_only", "impact_status": "not_applicable",
+         "gradable": False, "sensitivity_class": "protected_content", "protected_content": True,
+         "authorization": "compliance_required", "disposition": "data_acquired_calculation_pending",
+         "source_existence_state": "acquired_local", "evaluation_state": "measured_abstained",
+         "source_dependency_ids": ["SRC-sales_comm_log-0001"], "evidence_ref": "ev",
+         "evidence_as_of": "2026-08-31T00:00:00Z", "owner": "claude_studio", "internal_visibility": True,
+         "customer_visibility": "hidden", "confidence": "abstain", "explainability_ref": "x", "evidence_index_ref": "x",
+         "direct_source_fields": ["thread_text_ref"], "protected_content_envelope_ref": "ENV-0001",
+         "envelope_authorization": "approved"}
+    r.update(_sub("142", approved=False))
     return r
 
 
@@ -507,6 +620,7 @@ def run_self_tests():
         ("metric_sip", "metric_row", good_sip(), lambda o: validate_metric_row(o, CTX)),
         ("metric_gna", "metric_row", good_gna(), lambda o: validate_metric_row(o, CTX)),
         ("metric_overlay", "metric_row", good_overlay(), lambda o: validate_metric_row(o, CTX)),
+        ("metric_abstained", "metric_row", good_abstained(), lambda o: validate_metric_row(o, CTX)),
         ("packet", "packet", good_packet(), lambda o: validate_packet(o, CTX)),
         ("source", "source_node", good_source(), lambda o: validate_source_dag([o], CTX)),
         ("candidate", "candidate", good_candidate(), validate_candidate),
@@ -535,6 +649,21 @@ def run_self_tests():
     rec("cross.packet_missing_vault_gate", False, validate_packet(dict(good_packet(), admission_contract=dict(good_packet()["admission_contract"], inherited_admission_gates=["other"])), CTX))
     rec("cross.packet_partition_overlap", False, validate_packet(dict(good_packet(), partitions_target={"accepted_measured_ids": ["SW-011", "SW-012"], "accepted_disposition_only_ids": ["SW-012", "SW-014"], "rejected_ids": ["SW-015"]}), CTX))
     rec("cross.packet_wrong_module_owner", False, validate_packet(dict(good_packet(), module=3), CTX))
+    # abstained / envelope
+    rec("cross.abstained_valid", True, validate_metric_row(good_abstained(), CTX))
+    rec("cross.abstained_protected_false", False, validate_metric_row(dict(good_abstained(), protected_content=False, sensitivity_class="none", calculation_kind="count", formula="c", direct_source_fields=["x"]), CTX))
+    rec("cross.abstained_no_envelope_ref", False, validate_metric_row({k: v for k, v in good_abstained().items() if k != "protected_content_envelope_ref"}, CTX))
+    rec("cross.abstained_not_approved", False, validate_metric_row(dict(good_abstained(), envelope_authorization="requested"), CTX))
+    # ISO real parsing
+    rec("cross.iso_impossible_datetime", False, validate_metric_row(dict(good_metric(), evidence_as_of="2026-13-40T25:61:61Z"), CTX))
+    rec("cross.iso_naive_no_tz", False, validate_metric_row(dict(good_metric(), evidence_as_of="2026-09-02T00:00:00"), CTX))
+    rec("cross.iso_valid_offset", True, validate_metric_row(dict(good_metric(), evidence_as_of="2026-09-02T00:00:00+00:00"), CTX))
+    # anti-tautology: canonical stops / blast / vault anchored to validator constants
+    rec("anchor.canon_rename_rejected", False, validate_canon_list([f"stop_{i}" for i in range(11)]))
+    rec("anchor.canon_ok", True, validate_canon_list(list(CANON_CONST)))
+    rec("anchor.blast_both_weakened_rejected", False, validate_blast_radius({"one_source_failure_scope": "all", "blocks_unrelated_modules": True, "blocks_independent_metrics": True, "rejected_id_blocks_final_completion_only": False}))
+    rec("anchor.vault_both_weakened_rejected", False, validate_vault_gate({"fail_closed": False, "required_dir_mode": "0777", "required_file_mode": "0666", "current_conformance": "conforming", "gate_phase": "none", "status": "OK", "rule": "x"}))
+    rec("anchor.packet_renamed_canonical_rejected", False, validate_packet(dict(good_packet(), stop_conditions={"inherited_canonical": [f"stop_{i}" for i in range(11)], "packet_specific": ["x"]}), CTX))
 
     # transitions + context receipts
     rec("trans.sip_to_crm", True, [] if _trans("disposition", "source_investigation_pending", "crm_available_acquisition_pending") else ["x"])
@@ -565,27 +694,60 @@ def run_self_tests():
 def run_probes():
     probes = []
 
-    def rec(name, errs):
+    def rec(name, fn):
+        # crash-resistant: a raised exception is a FAIL (must be a clean validation error, never a crash)
+        try:
+            errs = fn()
+        except Exception as ex:  # noqa: BLE001
+            probes.append({"probe": name, "expected": "reject_no_crash", "got": "CRASH",
+                           "pass": False, "n_errors": 0, "sample_error": f"{type(ex).__name__}: {ex}"})
+            return
         probes.append({"probe": name, "expected": "reject", "got": "reject" if errs else "accept",
                        "pass": bool(errs), "n_errors": len(errs), "sample_error": errs[0] if errs else None})
 
-    rec("01_metric_business_question_123", validate_metric_row(dict(good_metric(), business_question=123), CTX))
-    rec("02_metric_invalid_evidence_as_of", validate_metric_row(dict(good_metric(), evidence_as_of="2026-13-40"), CTX))
-    rec("03_metric_bad_definition_version", validate_metric_row(dict(good_metric(), definition_version="1.0"), CTX))
-    rec("04_metric_source_dep_ids_123_BAD", validate_metric_row(dict(good_metric(), source_dependency_ids=[123, "BAD"]), CTX))
-    rec("05_metric_threshold_rule_123", validate_metric_row(dict(good_metric(), detection_threshold_contract=dict(good_metric()["detection_threshold_contract"], rule=123)), CTX))
-    rec("06_sip_with_value_grade_narrative", validate_metric_row(dict(good_sip(), value=1, grade="A", narrative="n"), CTX))
-    rec("07_gna_plus_measured_unscored", validate_metric_row(dict(good_gna(), evaluation_state="measured_unscored"), CTX))
-    rec("08_sw079_wrong_disposition", validate_metric_row(dict(good_overlay(), disposition="measured_validated"), CTX))
-    rec("09_packet_mgmt_123_prereq_string", validate_packet(dict(good_packet(), management_question=123, prerequisites="notarray"), CTX))
-    rec("10_source_period_123_provenance_456", validate_source_dag([dict(good_source(), period=123, provenance_ref=456)], CTX))
-    rec("11_source_dependent_sw_999", validate_source_dag([dict(good_source(), dependent_metric_ids=["SW-999"])], CTX))
-    rec("12_source_unregistered_cand_9999", validate_source_dag([dict(good_source(), dependent_candidate_ids=["CAND-9999"])], CTX))
-    rec("13_source_unproved_admitted_promoted", validate_source_dag([dict(good_source(), source_existence_state="unproved", acquisition_admission_state="admitted_promoted")], CTX))
-    rec("14_candidate_name_123_auth_yes", validate_candidate(dict(good_candidate(), proposed_name=123, authorization_required="yes")))
-    rec("15_candidate_related_sw_999", validate_candidate(dict(good_candidate(), relationship_to_295="refines_existing", related_sw_id="SW-999")))
-    rec("16_weakened_blast_radius", validate_blast_radius(dict(FCS["blast_radius_rule"], blocks_independent_metrics=True)))
-    rec("17_empty_vault_gate", validate_vault_gate({}))
+    M = lambda **kw: validate_metric_row(dict(good_metric(), **kw), CTX)  # noqa: E731
+    # --- the 17 reviewer-reproduced false positives ---
+    rec("01_metric_business_question_123", lambda: M(business_question=123))
+    rec("02_metric_invalid_evidence_as_of", lambda: M(evidence_as_of="2026-13-40T25:61:61Z"))
+    rec("03_metric_bad_definition_version", lambda: M(definition_version="1.0"))
+    rec("04_metric_source_dep_ids_123_BAD", lambda: M(source_dependency_ids=[123, "BAD"]))
+    rec("05_metric_threshold_rule_123", lambda: M(detection_threshold_contract=dict(good_metric()["detection_threshold_contract"], rule=123)))
+    rec("06_sip_with_value_grade_narrative", lambda: validate_metric_row(dict(good_sip(), value=1, grade="A", narrative="n"), CTX))
+    rec("07_gna_plus_measured_unscored", lambda: validate_metric_row(dict(good_gna(), evaluation_state="measured_unscored"), CTX))
+    rec("08_sw079_wrong_disposition", lambda: validate_metric_row(dict(good_overlay(), disposition="measured_validated"), CTX))
+    rec("09_packet_mgmt_123_prereq_string", lambda: validate_packet(dict(good_packet(), management_question=123, prerequisites="notarray"), CTX))
+    rec("10_source_period_123_provenance_456", lambda: validate_source_dag([dict(good_source(), period=123, provenance_ref=456)], CTX))
+    rec("11_source_dependent_sw_999", lambda: validate_source_dag([dict(good_source(), dependent_metric_ids=["SW-999"])], CTX))
+    rec("12_source_unregistered_cand_9999", lambda: validate_source_dag([dict(good_source(), dependent_candidate_ids=["CAND-9999"])], CTX))
+    rec("13_source_unproved_admitted_promoted", lambda: validate_source_dag([dict(good_source(), source_existence_state="unproved", acquisition_admission_state="admitted_promoted")], CTX))
+    rec("14_candidate_name_123_auth_yes", lambda: validate_candidate(dict(good_candidate(), proposed_name=123, authorization_required="yes")))
+    rec("15_candidate_related_sw_999", lambda: validate_candidate(dict(good_candidate(), relationship_to_295="refines_existing", related_sw_id="SW-999")))
+    rec("16_weakened_blast_radius", lambda: validate_blast_radius(dict(FCS["blast_radius_rule"], blocks_independent_metrics=True)))
+    rec("17_empty_vault_gate", lambda: validate_vault_gate({}))
+    # --- fix 1: ISO real calendar parsing + tz-aware ---
+    rec("18_iso_impossible_calendar", lambda: M(evidence_as_of="2026-13-40T25:61:61Z"))
+    rec("19_iso_naive_no_timezone", lambda: M(evidence_as_of="2026-09-02T12:00:00"))
+    # --- fix 2: measured_abstained without authorized envelope ---
+    rec("20_abstained_protected_false", lambda: validate_metric_row(dict(good_abstained(), protected_content=False, sensitivity_class="none", calculation_kind="count", formula="c", direct_source_fields=["x"]), CTX))
+    rec("21_abstained_no_envelope_ref", lambda: validate_metric_row({k: v for k, v in good_abstained().items() if k != "protected_content_envelope_ref"}, CTX))
+    rec("22_abstained_authorization_not_approved", lambda: validate_metric_row(dict(good_abstained(), envelope_authorization="requested"), CTX))
+    # --- fix 3: crash-resistance ($vocab / nested must fail closed, never TypeError) ---
+    rec("23_crash_boundary_class_list", lambda: M(boundary_class=[]))
+    rec("24_crash_disposition_dict", lambda: M(disposition={}))
+    rec("25_crash_calc_kind_int", lambda: M(calculation_kind=123))
+    rec("26_crash_source_period_list_provenance_dict", lambda: validate_source_dag([dict(good_source(), period=[], provenance_ref={})], CTX))
+    rec("27_crash_packet_nested_nonobjects", lambda: validate_packet(dict(good_packet(), partitions_target="x", stop_conditions=5, admission_contract=[]), CTX))
+    # --- fix 4 + shadow finding: anti-tautology anchors (co-mutation must still reject) ---
+    rec("28_blast_actual_and_expected_coweakened", lambda: validate_blast_radius({"one_source_failure_scope": "all", "blocks_unrelated_modules": True, "blocks_independent_metrics": True, "rejected_id_blocks_final_completion_only": False}))
+    rec("29_vault_actual_and_expected_coweakened", lambda: validate_vault_gate({"fail_closed": False, "required_dir_mode": "0777", "required_file_mode": "0666", "current_conformance": "conforming", "gate_phase": "none", "status": "ok", "rule": "x"}))
+    rec("30_canonical_wholesale_rename", lambda: validate_canon_list([f"renamed_stop_{i}" for i in range(11)]))
+    rec("31_packet_canonical_renamed", lambda: validate_packet(dict(good_packet(), stop_conditions={"inherited_canonical": [f"renamed_stop_{i}" for i in range(11)], "packet_specific": ["x"]}), CTX))
+    # --- independent FRESH malformed cases (not the reviewer list) ---
+    rec("F1_metric_unknown_property", lambda: M(foo=1))
+    rec("F2_metric_module_out_of_range", lambda: M(module=99))
+    rec("F3_metric_semver_two_part", lambda: M(definition_version="2.5"))
+    rec("F4_source_bad_profile_const", lambda: validate_source_dag([dict(good_source(), profile="serra-nissan")], CTX))
+    rec("F5_candidate_boundary_list", lambda: validate_candidate(dict(good_candidate(), boundary_class=["sales"])))
     return probes
 
 
@@ -624,12 +786,31 @@ def check_vocab(errors):
     if set(DISP_EVAL.keys()) != set(DISP["values"].keys()):
         errors.append("VOCAB: disposition_evaluation_consistency must cover all 8 dispositions")
     # fail-closed-stops exactness
-    if FCS.get("count") != 11 or len(CANON_STOPS) != 11 or sorted(CANON_STOPS) != sorted(FCS["canonical_stops"].keys()):
-        errors.append("VOCAB: fail-closed-stops not exactly 11 canonical names")
-    if validate_blast_radius(FCS["blast_radius_rule"]):
-        errors.append("VOCAB: blast_radius_rule does not match machine-semantic expected")
-    if validate_vault_gate(FCS["inherited_admission_gates"].get("vault_policy_nonconformance_admission_gate", {})):
-        errors.append("VOCAB: vault admission gate does not match machine-semantic expected")
+    if FCS.get("count") != 11 or len(CANON_CONST) != 11:
+        errors.append("VOCAB: fail-closed-stops count != 11")
+    if validate_canon_list(FCS.get("canonical_stop_names")):
+        errors.append("VOCAB: canonical_stop_names (contract) != immutable validator constant")
+    if sorted((FCS.get("canonical_stops") or {}).keys()) != sorted(CANON_CONST):
+        errors.append("VOCAB: canonical_stops keys != immutable validator constant (rename attempt)")
+    # Anti-tautology: compare the contract ACTUAL and its embedded EXPECTED to the validator CONSTANTS.
+    if validate_blast_radius(FCS.get("blast_radius_rule", {})):
+        errors.append("VOCAB: blast_radius_rule actual != validator constant")
+    if FCS.get("blast_radius_expected") != BLAST_CONST:
+        errors.append("VOCAB: blast_radius_expected (embedded) != validator constant (co-weakening attempt)")
+    vg = FCS.get("inherited_admission_gates", {}).get("vault_policy_nonconformance_admission_gate", {})
+    if validate_vault_gate(vg):
+        errors.append("VOCAB: vault admission gate actual != validator constant")
+    vge = FCS.get("vault_gate_expected", {})
+    if any(vge.get(k) != VAULT_CONST[k] for k in ("required_dir_mode", "required_file_mode", "current_conformance", "gate_phase", "status_must_contain")) or vge.get("fail_closed") is not True:
+        errors.append("VOCAB: vault_gate_expected (embedded) != validator constant (co-weakening attempt)")
+    # Hard anchor to immutable Phase 0 authority evidence (07 vault topology / 09 conflict register C-02).
+    for path, want in PHASE0_AUTHORITY.items():
+        try:
+            got = sha256_file(path)
+        except OSError:
+            errors.append(f"VOCAB: Phase 0 authority file missing {os.path.basename(path)}"); continue
+        if got != want:
+            errors.append(f"VOCAB: Phase 0 authority {os.path.basename(path)} hash changed (anchor broken)")
 
 
 # ----------------------------------------------------------------- main

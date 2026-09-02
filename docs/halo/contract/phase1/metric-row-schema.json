@@ -43,6 +43,8 @@
     "review_point": {"type": "string", "required_when_nonterminal_pending": true, "note": "Date/condition when a pending disposition is re-adjudicated."},
     "finite_investigation_ref": {"type": "string", "required_when": "disposition == 'source_investigation_pending'", "note": "Reference to the finite investigation packet (one help-contract pass, one read-only UI pass, one controlled probe). Required for source_investigation_pending; next_action alone is insufficient."},
     "affirmative_investigation_evidence_ref": {"type": "string", "required_when": "disposition == 'genuinely_not_available'", "note": "Affirmative source/retention/product evidence that the required event/field/history is not obtainable. Required to assert genuinely_not_available."},
+    "protected_content_envelope_ref": {"type": "string", "required_when": "evaluation_state == 'measured_abstained' OR (protected_content == true AND measurable)", "note": "Reference to the authorized protected-content envelope (SPEC §5.5). Required before any content/semantic result may be abstained or measured."},
+    "envelope_authorization": {"type": "enum", "values": ["not_requested", "requested", "approved"], "required_when": "protected_content == true", "note": "Must be 'approved' for measured_abstained or any protected content result."},
     "internal_visibility": {"type": "boolean", "default": true},
     "customer_visibility": {"type": "enum", "values": ["full", "appendix_id_label_only", "hidden"]},
     "confidence": {"type": "enum", "values": ["high", "medium", "low", "abstain", "not_applicable"]},
@@ -117,7 +119,9 @@
     "gradable == false => evaluation_state may be 'measured_unscored' at most; no grade_target may score it.",
     "disposition == 'source_investigation_pending' => gradable==false AND customer_visibility!='full' AND owner,next_action,review_point,evidence_as_of,finite_investigation_ref present AND source_existence_state in ['unproved','investigation_pending'].",
     "disposition == 'genuinely_not_available' => affirmative_investigation_evidence_ref present.",
-    "protected_content == true => sensitivity_class == 'protected_content' AND (evaluation_state in ['not_measured','measured_unscored','measured_abstained']) until protected-content envelope authorization is recorded.",
+    "envelope_authorized := (protected_content == true AND sensitivity_class == 'protected_content' AND protected_content_envelope_ref present AND envelope_authorization == 'approved').",
+    "evaluation_state == 'measured_abstained' => envelope_authorized (reject data_acquired_calculation_pending + measured_abstained when protected_content is false/none or no approved envelope).",
+    "protected_content == true AND NOT envelope_authorized => evaluation_state in ['not_measured','measured_unscored'] only (cannot be measured_graded or measured_abstained).",
     "detection_threshold_contract, comparison_reference_contract, grade_target_contract are THREE separate, always-present, independently versioned objects with DISTINCT ids (threshold_id != reference_id != grade_target_id); a change in one MUST NOT mutate another; each fully validates against its sub-contract required_fields.",
     "no substitute/inferred value may be used to hide an absent direct field (missing is not zero)."
   ]

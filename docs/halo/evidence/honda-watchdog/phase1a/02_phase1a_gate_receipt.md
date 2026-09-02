@@ -18,7 +18,7 @@ recipients, or customer changes. INGEST `src/routeTree.gen.ts` untouched.
 | P1A.5 | Source registry/DAG schema frozen (dedupe key (profile,family,period,schema_revision); no per-metric duplicate acquisition; source→metric fan-out) (item 5) | **PASS** | `source-registry-dag-schema.json` |
 | P1A.6 | Separate beyond-295 candidate-intake schema; cannot alter the 295 (item 6) | **PASS** | `beyond-295-candidate-intake-schema.json` (CAND-#### key; hard invariants) |
 | P1A.7 | Canonical fail-closed stops defined; one source failure blocks only dependent IDs (item 7) | **PASS** | `fail-closed-stops.json` (11 stops + blast_radius_rule) |
-| P1A.8 | **Generic recursive JSON-Schema engine** (`record-schemas.json`) + cross-record invariants; recursively-generated mutations for every field at every depth (metric rows, 3 sub-contracts, packets + nested contracts, source/DAG, candidates) + transitions/context-receipts/stops/partitions/DAG/privacy/two-delta/change-scope; **no metric rows/packets populated** (item 8) | **PASS** | `validate_phase1_contracts.py` → `PHASE1A_CONTRACT_CHECKS.json`: structure PASS, vocab PASS, **784/784 self-tests + 17/17 named malformed probes reject**, overall_pass=true |
+| P1A.8 | **Generic recursive JSON-Schema engine** (`record-schemas.json`) + cross-record invariants; recursively-generated mutations for every field at every depth (metric rows, 3 sub-contracts, packets + nested contracts, source/DAG, candidates) + transitions/context-receipts/stops/partitions/DAG/privacy/two-delta/change-scope; **no metric rows/packets populated** (item 8) | **PASS** | `validate_phase1_contracts.py` → `PHASE1A_CONTRACT_CHECKS.json`: structure PASS, vocab PASS, **952/952 self-tests + 36/36 named malformed probes reject (0 crashes)**, overall_pass=true |
 | P1A.9 | Design-only boundary honored | **PASS** | Only additive docs/contracts/validator/evidence written; catalog `29c7ac06…` unchanged; reviewed SPEC `fedd957b…` unchanged; INGEST routeTree ` M` untouched |
 
 ## Shadow re-review correction (impartial Phase 1A HOLD → deepened)
@@ -85,9 +85,36 @@ with the example-checks **replaced by a generic recursive JSON-Schema-like engin
   fresh malformed instances (unknown property, `module=99`, short `inherited_canonical`, bad enum,
   string boolean) — all rejected, confirming enforcement generalizes beyond the fixtures.
 
+## Third shadow re-review correction (still-HOLD → 4 narrow fixes + canonical anti-tautology)
+
+The third submission (`a57c5aa13`) remained **HOLD** on four narrow issues plus a fifth
+anti-tautology finding. All fixed:
+
+1. **Real ISO datetime.** `evidence_as_of` is validated by actual calendar-valid, **timezone-aware**
+   `datetime` parsing (rejects `2026-13-40T25:61:61Z` and naive timestamps), not regex shape.
+2. **Protected-content abstention.** `measured_abstained` is enforced **iff** `protected_content=true`
+   + `sensitivity_class=protected_content` + `protected_content_envelope_ref` present +
+   `envelope_authorization=approved` (new schema fields); `data_acquired_calculation_pending +
+   measured_abstained` rejects when any is false/none/unapproved.
+3. **Crash-resistance.** `$vocab`/enum resolution type-checks before membership, so `[]`/`{}`/non-string
+   values fail closed with a validation error, **never a TypeError**. Cross-record checks and the DAG
+   dedupe key are hardened. Five crash-resistance probes confirm **0 crashes**.
+4. **Anti-tautology (blast-radius + vault-gate).** Both are compared against **immutable validator
+   constants** (`BLAST_CONST`/`VAULT_CONST`) — not read from `fail-closed-stops.json` — and the
+   contract's embedded `*_expected` blocks are additionally checked against those constants, so
+   weakening the actual **and** its embedded expected together still rejects.
+5. **Anti-tautology (canonical stops).** The 11 canonical stop identifiers are anchored to
+   `CANON_CONST` (immutable), so a wholesale rename in the contract (even internally consistent)
+   rejects. Additionally, the validator hard-anchors to **immutable Phase 0 authority hashes**
+   (`07_vault_vs_brain_topology.md` `9d3bb628…`, `09_conflict_register.json` `0357992b…`) and the
+   reviewed SPEC (`fedd957b…`); a change to any breaks the anchor.
+
+Coverage grew to **952 recursive self-tests + 36 named probes** (17 originals + ISO×2, abstention×3,
+crash-resistance×5, anti-tautology×4, fresh×5), all rejecting, **0 crashes**.
+
 ## Tests run (read-only / deterministic)
 
-- `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write` → **RESULT: PASS** (exit 0); `structure_295_11_18=PASS`, `vocab_closure=PASS`, `self_tests_total=784`, `self_tests_failed=0`, `named_probes_total=17`, `named_probes_failed=0`.
+- `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write` → **RESULT: PASS** (exit 0); `structure_295_11_18=PASS`, `vocab_closure=PASS`, `self_tests_total=952`, `self_tests_failed=0`, `named_probes_total=36`, `named_probes_failed=0` (0 crashes).
 - `python3 scripts/halo-phase0/validate_phase0_catalog.py --no-write` → **PASS** (295/11/18 preserved; generated `03` unchanged).
 - JSON parse: all six `docs/halo/contract/phase1/*.json` + `01_phase1a_contract_manifest.json` + `PHASE1A_CONTRACT_CHECKS.json` load OK.
 - Active-objective sha256 unchanged (`7c8e622b…`).
@@ -95,17 +122,18 @@ with the example-checks **replaced by a generic recursive JSON-Schema-like engin
 
 ## Independent verification (separation of duties — Core Value #5)
 
-A fresh independent agent (read-only, non-author) re-verified the **generic** engine and returned
-**PASS on all six checks**, confirming: the validator loads `record-schemas.json` and validates via a
-recursive `validate_instance()`; mutations are generated recursively (323 of the 784 target nested
-sub-objects); all 17 named probes reject for the correct reasons; and — decisively — the agent
-**constructed its own fresh malformed instances not present in the test file** (a metric with an
-unknown `foo` property → "additional property not allowed"; `module=99` → "above maximum" + owner
-mismatch; a packet with a short `inherited_canonical` → "fewer than minItems 11" + "must equal
-canonical_stop_names exactly"; a bad `source_type` enum; a string boolean) and confirmed each is
-rejected, proving enforcement **generalizes beyond the built-in fixtures**. The 295 matrix,
-EXECUTION_SPEC, and INGEST routeTree are unchanged. (Earlier independent reviews covered the prior
-submissions `60c519966` and `59e97d289`.)
+A fresh independent agent (read-only, non-author) re-verified the corrected engine and returned
+**PASS on all seven checks**, confirming: `valid_iso_datetime()` uses real `datetime.fromisoformat`
+parsing and requires tz-aware (probes 18/19 reject); protected-content abstention probes 20/21/22
+reject while the fully-authorized fixture accepts; crash-resistance probes 23–27 all reject with
+**0 CRASH**; and — decisively for the anti-tautology finding — the agent **imported the module and
+called the anchor functions on its own weakened inputs**: `validate_canon_list(["a"…"k"])` → rename
+rejected; `validate_blast_radius({…weakened…})` → 4 constant-mismatch errors; `validate_vault_gate({})`
+→ 7 errors; and it confirmed `BLAST_CONST`/`VAULT_CONST`/`CANON_CONST` are validator literals (not
+read from the contract) and that `check_vocab` re-hashes the pinned Phase 0 07/09 + SPEC authority.
+The 295 matrix, EXECUTION_SPEC, and Phase 0 07/09 are unchanged (hashes match the pins); INGEST
+routeTree is ` M` untouched. (Earlier independent reviews covered `60c519966`, `59e97d289`, and the
+generic-engine `a57c5aa13`.)
 
 ## Rollback
 

@@ -77,7 +77,8 @@
         "review_point": {"type": "string", "nonempty": true},
         "finite_investigation_ref": {"type": "string", "nonempty": true},
         "affirmative_investigation_evidence_ref": {"type": "string", "nonempty": true},
-        "envelope_authorized": {"type": "boolean"}
+        "protected_content_envelope_ref": {"type": "string", "nonempty": true},
+        "envelope_authorization": {"type": "string", "enum": ["not_requested", "requested", "approved"]}
       }
     },
     "threshold_contract": {
