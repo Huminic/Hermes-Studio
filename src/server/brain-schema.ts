@@ -389,6 +389,413 @@ CREATE INDEX IF NOT EXISTS comms_log_channel ON comms_log(channel, ts DESC);
 ALTER TABLE adjacent_neighbors ADD COLUMN source_refs TEXT;
 `,
   },
+  {
+    version: 5,
+    name: 'watchdog_canonical_infostore',
+    sql: `
+-- Canonical Semantic Watchdog InfoStore (execution spec §7, with §6.1/§6.3 record
+-- fields). Additive, versioned, profile-scoped, append-oriented. This is the
+-- reusable §7 owner for the full 11-module / 295-metric catalog across repeated
+-- periods; it supersedes the packet-specific watchdog_packet_* adapter as the write
+-- path for new packets, while those legacy tables remain (untouched) for rollback.
+--
+-- Multi-period / multi-module safety (validated before the adapter):
+--   * metric definitions are TRULY versioned — PK (metric_id, metric_version) — and
+--     every definition FK binds the version, so a formula change is a new immutable
+--     definition row, not an overwrite;
+--   * run-scoped rows key on run_key (+metric), so the same metric recurs across
+--     periods without collision;
+--   * a final report spans many module runs via watchdog_report_run_module_link and
+--     an explicit immutable module_run_ids set — never a single run_key.
+--
+-- Invariants (spec §7): one profile/tenant per DB; append-only observations/
+-- evaluations; idempotent run/artifact keys; immutable source hashes; versioned
+-- formulas/baselines; explicit missing (NULL, never zero); reproducible report-as-of
+-- reconstruction; rollback by disabling a pipeline version, never deleting history.
+-- FKs are ON (brain-store opens PRAGMA foreign_keys=ON); parents precede children.
+
+-- Reuse the EXISTING operational finding table exactly (never a competing table).
+-- Byte-for-byte the schema watchdog-store.ts::ensure() creates; IF NOT EXISTS so
+-- whichever path runs first wins and the other is an inert no-op.
+CREATE TABLE IF NOT EXISTS watchdog_finding (
+  key         TEXT PRIMARY KEY,
+  profile     TEXT NOT NULL,
+  rule_id     TEXT NOT NULL,
+  category    TEXT NOT NULL,
+  priority    TEXT NOT NULL,
+  issue       TEXT NOT NULL,
+  name        TEXT NOT NULL,
+  details     TEXT NOT NULL,
+  evidence    TEXT,
+  status      TEXT NOT NULL DEFAULT 'open',
+  first_seen  INTEGER NOT NULL,
+  last_seen   INTEGER NOT NULL,
+  alerted_at  INTEGER
+);
+CREATE INDEX IF NOT EXISTS watchdog_finding_status ON watchdog_finding(profile, status, priority);
+
+-- §7.1 metric definition — TRULY versioned; composite identity (metric_id,
+-- metric_version). required_fields (direct source columns) is stored SEPARATELY from
+-- required_sources (upstream source ids).
+CREATE TABLE IF NOT EXISTS watchdog_metric_definition (
+  metric_id             TEXT NOT NULL,
+  metric_version        TEXT NOT NULL,
+  module                INTEGER NOT NULL,
+  business_question     TEXT,
+  boundary_class        TEXT,
+  population            TEXT,
+  calculation_kind      TEXT,
+  null_missing_behavior TEXT,
+  unit                  TEXT NOT NULL,
+  polarity              TEXT,
+  window                TEXT,
+  timezone              TEXT,
+  cadence               TEXT,
+  formula               TEXT,
+  numerator_definition  TEXT,
+  denominator_definition TEXT,
+  required_fields       TEXT,
+  required_sources      TEXT,
+  impact_method         TEXT,
+  gradable              INTEGER NOT NULL CHECK (gradable IN (0, 1)),
+  sensitivity_class     TEXT,
+  effective_start       TEXT,
+  effective_end         TEXT,
+  definition_status     TEXT NOT NULL,
+  PRIMARY KEY (metric_id, metric_version)
+);
+
+-- §7.2 detection rule — trigger/threshold; a comparison reference never mutates it.
+CREATE TABLE IF NOT EXISTS watchdog_detection_rule (
+  detection_rule_id     TEXT PRIMARY KEY,
+  metric_id             TEXT NOT NULL,
+  metric_version        TEXT NOT NULL,
+  threshold_id          TEXT,
+  condition             TEXT,
+  comparator            TEXT,
+  threshold             REAL,
+  provenance            TEXT,
+  effective_start       TEXT,
+  effective_end         TEXT,
+  approval_state        TEXT,
+  status                TEXT,
+  evaluation_semantics  TEXT,
+  FOREIGN KEY (metric_id, metric_version)
+    REFERENCES watchdog_metric_definition(metric_id, metric_version)
+);
+CREATE INDEX IF NOT EXISTS watchdog_detection_rule_metric ON watchdog_detection_rule(metric_id, metric_version);
+
+-- §7.3 source artifact — admitted Sales-only artifacts only. Idempotent per
+-- (profile, source_sha256, dealer, period).
+-- This table holds ADMITTED rows only, so family/source_type/dealer_period_result/
+-- admission_receipt are NOT NULL (a rejected/contaminated artifact never lands here).
+CREATE TABLE IF NOT EXISTS watchdog_source_artifact (
+  source_artifact_id    TEXT PRIMARY KEY,
+  profile               TEXT NOT NULL,
+  family                TEXT NOT NULL,
+  source_type           TEXT NOT NULL,
+  raw_location          TEXT,
+  source_sha256         TEXT NOT NULL,
+  dealer_id             TEXT NOT NULL,
+  period                TEXT NOT NULL,
+  schema_version        TEXT,
+  schema_contract_sha256 TEXT,
+  receipt_sha256        TEXT,
+  bytes                 INTEGER,
+  row_count             INTEGER,
+  dealer_period_result  TEXT NOT NULL,
+  admission_receipt     TEXT NOT NULL,
+  UNIQUE (profile, source_sha256, dealer_id, period)
+);
+
+-- §7.4 normalized dataset — reproducible normalization lineage. transform_config_hash
+-- (config/params) is stored SEPARATELY from transformation_code_hash (the code).
+CREATE TABLE IF NOT EXISTS watchdog_normalized_dataset (
+  normalized_dataset_id TEXT PRIMARY KEY,
+  source_artifact_id    TEXT NOT NULL,
+  profile               TEXT NOT NULL,
+  dealer_id             TEXT NOT NULL,
+  period                TEXT NOT NULL,
+  normalized_sha256     TEXT,
+  filter_spec           TEXT,
+  row_key_set_hash      TEXT,
+  row_key_set_hash_method TEXT,
+  timezone              TEXT,
+  as_of                 TEXT,
+  watermark             TEXT,
+  late_correction_version INTEGER,
+  transform_config_hash TEXT,
+  transformation_code_hash TEXT,
+  join_keys             TEXT,
+  join_cardinality      TEXT,
+  unmatched_counts      TEXT,
+  io_reconciliation     TEXT,
+  FOREIGN KEY (source_artifact_id) REFERENCES watchdog_source_artifact(source_artifact_id)
+);
+CREATE INDEX IF NOT EXISTS watchdog_normalized_dataset_source ON watchdog_normalized_dataset(source_artifact_id);
+
+-- §6.1 capability snapshot — period-specific capacity context (optional per run).
+-- Revisioned: a late correction is a NEW revision, not an overwrite; uniqueness is
+-- per (profile, dealer, period, revision) so no single irreversible row is forced.
+CREATE TABLE IF NOT EXISTS watchdog_capability_snapshot (
+  capability_snapshot_id TEXT PRIMARY KEY,
+  profile               TEXT NOT NULL,
+  dealer_id             TEXT NOT NULL,
+  period                TEXT NOT NULL,
+  revision              INTEGER NOT NULL DEFAULT 1,
+  supersedes_id         TEXT,
+  throughput            TEXT,
+  workforce             TEXT,
+  workload_capacity     TEXT,
+  inventory_context     TEXT,
+  source_mix            TEXT,
+  dealer_history        TEXT,
+  seasonality_flags     TEXT,
+  manual_potential      TEXT,
+  provenance            TEXT,
+  UNIQUE (profile, dealer_id, period, revision)
+);
+
+-- §6.3 comparison reference — reference-only context (never the trigger). Preserves
+-- publication/validity/capability/input/minimum-sample/history fields.
+-- Version-addressable: PK (reference_id, reference_version); an evaluation names the
+-- EXACT (reference_id, reference_version) it used.
+CREATE TABLE IF NOT EXISTS watchdog_comparison_reference (
+  reference_id          TEXT NOT NULL,
+  reference_version     TEXT NOT NULL,
+  metric_id             TEXT NOT NULL,
+  metric_version        TEXT NOT NULL,
+  profile               TEXT NOT NULL,
+  basis                 TEXT,
+  formula               TEXT,
+  value_or_range        TEXT,
+  unit                  TEXT,
+  comparator            TEXT,
+  polarity              TEXT,
+  source                TEXT,
+  publication_date      TEXT,
+  valid_period          TEXT,
+  capability_snapshot_id TEXT,
+  inputs                TEXT,
+  assumptions           TEXT,
+  minimum_sample        TEXT,
+  history_ref           TEXT,
+  confidence            TEXT,
+  compatibility_result  TEXT,
+  approval_state        TEXT,
+  status                TEXT,
+  derivation_narrative  TEXT,
+  PRIMARY KEY (reference_id, reference_version),
+  FOREIGN KEY (metric_id, metric_version)
+    REFERENCES watchdog_metric_definition(metric_id, metric_version),
+  FOREIGN KEY (capability_snapshot_id)
+    REFERENCES watchdog_capability_snapshot(capability_snapshot_id)
+);
+CREATE INDEX IF NOT EXISTS watchdog_comparison_reference_metric ON watchdog_comparison_reference(metric_id, metric_version);
+
+-- §6.3 grade target — the one approved grading target for a gradable metric. Same
+-- durable publication/validity/capability/input/minimum-sample/history contract.
+-- Version-addressable: PK (grade_target_id, target_version); an evaluation names the
+-- EXACT (grade_target_id, target_version) it graded against.
+CREATE TABLE IF NOT EXISTS watchdog_grade_target (
+  grade_target_id       TEXT NOT NULL,
+  target_version        TEXT NOT NULL,
+  metric_id             TEXT NOT NULL,
+  metric_version        TEXT NOT NULL,
+  profile               TEXT NOT NULL,
+  basis                 TEXT,
+  value_or_range        TEXT,
+  unit                  TEXT,
+  comparator            TEXT,
+  polarity              TEXT,
+  source                TEXT,
+  provenance            TEXT,
+  publication_date      TEXT,
+  effective_start       TEXT,
+  effective_end         TEXT,
+  valid_period          TEXT,
+  capability_snapshot_id TEXT,
+  inputs                TEXT,
+  assumptions           TEXT,
+  minimum_sample        TEXT,
+  history_ref           TEXT,
+  confidence            TEXT,
+  compatibility_result  TEXT,
+  approval_state        TEXT,
+  status                TEXT,
+  derivation_narrative  TEXT,
+  PRIMARY KEY (grade_target_id, target_version),
+  FOREIGN KEY (metric_id, metric_version)
+    REFERENCES watchdog_metric_definition(metric_id, metric_version),
+  FOREIGN KEY (capability_snapshot_id)
+    REFERENCES watchdog_capability_snapshot(capability_snapshot_id)
+);
+CREATE INDEX IF NOT EXISTS watchdog_grade_target_metric ON watchdog_grade_target(metric_id, metric_version);
+
+-- §7.10 module run — THE canonical run anchor (identity + lifecycle partitions +
+-- reconciliation/QC + acceptance). Carries the run-level two-delta report_lineage
+-- that is part of the content-of-record. Children reference run_key here.
+CREATE TABLE IF NOT EXISTS watchdog_module_run (
+  run_key               TEXT PRIMARY KEY,
+  profile               TEXT NOT NULL,
+  packet_id             TEXT NOT NULL,
+  module                INTEGER NOT NULL,
+  dealer_id             TEXT NOT NULL,
+  period                TEXT NOT NULL,
+  binding_sha256        TEXT NOT NULL,
+  source_sha256         TEXT NOT NULL,
+  engine_version        TEXT NOT NULL,
+  content_sha256        TEXT NOT NULL,
+  expected_subset       TEXT NOT NULL,
+  accepted_measured_ids TEXT NOT NULL,
+  accepted_disposition_only_ids TEXT NOT NULL,
+  rejected_ids          TEXT NOT NULL,
+  lifecycle_partition   TEXT NOT NULL,
+  report_lineage        TEXT NOT NULL,
+  input_hash            TEXT,
+  output_hash           TEXT,
+  reconciliation        TEXT NOT NULL,
+  qc_result             TEXT,
+  acceptance_state      TEXT NOT NULL,
+  graph_manifest        TEXT,
+  graph_sha256          TEXT,
+  as_of                 TEXT NOT NULL,
+  persisted_at          INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS watchdog_module_run_profile ON watchdog_module_run(profile, period);
+
+-- §7.8 metric observation — append-only; missing stays NULL, never zero. Binds the
+-- versioned definition (metric_id, metric_version).
+CREATE TABLE IF NOT EXISTS watchdog_metric_observation (
+  run_key               TEXT NOT NULL,
+  metric_id             TEXT NOT NULL,
+  metric_version        TEXT NOT NULL,
+  profile               TEXT NOT NULL,
+  period                TEXT NOT NULL,
+  status                TEXT NOT NULL,
+  calculation_kind      TEXT NOT NULL,
+  value                 REAL,
+  unit                  TEXT NOT NULL,
+  numerator             REAL,
+  denominator           REAL,
+  missing               REAL,
+  formula               TEXT,
+  source_fields         TEXT NOT NULL,
+  source_lineage        TEXT NOT NULL,
+  normalized_dataset_id TEXT,
+  confidence            TEXT NOT NULL,
+  gradable              INTEGER NOT NULL CHECK (gradable IN (0, 1)),
+  disposition           TEXT,
+  unresolved_reason     TEXT,
+  detail                TEXT,
+  source_investigation  TEXT,
+  PRIMARY KEY (run_key, metric_id),
+  UNIQUE (run_key, metric_id, metric_version),
+  FOREIGN KEY (run_key) REFERENCES watchdog_module_run(run_key),
+  FOREIGN KEY (metric_id, metric_version)
+    REFERENCES watchdog_metric_definition(metric_id, metric_version)
+);
+CREATE INDEX IF NOT EXISTS watchdog_metric_observation_metric ON watchdog_metric_observation(profile, period, metric_id);
+
+-- §7.9 metric evaluation — observation/detection/comparison/grade links + rating.
+-- metric_version is NOT NULL and bound through the versioned observation key, so it
+-- cannot drift from its observation. reference/grade-target links are VERSION-exact.
+CREATE TABLE IF NOT EXISTS watchdog_metric_evaluation (
+  run_key                 TEXT NOT NULL,
+  metric_id               TEXT NOT NULL,
+  metric_version          TEXT NOT NULL,
+  profile                 TEXT NOT NULL,
+  period                  TEXT NOT NULL,
+  gradable_state          TEXT NOT NULL,
+  threshold_id            TEXT,
+  comparator              TEXT,
+  threshold               REAL,
+  reference_id            TEXT,
+  reference_version       TEXT,
+  grade_target_id         TEXT,
+  grade_target_version    TEXT,
+  detection_rule          TEXT,
+  detection_fired         INTEGER CHECK (detection_fired IN (0, 1) OR detection_fired IS NULL),
+  rating                  TEXT NOT NULL,
+  reason                  TEXT,
+  PRIMARY KEY (run_key, metric_id),
+  FOREIGN KEY (run_key, metric_id, metric_version)
+    REFERENCES watchdog_metric_observation(run_key, metric_id, metric_version),
+  FOREIGN KEY (reference_id, reference_version)
+    REFERENCES watchdog_comparison_reference(reference_id, reference_version),
+  FOREIGN KEY (grade_target_id, grade_target_version)
+    REFERENCES watchdog_grade_target(grade_target_id, target_version)
+);
+
+-- §7.11 finding metric-link — many-to-many finding<->metric. PK
+-- (finding_key, run_key, metric_id) permits multiple findings for one metric/run AND
+-- one finding contributing across multiple metrics; run_key keeps periods distinct.
+CREATE TABLE IF NOT EXISTS watchdog_finding_metric_link (
+  finding_key           TEXT NOT NULL,
+  run_key               TEXT NOT NULL,
+  metric_id             TEXT NOT NULL,
+  content_ordinal       INTEGER NOT NULL,
+  profile               TEXT NOT NULL,
+  period                TEXT NOT NULL,
+  severity              TEXT NOT NULL,
+  headline              TEXT NOT NULL,
+  detail                TEXT NOT NULL,
+  audience              TEXT,
+  evidence_class        TEXT,
+  root_cause_class      TEXT,
+  recommended_action    TEXT,
+  PRIMARY KEY (finding_key, run_key, metric_id),
+  FOREIGN KEY (finding_key) REFERENCES watchdog_finding(key),
+  FOREIGN KEY (run_key, metric_id) REFERENCES watchdog_metric_observation(run_key, metric_id)
+);
+CREATE INDEX IF NOT EXISTS watchdog_finding_metric_link_run ON watchdog_finding_metric_link(run_key, metric_id);
+
+-- §7.12 report run — a FINAL report that may span multiple module runs. The member
+-- runs are recorded both as an explicit immutable module_run_ids set and via the
+-- watchdog_report_run_module_link table (never a single run_key).
+CREATE TABLE IF NOT EXISTS watchdog_report_run (
+  report_run_id         TEXT PRIMARY KEY,
+  profile               TEXT NOT NULL,
+  period                TEXT NOT NULL,
+  report_version        TEXT,
+  source_cutoff         TEXT,
+  freshness             TEXT,
+  report_lineage        TEXT NOT NULL,
+  module_run_ids        TEXT NOT NULL,
+  pdf_artifact_sha256   TEXT,
+  internal_artifact_sha256 TEXT,
+  qa_receipt            TEXT,
+  delivery_state        TEXT NOT NULL,
+  activation_state      TEXT
+);
+CREATE INDEX IF NOT EXISTS watchdog_report_run_period ON watchdog_report_run(profile, period);
+
+CREATE TABLE IF NOT EXISTS watchdog_report_run_module_link (
+  report_run_id         TEXT NOT NULL,
+  run_key               TEXT NOT NULL,
+  PRIMARY KEY (report_run_id, run_key),
+  FOREIGN KEY (report_run_id) REFERENCES watchdog_report_run(report_run_id),
+  FOREIGN KEY (run_key) REFERENCES watchdog_module_run(run_key)
+);
+CREATE INDEX IF NOT EXISTS watchdog_report_run_module_link_run ON watchdog_report_run_module_link(run_key);
+
+-- Canonical alert candidate — inert simulations. DB CHECK constraints HARD-enforce
+-- delivered=0 and unsent=1: a delivery flag can never be written any other way.
+CREATE TABLE IF NOT EXISTS watchdog_alert_candidate (
+  run_key               TEXT NOT NULL,
+  metric_id             TEXT NOT NULL,
+  profile               TEXT NOT NULL,
+  period                TEXT NOT NULL,
+  would_fire            INTEGER NOT NULL CHECK (would_fire IN (0, 1)),
+  channel               TEXT NOT NULL,
+  delivered             INTEGER NOT NULL CHECK (delivered = 0),
+  unsent                INTEGER NOT NULL CHECK (unsent = 1),
+  message               TEXT NOT NULL,
+  PRIMARY KEY (run_key, metric_id),
+  FOREIGN KEY (run_key, metric_id) REFERENCES watchdog_metric_observation(run_key, metric_id)
+);
+`,
+  },
 ]
 
 export function migrationChecksum(sql: string): string {

@@ -1,0 +1,92 @@
+{
+  "artifact": "honda-watchdog-pkt-02-01-canonical-migration-backfill-receipt",
+  "binding_sha256": "1c1c98a2e7b3be8d10eea9495861b7a33e65a00020ab7c9e756da363b69f2082",
+  "boundary": {
+    "disposable_db_deleted": true,
+    "notification_delivery_table_present": false,
+    "real_sqlite": true
+  },
+  "canonical_counts": {
+    "alert_candidate": 3,
+    "comparison_reference": 3,
+    "detection_rule": 3,
+    "finding_metric_link": 5,
+    "grade_target": 5,
+    "metric_definition": 5,
+    "metric_evaluation": 5,
+    "metric_observation": 5,
+    "module_run": 1,
+    "normalized_dataset": 1,
+    "report_run": 1,
+    "source_artifact": 1
+  },
+  "dealer_id": "21043",
+  "generated_note": "Deterministic (no wall-clock in hashes). The dev brain.db is DISPOSABLE (tmp) and is deleted at the end of this run; ONLY this committed evidence is durable. No data is installed into a standing dev or production Brain.",
+  "graph_sha256": "2c43390cc3c12e3ecd0527d5194ae6321f6d345a82e9523f46840b600702054d",
+  "hashes": {
+    "canonical_reconstructed_sha256": "ae30c07ab4a6e9ae85461dc183c32b94e1ae50c11c5004ab2b51e4d9b965eba1",
+    "legacy_content_sha256": "ae30c07ab4a6e9ae85461dc183c32b94e1ae50c11c5004ab2b51e4d9b965eba1",
+    "read_path_reconstructed_sha256": "ae30c07ab4a6e9ae85461dc183c32b94e1ae50c11c5004ab2b51e4d9b965eba1",
+    "reconstructed_equals_pinned": true
+  },
+  "idempotence": {
+    "first_backfill_changed": true,
+    "rebackfill_changed": false
+  },
+  "legacy_counts": {
+    "alert_candidates": 3,
+    "evaluations": 5,
+    "findings": 5,
+    "observations": 5,
+    "run": 1
+  },
+  "migration": {
+    "canonical_tables": [
+      "watchdog_alert_candidate",
+      "watchdog_capability_snapshot",
+      "watchdog_comparison_reference",
+      "watchdog_detection_rule",
+      "watchdog_finding",
+      "watchdog_finding_metric_link",
+      "watchdog_grade_target",
+      "watchdog_metric_definition",
+      "watchdog_metric_evaluation",
+      "watchdog_metric_observation",
+      "watchdog_module_run",
+      "watchdog_normalized_dataset",
+      "watchdog_report_run",
+      "watchdog_report_run_module_link",
+      "watchdog_source_artifact"
+    ],
+    "schema_version": 5
+  },
+  "period": "2026-08-24..2026-08-30",
+  "pinned_content_sha256": "ae30c07ab4a6e9ae85461dc183c32b94e1ae50c11c5004ab2b51e4d9b965eba1",
+  "profile": "serra-honda",
+  "read_path_evidence": {
+    "canonical_read_obs": 5,
+    "compat_read_source": "canonical",
+    "legacy_rollback_surface_readable": true,
+    "listed_source": "canonical"
+  },
+  "row_parity": true,
+  "run_key": "119f77056b73c2c9a2a2a6d9ac9aa91afc63205ec674df9d01effe660e774aa7",
+  "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae",
+  "target_authority_preserved": {
+    "no_unapproved_target_is_active": true,
+    "pending_targets": [
+      {
+        "approval_state": "unresolved",
+        "grade_target_id": "GT-013",
+        "status": "draft",
+        "value_or_range": "pending"
+      },
+      {
+        "approval_state": "unresolved",
+        "grade_target_id": "GT-014",
+        "status": "draft",
+        "value_or_range": "pending"
+      }
+    ]
+  }
+}
