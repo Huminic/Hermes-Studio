@@ -28,6 +28,14 @@ remain `source_investigation_pending`.
 | SW-013 | **source_investigation_pending** | AFTER-HOURS-originated leads (Originated After Hours==Yes) with no HUMAN response by the authoritative **next opening + 15 min** — held: opening schedule + first-human timestamp absent; **no proxy** from generic hours / Adjusted Response Time | — | pending |
 | SW-014 | **source_investigation_pending** | **event count** predicate: first response **auto-reply only AND no human touch within two hours** (no business-hours restriction) — held: direct auto-vs-human actor classification + timestamps absent; **no channel/direction inference** | leads | pending |
 
+**Semantic immutability (exact).** Every definitional field above is now bound by **exact equality**
+to the versioned per-metric binding `pkt-02-01-binding.json` (sha `1c1c98a2…`, pinned in the packet's
+`authority_binding` and the manifest). The packet must EQUAL each binding field; the binding is
+re-anchored to the immutable authorities — `canonical_condition` == the frozen catalog condition,
+SW-011/012/015 formula/numerator/denominator/unit/source_fields/baseline_id == `gate2-evaluator-contract.json`,
+and OT comparator/threshold/unit/direction/basis == `baseline-registry.json`. No substring/keyword logic
+remains: a coordinated keyword-preserving mutation is rejected for exact field mismatch (probes P–V).
+
 Lifecycle partition: `accepted_measured = {SW-011, SW-012, SW-015}`,
 `source_investigation_pending = {SW-013, SW-014}`, `accepted_disposition_only / rejected /
 calculation_pending = {}`. Only accepted_measured feed value/grade/customer output; SW-013/014 are

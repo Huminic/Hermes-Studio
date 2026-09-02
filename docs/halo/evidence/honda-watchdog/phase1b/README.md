@@ -5,7 +5,10 @@
 ingest, runtime, DB schema, vault permissions, schedules, production, recipients, or INGEST changes;
 no calculation/acquisition/persistence/report generation.
 **Status: DRAFT / HOLD — not approved; awaiting a fresh impartial-shadow PASS.** (Prior submission
-`8dd773df8` returned HOLD; this packet implements the 12 corrections.)
+`33f743c55` returned HOLD — Codex reproduced a semantic-validator bypass in which a coordinated
+keyword-preserving mutation passed the old substring/required-token check with zero errors; this
+packet closes that gap by replacing token checks with **exact equality against an authority-anchored
+binding**.)
 
 ## Artifacts (`docs/halo/contract/phase1b/`)
 
@@ -15,13 +18,17 @@ no calculation/acquisition/persistence/report generation.
 | `master-ledger-schema.json` | Ledger row contract (five closed vocabularies; `authoritative`/`current_truth_ref`; chained append-only transitions; invariants) |
 | `master-ledger-295.json` | 295 rows once; frozen module owner; **carry-forward of 17 authoritative accepted+evaluated** (not reset); 18 overlay disposition-only; rest non-authoritative provisional |
 | `packet-index.json` | 30 **provisional_planning** packets (mechanically balanced, not yet logically grouped); each 5–12; one module; union == exact 295; PKT-02-01 active |
-| `packet-schema-1b.json` | Packet schema: lifecycle partitions + partition-conditional pipeline |
+| `packet-schema-1b.json` | Packet schema: lifecycle partitions + partition-conditional pipeline; requires `authority_binding{ref,sha256}` |
+| `pkt-02-01-binding.json` | **Versioned exact per-metric semantic binding** for PKT-02-01. Packet must EQUAL each field; anchored to catalog condition + gate2 + baseline OT; sha pinned in packet+manifest; immutable only after independent PASS |
 | `source-registry-1b.json` | Single reused+**promoted** Leads source; fans out to SW-011/012/015/090; no per-packet reacquisition |
-| `packets/PKT-02-01.json` | Authored packet (SW-011..015) + 5 metric definitions |
+| `packets/PKT-02-01.json` | Authored packet (SW-011..015) + 5 metric definitions, each EQUAL to its binding record; carries `authority_binding` |
 
 Scripts: `scripts/halo-phase1b/build_ledger.py` (deterministic ledger/assignment generator + carry-forward);
-`scripts/halo-phase1b/validate_phase1b.py` (reuses the Phase 1A engine; ledger/packet/metric/source +
-carry-forward/no-regression + strengthened transitions + semantic immutability + 21 adversarial controls (structured semantic bindings + coordinated-bypass + tz-aware chronological transitions)).
+`scripts/halo-phase1b/build_binding.py` (builds the exact per-metric binding from gate2/catalog/baseline
+and sets the packet to equal it); `scripts/halo-phase1b/validate_phase1b.py` (reuses the Phase 1A engine;
+ledger/packet/metric/source + carry-forward/no-regression + strengthened tz-aware transitions +
+**exact-equality semantic immutability** (packet == binding == catalog/gate2/baseline, no substring/keyword
+logic) + 22 adversarial controls (per-field coordinated-bypass P–T, all-five-mutation V, chronological-reversal U)).
 Reproduce: `python3 scripts/halo-phase1b/validate_phase1b.py --no-write`.
 
 ## PKT-02-01 (SW-011..015) — corrected/frozen meanings
@@ -45,8 +52,9 @@ block only module 2 + final completion, never unrelated packets.
 
 ## Result
 
-- Validator **PASS** (0 errors; **21/21 adversarial probes reject**); ledger 295 / 30 provisional
-  packets; **17 authoritative accepted+evaluated carried forward (not reset)**; two-delta present.
+- Validator **PASS** (0 errors; **22/22 adversarial probes reject**, each P–V an EXACT field mismatch
+  against the binding — not a keyword miss); ledger 295 / 30 provisional packets; **17 authoritative
+  accepted+evaluated carried forward (not reset)**; two-delta present.
 - Phase 1A regression **PASS** (956/956, 61/61, unchanged); Phase 0 **PASS**.
 - Immutable objective/SPEC/matrix/Phase 0 07/09 and all Phase 1A artifacts unchanged; INGEST untouched.
 

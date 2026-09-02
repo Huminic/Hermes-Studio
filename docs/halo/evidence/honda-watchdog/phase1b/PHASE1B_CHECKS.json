@@ -6,18 +6,19 @@
     "master-ledger-schema.json": "33c4fbbc6757e21cd2545411e04a33fe6a59ff78532da9ef312fa3b03309fadb",
     "master-ledger-295.json": "3406ca4ff8d90ce94e5f08f8929e393b34cb246267dc2ed942dc7a7d878fc7b8",
     "packet-index.json": "dd7a5cb1946ccc5345264acd39fc63d5b80cca3eb89a2f3df9d974d61caac542",
-    "packet-schema-1b.json": "db5970d09a8c0614264cf3b6582eb30bc51f020d000ef2d837a27a30dc898d58",
+    "packet-schema-1b.json": "51c9e25ce7f2ee381d233c52e488cbbbb8483479d4e68cf4b0bd16810634e29c",
     "source-registry-1b.json": "ab613382d74bac77a0e58bd809a44a91cbef923d82849eb2a04599852aae131f",
-    "packets/PKT-02-01.json": "f96d7004d7d61dd7e12746f49173f0b059bee3763bf2cb4f1859d4a137850284"
+    "packets/PKT-02-01.json": "89de72da33a5459d1aedd69cbc92a1fc347f3d589d8cbfd1ecf13bad1890d97d"
   },
   "ledger_metrics": 295,
   "packets": 30,
   "authored_packet": "PKT-02-01 (SW-011..015)",
   "two_delta_present": true,
   "semantic_bindings_provenance": {
-    "catalog": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json (29c7ac06…) — condition per metric",
-    "gate2": "docs/halo/contract/gate2-evaluator-contract.json — evaluable_conditions formula/source_fields/numerator/denominator/unit/baseline_id/comparator",
-    "baseline_registry": "docs/halo/contract/baseline-registry.json — OT-SW-011/012/015 comparator/threshold/unit/direction/basis"
+    "catalog": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json (29c7ac06…) — canonical_condition (exact)",
+    "gate2": "docs/halo/contract/gate2-evaluator-contract.json — SW-011/012/015 formula/numerator_field/denominator_field/unit/source_fields/baseline_id (exact)",
+    "baseline_registry": "docs/halo/contract/baseline-registry.json — OT-SW-011/012/015 comparator/threshold/unit/direction/basis (exact)",
+    "binding": "docs/halo/contract/phase1b/pkt-02-01-binding.json — versioned exact per-metric record; packet must EQUAL each field (no substring/keyword logic); sha pinned in packet + manifest"
   },
   "acquisition_truth": {
     "admitted_promoted_leads": [
@@ -29,7 +30,7 @@
     "admitted_held_other_evaluated_count": 13,
     "note": "All 17 preserve evaluated/report state; analytical evaluation is not acquisition promotion."
   },
-  "adversarial_probes_total": 21,
+  "adversarial_probes_total": 22,
   "adversarial_probes_failed": 0,
   "adversarial_probes": [
     {
@@ -102,15 +103,15 @@
       "got": "reject",
       "pass": true,
       "n_errors": 1,
-      "sample_error": "semantic SW-012: numerator/formula must not contain 'or'"
+      "sample_error": "semantic SW-012: formula != binding (exact)"
     },
     {
       "probe": "J_sw013_business_hours_for_after_hours",
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "n_errors": 2,
-      "sample_error": "semantic SW-013: population missing required token 'opening'"
+      "n_errors": 1,
+      "sample_error": "semantic SW-013: population != binding (exact)"
     },
     {
       "probe": "K_sw014_duration_for_two_hour_event",
@@ -118,23 +119,23 @@
       "got": "reject",
       "pass": true,
       "n_errors": 1,
-      "sample_error": "semantic SW-014: calculation_kind 'duration' != authority 'count'"
+      "sample_error": "semantic SW-014: calculation_kind != binding (exact)"
     },
     {
       "probe": "L_sw015_minutes_difference_for_2x_share",
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "n_errors": 2,
-      "sample_error": "semantic SW-015: numerator/formula must not contain 'minus'"
+      "n_errors": 1,
+      "sample_error": "semantic SW-015: formula != binding (exact)"
     },
     {
       "probe": "M_sw011_target_replacement",
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "n_errors": 2,
-      "sample_error": "semantic SW-011: grade target must reference OT-SW-011"
+      "n_errors": 5,
+      "sample_error": "semantic SW-011: grade_target_id != binding"
     },
     {
       "probe": "N_prior_accepted_state_regression",
@@ -157,16 +158,16 @@
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "n_errors": 1,
-      "sample_error": "semantic SW-012: numerator must include ALL THREE blank fields (missing 'actual response time')"
+      "n_errors": 2,
+      "sample_error": "semantic SW-012: numerator != binding (exact)"
     },
     {
       "probe": "Q_sw013_unrelated_after_hours_event",
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "n_errors": 2,
-      "sample_error": "semantic SW-013: population missing required token 'opening'"
+      "n_errors": 1,
+      "sample_error": "semantic SW-013: population != binding (exact)"
     },
     {
       "probe": "R_sw014_unrelated_count_question",
@@ -174,7 +175,7 @@
       "got": "reject",
       "pass": true,
       "n_errors": 3,
-      "sample_error": "semantic SW-014: predicate missing required token 'auto-reply'"
+      "sample_error": "semantic SW-014: business_question != binding (exact)"
     },
     {
       "probe": "S_sw015_denominator_all_leads",
@@ -182,15 +183,23 @@
       "got": "reject",
       "pass": true,
       "n_errors": 1,
-      "sample_error": "semantic SW-015: denominator must be exactly 'reps_with_numeric_response'"
+      "sample_error": "semantic SW-015: denominator != binding (exact)"
     },
     {
       "probe": "T_sw011_threshold_999",
       "expected": "reject",
       "got": "reject",
       "pass": true,
-      "n_errors": 1,
-      "sample_error": "semantic SW-011: threshold value 10 not bound (authority OT-011)"
+      "n_errors": 2,
+      "sample_error": "semantic SW-011: grade value_or_range != binding"
+    },
+    {
+      "probe": "V_coordinated_five_mutation_all_keywords",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 6,
+      "sample_error": "semantic SW-011: grade value_or_range != binding"
     },
     {
       "probe": "U_timestamp_chronological_reversal_offset",

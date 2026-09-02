@@ -58,10 +58,14 @@ _BR = p1.load(os.path.join(REPO, "docs", "halo", "contract", "baseline-registry.
 _OTS = _BR["operational_targets"] if isinstance(_BR["operational_targets"], list) else list(_BR["operational_targets"].values())
 OT = {e["id"]: e for e in _OTS if isinstance(e, dict) and "id" in e}
 SEMANTIC_PROVENANCE = {
-    "catalog": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json (29c7ac06…) — condition per metric",
-    "gate2": "docs/halo/contract/gate2-evaluator-contract.json — evaluable_conditions formula/source_fields/numerator/denominator/unit/baseline_id/comparator",
-    "baseline_registry": "docs/halo/contract/baseline-registry.json — OT-SW-011/012/015 comparator/threshold/unit/direction/basis"
+    "catalog": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json (29c7ac06…) — canonical_condition (exact)",
+    "gate2": "docs/halo/contract/gate2-evaluator-contract.json — SW-011/012/015 formula/numerator_field/denominator_field/unit/source_fields/baseline_id (exact)",
+    "baseline_registry": "docs/halo/contract/baseline-registry.json — OT-SW-011/012/015 comparator/threshold/unit/direction/basis (exact)",
+    "binding": "docs/halo/contract/phase1b/pkt-02-01-binding.json — versioned exact per-metric record; packet must EQUAL each field (no substring/keyword logic); sha pinned in packet + manifest"
 }
+G2 = GATE2["evaluable_conditions"]
+BINDING_PATH = os.path.join(C1B, "pkt-02-01-binding.json")
+BINDING = p1.load(BINDING_PATH)
 
 
 def _dt(s):
@@ -113,106 +117,73 @@ def check_transitions(r, mid, errs):
         errs.append(f"ledger {mid}: transitions[-1].to != disposition")
 
 
-def _numtok(text, val):
-    return re.search(r"(?<![\d.])%d(?![\d.])" % int(val), str(text)) is not None
-
-
-def _expected_semantics():
-    """Derive per-metric expected structured facts from the PINNED authority (catalog + gate2 + OT)."""
-    g = GATE2["evaluable_conditions"]
-    E = {
-        "SW-011": {"unit": g["SW-011"]["unit"], "calc": "duration", "disposition": "measured_validated",
-                   "ses": "acquired_local", "bucket": "accepted_measured_ids", "direct_fields": set(g["SW-011"]["source_fields"]),
-                   "formula_must": ["median", "after hours == no"],
-                   "grade_ref": "OT-SW-011", "comparator": OT["OT-SW-011"]["comparator"], "threshold": OT["OT-SW-011"]["threshold"]},
-        "SW-012": {"unit": g["SW-012"]["unit"], "calc": "rate", "disposition": "measured_validated",
-                   "ses": "acquired_local", "bucket": "accepted_measured_ids", "direct_fields": set(g["SW-012"]["source_fields"]),
-                   "numerator_all_blank": ["first contact attempt", "first customer contact", "actual response time"],
-                   "numerator_forbid": [" or ", "any of", "any "], "denominator_must": "business_hours_population",
-                   "grade_ref": "OT-SW-012", "comparator": OT["OT-SW-012"]["comparator"], "threshold": OT["OT-SW-012"]["threshold"]},
-        "SW-015": {"unit": g["SW-015"]["unit"], "calc": "rate", "disposition": "measured_validated",
-                   "ses": "acquired_local", "bucket": "accepted_measured_ids", "direct_fields": {"Sales Rep", "Actual Response Time (Min)"},
-                   "numerator_must": ["store median"], "numerator_2x": ["2 x store median", ">= 2"],
-                   "numerator_forbid": ["minus", "difference"], "denominator_exact": "reps_with_numeric_response",
-                   "grade_ref": "OT-SW-015", "comparator": OT["OT-SW-015"]["comparator"], "threshold": OT["OT-SW-015"]["threshold"]},
-        "SW-013": {"disposition": "source_investigation_pending", "ses": "investigation_pending", "bucket": "source_investigation_pending_ids",
-                   "population_must": ["after", "opening", "15"], "no_business_only": True, "catalog": CATALOG["SW-013"]["condition"]},
-        "SW-014": {"disposition": "source_investigation_pending", "calc": "count", "bucket": "source_investigation_pending_ids",
-                   "predicate_must": ["auto-reply", "no human", "hour"], "no_business_hours": True, "catalog": CATALOG["SW-014"]["condition"]},
-    }
-    return E
+def check_binding_anchoring(errs):
+    """Verify the binding's authority-derived fields EXACTLY equal the immutable catalog/gate2/baseline."""
+    for mid in ("SW-011", "SW-012", "SW-015"):
+        b = BINDING["metrics"][mid]; g = G2[mid]; ot = OT[g["baseline_id"]]
+        if b["canonical_condition"] != CATALOG[mid]["condition"]:
+            errs.append(f"binding {mid}: canonical_condition != catalog")
+        if b["formula"] != g["formula"]:
+            errs.append(f"binding {mid}: formula != gate2")
+        if b["numerator"] != g["numerator_field"]:
+            errs.append(f"binding {mid}: numerator != gate2 numerator_field")
+        if b["denominator"] != g["denominator_field"]:
+            errs.append(f"binding {mid}: denominator != gate2 denominator_field")
+        if b["unit"] != g["unit"]:
+            errs.append(f"binding {mid}: unit != gate2")
+        if list(b["direct_source_fields"]) != list(g["source_fields"]):
+            errs.append(f"binding {mid}: direct_source_fields != gate2 source_fields")
+        if b["grade_target_id"] != "GT-" + g["baseline_id"]:
+            errs.append(f"binding {mid}: grade_target_id != GT-{g['baseline_id']}")
+        oa = b.get("ot_anchor") or {}
+        for k, sk in (("baseline_id", "id"), ("comparator", "comparator"), ("threshold", "threshold"), ("unit", "unit"), ("direction", "direction"), ("basis", "basis")):
+            if oa.get(k) != ot.get(sk):
+                errs.append(f"binding {mid}: ot_anchor.{k} != baseline OT")
+    for mid in ("SW-013", "SW-014"):
+        if BINDING["metrics"][mid]["canonical_condition"] != CATALOG[mid]["condition"]:
+            errs.append(f"binding {mid}: canonical_condition != catalog (verbatim)")
 
 
 def check_semantic_immutability(pkt, errs):
-    """Bind SW-011..015 field-by-field to the derived authoritative structured facts (not paraphrase)."""
+    """EXACT field-for-field equality: each PKT-02-01 metric def must EQUAL its binding record.
+    No substring/keyword logic. The binding is sha-pinned in the packet and anchored to authority."""
+    if p1.sha256_file(BINDING_PATH) != (pkt.get("authority_binding") or {}).get("sha256"):
+        errs.append("packet authority_binding.sha256 != binding file sha (unpinned/altered binding)")
+    check_binding_anchoring(errs)
     md = {m.get("metric_id"): m for m in pkt.get("metric_definitions", [])}
     lp = pkt.get("lifecycle_partition", {})
     bucket_of = {i: b for b, ids in lp.items() for i in ids}
-    E = _expected_semantics()
-    for mid, ex in E.items():
+    alias = BINDING.get("alias_map", {})
+    for mid, b in BINDING["metrics"].items():
         m = md.get(mid, {})
-        f = str(m.get("formula", "")).lower()
-        num = str(m.get("numerator", "")).lower() + " " + f
-        den = str(m.get("denominator", "")).lower()
-        pop = str(m.get("population", "")).lower()
+        for field in ("business_question", "population", "calculation_kind", "unit", "disposition", "source_existence_state", "evaluation_state"):
+            if m.get(field) != b[field]:
+                errs.append(f"semantic {mid}: {field} != binding (exact)")
+        for field in ("numerator", "denominator", "formula"):
+            if b[field] is None:
+                if field in m:
+                    errs.append(f"semantic {mid}: {field} must be absent (source pending)")
+            elif m.get(field) != b[field]:
+                errs.append(f"semantic {mid}: {field} != binding (exact)")
+        pf = set(alias.get(x, x) for x in (m.get("direct_source_fields") or []))
+        if pf != set(b["direct_source_fields"]):
+            errs.append(f"semantic {mid}: direct_source_fields (alias-normalized) != binding exact set")
+        if bucket_of.get(mid) != b["lifecycle_bucket"]:
+            errs.append(f"semantic {mid}: lifecycle bucket != binding")
         gt = m.get("grade_target_contract") or {}
         dt = m.get("detection_threshold_contract") or {}
-        blob = " ".join(str(m.get(k, "")) for k in ("business_question", "population", "explainability_ref", "evidence_ref", "formula")).lower()
-        if "unit" in ex and m.get("unit") != ex["unit"]:
-            errs.append(f"semantic {mid}: unit {m.get('unit')!r} != authority {ex['unit']!r}")
-        if "calc" in ex and m.get("calculation_kind") != ex["calc"]:
-            errs.append(f"semantic {mid}: calculation_kind {m.get('calculation_kind')!r} != authority {ex['calc']!r}")
-        if m.get("disposition") != ex["disposition"]:
-            errs.append(f"semantic {mid}: disposition != {ex['disposition']}")
-        if "ses" in ex and m.get("source_existence_state") != ex["ses"]:
-            errs.append(f"semantic {mid}: source_existence_state != {ex['ses']}")
-        if bucket_of.get(mid) != ex["bucket"]:
-            errs.append(f"semantic {mid}: lifecycle bucket {bucket_of.get(mid)} != {ex['bucket']}")
-        if "direct_fields" in ex:
-            missing = {x for x in ex["direct_fields"] if x not in (m.get("direct_source_fields") or [])}
-            if missing:
-                errs.append(f"semantic {mid}: missing required direct fields {sorted(missing)}")
-        for tok in ex.get("formula_must", []):
-            if tok not in f:
-                errs.append(f"semantic {mid}: formula missing required token '{tok}'")
-        if "numerator_all_blank" in ex:
-            for fld in ex["numerator_all_blank"]:
-                if fld not in num:
-                    errs.append(f"semantic {mid}: numerator must include ALL THREE blank fields (missing '{fld}')")
-            if " and " not in num:
-                errs.append(f"semantic {mid}: numerator must AND (not OR/ANY) across the three blanks")
-        for bad in ex.get("numerator_forbid", []):
-            if bad in num:
-                errs.append(f"semantic {mid}: numerator/formula must not contain '{bad.strip()}'")
-        for tok in ex.get("numerator_must", []):
-            if tok not in num:
-                errs.append(f"semantic {mid}: numerator must contain '{tok}'")
-        if "numerator_2x" in ex and not any(t in num for t in ex["numerator_2x"]):
-            errs.append(f"semantic {mid}: numerator must express >= 2x store median")
-        if "denominator_exact" in ex and ex["denominator_exact"] not in den:
-            errs.append(f"semantic {mid}: denominator must be exactly '{ex['denominator_exact']}'")
-        if "denominator_must" in ex and ex["denominator_must"] not in den and ex["denominator_must"] not in f:
-            errs.append(f"semantic {mid}: denominator must reference '{ex['denominator_must']}'")
-        if "grade_ref" in ex:
-            if ex["grade_ref"] not in str(gt.get("grade_target_id")):
-                errs.append(f"semantic {mid}: grade target must reference {ex['grade_ref']}")
-            if gt.get("approval_state") != "approved" or gt.get("status") != "active":
-                errs.append(f"semantic {mid}: grade target must be approved+active")
-            th_text = str(dt.get("rule", "")) + " " + str(gt.get("value_or_range", ""))
-            if ex["comparator"] not in th_text:
-                errs.append(f"semantic {mid}: threshold comparator '{ex['comparator']}' not bound")
-            if not _numtok(th_text, ex["threshold"]):
-                errs.append(f"semantic {mid}: threshold value {ex['threshold']} not bound (authority OT-{mid[3:]})")
-        for tok in ex.get("population_must", []):
-            if tok not in pop:
-                errs.append(f"semantic {mid}: population missing required token '{tok}'")
-        if ex.get("no_business_only") and "business-hours" in pop and "after" not in pop:
-            errs.append(f"semantic {mid}: population must be after-hours, not business-hours")
-        if ex.get("no_business_hours") and "business-hours" in pop and "no business-hours" not in pop:
-            errs.append(f"semantic {mid}: must not impose a business-hours restriction")
-        for tok in ex.get("predicate_must", []):
-            if tok not in blob:
-                errs.append(f"semantic {mid}: predicate missing required token '{tok}'")
+        if gt.get("grade_target_id") != b["grade_target_id"]:
+            errs.append(f"semantic {mid}: grade_target_id != binding")
+        if gt.get("approval_state") != b["grade_approval"]:
+            errs.append(f"semantic {mid}: grade approval_state != binding")
+        if gt.get("status") != b["grade_status"]:
+            errs.append(f"semantic {mid}: grade status != binding")
+        if gt.get("basis") != b["grade_basis"]:
+            errs.append(f"semantic {mid}: grade basis != binding")
+        if gt.get("value_or_range") != b["grade_value_or_range"]:
+            errs.append(f"semantic {mid}: grade value_or_range != binding")
+        if dt.get("rule") != b["detection_rule"]:
+            errs.append(f"semantic {mid}: detection rule != binding")
 
 
 def check_cross_packet_independence(idx, errs):
@@ -492,6 +463,22 @@ def run_probes(led, idx, pkt, reg):
         "denominator": "all accepted leads rows"})))
     rec("T_sw011_threshold_999", lambda: sem(lambda m: (_def(m, "SW-011").__setitem__("detection_threshold_contract", dict(_def(m, "SW-011")["detection_threshold_contract"], rule="median_business_hours_response_min > 999")),
                                                         _def(m, "SW-011").__setitem__("grade_target_contract", dict(_def(m, "SW-011")["grade_target_contract"], value_or_range="> 999 minutes (breach); comparator '>' lower_is_better")))))
+    # --- single coordinated 5-mutation (all keywords retained) -> exact mismatch per metric ---
+    def five_probe():
+        m = copy.deepcopy(pkt)
+        _def(m, "SW-012").update({"numerator": "count of all rows regardless of First Contact Attempt blank AND First Customer Contact blank AND Actual Response Time blank"})
+        _def(m, "SW-013").update({"population": "Serra Honda 21043 after-hours Sales leads that were sold deals"})
+        _def(m, "SW-014").update({"business_question": "How many Sales leads were contacted in the period?"})
+        _def(m, "SW-015").update({"denominator": "all accepted leads rows"})
+        d = _def(m, "SW-011")
+        d["detection_threshold_contract"] = dict(d["detection_threshold_contract"], rule="median_business_hours_response_min > 999")
+        d["grade_target_contract"] = dict(d["grade_target_contract"], value_or_range="> 999 minutes (breach); comparator '>' lower_is_better")
+        e = []
+        check_semantic_immutability(m, e)
+        covered = all(any(("semantic %s:" % mid) in x for x in e) for mid in ("SW-011", "SW-012", "SW-013", "SW-014", "SW-015"))
+        return e if covered else []  # if any affected metric not flagged, return [] -> probe FAILS
+    rec("V_coordinated_five_mutation_all_keywords", five_probe)
+
     # --- chronological (tz-aware) timestamp reversal across offsets ---
     def ts_reversal():
         r = {"disposition": "measured_validated", "transitions": [

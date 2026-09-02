@@ -1,9 +1,9 @@
 {
   "artifact": "honda-watchdog-phase1b-manifest",
   "phase": "Phase 1B — packetized execution (design-only). Additive; preserves Phase 0/1A.",
-  "pinned_at_utc": "2026-09-02T06:51:10Z",
+  "pinned_at_utc": "2026-09-02T07:31Z",
   "pinned_on_branch": "codex/halo-295-unshrinkable-inputs",
-  "parent_head_at_authoring": "8dd773df8712a5d12aca43e0c3864312b3ee437c",
+  "parent_head_at_authoring": "33f743c55f916b1c193ca74ca6df5be459de04a4",
   "phase1a_predecessor": "Phase 1A PASS (binding) at bf8ee705d",
   "scope_statement": "Design-only. Additive packetized-execution layer. Does NOT modify the pinned objective, HONDA_SEMANTIC_WATCHDOG_EXECUTION_SPEC, the frozen 295, or any Phase 0/1A contract. Carries forward the 17 authoritative accepted+evaluated Honda metrics (not reset); the 18-ID Service overlay is disposition-only; all other rows are explicitly NON-AUTHORITATIVE provisional planning placeholders. Only PKT-02-01 authored in detail. No Vin/Gmail, ingest, runtime, DB schema, vault permissions, schedules, production, recipients, or INGEST changes; no NEW calculation/acquisition/persistence/report generation.",
   "preserved_immutable": {
@@ -47,8 +47,13 @@
     },
     "packet_schema_1b": {
       "path": "docs/halo/contract/phase1b/packet-schema-1b.json",
-      "sha256": "db5970d09a8c0614264cf3b6582eb30bc51f020d000ef2d837a27a30dc898d58",
-      "note": "lifecycle partitions + partition-conditional pipeline; SIP never accepted_disposition_only; accepted_measured requires measured+approved target."
+      "sha256": "51c9e25ce7f2ee381d233c52e488cbbbb8483479d4e68cf4b0bd16810634e29c",
+      "note": "lifecycle partitions + partition-conditional pipeline; SIP never accepted_disposition_only; accepted_measured requires measured+approved target; adds required authority_binding{ref,sha256} pinning the exact per-metric semantic binding."
+    },
+    "pkt_02_01_binding": {
+      "path": "docs/halo/contract/phase1b/pkt-02-01-binding.json",
+      "sha256": "1c1c98a2e7b3be8d10eea9495861b7a33e65a00020ab7c9e756da363b69f2082",
+      "note": "Versioned (v1) exact per-metric semantic binding for PKT-02-01. Each metric def must EQUAL its binding record FIELD-FOR-FIELD (no substring/keyword logic). Anchored to immutable authorities: canonical_condition == catalog condition (exact); SW-011/012/015 formula/numerator/denominator/unit/source_fields/baseline_id == gate2-evaluator-contract.json (exact); ot_anchor comparator/threshold/unit/direction/basis == baseline-registry.json (exact); SW-013/014 carry the catalog condition verbatim + reviewed source-pending contract. immutable_after_independent_pass=false: this additive binding becomes immutable ONLY after an independent PASS, and later phases MUST assert this sha256."
     },
     "source_registry_1b": {
       "path": "docs/halo/contract/phase1b/source-registry-1b.json",
@@ -57,23 +62,28 @@
     },
     "packet_pkt_02_01": {
       "path": "docs/halo/contract/phase1b/packets/PKT-02-01.json",
-      "sha256": "f96d7004d7d61dd7e12746f49173f0b059bee3763bf2cb4f1859d4a137850284",
-      "note": "authored packet + 5 metric definitions; SW-011/012/015 accepted_measured (measured_validated/graded, bound to approved OT targets); SW-013/014 source_investigation_pending."
+      "sha256": "89de72da33a5459d1aedd69cbc92a1fc347f3d589d8cbfd1ecf13bad1890d97d",
+      "note": "authored packet + 5 metric definitions, each EQUAL to its pkt-02-01-binding record; carries authority_binding{ref,sha256=1c1c98a2…}; SW-011/012/015 accepted_measured (measured_validated/graded, bound to approved OT targets); SW-013/014 source_investigation_pending."
     },
     "build_ledger": {
       "path": "scripts/halo-phase1b/build_ledger.py",
       "sha256": "1648cbded57c27e4b4efb28a987c1529ccb699d9fc202757c1df386fea78512d",
       "note": "deterministic ledger/packet-assignment generator (frozen Phase 0 map)."
     },
+    "build_binding": {
+      "path": "scripts/halo-phase1b/build_binding.py",
+      "sha256": "ae0ab5d11704b6b0136726c4da6d55bf28808ad0061bbf16a832c178ff030eca",
+      "note": "generator: reads gate2-evaluator-contract.json + catalog + baseline-registry.json, builds the exact per-metric binding (authority-derived definitional fields + Phase-1B-authored literals for business_question/population/grade value), then sets the packet metric defs to EQUAL the binding and pins its sha256 in the packet. Design-only; reads pinned authorities only."
+    },
     "validator": {
       "path": "scripts/halo-phase1b/validate_phase1b.py",
-      "sha256": "a4e26dab81bd36b1838a4cc6ac300d97bd56be80325de96280050ec4badc7459",
-      "note": "reuses Phase 1A engine; validates ledger/packet/metric/source-DAG + carry-forward/no-regression + strengthened tz-aware chained transitions + STRUCTURED semantic bindings (catalog/gate2/baseline, not paraphrase) + 21 adversarial controls (incl. coordinated-bypass + chronological-reversal)."
+      "sha256": "851a6da60ff8fe5ccd78861bbe42021c179b63af236f804cabbe1ac700dd67e4",
+      "note": "reuses Phase 1A engine; validates ledger/packet/metric/source-DAG + carry-forward/no-regression + strengthened tz-aware chained transitions + EXACT-EQUALITY semantic immutability (packet == pkt-02-01-binding field-for-field; binding re-anchored to catalog/gate2/baseline; no substring/keyword logic) + 22 adversarial controls (incl. per-field coordinated-bypass P–T, the single all-five-mutation probe V, and chronological-reversal U)."
     },
     "checks_output": {
       "path": "docs/halo/evidence/honda-watchdog/phase1b/PHASE1B_CHECKS.json",
-      "sha256": "2bf91c3284d6d1ead33ca84fd139dd052813b48560985731ec39a7e3d951fa3f",
-      "note": "overall_pass=true; 0 errors; 21/21 adversarial probes reject; two_delta_present=true; semantic bindings derived from catalog/gate2/baseline; tz-aware transition timestamps; acquisition truth (promoted leads vs held) recorded."
+      "sha256": "d10a91a27efcc24699d010d53374d73baa61bd0e89fe64f014241637b21dac8a",
+      "note": "overall_pass=true; 0 errors; 22/22 adversarial probes reject; two_delta_present=true; semantic immutability is EXACT equality against pkt-02-01-binding (sha pinned in packet+manifest); tz-aware transition timestamps; acquisition truth (promoted leads vs held) recorded."
     }
   },
   "prohibited_action_confirmation": "No VinSolutions, Gmail, network, schedule, ingest, DB-schema, product/runtime, vault-permission, production, recipient, or customer action. No NEW values/grades computed here; the 17 authoritative evaluated metrics carry forward prior accepted state (computed at Gate 4A, not recomputed). SW-013/014 opened as finite investigations with NO Vin/UI action. INGEST src/routeTree.gen.ts untouched.",
@@ -133,6 +143,19 @@
       "1: corrected false acquisition-vs-analytics wording (TWO_DELTA, receipt, manifest): all 17 preserve evaluated/report state; only SW-011/012/015/090 preserve admitted_promoted; the other 13 remain admitted_held (evaluation is not promotion).",
       "2: replaced loose substring semantic checks with STRUCTURED bindings derived from the pinned catalog condition + gate2 evaluable_conditions + baseline-registry OT records (unit/calc/numerator/denominator/formula/direct-fields/threshold comparator+value/approval/reference/disposition/source-state/lifecycle-bucket); added coordinated-bypass probes P-T (SW-012 two-of-three blanks, SW-013 unrelated after-hours, SW-014 unrelated count, SW-015 all-leads denominator, SW-011 threshold >999) that reject for the semantic binding.",
       "3: replaced lexical timestamp ordering with tz-aware chronological parsing (reject malformed/naive; reject reversed instants across offsets); probe U proves rejection for 2026-09-02T07:00:00+14:00 after 06:51:10Z."
+    ]
+  },
+  "shadow_correction_3": {
+    "prior_commit": "33f743c55f916b1c193ca74ca6df5be459de04a4",
+    "verdict": "impartial shadow HOLD — one final proof gap (Codex reproduced a semantic-validator bypass)",
+    "reproduced_bypass": "On 33f743c55, a coordinated keyword-preserving mutation (SW-012 -> count all rows, SW-013 -> sold deals, SW-014 -> generic contacted-lead count, SW-015 denominator -> all leads, SW-011 threshold -> >999) passed the prior substring/required-token semantic check with ZERO errors, because the expected keywords were retained while the MEANING changed.",
+    "fix": [
+      "1: replaced token/substring semantic validation with EXACT EQUALITY over a structured Phase-1B binding artifact (pkt-02-01-binding.json). Each PKT-02-01 metric def must EQUAL its binding record field-for-field (canonical_condition, business_question, population, calculation_kind, numerator, denominator, formula, unit, direct_source_fields (exact set after one explicit alias mapping), disposition, source_existence_state, evaluation_state, lifecycle bucket, grade target id/approval/status/basis/value_or_range, detection rule). No contains/required-token logic remains.",
+      "2: binding anchored to immutable authorities — canonical_condition == frozen catalog condition (exact); SW-011/012/015 formula/numerator/denominator/unit/source_fields/baseline_id == gate2-evaluator-contract.json (exact); OT comparator/threshold/unit/direction/basis == baseline-registry.json (exact). Sales Rep presentation alias is ONE explicit exact mapping (Sales Rep -> 'Sales Rep (aggregated, pseudonymized)') compared as exact sets, never subset.",
+      "3: SW-013/014 (not evaluable in Gate 2) preserve the exact catalog condition verbatim + a reviewed source-pending implementation contract; the exact packet fields are authoritative for this instance; the binding sha256 (1c1c98a2…) is pinned in the packet + this manifest; the additive binding becomes immutable ONLY after an independent PASS and later phases MUST assert this hash.",
+      "4: added authority_binding{ref,sha256} to the packet schema + packet, and canonical_condition into each binding record, so the exact catalog meaning is machine-bound. Prior correct definitions unchanged.",
+      "5: rewrote probes P–T so each coordinated mutation is rejected for an EXACT field mismatch even with keywords present, and added probe V that performs ALL FIVE mutations at once and asserts a semantic error for EACH affected metric (6 errors). Removed the claim that token checks prove semantic immutability.",
+      "6: preserved everything prior — tz-aware transition logic/probe U, acquisition-vs-analytics wording, the other 21 controls (now 22 total), exact 295/30/5–12/no-overlap, 17 evaluated, Leads promotion for 011/012/015/090, 13 evaluated held, 18 Service overlay outside Sales, DRAFT/HOLD status, provisional packets, Phase-1B-only scope."
     ]
   }
 }

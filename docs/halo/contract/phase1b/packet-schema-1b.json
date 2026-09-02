@@ -7,7 +7,7 @@
   "vocab_ref": "docs/halo/contract/phase1/frozen-vocabularies.json",
   "packet_schema": {
     "type": "object", "additionalProperties": false,
-    "required": ["packet_id", "module", "management_question", "target_ids", "source_dependencies", "metric_definitions", "lifecycle_partition", "stop_conditions", "two_delta_proof", "status"],
+    "required": ["packet_id", "module", "management_question", "target_ids", "source_dependencies", "metric_definitions", "lifecycle_partition", "stop_conditions", "two_delta_proof", "authority_binding", "status"],
     "properties": {
       "artifact": {"type": "string", "nonempty": true},
       "schema": {"type": "string", "nonempty": true},
@@ -25,6 +25,7 @@
       "stop_conditions": {"type": "object", "required": ["inherited_canonical", "packet_specific"]},
       "two_delta_proof": {"type": "object", "required": ["evidence_delta", "meaning_delta"]},
       "acceptance": {"type": "object"},
+      "authority_binding": {"type": "object", "required_keys": ["ref", "sha256"], "note": "Pins the exact per-metric semantic binding artifact (pkt-02-01-binding.json). Each metric def must EQUAL its binding record field-for-field; the binding is anchored to the immutable catalog/gate2/baseline authorities."},
       "status": {"type": "string", "enum": ["active_authored", "planned"]}
     }
   },
