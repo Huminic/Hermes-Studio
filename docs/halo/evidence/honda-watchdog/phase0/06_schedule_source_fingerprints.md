@@ -148,8 +148,13 @@ re-verified 2026-09-02):
   `Base Report Name = "Communication Log"`; `Date Range = Yesterday` (Aug 30 2026);
   `Dealers = "Serra Honda of Sylacauga"`.
 - **Reconciliation (both facts preserved):** the anchor's `data_row_total = 28` is a
-  **parser/counting artifact** (a cross-sheet row tally — `Report` 3 rows + `Filters` 26 rows — not
-  a count of communication records). It does **not** represent 28 communication rows. The anchor
+  **parser/counting artifact**. The native-scheduled generator computes it by **summing the per-tab
+  row counts recorded in `classify-report.json`** (sha256
+  `e9e0c897a7aceebaf0a0a8f0afc7a3eec770b4cd3b7db118f40a35a6c5beba16`, verified locally 2026-09-02):
+  for `Report-5649.xlsx`, `tab_rows = {Report: 3, Filters: 25} = 28`. (openpyxl reports the `Filters`
+  sheet `max_row = 26` only because **Filters row 26 is entirely blank** — the last populated Filters
+  row is row 25, "Users".) The 28 is therefore a sum of **structural / filter-definition tab rows**,
+  **not** a count of communication records — it does not represent 28 communication rows. The anchor
   already carries the corroborating note *"Honda daily sales_comm_log additionally has zero real data
   rows."* Neither the parser tally nor the delivery may be treated as data: the delivery is
   quarantined whole (hidden Lead Intent) **and** contains zero real rows. Recorded in

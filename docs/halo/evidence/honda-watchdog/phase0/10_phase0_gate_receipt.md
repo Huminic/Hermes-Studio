@@ -18,7 +18,7 @@ acquisition, ingest, schedule, product-code, schema, production, or external-sys
 | G0.7 | Rollback point recorded | **PASS** | `04_repo_state_and_rollback.md` §6 (MAIN `9ac76c58b`; INGEST `4c41df11d`) |
 | G0.8 | No dirty or competing writer on the Phase 0 canonical branch | **PASS (with quarantine)** | MAIN working tree clean, upstream 0/0. Only dirty state = INGEST `src/routeTree.gen.ts` in a **separate repo/branch, unrelated generated file, explicitly quarantined & untouched** (`04_…md` §3, `09_conflict_register.json` C-01). Reviewer: confirm this quarantine interpretation. |
 | G0.9 | Capability ledger with reproduction results | **PASS** | `05_capability_ledger.json` (10 rows; runtime call-sites inspected; unreproduced external facts labeled `reported_pending_phase0_verification`) |
-| G0.10 | Vault-vs-Brain topology; contaminated bytes cannot promote | **PASS (topology proved; policy UNRESOLVED)** | `07_vault_vs_brain_topology.md` (promotion guard requires `validation_state=='held'`; 15/15 tests reproduced). Access/retention **policy** unresolved → C-02. |
+| G0.10 | Vault-vs-Brain topology; contaminated bytes cannot promote | **PASS (topology proved; policy PINNED, enforcement NONCONFORMING)** | `07_vault_vs_brain_topology.md` (promotion guard requires `validation_state=='held'`; 15/15 tests reproduced). Vault access/retention **policy PINNED** (07 §4.2); **current runtime enforcement NONCONFORMING** (hold `0750`; held/quarantine/analytics children `0775`/`0755`; raw files `0444`) → carried as a **Phase 3 fail-closed admission gate** (C-02). No runtime perm change in this correction. |
 | G0.11 | Architecture/ownership/no-touch map + canonical branch chosen | **PASS** | `08_architecture_ownership_notouch_map.md` |
 | G0.12 | Conflict register (owner/next-action/freshness) | **PASS** | `09_conflict_register.json` (0 Phase-0-blocking) |
 
@@ -31,7 +31,11 @@ including items that cannot be reproduced without prohibited access — these ar
 **Carried-forward (not Phase 0 blockers):**
 - `reported_pending_phase0_verification`: live schedule currency (C-03); Honda promotion-executed
   state (C-05); ledger rows for those.
-- `UNRESOLVED`: vault access/retention policy (C-02).
+- **POLICY PINNED / ENFORCEMENT NONCONFORMING:** vault access/retention policy is pinned
+  (07 §4.2 — fail-closed until `0700`/`0600` or a dedicated service identity; audited raw access;
+  audit fields; no auto-deletion, legal hold wins). Current runtime is nonconforming
+  (`0750`/`0775`/`0755`; raw files `0444`). Carried as a **Phase 3 fail-closed admission gate**
+  (C-02). No runtime perm change in Phase 0.
 - `HOLD/PENDING` (pre-existing, dependent-metric scope only): Gate 3 Hidden Lead Intent (C-04);
   Response Times SW-013/016/017 (C-09).
 - Planned future work: durable metric storage (C-06); canonical reader-path consolidation (C-07).
@@ -43,8 +47,33 @@ including items that cannot be reproduced without prohibited access — these ar
   these claims against files (habit per project standard). Result recorded in the packet README /
   commit message.
 - **Governance approval:** the **impartial shadow** (non-author, non-deployer) must review this
-  pinned packet and issue the binding PASS/HOLD. **Approval state: PENDING impartial-shadow review.**
-  This receipt records the mechanical result only; the author does not self-approve the gate.
+  pinned packet and issue the binding PASS/HOLD. **Approval state: PENDING impartial-shadow review**
+  — final approval is withheld only until the **corrected re-review** (below) is memorialized. This
+  receipt records the mechanical result only; the author does not self-approve the gate.
+
+## Shadow-correction & re-review chain
+
+**Amended (UTC):** 2026-09-02T04:15:46Z. This receipt is part of an auditable correction chain; no
+history is rewritten.
+
+1. **Original mechanical receipt** — issued with the Phase 0 evidence packet at commit
+   `321487ac0`. Mechanical PASS; impartial-shadow approval PENDING.
+2. **First shadow re-review → HOLD** (items 1–5). Corrections committed at
+   **`d27e4a8cb`** (docs-only): pinned the full active objective (sha256 `7c8e622b…`) + authority
+   entry; pinned the concrete vault policy with enforcement recorded NONCONFORMING (no runtime perm
+   change); completed per-family schedule fingerprints; corrected the Communication zero-real-row
+   fact; split manual-only capabilities.
+3. **Second shadow re-review → HOLD narrowed to two doc-only inconsistencies.** This correction
+   (docs-only, on parent `d27e4a8cb`): (a) replaced the false "Report 3 + Filters 26 = 28"
+   arithmetic in `06 §2` and `09` C-12 with the verified generator evidence — the native-scheduled
+   generator sums `classify-report.json` `tab_rows`; `Report-5649` `tab_rows = {Report:3, Filters:25}
+   = 28` (openpyxl `max_row=26` only because Filters row 26 is blank); `classify-report.json` sha256
+   `e9e0c897a7aceebaf0a0a8f0afc7a3eec770b4cd3b7db118f40a35a6c5beba16` (verified locally); zero-real-row
+   and whole-delivery-quarantine conclusions preserved; and (b) this receipt update (G0.10 + C-02
+   carried-forward → policy PINNED / enforcement NONCONFORMING / Phase 3 fail-closed admission gate).
+
+**Overall Phase 0 status: HOLD** — mechanical checks PASS; binding approval remains PENDING the
+impartial shadow's memorialization of this corrected re-review.
 
 ## Prohibited-action confirmation
 
