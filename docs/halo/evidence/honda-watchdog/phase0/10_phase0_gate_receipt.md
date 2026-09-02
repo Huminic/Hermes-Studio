@@ -46,10 +46,10 @@ including items that cannot be reproduced without prohibited access — these ar
 - **Independent code-fact verification:** a fresh `code-reviewer` agent was dispatched to check
   these claims against files (habit per project standard). Result recorded in the packet README /
   commit message.
-- **Governance approval:** the **impartial shadow** (non-author, non-deployer) must review this
-  pinned packet and issue the binding PASS/HOLD. **Approval state: PENDING impartial-shadow review**
-  — final approval is withheld only until the **corrected re-review** (below) is memorialized. This
-  receipt records the mechanical result only; the author does not self-approve the gate.
+- **Governance approval:** the **impartial shadow** (non-author, non-deployer) reviewed this pinned
+  packet and issued the binding verdict. **Approval state: PASS (binding) — impartial-shadow final
+  re-review of commit `92babbde53ce4e1062bb36eece2b786e6cee457a`.** The author did not self-approve;
+  implementation, verification, and approval remained separated (Core Value #5).
 
 ## Shadow-correction & re-review chain
 
@@ -72,8 +72,21 @@ history is rewritten.
    and whole-delivery-quarantine conclusions preserved; and (b) this receipt update (G0.10 + C-02
    carried-forward → policy PINNED / enforcement NONCONFORMING / Phase 3 fail-closed admission gate).
 
-**Overall Phase 0 status: HOLD** — mechanical checks PASS; binding approval remains PENDING the
-impartial shadow's memorialization of this corrected re-review.
+4. **Final impartial-shadow re-review → binding PASS.** The impartial shadow (non-author,
+   non-deployer) reviewed commit **`92babbde53ce4e1062bb36eece2b786e6cee457a`** and returned a
+   **binding PASS**, memorialized here (UTC) **2026-09-02T04:19:07Z**.
+
+**Overall Phase 0 status: PASS (binding).** Mechanical checks PASS and the impartial shadow issued a
+binding PASS at evidence commit `92babbde5`. Phase 0 (recover and pin current truth) is complete.
+
+**Scope of this PASS:** Phase 0 pinning only. It does **not** authorize Phase 1 or relax any
+downstream gate. All downstream gates and carried-forward conditions remain **enforceable** — in
+particular: Gate 3 Hidden Lead Intent HOLD/PENDING (C-04); vault policy PINNED with enforcement
+NONCONFORMING → Phase 3 fail-closed admission gate (C-02); durable metric storage absent (C-06);
+canonical reader-path consolidation (C-07); `reported_pending_phase0_verification` items
+(C-03/C-05/C-11); and the active-objective added requirements carried downstream (C-10). No
+acquisition, ingest, schedule, product-code, runtime, or production change is authorized by this
+receipt.
 
 ## Prohibited-action confirmation
 

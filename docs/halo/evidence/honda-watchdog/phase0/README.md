@@ -12,8 +12,15 @@ items 1–5 — pinned the full active objective (`../../../planning/HONDA_SEMAN
 sha256 `7c8e622b44308090baf494efb120880950a125cd7ba9174f2514ff30f7acaf0d`) with its added
 requirements reconciled below; pinned a concrete vault policy (enforcement nonconforming, no runtime
 perm change); completed per-family schedule fingerprints; corrected the Communication zero-real-row
-fact; split manual-only capabilities. **Mechanical checks may PASS, but overall Phase 0 remains
-HOLD pending impartial-shadow re-review.**
+fact; split manual-only capabilities. A second narrowed re-review corrected the Communication "28"
+parser-artifact explanation and the receipt vault-policy status.
+
+**Phase 0 verdict: PASS (binding).** The impartial shadow (non-author, non-deployer) returned a
+binding **PASS** at evidence commit `92babbde53ce4e1062bb36eece2b786e6cee457a` (memorialized
+2026-09-02T04:19:07Z; see `10_phase0_gate_receipt.md`). Phase 0 (recover and pin current truth) is
+complete. This PASS is **pinning only** — it does not authorize Phase 1 and does not relax any
+downstream gate; all downstream gates and carried-forward conditions (e.g. Gate 3 Hidden Lead Intent
+C-04; vault enforcement Phase 3 gate C-02; C-03/C-05/C-06/C-07/C-10/C-11) remain **enforceable**.
 
 ## Objective reconciliation (active objective added requirements)
 
