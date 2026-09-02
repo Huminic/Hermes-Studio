@@ -1,0 +1,37 @@
+{
+  "artifact": "honda-watchdog-phase1b-manifest",
+  "phase": "Phase 1B — packetized execution (design-only). Additive; preserves Phase 0/1A.",
+  "pinned_at_utc": "2026-09-02T06:36:12Z",
+  "pinned_on_branch": "codex/halo-295-unshrinkable-inputs",
+  "parent_head_at_authoring": "5c6f4d9170b41baae9b534caf92edbb312a8504a",
+  "phase1a_predecessor": "Phase 1A PASS (binding) at bf8ee705d",
+  "scope_statement": "Design-only. Additive packetized-execution layer. Does NOT modify the pinned objective, HONDA_SEMANTIC_WATCHDOG_EXECUTION_SPEC, the frozen 295 catalog, or any Phase 0/1A contract. Only PKT-02-01 authored in detail; the other 289 ledger rows are planning-level (packet assignment + init state). No Vin/Gmail, ingest, runtime, DB schema, vault permissions, schedules, production, recipients, or INGEST changes.",
+  "preserved_immutable": {
+    "active_objective_sha256": "7c8e622b44308090baf494efb120880950a125cd7ba9174f2514ff30f7acaf0d",
+    "execution_spec_sha256": "fedd957b9431521591155763327147d86c25fe3da11e2996470c134eaf9d785e",
+    "matrix_295_sha256": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+    "phase0_07_sha256": "9d3bb62894701d5f973b275ad8f68ebc47863aa45abf9f88c34cde22e7d74b2d",
+    "phase0_09_sha256": "0357992bcc60b7a085ceb2f2b7d83b8c4549941de26d8dbb68d43af5490d2504"
+  },
+  "reused_source": {
+    "family": "vinsolutions_custom_reporting_leads", "dealer": "21043", "period": "2026-08-24..2026-08-30",
+    "artifact": "serra-honda-21043_leads_2026-08-24_2026-08-30.xlsx",
+    "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae",
+    "schema_contract_sha256": "7d446696d9be66b917308cad68e27fb8dfaf40ca6e08064afde16031c172eeb1",
+    "receipt_sha256": "68f845a528623c3799e52c2bb45ba25551450314c5b69ac5fbde2b6e2b6521f2",
+    "row_key": "Lead ID (119 unique)", "reuse_or_fresh": "reuse", "sales_only": true
+  },
+  "artifacts": {
+    "spec_amendment_002": {"path": "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_SPEC_AMENDMENT_002.md", "sha256": "3e814d21cacb501477baacf56b1cdc9c5345aa1e5030762d2e7abdf253d142ea", "note": "additive packetized-execution amendment (does not modify SPEC/objective)."},
+    "master_ledger_schema": {"path": "docs/halo/contract/phase1b/master-ledger-schema.json", "sha256": "b9f0749ed86183b2ea7af948965478feac31429cd223537673c15dad1d82e6d4"},
+    "master_ledger_295": {"path": "docs/halo/contract/phase1b/master-ledger-295.json", "sha256": "c21b56748a714568532282fd79df4ad7fc4e374959efd4475ca3ec590ff9e4ec", "note": "295 rows, exactly once; frozen module owner; unique packet assignment; append-only transitions."},
+    "packet_index": {"path": "docs/halo/contract/phase1b/packet-index.json", "sha256": "3005a738d1ea43ea5f84d42c6cc24b0a56d512dc850d77adbbff2a30a436a16d", "note": "30 packets; each 5-12; one module; target union == exact 295; PKT-02-01 active."},
+    "packet_schema_1b": {"path": "docs/halo/contract/phase1b/packet-schema-1b.json", "sha256": "db5970d09a8c0614264cf3b6582eb30bc51f020d000ef2d837a27a30dc898d58", "note": "lifecycle partitions + partition-conditional pipeline; SIP never accepted_disposition_only."},
+    "source_registry_1b": {"path": "docs/halo/contract/phase1b/source-registry-1b.json", "sha256": "e297101c55d3bde125628b950803fb6b30467b66296a9f02aa216e98612839e8", "note": "single reused Leads source; fans out to SW-011/012/015; no per-packet reacquisition."},
+    "packet_pkt_02_01": {"path": "docs/halo/contract/phase1b/packets/PKT-02-01.json", "sha256": "b05453de9187b7e3bfd5d4082044f8894bb917fa374ad84788dac4edfabb77d6", "note": "authored packet + 5 metric definitions (SW-011..015); 011/012/015 calculation_pending, 013/014 source_investigation_pending."},
+    "build_ledger": {"path": "scripts/halo-phase1b/build_ledger.py", "sha256": "42b83fb4a38bd6f1e441aabdabd097d13ef3eb3cdeea6fb6984e3909e0d14b85", "note": "deterministic ledger/packet-assignment generator (frozen Phase 0 map)."},
+    "validator": {"path": "scripts/halo-phase1b/validate_phase1b.py", "sha256": "a73282759dd7a9474a7ad71905e39840beb9bc678f3a90de4696a0b30e71ad7d", "note": "reuses Phase 1A engine; validates ledger/packet/metric/source + 8 adversarial controls."},
+    "checks_output": {"path": "docs/halo/evidence/honda-watchdog/phase1b/PHASE1B_CHECKS.json", "sha256": "4d7c02374eeea5188af977cf31602f95f79af3c5fd6646e291f934f7a916f1b4", "note": "overall_pass=true; 0 errors; 8/8 adversarial probes reject; two_delta_present=true."}
+  },
+  "prohibited_action_confirmation": "No VinSolutions, Gmail, network, schedule, ingest, DB-schema, product/runtime, vault-permission, production, recipient, or customer action. No values/grades computed (all metrics not_measured). SW-013/014 opened as finite investigations with NO Vin/UI action. INGEST src/routeTree.gen.ts untouched."
+}

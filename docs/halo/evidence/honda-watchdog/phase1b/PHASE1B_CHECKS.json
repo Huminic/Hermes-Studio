@@ -1,0 +1,88 @@
+{
+  "check": "honda_watchdog_phase1b",
+  "phase": "Phase 1B — packetized execution instances (design-only)",
+  "reuses": "scripts/halo-phase1/validate_phase1_contracts.py (Phase 1A generic engine, unmodified)",
+  "instance_files": {
+    "master-ledger-schema.json": "b9f0749ed86183b2ea7af948965478feac31429cd223537673c15dad1d82e6d4",
+    "master-ledger-295.json": "c21b56748a714568532282fd79df4ad7fc4e374959efd4475ca3ec590ff9e4ec",
+    "packet-index.json": "3005a738d1ea43ea5f84d42c6cc24b0a56d512dc850d77adbbff2a30a436a16d",
+    "packet-schema-1b.json": "db5970d09a8c0614264cf3b6582eb30bc51f020d000ef2d837a27a30dc898d58",
+    "source-registry-1b.json": "e297101c55d3bde125628b950803fb6b30467b66296a9f02aa216e98612839e8",
+    "packets/PKT-02-01.json": "b05453de9187b7e3bfd5d4082044f8894bb917fa374ad84788dac4edfabb77d6"
+  },
+  "ledger_metrics": 295,
+  "packets": 30,
+  "authored_packet": "PKT-02-01 (SW-011..015)",
+  "two_delta_present": true,
+  "adversarial_probes_total": 8,
+  "adversarial_probes_failed": 0,
+  "adversarial_probes": [
+    {
+      "probe": "A_sip_as_accepted_disposition_only",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "packet: SW-013 in accepted_disposition_only but disposition not evidence-backed (SIP never allowed)"
+    },
+    {
+      "probe": "B_proxy_attach_013_to_leads",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "packet: metric SW-013 claims source SRC-vinsolutions_custom_reporting_leads-0001 but source does not declare it (fan-out mismatch / proxy attach)"
+    },
+    {
+      "probe": "C_overlay_customer_full",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "Service overlay id must be separate_serra_service/outside_sales_domain/proved_outside_sales_domain/gradable=false/not_measured/appendix_id_label_only"
+    },
+    {
+      "probe": "D_packet_index_union_not_295",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "packet-index: target union != exact 295 (overlap/gap)"
+    },
+    {
+      "probe": "E_per_packet_reacquisition_duplicate_source",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "source: duplicate acquisition dedupe key ('serra-honda', 'custom_reporting', '2026-08-24..2026-08-30', 'leads-v1-57col')"
+    },
+    {
+      "probe": "F_ledger_append_only_violation",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "ledger SW-011: transitions[-1].to != disposition (append-only)"
+    },
+    {
+      "probe": "G_ledger_sip_bad_evaluation",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "ledger SW-013: SIP state invalid"
+    },
+    {
+      "probe": "H_packet_bucket_disposition_mismatch",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "packet: SW-013 in calculation_pending bucket but disposition mismatch"
+    }
+  ],
+  "errors": [],
+  "overall_pass": true,
+  "note": "Design-only: only PKT-02-01 authored in detail; the other 289 ledger rows are planning-level (packet assignment + init state), no metric definitions. No Vin/Gmail/runtime/DB/vault/INGEST action."
+}

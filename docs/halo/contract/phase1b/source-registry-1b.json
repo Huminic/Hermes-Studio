@@ -1,0 +1,44 @@
+{
+  "artifact": "honda-watchdog-phase1b-source-registry",
+  "schema_version": "1.0.0",
+  "frozen": true,
+  "phase": "Phase 1B — source DAG instance. Each source exists once and fans out; no per-packet reacquisition. Nodes validate against the Phase 1A source_node schema.",
+  "profile": "serra-honda", "dealer_id": "21043",
+  "nodes": [
+    {
+      "source_id": "SRC-vinsolutions_custom_reporting_leads-0001",
+      "profile": "serra-honda",
+      "family": "custom_reporting",
+      "period": "2026-08-24..2026-08-30",
+      "schema_revision": "leads-v1-57col",
+      "source_type": "manual",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "provenance_ref": "capture_id VIN-LEADS-20260831-21043; receipt docs/halo/evidence/m1r/leads/leads-real-golden.json",
+      "sales_only_receipt": "leads-real-golden.json Honda file: service_parts_leakage_rows=0; sales_only_filters per vinsolutions-custom-reporting-leads-contract.json",
+      "dependent_metric_ids": ["SW-011", "SW-012", "SW-015"],
+      "dependent_candidate_ids": []
+    }
+  ],
+  "reuse_receipts": {
+    "SRC-vinsolutions_custom_reporting_leads-0001": {
+      "reuse_or_fresh": "reuse",
+      "label": "REUSE of the existing accepted vinsolutions_custom_reporting_leads Honda 21043 artifact (no fresh acquisition performed in this authoring step)",
+      "artifact": "serra-honda-21043_leads_2026-08-24_2026-08-30.xlsx",
+      "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae",
+      "bytes": 46940,
+      "schema": {"contract": "docs/halo/contract/vinsolutions-custom-reporting-leads-contract.json", "contract_sha256": "7d446696d9be66b917308cad68e27fb8dfaf40ca6e08064afde16031c172eeb1", "column_count": 57, "sheet_name": "Export"},
+      "receipt_sha256": "68f845a528623c3799e52c2bb45ba25551450314c5b69ac5fbde2b6e2b6521f2",
+      "row_key": {"field": "Lead ID", "populated": 119, "unique": 119, "row_key_set_hash": "computed_at_normalized_dataset_creation_phase5_not_fabricated_here"},
+      "period": "2026-08-24..2026-08-30",
+      "sales_only": true,
+      "dealer_id": "21043",
+      "not_re_acquired": "This packet reuses the pinned accepted artifact; it does NOT re-acquire. Fresh acquisition is a separate governed action (Phase 5)."
+    }
+  },
+  "invariants": [
+    "The acquisition dedupe key (profile, family, period, schema_revision) is unique across nodes.",
+    "dependent_metric_ids are frozen 295 SW ids; each dependent metric references this source_id (single fan-out).",
+    "SW-013/SW-014 are NOT dependents of this source: their required direct fields (authoritative opening boundary + first-human timestamp; system/auto-vs-human actor classification) are absent here — no proxy/inference is used to attach them."
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "artifact": "honda-watchdog-phase1b-master-ledger-schema",
+  "schema_version": "1.0.0",
+  "frozen": true,
+  "phase": "Phase 1B — contract for the master 295 ledger. Additive; reuses the Phase 1A closed vocabularies.",
+  "vocab_ref": "docs/halo/contract/phase1/frozen-vocabularies.json",
+  "row_key": "metric_id",
+  "row_schema": {
+    "type": "object", "additionalProperties": false,
+    "required": ["metric_id", "module", "packet_id", "boundary_class", "definition_version", "disposition", "source_existence_state", "acquisition_admission_state", "evaluation_state", "report_acceptance_state", "owner", "evidence_as_of", "evidence_ref", "next_action", "review_point", "source_dependency_ids", "transitions"],
+    "properties": {
+      "metric_id": {"type": "string", "pattern": "^SW-\\d{3}$"},
+      "module": {"type": "integer", "minimum": 1, "maximum": 11},
+      "packet_id": {"type": "string", "pattern": "^PKT-\\d{2}[A-Z]?-\\d{2}$"},
+      "boundary_class": {"$vocab": "boundary_class"},
+      "definition_version": {"type": "string", "format": "semver"},
+      "disposition": {"$vocab": "disposition"},
+      "source_existence_state": {"$vocab": "source_existence_state"},
+      "acquisition_admission_state": {"$vocab": "acquisition_admission_state"},
+      "evaluation_state": {"$vocab": "metric_evaluation_state"},
+      "report_acceptance_state": {"$vocab": "report_acceptance_state"},
+      "owner": {"type": "string", "enum": ["codex", "claude_studio", "duane", "impartial_shadow"]},
+      "evidence_as_of": {"type": "string", "format": "iso_datetime"},
+      "evidence_ref": {"type": "string", "nonempty": true},
+      "next_action": {"type": "string", "nonempty": true},
+      "review_point": {"type": "string", "nonempty": true},
+      "source_dependency_ids": {"type": "array", "items": {"type": "string", "pattern": "^SRC-[a-z_]+-\\d{4}$"}},
+      "definition_ref": {"type": "string", "nonempty": true},
+      "transitions": {"type": "array", "minItems": 1, "items": {"$ref": "ledger_transition"}}
+    }
+  },
+  "transition_schema": {
+    "type": "object", "additionalProperties": false,
+    "required": ["to", "at", "by", "reason"],
+    "properties": {
+      "from": {"type": ["string", "null"]},
+      "to": {"$vocab": "disposition"},
+      "at": {"type": "string", "format": "iso_datetime"},
+      "by": {"type": "string", "enum": ["codex", "claude_studio", "duane", "impartial_shadow"]},
+      "reason": {"type": "string", "nonempty": true}
+    }
+  },
+  "ledger_invariants": [
+    "Exactly 295 rows; metric_id set == frozen SW-001..295, each once (no duplicate, no gap).",
+    "Each row.module == the frozen Phase 0 module owner of its metric_id.",
+    "Each row.packet_id exists in packet-index.json and lists this metric_id; packet assignment is unique (one packet per ID).",
+    "Every Service-overlay id (18) has boundary_class=separate_serra_service AND disposition=outside_sales_domain AND source_existence_state=proved_outside_sales_domain AND evaluation_state=not_measured.",
+    "boundary_class != 'sales' => evaluation_state in ['not_measured','measured_unscored'] (disposition-only).",
+    "disposition == 'source_investigation_pending' => source_existence_state in ['unproved','investigation_pending'] AND evaluation_state == 'not_measured' AND owner/evidence_as_of/next_action/review_point present.",
+    "(disposition, source_existence_state) obeys frozen source_existence_state.disposition_consistency; (disposition, evaluation_state) obeys frozen disposition_evaluation_consistency; (source_existence_state, acquisition_admission_state) obeys the frozen allowed-pair matrix.",
+    "transitions are append-only and versioned: transitions[-1].to == row.disposition; each transition.to draws from the frozen disposition adjacency (or is the initial ledger-init entry with from=null).",
+    "measurable rows (disposition in ['measured_validated','data_acquired_calculation_pending']) have nonempty source_dependency_ids, each a registered source_id in the source registry.",
+    "A packet acceptance produces an acceptance hash over its accepted partitions + an independent receipt (packet artifact); the ledger row's report_acceptance_state advances only via a recorded transition."
+  ],
+  "closing_rules_ref": "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_SPEC_AMENDMENT_002.md §2-§3"
+}
