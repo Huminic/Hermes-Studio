@@ -56,7 +56,40 @@
         "genuinely_not_available_requires_affirmative_evidence": true,
         "outside_sales_domain_from_source_investigation_requires_boundary_correction": true,
         "terminal_states": ["genuinely_not_available", "outside_sales_domain"]
+      },
+      "context_receipts": {
+        "__comment": "Certain transitions require an affirmative context receipt (a named evidence ref), not prose. Keys are 'from->to'; each lists the required receipt field(s) in the transition context.",
+        "source_investigation_pending->outside_sales_domain": ["boundary_correction_ref"],
+        "source_investigation_pending->genuinely_not_available": ["affirmative_investigation_evidence_ref"],
+        "crm_available_acquisition_pending->genuinely_not_available": ["affirmative_investigation_evidence_ref"],
+        "external_source_required->genuinely_not_available": ["affirmative_investigation_evidence_ref"],
+        "additional_history_required->genuinely_not_available": ["affirmative_investigation_evidence_ref"],
+        "data_acquired_calculation_pending->genuinely_not_available": ["affirmative_investigation_evidence_ref"]
       }
+    },
+    "calculation_kind": {
+      "spec_ref": "SPEC §5.4/§5.5/§6 — frozen closed set of calculation kinds",
+      "closed": true,
+      "exactly_one_per_measurable_metric": true,
+      "values": {
+        "count": "Whole-number count of entities/events.",
+        "rate": "Ratio numerator/denominator (share, conversion, %). Requires an explicit zero-denominator behavior.",
+        "duration": "Elapsed-time measure (e.g., minutes to first touch).",
+        "currency": "Monetary measure (front/back/total gross, CPL).",
+        "direct": "Direct passthrough of a delivered field (no derived formula).",
+        "semantic": "Content/NLP-derived output; requires the protected-content envelope and abstention semantics."
+      },
+      "required_fields_by_kind": {
+        "count": ["population", "direct_source_fields", "formula", "unit", "window", "null_missing_behavior"],
+        "rate": ["population", "direct_source_fields", "numerator", "denominator", "formula", "unit", "window", "null_missing_behavior", "zero_denominator_behavior"],
+        "duration": ["population", "direct_source_fields", "formula", "unit", "window", "null_missing_behavior"],
+        "currency": ["population", "direct_source_fields", "formula", "unit", "window", "null_missing_behavior"],
+        "direct": ["population", "direct_source_fields", "unit", "window", "null_missing_behavior"],
+        "semantic": ["population", "direct_source_fields", "unit", "window", "null_missing_behavior"]
+      },
+      "semantic_requires": {"sensitivity_class": "protected_content", "protected_content": true},
+      "null_missing_behavior_closed": ["missing_not_zero", "explicit_null", "not_applicable"],
+      "zero_denominator_behavior_closed": ["undefined_withheld", "reported_as_no_denominator"]
     },
     "source_existence_state": {
       "spec_ref": "SPEC §5 (source-first), §7.1 — frozen for Phase 1A source registry",
@@ -71,6 +104,17 @@
         "proved_outside_sales_domain": "Proved the source belongs to Service/Parts/cross-rooftop/compliance-PII.",
         "proved_not_available": "Finite investigation proved not obtainable (basis for genuinely_not_available)."
       },
+      "transitions": {
+        "unproved": ["investigation_pending", "proved_available_in_crm", "proved_requires_external", "proved_requires_more_history", "proved_outside_sales_domain", "proved_not_available"],
+        "investigation_pending": ["proved_available_in_crm", "proved_requires_external", "proved_requires_more_history", "proved_outside_sales_domain", "proved_not_available"],
+        "proved_available_in_crm": ["acquired_local", "proved_requires_more_history", "proved_requires_external", "proved_outside_sales_domain", "proved_not_available"],
+        "acquired_local": ["proved_requires_more_history"],
+        "proved_requires_external": ["acquired_local", "proved_available_in_crm", "proved_outside_sales_domain", "proved_not_available"],
+        "proved_requires_more_history": ["acquired_local", "proved_available_in_crm", "proved_not_available"],
+        "proved_outside_sales_domain": [],
+        "proved_not_available": []
+      },
+      "terminal_states": ["proved_outside_sales_domain", "proved_not_available"],
       "disposition_consistency": {
         "source_investigation_pending": ["unproved", "investigation_pending"],
         "crm_available_acquisition_pending": ["proved_available_in_crm"],
@@ -92,9 +136,18 @@
         "measured_abstained": "Content/semantic output abstained due to low confidence (never a measured fact).",
         "measurement_rejected": "Failed independent recomputation / two-delta / QA."
       },
+      "transitions": {
+        "not_measured": ["measured_unscored", "measured_abstained", "measurement_rejected"],
+        "measured_unscored": ["measured_graded", "measurement_rejected", "not_measured"],
+        "measured_graded": ["measured_unscored", "measurement_rejected"],
+        "measured_abstained": ["not_measured", "measured_unscored"],
+        "measurement_rejected": ["not_measured"]
+      },
+      "terminal_states": [],
       "invariants": {
         "graded_requires_disposition": ["measured_validated"],
         "graded_requires_gradable_true_and_grade_target_approved": true,
+        "graded_requires_grade_target_compatible": true,
         "abstained_only_for_protected_content_envelope": true
       }
     },

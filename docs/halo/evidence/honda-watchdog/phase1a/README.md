@@ -24,10 +24,12 @@ Amendment (`docs/halo/planning/`): `HONDA_SEMANTIC_WATCHDOG_SPEC_AMENDMENT_001.m
 amendment of SPEC §3; the reviewed SPEC bytes are unchanged so the Phase 0 authority hash stays
 valid.
 
-Validator (item 8): `scripts/halo-phase1/validate_phase1_contracts.py` — reuses the Phase 0 module
-map (295/11/18 single source of truth), proves vocab closure, and runs 29 synthetic self-tests
-across all rule classes (schema, partition, state transitions, formula, threshold/reference/target
-separation, DAG dedupe, privacy/PII, two-delta, candidate-intake, change-scope). Reproduce:
+Validator (item 8): `scripts/halo-phase1/validate_phase1_contracts.py` — **schema-driven**: reads
+required fields/enums/patterns/transitions from the frozen contracts (single source of truth) and
+reuses the Phase 0 module map (295/11/18). Runs **201 exhaustive mutation self-tests** (one per
+required field / enum / conditional / sub-contract field / transition / context-receipt / stop /
+partition / DAG / candidate rule) plus **5 named malformed probes** (sparse SIP metric, GNA missing
+affirmative evidence, sparse packet, sparse source, sparse candidate) that must reject. Reproduce:
 `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write`.
 
 ## Evidence (`docs/halo/evidence/honda-watchdog/phase1a/`)
@@ -43,13 +45,18 @@ separation, DAG dedupe, privacy/PII, two-delta, candidate-intake, change-scope).
 - Structure **295/11/18 preserved**; six closed vocabularies frozen; disposition amended to 8 with
   the approved nonterminal `source_investigation_pending` (restricted transitions; no direct
   acquired/measured).
-- Validator + **29/29 self-tests PASS**; deterministic; imports the Phase 0 map so 295/11/18 cannot
-  silently drift.
-- Independent non-author verification: **PASS on all checks, no inconsistencies**.
+- Schema-driven validator + **201/201 self-tests + 5/5 named probes PASS**; deterministic; imports
+  the Phase 0 map so 295/11/18 cannot silently drift.
+- Independent non-author re-verification of the deepened validator: **PASS on all checks, reject-tests
+  non-tautological**.
 - **No metric rows or packets authored** (Phase 1 remains design-only).
 
-**Mechanical checks PASS; overall Phase 1A is HOLD pending impartial-shadow review.** This gate does
-not authorize Phase 1B/2+; downstream gates and fail-closed stops remain enforceable.
+**Re-review note:** the first submission (`60c519966`) was HOLD (validator too shallow); this packet
+reissues a deepened, exhaustive, schema-driven validator (see `02_phase1a_gate_receipt.md` §Shadow
+re-review correction for the ten fixes).
+
+**Mechanical checks PASS; overall Phase 1A is HOLD pending impartial-shadow re-review.** This gate
+does not authorize Phase 1B/2+; downstream gates and fail-closed stops remain enforceable.
 
 ## Boundaries honored
 

@@ -18,12 +18,49 @@ recipients, or customer changes. INGEST `src/routeTree.gen.ts` untouched.
 | P1A.5 | Source registry/DAG schema frozen (dedupe key (profile,family,period,schema_revision); no per-metric duplicate acquisition; source→metric fan-out) (item 5) | **PASS** | `source-registry-dag-schema.json` |
 | P1A.6 | Separate beyond-295 candidate-intake schema; cannot alter the 295 (item 6) | **PASS** | `beyond-295-candidate-intake-schema.json` (CAND-#### key; hard invariants) |
 | P1A.7 | Canonical fail-closed stops defined; one source failure blocks only dependent IDs (item 7) | **PASS** | `fail-closed-stops.json` (11 stops + blast_radius_rule) |
-| P1A.8 | Validator/self-tests for 295/11/18 + partition/schema/state/formula/threshold-reference-target/DAG/privacy/two-delta/change-scope; **no metric rows/packets populated** (item 8) | **PASS** | `validate_phase1_contracts.py` → `PHASE1A_CONTRACT_CHECKS.json`: structure PASS, vocab PASS, **29/29 self-tests pass**, overall_pass=true |
+| P1A.8 | **Schema-driven** validator + exhaustive mutation self-tests for 295/11/18 + per-field/enum/pattern/conditional (metric rows, 3 sub-contracts, packets, source/DAG, candidates) + transitions/context-receipts/stops/partitions/DAG/privacy/two-delta/change-scope; **no metric rows/packets populated** (item 8) | **PASS** | `validate_phase1_contracts.py` → `PHASE1A_CONTRACT_CHECKS.json`: structure PASS, vocab PASS, **201/201 self-tests + 5/5 named malformed probes reject**, overall_pass=true |
 | P1A.9 | Design-only boundary honored | **PASS** | Only additive docs/contracts/validator/evidence written; catalog `29c7ac06…` unchanged; reviewed SPEC `fedd957b…` unchanged; INGEST routeTree ` M` untouched |
+
+## Shadow re-review correction (impartial Phase 1A HOLD → deepened)
+
+The first Phase 1A submission (commit `60c519966`) was returned **HOLD: validator materially too
+shallow**. This receipt reissues Phase 1A with a deepened, **schema-driven** validator. The ten
+required fixes are all implemented:
+
+1. Schema-driven exhaustive enforcement of every required field/type/pattern/enum/conditional for
+   metric rows, packets, source nodes/DAG, and candidates (loops over the contract field sets — not
+   selected fields). A sparse SIP row now rejects on all missing fields.
+2. `finite_investigation_ref` added to the metric schema and required for `source_investigation_pending`.
+3. `affirmative_investigation_evidence_ref` added and required for `genuinely_not_available`.
+4. Packet validator rejects absence of `packet_id`, `management_question`, `prerequisites`,
+   `source_dependencies`, admission/transform/persist/test/report-fragment contracts (each nested
+   key), and packet-specific stops.
+5. Source validator enforces source_id/type/existence+admission states/provenance_ref/
+   sales_only_receipt; candidate validator enforces all required fields.
+6. The three detection/comparison/grade objects are fully validated (all fields/enums/IDs/versions),
+   always required, proven independent (distinct IDs); scoring requires an **approved + active +
+   compatible** grade target.
+7. Transition adjacency frozen and enforced for `source_existence_state` and
+   `metric_evaluation_state`; SIP→outside_sales_domain requires a `boundary_correction_ref` receipt
+   and SIP/…→genuinely_not_available requires an `affirmative_investigation_evidence_ref` receipt
+   (machine context receipts, not prose).
+8. Closed `calculation_kind` (count/rate/duration/currency/direct/semantic) with conditional required
+   population/direct-fields/formula/numerator/denominator/window/unit and explicit
+   `null_missing_behavior` + `zero_denominator_behavior`.
+9. `fail-closed-stops.json` frozen at exactly 11 canonical names/count with a `canonical_stop_names`
+   list; packets must inherit it **exactly** and mechanically inherit the Phase 0 vault-policy
+   nonconformance admission gate (C-02).
+10. Source DAG contradiction resolved: separate `dependent_metric_ids` (SW only) vs
+    `dependent_candidate_ids` (CAND only), validated disjoint.
+
+Mutation tests cover **every** required field/conditional/vocab/transition/context-receipt/stop/
+partition/DAG/candidate rule (201 self-tests), plus five named malformed probes that must reject
+(sparse SIP metric, GNA missing affirmative evidence, sparse packet, sparse source, sparse candidate)
+— independently reproduced.
 
 ## Tests run (read-only / deterministic)
 
-- `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write` → **RESULT: PASS** (exit 0); `structure_295_11_18=PASS`, `vocab_closure=PASS`, `self_tests_total=29`, `self_tests_failed=0`.
+- `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write` → **RESULT: PASS** (exit 0); `structure_295_11_18=PASS`, `vocab_closure=PASS`, `self_tests_total=201`, `self_tests_failed=0`, `named_probes_total=5`, `named_probes_failed=0`.
 - `python3 scripts/halo-phase0/validate_phase0_catalog.py --no-write` → **PASS** (295/11/18 preserved; generated `03` unchanged).
 - JSON parse: all six `docs/halo/contract/phase1/*.json` + `01_phase1a_contract_manifest.json` + `PHASE1A_CONTRACT_CHECKS.json` load OK.
 - Active-objective sha256 unchanged (`7c8e622b…`).
@@ -31,15 +68,17 @@ recipients, or customer changes. INGEST `src/routeTree.gen.ts` untouched.
 
 ## Independent verification (separation of duties — Core Value #5)
 
-A fresh independent agent (read-only, non-author) verified the frozen contracts and validator
-against the files and returned **PASS on all six checks with no inconsistencies**, specifically
-confirming: disposition has exactly 8 values with `source_investigation_pending` restricted to the
-approved targets and forbidden from `measured_validated`/`data_acquired_calculation_pending`
-(enforced by self-tests `transition.sip_to_measured_forbidden` and
-`transition.sip_to_data_acquired_forbidden`, both expecting REJECT); the 18-overlay matches the
-SPEC; the validator imports the Phase 0 module map as the single source of truth for 295/11/18; no
-metric rows or packet were authored; and the reviewed SPEC, the 295 matrix, and INGEST routeTree are
-untouched.
+A fresh independent agent (read-only, non-author) re-verified the **deepened** contracts and
+validator against the files and returned **PASS on all six checks**, explicitly confirming the
+validator is schema-driven (mutation harness loops over the contract field sets, not hard-coded
+examples), that every reject-test constructs a real mutation of a valid fixture (so passes are
+**non-tautological**), that the five named probes each reject with ≥1 error (sparse SIP 44, GNA 1,
+sparse packet 25, sparse source 16, sparse candidate 13), that the item-specific deepening rules
+(finite_investigation_ref, affirmative_investigation_evidence_ref, calc-kind conditionals, full
+sub-contract validation + distinct IDs, approved/active/compatible scoring, source_existence/
+metric_evaluation transitions, SIP context receipts, exact stop inheritance + vault gate, DAG SW/CAND
+separation) are each enforced, and that the 295 matrix, EXECUTION_SPEC, and INGEST routeTree are
+unchanged. (An earlier independent review covered the prior shallower submission `60c519966`.)
 
 ## Rollback
 

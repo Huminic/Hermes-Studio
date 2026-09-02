@@ -2,70 +2,32 @@
   "artifact": "honda-watchdog-phase1a-contract-manifest",
   "phase": "Phase 1A — freeze planning contracts + machine validators (design-only)",
   "pinned_at_utc": "2026-09-02T04:32:44Z",
+  "amended_at_utc": "2026-09-02T04:49:07Z",
   "pinned_on_branch": "codex/halo-295-unshrinkable-inputs",
   "parent_head": "df70a8a1c97277b62aa8fc86fa10eb61cca9a800",
   "phase0_predecessor": "Phase 0 PASS (binding) memorialized at df70a8a1c; evidence commit 92babbde5",
-  "scope_statement": "Design-only: freeze/amend planning contracts and build machine validators BEFORE authoring any metric definitions or packets. No metric rows populated; no packet authored. No values/grades, Vin/Gmail, ingest, product/runtime/DB-schema, schedules, production, recipients, or customer changes. INGEST routeTree.gen.ts untouched.",
+  "shadow_correction": {
+    "prior_phase1a_commit": "60c519966c25b43e1b0443ecf7729b653e03ca3b",
+    "verdict": "impartial Phase 1A review returned binding HOLD (validator materially too shallow)",
+    "correction": "Deepened to an exhaustive, SCHEMA-DRIVEN validator: per-field/enum/pattern/conditional enforcement for metric rows, all 3 sub-contracts, packets, source nodes/DAG, and candidates; added calculation_kind vocab + conditional required fields; finite_investigation_ref (SIP) and affirmative_investigation_evidence_ref (GNA); source_existence_state + metric_evaluation_state transition adjacency; disposition context receipts; exact fail-closed-stop inheritance + Phase 0 vault-policy admission gate; dependent_candidate_ids DAG split. Mutation test for EVERY required field/enum/conditional/transition/stop/partition/DAG/candidate rule + 5 named malformed probes. Self-tests 201/201; probes 5/5.",
+    "overall_phase1a_status": "HOLD pending impartial-shadow re-review (mechanical checks PASS)"
+  },
+  "scope_statement": "Design-only: freeze/amend planning contracts and machine validators BEFORE authoring any metric definitions or packets. No metric rows populated; no packet authored. No values/grades, Vin/Gmail, ingest, product/runtime/DB-schema, schedules, production, recipients, or customer changes. INGEST routeTree.gen.ts untouched.",
   "authoritative_catalog": {
     "path": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json",
     "sha256": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
     "note": "FROZEN and preserved unchanged by Phase 1A (295 unique SW-001..SW-295)."
   },
   "artifacts": {
-    "spec_amendment_001": {
-      "path": "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_SPEC_AMENDMENT_001.md",
-      "sha256": "822b08d2c27f90107631d332cab92a284a7482191e944a2f230cbbaf52dd51f8",
-      "item": 1,
-      "note": "Additive amendment; adds disposition state #8 source_investigation_pending. Reviewed SPEC bytes (sha256 fedd957b…) unchanged, so Phase 0 authority hash remains valid."
-    },
-    "frozen_vocabularies": {
-      "path": "docs/halo/contract/phase1/frozen-vocabularies.json",
-      "sha256": "4868bfd1d8b8ec5d95dc503682e8c5efe9d07813d9fd9b0aeca0e0c83cc964a3",
-      "item": "1+2",
-      "note": "Six closed vocabularies + transition invariants (boundary_class, disposition[8], source_existence_state, metric_evaluation_state, acquisition_admission_state, report_acceptance_state)."
-    },
-    "metric_row_schema": {
-      "path": "docs/halo/contract/phase1/metric-row-schema.json",
-      "sha256": "b54d565dcd2cf02a67307e7c510f05d4ef2b168891d88c478baf205f1c53c8f3",
-      "item": 3,
-      "note": "Per-metric row schema + separate versioned detection/comparison/grade sub-contracts. No rows authored."
-    },
-    "packet_schema": {
-      "path": "docs/halo/contract/phase1/packet-schema.json",
-      "sha256": "1d3c998892228ced478b5b5a4ee20b0039a875cd249cec9738e93d7a0fe4b7e2",
-      "item": 4,
-      "note": "One module; 5-12 exact IDs or reason; two-delta; exact mutually-exclusive partitions. No packet authored."
-    },
-    "source_registry_dag_schema": {
-      "path": "docs/halo/contract/phase1/source-registry-dag-schema.json",
-      "sha256": "6876543f301f1f3e822830838270d666756eacac316814c04f065686594bf63c",
-      "item": 5,
-      "note": "Acquisition dedupe key (profile,family,period,schema_revision); no per-metric duplicate acquisition; source->metric fan-out DAG."
-    },
-    "beyond_295_candidate_intake_schema": {
-      "path": "docs/halo/contract/phase1/beyond-295-candidate-intake-schema.json",
-      "sha256": "87bd5adfb8d9fab0563384edd2c90c7da0dad24d04b04d9c28beb6db68071639",
-      "item": 6,
-      "note": "Separate candidate registry (CAND-####); cannot alter authoritative 295."
-    },
-    "fail_closed_stops": {
-      "path": "docs/halo/contract/phase1/fail-closed-stops.json",
-      "sha256": "5bdcf282f33137f97e0bac43b165b28e7558de2e39cdc88bd9d1a17f1f19c60b",
-      "item": 7,
-      "note": "11 canonical fail-closed stops; one source failure blocks only dependent IDs."
-    },
-    "validator": {
-      "path": "scripts/halo-phase1/validate_phase1_contracts.py",
-      "sha256": "14771e6238d5eac95bd95aac44aba285ff871eacbe3707e47a573b9e5b97b5cd",
-      "item": 8,
-      "note": "Structure(295/11/18)+vocab-closure+29 synthetic self-tests. Reproduce: python3 scripts/halo-phase1/validate_phase1_contracts.py [--no-write]."
-    },
-    "contract_checks_output": {
-      "path": "docs/halo/evidence/honda-watchdog/phase1a/PHASE1A_CONTRACT_CHECKS.json",
-      "sha256": "d589ae7642a5488de584996b3639ceeb69c36dad162625b2aac818e693529300",
-      "item": 8,
-      "note": "Deterministic validator output: overall_pass=true; 29/29 self-tests pass; structure + vocab PASS."
-    }
+    "spec_amendment_001": {"path": "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_SPEC_AMENDMENT_001.md", "sha256": "822b08d2c27f90107631d332cab92a284a7482191e944a2f230cbbaf52dd51f8", "item": 1},
+    "frozen_vocabularies": {"path": "docs/halo/contract/phase1/frozen-vocabularies.json", "sha256": "2f3cf481d7f5dcfb0ad8f596d66b277db0cde77fbee1d30c3c3b4a22e62286da", "item": "1+2+8", "note": "Six closed vocabularies + calculation_kind; disposition/source_existence/metric_evaluation/acquisition transitions; disposition context receipts."},
+    "metric_row_schema": {"path": "docs/halo/contract/phase1/metric-row-schema.json", "sha256": "02da60a8ac977780b2df30c40458a571c1a18f0793841f0c75b3a55e7356a042", "item": 3, "note": "always_required_fields; calculation_kind conditionals; finite_investigation_ref; affirmative_investigation_evidence_ref; 3 always-present distinct-id sub-contracts."},
+    "packet_schema": {"path": "docs/halo/contract/phase1/packet-schema.json", "sha256": "4feaad548c64701349c0d462b9afddae68b95049e19d99f2af2c9ffe8d3b717e", "item": 4, "note": "exact canonical stop inheritance + vault admission gate; nonempty packet_specific."},
+    "source_registry_dag_schema": {"path": "docs/halo/contract/phase1/source-registry-dag-schema.json", "sha256": "840440155170326dae11d63096ac2a82f9db66dddace0ca8d93b6b75edfd0ae7", "item": "5+10", "note": "dedupe key; dependent_metric_ids (SW) vs dependent_candidate_ids (CAND) disjoint."},
+    "beyond_295_candidate_intake_schema": {"path": "docs/halo/contract/phase1/beyond-295-candidate-intake-schema.json", "sha256": "87bd5adfb8d9fab0563384edd2c90c7da0dad24d04b04d9c28beb6db68071639", "item": 6},
+    "fail_closed_stops": {"path": "docs/halo/contract/phase1/fail-closed-stops.json", "sha256": "21af853227f23789461517dfba1b9fb3c56655a6965baf72a89b16fcf30e0e8a", "item": "7+9", "note": "exactly 11 canonical names; canonical_stop_names list; inherited vault-policy nonconformance admission gate."},
+    "validator": {"path": "scripts/halo-phase1/validate_phase1_contracts.py", "sha256": "0047d58428a289c64a7532209126567fecf64d12e4c01f05646018cff7f8dbbc", "item": 8, "note": "Schema-driven; structure(295/11/18)+vocab-closure+201 self-tests+5 named probes. Reproduce: python3 scripts/halo-phase1/validate_phase1_contracts.py [--no-write]."},
+    "contract_checks_output": {"path": "docs/halo/evidence/honda-watchdog/phase1a/PHASE1A_CONTRACT_CHECKS.json", "sha256": "c9a5d096ea714578182a479f07bc26710aeb08bc174614252a946f0a5b7b8c08", "item": 8, "note": "Deterministic output: overall_pass=true; 201/201 self-tests; 5/5 probes reject; structure + vocab PASS."}
   },
   "prohibited_access_confirmation": "No VinSolutions, Gmail, network, schedule, ingest, DB-schema, product/runtime, production, or recipient access. All artifacts are local docs/contracts/validator files. INGEST src/routeTree.gen.ts not touched."
 }

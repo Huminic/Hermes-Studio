@@ -1,137 +1,84 @@
 {
   "check": "honda_watchdog_phase1a_contracts",
-  "phase": "Phase 1A — design-only contract freeze + self-tests",
+  "phase": "Phase 1A — design-only exhaustive schema-driven contract freeze + self-tests",
+  "schema_driven": true,
   "contract_files": {
-    "frozen-vocabularies.json": "4868bfd1d8b8ec5d95dc503682e8c5efe9d07813d9fd9b0aeca0e0c83cc964a3",
-    "metric-row-schema.json": "b54d565dcd2cf02a67307e7c510f05d4ef2b168891d88c478baf205f1c53c8f3",
-    "packet-schema.json": "1d3c998892228ced478b5b5a4ee20b0039a875cd249cec9738e93d7a0fe4b7e2",
-    "source-registry-dag-schema.json": "6876543f301f1f3e822830838270d666756eacac316814c04f065686594bf63c",
+    "frozen-vocabularies.json": "2f3cf481d7f5dcfb0ad8f596d66b277db0cde77fbee1d30c3c3b4a22e62286da",
+    "metric-row-schema.json": "02da60a8ac977780b2df30c40458a571c1a18f0793841f0c75b3a55e7356a042",
+    "packet-schema.json": "4feaad548c64701349c0d462b9afddae68b95049e19d99f2af2c9ffe8d3b717e",
+    "source-registry-dag-schema.json": "840440155170326dae11d63096ac2a82f9db66dddace0ca8d93b6b75edfd0ae7",
     "beyond-295-candidate-intake-schema.json": "87bd5adfb8d9fab0563384edd2c90c7da0dad24d04b04d9c28beb6db68071639",
-    "fail-closed-stops.json": "5bdcf282f33137f97e0bac43b165b28e7558de2e39cdc88bd9d1a17f1f19c60b"
+    "fail-closed-stops.json": "21af853227f23789461517dfba1b9fb3c56655a6965baf72a89b16fcf30e0e8a"
   },
   "structure_295_11_18": "PASS",
   "vocab_closure": "PASS",
-  "self_tests_total": 29,
+  "self_tests_total": 201,
   "self_tests_failed": 0,
+  "named_probes_total": 5,
+  "named_probes_failed": 0,
+  "named_probes": [
+    {
+      "probe": "sparse_sip_metric",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 44,
+      "sample_error": "missing required field definition_version"
+    },
+    {
+      "probe": "gna_missing_affirmative_evidence",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "genuinely_not_available requires affirmative_investigation_evidence_ref"
+    },
+    {
+      "probe": "sparse_packet",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 25,
+      "sample_error": "packet missing target_ids"
+    },
+    {
+      "probe": "sparse_source",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 16,
+      "sample_error": "source missing profile"
+    },
+    {
+      "probe": "sparse_candidate",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 13,
+      "sample_error": "candidate missing proposed_name"
+    }
+  ],
   "self_tests": [
     {
-      "test": "metric_row.valid_sales_graded",
+      "test": "metric.valid_graded",
       "expected": "accept",
       "got": "accept",
       "pass": true,
       "sample_error": null
     },
     {
-      "test": "metric_row.graded_without_approved_target_rejected",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "measured_graded requires an approved+active grade_target"
-    },
-    {
-      "test": "metric_row.calculated_without_formula_rejected",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "measured_graded requires formula"
-    },
-    {
-      "test": "metric_row.nongradable_graded_rejected",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "measured_graded requires gradable + measured_validated"
-    },
-    {
-      "test": "metric_row.source_investigation_pending_valid",
+      "test": "metric.valid_sip",
       "expected": "accept",
       "got": "accept",
       "pass": true,
       "sample_error": null
     },
     {
-      "test": "metric_row.source_investigation_pending_missing_reviewpoint_rejected",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "source_investigation_pending missing review_point"
-    },
-    {
-      "test": "metric_row.source_investigation_pending_gradable_rejected",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "source_investigation_pending must be gradable=false and not customer-full"
-    },
-    {
-      "test": "metric_row.service_overlay_valid",
+      "test": "metric.valid_gna",
       "expected": "accept",
       "got": "accept",
       "pass": true,
       "sample_error": null
-    },
-    {
-      "test": "metric_row.service_overlay_wrong_boundary_rejected",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "service overlay id must be separate_serra_service + appendix_id_label_only"
-    },
-    {
-      "test": "metric_row.protected_content_graded_without_envelope_rejected",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "measured_graded requires gradable + measured_validated"
-    },
-    {
-      "test": "separation.score_requires_approved_grade_target",
-      "expected": "accept",
-      "got": "accept",
-      "pass": true,
-      "sample_error": null
-    },
-    {
-      "test": "separation.comparison_reference_alone_cannot_score",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "blocked"
-    },
-    {
-      "test": "transition.sip_to_crm_available_allowed",
-      "expected": "accept",
-      "got": "accept",
-      "pass": true,
-      "sample_error": null
-    },
-    {
-      "test": "transition.sip_to_measured_forbidden",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "blocked"
-    },
-    {
-      "test": "transition.sip_to_data_acquired_forbidden",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "blocked"
-    },
-    {
-      "test": "transition.held_to_promoted_allowed",
-      "expected": "accept",
-      "got": "accept",
-      "pass": true,
-      "sample_error": null
-    },
-    {
-      "test": "transition.quarantine_to_admitted_forbidden",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "blocked"
     },
     {
       "test": "packet.valid",
@@ -141,53 +88,11 @@
       "sample_error": null
     },
     {
-      "test": "packet.overlapping_partitions_rejected",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "partitions not mutually exclusive"
-    },
-    {
-      "test": "packet.partition_union_mismatch_rejected",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "partitions union != target_ids"
-    },
-    {
-      "test": "packet.single_delta_rejected",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "two_delta_proof requires both evidence_delta and meaning_delta"
-    },
-    {
-      "test": "packet.wrong_module_ownership_rejected",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "SW-011 not owned by module 3"
-    },
-    {
-      "test": "packet.oversize_without_reason_rejected",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "target_ids out of 5..12 without size_reason"
-    },
-    {
-      "test": "dag.unique_dedupe_key_ok",
+      "test": "source.valid",
       "expected": "accept",
       "got": "accept",
       "pass": true,
       "sample_error": null
-    },
-    {
-      "test": "dag.duplicate_dedupe_key_rejected",
-      "expected": "reject",
-      "got": "reject",
-      "pass": true,
-      "sample_error": "duplicate acquisition dedupe key ('serra-honda', 'appointments', '2026-08-24..2026-08-30', 'v1') (no per-metric duplicate acquisition)"
     },
     {
       "test": "candidate.valid",
@@ -197,21 +102,1365 @@
       "sample_error": null
     },
     {
-      "test": "candidate.sw_id_as_candidate_rejected",
+      "test": "metric.drop_required.metric_id",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field metric_id"
+    },
+    {
+      "test": "metric.drop_required.definition_version",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field definition_version"
+    },
+    {
+      "test": "metric.drop_required.module",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field module"
+    },
+    {
+      "test": "metric.drop_required.business_question",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field business_question"
+    },
+    {
+      "test": "metric.drop_required.boundary_class",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field boundary_class"
+    },
+    {
+      "test": "metric.drop_required.population",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field population"
+    },
+    {
+      "test": "metric.drop_required.calculation_kind",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field calculation_kind"
+    },
+    {
+      "test": "metric.drop_required.null_missing_behavior",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field null_missing_behavior"
+    },
+    {
+      "test": "metric.drop_required.unit",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field unit"
+    },
+    {
+      "test": "metric.drop_required.polarity",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field polarity"
+    },
+    {
+      "test": "metric.drop_required.window",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field window"
+    },
+    {
+      "test": "metric.drop_required.timezone",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field timezone"
+    },
+    {
+      "test": "metric.drop_required.cadence",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field cadence"
+    },
+    {
+      "test": "metric.drop_required.impact_method",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field impact_method"
+    },
+    {
+      "test": "metric.drop_required.impact_status",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field impact_status"
+    },
+    {
+      "test": "metric.drop_required.gradable",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field gradable"
+    },
+    {
+      "test": "metric.drop_required.sensitivity_class",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field sensitivity_class"
+    },
+    {
+      "test": "metric.drop_required.protected_content",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field protected_content"
+    },
+    {
+      "test": "metric.drop_required.authorization",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field authorization"
+    },
+    {
+      "test": "metric.drop_required.disposition",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field disposition"
+    },
+    {
+      "test": "metric.drop_required.source_existence_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field source_existence_state"
+    },
+    {
+      "test": "metric.drop_required.evaluation_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field evaluation_state"
+    },
+    {
+      "test": "metric.drop_required.source_dependency_ids",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field source_dependency_ids"
+    },
+    {
+      "test": "metric.drop_required.evidence_ref",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field evidence_ref"
+    },
+    {
+      "test": "metric.drop_required.evidence_as_of",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field evidence_as_of"
+    },
+    {
+      "test": "metric.drop_required.owner",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field owner"
+    },
+    {
+      "test": "metric.drop_required.internal_visibility",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field internal_visibility"
+    },
+    {
+      "test": "metric.drop_required.customer_visibility",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field customer_visibility"
+    },
+    {
+      "test": "metric.drop_required.confidence",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field confidence"
+    },
+    {
+      "test": "metric.drop_required.explainability_ref",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field explainability_ref"
+    },
+    {
+      "test": "metric.drop_required.evidence_index_ref",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field evidence_index_ref"
+    },
+    {
+      "test": "metric.drop_required.detection_threshold_contract",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field detection_threshold_contract"
+    },
+    {
+      "test": "metric.drop_required.comparison_reference_contract",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field comparison_reference_contract"
+    },
+    {
+      "test": "metric.drop_required.grade_target_contract",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "missing required field grade_target_contract"
+    },
+    {
+      "test": "metric.bad_enum.boundary_class",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "boundary_class: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.calculation_kind",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "calculation_kind: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.null_missing_behavior",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "null_missing_behavior: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.zero_denominator_behavior",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "zero_denominator_behavior: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.polarity",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "polarity: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.cadence",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "cadence: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.impact_method",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "impact_method: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.impact_status",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "impact_status: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.sensitivity_class",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "sensitivity_class: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.authorization",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "authorization: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.disposition",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "disposition: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.source_existence_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source_existence_state: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.evaluation_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "evaluation_state: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.owner",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "owner: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.customer_visibility",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "customer_visibility: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.bad_enum.confidence",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "confidence: '__BAD__' not in enum"
+    },
+    {
+      "test": "metric.module_not_int",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "module: not integer"
+    },
+    {
+      "test": "metric.metric_id_bad_pattern",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "metric_id: fails pattern"
+    },
+    {
+      "test": "metric.timezone_not_const",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "timezone: must be America/New_York"
+    },
+    {
+      "test": "metric.gradable_not_bool",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "gradable: not boolean"
+    },
+    {
+      "test": "metric.wrong_module_owner",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "module != frozen owner"
+    },
+    {
+      "test": "metric.rate_missing_denominator",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "calc_kind rate requires denominator"
+    },
+    {
+      "test": "metric.rate_missing_zero_den_behavior",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "calc_kind rate requires zero_denominator_behavior"
+    },
+    {
+      "test": "metric.measurable_missing_direct_fields",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "calc_kind rate requires direct_source_fields"
+    },
+    {
+      "test": "metric.semantic_without_protected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "semantic calc_kind requires sensitivity_class=protected_content + protected_content=true"
+    },
+    {
+      "test": "metric.sip_missing_finite_investigation_ref",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "SIP missing finite_investigation_ref"
+    },
+    {
+      "test": "metric.sip_gradable_true",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "SIP requires gradable=false"
+    },
+    {
+      "test": "metric.sip_customer_full",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "SIP cannot be customer full"
+    },
+    {
+      "test": "metric.sip_bad_existence",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "SIP requires source_existence_state unproved/investigation_pending"
+    },
+    {
+      "test": "metric.gna_missing_affirmative",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "genuinely_not_available requires affirmative_investigation_evidence_ref"
+    },
+    {
+      "test": "metric.graded_target_not_approved",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "measured_graded requires approved+active+compatible grade_target"
+    },
+    {
+      "test": "metric.graded_target_incompatible",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "measured_graded requires approved+active+compatible grade_target"
+    },
+    {
+      "test": "metric.nongradable_graded",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "measured_graded requires gradable + measured_validated"
+    },
+    {
+      "test": "metric.overlay_wrong_boundary",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "service overlay id must be separate_serra_service + appendix_id_label_only"
+    },
+    {
+      "test": "metric.nonsales_customer_full",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "non-sales boundary must be disposition-only, non-gradable, not customer-full"
+    },
+    {
+      "test": "metric.subcontract_ids_not_distinct",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "sub-contract ids must be distinct"
+    },
+    {
+      "test": "separation.score_requires_approved_active_compatible",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "separation.comparison_alone_cannot_score",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "blocked"
+    },
+    {
+      "test": "subcontract.threshold_contract.drop.threshold_id",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "threshold_contract: missing threshold_id"
+    },
+    {
+      "test": "subcontract.threshold_contract.drop.version",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "threshold_contract: missing version"
+    },
+    {
+      "test": "subcontract.threshold_contract.drop.rule",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "threshold_contract: missing rule"
+    },
+    {
+      "test": "subcontract.threshold_contract.drop.provenance",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "threshold_contract: missing provenance"
+    },
+    {
+      "test": "subcontract.threshold_contract.drop.effective_dates",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "threshold_contract: missing effective_dates"
+    },
+    {
+      "test": "subcontract.threshold_contract.drop.approval_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "threshold_contract: missing approval_state"
+    },
+    {
+      "test": "subcontract.threshold_contract.drop.status",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "threshold_contract: missing status"
+    },
+    {
+      "test": "subcontract.threshold_contract.bad_enum.approval_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "threshold_contract.approval_state: '__BAD__' not in enum"
+    },
+    {
+      "test": "subcontract.threshold_contract.bad_enum.status",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "threshold_contract.status: '__BAD__' not in enum"
+    },
+    {
+      "test": "subcontract.comparison_contract.drop.reference_id",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract: missing reference_id"
+    },
+    {
+      "test": "subcontract.comparison_contract.drop.version",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract: missing version"
+    },
+    {
+      "test": "subcontract.comparison_contract.drop.basis",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract: missing basis"
+    },
+    {
+      "test": "subcontract.comparison_contract.drop.formula",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract: missing formula"
+    },
+    {
+      "test": "subcontract.comparison_contract.drop.provenance",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract: missing provenance"
+    },
+    {
+      "test": "subcontract.comparison_contract.drop.publication_date",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract: missing publication_date"
+    },
+    {
+      "test": "subcontract.comparison_contract.drop.valid_period",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract: missing valid_period"
+    },
+    {
+      "test": "subcontract.comparison_contract.drop.compatibility_result",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract: missing compatibility_result"
+    },
+    {
+      "test": "subcontract.comparison_contract.drop.assumptions",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract: missing assumptions"
+    },
+    {
+      "test": "subcontract.comparison_contract.drop.confidence",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract: missing confidence"
+    },
+    {
+      "test": "subcontract.comparison_contract.drop.approval_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract: missing approval_state"
+    },
+    {
+      "test": "subcontract.comparison_contract.drop.status",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract: missing status"
+    },
+    {
+      "test": "subcontract.comparison_contract.bad_enum.basis",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract.basis: '__BAD__' not in enum"
+    },
+    {
+      "test": "subcontract.comparison_contract.bad_enum.compatibility_result",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract.compatibility_result: '__BAD__' not in enum"
+    },
+    {
+      "test": "subcontract.comparison_contract.bad_enum.confidence",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract.confidence: '__BAD__' not in enum"
+    },
+    {
+      "test": "subcontract.comparison_contract.bad_enum.approval_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract.approval_state: '__BAD__' not in enum"
+    },
+    {
+      "test": "subcontract.comparison_contract.bad_enum.status",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "comparison_contract.status: '__BAD__' not in enum"
+    },
+    {
+      "test": "subcontract.grade_target_contract.drop.grade_target_id",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "grade_target_contract: missing grade_target_id"
+    },
+    {
+      "test": "subcontract.grade_target_contract.drop.version",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "grade_target_contract: missing version"
+    },
+    {
+      "test": "subcontract.grade_target_contract.drop.basis",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "grade_target_contract: missing basis"
+    },
+    {
+      "test": "subcontract.grade_target_contract.drop.value_or_range",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "grade_target_contract: missing value_or_range"
+    },
+    {
+      "test": "subcontract.grade_target_contract.drop.provenance",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "grade_target_contract: missing provenance"
+    },
+    {
+      "test": "subcontract.grade_target_contract.drop.effective_dates",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "grade_target_contract: missing effective_dates"
+    },
+    {
+      "test": "subcontract.grade_target_contract.drop.compatibility_result",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "measured_graded requires approved+active+compatible grade_target"
+    },
+    {
+      "test": "subcontract.grade_target_contract.drop.approval_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "measured_graded requires approved+active+compatible grade_target"
+    },
+    {
+      "test": "subcontract.grade_target_contract.drop.status",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "measured_graded requires approved+active+compatible grade_target"
+    },
+    {
+      "test": "subcontract.grade_target_contract.bad_enum.basis",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "grade_target_contract.basis: '__BAD__' not in enum"
+    },
+    {
+      "test": "subcontract.grade_target_contract.bad_enum.compatibility_result",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "measured_graded requires approved+active+compatible grade_target"
+    },
+    {
+      "test": "subcontract.grade_target_contract.bad_enum.approval_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "measured_graded requires approved+active+compatible grade_target"
+    },
+    {
+      "test": "subcontract.grade_target_contract.bad_enum.status",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "measured_graded requires approved+active+compatible grade_target"
+    },
+    {
+      "test": "packet.drop_required.packet_id",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing packet_id"
+    },
+    {
+      "test": "packet.drop_required.module",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing module"
+    },
+    {
+      "test": "packet.drop_required.target_ids",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing target_ids"
+    },
+    {
+      "test": "packet.drop_required.management_question",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing management_question"
+    },
+    {
+      "test": "packet.drop_required.prerequisites",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing prerequisites"
+    },
+    {
+      "test": "packet.drop_required.source_dependencies",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing source_dependencies"
+    },
+    {
+      "test": "packet.drop_required.admission_contract",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing admission_contract"
+    },
+    {
+      "test": "packet.drop_required.transform_contract",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing transform_contract"
+    },
+    {
+      "test": "packet.drop_required.persist_contract",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing persist_contract"
+    },
+    {
+      "test": "packet.drop_required.test_contract",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing test_contract"
+    },
+    {
+      "test": "packet.drop_required.report_fragment_contract",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing report_fragment_contract"
+    },
+    {
+      "test": "packet.drop_required.stop_conditions",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing stop_conditions"
+    },
+    {
+      "test": "packet.drop_required.two_delta_proof",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing two_delta_proof"
+    },
+    {
+      "test": "packet.drop_required.partitions_target",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "packet missing partitions_target"
+    },
+    {
+      "test": "packet.admission_contract.drop.family",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "admission_contract: missing family"
+    },
+    {
+      "test": "packet.admission_contract.drop.dedupe_key",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "admission_contract: missing dedupe_key"
+    },
+    {
+      "test": "packet.admission_contract.drop.sales_only_receipt",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "admission_contract: missing sales_only_receipt"
+    },
+    {
+      "test": "packet.admission_contract.drop.expected_admission_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "admission_contract: missing expected_admission_state"
+    },
+    {
+      "test": "packet.admission_contract.drop.inherited_admission_gates",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "admission_contract: missing inherited_admission_gates"
+    },
+    {
+      "test": "packet.transform_contract.drop.normalized_spec",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "transform_contract: missing normalized_spec"
+    },
+    {
+      "test": "packet.transform_contract.drop.row_key_set_hash_method",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "transform_contract: missing row_key_set_hash_method"
+    },
+    {
+      "test": "packet.transform_contract.drop.join_keys",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "transform_contract: missing join_keys"
+    },
+    {
+      "test": "packet.transform_contract.drop.reconciliation",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "transform_contract: missing reconciliation"
+    },
+    {
+      "test": "packet.persist_contract.drop.target_tables",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "persist_contract: missing target_tables"
+    },
+    {
+      "test": "packet.persist_contract.drop.append_only",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "persist_contract: missing append_only"
+    },
+    {
+      "test": "packet.persist_contract.drop.idempotent_key",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "persist_contract: missing idempotent_key"
+    },
+    {
+      "test": "packet.test_contract.drop.positive_golden",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "test_contract: missing positive_golden"
+    },
+    {
+      "test": "packet.test_contract.drop.negative_tests",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "test_contract: missing negative_tests"
+    },
+    {
+      "test": "packet.test_contract.drop.missing_is_not_zero_test",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "test_contract: missing missing_is_not_zero_test"
+    },
+    {
+      "test": "packet.report_fragment_contract.drop.subsection_outputs",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "report_fragment_contract: missing subsection_outputs"
+    },
+    {
+      "test": "packet.report_fragment_contract.drop.customer_language_scope",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "report_fragment_contract: missing customer_language_scope"
+    },
+    {
+      "test": "packet.report_fragment_contract.drop.internal_companion_scope",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "report_fragment_contract: missing internal_companion_scope"
+    },
+    {
+      "test": "packet.inherited_canonical_not_exact",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "stop_conditions.inherited_canonical must equal canonical_stop_names exactly"
+    },
+    {
+      "test": "packet.packet_specific_empty",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "stop_conditions: missing packet_specific"
+    },
+    {
+      "test": "packet.missing_vault_gate",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "admission_contract: missing inherited_admission_gates"
+    },
+    {
+      "test": "packet.single_delta",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "two_delta_proof: missing meaning_delta"
+    },
+    {
+      "test": "packet.partition_overlap",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "partitions not mutually exclusive"
+    },
+    {
+      "test": "packet.partition_union_mismatch",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "partitions union != target_ids"
+    },
+    {
+      "test": "packet.wrong_module_ownership",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "SW-011 not owned by module 3"
+    },
+    {
+      "test": "packet.oversize_without_reason",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "target_ids out of 5..12 without size_reason"
+    },
+    {
+      "test": "source.drop_required.source_id",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source missing source_id"
+    },
+    {
+      "test": "source.drop_required.profile",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source missing profile"
+    },
+    {
+      "test": "source.drop_required.family",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source missing family"
+    },
+    {
+      "test": "source.drop_required.period",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source missing period"
+    },
+    {
+      "test": "source.drop_required.schema_revision",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source missing schema_revision"
+    },
+    {
+      "test": "source.drop_required.source_type",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source missing source_type"
+    },
+    {
+      "test": "source.drop_required.source_existence_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source missing source_existence_state"
+    },
+    {
+      "test": "source.drop_required.acquisition_admission_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source missing acquisition_admission_state"
+    },
+    {
+      "test": "source.drop_required.provenance_ref",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source missing provenance_ref"
+    },
+    {
+      "test": "source.drop_required.sales_only_receipt",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source missing sales_only_receipt"
+    },
+    {
+      "test": "source.drop_required.dependent_metric_ids",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source missing dependent_metric_ids"
+    },
+    {
+      "test": "source.drop_required.dependent_candidate_ids",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source missing dependent_candidate_ids"
+    },
+    {
+      "test": "source.bad_family",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "family not in enum"
+    },
+    {
+      "test": "source.bad_acq_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "acquisition_admission_state not in vocab"
+    },
+    {
+      "test": "source.duplicate_dedupe_key",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "duplicate acquisition dedupe key ('serra-honda', 'appointments', '2026-08-24..2026-08-30', 'v1')"
+    },
+    {
+      "test": "source.sw_in_candidate_edges",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "dependent_candidate_ids must be CAND ids (SW-031)"
+    },
+    {
+      "test": "source.cand_in_metric_edges",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "dependent_metric_ids must be SW ids (CAND-0001)"
+    },
+    {
+      "test": "candidate.drop_required.candidate_id",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "candidate missing candidate_id"
+    },
+    {
+      "test": "candidate.drop_required.proposed_name",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "candidate missing proposed_name"
+    },
+    {
+      "test": "candidate.drop_required.description",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "candidate missing description"
+    },
+    {
+      "test": "candidate.drop_required.observed_source",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "candidate missing observed_source"
+    },
+    {
+      "test": "candidate.drop_required.rationale",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "candidate missing rationale"
+    },
+    {
+      "test": "candidate.drop_required.boundary_class",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "candidate missing boundary_class"
+    },
+    {
+      "test": "candidate.drop_required.relationship_to_295",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "candidate missing relationship_to_295"
+    },
+    {
+      "test": "candidate.drop_required.candidate_state",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "candidate missing candidate_state"
+    },
+    {
+      "test": "candidate.drop_required.authorization_required",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "candidate missing authorization_required"
+    },
+    {
+      "test": "candidate.drop_required.owner",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "candidate missing owner"
+    },
+    {
+      "test": "candidate.drop_required.evidence_ref",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "candidate missing evidence_ref"
+    },
+    {
+      "test": "candidate.sw_id",
       "expected": "reject",
       "got": "reject",
       "pass": true,
       "sample_error": "candidate_id must match ^CAND-\\d{4}$"
     },
     {
-      "test": "candidate.mutates_295_rejected",
+      "test": "candidate.refines_without_related",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "refines_existing requires related_sw_id"
+    },
+    {
+      "test": "candidate.mutates_295",
       "expected": "reject",
       "got": "reject",
       "pass": true,
       "sample_error": "candidate intake may not mutate the authoritative 295"
     },
     {
-      "test": "change_scope.catalog_still_295",
+      "test": "trans.sip_to_crm",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "trans.sip_to_measured_forbidden",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "x"
+    },
+    {
+      "test": "trans.sip_to_data_acquired_forbidden",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "x"
+    },
+    {
+      "test": "trans.sip_to_outside_needs_boundary_correction",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "x"
+    },
+    {
+      "test": "trans.sip_to_outside_with_receipt",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "trans.sip_to_gna_needs_affirmative",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "x"
+    },
+    {
+      "test": "trans.sip_to_gna_with_receipt",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "trans.ses_unproved_to_acquired_forbidden",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "x"
+    },
+    {
+      "test": "trans.ses_unproved_to_investigation_ok",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "trans.mes_not_measured_to_graded_forbidden",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "x"
+    },
+    {
+      "test": "trans.mes_unscored_to_graded_ok",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "trans.acq_quarantine_to_admitted_forbidden",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "x"
+    },
+    {
+      "test": "trans.acq_held_to_promoted_ok",
       "expected": "accept",
       "got": "accept",
       "pass": true,
@@ -220,5 +1469,5 @@
   ],
   "errors": [],
   "overall_pass": true,
-  "note": "Design-only: no metric rows or packets authored. Fixtures are synthetic in-memory cases proving each rule fires."
+  "note": "Design-only: no metric rows or packets authored. Fixtures/mutations are synthetic in-memory cases; every required field/enum/conditional/transition/context-receipt/stop/partition/DAG/candidate rule has a mutation test."
 }

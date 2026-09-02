@@ -18,15 +18,16 @@
     "acquisition_admission_state": {"type": "enum", "vocab": "acquisition_admission_state"},
     "provenance_ref": {"type": "string", "nonempty": true, "note": "Missing provenance is a fail-closed stop."},
     "sales_only_receipt": {"type": "string", "note": "Zero Service/Parts proof; else quarantine whole-delivery."},
-    "dependent_metric_ids": {"type": "array<string>", "each_pattern": "^SW-\\d{3}$", "note": "DAG fan-out edges source->metric."}
+    "dependent_metric_ids": {"type": "array<string>", "each_pattern": "^SW-\\d{3}$", "note": "DAG fan-out edges source->authoritative-295 metric. SW ids ONLY."},
+    "dependent_candidate_ids": {"type": "array<string>", "each_pattern": "^CAND-\\d{4}$", "note": "SEPARATE DAG fan-out edges source->beyond-295 candidate. CAND ids ONLY. Resolves the SW-vs-candidate contradiction: the two edge sets are disjoint and validated separately; a candidate edge never enters the 295 metric graph."}
   },
   "dag_invariants": [
     "The acquisition dedupe key (profile, family, period, schema_revision) is UNIQUE across source nodes: exactly one acquisition task per key.",
     "NO per-metric duplicate acquisition: a metric that needs an already-registered (family,period,schema_revision) reuses that source_id; it does not create a second acquisition node.",
-    "Edges are strictly source -> metric (fan-out). A metric may depend on multiple sources; a source may feed many metrics.",
-    "The dependency graph is acyclic (metrics never feed acquisition).",
-    "Every dependent_metric_id is one of the frozen 295 (or a registered beyond-295 candidate, per candidate-intake schema — which is a SEPARATE registry).",
+    "Edges are strictly source -> metric/candidate (fan-out). A metric/candidate may depend on multiple sources; a source may feed many.",
+    "The dependency graph is acyclic (metrics/candidates never feed acquisition).",
+    "dependent_metric_ids contains ONLY frozen-295 SW ids (^SW-\\d{3}$, 001..295). dependent_candidate_ids contains ONLY beyond-295 candidate ids (^CAND-\\d{4}$). The two sets are disjoint; a value may never appear in both, and neither set may contain the other's id form.",
     "acquisition_admission_state transitions obey frozen-vocabularies acquisition_admission_state (quarantine terminal; promotion only from held).",
-    "A source in acquisition_exception opens a visible source-run exception and creates no empty observations for its dependent metrics."
+    "A source in acquisition_exception opens a visible source-run exception and creates no empty observations for its dependent metrics/candidates."
   ]
 }

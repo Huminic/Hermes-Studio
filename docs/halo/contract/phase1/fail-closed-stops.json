@@ -18,10 +18,25 @@
     "dirty_or_competing_writer": "A dirty/competing writer overlaps the working branch/artifact.",
     "production_or_customer_behavior_change": "Any action that would alter production or customer behavior (schedule, recipient, send, deploy)."
   },
+  "canonical_stop_names": [
+    "wrong_dealer", "service_parts_in_sales", "ambiguous_period", "schema_drift",
+    "missing_provenance", "protected_content_or_pii_outside_envelope",
+    "formula_or_denominator_ambiguity", "incompatible_baseline", "source_substitution_or_skip",
+    "dirty_or_competing_writer", "production_or_customer_behavior_change"
+  ],
   "blast_radius_rule": {
     "one_source_failure_blocks": "only the dependent metric IDs of that source",
     "does_not_block": "unrelated modules or independent metrics",
     "module_rule": "a failed/blocked ID never erases the rest of its module; a rejected ID blocks only FINAL completion until corrected or converted to an evidence-backed allowed disposition"
   },
-  "count": 11
+  "inherited_admission_gates": {
+    "vault_policy_nonconformance_admission_gate": {
+      "source": "Phase 0 evidence — 09_conflict_register.json C-02; 07_vault_vs_brain_topology.md §4.3",
+      "rule": "New protected raw admission FAILS CLOSED until vault dirs are 0700 / files 0600 (or a documented dedicated service identity). Current runtime is NONCONFORMING (0750/0775/0755; files 0444).",
+      "enforced_by": "packet admission_contract must mechanically inherit this gate; a packet cannot admit new protected raw while nonconforming.",
+      "status": "PINNED / ENFORCEMENT NONCONFORMING -> Phase 3 fail-closed admission gate"
+    }
+  },
+  "count": 11,
+  "inheritance_rule": "A packet's stop_conditions.inherited_canonical MUST equal canonical_stop_names EXACTLY (mechanical inheritance, not any string), and its admission_contract MUST inherit inherited_admission_gates.vault_policy_nonconformance_admission_gate."
 }
