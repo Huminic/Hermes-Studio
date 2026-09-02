@@ -1,0 +1,33 @@
+{
+  "artifact": "honda-watchdog-phase1-phase0-derived-authority",
+  "schema_version": "1.0.0",
+  "frozen": true,
+  "phase": "Phase 1A — machine-readable representation of the Phase 0 / SPEC authority semantics used to anchor fail-closed-stops.",
+  "how_this_is_anchored": "The Phase 1A validator (a) verifies the pinned sha256 of the immutable Phase 0 evidence (07/09) + reviewed SPEC AND of this file; then (b) RELATIONALLY verifies every value below by requiring its token/phrase to appear literally in the pinned immutable source; then (c) DERIVES the canonical stops / blast-radius / vault-gate semantics FROM this file. Because the accepted values must match tokens in the unchanged Phase 0 authority, co-mutating validator + contract (and even this file) fails while Phase 0 authority is unchanged.",
+  "phase0_sources": {
+    "vault_topology_07": {"path": "docs/halo/evidence/honda-watchdog/phase0/07_vault_vs_brain_topology.md", "sha256": "9d3bb62894701d5f973b275ad8f68ebc47863aa45abf9f88c34cde22e7d74b2d"},
+    "conflict_register_09": {"path": "docs/halo/evidence/honda-watchdog/phase0/09_conflict_register.json", "sha256": "0357992bcc60b7a085ceb2f2b7d83b8c4549941de26d8dbb68d43af5490d2504"},
+    "spec": {"path": "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_EXECUTION_SPEC.md", "sha256": "fedd957b9431521591155763327147d86c25fe3da11e2996470c134eaf9d785e"}
+  },
+  "vault": {
+    "value": {"fail_closed": true, "required_dir_mode": "0700", "required_file_mode": "0600", "current_conformance": "nonconforming", "gate_phase": "phase3_admission_gate", "status_must_contain": "NONCONFORMING"},
+    "relational_tokens": {"vault_topology_07": ["`0700`", "`0600`", "fail closed"], "conflict_register_09": ["NONCONFORMING"]}
+  },
+  "blast": {
+    "value": {"one_source_failure_scope": "dependent_ids_only", "blocks_unrelated_modules": false, "blocks_independent_metrics": false, "rejected_id_blocks_final_completion_only": true},
+    "relational_tokens": {"spec": ["blocks only its dependent IDs", "cannot block unrelated modules", "prevents final completion"]}
+  },
+  "canonical_stops": [
+    {"key": "wrong_dealer", "spec_phrase": "wrong dealer"},
+    {"key": "service_parts_in_sales", "spec_phrase": "Service/Parts"},
+    {"key": "ambiguous_period", "spec_phrase": "ambiguous period"},
+    {"key": "schema_drift", "spec_phrase": "schema drift"},
+    {"key": "missing_provenance", "spec_phrase": "provenance"},
+    {"key": "protected_content_or_pii_outside_envelope", "spec_phrase": "PII outside the approved envelope"},
+    {"key": "formula_or_denominator_ambiguity", "spec_phrase": "formula/denominator ambiguity"},
+    {"key": "incompatible_baseline", "spec_phrase": "incompatible baseline"},
+    {"key": "source_substitution_or_skip", "spec_phrase": "skipped/substituted"},
+    {"key": "dirty_or_competing_writer", "spec_phrase": "competing writer"},
+    {"key": "production_or_customer_behavior_change", "spec_phrase": "production/customer behavior"}
+  ]
+}

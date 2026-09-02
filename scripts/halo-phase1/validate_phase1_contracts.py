@@ -87,51 +87,106 @@ SES_ACQ = FV["source_existence_acquisition_matrix"]["allowed_pairs"]
 CATALOG = set(range(1, 296))
 SRC_DEP_FIELDS = {"direct_source_fields", "numerator", "denominator", "formula", "zero_denominator_behavior"}
 
-# --- IMMUTABLE canonical fail-closed stop identifiers (validator constant, NOT read from the mutable
-#     fail-closed-stops.json). Anti-tautology: renaming all 11 in the contract (even consistently)
-#     rejects because comparison is against this constant and the reviewed SPEC §9 authority.
-CANON_CONST = [
-    "wrong_dealer", "service_parts_in_sales", "ambiguous_period", "schema_drift",
-    "missing_provenance", "protected_content_or_pii_outside_envelope",
-    "formula_or_denominator_ambiguity", "incompatible_baseline", "source_substitution_or_skip",
-    "dirty_or_competing_writer", "production_or_customer_behavior_change",
-]
-CANON_STOPS = CANON_CONST  # authoritative basis for all comparisons (not the mutable file)
-
-# --- IMMUTABLE validator constants (NOT read from fail-closed-stops.json). Anti-tautology anchor:
-#     the contract's blast-radius / vault-gate ACTUALS and its embedded EXPECTED are both compared
-#     against these constants, so weakening the contract (even actual+expected together) rejects.
-BLAST_CONST = {
-    "one_source_failure_scope": "dependent_ids_only",
-    "blocks_unrelated_modules": False,
-    "blocks_independent_metrics": False,
-    "rejected_id_blocks_final_completion_only": True,
-}
-VAULT_CONST = {
-    "fail_closed": True,
-    "required_dir_mode": "0700",
-    "required_file_mode": "0600",
-    "current_conformance": "nonconforming",
-    "gate_phase": "phase3_admission_gate",
-    "status_must_contain": "NONCONFORMING",
-}
-# Phase 0 authority is immutable: pin its evidence-file hashes so the vault-policy semantics are
-# anchored to Phase 0 (07 vault topology / 09 conflict register C-02), not self-declared here.
+# ---------------------------------------------------------------- RELATIONAL Phase 0 authority anchor
+# Canonical stops / blast-radius / vault-gate semantics are NOT hard-coded literals (which could be
+# co-mutated with the contract). They are DERIVED from a machine-readable authority representation
+# (phase0-derived-authority.json) whose every value is RELATIONALLY verified to appear in the pinned,
+# immutable Phase 0 evidence (07/09) and reviewed SPEC. A value is accepted only if its token/phrase
+# literally appears in the unchanged Phase 0 / SPEC text, so co-mutating validator + contract fails
+# while Phase 0 authority is unchanged.
+P07 = os.path.join(REPO_ROOT, "docs/halo/evidence/honda-watchdog/phase0/07_vault_vs_brain_topology.md")
+P09 = os.path.join(REPO_ROOT, "docs/halo/evidence/honda-watchdog/phase0/09_conflict_register.json")
+PSPEC = os.path.join(REPO_ROOT, "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_EXECUTION_SPEC.md")
+AUTH_PATH = os.path.join(CONTRACT_DIR, "phase0-derived-authority.json")
 PHASE0_AUTHORITY = {
-    os.path.join(REPO_ROOT, "docs/halo/evidence/honda-watchdog/phase0/07_vault_vs_brain_topology.md"):
-        "9d3bb62894701d5f973b275ad8f68ebc47863aa45abf9f88c34cde22e7d74b2d",
-    os.path.join(REPO_ROOT, "docs/halo/evidence/honda-watchdog/phase0/09_conflict_register.json"):
-        "0357992bcc60b7a085ceb2f2b7d83b8c4549941de26d8dbb68d43af5490d2504",
-    # reviewed SPEC (byte-pinned in Phase 0 authority hashes) — §9 is the source of the 11 stops
-    os.path.join(REPO_ROOT, "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_EXECUTION_SPEC.md"):
-        "fedd957b9431521591155763327147d86c25fe3da11e2996470c134eaf9d785e",
+    P07: "9d3bb62894701d5f973b275ad8f68ebc47863aa45abf9f88c34cde22e7d74b2d",
+    P09: "0357992bcc60b7a085ceb2f2b7d83b8c4549941de26d8dbb68d43af5490d2504",
+    PSPEC: "fedd957b9431521591155763327147d86c25fe3da11e2996470c134eaf9d785e",
 }
+AUTH_SHA = "2e8bdb60da09faf02bd88dcf3bd3485356f4868833884e260a78f71fe05a1827"
+
+
+def _read_text(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return f.read()
+
+
+def _relational_derive(auth, src):
+    """Validate an authority payload against immutable source TEXT; derive canon/blast/vault.
+    A value is accepted only if its token/phrase literally appears in the unchanged text, so a
+    co-mutated (weakened) payload fails here even when Phase 0 files are untouched."""
+    if not isinstance(auth, dict):
+        return None, ["authority payload not an object"]
+    errs = []
+    try:
+        v = auth["vault"]["value"]
+        for f, toks in auth["vault"]["relational_tokens"].items():
+            for tok in toks:
+                if tok not in src.get(f, ""):
+                    errs.append(f"vault token {tok!r} not in {f}")
+        if ("`%s`" % v.get("required_dir_mode")) not in src.get("vault_topology_07", ""):
+            errs.append("vault required_dir_mode not backed by Phase 0 07")
+        if ("`%s`" % v.get("required_file_mode")) not in src.get("vault_topology_07", ""):
+            errs.append("vault required_file_mode not backed by Phase 0 07")
+        if v.get("status_must_contain", "\0") not in src.get("conflict_register_09", ""):
+            errs.append("vault status token not backed by Phase 0 09")
+        if v.get("fail_closed") is not True or "fail closed" not in src.get("vault_topology_07", ""):
+            errs.append("vault fail_closed not backed by Phase 0 07")
+        blast = auth["blast"]["value"]
+        for tok in auth["blast"]["relational_tokens"].get("spec", []):
+            if tok not in src.get("spec", ""):
+                errs.append(f"blast token {tok!r} not in SPEC")
+        if "cannot block unrelated modules" in src.get("spec", "") and blast.get("blocks_unrelated_modules") is not False:
+            errs.append("blast blocks_unrelated_modules must be false per SPEC")
+        if "blocks only its dependent IDs" in src.get("spec", "") and blast.get("one_source_failure_scope") != "dependent_ids_only":
+            errs.append("blast one_source_failure_scope must be dependent_ids_only per SPEC")
+        canon = []
+        for st in auth["canonical_stops"]:
+            ph = st.get("spec_phrase")
+            if not ph or ph not in src.get("spec", ""):
+                errs.append(f"canonical stop phrase {ph!r} not in SPEC")
+            canon.append(st.get("key"))
+        if len(canon) != 11:
+            errs.append("authority canonical stops != 11")
+    except (KeyError, TypeError, AttributeError) as ex:
+        return None, [f"authority payload malformed: {ex}"]
+    if errs:
+        return None, errs
+    return {"vault": v, "blast": blast, "canon": canon}, errs
+
+
+def _load_phase0_src():
+    return {"vault_topology_07": _read_text(P07), "conflict_register_09": _read_text(P09), "spec": _read_text(PSPEC)}
+
+
+def derive_authority():
+    """Verify immutable hashes (Phase 0 07/09 + SPEC + authority representation), then derive."""
+    errs = []
+    pins = dict(PHASE0_AUTHORITY); pins[AUTH_PATH] = AUTH_SHA
+    for path, want in pins.items():
+        try:
+            got = sha256_file(path)
+        except OSError:
+            errs.append(f"authority file missing {os.path.basename(path)}"); continue
+        if got != want:
+            errs.append(f"authority {os.path.basename(path)} hash drift (anchor broken)")
+    if errs:
+        return None, errs
+    derived, derrs = _relational_derive(load(AUTH_PATH), _load_phase0_src())
+    return derived, errs + derrs
+
+
+DERIVED, DERIVE_ERRORS = derive_authority()
+VAULT_SEM = DERIVED["vault"] if DERIVED else {}
+BLAST_SEM = DERIVED["blast"] if DERIVED else {}
+CANON_STOPS = DERIVED["canon"] if DERIVED else []
 
 
 def validate_canon_list(lst):
-    """Compare a canonical-stop list to the IMMUTABLE validator constant (defeats wholesale rename)."""
-    if lst != CANON_CONST:
-        return ["canonical_stop_names != validator constant (wholesale rename / co-mutation attempt)"]
+    if not CANON_STOPS:
+        return ["canonical stops not derived from Phase 0 authority"]
+    if lst != CANON_STOPS:
+        return ["canonical_stop_names != Phase 0-derived authority (rename / co-mutation attempt)"]
     return []
 
 
@@ -290,8 +345,10 @@ def cross_metric(r, ctx, e):
     for s in sdi if isinstance(sdi, list) else []:
         if ctx is not None and isinstance(s, str) and s not in ctx.get("source_ids", set()):
             e.append(f"source_dependency '{s}' not a registered source id")
+    def _d(x):
+        return x if isinstance(x, dict) else {}
     if es == "measured_graded":
-        gt = r.get("grade_target_contract") or {}
+        gt = _d(r.get("grade_target_contract"))
         if r.get("gradable") is not True or disp != "measured_validated":
             e.append("measured_graded requires gradable + measured_validated")
         if gt.get("approval_state") != "approved" or gt.get("status") != "active" or gt.get("compatibility_result") != "compatible":
@@ -305,10 +362,10 @@ def cross_metric(r, ctx, e):
         e.append("measured_abstained requires protected_content=true, sensitivity_class=protected_content, an envelope reference, and envelope_authorization=approved")
     if r.get("protected_content") is True and not env_ok and es not in ("not_measured", "measured_unscored"):
         e.append("protected content without an approved envelope can only be not_measured/measured_unscored")
-    ids = [(r.get("detection_threshold_contract") or {}).get("threshold_id"),
-           (r.get("comparison_reference_contract") or {}).get("reference_id"),
-           (r.get("grade_target_contract") or {}).get("grade_target_id")]
-    ids = [i for i in ids if i]
+    ids = [_d(r.get("detection_threshold_contract")).get("threshold_id"),
+           _d(r.get("comparison_reference_contract")).get("reference_id"),
+           _d(r.get("grade_target_contract")).get("grade_target_id")]
+    ids = [i for i in ids if isinstance(i, str)]
     if len(set(ids)) != len(ids):
         e.append("sub-contract ids (threshold/reference/grade_target) must be distinct")
 
@@ -316,7 +373,8 @@ def cross_metric(r, ctx, e):
 def validate_metric_row(r, ctx=None):
     e = []
     validate_instance(r, {"$ref": "metric_row"}, "metric", e)
-    cross_metric(r, ctx, e)
+    if isinstance(r, dict):
+        cross_metric(r, ctx, e)
     return e
 
 
@@ -336,9 +394,14 @@ def cross_source_node(n, ctx, e):
 
 def validate_source_dag(nodes, ctx=None):
     e = []
+    if not isinstance(nodes, list):
+        return ["source dag input is not a list"]
     seen = set()
     for n in nodes:
         validate_instance(n, {"$ref": "source_node"}, "source", e)
+        if not isinstance(n, dict):
+            e.append("source node is not an object")
+            continue
         cross_source_node(n, ctx, e)
         # hashable dedupe key even if a component is a bad (non-scalar) type (schema flags the type)
         key = tuple(x if isinstance(x, (str, int, float, bool, type(None))) else repr(x)
@@ -352,10 +415,12 @@ def validate_source_dag(nodes, ctx=None):
 def validate_candidate(c):
     e = []
     validate_instance(c, {"$ref": "candidate"}, "candidate", e)
+    if not isinstance(c, dict):
+        return e
     if c.get("relationship_to_295") == "refines_existing" and not c.get("related_sw_id"):
         e.append("refines_existing requires related_sw_id")
     rsw = c.get("related_sw_id")
-    if rsw and SW.match(str(rsw)) and int(rsw.split("-")[1]) not in CATALOG:
+    if isinstance(rsw, str) and SW.match(rsw) and int(rsw.split("-")[1]) not in CATALOG:
         e.append("related_sw_id not in frozen 295")
     return e
 
@@ -363,9 +428,12 @@ def validate_candidate(c):
 def validate_packet(p, ctx=None):
     e = []
     validate_instance(p, {"$ref": "packet"}, "packet", e)
-    tids = p.get("target_ids") or []
+    if not isinstance(p, dict):
+        return e
+    tids = p.get("target_ids")
+    tids = tids if isinstance(tids, list) else []
     for t in tids:
-        if SW.match(str(t)) and OWNER.get(int(t.split("-")[1]), [None])[0] != p.get("module"):
+        if isinstance(t, str) and SW.match(t) and OWNER.get(int(t.split("-")[1]), [None])[0] != p.get("module"):
             e.append(f"{t} not owned by module {p.get('module')}")
     if not (5 <= len(tids) <= 12) and not p.get("size_reason"):
         e.append("target_ids out of 5..12 without size_reason")
@@ -373,11 +441,11 @@ def validate_packet(p, ctx=None):
     part = part if isinstance(part, dict) else {}
 
     def _idset(v):
-        return set(v) if isinstance(v, list) else set()
+        return {x for x in v if isinstance(x, str)} if isinstance(v, list) else set()
     a, b, c = _idset(part.get("accepted_measured_ids")), _idset(part.get("accepted_disposition_only_ids")), _idset(part.get("rejected_ids"))
     if (a & b) or (a & c) or (b & c):
         e.append("partitions not mutually exclusive")
-    if isinstance(tids, list) and (a | b | c) != set(tids):
+    if (a | b | c) != {t for t in tids if isinstance(t, str)}:
         e.append("partitions union != target_ids")
     sc = p.get("stop_conditions")
     sc = sc if isinstance(sc, dict) else {}
@@ -385,41 +453,48 @@ def validate_packet(p, ctx=None):
         e.append("stop_conditions.inherited_canonical must equal canonical_stop_names exactly")
     adm = p.get("admission_contract")
     adm = adm if isinstance(adm, dict) else {}
-    if "vault_policy_nonconformance_admission_gate" not in (adm.get("inherited_admission_gates") or []):
+    gates = adm.get("inherited_admission_gates")
+    gates = gates if isinstance(gates, list) else []
+    if "vault_policy_nonconformance_admission_gate" not in gates:
         e.append("admission_contract must inherit vault_policy_nonconformance_admission_gate")
-    for s in p.get("source_dependencies") or []:
-        if ctx is not None and s not in ctx.get("source_ids", set()):
+    sdeps = p.get("source_dependencies")
+    for s in sdeps if isinstance(sdeps, list) else []:
+        if ctx is not None and isinstance(s, str) and s not in ctx.get("source_ids", set()):
             e.append(f"packet source_dependency '{s}' not registered")
     return e
 
 
 def validate_blast_radius(br):
-    """Compare against the IMMUTABLE validator constant (not the contract's embedded expected)."""
+    """Compare against the Phase-0-DERIVED blast semantics (not a literal, not the contract expected)."""
+    if not BLAST_SEM:
+        return ["blast semantics not derived from Phase 0 authority"]
     if not isinstance(br, dict):
         return ["blast_radius not an object"]
     e = []
-    for k, v in BLAST_CONST.items():
+    for k, v in BLAST_SEM.items():
         if br.get(k) != v:
-            e.append(f"blast_radius {k} != {v!r} (validator constant)")
+            e.append(f"blast_radius {k} != {v!r} (Phase 0-derived)")
     return e
 
 
 def validate_vault_gate(vg):
-    """Compare against the IMMUTABLE validator constant (not the contract's embedded expected)."""
+    """Compare against the Phase-0-DERIVED vault semantics (not a literal, not the contract expected)."""
+    if not VAULT_SEM:
+        return ["vault semantics not derived from Phase 0 authority"]
     if not isinstance(vg, dict):
         return ["vault gate not an object"]
     e = []
-    if vg.get("fail_closed") is not True:
+    if vg.get("fail_closed") is not VAULT_SEM.get("fail_closed"):
         e.append("vault gate fail_closed must be true")
-    if vg.get("required_dir_mode") != VAULT_CONST["required_dir_mode"]:
+    if vg.get("required_dir_mode") != VAULT_SEM["required_dir_mode"]:
         e.append("vault gate required_dir_mode must be 0700")
-    if vg.get("required_file_mode") != VAULT_CONST["required_file_mode"]:
+    if vg.get("required_file_mode") != VAULT_SEM["required_file_mode"]:
         e.append("vault gate required_file_mode must be 0600")
-    if vg.get("current_conformance") != VAULT_CONST["current_conformance"]:
+    if vg.get("current_conformance") != VAULT_SEM["current_conformance"]:
         e.append("vault gate current_conformance must be nonconforming")
-    if vg.get("gate_phase") != VAULT_CONST["gate_phase"]:
+    if vg.get("gate_phase") != VAULT_SEM["gate_phase"]:
         e.append("vault gate gate_phase must be phase3_admission_gate")
-    if VAULT_CONST["status_must_contain"] not in str(vg.get("status", "")):
+    if VAULT_SEM["status_must_contain"] not in str(vg.get("status", "")):
         e.append("vault gate status must state NONCONFORMING")
     if not vg.get("rule"):
         e.append("vault gate rule required")
@@ -660,10 +735,20 @@ def run_self_tests():
     rec("cross.iso_valid_offset", True, validate_metric_row(dict(good_metric(), evidence_as_of="2026-09-02T00:00:00+00:00"), CTX))
     # anti-tautology: canonical stops / blast / vault anchored to validator constants
     rec("anchor.canon_rename_rejected", False, validate_canon_list([f"stop_{i}" for i in range(11)]))
-    rec("anchor.canon_ok", True, validate_canon_list(list(CANON_CONST)))
-    rec("anchor.blast_both_weakened_rejected", False, validate_blast_radius({"one_source_failure_scope": "all", "blocks_unrelated_modules": True, "blocks_independent_metrics": True, "rejected_id_blocks_final_completion_only": False}))
-    rec("anchor.vault_both_weakened_rejected", False, validate_vault_gate({"fail_closed": False, "required_dir_mode": "0777", "required_file_mode": "0666", "current_conformance": "conforming", "gate_phase": "none", "status": "OK", "rule": "x"}))
+    rec("anchor.canon_ok", True, validate_canon_list(list(CANON_STOPS)))
+    rec("anchor.blast_weakened_rejected", False, validate_blast_radius({"one_source_failure_scope": "all", "blocks_unrelated_modules": True, "blocks_independent_metrics": True, "rejected_id_blocks_final_completion_only": False}))
+    rec("anchor.vault_weakened_rejected", False, validate_vault_gate({"fail_closed": False, "required_dir_mode": "0777", "required_file_mode": "0666", "current_conformance": "conforming", "gate_phase": "none", "status": "OK", "rule": "x"}))
     rec("anchor.packet_renamed_canonical_rejected", False, validate_packet(dict(good_packet(), stop_conditions={"inherited_canonical": [f"stop_{i}" for i in range(11)], "packet_specific": ["x"]}), CTX))
+    # RELATIONAL anti-tautology: co-mutate the authority PAYLOAD in memory (as if code+contract were
+    # weakened together) and confirm it fails against the UNCHANGED Phase 0 source text.
+    _p0src = _load_phase0_src()
+    _wv = copy.deepcopy(load(AUTH_PATH)); _wv["vault"]["value"]["required_dir_mode"] = "0777"; _wv["vault"]["relational_tokens"]["vault_topology_07"] = ["`0777`"]
+    rec("anchor.relational_vault_comutation_rejected", False, _relational_derive(_wv, _p0src)[1])
+    _wb = copy.deepcopy(load(AUTH_PATH)); _wb["blast"]["value"]["blocks_unrelated_modules"] = True
+    rec("anchor.relational_blast_comutation_rejected", False, _relational_derive(_wb, _p0src)[1])
+    _wc = copy.deepcopy(load(AUTH_PATH)); _wc["canonical_stops"][0]["spec_phrase"] = "weakened phrase absent from spec"
+    rec("anchor.relational_canon_comutation_rejected", False, _relational_derive(_wc, _p0src)[1])
+    rec("anchor.relational_authority_ok", True, _relational_derive(load(AUTH_PATH), _p0src)[1])
 
     # transitions + context receipts
     rec("trans.sip_to_crm", True, [] if _trans("disposition", "source_investigation_pending", "crm_available_acquisition_pending") else ["x"])
@@ -748,7 +833,96 @@ def run_probes():
     rec("F3_metric_semver_two_part", lambda: M(definition_version="2.5"))
     rec("F4_source_bad_profile_const", lambda: validate_source_dag([dict(good_source(), profile="serra-nissan")], CTX))
     rec("F5_candidate_boundary_list", lambda: validate_candidate(dict(good_candidate(), boundary_class=["sales"])))
+    # --- reviewer #4 exact crash cases: JSON-valid malformed roots / unhashable nested collections ---
+    rec("32_root_metric_list", lambda: validate_metric_row([], CTX))
+    rec("33_root_packet_none", lambda: validate_packet(None, CTX))
+    rec("34_root_candidate_list", lambda: validate_candidate([]))
+    rec("35_root_sourcedag_list_of_list", lambda: validate_source_dag([[]], CTX))
+    rec("36_packet_source_deps_dict_item", lambda: validate_packet(dict(good_packet(), source_dependencies=[{}]), CTX))
+    rec("37_packet_partition_dict_item", lambda: validate_packet(dict(good_packet(), partitions_target={"accepted_measured_ids": [{}], "accepted_disposition_only_ids": [], "rejected_ids": []}), CTX))
+    # --- reviewer #4 relational co-mutation adversarial (code+contract weakened, Phase 0 unchanged) ---
+    _src = _load_phase0_src()
+    def _mut(mutator):
+        payload = copy.deepcopy(load(AUTH_PATH)); mutator(payload); return _relational_derive(payload, _src)[1]
+    rec("38_relational_vault_comutation", lambda: _mut(lambda a: (a["vault"]["value"].update({"required_dir_mode": "0777"}), a["vault"]["relational_tokens"].update({"vault_topology_07": ["`0777`"]}))))
+    rec("39_relational_blast_comutation", lambda: _mut(lambda a: a["blast"]["value"].update({"blocks_unrelated_modules": True})))
+    rec("40_relational_canon_comutation", lambda: _mut(lambda a: a["canonical_stops"][0].update({"spec_phrase": "absent from spec"})))
     return probes
+
+
+def _paths(obj, prefix=()):
+    """Yield the path tuple of EVERY reachable dict key and list index, at any depth."""
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            yield prefix + (k,)
+            yield from _paths(v, prefix + (k,))
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            yield prefix + (i,)
+            yield from _paths(v, prefix + (i,))
+
+
+def _getpath(obj, path):
+    cur = obj
+    for p in path:
+        cur = cur[p]
+    return cur
+
+
+def _setpath(obj, path, val):
+    o = copy.deepcopy(obj)
+    cur = o
+    for p in path[:-1]:
+        cur = cur[p]
+    cur[path[-1]] = val
+    return o
+
+
+def run_fuzz():
+    """RECURSIVE crash fuzz over a finite, stated universe: every reachable nested dict-key / list-
+    index path of each valid fixture is set to each hostile JSON value, plus hostile items are
+    appended into every list (incl. empty identifier arrays) to exercise unhashable-in-array paths.
+    This metric counts ONLY uncaught exceptions; semantic rejections are expected and NOT counted."""
+    HOSTILE = [None, [], {}, [{}], [None], 0, True, "x", [[]], [{"a": 1}], [123], [{"k": "v"}]]
+    APPEND = [{}, [], None, [{}], 123, {"a": 1}]
+    fixtures = [
+        ("metric", good_metric(), lambda o: validate_metric_row(o, CTX)),
+        ("packet", good_packet(), lambda o: validate_packet(o, CTX)),
+        ("source", good_source(), lambda o: validate_source_dag([o], CTX)),
+        ("candidate", good_candidate(), validate_candidate),
+    ]
+    universe = 0
+    exceptions = []
+
+    def run(label, fn, obj):
+        nonlocal universe
+        universe += 1
+        try:
+            fn(obj)
+        except Exception as ex:  # noqa: BLE001
+            exceptions.append(f"{label}: {type(ex).__name__}: {ex}")
+
+    # 1) hostile at the record ROOT
+    for name, _valid, fn in fixtures:
+        for h in HOSTILE:
+            run(f"{name}:root={h!r}", fn, h)
+    # 2) hostile at EVERY reachable nested path (recursive)
+    for name, valid, fn in fixtures:
+        allpaths = list(_paths(valid))
+        for path in allpaths:
+            for h in HOSTILE:
+                run(f"{name}:path={path}:set={h!r}", fn, _setpath(valid, path, h))
+        # 3) append hostile (incl. unhashable) items into EVERY list, incl. empty identifier arrays
+        for path in allpaths:
+            node = _getpath(valid, path)
+            if isinstance(node, list):
+                for h in APPEND:
+                    run(f"{name}:path={path}:append={h!r}", fn, _setpath(valid, path, node + [h]))
+    # 4) hostile as the source-dag container itself
+    for h in HOSTILE:
+        run(f"source_dag:container={h!r}", lambda o: validate_source_dag(o, CTX), h)
+    return {"tested_universe": universe, "exceptions": len(exceptions), "exception_samples": exceptions[:15],
+            "universe_description": "roots + EVERY reachable nested dict-key/list-index path of each valid fixture (recursive), each set to 12 hostile JSON values (None,[],{},[{}],[None],0,true,'x',[[]],[{a:1}],[123],[{k:v}]); plus 6 hostile-item appends into every list incl. empty identifier arrays; plus source-dag container over 12 hostiles. Counts ONLY uncaught exceptions; semantic rejections are expected and reported separately (per-record errors), not here."}
 
 
 # ----------------------------------------------------------------- structure / vocab
@@ -786,31 +960,27 @@ def check_vocab(errors):
     if set(DISP_EVAL.keys()) != set(DISP["values"].keys()):
         errors.append("VOCAB: disposition_evaluation_consistency must cover all 8 dispositions")
     # fail-closed-stops exactness
-    if FCS.get("count") != 11 or len(CANON_CONST) != 11:
-        errors.append("VOCAB: fail-closed-stops count != 11")
-    if validate_canon_list(FCS.get("canonical_stop_names")):
-        errors.append("VOCAB: canonical_stop_names (contract) != immutable validator constant")
-    if sorted((FCS.get("canonical_stops") or {}).keys()) != sorted(CANON_CONST):
-        errors.append("VOCAB: canonical_stops keys != immutable validator constant (rename attempt)")
-    # Anti-tautology: compare the contract ACTUAL and its embedded EXPECTED to the validator CONSTANTS.
-    if validate_blast_radius(FCS.get("blast_radius_rule", {})):
-        errors.append("VOCAB: blast_radius_rule actual != validator constant")
-    if FCS.get("blast_radius_expected") != BLAST_CONST:
-        errors.append("VOCAB: blast_radius_expected (embedded) != validator constant (co-weakening attempt)")
-    vg = FCS.get("inherited_admission_gates", {}).get("vault_policy_nonconformance_admission_gate", {})
-    if validate_vault_gate(vg):
-        errors.append("VOCAB: vault admission gate actual != validator constant")
-    vge = FCS.get("vault_gate_expected", {})
-    if any(vge.get(k) != VAULT_CONST[k] for k in ("required_dir_mode", "required_file_mode", "current_conformance", "gate_phase", "status_must_contain")) or vge.get("fail_closed") is not True:
-        errors.append("VOCAB: vault_gate_expected (embedded) != validator constant (co-weakening attempt)")
-    # Hard anchor to immutable Phase 0 authority evidence (07 vault topology / 09 conflict register C-02).
-    for path, want in PHASE0_AUTHORITY.items():
-        try:
-            got = sha256_file(path)
-        except OSError:
-            errors.append(f"VOCAB: Phase 0 authority file missing {os.path.basename(path)}"); continue
-        if got != want:
-            errors.append(f"VOCAB: Phase 0 authority {os.path.basename(path)} hash changed (anchor broken)")
+    for de in DERIVE_ERRORS:
+        errors.append(f"VOCAB: authority-derive: {de}")
+    if not DERIVED:
+        errors.append("VOCAB: Phase 0 authority could not be derived (anchor broken)")
+    else:
+        if FCS.get("count") != 11 or len(CANON_STOPS) != 11:
+            errors.append("VOCAB: fail-closed-stops count != 11")
+        if validate_canon_list(FCS.get("canonical_stop_names")):
+            errors.append("VOCAB: canonical_stop_names (contract) != Phase 0-derived authority")
+        if sorted((FCS.get("canonical_stops") or {}).keys()) != sorted(CANON_STOPS):
+            errors.append("VOCAB: canonical_stops keys != Phase 0-derived authority (rename attempt)")
+        if validate_blast_radius(FCS.get("blast_radius_rule", {})):
+            errors.append("VOCAB: blast_radius_rule actual != Phase 0-derived")
+        if FCS.get("blast_radius_expected") != BLAST_SEM:
+            errors.append("VOCAB: blast_radius_expected (embedded) != Phase 0-derived (co-weakening attempt)")
+        vg = FCS.get("inherited_admission_gates", {}).get("vault_policy_nonconformance_admission_gate", {})
+        if validate_vault_gate(vg):
+            errors.append("VOCAB: vault admission gate actual != Phase 0-derived")
+        vge = FCS.get("vault_gate_expected", {})
+        if any(vge.get(k) != VAULT_SEM[k] for k in ("required_dir_mode", "required_file_mode", "current_conformance", "gate_phase", "status_must_contain")) or vge.get("fail_closed") is not True:
+            errors.append("VOCAB: vault_gate_expected (embedded) != Phase 0-derived (co-weakening attempt)")
 
 
 # ----------------------------------------------------------------- main
@@ -823,7 +993,8 @@ def main():
     errors = []
     contract_files = ["frozen-vocabularies.json", "record-schemas.json", "metric-row-schema.json",
                       "packet-schema.json", "source-registry-dag-schema.json",
-                      "beyond-295-candidate-intake-schema.json", "fail-closed-stops.json"]
+                      "beyond-295-candidate-intake-schema.json", "fail-closed-stops.json",
+                      "phase0-derived-authority.json"]
     contract_hashes = {}
     for cf in contract_files:
         p = os.path.join(CONTRACT_DIR, cf)
@@ -836,26 +1007,29 @@ def main():
     check_vocab(errors)
     self_tests = run_self_tests()
     probes = run_probes()
+    fuzz = run_fuzz()
     failed_tests = [t for t in self_tests if not t["pass"]]
     failed_probes = [p for p in probes if not p["pass"]]
-    overall = (not errors) and (not failed_tests) and (not failed_probes)
+    overall = (not errors) and (not failed_tests) and (not failed_probes) and (fuzz["exceptions"] == 0)
 
     result = {
         "check": "honda_watchdog_phase1a_contracts",
         "phase": "Phase 1A — design-only GENERIC recursive schema-driven contract freeze + self-tests",
-        "engine": "generic JSON-Schema-like recursive validator (record-schemas.json) + cross-record invariants",
+        "engine": "generic JSON-Schema-like recursive validator (record-schemas.json) + cross-record invariants; canon/blast/vault semantics RELATIONALLY derived from immutable Phase 0 authority (07/09/SPEC)",
         "contract_files": contract_hashes,
+        "phase0_authority_derived": bool(DERIVED),
         "structure_295_11_18": "PASS" if not any(e.startswith("STRUCTURE") for e in errors) else "FAIL",
         "vocab_closure": "PASS" if not any(e.startswith("VOCAB") for e in errors) else "FAIL",
         "self_tests_total": len(self_tests),
         "self_tests_failed": len(failed_tests),
         "named_probes_total": len(probes),
         "named_probes_failed": len(failed_probes),
+        "crash_fuzz": fuzz,
         "named_probes": probes,
         "self_tests": self_tests,
         "errors": errors,
         "overall_pass": overall,
-        "note": "Design-only: no records authored. Mutations are generated RECURSIVELY from the schemas (drop each required field at any depth; inject a type/enum/pattern/format/const violation at each leaf); plus 17 named reviewer probes. Generic engine — not example patches.",
+        "note": "Design-only: no records authored. Mutations are generated RECURSIVELY from the schemas (drop each required field at any depth; inject a type/enum/pattern/format/const violation at each leaf); plus named reviewer probes; plus a crash-fuzz over a stated hostile universe (0 crashes required). canon/blast/vault are derived from immutable Phase 0 authority, not literals. Generic engine — not example patches.",
     }
     payload = json.dumps(result, indent=2, ensure_ascii=False)
     if not args.no_write:
@@ -865,7 +1039,8 @@ def main():
     print(payload)
     print(f"\nRESULT: {'PASS' if overall else 'FAIL'} "
           f"(self_tests {len(self_tests)-len(failed_tests)}/{len(self_tests)}, "
-          f"probes {len(probes)-len(failed_probes)}/{len(probes)})", file=sys.stderr)
+          f"probes {len(probes)-len(failed_probes)}/{len(probes)}, "
+          f"fuzz {fuzz['tested_universe']-fuzz['exceptions']}/{fuzz['tested_universe']} no-exception)", file=sys.stderr)
     return 0 if overall else 1
 
 

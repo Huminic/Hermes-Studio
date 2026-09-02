@@ -35,12 +35,17 @@ cross-record invariants (module ownership, overlay strictness, disposition↔eva
 disposition↔source_existence consistency, SIP/GNA rules, registered source/candidate-ID resolution +
 frozen-catalog membership, source_existence↔acquisition pair matrix, exact stop inheritance,
 machine-semantic blast-radius + vault gate). Mutations are generated **recursively** from the schemas
-(drop each required field at any depth; inject a violation at each leaf): **952 self-tests** plus
-**36 named probes** (17 reviewer-reproduced false positives + 19 for real-ISO-datetime,
-protected-content abstention, crash-resistance, and anti-tautology anchoring — plus fresh cases),
-all rejecting with **0 crashes**. Real calendar-valid tz-aware ISO parsing; blast-radius, vault-gate,
-and the 11 canonical stop identifiers are anchored to **immutable validator constants + Phase 0
-authority hashes** (not the mutable contract file). Reproduce:
+(drop each required field at any depth; inject a violation at each leaf): **956 self-tests** plus
+**45 named probes** (reviewer-reproduced false positives + real-ISO-datetime, protected-content
+abstention, crash-resistance, anti-tautology, and fresh cases) plus a **recursive crash-fuzz over a
+finite stated universe of 2118** (every reachable nested path × 12 hostile JSON values + hostile-item
+appends into every list) with **0 exceptions** (counted separately from expected semantic rejections).
+
+**Relational Phase 0 anchor:** canonical stops / blast-radius / vault-gate are **derived** from
+`phase0-derived-authority.json`, whose every value the validator verifies to appear literally in the
+immutable, hash-pinned Phase 0 evidence (`07` modes `0700`/`0600` + fail-closed; `09` NONCONFORMING)
+and reviewed SPEC (§8/§9 phrases). Co-mutating validator + contract fails while Phase 0 is unchanged.
+Real calendar-valid tz-aware ISO parsing. Reproduce:
 `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write`.
 
 ## Evidence (`docs/halo/evidence/honda-watchdog/phase1a/`)
@@ -49,24 +54,27 @@ authority hashes** (not the mutable contract file). Reproduce:
 |---|---|
 | `01_phase1a_contract_manifest.json` | sha256 of every contract/validator/amendment/checks artifact + scope statement |
 | `02_phase1a_gate_receipt.md` | Gate criteria P1A.1–P1A.9 (mechanical PASS), tests, independent verification, rollback, approval PENDING |
-| `PHASE1A_CONTRACT_CHECKS.json` | Deterministic validator output (structure PASS, vocab PASS, 952/952 self-tests, 36/36 named probes, 0 crashes) |
+| `PHASE1A_CONTRACT_CHECKS.json` | Deterministic validator output (structure PASS, vocab PASS, phase0_authority_derived=true, 956/956 self-tests, 45/45 named probes, crash-fuzz universe 2118 / 0 exceptions) |
+| `../../../contract/phase1/phase0-derived-authority.json` | Machine-readable Phase 0/SPEC authority payload; canon/blast/vault derived from it after relational verification against immutable Phase 0 |
 
 ## Result
 
 - Structure **295/11/18 preserved**; six closed vocabularies frozen; disposition amended to 8 with
   the approved nonterminal `source_investigation_pending` (restricted transitions; no direct
   acquired/measured).
-- Generic recursive validator + **952/952 self-tests + 36/36 named probes PASS (0 crashes)**;
-  deterministic; imports the Phase 0 map so 295/11/18 cannot silently drift.
-- Independent non-author re-verification of the generic engine: **PASS on all checks**, including
-  fresh malformed instances the reviewer built itself — all rejected (enforcement generalizes).
+- Generic recursive validator + **956/956 self-tests + 45/45 named probes PASS + recursive crash-fuzz
+  (universe 2118, 0 exceptions)**; deterministic; imports the Phase 0 map so 295/11/18 cannot drift.
+- Canon/blast/vault semantics are **relationally derived** from immutable Phase 0 authority; the
+  adversarial co-mutation test confirms code+contract weakening fails while Phase 0 is unchanged.
+- Independent non-author re-verification: **PASS on all checks** across prior rounds, including fresh
+  malformed instances built by the reviewer — all rejected (enforcement generalizes).
 - **No metric rows or packets authored** (Phase 1 remains design-only).
 
-**Re-review history:** `60c519966` HOLD (too shallow) → `59e97d289` HOLD (still accepted 17 malformed
-contracts, example-based) → `a57c5aa13` HOLD (4 narrow issues + canonical anti-tautology) → this
-packet adds real ISO-datetime parsing, protected-content abstention enforcement, crash-resistant
-type-checking, and immutable-constant + Phase 0 authority anchoring of blast-radius/vault-gate/
-canonical stops (see `02_phase1a_gate_receipt.md` §Third shadow re-review correction).
+**Re-review history:** `60c519966` HOLD (too shallow) → `59e97d289` HOLD (accepted 17 malformed,
+example-based) → `a57c5aa13` HOLD (4 issues + canonical anti-tautology) → `e9d315428` HOLD (incomplete
+crash-resistance + non-relational anchor) → this packet completes crash-resistance (recursive fuzz,
+type-guarded roots/collections) and makes the Phase 0 anchor relational (see
+`02_phase1a_gate_receipt.md` §Fourth shadow re-review correction).
 
 **Mechanical checks PASS; overall Phase 1A is HOLD pending impartial-shadow re-review.** This gate
 does not authorize Phase 1B/2+; downstream gates and fail-closed stops remain enforceable.

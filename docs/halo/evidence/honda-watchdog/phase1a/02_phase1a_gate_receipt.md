@@ -18,7 +18,7 @@ recipients, or customer changes. INGEST `src/routeTree.gen.ts` untouched.
 | P1A.5 | Source registry/DAG schema frozen (dedupe key (profile,family,period,schema_revision); no per-metric duplicate acquisition; source→metric fan-out) (item 5) | **PASS** | `source-registry-dag-schema.json` |
 | P1A.6 | Separate beyond-295 candidate-intake schema; cannot alter the 295 (item 6) | **PASS** | `beyond-295-candidate-intake-schema.json` (CAND-#### key; hard invariants) |
 | P1A.7 | Canonical fail-closed stops defined; one source failure blocks only dependent IDs (item 7) | **PASS** | `fail-closed-stops.json` (11 stops + blast_radius_rule) |
-| P1A.8 | **Generic recursive JSON-Schema engine** (`record-schemas.json`) + cross-record invariants; recursively-generated mutations for every field at every depth (metric rows, 3 sub-contracts, packets + nested contracts, source/DAG, candidates) + transitions/context-receipts/stops/partitions/DAG/privacy/two-delta/change-scope; **no metric rows/packets populated** (item 8) | **PASS** | `validate_phase1_contracts.py` → `PHASE1A_CONTRACT_CHECKS.json`: structure PASS, vocab PASS, **952/952 self-tests + 36/36 named malformed probes reject (0 crashes)**, overall_pass=true |
+| P1A.8 | **Generic recursive JSON-Schema engine** (`record-schemas.json`) + cross-record invariants; recursively-generated mutations for every field at every depth (metric rows, 3 sub-contracts, packets + nested contracts, source/DAG, candidates) + transitions/context-receipts/stops/partitions/DAG/privacy/two-delta/change-scope; **no metric rows/packets populated** (item 8) | **PASS** | `validate_phase1_contracts.py` → `PHASE1A_CONTRACT_CHECKS.json`: structure PASS, vocab PASS, **956/956 self-tests + 45/45 named probes reject + recursive crash-fuzz (universe 2118, 0 exceptions)**, overall_pass=true |
 | P1A.9 | Design-only boundary honored | **PASS** | Only additive docs/contracts/validator/evidence written; catalog `29c7ac06…` unchanged; reviewed SPEC `fedd957b…` unchanged; INGEST routeTree ` M` untouched |
 
 ## Shadow re-review correction (impartial Phase 1A HOLD → deepened)
@@ -112,9 +112,37 @@ anti-tautology finding. All fixed:
 Coverage grew to **952 recursive self-tests + 36 named probes** (17 originals + ISO×2, abstention×3,
 crash-resistance×5, anti-tautology×4, fresh×5), all rejecting, **0 crashes**.
 
+## Fourth shadow re-review correction (still-HOLD → complete crash-resistance + relational anchor)
+
+The fourth submission (`e9d315428`) remained **HOLD** on two material gaps. Both fixed:
+
+1. **Complete crash-resistance.** Every public record ROOT (`validate_metric_row`, `validate_packet`,
+   `validate_candidate`, `validate_source_dag`) and every nested collection / set / membership path is
+   type-guarded, so arbitrary JSON values return a **validation error, never an exception**. The exact
+   reviewer probes now reject cleanly: `validate_metric_row([])`, `validate_packet(None)`,
+   `validate_candidate([])`, `validate_source_dag([[]])`, packet `source_dependencies=[{}]`, partitions
+   `accepted_measured_ids=[{}]`. A **recursive crash-fuzz** mutates **every reachable nested
+   dict-key/list-index path** of each valid fixture to 12 hostile JSON values, appends hostile
+   (unhashable) items into every list incl. empty identifier arrays, and fuzzes the source-dag
+   container — a **finite tested universe of 2118** with **0 exceptions**. Exceptions are counted
+   **separately** from semantic rejections (which are expected).
+2. **Relational Phase 0 anchor.** The canonical stops / blast-radius / vault-gate semantics are no
+   longer hard-coded literals. They are **DERIVED** from a machine-readable authority representation
+   (`phase0-derived-authority.json`) whose every value is **relationally verified** to appear literally
+   in the immutable, hash-pinned Phase 0 evidence — vault modes `` `0700` ``/`` `0600` `` and
+   "fail closed" in `07`, `NONCONFORMING` in `09`, and the blast phrases ("blocks only its dependent
+   IDs", "cannot block unrelated modules", "prevents final completion") + all 11 stop phrases in the
+   reviewed SPEC (§8/§9). **Adversarial test:** co-mutating the authority payload (weakened
+   vault→`0777`, blast `blocks_unrelated_modules→true`, or a canonical `spec_phrase` absent from SPEC)
+   **fails against the UNCHANGED Phase 0 text** — proving code+contract co-mutation cannot pass while
+   Phase 0 authority is unchanged (self-tests `anchor.relational_*`, probes 38–40).
+
+Coverage: **956 recursive self-tests + 45 named probes + a 2118-case recursive crash-fuzz (0
+exceptions)**.
+
 ## Tests run (read-only / deterministic)
 
-- `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write` → **RESULT: PASS** (exit 0); `structure_295_11_18=PASS`, `vocab_closure=PASS`, `self_tests_total=952`, `self_tests_failed=0`, `named_probes_total=36`, `named_probes_failed=0` (0 crashes).
+- `python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write` → **RESULT: PASS** (exit 0); `structure_295_11_18=PASS`, `vocab_closure=PASS`, `phase0_authority_derived=true`, `self_tests_total=956`, `self_tests_failed=0`, `named_probes_total=45`, `named_probes_failed=0`, `crash_fuzz.tested_universe=2118`, `crash_fuzz.exceptions=0`.
 - `python3 scripts/halo-phase0/validate_phase0_catalog.py --no-write` → **PASS** (295/11/18 preserved; generated `03` unchanged).
 - JSON parse: all six `docs/halo/contract/phase1/*.json` + `01_phase1a_contract_manifest.json` + `PHASE1A_CONTRACT_CHECKS.json` load OK.
 - Active-objective sha256 unchanged (`7c8e622b…`).
@@ -122,18 +150,20 @@ crash-resistance×5, anti-tautology×4, fresh×5), all rejecting, **0 crashes**.
 
 ## Independent verification (separation of duties — Core Value #5)
 
-A fresh independent agent (read-only, non-author) re-verified the corrected engine and returned
-**PASS on all seven checks**, confirming: `valid_iso_datetime()` uses real `datetime.fromisoformat`
-parsing and requires tz-aware (probes 18/19 reject); protected-content abstention probes 20/21/22
-reject while the fully-authorized fixture accepts; crash-resistance probes 23–27 all reject with
-**0 CRASH**; and — decisively for the anti-tautology finding — the agent **imported the module and
-called the anchor functions on its own weakened inputs**: `validate_canon_list(["a"…"k"])` → rename
-rejected; `validate_blast_radius({…weakened…})` → 4 constant-mismatch errors; `validate_vault_gate({})`
-→ 7 errors; and it confirmed `BLAST_CONST`/`VAULT_CONST`/`CANON_CONST` are validator literals (not
-read from the contract) and that `check_vocab` re-hashes the pinned Phase 0 07/09 + SPEC authority.
-The 295 matrix, EXECUTION_SPEC, and Phase 0 07/09 are unchanged (hashes match the pins); INGEST
-routeTree is ` M` untouched. (Earlier independent reviews covered `60c519966`, `59e97d289`, and the
-generic-engine `a57c5aa13`.)
+A fresh independent agent (read-only, non-author) re-verified this submission and returned **PASS on
+all five checks**. Decisively: (a) for crash-resistance, it imported the module from a throwaway copy
+outside the repo and ran its **own** hostile inputs — `validate_metric_row({"module":[{}],
+"boundary_class":{}})`, `validate_packet({"target_ids":[{}],…})`, `validate_source_dag([{"dependent_
+metric_ids":[{}]}])`, `validate_candidate({"boundary_class":[]})` — each returned a **non-empty error
+list with NO traceback**, and confirmed `run_fuzz`/`_paths`/`_setpath` recurse into every nested path
+(universe 2118, 0 exceptions); (b) for the relational anchor, it confirmed `CANON_STOPS`/`VAULT_SEM`/
+`BLAST_SEM` are **derived** at import from `phase0-derived-authority.json` (not literals) and then
+**weakened the authority payload in memory three ways** (vault→`0777`, blast `blocks_unrelated_
+modules→true`, a canonical `spec_phrase` absent from SPEC) — each returned `derived=None` with the
+correct rejection **while the real Phase 0 files were unchanged**, proving code+contract co-mutation
+cannot pass. The 295 matrix, EXECUTION_SPEC, and Phase 0 07/09 are unchanged (hashes match the pins);
+INGEST routeTree is ` M` untouched. (Earlier independent reviews covered `60c519966`, `59e97d289`,
+`a57c5aa13`, and `e9d315428`.)
 
 ## Rollback
 
