@@ -1,0 +1,154 @@
+{
+  "artifact": "honda-watchdog-phase1-frozen-vocabularies",
+  "schema_version": "1.0.0",
+  "frozen": true,
+  "phase": "Phase 1A — freeze planning contracts before any metric authoring",
+  "purpose": "Freeze the SIX closed vocabularies and their transition invariants used by the Honda Semantic Watchdog. Design-only: no metric rows authored here. Each vocabulary is a CLOSED set (any value outside it is a fail-closed contract error). This file is the machine-authoritative home for the disposition vocabulary amended by SPEC_AMENDMENT_001 (item 1).",
+  "authority": {
+    "spec": "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_EXECUTION_SPEC.md (reviewed, byte-pinned; sha256 fedd957b…) — §3 disposition/boundary, §6 threshold/reference/target, §7 InfoStore states, §8 module partitions",
+    "amendment": "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_SPEC_AMENDMENT_001.md (adds disposition state #8 source_investigation_pending)",
+    "catalog": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json (sha256 29c7ac06…; 295 IDs frozen)"
+  },
+  "closed_vocabularies": {
+    "boundary_class": {
+      "spec_ref": "SPEC §3",
+      "closed": true,
+      "exactly_one_per_metric": true,
+      "values": {
+        "sales": "In-envelope Honda Sales. The only class eligible for value/grade/narrative/customer projection.",
+        "separate_serra_service": "Service/Parts — separately governed combined Serra Service workspace. Never enters Honda Sales. Disposition-only; appendix projects ID + neutral label + no value.",
+        "cross_rooftop_authorization": "Requires cross-rooftop authorization; outside Honda Sales until separately authorized.",
+        "compliance_pii_authorization": "Requires compliance/PII authorization envelope; disposition-only until authorized.",
+        "external_noncrm": "Data outside VinSolutions/CRM; external source named and required."
+      },
+      "in_envelope_value_class": "sales",
+      "service_overlay_must_be": "separate_serra_service",
+      "service_overlay_ids": ["SW-079","SW-081","SW-083","SW-115","SW-118","SW-199","SW-222","SW-223","SW-224","SW-225","SW-226","SW-227","SW-228","SW-229","SW-263","SW-270","SW-279","SW-294"]
+    },
+    "disposition": {
+      "spec_ref": "SPEC §3 + SPEC_AMENDMENT_001",
+      "closed": true,
+      "exactly_one_per_metric": true,
+      "count": 8,
+      "values": {
+        "measured_validated": {"desc": "Real source, accepted calculation, accepted baseline/evaluation where applicable.", "terminal": false, "gradable_allowed": true},
+        "data_acquired_calculation_pending": {"desc": "Governed source exists locally, but transformation/evaluation is unfinished.", "terminal": false, "gradable_allowed": true},
+        "crm_available_acquisition_pending": {"desc": "Required field proved in VinSolutions but not yet acquired.", "terminal": false, "gradable_allowed": false},
+        "additional_history_required": {"desc": "Field and method proved, but the required trailing/cohort window has not accumulated.", "terminal": false, "gradable_allowed": false},
+        "external_source_required": {"desc": "Data is outside VinSolutions and the source is named.", "terminal": false, "gradable_allowed": false},
+        "genuinely_not_available": {"desc": "Source investigation PROVED the required event/field/history is not obtainable. Requires affirmative finite-investigation evidence.", "terminal": true, "gradable_allowed": false, "requires_fields": ["affirmative_investigation_evidence_ref"]},
+        "outside_sales_domain": {"desc": "Service, Parts, cross-rooftop, compliance/PII, or other separately governed work.", "terminal": true, "gradable_allowed": false},
+        "source_investigation_pending": {"desc": "AMENDMENT_001 state #8 (nonterminal). Sales source EXISTENCE is unproved — a finite investigation is required before any other disposition may be asserted.", "terminal": false, "nonterminal": true, "gradable_allowed": false, "value_allowed": false, "grade_allowed": false, "narrative_allowed": false, "customer_projection_allowed": false, "requires_fields": ["owner", "finite_investigation_ref", "evidence_as_of", "review_point"]}
+      },
+      "transitions": {
+        "source_investigation_pending": ["crm_available_acquisition_pending", "external_source_required", "additional_history_required", "outside_sales_domain", "genuinely_not_available"],
+        "crm_available_acquisition_pending": ["data_acquired_calculation_pending", "additional_history_required", "external_source_required", "outside_sales_domain", "genuinely_not_available"],
+        "data_acquired_calculation_pending": ["measured_validated", "additional_history_required", "outside_sales_domain", "genuinely_not_available"],
+        "additional_history_required": ["data_acquired_calculation_pending", "measured_validated", "crm_available_acquisition_pending", "genuinely_not_available"],
+        "external_source_required": ["data_acquired_calculation_pending", "crm_available_acquisition_pending", "outside_sales_domain", "genuinely_not_available"],
+        "measured_validated": ["data_acquired_calculation_pending", "additional_history_required"],
+        "genuinely_not_available": [],
+        "outside_sales_domain": []
+      },
+      "invariants": {
+        "source_investigation_pending_allowed_targets_exact": ["crm_available_acquisition_pending", "external_source_required", "additional_history_required", "outside_sales_domain", "genuinely_not_available"],
+        "source_investigation_pending_forbidden_direct_targets": ["measured_validated", "data_acquired_calculation_pending"],
+        "genuinely_not_available_requires_affirmative_evidence": true,
+        "outside_sales_domain_from_source_investigation_requires_boundary_correction": true,
+        "terminal_states": ["genuinely_not_available", "outside_sales_domain"]
+      }
+    },
+    "source_existence_state": {
+      "spec_ref": "SPEC §5 (source-first), §7.1 — frozen for Phase 1A source registry",
+      "closed": true,
+      "values": {
+        "unproved": "Existence not yet investigated.",
+        "investigation_pending": "A finite investigation is open (pairs with disposition source_investigation_pending).",
+        "proved_available_in_crm": "Source/field proved present in VinSolutions, not yet acquired.",
+        "acquired_local": "Sales-clean raw bytes acquired to the Honda landing.",
+        "proved_requires_external": "Proved the data requires a named external (non-CRM) source.",
+        "proved_requires_more_history": "Proved the field/method exists but the trailing/cohort window has not accumulated.",
+        "proved_outside_sales_domain": "Proved the source belongs to Service/Parts/cross-rooftop/compliance-PII.",
+        "proved_not_available": "Finite investigation proved not obtainable (basis for genuinely_not_available)."
+      },
+      "disposition_consistency": {
+        "source_investigation_pending": ["unproved", "investigation_pending"],
+        "crm_available_acquisition_pending": ["proved_available_in_crm"],
+        "data_acquired_calculation_pending": ["acquired_local"],
+        "measured_validated": ["acquired_local"],
+        "additional_history_required": ["proved_requires_more_history", "proved_available_in_crm", "acquired_local"],
+        "external_source_required": ["proved_requires_external"],
+        "outside_sales_domain": ["proved_outside_sales_domain"],
+        "genuinely_not_available": ["proved_not_available"]
+      }
+    },
+    "metric_evaluation_state": {
+      "spec_ref": "SPEC §6, §7.9 — frozen closed set",
+      "closed": true,
+      "values": {
+        "not_measured": "No observation persisted.",
+        "measured_unscored": "Observation persisted but not graded (gradable=false, unresolved grade target, or measured-unscored layer e.g. Response Times).",
+        "measured_graded": "Observation persisted and graded against the one approved grade target.",
+        "measured_abstained": "Content/semantic output abstained due to low confidence (never a measured fact).",
+        "measurement_rejected": "Failed independent recomputation / two-delta / QA."
+      },
+      "invariants": {
+        "graded_requires_disposition": ["measured_validated"],
+        "graded_requires_gradable_true_and_grade_target_approved": true,
+        "abstained_only_for_protected_content_envelope": true
+      }
+    },
+    "acquisition_admission_state": {
+      "spec_ref": "SPEC §5, §7.1, §7.3 — frozen closed set (per source artifact)",
+      "closed": true,
+      "values": {
+        "not_acquired": "No acquisition attempted.",
+        "acquisition_pending": "Acquisition task open for the dedupe key.",
+        "acquired_pending_admission": "Bytes acquired; in neutral pre-admission inspection.",
+        "admitted_held": "Sales-clean; classifier-accepted, held (accepted-eligible), not promoted.",
+        "admitted_promoted": "Promoted into analytics (after idempotence/current-period/e2e tests).",
+        "quarantined": "Contaminated/failed classifier; TERMINAL for the artifact; routed to segregated pre-admission vault; writes zero analytical rows.",
+        "acquisition_exception": "Missing/failed delivery; opens a visible source-run exception; creates no empty observations."
+      },
+      "transitions": {
+        "not_acquired": ["acquisition_pending"],
+        "acquisition_pending": ["acquired_pending_admission", "acquisition_exception"],
+        "acquired_pending_admission": ["admitted_held", "quarantined"],
+        "admitted_held": ["admitted_promoted"],
+        "admitted_promoted": [],
+        "quarantined": [],
+        "acquisition_exception": ["acquisition_pending"]
+      },
+      "invariants": {
+        "quarantine_terminal": true,
+        "no_quarantine_to_admitted": true,
+        "promotion_only_from_held": true
+      }
+    },
+    "report_acceptance_state": {
+      "spec_ref": "SPEC §8, §7.10, §7.12 — frozen closed set (module subsection / report run)",
+      "closed": true,
+      "values": {
+        "draft": "Authored, not reviewed.",
+        "in_review": "Under impartial-shadow review.",
+        "accepted": "Impartial-shadow pass; measured IDs only feed grades/narrative.",
+        "rejected": "Failed review; blocks final completion until corrected or converted to an allowed disposition.",
+        "withheld_no_delivery": "Assembled but intentionally not delivered (Honda goal sends nothing to customers)."
+      },
+      "transitions": {
+        "draft": ["in_review"],
+        "in_review": ["accepted", "rejected"],
+        "rejected": ["draft"],
+        "accepted": ["withheld_no_delivery"],
+        "withheld_no_delivery": []
+      },
+      "module_partitions": {
+        "names": ["accepted_measured_ids", "accepted_disposition_only_ids", "rejected_ids"],
+        "mutually_exclusive": true,
+        "union_covers_module_expected_ids": true,
+        "grades_and_narrative_use": "accepted_measured_ids",
+        "safe_appendix_uses": "all_295"
+      }
+    }
+  }
+}

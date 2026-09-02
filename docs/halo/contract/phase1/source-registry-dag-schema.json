@@ -1,0 +1,32 @@
+{
+  "artifact": "honda-watchdog-phase1-source-registry-dag-schema",
+  "schema_version": "1.0.0",
+  "frozen": true,
+  "phase": "Phase 1A — freeze the source registry + acquisition DAG schema. Design-only: NO source rows authored here.",
+  "spec_ref": "SPEC §5 (source-first, one artifact fans out to every dependent metric; never 295 browser searches), §7.1 (acquire once per (family,dealer,period,schema_revision))",
+  "vocab_ref": "docs/halo/contract/phase1/frozen-vocabularies.json",
+  "source_node_key": "source_id",
+  "acquisition_dedupe_key": ["profile", "family", "period", "schema_revision"],
+  "required_source_fields": {
+    "source_id": {"type": "string", "pattern": "^SRC-[a-z_]+-\\d{4}$"},
+    "profile": {"type": "const", "value": "serra-honda"},
+    "family": {"type": "enum", "values": ["lead_source_roi", "cage_kpi", "sales_comm_log", "crm_sales_gross", "appointments", "dealership_performance", "response_times", "custom_reporting", "manual_crm", "external"]},
+    "period": {"type": "string", "note": "e.g. 2026-08-24..2026-08-30 or a daily date; ambiguous period is a fail-closed stop."},
+    "schema_revision": {"type": "string"},
+    "source_type": {"type": "enum", "values": ["native_xlsx", "browser_csv", "manual", "external"]},
+    "source_existence_state": {"type": "enum", "vocab": "source_existence_state"},
+    "acquisition_admission_state": {"type": "enum", "vocab": "acquisition_admission_state"},
+    "provenance_ref": {"type": "string", "nonempty": true, "note": "Missing provenance is a fail-closed stop."},
+    "sales_only_receipt": {"type": "string", "note": "Zero Service/Parts proof; else quarantine whole-delivery."},
+    "dependent_metric_ids": {"type": "array<string>", "each_pattern": "^SW-\\d{3}$", "note": "DAG fan-out edges source->metric."}
+  },
+  "dag_invariants": [
+    "The acquisition dedupe key (profile, family, period, schema_revision) is UNIQUE across source nodes: exactly one acquisition task per key.",
+    "NO per-metric duplicate acquisition: a metric that needs an already-registered (family,period,schema_revision) reuses that source_id; it does not create a second acquisition node.",
+    "Edges are strictly source -> metric (fan-out). A metric may depend on multiple sources; a source may feed many metrics.",
+    "The dependency graph is acyclic (metrics never feed acquisition).",
+    "Every dependent_metric_id is one of the frozen 295 (or a registered beyond-295 candidate, per candidate-intake schema — which is a SEPARATE registry).",
+    "acquisition_admission_state transitions obey frozen-vocabularies acquisition_admission_state (quarantine terminal; promotion only from held).",
+    "A source in acquisition_exception opens a visible source-run exception and creates no empty observations for its dependent metrics."
+  ]
+}

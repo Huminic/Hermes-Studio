@@ -1,0 +1,224 @@
+{
+  "check": "honda_watchdog_phase1a_contracts",
+  "phase": "Phase 1A — design-only contract freeze + self-tests",
+  "contract_files": {
+    "frozen-vocabularies.json": "4868bfd1d8b8ec5d95dc503682e8c5efe9d07813d9fd9b0aeca0e0c83cc964a3",
+    "metric-row-schema.json": "b54d565dcd2cf02a67307e7c510f05d4ef2b168891d88c478baf205f1c53c8f3",
+    "packet-schema.json": "1d3c998892228ced478b5b5a4ee20b0039a875cd249cec9738e93d7a0fe4b7e2",
+    "source-registry-dag-schema.json": "6876543f301f1f3e822830838270d666756eacac316814c04f065686594bf63c",
+    "beyond-295-candidate-intake-schema.json": "87bd5adfb8d9fab0563384edd2c90c7da0dad24d04b04d9c28beb6db68071639",
+    "fail-closed-stops.json": "5bdcf282f33137f97e0bac43b165b28e7558de2e39cdc88bd9d1a17f1f19c60b"
+  },
+  "structure_295_11_18": "PASS",
+  "vocab_closure": "PASS",
+  "self_tests_total": 29,
+  "self_tests_failed": 0,
+  "self_tests": [
+    {
+      "test": "metric_row.valid_sales_graded",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "metric_row.graded_without_approved_target_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "measured_graded requires an approved+active grade_target"
+    },
+    {
+      "test": "metric_row.calculated_without_formula_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "measured_graded requires formula"
+    },
+    {
+      "test": "metric_row.nongradable_graded_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "measured_graded requires gradable + measured_validated"
+    },
+    {
+      "test": "metric_row.source_investigation_pending_valid",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "metric_row.source_investigation_pending_missing_reviewpoint_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source_investigation_pending missing review_point"
+    },
+    {
+      "test": "metric_row.source_investigation_pending_gradable_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "source_investigation_pending must be gradable=false and not customer-full"
+    },
+    {
+      "test": "metric_row.service_overlay_valid",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "metric_row.service_overlay_wrong_boundary_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "service overlay id must be separate_serra_service + appendix_id_label_only"
+    },
+    {
+      "test": "metric_row.protected_content_graded_without_envelope_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "measured_graded requires gradable + measured_validated"
+    },
+    {
+      "test": "separation.score_requires_approved_grade_target",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "separation.comparison_reference_alone_cannot_score",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "blocked"
+    },
+    {
+      "test": "transition.sip_to_crm_available_allowed",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "transition.sip_to_measured_forbidden",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "blocked"
+    },
+    {
+      "test": "transition.sip_to_data_acquired_forbidden",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "blocked"
+    },
+    {
+      "test": "transition.held_to_promoted_allowed",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "transition.quarantine_to_admitted_forbidden",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "blocked"
+    },
+    {
+      "test": "packet.valid",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "packet.overlapping_partitions_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "partitions not mutually exclusive"
+    },
+    {
+      "test": "packet.partition_union_mismatch_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "partitions union != target_ids"
+    },
+    {
+      "test": "packet.single_delta_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "two_delta_proof requires both evidence_delta and meaning_delta"
+    },
+    {
+      "test": "packet.wrong_module_ownership_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "SW-011 not owned by module 3"
+    },
+    {
+      "test": "packet.oversize_without_reason_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "target_ids out of 5..12 without size_reason"
+    },
+    {
+      "test": "dag.unique_dedupe_key_ok",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "dag.duplicate_dedupe_key_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "duplicate acquisition dedupe key ('serra-honda', 'appointments', '2026-08-24..2026-08-30', 'v1') (no per-metric duplicate acquisition)"
+    },
+    {
+      "test": "candidate.valid",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    },
+    {
+      "test": "candidate.sw_id_as_candidate_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "candidate_id must match ^CAND-\\d{4}$"
+    },
+    {
+      "test": "candidate.mutates_295_rejected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "sample_error": "candidate intake may not mutate the authoritative 295"
+    },
+    {
+      "test": "change_scope.catalog_still_295",
+      "expected": "accept",
+      "got": "accept",
+      "pass": true,
+      "sample_error": null
+    }
+  ],
+  "errors": [],
+  "overall_pass": true,
+  "note": "Design-only: no metric rows or packets authored. Fixtures are synthetic in-memory cases proving each rule fires."
+}

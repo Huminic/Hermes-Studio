@@ -1,0 +1,29 @@
+{
+  "artifact": "honda-watchdog-phase1-beyond-295-candidate-intake-schema",
+  "schema_version": "1.0.0",
+  "frozen": true,
+  "phase": "Phase 1A — freeze a SEPARATE candidate-intake registry for useful data discovered beyond the fixed 295. Design-only: NO candidates authored here.",
+  "objective_ref": "Active objective (sha256 7c8e622b…): err toward inclusion for useful data beyond the fixed 295 — but it CANNOT alter the authoritative 295.",
+  "authoritative_catalog": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json (sha256 29c7ac06…) — FROZEN; 295 unique SW-001..SW-295.",
+  "candidate_key": "candidate_id",
+  "required_candidate_fields": {
+    "candidate_id": {"type": "string", "pattern": "^CAND-\\d{4}$", "note": "MUST NOT be an SW-### id."},
+    "proposed_name": {"type": "string", "nonempty": true},
+    "description": {"type": "string", "nonempty": true},
+    "observed_source": {"type": "string", "note": "Where the useful data was observed (dataset/surface)."},
+    "rationale": {"type": "string", "nonempty": true},
+    "boundary_class": {"type": "enum", "vocab": "boundary_class", "note": "Must be 'sales' to be in-envelope; Service/Parts candidates are recorded but stay outside Honda Sales."},
+    "relationship_to_295": {"type": "enum", "values": ["net_new", "refines_existing"], "refines_existing_requires": "related_sw_id"},
+    "related_sw_id": {"type": "string", "pattern": "^SW-\\d{3}$", "required_when": "relationship_to_295 == 'refines_existing'"},
+    "candidate_state": {"type": "enum", "values": ["candidate_review_pending", "accepted_for_future_catalog", "rejected"]},
+    "authorization_required": {"type": "boolean", "note": "Promotion of a candidate into any future authoritative catalog is a separate governed decision (goal/plan/output change) requiring authority."},
+    "owner": {"type": "enum", "values": ["codex", "claude_studio", "duane"]},
+    "evidence_ref": {"type": "string"}
+  },
+  "hard_invariants": [
+    "This registry is SEPARATE from the 295 matrix and CANNOT add, remove, renumber, or reclassify any SW-001..SW-295 id.",
+    "candidate_id MUST match ^CAND-\\d{4}$ and MUST NOT be an SW-### id (no collision with the 295).",
+    "Accepting a candidate (accepted_for_future_catalog) does NOT mutate the authoritative 295; catalog change is a separate authorized goal/plan/output change.",
+    "A Service/Parts candidate is recorded for completeness but never enters Honda Sales sources/metrics/grades/narrative."
+  ]
+}

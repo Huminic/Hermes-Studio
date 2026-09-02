@@ -1,0 +1,27 @@
+{
+  "artifact": "honda-watchdog-phase1-fail-closed-stops",
+  "schema_version": "1.0.0",
+  "frozen": true,
+  "phase": "Phase 1A — freeze the canonical fail-closed stop conditions. Design-only.",
+  "spec_ref": "SPEC §9 stop conditions",
+  "principle": "Fail-closed: on any stop condition, STOP — do not guess, infer, substitute, or proceed. Record the stop with evidence, owner, next action, and review point.",
+  "canonical_stops": {
+    "wrong_dealer": "Any artifact/row not bound to Serra Honda dealer 21043.",
+    "service_parts_in_sales": "Any Service/Parts evidence (visible rows OR hidden Lead Intent) in a Sales source/metric — whole-delivery quarantine.",
+    "ambiguous_period": "Period cannot be deterministically resolved.",
+    "schema_drift": "Header/type/field signature differs from the contracted schema_revision.",
+    "missing_provenance": "Required capture/receipt provenance absent.",
+    "protected_content_or_pii_outside_envelope": "Message content / PII used without the authorized protected-content envelope.",
+    "formula_or_denominator_ambiguity": "Numerator/denominator/formula not exactly defined.",
+    "incompatible_baseline": "Grade target/comparison definition, population, period, or denominator incompatible.",
+    "source_substitution_or_skip": "A required source is skipped or substituted by another.",
+    "dirty_or_competing_writer": "A dirty/competing writer overlaps the working branch/artifact.",
+    "production_or_customer_behavior_change": "Any action that would alter production or customer behavior (schedule, recipient, send, deploy)."
+  },
+  "blast_radius_rule": {
+    "one_source_failure_blocks": "only the dependent metric IDs of that source",
+    "does_not_block": "unrelated modules or independent metrics",
+    "module_rule": "a failed/blocked ID never erases the rest of its module; a rejected ID blocks only FINAL completion until corrected or converted to an evidence-backed allowed disposition"
+  },
+  "count": 11
+}

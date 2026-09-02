@@ -1,0 +1,35 @@
+{
+  "artifact": "honda-watchdog-phase1-packet-schema",
+  "schema_version": "1.0.0",
+  "frozen": true,
+  "phase": "Phase 1A — freeze the execution PACKET schema (the unit of module work). Design-only: NO packet is authored here.",
+  "spec_ref": "SPEC §8 module partitions, §9 two-delta proof, §11 artifacts",
+  "vocab_ref": "docs/halo/contract/phase1/frozen-vocabularies.json",
+  "packet_key": "packet_id",
+  "required_fields": {
+    "packet_id": {"type": "string", "pattern": "^PKT-\\d{2}[A-Z]?-\\d{2}$", "note": "e.g. PKT-02-01 = module 2, packet 1."},
+    "module": {"type": "integer", "range": [1, 11], "exactly_one": true, "note": "A packet targets exactly ONE module."},
+    "target_ids": {"type": "array<string>", "each_pattern": "^SW-\\d{3}$", "normal_size_min": 5, "normal_size_max": 12, "out_of_range_requires": "size_reason"},
+    "size_reason": {"type": "string", "required_when": "len(target_ids) < 5 or len(target_ids) > 12"},
+    "management_question": {"type": "string", "nonempty": true, "note": "Concrete management/business question the packet answers."},
+    "prerequisites": {"type": "array<string>", "note": "Other packet_ids / contracts that must be accepted first."},
+    "source_dependencies": {"type": "array<string>", "note": "source_id references into source-registry-dag-schema (family-level, deduped)."},
+    "admission_contract": {"type": "object", "required_keys": ["family", "dedupe_key", "sales_only_receipt", "expected_admission_state"]},
+    "transform_contract": {"type": "object", "required_keys": ["normalized_spec", "row_key_set_hash_method", "join_keys", "reconciliation"]},
+    "persist_contract": {"type": "object", "required_keys": ["target_tables", "append_only", "idempotent_key"]},
+    "test_contract": {"type": "object", "required_keys": ["positive_golden", "negative_tests", "missing_is_not_zero_test"]},
+    "report_fragment_contract": {"type": "object", "required_keys": ["subsection_outputs", "customer_language_scope", "internal_companion_scope"]},
+    "stop_conditions": {"type": "object", "required_keys": ["inherited_canonical", "packet_specific"], "note": "inherited_canonical MUST reference fail-closed-stops.json; packet_specific adds packet-local stops."},
+    "two_delta_proof": {"type": "object", "required_keys": ["evidence_delta", "meaning_delta"], "note": "evidence_delta = raw->normalized proof plan; meaning_delta = normalized->metric/grade/narrative proof plan. Both are FUTURE proofs planned here, executed later."},
+    "partitions_target": {"type": "object", "required_keys": ["accepted_measured_ids", "accepted_disposition_only_ids", "rejected_ids"], "note": "Exact, mutually exclusive; union == target_ids (or module expected set at module close)."}
+  },
+  "invariants": [
+    "module is exactly one integer 1..11.",
+    "5 <= len(target_ids) <= 12, OR size_reason is present and nonempty.",
+    "target_ids are unique, all match ^SW-\\d{3}$, and are all owned by `module` per the frozen 295->11 map.",
+    "partitions_target.{accepted_measured_ids,accepted_disposition_only_ids,rejected_ids} are pairwise disjoint and their union == set(target_ids).",
+    "stop_conditions.inherited_canonical references the canonical fail-closed stop list; a packet cannot silently drop a canonical stop.",
+    "two_delta_proof requires BOTH evidence_delta and meaning_delta (no single-delta acceptance).",
+    "a source failure among source_dependencies blocks only the dependent target_ids, never the whole module."
+  ]
+}

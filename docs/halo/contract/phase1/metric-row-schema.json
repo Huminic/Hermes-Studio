@@ -1,0 +1,105 @@
+{
+  "artifact": "honda-watchdog-phase1-metric-row-schema",
+  "schema_version": "1.0.0",
+  "frozen": true,
+  "phase": "Phase 1A — freeze the per-metric definition row schema. Design-only: NO metric rows are authored here; this is the contract every future SW-001..SW-295 row must satisfy.",
+  "spec_ref": "SPEC §3, §5, §6, §7.2/§7.6/§7.7/§7.8, §12 metric checklist",
+  "vocab_ref": "docs/halo/contract/phase1/frozen-vocabularies.json",
+  "row_key": "metric_id",
+  "required_fields": {
+    "metric_id": {"type": "string", "pattern": "^SW-\\d{3}$", "in_catalog_295": true},
+    "definition_version": {"type": "string", "semver_like": true},
+    "module": {"type": "integer", "range": [1, 11]},
+    "business_question": {"type": "string", "nonempty": true, "note": "Exact management/business question this metric answers."},
+    "boundary_class": {"type": "enum", "vocab": "boundary_class"},
+    "population": {"type": "string", "nonempty": true},
+    "numerator": {"type": "string", "required_when_gradable_or_measured": true},
+    "denominator": {"type": "string", "required_when_ratio": true, "note": "Ambiguous/undefined denominator is a fail-closed stop."},
+    "formula": {"type": "string", "required_when_calculated": true, "note": "No calculated claim without a complete formula AND direct source fields."},
+    "direct_source_fields": {"type": "array<string>", "min_items_when_calculated": 1},
+    "unit": {"type": "string", "nonempty": true},
+    "polarity": {"type": "enum", "values": ["higher_is_better", "lower_is_better", "target_band", "neutral_control"]},
+    "window": {"type": "string", "note": "Trailing/cohort/period window."},
+    "timezone": {"type": "const", "value": "America/New_York"},
+    "cadence": {"type": "enum", "values": ["daily", "weekly", "monthly", "manual", "on_demand"]},
+    "impact_method": {"type": "enum", "values": ["incremental_units_dollars", "operational_only", "none"]},
+    "impact_status": {"type": "enum", "values": ["not_estimated", "range_estimated", "assumption_labeled", "not_applicable"]},
+    "gradable": {"type": "boolean"},
+    "sensitivity_class": {"type": "enum", "values": ["none", "pii", "protected_content", "compliance"]},
+    "protected_content": {"type": "boolean", "note": "true => requires the authorized protected-content envelope; may only be measured_abstained/measured_unscored until enveloped."},
+    "authorization": {"type": "enum", "values": ["none_required", "duane_required", "compliance_required", "cross_rooftop_required", "external_required"]},
+    "disposition": {"type": "enum", "vocab": "disposition"},
+    "source_existence_state": {"type": "enum", "vocab": "source_existence_state"},
+    "evaluation_state": {"type": "enum", "vocab": "metric_evaluation_state"},
+    "source_dependency_ids": {"type": "array<string>", "note": "References into the source registry/DAG (family-level), never per-metric duplicate acquisition."},
+    "evidence_ref": {"type": "string", "nonempty": true},
+    "evidence_as_of": {"type": "string", "iso_datetime": true},
+    "owner": {"type": "enum", "values": ["codex", "claude_studio", "duane", "impartial_shadow"]},
+    "next_action": {"type": "string", "required_when_unresolved": true},
+    "review_point": {"type": "string", "required_when_nonterminal_pending": true, "note": "Date/condition when a pending disposition is re-adjudicated."},
+    "internal_visibility": {"type": "boolean", "default": true},
+    "customer_visibility": {"type": "enum", "values": ["full", "appendix_id_label_only", "hidden"]},
+    "confidence": {"type": "enum", "values": ["high", "medium", "low", "abstain", "not_applicable"]},
+    "explainability_ref": {"type": "string", "note": "How the data was used (objective hook: PE-grade + blue-collar readable)."},
+    "evidence_index_ref": {"type": "string", "note": "Hook into the deep supporting-data index over the 200+/295 metrics (active objective)."},
+    "detection_threshold_contract": {"type": "object", "schema": "threshold_contract"},
+    "comparison_reference_contract": {"type": "object", "schema": "comparison_contract"},
+    "grade_target_contract": {"type": "object", "schema": "grade_target_contract"}
+  },
+  "sub_contracts": {
+    "threshold_contract": {
+      "purpose": "Detection rule threshold — decides whether a Watchdog condition/event fires. Alerts evaluate ONLY this. Never silently changed by a comparison reference.",
+      "required_fields": {
+        "threshold_id": "string",
+        "version": "string",
+        "rule": "string",
+        "provenance": "string",
+        "effective_dates": "string",
+        "approval_state": {"type": "enum", "values": ["proposed", "approved", "retired"]},
+        "status": {"type": "enum", "values": ["active", "draft", "inactive"]}
+      }
+    },
+    "comparison_contract": {
+      "purpose": "Comparison reference — historical/capability/industry/peer context. Reference-only unless separately approved as the grade target. Multiple may be shown; never scores by itself.",
+      "required_fields": {
+        "reference_id": "string",
+        "version": "string",
+        "basis": {"type": "enum", "values": ["dealer_history", "capability_normalized", "published_industry", "peer_cohort", "operator_potential"]},
+        "formula": "string",
+        "provenance": "string",
+        "publication_date": "string",
+        "valid_period": "string",
+        "compatibility_result": {"type": "enum", "values": ["compatible", "incompatible", "unresolved"]},
+        "assumptions": "string",
+        "confidence": {"type": "enum", "values": ["high", "medium", "low"]},
+        "approval_state": {"type": "enum", "values": ["proposed", "approved", "reference_only", "retired"]},
+        "status": {"type": "enum", "values": ["active", "draft", "inactive"]}
+      }
+    },
+    "grade_target_contract": {
+      "purpose": "The ONE approved standard used to score a gradable metric. Report grades use only this. Event/control metrics may be gradable=false with no grade target.",
+      "required_fields": {
+        "grade_target_id": "string",
+        "version": "string",
+        "basis": {"type": "enum", "values": ["dealer_history", "capability_normalized", "published_industry", "peer_cohort", "operator_potential"]},
+        "value_or_range": "string",
+        "provenance": "string",
+        "effective_dates": "string",
+        "compatibility_result": {"type": "enum", "values": ["compatible", "incompatible", "unresolved"]},
+        "approval_state": {"type": "enum", "values": ["proposed", "approved", "unresolved", "retired"]},
+        "status": {"type": "enum", "values": ["active", "draft", "inactive"]}
+      }
+    }
+  },
+  "cross_field_invariants": [
+    "boundary_class != 'sales' => customer_visibility != 'full' AND gradable == false AND evaluation_state in ['not_measured','measured_unscored'] (disposition-only).",
+    "metric_id in service_overlay_ids => boundary_class == 'separate_serra_service' AND customer_visibility == 'appendix_id_label_only'.",
+    "gradable == true => a grade_target_contract with approval_state=='approved' AND status=='active' is required to reach evaluation_state 'measured_graded'.",
+    "gradable == false => no grade_target may score the metric; evaluation_state may be 'measured_unscored' at most.",
+    "evaluation_state == 'measured_graded' => disposition == 'measured_validated' AND numerator/denominator/formula/unit/window present.",
+    "disposition == 'source_investigation_pending' => gradable==false AND customer_visibility!='full' AND owner,next_action,review_point,evidence_as_of present AND source_existence_state in ['unproved','investigation_pending'].",
+    "protected_content == true => sensitivity_class in ['protected_content'] AND (evaluation_state in ['not_measured','measured_unscored','measured_abstained']) until protected-content envelope authorization is recorded.",
+    "detection_threshold_contract, comparison_reference_contract, grade_target_contract are THREE separate versioned records; a change in one MUST NOT mutate another.",
+    "no substitute/inferred value may be used to hide an absent direct field (missing is not zero)."
+  ]
+}
