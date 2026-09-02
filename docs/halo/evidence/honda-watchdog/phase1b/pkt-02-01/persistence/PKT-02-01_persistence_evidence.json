@@ -1,0 +1,228 @@
+{
+  "alert_candidates": [
+    {
+      "channel": "simulated_none",
+      "delivered": false,
+      "metric_id": "SW-011",
+      "unsent": true,
+      "would_fire": false
+    },
+    {
+      "channel": "simulated_none",
+      "delivered": false,
+      "metric_id": "SW-012",
+      "unsent": true,
+      "would_fire": true
+    },
+    {
+      "channel": "simulated_none",
+      "delivered": false,
+      "metric_id": "SW-015",
+      "unsent": true,
+      "would_fire": true
+    }
+  ],
+  "artifact": "honda-watchdog-pkt-02-01-brain-persistence-proof",
+  "binding_sha256": "1c1c98a2e7b3be8d10eea9495861b7a33e65a00020ab7c9e756da363b69f2082",
+  "boundary_proofs": {
+    "measured_count": 3,
+    "missing_preserved_as_null": true,
+    "no_delivery_side_effect": true,
+    "notification_delivery_table_present": false,
+    "pending_count": 2,
+    "zero_service_parts": "119 rows: one rooftop Dealer ID=21043; zero Service/Parts tokens in categorical columns; business-hours population (Originated After Hours=No)=76; Sales Rep aggregated in-memory, no names retained"
+  },
+  "content_sha256": "ae30c07ab4a6e9ae85461dc183c32b94e1ae50c11c5004ab2b51e4d9b965eba1",
+  "dealer_id": "21043",
+  "engine_version": "pkt-exec-1",
+  "evidence_delta": {
+    "bytes": 46940,
+    "dealer_id": "21043",
+    "missing_rule": "blanks preserved as missing (never zero); coverage_numeric + missing == business-hours population",
+    "period": "2026-08-24..2026-08-30",
+    "receipt_sha256": "68f845a528623c3799e52c2bb45ba25551450314c5b69ac5fbde2b6e2b6521f2",
+    "row_reconciliation": "119 of 119",
+    "sales_only_proof": "119 rows: one rooftop Dealer ID=21043; zero Service/Parts tokens in categorical columns; business-hours population (Originated After Hours=No)=76; Sales Rep aggregated in-memory, no names retained",
+    "schema_contract_sha256": "7d446696d9be66b917308cad68e27fb8dfaf40ca6e08064afde16031c172eeb1",
+    "source_id": "SRC-vinsolutions_custom_reporting_leads-0001",
+    "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae"
+  },
+  "generated_note": "Deterministic content (no wall-clock). The dev brain.db is disposable (tmp); only this evidence is durable.",
+  "idempotence": {
+    "first_persist_changed": true,
+    "replay_changed": false,
+    "runs_after_replay": 1
+  },
+  "lifecycle_partition": {
+    "accepted_disposition_only_ids": [],
+    "accepted_measured_ids": [
+      "SW-011",
+      "SW-012",
+      "SW-015"
+    ],
+    "calculation_pending_ids": [],
+    "rejected_ids": [],
+    "source_investigation_pending_ids": [
+      "SW-013",
+      "SW-014"
+    ]
+  },
+  "metrics": [
+    {
+      "comparator": ">",
+      "denominator": 76,
+      "detection_fired": false,
+      "detection_rule": "median_business_hours_response_min > 10",
+      "gradable": true,
+      "grade_target_id": "GT-OT-SW-011",
+      "metric_id": "SW-011",
+      "missing": 49,
+      "numerator": 27,
+      "rating": "healthy",
+      "source_investigation_missing_fields": null,
+      "status": "measured",
+      "threshold": 10,
+      "threshold_id": "TH-OT-SW-011",
+      "unit": "minutes",
+      "value": 6
+    },
+    {
+      "comparator": ">",
+      "denominator": 76,
+      "detection_fired": true,
+      "detection_rule": "strict_untouched_rate > 0",
+      "gradable": true,
+      "grade_target_id": "GT-OT-SW-012",
+      "metric_id": "SW-012",
+      "missing": null,
+      "numerator": 15,
+      "rating": "breach",
+      "source_investigation_missing_fields": null,
+      "status": "measured",
+      "threshold": 0,
+      "threshold_id": "TH-OT-SW-012",
+      "unit": "ratio_0_1",
+      "value": 0.19736842105263158
+    },
+    {
+      "comparator": null,
+      "denominator": null,
+      "detection_fired": null,
+      "detection_rule": null,
+      "gradable": false,
+      "grade_target_id": "GT-013",
+      "metric_id": "SW-013",
+      "missing": null,
+      "numerator": null,
+      "rating": "withheld",
+      "source_investigation_missing_fields": [
+        "authoritative_opening_schedule",
+        "first_human_response_timestamp"
+      ],
+      "status": "source_investigation_pending",
+      "threshold": null,
+      "threshold_id": null,
+      "unit": "ratio_0_1",
+      "value": null
+    },
+    {
+      "comparator": null,
+      "denominator": null,
+      "detection_fired": null,
+      "detection_rule": null,
+      "gradable": false,
+      "grade_target_id": "GT-014",
+      "metric_id": "SW-014",
+      "missing": null,
+      "numerator": null,
+      "rating": "withheld",
+      "source_investigation_missing_fields": [
+        "first_response_actor_classification",
+        "human_touch_event_timestamps"
+      ],
+      "status": "source_investigation_pending",
+      "threshold": null,
+      "threshold_id": null,
+      "unit": "leads",
+      "value": null
+    },
+    {
+      "comparator": ">",
+      "denominator": 4,
+      "detection_fired": true,
+      "detection_rule": "rep_2x_store_median_share > 0",
+      "gradable": true,
+      "grade_target_id": "GT-OT-SW-015",
+      "metric_id": "SW-015",
+      "missing": null,
+      "numerator": 2,
+      "rating": "breach",
+      "source_investigation_missing_fields": null,
+      "status": "measured",
+      "threshold": 0,
+      "threshold_id": "TH-OT-SW-015",
+      "unit": "ratio_0_1",
+      "value": 0.5
+    }
+  ],
+  "module": 2,
+  "packet_id": "PKT-02-01",
+  "period": "2026-08-24..2026-08-30",
+  "persistence_surface": {
+    "convention": "feature-owned watchdog tables (CREATE TABLE IF NOT EXISTS)",
+    "in_memory_shim": false,
+    "kind": "per-profile Brain (better-sqlite3)",
+    "location_pattern": "~/.hermes/profiles/<profile>/brain/brain.db",
+    "row_counts": {
+      "watchdog_packet_alert_candidate": 3,
+      "watchdog_packet_evaluation": 5,
+      "watchdog_packet_finding": 5,
+      "watchdog_packet_observation": 5,
+      "watchdog_packet_run": 1
+    },
+    "tables": [
+      "watchdog_packet_alert_candidate",
+      "watchdog_packet_evaluation",
+      "watchdog_packet_finding",
+      "watchdog_packet_observation",
+      "watchdog_packet_run"
+    ]
+  },
+  "profile": "serra-honda",
+  "reconciliation": {
+    "metrics": [
+      {
+        "denominator": 76,
+        "evaluator": 6,
+        "independent": 6,
+        "match": true,
+        "metric_id": "SW-011",
+        "numerator": 27,
+        "persisted_accepted": 6
+      },
+      {
+        "denominator": 76,
+        "evaluator": 0.19736842105263158,
+        "independent": 0.19736842105263158,
+        "match": true,
+        "metric_id": "SW-012",
+        "numerator": 15,
+        "persisted_accepted": 0.19736842105263158
+      },
+      {
+        "denominator": 4,
+        "evaluator": 0.5,
+        "independent": 0.5,
+        "match": true,
+        "metric_id": "SW-015",
+        "numerator": 2,
+        "persisted_accepted": 0.5
+      }
+    ],
+    "ok": true
+  },
+  "reconstructed_content_sha256": "ae30c07ab4a6e9ae85461dc183c32b94e1ae50c11c5004ab2b51e4d9b965eba1",
+  "reconstructed_equals_pinned": true,
+  "run_key": "119f77056b73c2c9a2a2a6d9ac9aa91afc63205ec674df9d01effe660e774aa7",
+  "source_sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae"
+}
