@@ -101,11 +101,11 @@ Migration 5 stays byte-immutable; migration 6 is additive.
     disposable /tmp HOME, true exit 0, 15 ~/.hermes brains byte-identical pre/post.
 
 ## Files (frozen in this commit)
-- M `src/server/brain-schema.ts` (migration 6 additive; v5 immutable)
-- M `src/server/watchdog/canonical-watchdog-store.ts`
-- M `src/server/watchdog/pkt-02-01-canonical-adapter.ts`
-- M `src/server/watchdog/watchdog-run-store.ts`
-- M `src/test/pkt-02-01-canonical-watchdog-store.test.ts`
-- M `vitest.config.ts`  ·  ?? `src/test/setup-brain-tmp.ts`
-- M `.../pkt-02-01/persistence/CANONICAL_MIGRATION_BACKFILL_RECEIPT.json`
-- ?? `.../pkt-02-02/receipts/` (HERMES_TESTDB_INVENTORY_{,PRE,POST}.json)
+- `src/server/brain-schema.ts` (migration 6 additive; v5 immutable)
+- `src/server/watchdog/canonical-watchdog-store.ts`
+- `src/server/watchdog/pkt-02-01-canonical-adapter.ts`
+- `src/server/watchdog/watchdog-run-store.ts`
+- `src/test/pkt-02-01-canonical-watchdog-store.test.ts`
+- `vitest.config.ts`  ·  `src/test/setup-brain-tmp.ts`
+- `.../pkt-02-01/persistence/CANONICAL_MIGRATION_BACKFILL_RECEIPT.json`
+- `.../pkt-02-01/persistence/hermes-testdb-inventory/` (HERMES_TESTDB_INVENTORY_{,PRE,POST}.json)
