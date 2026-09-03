@@ -1,0 +1,24 @@
+INTERLOCK_MOUNTS_BEGIN
+/dev/loop13 /tmp/sw-full-regression-deps-20260903-v6-mnt squashfs ro,relatime,errors=continue
+/dev/loop13 /home/ubuntu/Claude-store/huminic-studio/node_modules squashfs ro,relatime,errors=continue
+/dev/sdb1[/home/ubuntu/.npm] /home/ubuntu/.npm ext4   ro,relatime
+/dev/sdb1[/home/ubuntu/.local/share/pnpm] /home/ubuntu/.local/share/pnpm ext4   ro,relatime
+/dev/sdb1[/home/ubuntu/.cache/pnpm] /home/ubuntu/.cache/pnpm ext4   ro,relatime
+INTERLOCK_MOUNTS_END
+failed to load config from /home/ubuntu/hs-m1r-isolated-20260830/vitest.config.ts
+
+⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯
+ReferenceError: __dirname is not defined
+    at eval (/home/ubuntu/hs-m1r-isolated-20260830/vitest.config.ts:21:46)
+    at async ESModulesEvaluator.runInlinedModule (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:913:3)
+    at async ModuleRunner.directRequest (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1146:59)
+    at async ModuleRunner.cachedRequest (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1053:73)
+    at async ModuleRunner.import (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/module-runner.js:1014:10)
+    at async runnerImport (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:35196:20)
+    at async runnerImportConfigFile (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:35787:45)
+    at async loadConfigFromFile (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:35764:42)
+    at async resolveConfig (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:35413:22)
+    at async _createServer (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:25362:67)
+
+
+

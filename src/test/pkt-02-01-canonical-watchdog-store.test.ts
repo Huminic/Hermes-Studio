@@ -122,6 +122,8 @@ function syntheticEnvelope(
   const profile = over.profile ?? PROFILE
   const dealer = over.dealer_id ?? DEALER
   const period = over.period ?? PERIOD
+  const runKey = over.run_key ?? 'testrun-coex-0001'
+  const fk = (s: string): string => `${runKey}:${s}` // run-namespaced finding keys
   const sha = 'a'.repeat(64)
   const lineage = {
     source_id: 'SRC-test_family-0001',
@@ -134,7 +136,7 @@ function syntheticEnvelope(
   }
   const observations: Array<Observation> = [
     {
-      metric_id: 'SW-201',
+      metric_id: 'TEST-METRIC-A',
       period,
       status: 'measured' as const,
       calculation_kind: 'rate',
@@ -152,7 +154,7 @@ function syntheticEnvelope(
       source_investigation: null,
     },
     {
-      metric_id: 'SW-202',
+      metric_id: 'TEST-METRIC-B',
       period,
       status: 'source_investigation_pending' as const,
       calculation_kind: 'rate',
@@ -173,7 +175,7 @@ function syntheticEnvelope(
       gradable: false,
       detail: null,
       source_investigation: {
-        metric_id: 'SW-202',
+        metric_id: 'TEST-METRIC-B',
         disposition: 'source_investigation_pending',
         searched_universe: ['A'],
         required: [],
@@ -184,7 +186,7 @@ function syntheticEnvelope(
   ]
   const evaluations: Array<Evaluation> = [
     {
-      metric_id: 'SW-201',
+      metric_id: 'TEST-METRIC-A',
       period,
       gradable_state: 'graded' as const,
       threshold_id: 'TH-201',
@@ -198,7 +200,7 @@ function syntheticEnvelope(
       reason: null,
     },
     {
-      metric_id: 'SW-202',
+      metric_id: 'TEST-METRIC-B',
       period,
       gradable_state: 'withheld' as const,
       threshold_id: null,
@@ -214,35 +216,35 @@ function syntheticEnvelope(
   ]
   const findings: Array<Finding> = [
     {
-      metric_id: 'SW-201',
+      metric_id: 'TEST-METRIC-A',
       period,
       severity: 'breach' as const,
-      headline: 'SW-201 primary',
+      headline: 'TEST-METRIC-A primary',
       detail: 'd1',
     },
     {
-      metric_id: 'SW-201',
+      metric_id: 'TEST-METRIC-A',
       period,
       severity: 'breach' as const,
-      headline: 'SW-201 secondary',
+      headline: 'TEST-METRIC-A secondary',
       detail: 'd2',
     },
     {
-      metric_id: 'SW-202',
+      metric_id: 'TEST-METRIC-B',
       period,
       severity: 'pending' as const,
-      headline: 'SW-202 held',
+      headline: 'TEST-METRIC-B held',
       detail: 'd3',
     },
   ]
   const alert_simulations: Array<AlertSimulation> = [
     {
-      metric_id: 'SW-201',
+      metric_id: 'TEST-METRIC-A',
       would_fire: true,
       channel: 'simulated_none' as const,
       delivered: false as const,
       unsent: true as const,
-      message: '[SIMULATED — NOT SENT] SW-201',
+      message: '[SIMULATED — NOT SENT] TEST-METRIC-A',
     },
   ]
   const two_delta = {
@@ -269,7 +271,7 @@ function syntheticEnvelope(
     module: 9,
     dealer_id: dealer,
     period,
-    run_key: over.run_key ?? 'testrun-coex-0001',
+    run_key: runKey,
     as_of: '2026-09-02T00:00:00Z',
     engine_version: 'test-1',
     binding_sha256: 'd'.repeat(64),
@@ -279,13 +281,14 @@ function syntheticEnvelope(
     definition_version: '1.0.0',
     reference_version: '1.0.0',
     target_version: '1.0.0',
-    expected_metric_ids: ['SW-201', 'SW-202'],
-    measured_metric_ids: ['SW-201'],
+    expected_metric_ids: ['TEST-METRIC-A', 'TEST-METRIC-B'],
+    measured_metric_ids: ['TEST-METRIC-A'],
     lifecycle_partition: {
-      accepted_measured_ids: ['SW-201'],
+      accepted_measured_ids: ['TEST-METRIC-A'],
       accepted_disposition_only_ids: [],
       rejected_ids: [],
-      source_investigation_pending_ids: ['SW-202'],
+      source_investigation_pending_ids: ['TEST-METRIC-B'],
+      calculation_pending_ids: [],
     },
     observations,
     evaluations,
@@ -295,7 +298,7 @@ function syntheticEnvelope(
     reconciliation,
     metric_definitions: [
       {
-        metric_id: 'SW-201',
+        metric_id: 'TEST-METRIC-A',
         metric_version: '1.0.0',
         module: 9,
         calculation_kind: 'rate',
@@ -307,7 +310,7 @@ function syntheticEnvelope(
         required_sources: ['SRC-test_family-0001'],
       },
       {
-        metric_id: 'SW-202',
+        metric_id: 'TEST-METRIC-B',
         metric_version: '1.0.0',
         module: 9,
         calculation_kind: 'rate',
@@ -325,7 +328,19 @@ function syntheticEnvelope(
         dealer_id: dealer,
         period,
         dealer_period_result: 'admitted',
-        admission_receipt: { proof: 'x' },
+        admission_receipt: {
+          source_sha256: sha,
+          schema_contract_sha256: 'b'.repeat(64),
+          bytes: 100,
+          row_count: 10,
+          profile,
+          dealer_id: dealer,
+          period,
+          admitted: true as const,
+          zero_service_parts: true as const,
+          sales_only_proof: two_delta.evidence_delta.sales_only_proof,
+          provenance: { proof: 'x' },
+        },
         schema_contract_sha256: 'b'.repeat(64),
         receipt_sha256: 'c'.repeat(64),
         bytes: 100,
@@ -346,9 +361,10 @@ function syntheticEnvelope(
     ],
     detection_rules: [
       {
-        detection_rule_id: 'DR-SW-201-1.0.0',
-        metric_id: 'SW-201',
+        detection_rule_id: 'DR-TEST-METRIC-A-1.0.0',
+        metric_id: 'TEST-METRIC-A',
         metric_version: '1.0.0',
+        threshold_id: 'TH-201',
         condition: 'rate > 0',
         comparator: '>',
         threshold: 0,
@@ -360,7 +376,7 @@ function syntheticEnvelope(
       {
         grade_target_id: 'GT-201',
         target_version: '1.0.0',
-        metric_id: 'SW-201',
+        metric_id: 'TEST-METRIC-A',
         metric_version: '1.0.0',
         basis: 'operator_potential',
         value_or_range: '> 0',
@@ -371,7 +387,7 @@ function syntheticEnvelope(
       {
         grade_target_id: 'GT-202',
         target_version: '1.0.0',
-        metric_id: 'SW-202',
+        metric_id: 'TEST-METRIC-B',
         metric_version: '1.0.0',
         basis: 'dealer_history',
         value_or_range: 'pending',
@@ -384,7 +400,7 @@ function syntheticEnvelope(
       {
         reference_id: 'CR-201',
         reference_version: '1.0.0',
-        metric_id: 'SW-201',
+        metric_id: 'TEST-METRIC-A',
         metric_version: '1.0.0',
         basis: 'operator_potential',
         approval_state: 'reference_only',
@@ -393,44 +409,62 @@ function syntheticEnvelope(
     ],
     finding_specs: [
       {
-        finding_key: 'f-201-a',
-        metric_id: 'SW-201',
+        finding_key: fk('f-201-a'),
+        metric_id: 'TEST-METRIC-A',
         period,
         severity: 'breach',
-        headline: 'SW-201 primary',
+        headline: 'TEST-METRIC-A primary',
         detail: 'd1',
         priority: 'high',
       },
       {
-        finding_key: 'f-201-b',
-        metric_id: 'SW-201',
+        finding_key: fk('f-201-b'),
+        metric_id: 'TEST-METRIC-A',
         period,
         severity: 'breach',
-        headline: 'SW-201 secondary',
+        headline: 'TEST-METRIC-A secondary',
         detail: 'd2',
         priority: 'high',
       },
       {
-        finding_key: 'f-202',
-        metric_id: 'SW-202',
+        finding_key: fk('f-202'),
+        metric_id: 'TEST-METRIC-B',
         period,
         severity: 'pending',
-        headline: 'SW-202 held',
+        headline: 'TEST-METRIC-B held',
         detail: 'd3',
         priority: 'medium',
       },
     ],
+    capability_snapshots: [],
     report_run: {
-      report_run_id: 'RR:testrun-coex-0001',
+      report_run_id: `RR:${runKey}`,
       report_lineage: two_delta,
       delivery_state: 'undelivered',
+      activation_state: 'inactive',
     },
     sales_only_admission: {
       proof: two_delta.evidence_delta.sales_only_proof,
       dealer_id: dealer,
       zero_service_parts: true,
     },
-    dataset_id_by_metric: { 'SW-201': nd, 'SW-202': null },
+    dataset_id_by_metric: { 'TEST-METRIC-A': nd, 'TEST-METRIC-B': null },
+    detection_rule_id_by_metric: {
+      'TEST-METRIC-A': 'DR-TEST-METRIC-A-1.0.0',
+      'TEST-METRIC-B': null,
+    },
+    disposition_by_metric: {
+      'TEST-METRIC-A': 'measured_validated',
+      'TEST-METRIC-B': 'source_investigation_pending',
+    },
+    evaluation_state_by_metric: {
+      'TEST-METRIC-A': 'measured_graded',
+      'TEST-METRIC-B': 'not_measured',
+    },
+    affirmative_investigation_evidence_ref_by_metric: {
+      'TEST-METRIC-A': null,
+      'TEST-METRIC-B': null,
+    },
     ...over,
   }
   base.content_sha256 = envelopeContentSha(base)
@@ -451,10 +485,18 @@ function tables(pr: string): Array<string> {
 // ── migration + genericity (no real leads needed) ────────────────────
 
 describe('canonical migration + genericity', () => {
-  it('migration 5 creates the full canonical graph on an empty DB', () => {
+  it('migrations 5+6 create the full canonical graph on an empty DB', () => {
     const h = openBrain(PROFILE, { profileRoot })
-    expect(h.schemaVersion).toBe(5)
+    expect(h.schemaVersion).toBe(6)
     for (const t of CANON_TABLES) expect(tables(profileRoot)).toContain(t)
+    // v6 additive lineage-link tables present
+    for (const t of [
+      'watchdog_run_source_artifact',
+      'watchdog_run_normalized_dataset',
+      'watchdog_run_capability_snapshot',
+      'watchdog_evaluation_detection_rule',
+    ])
+      expect(tables(profileRoot)).toContain(t)
   })
 
   it('coexists with the operational watchdog_finding store (never a competing table)', () => {
@@ -490,19 +532,19 @@ describe('canonical migration + genericity', () => {
     })!
     expect(stored.packet_id).toBe('PKT-TEST-COEX')
     expect(stored.observations.map((o) => o.metric_id).sort()).toEqual([
-      'SW-201',
-      'SW-202',
+      'TEST-METRIC-A',
+      'TEST-METRIC-B',
     ])
     // no new tables created by a second packet
     expect(tables(profileRoot).length).toBe(before)
   })
 
-  it('supports MULTIPLE findings per metric/run (two SW-201 findings coexist)', () => {
+  it('supports MULTIPLE findings per metric/run (two TEST-METRIC-A findings coexist)', () => {
     const env = syntheticEnvelope()
     persistCanonicalRunEnvelope(env, { profileRoot })
     const h = openBrain(PROFILE, { profileRoot })
     const n = h.get<{ n: number }>(
-      `SELECT COUNT(*) n FROM watchdog_finding_metric_link WHERE run_key = ? AND metric_id = 'SW-201'`,
+      `SELECT COUNT(*) n FROM watchdog_finding_metric_link WHERE run_key = ? AND metric_id = 'TEST-METRIC-A'`,
       env.run_key,
     )!.n
     expect(n).toBe(2)
@@ -511,7 +553,7 @@ describe('canonical migration + genericity', () => {
       profileRoot,
     })!
     expect(
-      stored.findings.filter((f) => f.metric_id === 'SW-201'),
+      stored.findings.filter((f) => f.metric_id === 'TEST-METRIC-A'),
     ).toHaveLength(2)
   })
 
@@ -538,7 +580,7 @@ describe('canonical migration + genericity', () => {
       profileRoot,
     })!
     expect(
-      stored.findings.filter((f) => f.metric_id === 'SW-201'),
+      stored.findings.filter((f) => f.metric_id === 'TEST-METRIC-A'),
     ).toHaveLength(2)
   })
 
@@ -576,27 +618,44 @@ describe('canonical migration + genericity', () => {
   it('fail-closed: an admitted artifact missing its admission_receipt is rejected', () => {
     const env = syntheticEnvelope()
     env.source_artifacts = [
-      { ...env.source_artifacts[0], admission_receipt: null },
+      {
+        ...env.source_artifacts[0],
+        admission_receipt:
+          null as unknown as (typeof env.source_artifacts)[0]['admission_receipt'],
+      },
     ]
     expect(() => persistCanonicalRunEnvelope(env, { profileRoot })).toThrow(
       /admission_receipt/,
     )
   })
 
-  it('fail-closed: lifecycle partition non-exclusive / union != expected is rejected', () => {
+  it('fail-closed: lifecycle non-exclusive / missing bucket / arbitrary bucket rejected', () => {
+    // all five keys present, but an id appears in two buckets (not exclusive)
     const dup = syntheticEnvelope()
     dup.lifecycle_partition = {
-      accepted_measured_ids: ['SW-201'],
-      rejected_ids: ['SW-201'],
-      source_investigation_pending_ids: ['SW-202'],
+      accepted_measured_ids: ['TEST-METRIC-A'],
+      accepted_disposition_only_ids: [],
+      rejected_ids: ['TEST-METRIC-A'],
+      source_investigation_pending_ids: ['TEST-METRIC-B'],
+      calculation_pending_ids: [],
     }
     expect(() => persistCanonicalRunEnvelope(dup, { profileRoot })).toThrow(
       /not exclusive/,
     )
+    // a required bucket key missing
     const gap = syntheticEnvelope()
-    gap.lifecycle_partition = { accepted_measured_ids: ['SW-201'] }
+    gap.lifecycle_partition = { accepted_measured_ids: ['TEST-METRIC-A'] }
     expect(() => persistCanonicalRunEnvelope(gap, { profileRoot })).toThrow(
-      /union != expected|no bucket/,
+      /missing required bucket/,
+    )
+    // an arbitrary (non-vocabulary) bucket key
+    const bad = syntheticEnvelope()
+    bad.lifecycle_partition = {
+      ...syntheticEnvelope().lifecycle_partition,
+      made_up_bucket: [],
+    }
+    expect(() => persistCanonicalRunEnvelope(bad, { profileRoot })).toThrow(
+      /unknown bucket/,
     )
   })
 
@@ -613,7 +672,7 @@ describe('canonical migration + genericity', () => {
   it('immutable-parent collision: same definition key with a different value fails', () => {
     const a = syntheticEnvelope()
     persistCanonicalRunEnvelope(a, { profileRoot })
-    // second run, same metric definition KEY (SW-201@1.0.0) but a DIFFERENT formula
+    // second run, same metric definition KEY (TEST-METRIC-A@1.0.0) but a DIFFERENT formula
     const b = syntheticEnvelope({
       run_key: 'testrun-coex-0002',
       report_run: {
@@ -623,7 +682,7 @@ describe('canonical migration + genericity', () => {
       },
     })
     b.metric_definitions = b.metric_definitions.map((d) =>
-      d.metric_id === 'SW-201' ? { ...d, formula: 'DIFFERENT' } : d,
+      d.metric_id === 'TEST-METRIC-A' ? { ...d, formula: 'DIFFERENT' } : d,
     )
     b.content_sha256 = envelopeContentSha(b)
     expect(() => persistCanonicalRunEnvelope(b, { profileRoot })).toThrow(
@@ -651,6 +710,432 @@ describe('canonical migration + genericity', () => {
   })
 })
 
+// ── Part A consolidated-control adversarial tests (items 1–10) ───────
+describe('Part A controls — adversarial', () => {
+  const reject = (mut: (e: CanonicalRunEnvelope) => void, re: RegExp) => {
+    const env = syntheticEnvelope()
+    mut(env)
+    if (env.content_sha256 === '' || true) {
+      // most mutations are outside the content hash; reseal only if content changed
+    }
+    expect(() => persistCanonicalRunEnvelope(env, { profileRoot })).toThrow(re)
+  }
+
+  // item 1 (replay): same content hash, changed as_of/disposition → fail (not no-op)
+  it('replay with a changed as_of (same content hash) fails, not a no-op', () => {
+    const env = syntheticEnvelope()
+    persistCanonicalRunEnvelope(env, { profileRoot })
+    const again = syntheticEnvelope() // same run_key + content
+    again.as_of = '2099-01-01T00:00:00Z' // not in content hash; IS in graph manifest
+    expect(again.content_sha256).toBe(env.content_sha256)
+    expect(() => persistCanonicalRunEnvelope(again, { profileRoot })).toThrow(
+      CanonicalWatchdogIntegrityError,
+    )
+  })
+
+  // item 2: exact membership
+  it('extra/missing/duplicate metric definition rejected', () => {
+    reject(
+      (e) =>
+        e.metric_definitions.push({
+          ...e.metric_definitions[0],
+          metric_id: 'SW-999',
+        }),
+      /metric_definitions/,
+    )
+    reject(
+      (e) => (e.metric_definitions = [e.metric_definitions[0]]),
+      /metric_definitions/,
+    )
+    reject(
+      (e) => (e.metric_definitions[1] = { ...e.metric_definitions[0] }),
+      /duplicate metric_id/,
+    )
+  })
+  it('unused detection rule / grade target / reference rejected', () => {
+    reject(
+      (e) =>
+        e.detection_rules.push({
+          ...e.detection_rules[0],
+          detection_rule_id: 'DR-UNUSED',
+        }),
+      /detection_rules supplied != linked/,
+    )
+    reject(
+      (e) =>
+        e.grade_targets.push({
+          ...e.grade_targets[0],
+          grade_target_id: 'GT-UNUSED',
+        }),
+      /grade_targets supplied != used/,
+    )
+  })
+  it('module-inconsistent metric definition rejected', () => {
+    reject((e) => (e.metric_definitions[0].module = 99), /module 99 != run/)
+  })
+
+  // item 5: authority identity
+  it('detection-rule threshold/comparator mismatch + non-approved rejected', () => {
+    reject(
+      (e) => (e.detection_rules[0].threshold_id = 'WRONG'),
+      /threshold_id mismatch/,
+    )
+    reject(
+      (e) => (e.detection_rules[0].comparator = '<'),
+      /comparator mismatch/,
+    )
+    reject(
+      (e) => (e.detection_rules[0].approval_state = 'unresolved'),
+      /approved\+active/,
+    )
+  })
+  it('cross-metric grade-target authority rejected', () => {
+    reject(
+      (e) => (e.grade_targets[0].metric_id = 'TEST-METRIC-B'),
+      /grade_targets supplied != used|metric\/version mismatch/,
+    )
+  })
+  it('ambiguous duplicate authority id rejected', () => {
+    reject(
+      (e) =>
+        e.grade_targets.push({
+          ...e.grade_targets[0],
+          target_version: '2.0.0',
+        }),
+      /ambiguous duplicate id|supplied != used/,
+    )
+  })
+
+  // item 6: capability
+  it('target capability_snapshot_id not supplied rejected', () => {
+    reject(
+      (e) => (e.grade_targets[0].capability_snapshot_id = 'CAP-NONE'),
+      /not supplied/,
+    )
+  })
+
+  // frozen contract: genuinely_not_available needs the EXACT named ref, not prose
+  it('genuinely_not_available without affirmative_investigation_evidence_ref fails (even with prose)', () => {
+    const mkGNA = (ref: string | null): CanonicalRunEnvelope => {
+      const e = syntheticEnvelope()
+      e.lifecycle_partition.source_investigation_pending_ids = []
+      e.lifecycle_partition.accepted_disposition_only_ids = ['TEST-METRIC-B']
+      e.disposition_by_metric['TEST-METRIC-B'] = 'genuinely_not_available'
+      e.evaluation_state_by_metric['TEST-METRIC-B'] = 'not_measured'
+      // generic prose is PRESENT but must NOT satisfy the gate
+      e.observations[1].source_investigation = {
+        metric_id: 'TEST-METRIC-B',
+        disposition: 'genuinely_not_available',
+        searched_universe: ['A'],
+        required: [],
+        missing_fields: ['x'],
+        evidence: 'we looked everywhere, prose only',
+      } as never
+      e.affirmative_investigation_evidence_ref_by_metric['TEST-METRIC-B'] = ref
+      e.content_sha256 = envelopeContentSha(e)
+      return e
+    }
+    expect(() =>
+      persistCanonicalRunEnvelope(mkGNA('   '), { profileRoot }),
+    ).toThrow(/affirmative_investigation_evidence_ref/)
+    expect(() =>
+      persistCanonicalRunEnvelope(mkGNA(null), { profileRoot }),
+    ).toThrow(/affirmative_investigation_evidence_ref/)
+    const ok = mkGNA('EVID-REF-0001')
+    ok.run_key = 'testrun-gna-ok'
+    ok.report_run = { ...ok.report_run, report_run_id: 'RR:testrun-gna-ok' }
+    ok.content_sha256 = envelopeContentSha(ok)
+    expect(persistCanonicalRunEnvelope(ok, { profileRoot }).changed).toBe(true)
+    const h = openBrain(PROFILE, { profileRoot })
+    const ref = h.get<{ affirmative_investigation_evidence_ref: string }>(
+      `SELECT affirmative_investigation_evidence_ref FROM watchdog_metric_observation WHERE run_key=? AND metric_id='TEST-METRIC-B'`,
+      ok.run_key,
+    )!
+    h.close()
+    expect(ref.affirmative_investigation_evidence_ref).toBe('EVID-REF-0001')
+  })
+
+  // Defect-B strict IFF: EVERY non-GNA metric requires literal null. A non-null ref —
+  // nonblank string, '', whitespace, or undefined — on a non-GNA metric is REJECTED.
+  it('non-GNA metric with any non-null affirmative_investigation_evidence_ref is rejected', () => {
+    const mk = (ref: unknown): CanonicalRunEnvelope => {
+      const e = syntheticEnvelope()
+      // TEST-METRIC-A is measured_validated (accepted_measured) → NOT GNA.
+      e.affirmative_investigation_evidence_ref_by_metric['TEST-METRIC-A'] =
+        ref as never
+      e.content_sha256 = envelopeContentSha(e)
+      return e
+    }
+    for (const bad of ['nonblank-ref', '', '   ', undefined]) {
+      expect(() =>
+        persistCanonicalRunEnvelope(mk(bad), { profileRoot }),
+      ).toThrow(/affirmative_investigation_evidence_ref === null/)
+    }
+  })
+
+  // Defect-B: GNA requires a trimmed non-empty STRING — a non-string ref is rejected.
+  it('genuinely_not_available with a non-string affirmative ref is rejected', () => {
+    const e = syntheticEnvelope()
+    e.lifecycle_partition.source_investigation_pending_ids = []
+    e.lifecycle_partition.accepted_disposition_only_ids = ['TEST-METRIC-B']
+    e.disposition_by_metric['TEST-METRIC-B'] = 'genuinely_not_available'
+    e.evaluation_state_by_metric['TEST-METRIC-B'] = 'not_measured'
+    e.affirmative_investigation_evidence_ref_by_metric['TEST-METRIC-B'] =
+      123 as never
+    e.content_sha256 = envelopeContentSha(e)
+    expect(() => persistCanonicalRunEnvelope(e, { profileRoot })).toThrow(
+      /trimmed non-empty string/,
+    )
+  })
+
+  // generic read-path: the three governed fields survive persist → readback EXACTLY
+  it('readback exposes disposition / evaluation_state / affirmative ref (normal states)', () => {
+    const env = syntheticEnvelope()
+    persistCanonicalRunEnvelope(env, { profileRoot })
+    const s = readCanonicalRun(env.run_key, { profile: PROFILE, profileRoot })!
+    expect(s.read_shape_version).toBe(2)
+    expect(s.disposition_by_metric).toEqual({
+      'TEST-METRIC-A': 'measured_validated',
+      'TEST-METRIC-B': 'source_investigation_pending',
+    })
+    expect(s.evaluation_state_by_metric).toEqual({
+      'TEST-METRIC-A': 'measured_graded',
+      'TEST-METRIC-B': 'not_measured',
+    })
+    expect(s.affirmative_investigation_evidence_ref_by_metric).toEqual({
+      'TEST-METRIC-A': null,
+      'TEST-METRIC-B': null,
+    })
+  })
+  it('readback exposes the exact affirmative_investigation_evidence_ref for a GNA metric', () => {
+    const e = syntheticEnvelope()
+    e.lifecycle_partition.source_investigation_pending_ids = []
+    e.lifecycle_partition.accepted_disposition_only_ids = ['TEST-METRIC-B']
+    e.disposition_by_metric['TEST-METRIC-B'] = 'genuinely_not_available'
+    e.evaluation_state_by_metric['TEST-METRIC-B'] = 'not_measured'
+    e.affirmative_investigation_evidence_ref_by_metric['TEST-METRIC-B'] = 'EVID-GNA-7'
+    e.content_sha256 = envelopeContentSha(e)
+    persistCanonicalRunEnvelope(e, { profileRoot })
+    const s = readCanonicalRun(e.run_key, { profile: PROFILE, profileRoot })!
+    expect(s.disposition_by_metric['TEST-METRIC-B']).toBe('genuinely_not_available')
+    expect(s.evaluation_state_by_metric['TEST-METRIC-B']).toBe('not_measured')
+    expect(s.affirmative_investigation_evidence_ref_by_metric['TEST-METRIC-B']).toBe(
+      'EVID-GNA-7',
+    )
+    // backward compatibility: v1 engine record arrays still present + correct
+    expect(s.observations.map((o) => o.metric_id).sort()).toEqual([
+      'TEST-METRIC-A',
+      'TEST-METRIC-B',
+    ])
+  })
+
+  // item 7: report inertness
+  it('report lineage != two_delta / delivered / activated rejected', () => {
+    reject(
+      (e) =>
+        (e.report_run.report_lineage = {
+          ...e.two_delta,
+          meaning_delta: [{ x: 1 } as never],
+        }),
+      /report_lineage != env.two_delta/,
+    )
+    reject(
+      (e) => (e.report_run.delivery_state = 'delivered'),
+      /must be undelivered/,
+    )
+    reject(
+      (e) => (e.report_run.activation_state = 'active'),
+      /must be inactive/,
+    )
+  })
+
+  // item 4: admission receipt + source lineage
+  it('empty sales-only proof / null identity / lineage mismatch rejected', () => {
+    reject(
+      (e) => (e.source_artifacts[0].admission_receipt.sales_only_proof = '  '),
+      /empty sales_only_proof/,
+    )
+    reject((e) => {
+      e.source_artifacts[0].bytes = null
+      e.source_artifacts[0].admission_receipt.bytes = null
+    }, /contracted identity field 'bytes' is null/)
+    reject(
+      (e) => (e.observations[0].source_lineage.source_sha256 = 'f'.repeat(64)),
+      /source_lineage source_sha256 != artifact/,
+    )
+  })
+
+  // item 1/6/lifecycle: exact-key maps + bucket vocabulary/semantics
+  it('exact-key map missing / arbitrary bucket / bad disposition rejected', () => {
+    reject(
+      (e) => delete e.dataset_id_by_metric['TEST-METRIC-B'],
+      /dataset_id_by_metric keys/,
+    )
+    reject(
+      (e) => delete e.detection_rule_id_by_metric['TEST-METRIC-B'],
+      /detection_rule_id_by_metric keys/,
+    )
+    reject(
+      (e) => delete e.disposition_by_metric['TEST-METRIC-B'],
+      /disposition_by_metric keys/,
+    )
+    reject((e) => {
+      e.lifecycle_partition = {
+        ...syntheticEnvelope().lifecycle_partition,
+        made_up: [],
+      }
+    }, /unknown bucket/)
+  })
+  it('disposition/eval-state not admitted by its bucket rejected (SIP-as-disposition-only, calc-graded)', () => {
+    // put source_investigation_pending metric into disposition-only → rejected
+    reject((e) => {
+      e.lifecycle_partition.accepted_disposition_only_ids = ['TEST-METRIC-B']
+      e.lifecycle_partition.source_investigation_pending_ids = []
+    }, /not admitted by bucket/)
+  })
+
+  // item 3: manifest tamper (finding parent, as_of, disposition, capability, links)
+  it('finding-parent column tamper is caught by the graph sha', () => {
+    const env = syntheticEnvelope()
+    persistCanonicalRunEnvelope(env, { profileRoot })
+    const h = openBrain(PROFILE, { profileRoot })
+    h.run(
+      `UPDATE watchdog_finding SET details = 'TAMPERED' WHERE key = ?`,
+      `${env.run_key}:f-201-a`,
+    )
+    h.close()
+    expect(() =>
+      readCanonicalRun(env.run_key, { profile: PROFILE, profileRoot }),
+    ).toThrow(CanonicalWatchdogIntegrityError)
+  })
+  it('run-lineage link deletion is caught', () => {
+    const env = syntheticEnvelope()
+    persistCanonicalRunEnvelope(env, { profileRoot })
+    const h = openBrain(PROFILE, { profileRoot })
+    h.run(
+      `DELETE FROM watchdog_run_source_artifact WHERE run_key = ?`,
+      env.run_key,
+    )
+    h.close()
+    expect(() =>
+      readCanonicalRun(env.run_key, { profile: PROFILE, profileRoot }),
+    ).toThrow(CanonicalWatchdogIntegrityError)
+  })
+
+  // Defect-A (superseding): a calculation_pending observation carrying ANY non-null
+  // value is REJECTED — there is no measured_unscored / measured_abstained value
+  // exception. This replaces the prior "provisional value persists" test.
+  it('calculation_pending with a non-null value is rejected (no measured_unscored value exception)', () => {
+    const env = syntheticEnvelope()
+    env.lifecycle_partition.source_investigation_pending_ids = []
+    env.lifecycle_partition.calculation_pending_ids = ['TEST-METRIC-B']
+    env.disposition_by_metric['TEST-METRIC-B'] = 'data_acquired_calculation_pending'
+    env.evaluation_state_by_metric['TEST-METRIC-B'] = 'measured_unscored'
+    env.observations[1].value = 0.0357 // provisional value — now forbidden
+    env.observations[1].source_lineage = {
+      ...env.observations[0].source_lineage,
+    }
+    env.dataset_id_by_metric['TEST-METRIC-B'] = env.dataset_id_by_metric['TEST-METRIC-A']
+    env.content_sha256 = envelopeContentSha(env)
+    expect(() => persistCanonicalRunEnvelope(env, { profileRoot })).toThrow(
+      /calculation_pending must have NULL value/,
+    )
+  })
+
+  // The contract-valid calculation_pending shape: value===null, ungraded/withheld.
+  it('calculation_pending with value===null persists ungraded/withheld', () => {
+    const env = syntheticEnvelope()
+    env.lifecycle_partition.source_investigation_pending_ids = []
+    env.lifecycle_partition.calculation_pending_ids = ['TEST-METRIC-B']
+    env.disposition_by_metric['TEST-METRIC-B'] = 'data_acquired_calculation_pending'
+    env.evaluation_state_by_metric['TEST-METRIC-B'] = 'not_measured'
+    // value stays null (default). No grade/baseline/customer projection.
+    env.content_sha256 = envelopeContentSha(env)
+    const res = persistCanonicalRunEnvelope(env, { profileRoot })
+    expect(res.changed).toBe(true)
+    const s = readCanonicalRun(env.run_key, { profile: PROFILE, profileRoot })!
+    const o = s.observations.find((x) => x.metric_id === 'TEST-METRIC-B')!
+    expect(o.value).toBeNull()
+    expect(
+      s.evaluations.find((e) => e.metric_id === 'TEST-METRIC-B')!.gradable_state,
+    ).not.toBe('graded')
+  })
+
+  // Two-artifact / two-hash: BOTH mapped observations in contract-valid
+  // accepted_measured state (no calculation_pending / PKT-02-02 semantics). Proves
+  // per-artifact Sales-only isolation — contamination in artifact 2 is rejected.
+  it('two-artifact/two-hash (both accepted_measured) persists; artifact-2 contamination rejected', () => {
+    const mk = (): CanonicalRunEnvelope => {
+      const e = syntheticEnvelope()
+      const sha2 = 'e'.repeat(64)
+      const said2 = `SA2:${sha2.slice(0, 12)}`
+      const nd2 = `ND2:${sha2.slice(0, 12)}`
+      e.source_artifacts.push({
+        ...e.source_artifacts[0],
+        source_artifact_id: said2,
+        source_sha256: sha2,
+        admission_receipt: {
+          ...e.source_artifacts[0].admission_receipt,
+          source_sha256: sha2,
+        },
+      })
+      e.normalized_datasets.push({
+        ...e.normalized_datasets[0],
+        normalized_dataset_id: nd2,
+        source_artifact_id: said2,
+        normalized_sha256: sha2,
+      })
+      // TEST-METRIC-B → accepted_measured (measured_validated / measured_unscored), a
+      // contract-valid measured value bound to artifact 2 with matching lineage,
+      // ungraded. No calculation_pending / measured_unscored-value carve-out.
+      e.lifecycle_partition.source_investigation_pending_ids = []
+      e.lifecycle_partition.accepted_measured_ids = ['TEST-METRIC-A', 'TEST-METRIC-B']
+      e.measured_metric_ids = ['TEST-METRIC-A', 'TEST-METRIC-B']
+      e.disposition_by_metric['TEST-METRIC-B'] = 'measured_validated'
+      e.evaluation_state_by_metric['TEST-METRIC-B'] = 'measured_unscored'
+      // accepted_measured requires alert_simulations to cover the measured set —
+      // add an inert (never-sent) simulation for the newly-measured TEST-METRIC-B.
+      e.alert_simulations.push({
+        metric_id: 'TEST-METRIC-B',
+        would_fire: false,
+        channel: 'simulated_none',
+        delivered: false as const,
+        unsent: true as const,
+        message: '[SIMULATED — NOT SENT] TEST-METRIC-B',
+      })
+      e.observations[1].status = 'measured'
+      e.observations[1].value = 0.5
+      e.observations[1].numerator = 1
+      e.observations[1].denominator = 2
+      e.observations[1].source_investigation = null
+      e.observations[1].source_lineage = {
+        ...e.observations[0].source_lineage,
+        source_sha256: sha2,
+      }
+      e.dataset_id_by_metric['TEST-METRIC-B'] = nd2
+      e.content_sha256 = envelopeContentSha(e)
+      return e
+    }
+    const ok = mk()
+    expect(persistCanonicalRunEnvelope(ok, { profileRoot }).changed).toBe(true)
+    const s = readCanonicalRun(ok.run_key, { profile: PROFILE, profileRoot })!
+    expect(s.observations.find((o) => o.metric_id === 'TEST-METRIC-B')!.value).toBe(0.5)
+    // contaminate ONLY artifact 2
+    const bad = mk()
+    bad.run_key = 'testrun-coex-badart2'
+    bad.report_run = {
+      ...bad.report_run,
+      report_run_id: 'RR:testrun-coex-badart2',
+    }
+    bad.source_artifacts[1].admission_receipt.zero_service_parts =
+      false as unknown as true
+    bad.content_sha256 = envelopeContentSha(bad)
+    expect(() => persistCanonicalRunEnvelope(bad, { profileRoot })).toThrow(
+      /zero_service_parts/,
+    )
+  })
+})
+
 // ── real PKT-02-01 canonical proof ───────────────────────────────────
 
 describe.runIf(HAVE)('PKT-02-01 canonical persistence', () => {
@@ -665,6 +1150,7 @@ describe.runIf(HAVE)('PKT-02-01 canonical persistence', () => {
       detection_rule: 3,
       source_artifact: 1,
       normalized_dataset: 1,
+      capability_snapshot: 0,
       grade_target: 5,
       comparison_reference: 3,
       observation: 5,
@@ -673,7 +1159,15 @@ describe.runIf(HAVE)('PKT-02-01 canonical persistence', () => {
       finding_metric_link: 5,
       report_run: 1,
       alert_candidate: 3,
+      run_source_link: 1,
+      run_dataset_link: 1,
+      run_capability_link: 0,
+      eval_rule_link: 3,
     })
+    // First-write inserted counts reconcile exactly with the counted linked graph.
+    const replay = persist(makeRun(), profileRoot)
+    expect(replay.changed).toBe(false)
+    expect(replay.verified).toEqual(res.rows)
     expect(res.graphSha256).toMatch(/^[0-9a-f]{64}$/)
     expect(
       reconstructedContentShaCanonical(run.run_key, {
@@ -876,7 +1370,10 @@ describe.runIf(HAVE)('legacy backfill + compatibility reads', () => {
     const b = JSON.parse(JSON.stringify(a)) as PacketRun
     const p2 = '2026-08-17..2026-08-23'
     b.period = p2
-    b.observations.forEach((o) => (o.period = p2))
+    b.observations.forEach((o) => {
+      o.period = p2
+      o.source_lineage.period = p2 // lineage period must track the run period
+    })
     b.evaluations.forEach((e) => (e.period = p2))
     b.findings.forEach((f) => (f.period = p2))
     b.two_delta.evidence_delta.period = p2

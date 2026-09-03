@@ -51,6 +51,17 @@ export {
   CanonicalWatchdogStoreError,
   type StoredCanonicalRun,
 } from './canonical-watchdog-store'
+// Item 9: the packet-AGNOSTIC public persistence entry point + validation + read/list,
+// for any future packet that builds its own CanonicalRunEnvelope.
+export {
+  persistCanonicalRunEnvelope,
+  validateEnvelope,
+  envelopeContentSha,
+  readCanonicalRun as readCanonicalRunGeneric,
+  reconstructedContentShaCanonical as reconstructedContentShaGeneric,
+  listCanonicalRuns as listCanonicalRunsGeneric,
+  type CanonicalRunEnvelope,
+} from './canonical-watchdog-store'
 
 type Opts = { profile?: string; profileRoot?: string; repoRoot?: string }
 
@@ -106,9 +117,7 @@ export function reconstructedShaWatchdog(
 }
 
 /** Union of canonical + legacy run keys for a profile; canonical wins a shared key. */
-export function listWatchdogRuns(
-  opts: Opts = {},
-): Array<{
+export function listWatchdogRuns(opts: Opts = {}): Array<{
   run_key: string
   period: string
   content_sha256: string

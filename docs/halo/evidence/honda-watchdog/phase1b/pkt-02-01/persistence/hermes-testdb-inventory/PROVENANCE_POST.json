@@ -1,0 +1,2679 @@
+{
+  "artifact": "part-a-provenance-post",
+  "branch": "codex/halo-295-unshrinkable-inputs",
+  "head": "ecc1f6ec97da9bff66fa03df2f139ddfb1c74ddf",
+  "git_status_porcelain": " M docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CANONICAL_MIGRATION_BACKFILL_RECEIPT.json\n M src/server/brain-schema.ts\n M src/server/watchdog/canonical-watchdog-store.ts\n M src/server/watchdog/pkt-02-01-canonical-adapter.ts\n M src/server/watchdog/watchdog-run-store.ts\n M src/test/pkt-02-01-canonical-watchdog-store.test.ts\n M vitest.config.ts\n?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/PART_A_ACCEPTANCE_BUNDLE.md\n?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY.md\n?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_POST.json\n?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_PRE.json\n?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_PRE.json\n?? src/test/setup-brain-tmp.ts",
+  "relocated": {
+    "source_paths_removed": [
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-02/receipts/HERMES_TESTDB_INVENTORY.md",
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-02/receipts/HERMES_TESTDB_INVENTORY_PRE.json",
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-02/receipts/HERMES_TESTDB_INVENTORY_POST.json"
+    ],
+    "destination_dir": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory",
+    "files": [
+      "HERMES_TESTDB_INVENTORY.md",
+      "HERMES_TESTDB_INVENTORY_PRE.json",
+      "HERMES_TESTDB_INVENTORY_POST.json"
+    ]
+  },
+  "json_byte_identity": {
+    "PRE_json": {
+      "size": 5977,
+      "sha256": "31ee1bfdfb39373d34e4a53c690277e1064a74e25bcc11de2e53456ca8a28080"
+    },
+    "POST_json": {
+      "size": 5977,
+      "sha256": "31ee1bfdfb39373d34e4a53c690277e1064a74e25bcc11de2e53456ca8a28080"
+    }
+  },
+  "md_single_hunk": {
+    "pre_edit_sha256": "a44ad3c5f1928e56eae8c7e1ceeb020ccceed52b32c419d13b5bae2b98679f4d",
+    "post_edit_sha256": "cf1c3f4d8baa277b1dce4f96b9e6b106a96ff7b962504af6320740790307857e",
+    "post_edit_size": 2015,
+    "reconstruct_matches_pre": true,
+    "unified_diff_hunks": 1,
+    "unified_diff": "--- /tmp/md_preedit.md\t2026-09-03 02:39:44.379962495 +0000\n+++ /home/ubuntu/hs-m1r-isolated-20260830/docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY.md\t2026-09-03 02:38:34.847878077 +0000\n@@ -19,8 +19,10 @@\n ## Control applied this packet\n - **No `~/.hermes` DB is deleted or altered** in this packet.\n - A durable global test setup (`src/test/setup-brain-tmp.ts`, wired via `vitest.config.ts`\n-  `setupFiles`) redirects all per-profile Brain storage to a disposable `/tmp` root\n-  (`BRAIN_PROFILES_ROOT`) whenever it is unset, so **no test writes to `~/.hermes`**.\n+  `setupFiles`) points `HOME`/`USERPROFILE` at a fresh disposable `/tmp` directory per test\n+  file (NOT `BRAIN_PROFILES_ROOT`, so `vi.spyOn(os,'homedir')` tests keep isolation); the\n+  default `os.homedir()/.hermes` path therefore resolves under `/tmp` and **no test writes to\n+  `~/.hermes`**.\n - **Post-test proof:** `HERMES_TESTDB_INVENTORY_POST.json` is captured after the full test/regression\n   runs; the eight fixture files are verified **byte/mtime/checksum-identical** to the pre-inventory\n   and **no new `~/.hermes` test-profile DB** appears (`HERMES_TESTDB_INVENTORY_DIFF.md`).\n"
+  },
+  "dirty_tree_post_manifest_excluding_self": [
+    {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CANONICAL_MIGRATION_BACKFILL_RECEIPT.json",
+      "size": 3305,
+      "sha256": "950c2382b001f229b539f3cae42f3b89b16dfb33e52964193dba349ef7571341"
+    },
+    {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_POST.json",
+      "size": 5977,
+      "sha256": "31ee1bfdfb39373d34e4a53c690277e1064a74e25bcc11de2e53456ca8a28080"
+    },
+    {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_PRE.json",
+      "size": 5977,
+      "sha256": "31ee1bfdfb39373d34e4a53c690277e1064a74e25bcc11de2e53456ca8a28080"
+    },
+    {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY.md",
+      "size": 2015,
+      "sha256": "cf1c3f4d8baa277b1dce4f96b9e6b106a96ff7b962504af6320740790307857e"
+    },
+    {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_PRE.json",
+      "size": 97130,
+      "sha256": "7dff4876c11dda6ced6e4e6a360d8463f166b8fffc8cfe495009b04aa8cf3eca"
+    },
+    {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/PART_A_ACCEPTANCE_BUNDLE.md",
+      "size": 7619,
+      "sha256": "ad16d6e3763af1b633ec0b4526473cceafdd745134cd39b710a43973aa51c6ac"
+    },
+    {
+      "path": "src/server/brain-schema.ts",
+      "size": 32670,
+      "sha256": "9beab4548822c480fddf639930a9f43c39e8ec8d1c2e47a70d8495235ab512b0"
+    },
+    {
+      "path": "src/server/watchdog/canonical-watchdog-store.ts",
+      "size": 102859,
+      "sha256": "22f31ed2138f2382adfedbfc25c4b809e0977a38169b51fbf00dccafac1d72fe"
+    },
+    {
+      "path": "src/server/watchdog/pkt-02-01-canonical-adapter.ts",
+      "size": 18433,
+      "sha256": "7a1d48f72189f963742eef90a97e88a75b313269311c68de58340e50f3a08d42"
+    },
+    {
+      "path": "src/server/watchdog/watchdog-run-store.ts",
+      "size": 4862,
+      "sha256": "90e0adb4f1b00a3e30041b2b63ede541349fdd66b746dde0822d780c9d7ff6a2"
+    },
+    {
+      "path": "src/test/pkt-02-01-canonical-watchdog-store.test.ts",
+      "size": 50980,
+      "sha256": "7a312409fb1204afa16c104c3a214a9ee1071e4fe9a6a8a6a0ce6b3aa183ae90"
+    },
+    {
+      "path": "src/test/setup-brain-tmp.ts",
+      "size": 944,
+      "sha256": "33955f0ca42980f6d66503fbc69864a82f14857a7e15c9e21a56c0cc1b9af053"
+    },
+    {
+      "path": "vitest.config.ts",
+      "size": 512,
+      "sha256": "46dd25af3e16abdec63969f8f8af506281122d79d50024c88769e95351b45c2c"
+    }
+  ],
+  "pre_existing_hashes_unchanged": true,
+  "only_allowlisted_new_paths": true,
+  "pkt_02_02_receipts_removed": true,
+  "hermes_recursive_inventory": [
+    {
+      "rel_path": "mcp-audit.log",
+      "type": "file",
+      "size": 2280,
+      "sha256": "549ab94c01c10ff703dd6f67764b4340365550cb13de0d709e4cd1c93df063a9"
+    },
+    {
+      "rel_path": "profiles/acifix/messaging-hub.db",
+      "type": "file",
+      "size": 438272,
+      "sha256": "581a21f3fb9705d7a188c16ebebb34a03a3f0087e0c67b744eb8731b12fc33ac"
+    },
+    {
+      "rel_path": "profiles/acifix/messaging-hub.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "6b1b9e7fcdb6dc5d86f649e2da9663d27801282fab230e130613e5659fbc6730"
+    },
+    {
+      "rel_path": "profiles/acifix/messaging-hub.db-wal",
+      "type": "file",
+      "size": 4140632,
+      "sha256": "925a2ab63b2f9507784375568934bd7df5379f8937435eccd04b9b28634b1c31"
+    },
+    {
+      "rel_path": "profiles/cage-automotive/auth.yaml",
+      "type": "file",
+      "size": 525,
+      "sha256": "b3751b740e95ffefdf64dccdbb2348a0c422449e527279ef8cd72d08d2e122d2"
+    },
+    {
+      "rel_path": "profiles/difix/brain/brain.db",
+      "type": "file",
+      "size": 544768,
+      "sha256": "027b6519fcb3d54214916f4f99c63dd1c6ee263cbdc0f7a727ee762c9e950a2b"
+    },
+    {
+      "rel_path": "profiles/difix/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/difix/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/difix/messaging-hub.db",
+      "type": "file",
+      "size": 233472,
+      "sha256": "5da1062750b7a1058f44a74a99eca4b0f26f6115d72e93a22978f7b30ca3ed1f"
+    },
+    {
+      "rel_path": "profiles/difix/messaging-hub.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "806d8db2a5a7aaa93cf762b7694bc80fb3af4fc143508c3c8bb1840aafc770d1"
+    },
+    {
+      "rel_path": "profiles/difix/messaging-hub.db-wal",
+      "type": "file",
+      "size": 4140632,
+      "sha256": "65866b66dc89807969d4dae75434244c29e17df6df8477486274f4cffc5601b3"
+    },
+    {
+      "rel_path": "profiles/fictitious/messaging-hub.db",
+      "type": "file",
+      "size": 106496,
+      "sha256": "a6ed967f6e24a960bbb932ca36927e444234715ce81d26f3eeff52c8fcaa8928"
+    },
+    {
+      "rel_path": "profiles/fictitious/messaging-hub.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/fictitious/messaging-hub.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/auth.yaml",
+      "type": "file",
+      "size": 455,
+      "sha256": "a7cea70cb64b6649aa4222d495b82c29e81d023a4755e593c0244b84b2bb73b9"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/brain/brain.db",
+      "type": "file",
+      "size": 360448,
+      "sha256": "a126d88a8a3d355aae8138a6021979887ebe4692cbf8f6259102fc331c54c2c3"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/campaigns/templates/follow-up-lead.md",
+      "type": "file",
+      "size": 366,
+      "sha256": "c5910d6b9bfd0d237339769deef86320f445f6dc9154f8acd9fb1b8764b8a3da"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/campaigns/templates/service-due.md",
+      "type": "file",
+      "size": 312,
+      "sha256": "c6a763c6ce916ef0a9346cffd04bc23d7d7f5119cb2ff92fb23bf01a44848b85"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/campaigns/templates/service-recall.md",
+      "type": "file",
+      "size": 406,
+      "sha256": "7e9728dc68e0d3e9e90521b903bdb526ab5d2ba2a916bb58502a1ac051ba5c9b"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/00-start-here/company-overview.md",
+      "type": "file",
+      "size": 631,
+      "sha256": "22077fd60be11d992a368c8158b5e837ee3699e174c47814017a40bd316b5ace"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/00-start-here/glossary.md",
+      "type": "file",
+      "size": 509,
+      "sha256": "1c4ab41c9ca350428dbb399b0e20711ef67897d744a96639e3454505750d3fe5"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/00-start-here/how-to-edit-this-wiki.md",
+      "type": "file",
+      "size": 583,
+      "sha256": "f115aac1e79728ec709a558e1567fdf62bf218af0d8285931a545c94db500014"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/00-start-here/welcome.md",
+      "type": "file",
+      "size": 433,
+      "sha256": "998054d14dc05f362bd9e904d9c7dec0f544b16e8298392449b2da9ccc4cb067"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/01-people-and-culture/benefits.md",
+      "type": "file",
+      "size": 303,
+      "sha256": "a96992d31d36a8d365cfacea54e389a1bc20cd141bcd2b7b972d3d5cc12f32f6"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/01-people-and-culture/org-chart.md",
+      "type": "file",
+      "size": 446,
+      "sha256": "6383e79aaf3b7383a27c7fb5e77f64b67e231390592e96c42feeb08c4fd795ed"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/01-people-and-culture/policies/code-of-conduct.md",
+      "type": "file",
+      "size": 287,
+      "sha256": "fd079b95081a8b1a1e6b26a7960ce1a8a1fd04701fa5f0aa342a5bf80dcd8c75"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/01-people-and-culture/policies/time-off.md",
+      "type": "file",
+      "size": 281,
+      "sha256": "e8eff03a361dcbad1be05d8449841186cb26f254832aa6bb374aee7b5e46e398"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/01-people-and-culture/values.md",
+      "type": "file",
+      "size": 341,
+      "sha256": "19c2e2eb542e71868d4d82459465a48ad39d650146e74b2876865ff49f3a0ae1"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/02-operations/it-setup.md",
+      "type": "file",
+      "size": 376,
+      "sha256": "ca7a26afb08003599a66c4174b60776f5f2a860ba013e94bddb36a8d2dbfec6b"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/02-operations/procurement.md",
+      "type": "file",
+      "size": 303,
+      "sha256": "166ac159d503a382e8c396c6d8f78c36731e95f5ef51c7ba9aa804566d4f7c17"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/02-operations/tools-and-access.md",
+      "type": "file",
+      "size": 404,
+      "sha256": "4bcdb46bb2132dfb21ea9b91a1af53f5924fdf2b79ad1642091696cdb74fbf1c"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/03-sales/lead-handling.md",
+      "type": "file",
+      "size": 359,
+      "sha256": "57599edbdb7b1f5192e4005db9577556c9f326765e16591051010a44c61bcc00"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/03-sales/process.md",
+      "type": "file",
+      "size": 514,
+      "sha256": "5354e7885ad1711375e5371995138ede5fb8a22d3954ac4b5b1579ebd5942237"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/03-sales/scripts.md",
+      "type": "file",
+      "size": 524,
+      "sha256": "32846ea90542eafd79a804ee7fb0e3e0121e63a2d328f28de97d3c3213369d0d"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/04-service/process.md",
+      "type": "file",
+      "size": 457,
+      "sha256": "884d7da268d9adcea10828e52f5eb3729b127204d7c53ffe387f74ec1054ae64"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/04-service/recalls.md",
+      "type": "file",
+      "size": 352,
+      "sha256": "d82015e33d71f644e9b50a1167b84a6bf6fe873ba0fe3c26454943111939b33b"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/04-service/scheduling.md",
+      "type": "file",
+      "size": 309,
+      "sha256": "d1d91bc89c57238c10f59cccc86ec4c16793bb98cb7558d1b05c640821e06743"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/05-teams/finance/team-overview.md",
+      "type": "file",
+      "size": 300,
+      "sha256": "954e7b7fad21f40e7efc858415c034f9aa11af6a6896d622c3396cbb73d612d7"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/05-teams/parts/team-overview.md",
+      "type": "file",
+      "size": 294,
+      "sha256": "7f04601f155d5670be4faf714114e111bf50c47d3767069f4c8e3c1f723c38d6"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/05-teams/sales/team-overview.md",
+      "type": "file",
+      "size": 333,
+      "sha256": "1ceecc6f170fea73a3a96b1929ab2f09837f3c313bf16d98c403e414fdbe5569"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/05-teams/service/team-overview.md",
+      "type": "file",
+      "size": 324,
+      "sha256": "7893f4789ae97563fee59a2aa3451771b9cd9e67415f9b09de26a746c861302f"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/06-projects/README.md",
+      "type": "file",
+      "size": 309,
+      "sha256": "15d88b4901ab1943a0ea41515841e2c7808745653d2230f2a66302c1e2c84ef3"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/assets/.gitkeep",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/README.md",
+      "type": "file",
+      "size": 879,
+      "sha256": "7a349b0d5164f1667847876375a299549e04273879dc5cf66999a77242edac76"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/templates/meeting-notes.md",
+      "type": "file",
+      "size": 248,
+      "sha256": "5370b702ed5b978ec7939e5340cc8fd1b40f1ab4e51a77ed191fe3587a7bdfa2"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/company-wiki/templates/rfc.md",
+      "type": "file",
+      "size": 300,
+      "sha256": "4d2e6b135f82e9d2fe2ee8502f34020e63b53db8ceef2850936264cddf6c6695"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/governance/agents/caroline.md",
+      "type": "file",
+      "size": 2468,
+      "sha256": "79d906bcfd878488f6c51cd740bdb8b75afd76a2b0c04284ff2c59472f47ad30"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/governance/agents/communication-writer.md",
+      "type": "file",
+      "size": 446,
+      "sha256": "1c08368dad44ac090a9da979c3e93b0c8c0793009c9e3f11f9ce593265e9d1a9"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/governance/agents/copywriter.md",
+      "type": "file",
+      "size": 416,
+      "sha256": "ffebcaf9ce0c0c19068497ead06822e4f2cf9d8a76a3542a4af06a8fecba52ee"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/governance/agents/creative-director.md",
+      "type": "file",
+      "size": 446,
+      "sha256": "b88b745fc487de0c93709147f65ee3ff808532efb6957004314fecfc54035742"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/governance/agents/crm-guru.md",
+      "type": "file",
+      "size": 2600,
+      "sha256": "eb1ebd5ea90e9299caeb76878fcc808846be177d5e3786a356cc15749e36ca4c"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/governance/agents/data-guru.md",
+      "type": "file",
+      "size": 569,
+      "sha256": "f8138d715c229f5f2b6942db57b821b86f976a6307e44b244fef96da284da046"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/governance/agents/market-intel.md",
+      "type": "file",
+      "size": 430,
+      "sha256": "b546dd03d8d9f98bfedd90c631e765feabd1d74375dd92f21ed187b6f4b17b0c"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/governance/agents/nancy-gaston.md",
+      "type": "file",
+      "size": 2076,
+      "sha256": "5475afe5c9a0bebf8aeede151847dc501076a98728bb3b1cadb9bb85519ad2a6"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/governance/agents/photo-studio.md",
+      "type": "file",
+      "size": 452,
+      "sha256": "3797fac934dcac75311f88107d7415daa1f3dddf9f762bbc3e41f1a23a0ab5d8"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/governance/agents/sales-coach.md",
+      "type": "file",
+      "size": 446,
+      "sha256": "317503b65dbfb98ed801d0daec95cfb1360a65191a221731768d82160bcbc158"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/governance/agents/semantic-guardian.md",
+      "type": "file",
+      "size": 3636,
+      "sha256": "139df35e8f43be2d4e3fa97d29cfea176a7fd0cf4149ae7f4cf021f2cd6c73a4"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/governance/agents/video-producer.md",
+      "type": "file",
+      "size": 418,
+      "sha256": "bce86545beb7010be2d854c8f404bdb69a5e0a99cc8e8eb761133a665e9b9c89"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/knowledge/operating-manuals/consulting-human-operator-guide.md",
+      "type": "file",
+      "size": 16631,
+      "sha256": "0d77a6ded2020cfc5cc2d48423f0952fbbf2a0d35f6eb0b1d18ae5ffdf22a3e9"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/knowledge/operating-manuals/customer-admin-guide.md",
+      "type": "file",
+      "size": 16289,
+      "sha256": "849048a78dd71923adc4cf9711545f3c3fc7d2e98d57f38e5fc27ab0582927cd"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/knowledge/operating-manuals/huminic-rollup-operator-guide.md",
+      "type": "file",
+      "size": 10996,
+      "sha256": "140dce24a9db0b334a1e7486adfd692c4a70521b29c7ccdc2de21ddce54f7cd2"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/knowledge/operating-manuals/huminic-sales-and-prescription-guide.md",
+      "type": "file",
+      "size": 8267,
+      "sha256": "6309067257971504c4b9683675a05cdbaf2c599e7ba7e223b2d902f4ee230d89"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/knowledge/operating-manuals/nexxus-migration-customer-guide.md",
+      "type": "file",
+      "size": 16234,
+      "sha256": "062c9cec06676af902953bdeac3e4b9bb5e8a38e387fedc613596adb4dc55374"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/knowledge/operating-manuals/studio-admin-guide.md",
+      "type": "file",
+      "size": 23329,
+      "sha256": "3c55947757ed825eba28f7e843657a6039c4cfe29a461a3c18f96dd5b4e658b7"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/knowledge/widgets/ford-of-columbia-contact.md",
+      "type": "file",
+      "size": 602,
+      "sha256": "af687204dc8043a590bf0b01e01a3c636b3548a7cfec9ad56a813d8a1d42948a"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/knowledge/widgets/ford-of-columbia-sales-chat.md",
+      "type": "file",
+      "size": 629,
+      "sha256": "960041f6902a978d4de8f0dcd05966ee332a679255555ee0ad6f324ec266d05e"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/knowledge/widgets/ford-of-columbia-service.md",
+      "type": "file",
+      "size": 636,
+      "sha256": "828d682c1525bbe4bf2e66faee7e892f91719fbcc8455f8217dc00d40f9d4470"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/messaging-hub.db",
+      "type": "file",
+      "size": 139264,
+      "sha256": "9690c316a753e215aec1c5a9bca1c1f3db03908ee5d6b59462e6060a2f162a1a"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/messaging-hub.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/messaging-hub.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/ford-of-columbia/studio.yaml",
+      "type": "file",
+      "size": 2065,
+      "sha256": "cf0e420031386d3c38bedd633b9b312e8a51f9c7397647aef5ab3186f5a38a46"
+    },
+    {
+      "rel_path": "profiles/huminic-motors/messaging-hub.db",
+      "type": "file",
+      "size": 106496,
+      "sha256": "abf91947aa90e8edb2f443e96be2cd36dc17ea9a277b4c7a7e53ee4e59eb2cf0"
+    },
+    {
+      "rel_path": "profiles/huminic-motors/messaging-hub.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/huminic-motors/messaging-hub.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/huminic/auth.yaml",
+      "type": "file",
+      "size": 267,
+      "sha256": "841efe2ced00a4b501d6ec2a0229d2930afbe5be13395b4cf7e2e68f3500e873"
+    },
+    {
+      "rel_path": "profiles/huminic/brain/brain.db",
+      "type": "file",
+      "size": 352256,
+      "sha256": "a757408d4f3fd733cf859505cce68117869d2814a4c958c0a05c94a73141f495"
+    },
+    {
+      "rel_path": "profiles/huminic/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/huminic/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/huminic/company-wiki/glossary.md",
+      "type": "file",
+      "size": 450,
+      "sha256": "0ba2127a5c3f6d7d9dc5005646e25471114d7cc3f0ae426702a87b0e69af501d"
+    },
+    {
+      "rel_path": "profiles/huminic/company-wiki/policies/time-off.md",
+      "type": "file",
+      "size": 220,
+      "sha256": "0c6dc0d7ea8cbc3df0f35be67e7ba7d509b590e516a13050b85c15f6de4c8bf0"
+    },
+    {
+      "rel_path": "profiles/huminic/company-wiki/value-proposition.md",
+      "type": "file",
+      "size": 391,
+      "sha256": "7e746d749ed1a96c58bc8641c1a88950044fdb54d45efe8c094ce0528f647a13"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/auth.yaml",
+      "type": "file",
+      "size": 461,
+      "sha256": "6c2ec11c33eacf5961c42cb4734d99ed92e102b4532f6dd9bbecc630fa963c32"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/brain/brain.db",
+      "type": "file",
+      "size": 360448,
+      "sha256": "7de41e1cdb995c51bfaa8248f40bbeff87abdece8b05ba02084fbfe3ed7c4c04"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/campaigns/templates/follow-up-lead.md",
+      "type": "file",
+      "size": 366,
+      "sha256": "c5910d6b9bfd0d237339769deef86320f445f6dc9154f8acd9fb1b8764b8a3da"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/campaigns/templates/service-due.md",
+      "type": "file",
+      "size": 312,
+      "sha256": "c6a763c6ce916ef0a9346cffd04bc23d7d7f5119cb2ff92fb23bf01a44848b85"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/campaigns/templates/service-recall.md",
+      "type": "file",
+      "size": 406,
+      "sha256": "7e9728dc68e0d3e9e90521b903bdb526ab5d2ba2a916bb58502a1ac051ba5c9b"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/00-start-here/company-overview.md",
+      "type": "file",
+      "size": 634,
+      "sha256": "49f4e039d9f03c328a67824144c9884e7b00905d7a23ba0bdc125a712be40fc1"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/00-start-here/glossary.md",
+      "type": "file",
+      "size": 509,
+      "sha256": "1c4ab41c9ca350428dbb399b0e20711ef67897d744a96639e3454505750d3fe5"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/00-start-here/how-to-edit-this-wiki.md",
+      "type": "file",
+      "size": 583,
+      "sha256": "f115aac1e79728ec709a558e1567fdf62bf218af0d8285931a545c94db500014"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/00-start-here/welcome.md",
+      "type": "file",
+      "size": 436,
+      "sha256": "1b38bc5d392d0ce09b9d128fa362052467bccba69f9eb69413ad4ea2e1bacecb"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/01-people-and-culture/benefits.md",
+      "type": "file",
+      "size": 303,
+      "sha256": "a96992d31d36a8d365cfacea54e389a1bc20cd141bcd2b7b972d3d5cc12f32f6"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/01-people-and-culture/org-chart.md",
+      "type": "file",
+      "size": 446,
+      "sha256": "6383e79aaf3b7383a27c7fb5e77f64b67e231390592e96c42feeb08c4fd795ed"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/01-people-and-culture/policies/code-of-conduct.md",
+      "type": "file",
+      "size": 287,
+      "sha256": "fd079b95081a8b1a1e6b26a7960ce1a8a1fd04701fa5f0aa342a5bf80dcd8c75"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/01-people-and-culture/policies/time-off.md",
+      "type": "file",
+      "size": 281,
+      "sha256": "e8eff03a361dcbad1be05d8449841186cb26f254832aa6bb374aee7b5e46e398"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/01-people-and-culture/values.md",
+      "type": "file",
+      "size": 344,
+      "sha256": "579e3ea2634b526ef595f56fb750a38cf1f4b2ce183b77af53cbbe776b63a326"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/02-operations/it-setup.md",
+      "type": "file",
+      "size": 376,
+      "sha256": "ca7a26afb08003599a66c4174b60776f5f2a860ba013e94bddb36a8d2dbfec6b"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/02-operations/procurement.md",
+      "type": "file",
+      "size": 303,
+      "sha256": "166ac159d503a382e8c396c6d8f78c36731e95f5ef51c7ba9aa804566d4f7c17"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/02-operations/tools-and-access.md",
+      "type": "file",
+      "size": 404,
+      "sha256": "4bcdb46bb2132dfb21ea9b91a1af53f5924fdf2b79ad1642091696cdb74fbf1c"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/03-sales/lead-handling.md",
+      "type": "file",
+      "size": 359,
+      "sha256": "57599edbdb7b1f5192e4005db9577556c9f326765e16591051010a44c61bcc00"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/03-sales/process.md",
+      "type": "file",
+      "size": 514,
+      "sha256": "5354e7885ad1711375e5371995138ede5fb8a22d3954ac4b5b1579ebd5942237"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/03-sales/scripts.md",
+      "type": "file",
+      "size": 530,
+      "sha256": "53574362d8a2579aac27c8fa99a159b6498785fa3e21a8f85666055b6de5b42b"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/04-service/process.md",
+      "type": "file",
+      "size": 457,
+      "sha256": "884d7da268d9adcea10828e52f5eb3729b127204d7c53ffe387f74ec1054ae64"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/04-service/recalls.md",
+      "type": "file",
+      "size": 352,
+      "sha256": "d82015e33d71f644e9b50a1167b84a6bf6fe873ba0fe3c26454943111939b33b"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/04-service/scheduling.md",
+      "type": "file",
+      "size": 309,
+      "sha256": "d1d91bc89c57238c10f59cccc86ec4c16793bb98cb7558d1b05c640821e06743"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/05-teams/finance/team-overview.md",
+      "type": "file",
+      "size": 300,
+      "sha256": "954e7b7fad21f40e7efc858415c034f9aa11af6a6896d622c3396cbb73d612d7"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/05-teams/parts/team-overview.md",
+      "type": "file",
+      "size": 294,
+      "sha256": "7f04601f155d5670be4faf714114e111bf50c47d3767069f4c8e3c1f723c38d6"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/05-teams/sales/team-overview.md",
+      "type": "file",
+      "size": 333,
+      "sha256": "1ceecc6f170fea73a3a96b1929ab2f09837f3c313bf16d98c403e414fdbe5569"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/05-teams/service/team-overview.md",
+      "type": "file",
+      "size": 324,
+      "sha256": "7893f4789ae97563fee59a2aa3451771b9cd9e67415f9b09de26a746c861302f"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/06-projects/README.md",
+      "type": "file",
+      "size": 309,
+      "sha256": "15d88b4901ab1943a0ea41515841e2c7808745653d2230f2a66302c1e2c84ef3"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/assets/.gitkeep",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/README.md",
+      "type": "file",
+      "size": 888,
+      "sha256": "e1691340b9879edd28e27b92f331d144609146bc5447fa4fe8c629a16e10e2ba"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/templates/meeting-notes.md",
+      "type": "file",
+      "size": 248,
+      "sha256": "5370b702ed5b978ec7939e5340cc8fd1b40f1ab4e51a77ed191fe3587a7bdfa2"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/company-wiki/templates/rfc.md",
+      "type": "file",
+      "size": 300,
+      "sha256": "4d2e6b135f82e9d2fe2ee8502f34020e63b53db8ceef2850936264cddf6c6695"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/governance/agents/caroline.md",
+      "type": "file",
+      "size": 2486,
+      "sha256": "7ad761e130b041f8dc261e1e5e35cece68c979d62c8027565e7a71c2aeb332ac"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/governance/agents/communication-writer.md",
+      "type": "file",
+      "size": 449,
+      "sha256": "669e560d1ed49a68c8e0f043cc2d3252ac97e053b04d817f16b9b2666cac3755"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/governance/agents/copywriter.md",
+      "type": "file",
+      "size": 419,
+      "sha256": "2c6f4d18985532f80f66283652c0a827b79eec14721c900857b122df1c34c0dd"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/governance/agents/creative-director.md",
+      "type": "file",
+      "size": 449,
+      "sha256": "2010edf94063f8606b2db9b1ae927dec58d29c1072fa33494d482cf6f6de9539"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/governance/agents/crm-guru.md",
+      "type": "file",
+      "size": 2609,
+      "sha256": "a1e29b1ecf4b2f1bb33c03da25b9ce26a25c10d5c163d6f383a4c510245c26bb"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/governance/agents/data-guru.md",
+      "type": "file",
+      "size": 572,
+      "sha256": "63f59aeaaeb5faa2ce8666cb53fe9e244c3a9c11fcfab669b66344b77aa2d8a7"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/governance/agents/market-intel.md",
+      "type": "file",
+      "size": 433,
+      "sha256": "952fcb222d287edbf5f28f5913573754581331c6573e1f5c006ad0a2e03d7d7f"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/governance/agents/nancy-gaston.md",
+      "type": "file",
+      "size": 2091,
+      "sha256": "00e9eca1ccc552aad1e151f27b6c00bd1210dadcf841237f9f5129aa72bd8af8"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/governance/agents/photo-studio.md",
+      "type": "file",
+      "size": 455,
+      "sha256": "7af08a2e8968654433866714555f510dddc0cd4d864ac922e8aa33a7293ad17f"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/governance/agents/sales-coach.md",
+      "type": "file",
+      "size": 449,
+      "sha256": "9aed5f71ebd2c1bd111537e4430836d1623dada75ff0d88fe95b2a8cec79c56f"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/governance/agents/semantic-guardian.md",
+      "type": "file",
+      "size": 3654,
+      "sha256": "210e9dddf356aa16126eb7744c159072e8da0629f0b01996161dadc560844eef"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/governance/agents/video-producer.md",
+      "type": "file",
+      "size": 421,
+      "sha256": "46174a0be2ef84b2efa0da2ff39ad8bf4241bd1e5629a60fafdd1cf62e4f7dc7"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/knowledge/operating-manuals/consulting-human-operator-guide.md",
+      "type": "file",
+      "size": 16631,
+      "sha256": "0d77a6ded2020cfc5cc2d48423f0952fbbf2a0d35f6eb0b1d18ae5ffdf22a3e9"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/knowledge/operating-manuals/customer-admin-guide.md",
+      "type": "file",
+      "size": 16292,
+      "sha256": "0ad4df4ffb54ea1e2a11d601a1a0d31eef0e59d91c55334de6b3994de4e8c7ef"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/knowledge/operating-manuals/huminic-rollup-operator-guide.md",
+      "type": "file",
+      "size": 10999,
+      "sha256": "3134da4192e7e9b3f20d16c29d90b83014a3bc58dced15818b46f87f9cde5309"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/knowledge/operating-manuals/huminic-sales-and-prescription-guide.md",
+      "type": "file",
+      "size": 8267,
+      "sha256": "6309067257971504c4b9683675a05cdbaf2c599e7ba7e223b2d902f4ee230d89"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/knowledge/operating-manuals/nexxus-migration-customer-guide.md",
+      "type": "file",
+      "size": 16234,
+      "sha256": "062c9cec06676af902953bdeac3e4b9bb5e8a38e387fedc613596adb4dc55374"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/knowledge/operating-manuals/studio-admin-guide.md",
+      "type": "file",
+      "size": 23329,
+      "sha256": "3c55947757ed825eba28f7e843657a6039c4cfe29a461a3c18f96dd5b4e658b7"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/knowledge/widgets/hyundai-of-columbia-contact.md",
+      "type": "file",
+      "size": 614,
+      "sha256": "3a6c04fb61a838757ce7dfae77f6e72a32cfd057e0fdbd1220f032fdb8cde980"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/knowledge/widgets/hyundai-of-columbia-sales-chat.md",
+      "type": "file",
+      "size": 644,
+      "sha256": "961cf88eff3a3fd62994378c9dc4d43d52e44d1c88826ac8fbdfdf9e0673cd20"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/knowledge/widgets/hyundai-of-columbia-service.md",
+      "type": "file",
+      "size": 648,
+      "sha256": "ee8031ea4b297051d16ea5804fb76374fdc239b3dcd5312da2dfd3eb0c3a9934"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/messaging-hub.db",
+      "type": "file",
+      "size": 139264,
+      "sha256": "2b6dc2841c8d2b6847d4ccfd2ba6d653a2f156f0edd488fd6e73b0ae6a980a54"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/messaging-hub.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/messaging-hub.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/hyundai-of-columbia/studio.yaml",
+      "type": "file",
+      "size": 2089,
+      "sha256": "bb63f4d3b64b4203e6f902d61bce33c66aa1d7d55b60c71e6cf739ded462a35b"
+    },
+    {
+      "rel_path": "profiles/lsdfix-none/brain/brain.db",
+      "type": "file",
+      "size": 544768,
+      "sha256": "48ea3b3f8770ccdd2e947d658d05e09f4d87e59cc03f6c083cbc414408a6871b"
+    },
+    {
+      "rel_path": "profiles/lsdfix-none/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/lsdfix-none/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/lsdfix-none2/brain/brain.db",
+      "type": "file",
+      "size": 544768,
+      "sha256": "a335b92908dca4042690641f8887d96ae3c4a2f12a1574d0dcf8ba928e6965d2"
+    },
+    {
+      "rel_path": "profiles/lsdfix-none2/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/lsdfix-none2/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/missfix/brain/brain.db",
+      "type": "file",
+      "size": 552960,
+      "sha256": "96242eac0024245f50e6158179a996a76c7b7b9a2adb8e47ecaaa155da9f0b5b"
+    },
+    {
+      "rel_path": "profiles/missfix/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/missfix/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/missfix/messaging-hub.db",
+      "type": "file",
+      "size": 393216,
+      "sha256": "373b124577e968f9cc825eaaeb57535032c94433a0d515a7181ff36e5bc12573"
+    },
+    {
+      "rel_path": "profiles/missfix/messaging-hub.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "e55fc5327b171089195da8b8f8108257074cd2376696d7d04520bb4b8b1b9786"
+    },
+    {
+      "rel_path": "profiles/missfix/messaging-hub.db-wal",
+      "type": "file",
+      "size": 4128272,
+      "sha256": "fb226d2a2982dde5ad4491bad5aa4299fdc6e8c666dd66a657764f953674e872"
+    },
+    {
+      "rel_path": "profiles/missfix2/brain/brain.db",
+      "type": "file",
+      "size": 552960,
+      "sha256": "2d3fabe228134c8b2406b8450604fd0d398102c85df56a930179e60512973e42"
+    },
+    {
+      "rel_path": "profiles/missfix2/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/missfix2/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/missfix2/messaging-hub.db",
+      "type": "file",
+      "size": 258048,
+      "sha256": "75fd5d1140c5420ecf12673f9c64e38496596274726e28ce00d1b457f2b463a9"
+    },
+    {
+      "rel_path": "profiles/missfix2/messaging-hub.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "3fc5d52867ce4f72f3f783d7d2c9ce8b5f3a1ab3de97805e07b3ac3ae1a039e0"
+    },
+    {
+      "rel_path": "profiles/missfix2/messaging-hub.db-wal",
+      "type": "file",
+      "size": 4128272,
+      "sha256": "d12e0a6206d7e53de0b42a8256c27dac6fab733fb1f7fbaf20da58053245c235"
+    },
+    {
+      "rel_path": "profiles/serra-honda/auth.yaml",
+      "type": "file",
+      "size": 256,
+      "sha256": "fae6581b92f080b96d84795977b03fe40304ebf6ef5e6ceb653b67ca038aed09"
+    },
+    {
+      "rel_path": "profiles/serra-honda/brain/brain.db",
+      "type": "file",
+      "size": 446464,
+      "sha256": "b4bee89fa022bec4bb9c68e453b78ada4b79de0dc27fa5c53f6088ed5d716c7a"
+    },
+    {
+      "rel_path": "profiles/serra-honda/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/serra-honda/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/serra-honda/campaigns/templates/follow-up-lead.md",
+      "type": "file",
+      "size": 366,
+      "sha256": "c5910d6b9bfd0d237339769deef86320f445f6dc9154f8acd9fb1b8764b8a3da"
+    },
+    {
+      "rel_path": "profiles/serra-honda/campaigns/templates/service-due.md",
+      "type": "file",
+      "size": 312,
+      "sha256": "c6a763c6ce916ef0a9346cffd04bc23d7d7f5119cb2ff92fb23bf01a44848b85"
+    },
+    {
+      "rel_path": "profiles/serra-honda/campaigns/templates/service-recall.md",
+      "type": "file",
+      "size": 406,
+      "sha256": "7e9728dc68e0d3e9e90521b903bdb526ab5d2ba2a916bb58502a1ac051ba5c9b"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/00-start-here/company-overview.md",
+      "type": "file",
+      "size": 626,
+      "sha256": "c9306ddb460f080e4d656c12814feb262a35b4d8b02ccbd5878b202a4689445a"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/00-start-here/glossary.md",
+      "type": "file",
+      "size": 509,
+      "sha256": "1c4ab41c9ca350428dbb399b0e20711ef67897d744a96639e3454505750d3fe5"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/00-start-here/how-to-edit-this-wiki.md",
+      "type": "file",
+      "size": 583,
+      "sha256": "f115aac1e79728ec709a558e1567fdf62bf218af0d8285931a545c94db500014"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/00-start-here/welcome.md",
+      "type": "file",
+      "size": 428,
+      "sha256": "3488555d1bf90012c72264113467795944a5851155d046905d4cac8293467c37"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/01-people-and-culture/benefits.md",
+      "type": "file",
+      "size": 303,
+      "sha256": "a96992d31d36a8d365cfacea54e389a1bc20cd141bcd2b7b972d3d5cc12f32f6"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/01-people-and-culture/org-chart.md",
+      "type": "file",
+      "size": 446,
+      "sha256": "6383e79aaf3b7383a27c7fb5e77f64b67e231390592e96c42feeb08c4fd795ed"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/01-people-and-culture/policies/code-of-conduct.md",
+      "type": "file",
+      "size": 287,
+      "sha256": "fd079b95081a8b1a1e6b26a7960ce1a8a1fd04701fa5f0aa342a5bf80dcd8c75"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/01-people-and-culture/policies/time-off.md",
+      "type": "file",
+      "size": 281,
+      "sha256": "e8eff03a361dcbad1be05d8449841186cb26f254832aa6bb374aee7b5e46e398"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/01-people-and-culture/values.md",
+      "type": "file",
+      "size": 336,
+      "sha256": "f7d566cbb6c1819b70e1f4bd38061297a9069a4199f6c43b60d983bd97518eca"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/02-operations/it-setup.md",
+      "type": "file",
+      "size": 376,
+      "sha256": "ca7a26afb08003599a66c4174b60776f5f2a860ba013e94bddb36a8d2dbfec6b"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/02-operations/procurement.md",
+      "type": "file",
+      "size": 303,
+      "sha256": "166ac159d503a382e8c396c6d8f78c36731e95f5ef51c7ba9aa804566d4f7c17"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/02-operations/tools-and-access.md",
+      "type": "file",
+      "size": 404,
+      "sha256": "4bcdb46bb2132dfb21ea9b91a1af53f5924fdf2b79ad1642091696cdb74fbf1c"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/03-sales/lead-handling.md",
+      "type": "file",
+      "size": 359,
+      "sha256": "57599edbdb7b1f5192e4005db9577556c9f326765e16591051010a44c61bcc00"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/03-sales/process.md",
+      "type": "file",
+      "size": 514,
+      "sha256": "5354e7885ad1711375e5371995138ede5fb8a22d3954ac4b5b1579ebd5942237"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/03-sales/scripts.md",
+      "type": "file",
+      "size": 514,
+      "sha256": "4ae2a823b427438b615002512d98aeb3b14897d2301a976c9f65a6944206320a"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/04-service/process.md",
+      "type": "file",
+      "size": 457,
+      "sha256": "884d7da268d9adcea10828e52f5eb3729b127204d7c53ffe387f74ec1054ae64"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/04-service/recalls.md",
+      "type": "file",
+      "size": 352,
+      "sha256": "d82015e33d71f644e9b50a1167b84a6bf6fe873ba0fe3c26454943111939b33b"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/04-service/scheduling.md",
+      "type": "file",
+      "size": 309,
+      "sha256": "d1d91bc89c57238c10f59cccc86ec4c16793bb98cb7558d1b05c640821e06743"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/05-teams/finance/team-overview.md",
+      "type": "file",
+      "size": 300,
+      "sha256": "954e7b7fad21f40e7efc858415c034f9aa11af6a6896d622c3396cbb73d612d7"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/05-teams/parts/team-overview.md",
+      "type": "file",
+      "size": 294,
+      "sha256": "7f04601f155d5670be4faf714114e111bf50c47d3767069f4c8e3c1f723c38d6"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/05-teams/sales/team-overview.md",
+      "type": "file",
+      "size": 333,
+      "sha256": "1ceecc6f170fea73a3a96b1929ab2f09837f3c313bf16d98c403e414fdbe5569"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/05-teams/service/team-overview.md",
+      "type": "file",
+      "size": 324,
+      "sha256": "7893f4789ae97563fee59a2aa3451771b9cd9e67415f9b09de26a746c861302f"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/06-projects/README.md",
+      "type": "file",
+      "size": 309,
+      "sha256": "15d88b4901ab1943a0ea41515841e2c7808745653d2230f2a66302c1e2c84ef3"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/agents/caroline/escalation-path.md",
+      "type": "file",
+      "size": 2285,
+      "sha256": "b03a1a8f77332e6be3e2b6ef99d0082a9c8e92da8e93500eb269b95c1b965f12"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/agents/caroline/role.md",
+      "type": "file",
+      "size": 1661,
+      "sha256": "9d58f3cd00204a5773e150d17149d331644d4971c74e8d4402b66328268a3eb3"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/agents/caroline/tools.md",
+      "type": "file",
+      "size": 1919,
+      "sha256": "7a2897cb709fc05428505034463bcc8ec8cf5a213633a2dc35d59bae05260157"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/assets/.gitkeep",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/dealership/hours-location-contact.md",
+      "type": "file",
+      "size": 2098,
+      "sha256": "46be06e55c382b8a25187b9bc4cfac877ffeea6bc9e7144470cd260aa05dd1fa"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/policy/guardrails.md",
+      "type": "file",
+      "size": 3109,
+      "sha256": "e54a76317fbaa81943a3cfb5a6bdcc7e3c120b2785580457b33d96d582e27da3"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/README.md",
+      "type": "file",
+      "size": 864,
+      "sha256": "380ef7f8f34ace42101965763471cc9301a12daef24cc550cc32913186dd3de8"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/sales/budget-pre-owned-reengagement-play.md",
+      "type": "file",
+      "size": 2881,
+      "sha256": "b060b5fd313c8d7c8745e14106eb09bd45f4e515048bde23423c6786e93ee1c0"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/sales/inventory-and-pricing.md",
+      "type": "file",
+      "size": 2218,
+      "sha256": "c774d82927ff5f32823cad6152cbb19ec8c5808bcb392471d61b1044b0efb690"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/sales/lead-followup-cadence.md",
+      "type": "file",
+      "size": 2827,
+      "sha256": "0da59cb1ea07ba38b8050d3c21dc773e46d7b4bd8e2fbd72c5d37ca4c486094c"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/sales/passive-lead-checkback-play.md",
+      "type": "file",
+      "size": 2277,
+      "sha256": "ded278716758a52d3ab560088e972538c2727a77711ad3cc3fab7c473d6175ff"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/sales/prologue-sourcing-play.md",
+      "type": "file",
+      "size": 2644,
+      "sha256": "38fdf2c4774ad21e4f6e57f2cba627510cca2e58864bd23aad2b99ce40992c5e"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/sales/test-drive-and-appointment-scheduling.md",
+      "type": "file",
+      "size": 2607,
+      "sha256": "0a7ac03821420b7c63d8a09bd36ea0253f03d0cb89910e76646d87195839994c"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/sales/trade-in-plus-down-payment-handling-play.md",
+      "type": "file",
+      "size": 2906,
+      "sha256": "5c0449273201b03bcc87e62090c19a4c73736815742b58050270b7a1d6d943bb"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/sales/trade-in-process.md",
+      "type": "file",
+      "size": 2459,
+      "sha256": "7f501a15af7019807620f0b63ffd19ae9b729c22ac9a28c2effcf50f8c5b9290"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/templates/meeting-notes.md",
+      "type": "file",
+      "size": 248,
+      "sha256": "5370b702ed5b978ec7939e5340cc8fd1b40f1ab4e51a77ed191fe3587a7bdfa2"
+    },
+    {
+      "rel_path": "profiles/serra-honda/company-wiki/templates/rfc.md",
+      "type": "file",
+      "size": 300,
+      "sha256": "4d2e6b135f82e9d2fe2ee8502f34020e63b53db8ceef2850936264cddf6c6695"
+    },
+    {
+      "rel_path": "profiles/serra-honda/config.yaml",
+      "type": "file",
+      "size": 196,
+      "sha256": "20b8ffd167984049307dd31e08fd1aa6e6fe0140ec4a43f3037e83e019a420ad"
+    },
+    {
+      "rel_path": "profiles/serra-honda/config.yaml.bak.20260602T152407Z",
+      "type": "file",
+      "size": 119,
+      "sha256": "c04dba144d8856e8547dc12e8485c65704a9ec4ace84a92acc9fb005e838a076"
+    },
+    {
+      "rel_path": "profiles/serra-honda/engagement-state.yaml",
+      "type": "file",
+      "size": 1103,
+      "sha256": "8491af18b67eedd4b5e083075a2fe12ee6a16bd124ee41bad220b109f133c1e7"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/agents/caroline.md",
+      "type": "file",
+      "size": 2438,
+      "sha256": "8b0dcb2efde40ccba34cd841207e28ecb3fb705d787b02f8a4a4b3c6ca8ea2d0"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/agents/caroline/personas/sms.md",
+      "type": "file",
+      "size": 4040,
+      "sha256": "b2ba950eaecd401b26b658736dc3ef409e0897cfdfea3e88a3df070c274d89e7"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/agents/communication-writer.md",
+      "type": "file",
+      "size": 441,
+      "sha256": "4bbd18e3aea85b16bdf27eb013519feb27d1df3406e40dfeae0be9669d61a3f1"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/agents/copywriter.md",
+      "type": "file",
+      "size": 411,
+      "sha256": "ba0efc98b765d882a19ab1e112df5df33b58fd280eb6cab613fe8a079907554c"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/agents/creative-director.md",
+      "type": "file",
+      "size": 441,
+      "sha256": "75f92d296834be51162353f24946fc2633f0ce6879f4acd1a8b12ee5f6213161"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/agents/crm-guru.md",
+      "type": "file",
+      "size": 2585,
+      "sha256": "e432d20f4a4f5219cbf654f3174227a24e89010159edfdfbc193543c130985da"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/agents/data-guru.md",
+      "type": "file",
+      "size": 564,
+      "sha256": "12a163a49773acfbb5d0de42bf40cd7563de52e4ab85134ef83ce72c0e301789"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/agents/market-intel.md",
+      "type": "file",
+      "size": 425,
+      "sha256": "dfdec2298d9250dd7a145500f634640c80b349e2647b7d38e7513fde45c3392e"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/agents/nancy-gaston.md",
+      "type": "file",
+      "size": 2051,
+      "sha256": "3193a353866d927da936d23468685fefe5a88c441658ca5cabfcf452a227421b"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/agents/photo-studio.md",
+      "type": "file",
+      "size": 447,
+      "sha256": "034e629463819af396470e0f8f05938659f038f52422b1d51aebb33fb3638b0a"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/agents/sales-coach.md",
+      "type": "file",
+      "size": 441,
+      "sha256": "ea621e6dec31e957d8b670ae3f96b9432cb6fa136ab2f02109538f538c8b04b9"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/agents/semantic-guardian.md",
+      "type": "file",
+      "size": 3606,
+      "sha256": "f97974a0f33613fde7fbfcab16ab299890177980a8ca3c25bd1f67083ce4dba5"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/agents/video-producer.md",
+      "type": "file",
+      "size": 413,
+      "sha256": "d2d7092c60e9e0b0effdf1d6876709806308d0342bab810a7b7492abe80fbbdf"
+    },
+    {
+      "rel_path": "profiles/serra-honda/governance/scope-contract.md",
+      "type": "file",
+      "size": 139,
+      "sha256": "5f3ebceea2c99f4c0c5c2cf29be321c737d8f481c844841b3339a09e50a9a428"
+    },
+    {
+      "rel_path": "profiles/serra-honda/knowledge/operating-manuals/consulting-human-operator-guide.md",
+      "type": "file",
+      "size": 16631,
+      "sha256": "0d77a6ded2020cfc5cc2d48423f0952fbbf2a0d35f6eb0b1d18ae5ffdf22a3e9"
+    },
+    {
+      "rel_path": "profiles/serra-honda/knowledge/operating-manuals/customer-admin-guide.md",
+      "type": "file",
+      "size": 16284,
+      "sha256": "63b3bcb0e53c58b6aa1c6f2784035f8f6f41c1ab9573113fd4ed8849d0c2f9c1"
+    },
+    {
+      "rel_path": "profiles/serra-honda/knowledge/operating-manuals/huminic-rollup-operator-guide.md",
+      "type": "file",
+      "size": 10991,
+      "sha256": "c9d231f38b0e0dafe1a68ebd76d9f44f08baa26362abb5c74efce54d052ba50c"
+    },
+    {
+      "rel_path": "profiles/serra-honda/knowledge/operating-manuals/huminic-sales-and-prescription-guide.md",
+      "type": "file",
+      "size": 8267,
+      "sha256": "6309067257971504c4b9683675a05cdbaf2c599e7ba7e223b2d902f4ee230d89"
+    },
+    {
+      "rel_path": "profiles/serra-honda/knowledge/operating-manuals/nexxus-migration-customer-guide.md",
+      "type": "file",
+      "size": 16234,
+      "sha256": "062c9cec06676af902953bdeac3e4b9bb5e8a38e387fedc613596adb4dc55374"
+    },
+    {
+      "rel_path": "profiles/serra-honda/knowledge/operating-manuals/studio-admin-guide.md",
+      "type": "file",
+      "size": 23329,
+      "sha256": "3c55947757ed825eba28f7e843657a6039c4cfe29a461a3c18f96dd5b4e658b7"
+    },
+    {
+      "rel_path": "profiles/serra-honda/knowledge/widgets/serra-honda-contact.md",
+      "type": "file",
+      "size": 582,
+      "sha256": "e92218cf93c25bf622cf93f79c71480d715e6b6484bdab9b1e1c3b40fb1a4f65"
+    },
+    {
+      "rel_path": "profiles/serra-honda/knowledge/widgets/serra-honda-sales-chat.md",
+      "type": "file",
+      "size": 610,
+      "sha256": "e7a0df244ef8e035aa678ff8a4c0a239c3745b348abaab33c00221e6e1e759d4"
+    },
+    {
+      "rel_path": "profiles/serra-honda/messaging-hub.db",
+      "type": "file",
+      "size": 147456,
+      "sha256": "ce6c6dc17e7763b8be85904d87c9c96bac6ba4d02227b8612871eb27493892af"
+    },
+    {
+      "rel_path": "profiles/serra-honda/messaging-hub.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "dc665549c0f6f4bb41bde75978f5967d1bfbb963190c330e375423899526795e"
+    },
+    {
+      "rel_path": "profiles/serra-honda/messaging-hub.db-wal",
+      "type": "file",
+      "size": 201912,
+      "sha256": "023633c2dde2fbc36501fa92d55cd3883d776482831f1eca6830a273e546dbde"
+    },
+    {
+      "rel_path": "profiles/serra-honda/persona.md",
+      "type": "file",
+      "size": 87,
+      "sha256": "eb4150eb43c1268295304a8c4a6fcc3b9cbebd61756a300a3a2a2d74aa736c23"
+    },
+    {
+      "rel_path": "profiles/serra-honda/SOUL.md",
+      "type": "file",
+      "size": 186,
+      "sha256": "fc304ef006e1e49ddb06c138c37c26db44e8070705732ba980bc81734c5a7139"
+    },
+    {
+      "rel_path": "profiles/serra-honda/studio.yaml",
+      "type": "file",
+      "size": 3815,
+      "sha256": "0c675960a1349326a2660e16b24fb03f040002e3429aec72baf6a5a9048c8614"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/auth.yaml",
+      "type": "file",
+      "size": 447,
+      "sha256": "69eaea02b2e16b63e33ac2e79487b745ba75f71a702aa81aa94c7d1c5fe785d1"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/brain/brain.db",
+      "type": "file",
+      "size": 405504,
+      "sha256": "590f917bf905594dfd49fec46a36601e14054a92973ff18f67ef43e7dfd92f8d"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/campaigns/templates/follow-up-lead.md",
+      "type": "file",
+      "size": 366,
+      "sha256": "c5910d6b9bfd0d237339769deef86320f445f6dc9154f8acd9fb1b8764b8a3da"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/campaigns/templates/service-due.md",
+      "type": "file",
+      "size": 312,
+      "sha256": "c6a763c6ce916ef0a9346cffd04bc23d7d7f5119cb2ff92fb23bf01a44848b85"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/campaigns/templates/service-recall.md",
+      "type": "file",
+      "size": 406,
+      "sha256": "7e9728dc68e0d3e9e90521b903bdb526ab5d2ba2a916bb58502a1ac051ba5c9b"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/00-start-here/company-overview.md",
+      "type": "file",
+      "size": 627,
+      "sha256": "8ac28779406aec550a451fedd7072fa6cd5cacff9e6c9a5e9f156e867788cd6c"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/00-start-here/glossary.md",
+      "type": "file",
+      "size": 509,
+      "sha256": "1c4ab41c9ca350428dbb399b0e20711ef67897d744a96639e3454505750d3fe5"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/00-start-here/how-to-edit-this-wiki.md",
+      "type": "file",
+      "size": 583,
+      "sha256": "f115aac1e79728ec709a558e1567fdf62bf218af0d8285931a545c94db500014"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/00-start-here/welcome.md",
+      "type": "file",
+      "size": 429,
+      "sha256": "ce6d9f08765e663fb73af4d86457c011fff23bd732f710ed00ae261f9b1795f4"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/01-people-and-culture/benefits.md",
+      "type": "file",
+      "size": 303,
+      "sha256": "a96992d31d36a8d365cfacea54e389a1bc20cd141bcd2b7b972d3d5cc12f32f6"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/01-people-and-culture/org-chart.md",
+      "type": "file",
+      "size": 446,
+      "sha256": "6383e79aaf3b7383a27c7fb5e77f64b67e231390592e96c42feeb08c4fd795ed"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/01-people-and-culture/policies/code-of-conduct.md",
+      "type": "file",
+      "size": 287,
+      "sha256": "fd079b95081a8b1a1e6b26a7960ce1a8a1fd04701fa5f0aa342a5bf80dcd8c75"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/01-people-and-culture/policies/time-off.md",
+      "type": "file",
+      "size": 281,
+      "sha256": "e8eff03a361dcbad1be05d8449841186cb26f254832aa6bb374aee7b5e46e398"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/01-people-and-culture/values.md",
+      "type": "file",
+      "size": 337,
+      "sha256": "483c09d920ac1d1d8544aecaf63afbfcdbc6cb34e32661e53b17093b22f8322f"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/02-operations/it-setup.md",
+      "type": "file",
+      "size": 376,
+      "sha256": "ca7a26afb08003599a66c4174b60776f5f2a860ba013e94bddb36a8d2dbfec6b"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/02-operations/procurement.md",
+      "type": "file",
+      "size": 303,
+      "sha256": "166ac159d503a382e8c396c6d8f78c36731e95f5ef51c7ba9aa804566d4f7c17"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/02-operations/tools-and-access.md",
+      "type": "file",
+      "size": 404,
+      "sha256": "4bcdb46bb2132dfb21ea9b91a1af53f5924fdf2b79ad1642091696cdb74fbf1c"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/03-sales/lead-handling.md",
+      "type": "file",
+      "size": 359,
+      "sha256": "57599edbdb7b1f5192e4005db9577556c9f326765e16591051010a44c61bcc00"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/03-sales/process.md",
+      "type": "file",
+      "size": 514,
+      "sha256": "5354e7885ad1711375e5371995138ede5fb8a22d3954ac4b5b1579ebd5942237"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/03-sales/scripts.md",
+      "type": "file",
+      "size": 516,
+      "sha256": "e30cf11803dee027bf4670e0730bb98734bd89de5a1aacc74b441fdfa310cf19"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/04-service/process.md",
+      "type": "file",
+      "size": 457,
+      "sha256": "884d7da268d9adcea10828e52f5eb3729b127204d7c53ffe387f74ec1054ae64"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/04-service/recalls.md",
+      "type": "file",
+      "size": 352,
+      "sha256": "d82015e33d71f644e9b50a1167b84a6bf6fe873ba0fe3c26454943111939b33b"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/04-service/scheduling.md",
+      "type": "file",
+      "size": 309,
+      "sha256": "d1d91bc89c57238c10f59cccc86ec4c16793bb98cb7558d1b05c640821e06743"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/05-teams/finance/team-overview.md",
+      "type": "file",
+      "size": 300,
+      "sha256": "954e7b7fad21f40e7efc858415c034f9aa11af6a6896d622c3396cbb73d612d7"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/05-teams/parts/team-overview.md",
+      "type": "file",
+      "size": 294,
+      "sha256": "7f04601f155d5670be4faf714114e111bf50c47d3767069f4c8e3c1f723c38d6"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/05-teams/sales/team-overview.md",
+      "type": "file",
+      "size": 333,
+      "sha256": "1ceecc6f170fea73a3a96b1929ab2f09837f3c313bf16d98c403e414fdbe5569"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/05-teams/service/team-overview.md",
+      "type": "file",
+      "size": 324,
+      "sha256": "7893f4789ae97563fee59a2aa3451771b9cd9e67415f9b09de26a746c861302f"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/06-projects/README.md",
+      "type": "file",
+      "size": 309,
+      "sha256": "15d88b4901ab1943a0ea41515841e2c7808745653d2230f2a66302c1e2c84ef3"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/assets/.gitkeep",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/README.md",
+      "type": "file",
+      "size": 867,
+      "sha256": "543454844a0196c7dc285f34b332a55f1ea34dedc98cd842fb980fe635099e3c"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/templates/meeting-notes.md",
+      "type": "file",
+      "size": 248,
+      "sha256": "5370b702ed5b978ec7939e5340cc8fd1b40f1ab4e51a77ed191fe3587a7bdfa2"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/company-wiki/templates/rfc.md",
+      "type": "file",
+      "size": 300,
+      "sha256": "4d2e6b135f82e9d2fe2ee8502f34020e63b53db8ceef2850936264cddf6c6695"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/governance/agents/caroline.md",
+      "type": "file",
+      "size": 2444,
+      "sha256": "920aad11b5f225c79d5b47e54ad7890d676e3f1ee17bcec8580c234e7fad881d"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/governance/agents/communication-writer.md",
+      "type": "file",
+      "size": 442,
+      "sha256": "c72b9e005e805d755abf23c6a104aa960c772bd9cc9ba537a13964590b4d5125"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/governance/agents/copywriter.md",
+      "type": "file",
+      "size": 412,
+      "sha256": "b85f19dac04124d1c02e7760e0ac92b7e6ef497fceb947b7d3a660a2c72c4dbd"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/governance/agents/creative-director.md",
+      "type": "file",
+      "size": 442,
+      "sha256": "159b101394c8cbe2e359f89b91ad0d76e14c83521a90c1065938d3b0e5549f4a"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/governance/agents/crm-guru.md",
+      "type": "file",
+      "size": 2588,
+      "sha256": "ec5cf7690fcd1d1401f81c51fb77e69c28daa29538728c232d6ee5775a15147a"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/governance/agents/data-guru.md",
+      "type": "file",
+      "size": 565,
+      "sha256": "58b78980ae02bf034c89c94dd5fa1910699e89b64c769fabb8f48df6a724b2be"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/governance/agents/market-intel.md",
+      "type": "file",
+      "size": 426,
+      "sha256": "2a27d79b8b534c9214e942769c893b660668cad1ad01b74e0e4217b7119c6b32"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/governance/agents/nancy-gaston.md",
+      "type": "file",
+      "size": 2056,
+      "sha256": "8fc35bfb29f7ed5a8609389099d7d569da02def702d76772e02a0a1009ec5a87"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/governance/agents/photo-studio.md",
+      "type": "file",
+      "size": 448,
+      "sha256": "1ecac1b96f884de8e8cec0ba071761ed89bf5ddbe77fcce375c604148833f117"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/governance/agents/sales-coach.md",
+      "type": "file",
+      "size": 442,
+      "sha256": "4ca24f8ec5b0674cfe4dfba86ba44f46ec38b5251579c98da2aabb115afbc517"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/governance/agents/semantic-guardian.md",
+      "type": "file",
+      "size": 3612,
+      "sha256": "db96da2ffdd7bb733334891533b1aba88f7f48050a7ccd3e553661fa27f23f39"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/governance/agents/video-producer.md",
+      "type": "file",
+      "size": 414,
+      "sha256": "19ee25043d1e3a4f102661a4dca63e1f8c19e1e05cc513ad342de464d998a5e4"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/knowledge/operating-manuals/consulting-human-operator-guide.md",
+      "type": "file",
+      "size": 16631,
+      "sha256": "0d77a6ded2020cfc5cc2d48423f0952fbbf2a0d35f6eb0b1d18ae5ffdf22a3e9"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/knowledge/operating-manuals/customer-admin-guide.md",
+      "type": "file",
+      "size": 16285,
+      "sha256": "a3ae0fcf9b8c14c2470b6ca9434363ef7a3572b4e86e729748d14845dde0c6a9"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/knowledge/operating-manuals/huminic-rollup-operator-guide.md",
+      "type": "file",
+      "size": 10992,
+      "sha256": "c22c997cfbbc990d4533bba57da59679532a3bc13299c0f58ff1a29748ef4141"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/knowledge/operating-manuals/huminic-sales-and-prescription-guide.md",
+      "type": "file",
+      "size": 8267,
+      "sha256": "6309067257971504c4b9683675a05cdbaf2c599e7ba7e223b2d902f4ee230d89"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/knowledge/operating-manuals/nexxus-migration-customer-guide.md",
+      "type": "file",
+      "size": 16234,
+      "sha256": "062c9cec06676af902953bdeac3e4b9bb5e8a38e387fedc613596adb4dc55374"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/knowledge/operating-manuals/studio-admin-guide.md",
+      "type": "file",
+      "size": 23329,
+      "sha256": "3c55947757ed825eba28f7e843657a6039c4cfe29a461a3c18f96dd5b4e658b7"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/knowledge/widgets/serra-nissan-contact.md",
+      "type": "file",
+      "size": 586,
+      "sha256": "dc0d01637d0ad1ac39295d74919428895b80c182cd7f47b961d6afe61e55a1ca"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/knowledge/widgets/serra-nissan-sales-chat.md",
+      "type": "file",
+      "size": 615,
+      "sha256": "905fe311d14a1d3e1eef322b8068ed3769ad00819d525c26e9df8d5f870dd908"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/knowledge/widgets/serra-nissan-service.md",
+      "type": "file",
+      "size": 620,
+      "sha256": "b45528ad3d3c271fc9b0b97817c474d16568eb36c8880b6f66c1306b7e3f393f"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/messaging-hub.db",
+      "type": "file",
+      "size": 139264,
+      "sha256": "9690c316a753e215aec1c5a9bca1c1f3db03908ee5d6b59462e6060a2f162a1a"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/messaging-hub.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "8e61edecd2319f9ada9236880d37491dd504b5b68c5ad2a3a157028d2abb6d65"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/messaging-hub.db-wal",
+      "type": "file",
+      "size": 135992,
+      "sha256": "102dd40c6c31963f6dc3d17cee4fcca64377956500dfe136f0de50b76987d475"
+    },
+    {
+      "rel_path": "profiles/serra-nissan/studio.yaml",
+      "type": "file",
+      "size": 2748,
+      "sha256": "66279d2e1410a6f9fea826f966583aea8d929653ec998ccfb462dae9c9c0a346"
+    },
+    {
+      "rel_path": "profiles/serra-service/auth.yaml",
+      "type": "file",
+      "size": 276,
+      "sha256": "8a03b47b8e58e289db7aada26571f293718fd4fd4343347abe8bb92c1e21b855"
+    },
+    {
+      "rel_path": "profiles/serra-service/brain/brain.db",
+      "type": "file",
+      "size": 360448,
+      "sha256": "62a1aab56c37e90a4c8f804f74823a41b2a4d1d5ed46163a068b63c4725feccc"
+    },
+    {
+      "rel_path": "profiles/serra-service/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/serra-service/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/serra-service/campaigns/templates/follow-up-lead.md",
+      "type": "file",
+      "size": 366,
+      "sha256": "c5910d6b9bfd0d237339769deef86320f445f6dc9154f8acd9fb1b8764b8a3da"
+    },
+    {
+      "rel_path": "profiles/serra-service/campaigns/templates/service-due.md",
+      "type": "file",
+      "size": 312,
+      "sha256": "c6a763c6ce916ef0a9346cffd04bc23d7d7f5119cb2ff92fb23bf01a44848b85"
+    },
+    {
+      "rel_path": "profiles/serra-service/campaigns/templates/service-recall.md",
+      "type": "file",
+      "size": 406,
+      "sha256": "7e9728dc68e0d3e9e90521b903bdb526ab5d2ba2a916bb58502a1ac051ba5c9b"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/00-start-here/company-overview.md",
+      "type": "file",
+      "size": 626,
+      "sha256": "c9306ddb460f080e4d656c12814feb262a35b4d8b02ccbd5878b202a4689445a"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/00-start-here/glossary.md",
+      "type": "file",
+      "size": 509,
+      "sha256": "1c4ab41c9ca350428dbb399b0e20711ef67897d744a96639e3454505750d3fe5"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/00-start-here/how-to-edit-this-wiki.md",
+      "type": "file",
+      "size": 583,
+      "sha256": "f115aac1e79728ec709a558e1567fdf62bf218af0d8285931a545c94db500014"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/00-start-here/welcome.md",
+      "type": "file",
+      "size": 428,
+      "sha256": "3488555d1bf90012c72264113467795944a5851155d046905d4cac8293467c37"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/01-people-and-culture/benefits.md",
+      "type": "file",
+      "size": 303,
+      "sha256": "a96992d31d36a8d365cfacea54e389a1bc20cd141bcd2b7b972d3d5cc12f32f6"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/01-people-and-culture/org-chart.md",
+      "type": "file",
+      "size": 446,
+      "sha256": "6383e79aaf3b7383a27c7fb5e77f64b67e231390592e96c42feeb08c4fd795ed"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/01-people-and-culture/policies/code-of-conduct.md",
+      "type": "file",
+      "size": 287,
+      "sha256": "fd079b95081a8b1a1e6b26a7960ce1a8a1fd04701fa5f0aa342a5bf80dcd8c75"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/01-people-and-culture/policies/time-off.md",
+      "type": "file",
+      "size": 281,
+      "sha256": "e8eff03a361dcbad1be05d8449841186cb26f254832aa6bb374aee7b5e46e398"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/01-people-and-culture/values.md",
+      "type": "file",
+      "size": 336,
+      "sha256": "f7d566cbb6c1819b70e1f4bd38061297a9069a4199f6c43b60d983bd97518eca"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/02-operations/it-setup.md",
+      "type": "file",
+      "size": 376,
+      "sha256": "ca7a26afb08003599a66c4174b60776f5f2a860ba013e94bddb36a8d2dbfec6b"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/02-operations/procurement.md",
+      "type": "file",
+      "size": 303,
+      "sha256": "166ac159d503a382e8c396c6d8f78c36731e95f5ef51c7ba9aa804566d4f7c17"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/02-operations/tools-and-access.md",
+      "type": "file",
+      "size": 404,
+      "sha256": "4bcdb46bb2132dfb21ea9b91a1af53f5924fdf2b79ad1642091696cdb74fbf1c"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/03-sales/lead-handling.md",
+      "type": "file",
+      "size": 359,
+      "sha256": "57599edbdb7b1f5192e4005db9577556c9f326765e16591051010a44c61bcc00"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/03-sales/process.md",
+      "type": "file",
+      "size": 514,
+      "sha256": "5354e7885ad1711375e5371995138ede5fb8a22d3954ac4b5b1579ebd5942237"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/03-sales/scripts.md",
+      "type": "file",
+      "size": 514,
+      "sha256": "4ae2a823b427438b615002512d98aeb3b14897d2301a976c9f65a6944206320a"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/04-service/process.md",
+      "type": "file",
+      "size": 457,
+      "sha256": "884d7da268d9adcea10828e52f5eb3729b127204d7c53ffe387f74ec1054ae64"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/04-service/recalls.md",
+      "type": "file",
+      "size": 352,
+      "sha256": "d82015e33d71f644e9b50a1167b84a6bf6fe873ba0fe3c26454943111939b33b"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/04-service/scheduling.md",
+      "type": "file",
+      "size": 309,
+      "sha256": "d1d91bc89c57238c10f59cccc86ec4c16793bb98cb7558d1b05c640821e06743"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/05-teams/finance/team-overview.md",
+      "type": "file",
+      "size": 300,
+      "sha256": "954e7b7fad21f40e7efc858415c034f9aa11af6a6896d622c3396cbb73d612d7"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/05-teams/parts/team-overview.md",
+      "type": "file",
+      "size": 294,
+      "sha256": "7f04601f155d5670be4faf714114e111bf50c47d3767069f4c8e3c1f723c38d6"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/05-teams/sales/team-overview.md",
+      "type": "file",
+      "size": 333,
+      "sha256": "1ceecc6f170fea73a3a96b1929ab2f09837f3c313bf16d98c403e414fdbe5569"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/05-teams/service/team-overview.md",
+      "type": "file",
+      "size": 324,
+      "sha256": "7893f4789ae97563fee59a2aa3451771b9cd9e67415f9b09de26a746c861302f"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/06-projects/README.md",
+      "type": "file",
+      "size": 309,
+      "sha256": "15d88b4901ab1943a0ea41515841e2c7808745653d2230f2a66302c1e2c84ef3"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/assets/.gitkeep",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/README.md",
+      "type": "file",
+      "size": 870,
+      "sha256": "22acc3b56d96545e5d186b109f1578c5b81f3a274a210036b54513b32c86fcfa"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/templates/meeting-notes.md",
+      "type": "file",
+      "size": 248,
+      "sha256": "5370b702ed5b978ec7939e5340cc8fd1b40f1ab4e51a77ed191fe3587a7bdfa2"
+    },
+    {
+      "rel_path": "profiles/serra-service/company-wiki/templates/rfc.md",
+      "type": "file",
+      "size": 300,
+      "sha256": "4d2e6b135f82e9d2fe2ee8502f34020e63b53db8ceef2850936264cddf6c6695"
+    },
+    {
+      "rel_path": "profiles/serra-service/config.yaml",
+      "type": "file",
+      "size": 196,
+      "sha256": "20b8ffd167984049307dd31e08fd1aa6e6fe0140ec4a43f3037e83e019a420ad"
+    },
+    {
+      "rel_path": "profiles/serra-service/engagement-state.yaml",
+      "type": "file",
+      "size": 1103,
+      "sha256": "8491af18b67eedd4b5e083075a2fe12ee6a16bd124ee41bad220b109f133c1e7"
+    },
+    {
+      "rel_path": "profiles/serra-service/governance/agents/caroline.md",
+      "type": "file",
+      "size": 2438,
+      "sha256": "8b0dcb2efde40ccba34cd841207e28ecb3fb705d787b02f8a4a4b3c6ca8ea2d0"
+    },
+    {
+      "rel_path": "profiles/serra-service/governance/agents/communication-writer.md",
+      "type": "file",
+      "size": 441,
+      "sha256": "4bbd18e3aea85b16bdf27eb013519feb27d1df3406e40dfeae0be9669d61a3f1"
+    },
+    {
+      "rel_path": "profiles/serra-service/governance/agents/copywriter.md",
+      "type": "file",
+      "size": 411,
+      "sha256": "ba0efc98b765d882a19ab1e112df5df33b58fd280eb6cab613fe8a079907554c"
+    },
+    {
+      "rel_path": "profiles/serra-service/governance/agents/creative-director.md",
+      "type": "file",
+      "size": 441,
+      "sha256": "75f92d296834be51162353f24946fc2633f0ce6879f4acd1a8b12ee5f6213161"
+    },
+    {
+      "rel_path": "profiles/serra-service/governance/agents/crm-guru.md",
+      "type": "file",
+      "size": 2585,
+      "sha256": "e432d20f4a4f5219cbf654f3174227a24e89010159edfdfbc193543c130985da"
+    },
+    {
+      "rel_path": "profiles/serra-service/governance/agents/data-guru.md",
+      "type": "file",
+      "size": 564,
+      "sha256": "12a163a49773acfbb5d0de42bf40cd7563de52e4ab85134ef83ce72c0e301789"
+    },
+    {
+      "rel_path": "profiles/serra-service/governance/agents/market-intel.md",
+      "type": "file",
+      "size": 425,
+      "sha256": "dfdec2298d9250dd7a145500f634640c80b349e2647b7d38e7513fde45c3392e"
+    },
+    {
+      "rel_path": "profiles/serra-service/governance/agents/nancy-gaston.md",
+      "type": "file",
+      "size": 2051,
+      "sha256": "3193a353866d927da936d23468685fefe5a88c441658ca5cabfcf452a227421b"
+    },
+    {
+      "rel_path": "profiles/serra-service/governance/agents/photo-studio.md",
+      "type": "file",
+      "size": 447,
+      "sha256": "034e629463819af396470e0f8f05938659f038f52422b1d51aebb33fb3638b0a"
+    },
+    {
+      "rel_path": "profiles/serra-service/governance/agents/sales-coach.md",
+      "type": "file",
+      "size": 441,
+      "sha256": "ea621e6dec31e957d8b670ae3f96b9432cb6fa136ab2f02109538f538c8b04b9"
+    },
+    {
+      "rel_path": "profiles/serra-service/governance/agents/semantic-guardian.md",
+      "type": "file",
+      "size": 3606,
+      "sha256": "f97974a0f33613fde7fbfcab16ab299890177980a8ca3c25bd1f67083ce4dba5"
+    },
+    {
+      "rel_path": "profiles/serra-service/governance/agents/video-producer.md",
+      "type": "file",
+      "size": 413,
+      "sha256": "d2d7092c60e9e0b0effdf1d6876709806308d0342bab810a7b7492abe80fbbdf"
+    },
+    {
+      "rel_path": "profiles/serra-service/governance/scope-contract.md",
+      "type": "file",
+      "size": 139,
+      "sha256": "5f3ebceea2c99f4c0c5c2cf29be321c737d8f481c844841b3339a09e50a9a428"
+    },
+    {
+      "rel_path": "profiles/serra-service/knowledge/operating-manuals/consulting-human-operator-guide.md",
+      "type": "file",
+      "size": 16631,
+      "sha256": "0d77a6ded2020cfc5cc2d48423f0952fbbf2a0d35f6eb0b1d18ae5ffdf22a3e9"
+    },
+    {
+      "rel_path": "profiles/serra-service/knowledge/operating-manuals/customer-admin-guide.md",
+      "type": "file",
+      "size": 16284,
+      "sha256": "63b3bcb0e53c58b6aa1c6f2784035f8f6f41c1ab9573113fd4ed8849d0c2f9c1"
+    },
+    {
+      "rel_path": "profiles/serra-service/knowledge/operating-manuals/huminic-rollup-operator-guide.md",
+      "type": "file",
+      "size": 10991,
+      "sha256": "c9d231f38b0e0dafe1a68ebd76d9f44f08baa26362abb5c74efce54d052ba50c"
+    },
+    {
+      "rel_path": "profiles/serra-service/knowledge/operating-manuals/huminic-sales-and-prescription-guide.md",
+      "type": "file",
+      "size": 8267,
+      "sha256": "6309067257971504c4b9683675a05cdbaf2c599e7ba7e223b2d902f4ee230d89"
+    },
+    {
+      "rel_path": "profiles/serra-service/knowledge/operating-manuals/nexxus-migration-customer-guide.md",
+      "type": "file",
+      "size": 16234,
+      "sha256": "062c9cec06676af902953bdeac3e4b9bb5e8a38e387fedc613596adb4dc55374"
+    },
+    {
+      "rel_path": "profiles/serra-service/knowledge/operating-manuals/studio-admin-guide.md",
+      "type": "file",
+      "size": 23329,
+      "sha256": "3c55947757ed825eba28f7e843657a6039c4cfe29a461a3c18f96dd5b4e658b7"
+    },
+    {
+      "rel_path": "profiles/serra-service/knowledge/widgets/serra-service-chat.md",
+      "type": "file",
+      "size": 584,
+      "sha256": "6ada39f2f5e144ef1b8ae4ee0ed8227b55b266942047535ff98cfc4263c17ff2"
+    },
+    {
+      "rel_path": "profiles/serra-service/knowledge/widgets/serra-service-contact.md",
+      "type": "file",
+      "size": 485,
+      "sha256": "a5e206252081c15f4152fef1637925dac124fea0dbfe1bc28779f7610514d359"
+    },
+    {
+      "rel_path": "profiles/serra-service/messaging-hub.db",
+      "type": "file",
+      "size": 139264,
+      "sha256": "9690c316a753e215aec1c5a9bca1c1f3db03908ee5d6b59462e6060a2f162a1a"
+    },
+    {
+      "rel_path": "profiles/serra-service/messaging-hub.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/serra-service/messaging-hub.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/serra-service/persona.md",
+      "type": "file",
+      "size": 91,
+      "sha256": "e90c2ec895de233bd258996420f186cb295bdf49a721e9839962bab41b57bb7c"
+    },
+    {
+      "rel_path": "profiles/serra-service/SOUL.md",
+      "type": "file",
+      "size": 190,
+      "sha256": "d53ace81eb5010ca295d64945a905b53637ac9aff83726292e093af1be0567c7"
+    },
+    {
+      "rel_path": "profiles/serra-service/studio.yaml",
+      "type": "file",
+      "size": 2139,
+      "sha256": "a67cbdb1151e87c47720f495e360b554823c02710469e7ad58b02b8b5e5048ff"
+    },
+    {
+      "rel_path": "profiles/spfix-none/brain/brain.db",
+      "type": "file",
+      "size": 544768,
+      "sha256": "224eae257b04fc4ace1db88e1195afbdcec0b47811deda612ab7855ed9bda37c"
+    },
+    {
+      "rel_path": "profiles/spfix-none/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/spfix-none/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/sptfix-none/brain/brain.db",
+      "type": "file",
+      "size": 544768,
+      "sha256": "1d917d8259b1757179cdc90322291c0f5d43d3c72a50dece25ac85c0eb96c46e"
+    },
+    {
+      "rel_path": "profiles/sptfix-none/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/sptfix-none/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/test/brain/brain.db",
+      "type": "file",
+      "size": 552960,
+      "sha256": "65c1dab83b95decfccad4f14266a91964a372cdf66295faf78a8ca236c78b538"
+    },
+    {
+      "rel_path": "profiles/test/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/test/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/auth.yaml",
+      "type": "file",
+      "size": 453,
+      "sha256": "9ec6c874d0a7cba345694565e7d7d9d8ea60fa70c27f05d5fcbdcdbd23517b1f"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/brain/brain.db",
+      "type": "file",
+      "size": 405504,
+      "sha256": "c2f1e790d3a3734b5d7db3f694349bdb0f02329d773666ea3e7d9ca44a51fa0b"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/brain/brain.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/brain/brain.db-wal",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/campaigns/templates/follow-up-lead.md",
+      "type": "file",
+      "size": 366,
+      "sha256": "c5910d6b9bfd0d237339769deef86320f445f6dc9154f8acd9fb1b8764b8a3da"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/campaigns/templates/service-due.md",
+      "type": "file",
+      "size": 312,
+      "sha256": "c6a763c6ce916ef0a9346cffd04bc23d7d7f5119cb2ff92fb23bf01a44848b85"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/campaigns/templates/service-recall.md",
+      "type": "file",
+      "size": 406,
+      "sha256": "7e9728dc68e0d3e9e90521b903bdb526ab5d2ba2a916bb58502a1ac051ba5c9b"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/00-start-here/company-overview.md",
+      "type": "file",
+      "size": 630,
+      "sha256": "99fd7b6259d1e77388087f23adb6d8f2394031d409edadbe2256467df81c806d"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/00-start-here/glossary.md",
+      "type": "file",
+      "size": 509,
+      "sha256": "1c4ab41c9ca350428dbb399b0e20711ef67897d744a96639e3454505750d3fe5"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/00-start-here/how-to-edit-this-wiki.md",
+      "type": "file",
+      "size": 583,
+      "sha256": "f115aac1e79728ec709a558e1567fdf62bf218af0d8285931a545c94db500014"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/00-start-here/welcome.md",
+      "type": "file",
+      "size": 432,
+      "sha256": "5a952e88b697147ad6b4aa90d4ebcb8fa1616b4d9165c485255c215038703834"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/01-people-and-culture/benefits.md",
+      "type": "file",
+      "size": 303,
+      "sha256": "a96992d31d36a8d365cfacea54e389a1bc20cd141bcd2b7b972d3d5cc12f32f6"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/01-people-and-culture/org-chart.md",
+      "type": "file",
+      "size": 446,
+      "sha256": "6383e79aaf3b7383a27c7fb5e77f64b67e231390592e96c42feeb08c4fd795ed"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/01-people-and-culture/policies/code-of-conduct.md",
+      "type": "file",
+      "size": 287,
+      "sha256": "fd079b95081a8b1a1e6b26a7960ce1a8a1fd04701fa5f0aa342a5bf80dcd8c75"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/01-people-and-culture/policies/time-off.md",
+      "type": "file",
+      "size": 281,
+      "sha256": "e8eff03a361dcbad1be05d8449841186cb26f254832aa6bb374aee7b5e46e398"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/01-people-and-culture/values.md",
+      "type": "file",
+      "size": 340,
+      "sha256": "6fc0b6c122004886f5b3a6dcda62e4497662c607726d0eb6e393994f994bfe9b"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/02-operations/it-setup.md",
+      "type": "file",
+      "size": 376,
+      "sha256": "ca7a26afb08003599a66c4174b60776f5f2a860ba013e94bddb36a8d2dbfec6b"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/02-operations/procurement.md",
+      "type": "file",
+      "size": 303,
+      "sha256": "166ac159d503a382e8c396c6d8f78c36731e95f5ef51c7ba9aa804566d4f7c17"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/02-operations/tools-and-access.md",
+      "type": "file",
+      "size": 404,
+      "sha256": "4bcdb46bb2132dfb21ea9b91a1af53f5924fdf2b79ad1642091696cdb74fbf1c"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/03-sales/lead-handling.md",
+      "type": "file",
+      "size": 359,
+      "sha256": "57599edbdb7b1f5192e4005db9577556c9f326765e16591051010a44c61bcc00"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/03-sales/process.md",
+      "type": "file",
+      "size": 514,
+      "sha256": "5354e7885ad1711375e5371995138ede5fb8a22d3954ac4b5b1579ebd5942237"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/03-sales/scripts.md",
+      "type": "file",
+      "size": 522,
+      "sha256": "1126051ca1d11d337cb2604bb879c15df6acf556e4f568831ee691c3664f7337"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/04-service/process.md",
+      "type": "file",
+      "size": 457,
+      "sha256": "884d7da268d9adcea10828e52f5eb3729b127204d7c53ffe387f74ec1054ae64"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/04-service/recalls.md",
+      "type": "file",
+      "size": 352,
+      "sha256": "d82015e33d71f644e9b50a1167b84a6bf6fe873ba0fe3c26454943111939b33b"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/04-service/scheduling.md",
+      "type": "file",
+      "size": 309,
+      "sha256": "d1d91bc89c57238c10f59cccc86ec4c16793bb98cb7558d1b05c640821e06743"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/05-teams/finance/team-overview.md",
+      "type": "file",
+      "size": 300,
+      "sha256": "954e7b7fad21f40e7efc858415c034f9aa11af6a6896d622c3396cbb73d612d7"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/05-teams/parts/team-overview.md",
+      "type": "file",
+      "size": 294,
+      "sha256": "7f04601f155d5670be4faf714114e111bf50c47d3767069f4c8e3c1f723c38d6"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/05-teams/sales/team-overview.md",
+      "type": "file",
+      "size": 333,
+      "sha256": "1ceecc6f170fea73a3a96b1929ab2f09837f3c313bf16d98c403e414fdbe5569"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/05-teams/service/team-overview.md",
+      "type": "file",
+      "size": 324,
+      "sha256": "7893f4789ae97563fee59a2aa3451771b9cd9e67415f9b09de26a746c861302f"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/06-projects/README.md",
+      "type": "file",
+      "size": 309,
+      "sha256": "15d88b4901ab1943a0ea41515841e2c7808745653d2230f2a66302c1e2c84ef3"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/assets/.gitkeep",
+      "type": "file",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/README.md",
+      "type": "file",
+      "size": 876,
+      "sha256": "aae618b9fceadf6b08c9943060c3e292beb9c58ca8b485e6138fb0a2566a9b13"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/templates/meeting-notes.md",
+      "type": "file",
+      "size": 248,
+      "sha256": "5370b702ed5b978ec7939e5340cc8fd1b40f1ab4e51a77ed191fe3587a7bdfa2"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/company-wiki/templates/rfc.md",
+      "type": "file",
+      "size": 300,
+      "sha256": "4d2e6b135f82e9d2fe2ee8502f34020e63b53db8ceef2850936264cddf6c6695"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/governance/agents/caroline.md",
+      "type": "file",
+      "size": 2462,
+      "sha256": "66fa996125d52d21c3442746cf357bbafa9f3ef9950b3e214d773f70a1257f49"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/governance/agents/communication-writer.md",
+      "type": "file",
+      "size": 445,
+      "sha256": "d56d828046094f6f6ec9ace8b90fcc92ff721125d5e1f8ff9cd050e60249d6ce"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/governance/agents/copywriter.md",
+      "type": "file",
+      "size": 415,
+      "sha256": "2cccdcb34fa80dd327c2d7bf6a3e8ba0706d6ca37c027900e2c8358817f9836e"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/governance/agents/creative-director.md",
+      "type": "file",
+      "size": 445,
+      "sha256": "8615e344b6b0127d35bd970cb07f5f4f297efa350d99ff984c731994311237c1"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/governance/agents/crm-guru.md",
+      "type": "file",
+      "size": 2597,
+      "sha256": "e465e60e9c913938c9014b41fe8003054ef40c0bdfe499d33fa274ea2ae02888"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/governance/agents/data-guru.md",
+      "type": "file",
+      "size": 568,
+      "sha256": "9357f468f1dd5967a2107ab5052d86d602a46e43a2cbfc4b8463b3452e8031f3"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/governance/agents/market-intel.md",
+      "type": "file",
+      "size": 429,
+      "sha256": "f544d876263684c2c2f29ba9416cf8c425656105ae66208ae70765a2b1737fde"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/governance/agents/nancy-gaston.md",
+      "type": "file",
+      "size": 2071,
+      "sha256": "ebf4b806da8e7613f1adf722d285e3bb127fd117e096c3536e91c41f04f9a978"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/governance/agents/photo-studio.md",
+      "type": "file",
+      "size": 451,
+      "sha256": "698686441055347e190140561ba24b41db30491bf3644b4f8e95ddcd4cd6e991"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/governance/agents/sales-coach.md",
+      "type": "file",
+      "size": 445,
+      "sha256": "ce379e510390bdf6cccadf3c1ff1cc7ecc79fef4497a2aa34f3c8a6cbc5aaffc"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/governance/agents/semantic-guardian.md",
+      "type": "file",
+      "size": 3630,
+      "sha256": "62965d778fdd6c25ecfb0916c40e68c0d5d6367a00355fec3162b53bdf5cadf3"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/governance/agents/video-producer.md",
+      "type": "file",
+      "size": 417,
+      "sha256": "f5971f8a430eb4dbedd387f295bcbcdb23c04205f3f7009fd72e3b58ecabdc86"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/knowledge/operating-manuals/consulting-human-operator-guide.md",
+      "type": "file",
+      "size": 16631,
+      "sha256": "0d77a6ded2020cfc5cc2d48423f0952fbbf2a0d35f6eb0b1d18ae5ffdf22a3e9"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/knowledge/operating-manuals/customer-admin-guide.md",
+      "type": "file",
+      "size": 16288,
+      "sha256": "0a55ee8e80fb21f06e5b06bf1d1c404e15f6fe7a066a2f37d0b337b24e91aaa8"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/knowledge/operating-manuals/huminic-rollup-operator-guide.md",
+      "type": "file",
+      "size": 10995,
+      "sha256": "fa77d2f4bb1abd0ab88d54bc2b9d5c7b39b0fdda2c12392aec81b6583b588d1a"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/knowledge/operating-manuals/huminic-sales-and-prescription-guide.md",
+      "type": "file",
+      "size": 8267,
+      "sha256": "6309067257971504c4b9683675a05cdbaf2c599e7ba7e223b2d902f4ee230d89"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/knowledge/operating-manuals/nexxus-migration-customer-guide.md",
+      "type": "file",
+      "size": 16234,
+      "sha256": "062c9cec06676af902953bdeac3e4b9bb5e8a38e387fedc613596adb4dc55374"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/knowledge/operating-manuals/studio-admin-guide.md",
+      "type": "file",
+      "size": 23329,
+      "sha256": "3c55947757ed825eba28f7e843657a6039c4cfe29a461a3c18f96dd5b4e658b7"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/knowledge/widgets/tony-serra-ford-contact.md",
+      "type": "file",
+      "size": 598,
+      "sha256": "4558998012dca1adbbe8a8ea0f8def94ed936cbda2aab57cf1749cecc246ce36"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/knowledge/widgets/tony-serra-ford-sales-chat.md",
+      "type": "file",
+      "size": 625,
+      "sha256": "e6dc292a4c57eaa3a0f81e66b0145736525790a5745fe9c33cf4780f4af61523"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/knowledge/widgets/tony-serra-ford-service.md",
+      "type": "file",
+      "size": 632,
+      "sha256": "1ad2fd13331d5bd8f23477f958a74a6d5d095ed1ff85f8246497cb9a5a812fc6"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/messaging-hub.db",
+      "type": "file",
+      "size": 139264,
+      "sha256": "9690c316a753e215aec1c5a9bca1c1f3db03908ee5d6b59462e6060a2f162a1a"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/messaging-hub.db-shm",
+      "type": "file",
+      "size": 32768,
+      "sha256": "5e9e995274b6202bfc77a9e5ab8e6d19380497a7175dc516d57c64fe79d4b74c"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/messaging-hub.db-wal",
+      "type": "file",
+      "size": 135992,
+      "sha256": "6475b1ed63b28e0af5bbb64a7a8e3f63b9dad276a55c2061c98902d709ad56b2"
+    },
+    {
+      "rel_path": "profiles/tony-serra-ford/studio.yaml",
+      "type": "file",
+      "size": 2764,
+      "sha256": "3dec02d14a5d5e948399854aa07894445dc5c4a6598cee53f0db27ff9f9aa2fd"
+    }
+  ],
+  "hermes_equal_pre_post": true,
+  "attestation": "No metrics/bindings/source-bytes/lifecycle/canonical-DB changed; no Vin/Gmail/INGEST; no Part B; no commit/push/PR/deploy; provenance relocation + one MD wording hunk only."
+}

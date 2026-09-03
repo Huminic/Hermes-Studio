@@ -68,7 +68,10 @@ const byEngineOrder = <T extends { metric_id: string }>(
 
 /** Binding authority for a metric, or undefined if the binding does not define it
  *  (fail-closed callers throw). Typed possibly-undefined on purpose. */
-function metricAuthority(binding: Binding, id: string): MetricBinding | undefined {
+function metricAuthority(
+  binding: Binding,
+  id: string,
+): MetricBinding | undefined {
   return Object.hasOwn(binding.metrics, id) ? binding.metrics[id] : undefined
 }
 
@@ -201,6 +204,7 @@ function buildEnvelope(
     String(ed.row_reconciliation).match(/^\d+/)?.[0] ?? '',
     10,
   )
+  const rc = Number.isFinite(rowCount) ? rowCount : null
   const source_artifacts = [
     {
       source_artifact_id: saId(profile, dealer, period, sha),
@@ -212,13 +216,25 @@ function buildEnvelope(
       schema_contract_sha256: ed.schema_contract_sha256,
       receipt_sha256: ed.receipt_sha256,
       bytes: ed.bytes,
-      row_count: Number.isFinite(rowCount) ? rowCount : null,
+      row_count: rc,
       dealer_period_result: 'admitted',
+      // Structured admission receipt bound to the artifact identity (item 3).
       admission_receipt: {
-        source_id: ed.source_id,
-        row_reconciliation: ed.row_reconciliation,
+        source_sha256: sha,
+        schema_contract_sha256: ed.schema_contract_sha256,
+        bytes: ed.bytes,
+        row_count: rc,
+        profile,
+        dealer_id: dealer,
+        period,
+        admitted: true as const,
+        zero_service_parts: true as const,
         sales_only_proof: ed.sales_only_proof,
-        missing_rule: ed.missing_rule,
+        provenance: {
+          source_id: ed.source_id,
+          row_reconciliation: ed.row_reconciliation,
+          missing_rule: ed.missing_rule,
+        },
       },
     },
   ]
@@ -254,10 +270,34 @@ function buildEnvelope(
   const comparison_references = []
   const seenGrade = new Set<string>()
   const seenRef = new Set<string>()
+  // Explicit exact-key maps (keys == every metric); null where a metric has none.
+  const detection_rule_id_by_metric: Record<string, string | null> = {}
+  const disposition_by_metric: Record<string, string> = {}
+  const evaluation_state_by_metric: Record<string, string> = {}
+  const affirmative_investigation_evidence_ref_by_metric: Record<
+    string,
+    string | null
+  > = {}
+  for (const o of src.observations) {
+    detection_rule_id_by_metric[o.metric_id] = null // set below for detecting evals
+    // Item 9: governed disposition + measurement state READ from the binding
+    // (not measured-set inference). These fields are not in the content hash.
+    const mb = metricAuthority(binding, o.metric_id)
+    if (!mb)
+      throw new CanonicalWatchdogStoreError(
+        `${o.metric_id}: binding has no metric authority (disposition/evaluation_state)`,
+      )
+    disposition_by_metric[o.metric_id] = mb.disposition
+    evaluation_state_by_metric[o.metric_id] = mb.evaluation_state
+    // PKT-02-01 has no genuinely_not_available metric → exact field is null.
+    affirmative_investigation_evidence_ref_by_metric[o.metric_id] = null
+  }
   for (const e of src.evaluations) {
     if (e.detection_rule) {
+      const detId = `DR-${e.metric_id}-${DEFINITION_VERSION}`
+      detection_rule_id_by_metric[e.metric_id] = detId
       detection_rules.push({
-        detection_rule_id: `DR-${e.metric_id}-${DEFINITION_VERSION}`,
+        detection_rule_id: detId,
         metric_id: e.metric_id,
         metric_version: DEFINITION_VERSION,
         threshold_id: e.threshold_id,
@@ -373,6 +413,7 @@ function buildEnvelope(
     detection_rules,
     grade_targets,
     comparison_references,
+    capability_snapshots: [], // PKT-02-01 emits none
     finding_specs,
     report_run: {
       report_run_id: `RR:${src.run_key}`,
@@ -389,6 +430,10 @@ function buildEnvelope(
       zero_service_parts: true, // validateForPersist enforced the anchored grammar
     },
     dataset_id_by_metric,
+    detection_rule_id_by_metric,
+    disposition_by_metric,
+    evaluation_state_by_metric,
+    affirmative_investigation_evidence_ref_by_metric,
   }
 }
 
@@ -428,6 +473,10 @@ export type BackfillResult = {
     alert_candidates: number
   }
   canonicalRows: CanonicalPersistResult['rows']
+  /** Shared immutable-parent rows that already existed and VERIFIED byte-identical
+   *  (on a first write these are 0; on an idempotent replay they equal the first
+   *  write's inserted `canonicalRows`). */
+  canonicalVerified: CanonicalPersistResult['verified']
   legacyContentSha: string
   canonicalReconstructedSha: string | null
   parity: boolean
@@ -465,6 +514,7 @@ export function backfillLegacyToCanonical(
       alert_candidates: legacy.alert_candidates.length,
     },
     canonicalRows: res.rows,
+    canonicalVerified: res.verified,
     legacyContentSha: legacy.content_sha256,
     canonicalReconstructedSha: recon,
     parity:

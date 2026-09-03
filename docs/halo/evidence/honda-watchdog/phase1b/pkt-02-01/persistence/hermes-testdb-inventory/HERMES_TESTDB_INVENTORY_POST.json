@@ -1,0 +1,167 @@
+[
+  {
+    "profile": "difix",
+    "path": "/home/ubuntu/.hermes/profiles/difix/brain/brain.db",
+    "mtime_ms": 1788391557648.4656,
+    "mtime_iso": "2026-09-02T23:25:57.648Z",
+    "size_bytes": 544768,
+    "file_sha256": "027b6519fcb3d54214916f4f99c63dd1c6ee263cbdc0f7a727ee762c9e950a2b",
+    "max_migration": 5,
+    "v5_checksum": "9c9c4ce890dea7e1",
+    "classification": "test-fixture"
+  },
+  {
+    "profile": "ford-of-columbia",
+    "path": "/home/ubuntu/.hermes/profiles/ford-of-columbia/brain/brain.db",
+    "mtime_ms": 1781635804962.4172,
+    "mtime_iso": "2026-06-16T18:50:04.962Z",
+    "size_bytes": 360448,
+    "file_sha256": "a126d88a8a3d355aae8138a6021979887ebe4692cbf8f6259102fc331c54c2c3",
+    "max_migration": 4,
+    "v5_checksum": null,
+    "classification": "real-or-other"
+  },
+  {
+    "profile": "huminic",
+    "path": "/home/ubuntu/.hermes/profiles/huminic/brain/brain.db",
+    "mtime_ms": 1780635110625.98,
+    "mtime_iso": "2026-06-05T04:51:50.626Z",
+    "size_bytes": 352256,
+    "file_sha256": "a757408d4f3fd733cf859505cce68117869d2814a4c958c0a05c94a73141f495",
+    "max_migration": 4,
+    "v5_checksum": null,
+    "classification": "real-or-other"
+  },
+  {
+    "profile": "hyundai-of-columbia",
+    "path": "/home/ubuntu/.hermes/profiles/hyundai-of-columbia/brain/brain.db",
+    "mtime_ms": 1781635804954.4172,
+    "mtime_iso": "2026-06-16T18:50:04.954Z",
+    "size_bytes": 360448,
+    "file_sha256": "7de41e1cdb995c51bfaa8248f40bbeff87abdece8b05ba02084fbfe3ed7c4c04",
+    "max_migration": 4,
+    "v5_checksum": null,
+    "classification": "real-or-other"
+  },
+  {
+    "profile": "lsdfix-none",
+    "path": "/home/ubuntu/.hermes/profiles/lsdfix-none/brain/brain.db",
+    "mtime_ms": 1788391493588.3926,
+    "mtime_iso": "2026-09-02T23:24:53.588Z",
+    "size_bytes": 544768,
+    "file_sha256": "48ea3b3f8770ccdd2e947d658d05e09f4d87e59cc03f6c083cbc414408a6871b",
+    "max_migration": 5,
+    "v5_checksum": "9c9c4ce890dea7e1",
+    "classification": "test-fixture"
+  },
+  {
+    "profile": "lsdfix-none2",
+    "path": "/home/ubuntu/.hermes/profiles/lsdfix-none2/brain/brain.db",
+    "mtime_ms": 1788391493620.3926,
+    "mtime_iso": "2026-09-02T23:24:53.620Z",
+    "size_bytes": 544768,
+    "file_sha256": "a335b92908dca4042690641f8887d96ae3c4a2f12a1574d0dcf8ba928e6965d2",
+    "max_migration": 5,
+    "v5_checksum": "9c9c4ce890dea7e1",
+    "classification": "test-fixture"
+  },
+  {
+    "profile": "missfix",
+    "path": "/home/ubuntu/.hermes/profiles/missfix/brain/brain.db",
+    "mtime_ms": 1788391492840.3918,
+    "mtime_iso": "2026-09-02T23:24:52.840Z",
+    "size_bytes": 552960,
+    "file_sha256": "96242eac0024245f50e6158179a996a76c7b7b9a2adb8e47ecaaa155da9f0b5b",
+    "max_migration": 5,
+    "v5_checksum": "9c9c4ce890dea7e1",
+    "classification": "test-fixture"
+  },
+  {
+    "profile": "missfix2",
+    "path": "/home/ubuntu/.hermes/profiles/missfix2/brain/brain.db",
+    "mtime_ms": 1788391492828.3918,
+    "mtime_iso": "2026-09-02T23:24:52.828Z",
+    "size_bytes": 552960,
+    "file_sha256": "2d3fabe228134c8b2406b8450604fd0d398102c85df56a930179e60512973e42",
+    "max_migration": 5,
+    "v5_checksum": "9c9c4ce890dea7e1",
+    "classification": "test-fixture"
+  },
+  {
+    "profile": "serra-honda",
+    "path": "/home/ubuntu/.hermes/profiles/serra-honda/brain/brain.db",
+    "mtime_ms": 1784613295792.9036,
+    "mtime_iso": "2026-07-21T05:54:55.793Z",
+    "size_bytes": 446464,
+    "file_sha256": "b4bee89fa022bec4bb9c68e453b78ada4b79de0dc27fa5c53f6088ed5d716c7a",
+    "max_migration": 4,
+    "v5_checksum": null,
+    "classification": "real-or-other"
+  },
+  {
+    "profile": "serra-nissan",
+    "path": "/home/ubuntu/.hermes/profiles/serra-nissan/brain/brain.db",
+    "mtime_ms": 1784613186076.9214,
+    "mtime_iso": "2026-07-21T05:53:06.077Z",
+    "size_bytes": 405504,
+    "file_sha256": "590f917bf905594dfd49fec46a36601e14054a92973ff18f67ef43e7dfd92f8d",
+    "max_migration": 4,
+    "v5_checksum": null,
+    "classification": "real-or-other"
+  },
+  {
+    "profile": "serra-service",
+    "path": "/home/ubuntu/.hermes/profiles/serra-service/brain/brain.db",
+    "mtime_ms": 1781635804738.4172,
+    "mtime_iso": "2026-06-16T18:50:04.738Z",
+    "size_bytes": 360448,
+    "file_sha256": "62a1aab56c37e90a4c8f804f74823a41b2a4d1d5ed46163a068b63c4725feccc",
+    "max_migration": 4,
+    "v5_checksum": null,
+    "classification": "real-or-other"
+  },
+  {
+    "profile": "spfix-none",
+    "path": "/home/ubuntu/.hermes/profiles/spfix-none/brain/brain.db",
+    "mtime_ms": 1788391493680.3928,
+    "mtime_iso": "2026-09-02T23:24:53.680Z",
+    "size_bytes": 544768,
+    "file_sha256": "224eae257b04fc4ace1db88e1195afbdcec0b47811deda612ab7855ed9bda37c",
+    "max_migration": 5,
+    "v5_checksum": "9c9c4ce890dea7e1",
+    "classification": "test-fixture"
+  },
+  {
+    "profile": "sptfix-none",
+    "path": "/home/ubuntu/.hermes/profiles/sptfix-none/brain/brain.db",
+    "mtime_ms": 1788391492556.3914,
+    "mtime_iso": "2026-09-02T23:24:52.556Z",
+    "size_bytes": 544768,
+    "file_sha256": "1d917d8259b1757179cdc90322291c0f5d43d3c72a50dece25ac85c0eb96c46e",
+    "max_migration": 5,
+    "v5_checksum": "9c9c4ce890dea7e1",
+    "classification": "test-fixture"
+  },
+  {
+    "profile": "test",
+    "path": "/home/ubuntu/.hermes/profiles/test/brain/brain.db",
+    "mtime_ms": 1788391546140.4526,
+    "mtime_iso": "2026-09-02T23:25:46.140Z",
+    "size_bytes": 552960,
+    "file_sha256": "65c1dab83b95decfccad4f14266a91964a372cdf66295faf78a8ca236c78b538",
+    "max_migration": 5,
+    "v5_checksum": "9c9c4ce890dea7e1",
+    "classification": "test-fixture"
+  },
+  {
+    "profile": "tony-serra-ford",
+    "path": "/home/ubuntu/.hermes/profiles/tony-serra-ford/brain/brain.db",
+    "mtime_ms": 1784613186088.9214,
+    "mtime_iso": "2026-07-21T05:53:06.089Z",
+    "size_bytes": 405504,
+    "file_sha256": "c2f1e790d3a3734b5d7db3f694349bdb0f02329d773666ea3e7d9ca44a51fa0b",
+    "max_migration": 4,
+    "v5_checksum": null,
+    "classification": "real-or-other"
+  }
+]

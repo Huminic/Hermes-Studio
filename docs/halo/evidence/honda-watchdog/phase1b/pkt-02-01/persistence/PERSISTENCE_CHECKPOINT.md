@@ -14,12 +14,15 @@ No formula, target, catalog, binding, report-language, or acceptance-scope chang
 
 ## What is durable vs. what the disposable DB proved
 
-**Durable = only the committed evidence** (this checkpoint, `PKT-02-01_persistence_evidence.json`,
-and `CANONICAL_MIGRATION_BACKFILL_RECEIPT.json`). The behavior below was proved against a
-**disposable** dev Brain created under a fresh tmp profile root and **deleted at the end of the
-run**. **No PKT-02-01 data is installed into any standing dev or production Brain.** The claim is
-"the persistence/replay/backfill behavior is proved and reproducible," never "the data now lives
-in a Brain."
+**Durable = the committed Git code and evidence.** With this freeze commit, the Part-A
+implementation source (`brain-schema.ts` migrations 5 + 6, the canonical store/adapter/facade,
+tests) **and** the evidence chain (this checkpoint,
+`CANONICAL_MIGRATION_BACKFILL_RECEIPT.json`, and the sealed F/G/H full-regression evidence)
+are now durable in Git. The **proof data is not durable**: the behavior below was proved
+against a **disposable** dev Brain created under a fresh tmp profile root and **deleted at the
+end of the run**. **No PKT-02-01 data is installed into any standing dev or production Brain.**
+The claim is "the persistence/replay/backfill behavior is proved and reproducible," never "the
+data now lives in a Brain."
 
 Reproducing the proof re-creates the disposable `brain.db`, exercises it, and removes it. What
 persists across runs is the deterministic content-of-record (`content_sha256`
@@ -86,8 +89,15 @@ The immutable packet evidence remains the source of record and is not replaced:
 PKT-02-01_customer_mini_report.md, PKT-02-01_internal_companion.md, store/**}`. The Brain
 persistence is additive on top of it.
 
-## Canonical-graph proven properties (migration 5 + backfill)
+## Canonical-graph proven properties (migration 5 base + additive migration 6 + backfill)
 
+- **Additive migration 6 (`watchdog_run_lineage_links`):** on top of the byte-immutable
+  migration 5, migration 6 adds explicit run→lineage membership tables
+  (`watchdog_run_source_artifact`, `watchdog_run_normalized_dataset`,
+  `watchdog_run_capability_snapshot`) and an explicit evaluation→detection-rule identity link,
+  plus the `evaluation_state` and `affirmative_investigation_evidence_ref` columns — so the graph
+  manifest covers exactly the linked lineage and never sweeps unrelated same-profile/dealer/period
+  rows. Migrations 1–5 stay byte-identical (`git diff` shows 0 deletions to earlier migration SQL).
 - **Reconstructed content hash == pinned:** the canonical graph reconstructs `content_sha256`
   `ae30c07a…` exactly (`CANONICAL_MIGRATION_BACKFILL_RECEIPT.json`).
 - **Graph manifest / graph_sha256:** the run anchor stores an immutable manifest + sha covering
@@ -157,8 +167,13 @@ commit; source history is never deleted.
   re-backfill no-op.
 - **Validators:** Phase 0 catalog `overall_pass=true`; Phase 1 contracts PASS (956/956, 61/61,
   2118/2118); Phase 1B PASS (errors 0, probes 25/25); PKT-02-01 execution PASS (42/42).
-- **Full regression:** `vitest run` — 258 files, 2315 passed, 7 skipped, 0 failed. (Migration 5 is
-  additive: `git diff` shows 0 deletions to `brain-schema.ts`; migrations 1-4 byte-identical.)
+- **Full regression (final accepted authority — Packet H / run6):** the unchanged frozen 258-file
+  suite → **258 files, 2337 passed, 7 authorized skips, 0 failed, rc=0** (run6
+  `FULL_REGRESSION_POST.json` `29d028a2…`, `accepted=true`). Packet H is the final full-regression
+  authority for this exact implementation tree and supersedes the earlier local totals — this
+  update's 2315 and the original gate's 257/2280 below — which are retained only as history.
+  (Migration 5 is additive and migration 6 is additive on top of it: `git diff` shows 0 deletions
+  to `brain-schema.ts` migrations 1-5.)
 - **Lint/type separation:** the 6 new/changed files are eslint-clean and produce zero `tsc` errors;
   pre-existing repo `tsc` errors on unrelated tracked files are separate from this work.
 

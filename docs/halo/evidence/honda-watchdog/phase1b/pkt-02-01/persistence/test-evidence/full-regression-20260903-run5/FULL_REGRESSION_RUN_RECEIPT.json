@@ -1,0 +1,40 @@
+{
+ "packet": "SW-FULL-REGRESSION-EVIDENCE-20260903-G",
+ "run_dir": "full-regression-20260903-run5",
+ "start_utc": "2026-09-03T14:15:08Z",
+ "end_utc": "2026-09-03T14:17:23Z",
+ "cwd": "/home/ubuntu/hs-m1r-isolated-20260830",
+ "argv": "sudo -n unshare -n -m -- sh -c '<F v8 interlock + G squashfs mount + 3 ro snapshot-profile overmounts of /srv/.../{serra-honda,serra-nissan,tony-serra-ford}>' ... exec setpriv --reuid=ubuntu --regid=ubuntu --init-groups env -i HOME=/home/ubuntu USER=ubuntu PATH=/usr/local/bin:/usr/bin:/bin HALO_LEADS_DIR=/tmp/halo-295-leads-20260831 ./node_modules/.bin/vitest run --maxWorkers=2 --config /tmp/sw-full-regression-config-wrapper-20260903-v8.mts --configLoader runner",
+ "test_environment": {
+  "HOME": "/home/ubuntu",
+  "USER": "ubuntu",
+  "PATH": "/usr/local/bin:/usr/bin:/bin",
+  "HALO_LEADS_DIR": "/tmp/halo-295-leads-20260831"
+ },
+ "exit_code": 0,
+ "pid_captured": null,
+ "pre_path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/full-regression-20260903-run5/FULL_REGRESSION_PRE.json",
+ "pre_sha256": "41395b4234d7802bbdf63281d37848b21740b9520d64da9d17278e94e4cdc259",
+ "pre_size": 69986,
+ "raw_log_path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/full-regression-20260903-run5/full-regression.log",
+ "raw_log_sha256": "5b0596d038a7f202ce52dd77aa70ada69b08a7c5697efd914ebd35f1b9a13e36",
+ "raw_log_size": 52807,
+ "log_line_count": 914,
+ "interlock_mount_count": 10,
+ "log_first_line": "INTERLOCK_MOUNTS_BEGIN",
+ "log_last_line": "",
+ "process_proof": {
+  "method": "/proc cwd+cmdline; exclude builder+ancestors; match cwd under repo AND vitest",
+  "examined_pid_count": 730,
+  "excluded_ancestor_pids": [
+   1,
+   261173,
+   593146,
+   1976042,
+   4059577,
+   4076263
+  ],
+  "repo_matching_vitest_matches": [],
+  "no_repo_matching_vitest_process_remains": true
+ }
+}

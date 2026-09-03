@@ -1,0 +1,28 @@
+{
+  "phase": "focused",
+  "superseded_baseline_note": "prior 102/102 explicitly superseded; new interlock-approved 13-file baseline; no comparison to 102",
+  "command": "HALO_LEADS_DIR=/tmp/halo-295-leads-20260831 npx vitest run <13 ordered files> --maxWorkers=2",
+  "ordered_files": [
+    "src/test/pkt-02-01-canonical-watchdog-store.test.ts",
+    "src/test/pkt-02-01-brain-store.test.ts",
+    "src/test/brain-store.test.ts",
+    "src/test/pkt-02-01-adversarial.test.ts",
+    "src/test/pkt-02-01-binding.test.ts",
+    "src/test/pkt-02-01-engine.test.ts",
+    "src/test/pkt-02-01-report.test.ts",
+    "src/test/pkt-02-01-store.test.ts",
+    "src/test/pkt-02-01-leads-input.test.ts",
+    "src/test/pkt-02-01-source-inventory.test.ts",
+    "src/test/brain-record-families.test.ts",
+    "src/test/watchdog-store.test.ts",
+    "src/test/watchdog-notifications-store.test.ts"
+  ],
+  "cwd": "/home/ubuntu/hs-m1r-isolated-20260830",
+  "branch": "codex/halo-295-unshrinkable-inputs",
+  "head": "ecc1f6ec97da9bff66fa03df2f139ddfb1c74ddf",
+  "start_utc": "2026-09-03T03:27:46Z",
+  "end_utc": "2026-09-03T03:27:56Z",
+  "process_exit": 0,
+  "log_sha256": "c432ee8f31ff4918058edf47ae1cbc7e4652d05250e8168ca2502ccfe6844a73",
+  "log_bytes": 1016
+}

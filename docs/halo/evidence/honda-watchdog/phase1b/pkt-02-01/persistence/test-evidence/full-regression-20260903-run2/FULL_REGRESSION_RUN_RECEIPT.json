@@ -1,0 +1,38 @@
+{
+ "packet": "SW-FULL-REGRESSION-EVIDENCE-20260903-D",
+ "start_utc": "2026-09-03T07:23:46Z",
+ "end_utc": "2026-09-03T07:23:47Z",
+ "cwd": "/home/ubuntu/hs-m1r-isolated-20260830",
+ "argv": "sudo -n unshare -n -m -- sh -c '<frozen v6 interlock>' ... ./node_modules/.bin/vitest run --maxWorkers=2 --configLoader runner",
+ "environment_min": {
+  "HOME": "/home/ubuntu",
+  "USER": "ubuntu",
+  "PATH": "/usr/local/bin:/usr/bin:/bin",
+  "HALO_LEADS_DIR": "/tmp/halo-295-leads-20260831"
+ },
+ "only_corrected_argv": "--configLoader runner",
+ "exit_code": 1,
+ "pre_path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/full-regression-20260903-run2/FULL_REGRESSION_PRE.json",
+ "pre_sha256": "8b1c918282ab0ed7518d97bcb8c96509b8bd9feaf1c786b01206442b7d2e102c",
+ "pre_size": 58668,
+ "raw_log_path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/full-regression-20260903-run2/full-regression.log",
+ "raw_log_sha256": "407a23d9360179ee93dadad0f7ea15a3a1806314ba12d6da22cd5c3c993f04c8",
+ "raw_log_size": 2918,
+ "log_first_timestamp": null,
+ "log_last_timestamp": null,
+ "process_proof": {
+  "method": "scan /proc/[0-9]*/cwd+cmdline; exclude builder pid and full ancestor chain; match cwd==isolated repo AND argv contains vitest",
+  "examined_pid_count": 753,
+  "excluded_ancestor_pids": [
+   1,
+   261173,
+   593146,
+   1976042,
+   2318163,
+   2318427
+  ],
+  "repo_matching_vitest_pids": [],
+  "no_repo_matching_vitest_process_remains": true,
+  "note": "unrelated HyperErp workers not treated as matches (different cwd); pids only recorded, no sibling-path cmdline dumped"
+ }
+}

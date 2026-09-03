@@ -22,7 +22,7 @@
   },
   "dealer_id": "21043",
   "generated_note": "Deterministic (no wall-clock in hashes). The dev brain.db is DISPOSABLE (tmp) and is deleted at the end of this run; ONLY this committed evidence is durable. No data is installed into a standing dev or production Brain.",
-  "graph_sha256": "2c43390cc3c12e3ecd0527d5194ae6321f6d345a82e9523f46840b600702054d",
+  "graph_sha256": "480e5ae5587b01d506e71742e5a9e32bbe95a638bc72547e12bf47bc9a9e39c1",
   "hashes": {
     "canonical_reconstructed_sha256": "ae30c07ab4a6e9ae85461dc183c32b94e1ae50c11c5004ab2b51e4d9b965eba1",
     "legacy_content_sha256": "ae30c07ab4a6e9ae85461dc183c32b94e1ae50c11c5004ab2b51e4d9b965eba1",
@@ -46,6 +46,7 @@
       "watchdog_capability_snapshot",
       "watchdog_comparison_reference",
       "watchdog_detection_rule",
+      "watchdog_evaluation_detection_rule",
       "watchdog_finding",
       "watchdog_finding_metric_link",
       "watchdog_grade_target",
@@ -56,9 +57,12 @@
       "watchdog_normalized_dataset",
       "watchdog_report_run",
       "watchdog_report_run_module_link",
+      "watchdog_run_capability_snapshot",
+      "watchdog_run_normalized_dataset",
+      "watchdog_run_source_artifact",
       "watchdog_source_artifact"
     ],
-    "schema_version": 5
+    "schema_version": 6
   },
   "period": "2026-08-24..2026-08-30",
   "pinned_content_sha256": "ae30c07ab4a6e9ae85461dc183c32b94e1ae50c11c5004ab2b51e4d9b965eba1",

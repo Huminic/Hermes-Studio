@@ -1,0 +1,887 @@
+INTERLOCK_MOUNTS_BEGIN
+/dev/loop13 /tmp/sw-full-regression-deps-20260903-v8-mnt squashfs ro,relatime,errors=continue
+/dev/loop13 /home/ubuntu/Claude-store/huminic-studio/node_modules squashfs ro,relatime,errors=continue
+/dev/sdb1[/home/ubuntu/.npm] /home/ubuntu/.npm ext4   ro,relatime
+/dev/sdb1[/home/ubuntu/.local/share/pnpm] /home/ubuntu/.local/share/pnpm ext4   ro,relatime
+/dev/sdb1[/home/ubuntu/.cache/pnpm] /home/ubuntu/.cache/pnpm ext4   ro,relatime
+/dev/sdb1[/tmp/sw-full-regression-config-wrapper-20260903-v8.mts] /tmp/sw-full-regression-config-wrapper-20260903-v8.mts ext4   ro,relatime
+INTERLOCK_MOUNTS_END
+
+ RUN  v3.2.4 /home/ubuntu/hs-m1r-isolated-20260830
+
+ ✓ src/test/rollup.test.ts (7 tests) 4019ms
+   ✓ rollup (SRS Tranche E) > childHasGrantedRollup reflects studio.yaml scope  857ms
+   ✓ rollup (SRS Tranche E) > aggregates count across granted children with wildcard token  691ms
+   ✓ rollup (SRS Tranche E) > denies child without rollup grant even with wildcard token-allowed-profiles  550ms
+   ✓ rollup (SRS Tranche E) > admin token (with wildcard) bypasses the per-child grant requirement  470ms
+   ✓ rollup (SRS Tranche E) > non-wildcard token without child scope is denied  488ms
+   ✓ rollup (SRS Tranche E) > rejects rollup against table not in allowlist  493ms
+   ✓ rollup (SRS Tranche E) > writes a metadata_audit row to the PARENT profile after each rollup  469ms
+ ✓ src/test/pkt-02-01-canonical-watchdog-store.test.ts (57 tests) 5179ms
+   ✓ PKT-02-01 canonical persistence > persists the full graph, reconstructs the PINNED content hash, records graph sha  303ms
+ ✓ src/test/evaluator-spine.test.ts (13 tests) 3270ms
+   ✓ Gate 2 spine ledger — exact 885 keys (req 1) > every row carries every required field (no undefined)  530ms
+   ✓ Gate 2 no synthetic values / PII-free (req 7) > ledger is schema-closed (no customer/VIN field can exist) and carries no VIN token  524ms
+   ✓ Gate 2 recompute + determinism from held files (req 7,9) > recompute from held files is byte-identical to the committed (Prettier-clean) ledger  2143ms
+ ✓ src/test/wiki-mcp.test.ts (13 tests) 2879ms
+   ✓ wiki MCP — auth > rejects requests with no bearer token  1039ms
+   ✓ wiki MCP — admin tools > mcp__issue_token issues + mcp__revoke_token revokes  303ms
+stderr | src/test/notify-dealer.test.ts > notifyDealer — unconfigured recipient > returns 'unconfigured' without throwing and does not call resend
+[notifyDealer] unconfigured: no notifications.lead_recipient (or lead_notifications.adf_email) in studio.yaml for serra-nissan
+
+ ✓ src/test/evaluator-pipeline.test.ts (16 tests) 852ms
+ ✓ src/test/notify-dealer.test.ts (17 tests) 2804ms
+   ✓ notifyDealer — adf-xml profile (Serra) > emits an ADF-XML body that re-parses and calls resend_send_email  463ms
+   ✓ notifyDealer — email profile (Columbia / default) > retries once when the central-mcp stream terminates transiently  656ms
+   ✓ dispatchLeadNotification — multi-recipient routing fan-out (Columbia) > fans out to every routing recipient, each carrying the AI subject + recording link  931ms
+ ✓ src/test/profile-auth.test.ts (12 tests) 955ms
+ ✓ src/test/public-widget-vendor-leak.test.ts (3 tests) 444ms
+ ✓ src/test/evaluator-closure.test.ts (10 tests) 1653ms
+   ✓ Gate 3 closure registry — 855 exact cells (req 1) > every record carries every required field (no undefined, no N/A promotion)  1487ms
+ ✓ src/test/c11-validation-harness.test.ts (8 tests) 1071ms
+   ✓ C.11 fictitious-test-customer end-to-end > Chat — agent roster lists Sage + chat round-trip persists turn  530ms
+   ✓ C.11 fictitious-test-customer end-to-end > Campaigns — create audience + campaign + tick → delivery recorded  304ms
+ ✓ src/test/sentinel.test.ts (48 tests) 1284ms
+ ✓ src/test/consultative-engine.test.ts (4 tests) 1528ms
+   ✓ consultative engine (SRS Tranche C) > runs end-to-end against the Cedar Ridge fixture  492ms
+   ✓ consultative engine (SRS Tranche C) > does NOT bypass DSG even when running with admin authority  485ms
+   ✓ consultative engine (SRS Tranche C) > Cedar Ridge engagement-state.yaml is enrichable with adjacent neighbors  491ms
+ ✓ src/test/active-conversation-notify.test.ts (11 tests) 1137ms
+ ✓ src/test/guardian-text-gate.test.ts (12 tests) 1161ms
+   ✓ Semantic Guardian — hold on unbacked fact-ask > HOLDS (no send) when the model asserts inventory with no canonical backing  500ms
+ ✓ src/test/pkt-02-01-brain-store.test.ts (26 tests) 1142ms
+ ✓ src/test/notification-templates.test.ts (3 tests) 1204ms
+   ✓ per-notification template routing > fans a lead to humans (email card) AND the DMS contact (ADF-XML) in one dispatch  659ms
+   ✓ per-notification template routing > enriches the ADF document with the store brand + lead source  505ms
+ ✓ src/test/tranche-d.test.ts (13 tests) 1056ms
+ ✓ src/test/pen-test-sweep.test.ts (13 tests) 1059ms
+stderr | src/test/threads-assign-api.test.ts > /api/messaging/threads/$threadId/assign (human take-over) > take_over sets the assignee and PAUSES the autonomous agent end-to-end
+[notifyDealer] unconfigured: no notifications.lead_recipient (or lead_notifications.adf_email) in studio.yaml for serra-honda
+
+stderr | src/test/threads-assign-api.test.ts > /api/messaging/threads/$threadId/assign (human take-over) > hand_back clears the assignee and the agent RESUMES
+[notifyDealer] unconfigured: no notifications.lead_recipient (or lead_notifications.adf_email) in studio.yaml for serra-honda
+
+stderr | src/test/threads-assign-api.test.ts > /api/messaging/threads/$threadId/assign (human take-over) > rejects an unknown action
+[notifyDealer] unconfigured: no notifications.lead_recipient (or lead_notifications.adf_email) in studio.yaml for serra-honda
+
+ ✓ src/test/inbound-lead-notify.test.ts (5 tests) 780ms
+   ✓ inbound SMS → lead lands + dealer notified ONCE (new thread only) > treats inbound STOP as opt-out: blacklists the number and suppresses the AI reply  449ms
+stderr | src/test/threads-assign-api.test.ts > /api/messaging/threads/$threadId/assign (human take-over) > 404s for a thread that does not belong to the profile
+[notifyDealer] unconfigured: no notifications.lead_recipient (or lead_notifications.adf_email) in studio.yaml for serra-honda
+
+ ✓ src/test/threads-assign-api.test.ts (4 tests) 815ms
+   ✓ /api/messaging/threads/$threadId/assign (human take-over) > take_over sets the assignee and PAUSES the autonomous agent end-to-end  603ms
+stderr | src/test/webhooks.test.ts > /api/webhooks/vapi/$profile > returns notification:unconfigured when adf_email is missing
+[notifyDealer] unconfigured: no notifications.lead_recipient (or lead_notifications.adf_email) in studio.yaml for serra-honda
+
+ ✓ src/test/automations.test.ts (8 tests) 350ms
+stderr | src/test/webhooks.test.ts > /api/webhooks/textmagic/$profile > honors an explicit ?domain= override over the configured default
+[notifyDealer] unconfigured: no notifications.lead_recipient (or lead_notifications.adf_email) in studio.yaml for serra-honda
+
+ ✓ src/test/webhooks.test.ts (9 tests) 779ms
+   ✓ /api/webhooks/vapi/$profile > records a Vapi end-of-call event as an inbound voice thread and emits a lead notification  375ms
+stderr | src/test/agent-autonomous-reply.test.ts > agent-autonomous-reply > SUPPRESSES a pricing quote (prompt-injection defense) and sends the safe deflection
+[autonomous-reply] SUPPRESSED pricing violation for huminic thread f02d082e-62a3-49b3-bddc-365f2c8a23fb (matched "$24,999") — sending safe deflection
+
+stderr | src/test/agent-autonomous-reply.test.ts > agent-autonomous-reply > NEVER goes dead: dispatches a benign fallback when the provider fails
+[autonomous-reply] provider unavailable for huminic thread 8b9f8e6d-41d5-4388-ab2b-57fc22fea9f6 — sending benign fallback
+
+stderr | src/test/agent-autonomous-reply.test.ts > agent-autonomous-reply > NEVER goes dead: dispatches a benign fallback when the provider THROWS (e.g. rate-limit)
+[autonomous-reply] provider unavailable for huminic thread ebbb7a96-3459-4eb9-b6c7-686f9c378c3c — sending benign fallback
+
+stderr | src/test/agent-autonomous-reply.test.ts > agent-autonomous-reply > NEVER goes dead: dispatches a benign fallback when the provider returns an empty reply
+[autonomous-reply] provider unavailable for huminic thread 89317467-56c8-44ca-92c6-33c2651fabc6 — sending benign fallback
+
+ ✓ src/test/password-reset.test.ts (13 tests) 794ms
+ ✓ src/test/agent-autonomous-reply.test.ts (10 tests) 731ms
+   ✓ agent-autonomous-reply > dispatches an agent reply when rules allow  304ms
+stderr | src/test/inbound-hooks-integration.test.ts > inbound hook → 2-way reply → outbound (integration) > round-trips a chat conversation: create thread, subscribe, auto-reply outbound
+[notifyDealer] unconfigured: no notifications.lead_recipient (or lead_notifications.adf_email) in studio.yaml for serra-honda
+
+stderr | src/test/inbound-hooks-integration.test.ts > inbound hook → 2-way reply → outbound (integration) > CommGate blocks a regulated (sms) outbound inside the hook when the kill switch is off
+[notifyDealer] unconfigured: no notifications.lead_recipient (or lead_notifications.adf_email) in studio.yaml for serra-honda
+
+stderr | src/test/inbound-hooks-integration.test.ts > inbound hook → 2-way reply → outbound (integration) > pauses the AI when a human has taken over the thread
+[notifyDealer] unconfigured: no notifications.lead_recipient (or lead_notifications.adf_email) in studio.yaml for serra-honda
+
+stderr | src/test/inbound-hooks-integration.test.ts > inbound hook → 2-way reply → outbound (integration) > ingests an ADF lead email through the hook (channel email-adf + parsed lead_meta)
+[notifyDealer] unconfigured: no notifications.lead_recipient (or lead_notifications.adf_email) in studio.yaml for serra-honda
+
+ ✓ src/test/inbound-hooks-integration.test.ts (4 tests) 734ms
+   ✓ inbound hook → 2-way reply → outbound (integration) > round-trips a chat conversation: create thread, subscribe, auto-reply outbound  478ms
+ ✓ src/test/agents-chat-api.test.ts (12 tests) 783ms
+   ✓ /api/customer/agent-tasks > POST creates, GET lists, PATCH updates status, DELETE removes  301ms
+ ✓ src/test/marketing-lists-api.test.ts (4 tests) 489ms
+   ✓ audiences API — delete + DNC + CRM guard > DELETE removes a saved list; missing list 404s  363ms
+ ✓ src/test/dashboard-api.test.ts (5 tests) 672ms
+   ✓ /api/customer/dashboard > returns all four tabs and surfaces ingested funnel data  547ms
+ ✓ src/test/dsg-gate.test.ts (8 tests) 325ms
+ ✓ src/test/password-hash.test.ts (9 tests) 597ms
+ ✓ src/test/brain-record-families.test.ts (11 tests) 541ms
+ ✓ src/test/customer-data-uploads-api.test.ts (2 tests) 405ms
+   ✓ /api/customer/data-uploads > lets a scoped partner upload and list Data Store files for an in-scope profile  347ms
+ ✓ src/test/unified-widget-api.test.ts (19 tests) 523ms
+   ✓ POST /api/public/callback-request > creates a Sales lead thread and trips the dealer notification  326ms
+ ✓ src/test/tavus-webhook.test.ts (5 tests) 529ms
+   ✓ /api/webhooks/tavus/$profile > records a Tavus conversation as an inbound video thread + emits notification (same profile/agent path)  436ms
+ ✓ src/test/customer-wiki-api.test.ts (7 tests) 397ms
+ ✓ src/test/widget-chat-grounding.test.ts (3 tests) 424ms
+   ✓ public widget chat — Information-Store grounding (C) > injects wiki content when the question strongly matches the Information Store  382ms
+ ✓ src/test/threads-delete-api.test.ts (3 tests) 361ms
+   ✓ /api/messaging/threads/$threadId DELETE > deletes a profile-owned thread and removes it from the list  314ms
+ ✓ src/test/lead-flow.test.ts (11 tests) 393ms
+stderr | src/test/customer-widgets-api.test.ts > /api/public/widget-form (AC.4.4) > records a form submission as an inbound message in the right domain
+[notifyDealer] unconfigured: no notifications.lead_recipient (or lead_notifications.adf_email) in studio.yaml for huminic
+
+ ✓ src/test/customer-widgets-api.test.ts (4 tests) 428ms
+   ✓ /api/customer/widgets > returns ready + missing-file states per widget  312ms
+ ✓ src/test/ingest-native-metrics.test.ts (25 tests) 699ms
+ ✓ src/test/customer-chat-api.test.ts (9 tests) 452ms
+ ✓ src/test/automations-api.test.ts (4 tests) 460ms
+   ✓ /api/customer/automations > GET seeds the two required Serra drafts and returns the agent roster  386ms
+ ✓ src/test/gate5b-synthesis-audit.test.ts (34 tests) 422ms
+ ✓ src/test/threads-reply-takeover-api.test.ts (2 tests) 340ms
+ ✓ src/test/partner-teambox.test.ts (8 tests) 395ms
+stderr | src/test/customer-reports.test.ts > buildCustomerReports > marks the funnel unavailable when central-mcp is unconfigured
+[lead-funnel] serra-honda live lead query failed: unconfigured
+
+stderr | src/test/customer-reports.test.ts > buildCustomerReports > marks the funnel unavailable on an unrecognized VIN response shape
+[lead-funnel] serra-honda unexpected lead response shape
+
+ ✓ src/test/customer-reports.test.ts (8 tests) 562ms
+stdout | src/test/comm-reader.test.ts > Enhanced weekly Communication Log — real handoff admission (Gate 4C1) > admission proof recomputes byte-identically + reconciles to the manifest counts
+serra-honda: rows=1530 leads=386 reps=12
+serra-nissan: rows=760 leads=237 reps=13
+tony-serra-ford: rows=526 leads=199 reps=10
+wrote docs/halo/evidence/m1r/comms/comm-admission-aggregates.json
+
+ ✓ src/test/comm-reader.test.ts (14 tests) 503ms
+   ✓ Enhanced weekly Communication Log — real handoff admission (Gate 4C1) > admission proof recomputes byte-identically + reconciles to the manifest counts  480ms
+stderr | src/test/campaign-worker.test.ts > tickCampaigns > renders unresolved template vars empty and reports them
+[campaign-worker] campaign d3432a6e-2172-46d9-8d3b-a48b6bbc73c1 (huminic) had unresolved template vars: vehicle_model, service_type
+
+ ✓ src/test/knowledge-mcp.test.ts (4 tests) 308ms
+ ✓ src/test/campaign-worker.test.ts (6 tests) 432ms
+ ✓ src/test/lead-flow-api.test.ts (4 tests) 456ms
+   ✓ /api/customer/lead-flow > GET returns an empty flow + the account master gate  387ms
+ ✓ src/test/dashboard-metrics.test.ts (12 tests) 505ms
+ ✓ src/test/dashboards-api.test.ts (4 tests) 344ms
+   ✓ /api/customer/dashboards > GET returns empty cards + the available sources  314ms
+stdout | src/test/analytics.test.ts > getAnalytics() > returns a valid structure with an empty database
+[event-store] SQLite event store ready at /tmp/analytics-test-La3USD/.runtime/events.db
+
+stdout | src/test/analytics.test.ts > getAnalytics() > returns zero counts for an empty database
+[event-store] SQLite event store ready at /tmp/analytics-test-qVucPE/.runtime/events.db
+
+stdout | src/test/analytics.test.ts > getAnalytics() > dailyVolume always has exactly 14 entries
+[event-store] SQLite event store ready at /tmp/analytics-test-U5jogE/.runtime/events.db
+
+stdout | src/test/analytics.test.ts > getAnalytics() > counts total events correctly
+[event-store] SQLite event store ready at /tmp/analytics-test-qJ1dtE/.runtime/events.db
+
+stdout | src/test/analytics.test.ts > getAnalytics() > counts distinct sessions
+[event-store] SQLite event store ready at /tmp/analytics-test-y1iKCE/.runtime/events.db
+
+stdout | src/test/analytics.test.ts > getAnalytics() > tracks tool frequency by name
+[event-store] SQLite event store ready at /tmp/analytics-test-IEy3NE/.runtime/events.db
+
+stdout | src/test/analytics.test.ts > getAnalytics() > toolFrequency is sorted by total descending
+[event-store] SQLite event store ready at /tmp/analytics-test-nFhcyE/.runtime/events.db
+
+stdout | src/test/analytics.test.ts > getAnalytics() > toolFrequency has at most 15 entries
+[event-store] SQLite event store ready at /tmp/analytics-test-MH3iRF/.runtime/events.db
+
+stdout | src/test/analytics.test.ts > getAnalytics() > populates timeRange after events are inserted
+[event-store] SQLite event store ready at /tmp/analytics-test-z7VqdE/.runtime/events.db
+
+stdout | src/test/analytics.test.ts > getAnalytics() > timeRange is null for empty database
+[event-store] SQLite event store ready at /tmp/analytics-test-XZ0C2E/.runtime/events.db
+
+stdout | src/test/analytics.test.ts > getAnalytics() > eventTypeCounts includes tool events
+[event-store] SQLite event store ready at /tmp/analytics-test-NlhSvE/.runtime/events.db
+
+stdout | src/test/analytics.test.ts > getAnalytics() > returns consistent results on repeated calls (no mutation)
+[event-store] SQLite event store ready at /tmp/analytics-test-ne6iqB/.runtime/events.db
+
+ ✓ src/test/analytics.test.ts (12 tests) 378ms
+ ✓ src/test/m2b-render-html.test.ts (8 tests) 449ms
+ ✓ src/test/files-api-tenant-isolation.test.ts (7 tests) 422ms
+ ✓ src/test/watchdog-selftest.test.ts (12 tests) 449ms
+ ✓ src/test/vin-watcher.test.ts (16 tests) 434ms
+ ✓ src/test/lead-notify-retry.test.ts (2 tests) 288ms
+ ✓ src/test/widget-contact-grounding.test.ts (6 tests) 187ms
+ ✓ src/test/chat-info-store.test.ts (3 tests) 332ms
+ ✓ src/test/engagements.test.ts (4 tests) 147ms
+ ✓ src/test/messaging-threads-preview.test.ts (4 tests) 323ms
+ ✓ src/test/lookup-miss.test.ts (5 tests) 393ms
+ ✓ src/test/admin-boundary.test.ts (5 tests) 383ms
+ ✓ src/test/halo-report-api.test.ts (5 tests) 285ms
+ ✓ src/test/autonomous-subscription.test.ts (4 tests) 281ms
+ ✓ src/test/engagement-state-api.test.ts (4 tests) 351ms
+ ✓ src/test/comm-content-audit.test.ts (25 tests) 428ms
+ ✓ src/test/pkt-02-01-engine.test.ts (9 tests) 361ms
+ ✓ src/test/pkt-02-01-store.test.ts (7 tests) 304ms
+ ✓ src/test/scoped-activate.test.ts (5 tests) 245ms
+ ✓ src/test/widget-single-id.test.ts (4 tests) 288ms
+ ✓ src/test/evaluator-promotion-probe.test.ts (17 tests) 306ms
+ ✓ src/test/m1r-notification-examples.test.ts (5 tests) 207ms
+ ✓ src/test/resend-stream-timeout.test.ts (1 test) 272ms
+ ✓ src/test/widget-form-render.test.ts (3 tests) 257ms
+ ✓ src/test/metric-source-freshness.test.ts (7 tests) 214ms
+ ✓ src/test/brain-sync.test.ts (3 tests) 204ms
+ ✓ src/test/chat-memorialization.test.ts (3 tests) 271ms
+ ✓ src/test/m2r-sw295-inventory.test.ts (10 tests) 132ms
+ ✓ src/test/native-metrics-api.test.ts (3 tests) 242ms
+ ✓ src/test/metadata-substrate.test.ts (6 tests) 351ms
+ ✓ src/test/widget-form-notify.test.ts (1 test) 420ms
+   ✓ widget-form submission → lead lands + dealer notification trips > creates a lead thread AND invokes notifyDealer with the lead  418ms
+ ✓ src/test/models-api-label.test.ts (3 tests) 288ms
+ ✓ src/test/messaging-hub-store.test.ts (11 tests) 224ms
+stdout | src/test/event-store.test.ts > event-store > appendEvent() returns a sequence number
+[event-store] SQLite event store ready at /tmp/event-store-test-8C09SI/.runtime/events.db
+
+stdout | src/test/event-store.test.ts > event-store > appendEvent() increments sequence numbers
+[event-store] SQLite event store ready at /tmp/event-store-test-UIr02L/.runtime/events.db
+
+stdout | src/test/event-store.test.ts > event-store > getEventsSince() retrieves events after a given seq
+[event-store] SQLite event store ready at /tmp/event-store-test-o0oPzL/.runtime/events.db
+
+stdout | src/test/event-store.test.ts > event-store > getEventsSince() returns empty array for unknown session
+[event-store] SQLite event store ready at /tmp/event-store-test-2DOFCJ/.runtime/events.db
+
+stdout | src/test/event-store.test.ts > event-store > queryAuditEvents() returns all events by default
+[event-store] SQLite event store ready at /tmp/event-store-test-seNtsJ/.runtime/events.db
+
+stdout | src/test/event-store.test.ts > event-store > queryAuditEvents() filters by sessionKey
+[event-store] SQLite event store ready at /tmp/event-store-test-H57dOM/.runtime/events.db
+
+stdout | src/test/event-store.test.ts > event-store > queryAuditEvents() filters by eventTypes
+[event-store] SQLite event store ready at /tmp/event-store-test-AYSOoM/.runtime/events.db
+
+stdout | src/test/event-store.test.ts > event-store > queryAuditEvents() returns session list
+[event-store] SQLite event store ready at /tmp/event-store-test-gDTVzL/.runtime/events.db
+
+ ✓ src/test/event-store.test.ts (8 tests) 168ms
+ ✓ src/test/embeddings.test.ts (4 tests) 327ms
+ ✓ src/test/gate4h-downstream-contract.test.ts (29 tests) 347ms
+ ✓ src/test/comms-blacklist.test.ts (7 tests) 189ms
+ ✓ src/test/hermes-self-improvement-watcher.test.ts (4 tests) 281ms
+ ✓ src/test/brain-store.test.ts (7 tests) 298ms
+ ✓ src/test/reconciliation.test.ts (3 tests) 203ms
+ ✓ src/test/alert-display-model.test.ts (4 tests) 133ms
+ ✓ src/test/watchdog-fixture.test.ts (7 tests) 220ms
+ ✓ src/test/notifications-routing.test.ts (6 tests) 287ms
+ ✓ src/test/m1r-notification-paused-path.test.ts (3 tests) 200ms
+stderr | src/test/lead-notify-cooldown.test.ts > notifyNewLead cooldown gate > does NOT suppress when notify_cooldown_hours is 0
+[notifyDealer] unconfigured: central-mcp token not set (var=CENTRAL_MCP_TOKEN)
+
+ ✓ src/test/lead-notify-cooldown.test.ts (3 tests) 197ms
+ ✓ src/test/guarded-wiki.test.ts (4 tests) 165ms
+ ✓ src/test/comms-log.test.ts (2 tests) 197ms
+ ✓ src/test/sentinel-backup.test.ts (3 tests) 178ms
+ ✓ src/test/activity-log.test.ts (3 tests) 155ms
+ ✓ src/test/brain-readiness.test.ts (4 tests) 158ms
+ ✓ src/test/halo-card-render.test.ts (11 tests) 161ms
+ ✓ src/test/m2b-report-model.test.ts (7 tests) 191ms
+ ✓ src/test/pkt-02-01-report.test.ts (5 tests) 179ms
+ ✓ src/test/report-ingest-classify.test.ts (8 tests) 176ms
+ ✓ src/test/accepted-facts.test.ts (40 tests) 145ms
+ ✓ src/test/pkt-02-01-adversarial.test.ts (9 tests) 154ms
+ ✓ src/test/plugin-loader.test.ts (22 tests) 227ms
+ ✓ src/test/engagement-state-writer.test.ts (11 tests) 362ms
+ ✓ src/test/messaging-hub-reports.test.ts (5 tests) 219ms
+ ✓ src/test/autonomous-grounding.test.ts (5 tests) 314ms
+ ✓ src/test/report-ingest.test.ts (16 tests) 211ms
+ ✓ src/test/integrity-scanner.test.ts (5 tests) 186ms
+ ✓ src/test/watchdog-store.test.ts (4 tests) 190ms
+ ✓ src/test/halo-m1-proof.test.ts (5 tests) 222ms
+ ✓ src/test/watchdog-notifications-store.test.ts (12 tests) 188ms
+ ✓ src/test/crew-store.test.ts (9 tests) 91ms
+ ✓ src/test/customer-agents.test.ts (11 tests) 287ms
+stdout | src/test/comm-family-contract.test.ts > Enhanced weekly Communication Log — family contract (Gate 4C1) > committed contract JSON is byte-identical to the code mirror (no drift)
+wrote docs/halo/contract/enhanced-sales-communication-log-weekly-contract.json
+
+ ✓ src/test/comm-family-contract.test.ts (6 tests) 161ms
+ ✓ src/test/comm-capability-delta.test.ts (13 tests) 174ms
+ ✓ src/test/alert-dispatch.test.ts (5 tests) 207ms
+ ✓ src/test/messaging-adapters.test.ts (10 tests) 117ms
+ ✓ src/test/leads-real-golden.test.ts (5 tests) 234ms
+stderr | src/test/crm-guru.test.ts > assembleCanonicalFunnel — metric split > surfaces capping + unrecognized lead types in provenance (never silent)
+[crm-guru] lead window hit the API page ceiling — opportunity counts may undercount.
+[crm-guru] unrecognized lead types (possible undercount): CHAT, SHOWROOM
+
+ ✓ src/test/crm-guru.test.ts (14 tests) 98ms
+ ✓ src/test/gate4f-scheduled-residual-audit.test.ts (11 tests) 106ms
+stdout | src/test/plugin-bootstrap.test.ts > getLoadedPlugins > returns an empty list when the plugins root does not exist
+[plugin-bootstrap] loaded 0 plugin(s); 0 issue(s)
+
+stdout | src/test/plugin-bootstrap.test.ts > getLoadedPlugins > loads a valid plugin from the bootstrap root
+[plugin-bootstrap] loaded 1 plugin(s); 0 issue(s)
+  - customer-console@0.1.0: 1 routes, 1 slots, 1 bundles
+
+stdout | src/test/plugin-bootstrap.test.ts > getLoadedPlugins > memoizes the result and returns the cached value on subsequent calls
+[plugin-bootstrap] loaded 1 plugin(s); 0 issue(s)
+  - customer-console@0.1.0: 1 routes, 1 slots, 1 bundles
+
+stdout | src/test/plugin-bootstrap.test.ts > getLoadedPlugins > reloads when fresh: true is set
+[plugin-bootstrap] loaded 1 plugin(s); 0 issue(s)
+  - customer-console@0.1.0: 1 routes, 1 slots, 1 bundles
+[plugin-bootstrap] loaded 0 plugin(s); 0 issue(s)
+
+stdout | src/test/plugin-bootstrap.test.ts > getLoadedPlugins > reloads when the cache key changes (different pluginsRoot)
+[plugin-bootstrap] loaded 1 plugin(s); 0 issue(s)
+  - customer-console@0.1.0: 1 routes, 1 slots, 1 bundles
+[plugin-bootstrap] loaded 0 plugin(s); 0 issue(s)
+
+stdout | src/test/plugin-bootstrap.test.ts > summarize > flattens plugin manifests into summary entries
+[plugin-bootstrap] loaded 1 plugin(s); 0 issue(s)
+  - customer-console@0.1.0: 1 routes, 1 slots, 1 bundles
+
+stdout | src/test/plugin-bootstrap.test.ts > summarize > surfaces issues from the load result
+[plugin-bootstrap] loaded 0 plugin(s); 1 issue(s)
+
+stderr | src/test/plugin-bootstrap.test.ts > summarize > surfaces issues from the load result
+[plugin-bootstrap] issue: broken-plugin field=display_name — Required
+
+ ✓ src/test/plugin-bootstrap.test.ts (7 tests) 63ms
+ ✓ src/test/consultant-synthesis.test.ts (20 tests) 170ms
+ ✓ src/test/crm-audience.test.ts (3 tests) 143ms
+ ✓ src/test/lead-source-detail.test.ts (3 tests) 103ms
+ ✓ src/test/alert-engine.test.ts (6 tests) 162ms
+ ✓ src/test/missed-opportunities.test.ts (3 tests) 148ms
+ ✓ src/test/store-performance-trend.test.ts (2 tests) 89ms
+ ✓ src/test/demo-comms-guard.test.ts (15 tests) 117ms
+ ✓ src/test/auth-middleware.test.ts (26 tests) 33ms
+ ✓ src/test/accepted-findings.test.ts (17 tests) 129ms
+ ✓ src/test/halo-report-card.test.ts (8 tests) 116ms
+ ✓ src/test/messaging-hub-performance.test.ts (3 tests) 90ms
+ ✓ src/test/audience-resolver.test.ts (3 tests) 122ms
+ ✓ src/test/data-issues.test.ts (2 tests) 71ms
+ ✓ src/test/cockpit-data.test.ts (20 tests) 45ms
+ ✓ src/test/gate4g-final-residual-audit.test.ts (15 tests) 226ms
+ ✓ src/test/notifications.test.ts (5 tests) 15ms
+ ✓ src/test/catchup-immediate.test.ts (7 tests) 40ms
+ ✓ src/test/thread-takeover.test.ts (2 tests) 60ms
+ ✓ src/test/engagement-state.test.ts (10 tests) 73ms
+ ✓ src/test/evaluator-provenance-period.test.ts (14 tests) 28ms
+ ✓ src/test/pkt-02-01-leads-input.test.ts (4 tests) 105ms
+ ✓ src/test/rate-limit.test.ts (10 tests) 45ms
+ ✓ src/test/data-freshness.test.ts (11 tests) 83ms
+ ✓ src/test/metric-values-missing-not-zero.test.ts (1 test) 35ms
+ ✓ src/test/evaluator-semantic-validator.test.ts (67 tests) 58ms
+ ✓ src/test/task-store.test.ts (11 tests) 95ms
+ ✓ src/test/send-windows.test.ts (16 tests) 46ms
+stdout | src/test/comms-gate.test.ts > checkCommGate — fail-closed layers > SMS consent: blocks "Pending" + null consent with empty opt-in list (fail-closed)
+[sms-consent] t {"contactId":55,"phone":"+12025550123","subscriberStatus":"Pending","consent":"unknown","decision":"block","source":"subscriber-status"}
+
+stdout | src/test/comms-gate.test.ts > checkCommGate — fail-closed layers > SMS consent: allows an opted-in + consented contact when the status is configured
+[sms-consent] t {"contactId":55,"phone":"+12025550123","subscriberStatus":"Active","consent":"express","decision":"allow","source":"ok"}
+
+stdout | src/test/comms-gate.test.ts > checkCommGate — fail-closed layers > SMS consent: fails CLOSED on a VIN lookup error (does NOT honor fail-open)
+[sms-consent] t {"contactId":55,"phone":"+12025550123","subscriberStatus":null,"consent":"unknown","decision":"block","source":"vin-error"}
+
+ ✓ src/test/comms-gate.test.ts (22 tests) 54ms
+ ✓ src/test/salesperson-effectiveness.test.ts (2 tests) 48ms
+ ✓ src/test/gate5a-baseline-rank-audit.test.ts (13 tests) 56ms
+ ✓ src/test/m1r-real-data-e2e.test.ts (43 tests) 28ms
+ ✓ src/test/ingest-auth.test.ts (14 tests) 45ms
+ ✓ src/test/immediate-exclude.test.ts (11 tests) 58ms
+ ✓ src/test/studio-config.test.ts (12 tests) 98ms
+ ✓ src/test/comm-content-features.test.ts (15 tests) 9ms
+ ✓ src/test/chart-utils.test.ts (19 tests) 57ms
+ ✓ src/test/provisional-adapter.test.ts (22 tests) 22ms
+ ✓ src/test/leads-classifier.test.ts (25 tests) 57ms
+ ✓ src/test/competitor.test.ts (2 tests) 26ms
+ ✓ src/test/sales-growth-card.test.ts (6 tests) 58ms
+ ✓ src/test/evaluator-negative-controls.test.ts (13 tests) 34ms
+ ✓ src/test/catchup-common.test.ts (7 tests) 25ms
+ ✓ src/test/evaluator-data-minimization.test.ts (6 tests) 15ms
+ ✓ src/test/profile-soul-agents.test.ts (5 tests) 38ms
+ ✓ src/test/gate4i-response-times-audit.test.ts (18 tests) 57ms
+ ✓ src/test/ai-conversation-insights.test.ts (4 tests) 34ms
+ ✓ src/test/native-scheduled-provenance.test.ts (4 tests) 25ms
+ ✓ src/test/metric-values.test.ts (1 test) 50ms
+ ✓ src/test/watchdog-metric-catalog.test.ts (4 tests) 23ms
+ ✓ src/test/cockpit-window.test.ts (7 tests) 32ms
+ ✓ src/test/m2b-opportunities.test.ts (5 tests) 14ms
+ ✓ src/test/leads-reader.test.ts (7 tests) 17ms
+ ✓ src/test/halo-ai-narrative.test.ts (23 tests) 34ms
+ ✓ src/test/operations-aggregator.test.ts (4 tests) 32ms
+ ✓ src/test/gate5a-evidence-hashes.test.ts (2 tests) 8ms
+ ✓ src/test/watchdog-baseline.test.ts (5 tests) 8ms
+ ✓ src/test/frontmatter.test.ts (10 tests) 23ms
+ ✓ src/test/power-packs.test.ts (7 tests) 27ms
+ ✓ src/test/watchdog-comms-rules.test.ts (7 tests) 27ms
+ ✓ src/test/session-utils.test.ts (35 tests) 59ms
+ ✓ src/test/persona-compliance.test.ts (13 tests) 17ms
+ ✓ src/test/sms-triggers.test.ts (22 tests) 21ms
+ ✓ src/test/catchup-followup.test.ts (7 tests) 53ms
+ ✓ src/test/memory-parser.test.ts (24 tests) 9ms
+ ✓ src/test/vin-client.test.ts (15 tests) 23ms
+ ✓ src/test/comm-evidence-hashes.test.ts (10 tests) 24ms
+ ✓ src/test/comm-metrics.test.ts (19 tests) 33ms
+ ✓ src/test/pii-redactor.test.ts (15 tests) 11ms
+ ✓ src/test/portal-host.test.ts (7 tests) 5ms
+ ✓ src/test/evaluator-strict-predicate.test.ts (18 tests) 27ms
+ ✓ src/test/structured-candidate-audit.test.ts (15 tests) 24ms
+ ✓ src/test/lead-opportunities.test.ts (18 tests) 18ms
+ ✓ src/test/evaluator-gate3-evidence-hashes.test.ts (2 tests) 15ms
+ ✓ src/test/chat-contact-extract.test.ts (12 tests) 8ms
+ ✓ src/test/comms-scheduler.test.ts (3 tests) 17ms
+ ✓ src/test/evaluator-leads-metrics.test.ts (14 tests) 19ms
+ ✓ src/test/gate6-pdf-manifest.test.ts (3 tests) 12ms
+ ✓ src/test/background-ticks.test.ts (6 tests) 12ms
+ ✓ src/test/gate4j-crm-reconciliation-audit.test.ts (12 tests) 19ms
+ ✓ src/test/provisional-prototype-card.test.ts (6 tests) 11ms
+ ✓ src/test/evaluator-evidence-hashes.test.ts (2 tests) 14ms
+ ✓ src/test/leads-family-contract.test.ts (9 tests) 26ms
+ ✓ src/test/contact-csv.test.ts (5 tests) 7ms
+ ✓ src/test/leads-evidence-hashes.test.ts (2 tests) 8ms
+ ✓ src/test/ksg-gate.test.ts (10 tests) 15ms
+ ✓ src/test/halo-manifest-and-layers.test.ts (10 tests) 16ms
+ ✓ src/test/evaluator-baseline-registry.test.ts (6 tests) 11ms
+ ✓ src/test/gate5b-evidence-hashes.test.ts (2 tests) 16ms
+ ✓ src/test/metric-values-native.test.ts (8 tests) 10ms
+ ✓ src/test/utils.test.ts (6 tests) 22ms
+ ✓ src/test/report-audit.test.ts (7 tests) 7ms
+ ✓ src/test/gate4g-evidence-hashes.test.ts (2 tests) 12ms
+ ✓ src/test/gate4i-evidence-hashes.test.ts (2 tests) 9ms
+ ✓ src/test/widget-monitor.test.ts (7 tests) 8ms
+ ✓ src/test/evaluator-metric-spec.test.ts (1 test) 10ms
+ ✓ src/test/gauge-geom.test.ts (7 tests) 12ms
+ ✓ src/test/profiles-isolation-guard.test.ts (3 tests) 4ms
+ ✓ src/test/phone-handle.test.ts (8 tests) 7ms
+ ✓ src/test/adf-xml.test.ts (7 tests) 12ms
+ ✓ src/test/gate4h-evidence-hashes.test.ts (2 tests) 8ms
+ ✓ src/test/pkt-02-01-binding.test.ts (6 tests) 12ms
+ ✓ src/test/gate4j-evidence-hashes.test.ts (2 tests) 7ms
+ ✓ src/test/dealer-safe.test.ts (7 tests) 8ms
+ ✓ src/test/vin-sms-consent.test.ts (11 tests) 7ms
+ ✓ src/test/pkt-02-01-source-inventory.test.ts (5 tests) 8ms
+ ✓ src/test/gate4f-evidence-hashes.test.ts (2 tests) 8ms
+ ✓ src/test/upload-result-note.test.ts (5 tests) 6ms
+ ✓ src/test/host-stats.test.ts (2 tests) 4ms
+ ✓ src/test/active-acceptance-guard.test.ts (4 tests) 6ms
+ ✓ src/test/m1r-cage-comm-reconciliation.test.ts (10 tests | 6 skipped) 4ms
+ ✓ src/test/evaluator-dashboard-metrics.test.ts (8 tests) 8ms
+ ✓ src/test/cockpit-tabs.test.ts (4 tests) 4ms
+ ✓ src/test/dashboard-reconciliation.test.ts (2 tests | 1 skipped) 7ms
+ ✓ src/test/teambox-comms-ui.test.tsx (6 tests) 1173ms
+   ✓ Teambox — channel tabs + counts > shows All plus per-channel tabs with accurate counts and no sales/service segment  459ms
+ ✓ src/test/agents-chat-ui.test.tsx (5 tests) 1272ms
+   ✓ New Task interview (F1–F5) > capable → cadence → notify → review → confirm creates a structured record  969ms
+ ✓ src/test/campaigns-ia.test.tsx (6 tests) 1457ms
+   ✓ Marketing IA > renders exactly Overview/Campaigns/Automations/Lists tabs, no Triggers  493ms
+   ✓ Marketing IA > shows renamed overview cards reflecting real state, no global New campaign button  321ms
+stderr | src/test/console-renderers.test.tsx > console-renderers registry > each renderer mounts without throwing using minimal valid props
+An update to CustomerPerformanceRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerPerformanceRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerPerformanceRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerPerformanceRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerPerformanceRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerPerformanceRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerPerformanceRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerPerformanceRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerPerformanceRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerPerformanceRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerKnowledgeRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerKnowledgeRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerToolsWidgetRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerToolsWidgetRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerDataRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerDataRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerPerformanceRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerPerformanceRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerActivityRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerActivityRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to NativePerformancePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to HaloReportCardPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerChatRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerAgentsRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to DashboardLanding inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to NativePerformancePanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to HaloReportCardPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerAgentsRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerNotificationsRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to DashboardLanding inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to IssuesTab inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerNotificationsRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/test/console-renderers.test.tsx > console-renderers registry > chat renderer initially shows a loading state while fetching agents
+An update to CustomerChatRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/test/console-renderers.test.tsx > console-renderers registry > knowledge renderer shows the company wiki shell without leaking the slug
+An update to CustomerKnowledgeRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/test/console-renderers.test.tsx > console-renderers registry > tools-widget renderer surfaces the unified widget launch surface
+An update to CustomerToolsWidgetRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/test/console-renderers.test.tsx > console-renderers registry > data renderer mounts the native reports view (fetches /api/customer/reports)
+An update to CustomerDataRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CustomerDataRenderer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/test/dashboard-landing.test.tsx (2 tests) 966ms
+   ✓ DashboardLanding (report sections integration) > renders the Impact Board, Engagement Ladder, and Night Shift & Resurrections from the view  612ms
+   ✓ DashboardLanding (report sections integration) > the "Create alert" button opens the alert modal  352ms
+stderr | src/test/console-renderers.test.tsx > console-renderers registry > performance renderer surfaces dashboard builder and PDF export controls
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+ ✓ src/test/console-renderers.test.tsx (18 tests) 1296ms
+   ✓ console-renderers registry > each renderer mounts without throwing using minimal valid props  759ms
+ ✓ src/test/alert-wizard.test.tsx (3 tests) 500ms
+   ✓ AlertWizard > fetches the catalog, defaults direction, stores a percent threshold as 0–1  397ms
+ ✓ src/test/ds/settings-row.test.tsx (5 tests) 347ms
+ ✓ src/test/ds/section-header.test.tsx (5 tests) 298ms
+ ✓ src/test/ds/empty-state.test.tsx (5 tests) 254ms
+ ✓ src/test/ds/list-item.test.tsx (7 tests) 292ms
+ ✓ src/test/cockpit-powerpack-containment.test.tsx (3 tests) 339ms
+   ✓ Power Pack layout — overflow AND overlap regression > renders name, description, AND status for every pack (all three remain readable)  334ms
+ ✓ src/test/AlertsPanel.render.test.tsx (2 tests) 142ms
+ ✓ src/test/engagement-detail-screen.test.tsx (3 tests) 152ms
+ ✓ src/test/halo-report-card-ui.test.tsx (5 tests) 197ms
+ ✓ src/test/store-picker-landing.test.tsx (1 test) 169ms
+ ✓ src/test/native-performance-panel.test.tsx (2 tests) 198ms
+ ✓ src/test/ds/status-badge.test.tsx (7 tests) 82ms
+ ✓ src/test/ds/card.test.tsx (7 tests) 60ms
+
+ Test Files  258 passed (258)
+      Tests  2337 passed | 7 skipped (2344)
+   Start at  08:12:04
+   Duration  110.70s (transform 9.71s, setup 2.16s, collect 38.91s, tests 82.45s, environment 15.14s, prepare 32.06s)
+

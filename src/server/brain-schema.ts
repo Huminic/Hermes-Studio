@@ -796,6 +796,65 @@ CREATE TABLE IF NOT EXISTS watchdog_alert_candidate (
 );
 `,
   },
+  {
+    version: 6,
+    name: 'watchdog_run_lineage_links',
+    sql: `
+-- Additive (migration 5 stays byte-immutable). Explicit run→lineage membership so the
+-- graph manifest covers EXACTLY the supplied/linked source artifacts, normalized
+-- datasets, and capability snapshots — including ones not referenced by an observation
+-- — and never sweeps unrelated same-profile/dealer/period rows. Plus an explicit
+-- evaluation→detection-rule identity link (no DR-id-by-convention guessing).
+
+CREATE TABLE IF NOT EXISTS watchdog_run_source_artifact (
+  run_key            TEXT NOT NULL,
+  source_artifact_id TEXT NOT NULL,
+  PRIMARY KEY (run_key, source_artifact_id),
+  FOREIGN KEY (run_key) REFERENCES watchdog_module_run(run_key),
+  FOREIGN KEY (source_artifact_id) REFERENCES watchdog_source_artifact(source_artifact_id)
+);
+CREATE INDEX IF NOT EXISTS watchdog_run_source_artifact_run ON watchdog_run_source_artifact(run_key);
+
+CREATE TABLE IF NOT EXISTS watchdog_run_normalized_dataset (
+  run_key               TEXT NOT NULL,
+  normalized_dataset_id TEXT NOT NULL,
+  PRIMARY KEY (run_key, normalized_dataset_id),
+  FOREIGN KEY (run_key) REFERENCES watchdog_module_run(run_key),
+  FOREIGN KEY (normalized_dataset_id) REFERENCES watchdog_normalized_dataset(normalized_dataset_id)
+);
+CREATE INDEX IF NOT EXISTS watchdog_run_normalized_dataset_run ON watchdog_run_normalized_dataset(run_key);
+
+CREATE TABLE IF NOT EXISTS watchdog_run_capability_snapshot (
+  run_key                TEXT NOT NULL,
+  capability_snapshot_id TEXT NOT NULL,
+  PRIMARY KEY (run_key, capability_snapshot_id),
+  FOREIGN KEY (run_key) REFERENCES watchdog_module_run(run_key),
+  FOREIGN KEY (capability_snapshot_id) REFERENCES watchdog_capability_snapshot(capability_snapshot_id)
+);
+CREATE INDEX IF NOT EXISTS watchdog_run_capability_snapshot_run ON watchdog_run_capability_snapshot(run_key);
+
+CREATE TABLE IF NOT EXISTS watchdog_evaluation_detection_rule (
+  run_key           TEXT NOT NULL,
+  metric_id         TEXT NOT NULL,
+  detection_rule_id TEXT NOT NULL,
+  PRIMARY KEY (run_key, metric_id),
+  FOREIGN KEY (run_key, metric_id) REFERENCES watchdog_metric_evaluation(run_key, metric_id),
+  FOREIGN KEY (detection_rule_id) REFERENCES watchdog_detection_rule(detection_rule_id)
+);
+CREATE INDEX IF NOT EXISTS watchdog_evaluation_detection_rule_rule ON watchdog_evaluation_detection_rule(detection_rule_id);
+
+-- Explicit binding-derived MEASUREMENT/evaluation state, distinct from the GOVERNED
+-- disposition (which is stored in watchdog_metric_observation.disposition). This lets a
+-- provisional measured-unscored observation carry a value while remaining
+-- calculation-pending/ungraded. Legacy Observation.status cannot encode these.
+ALTER TABLE watchdog_metric_evaluation ADD COLUMN evaluation_state TEXT;
+
+-- Frozen-schema required field for a genuinely_not_available disposition: the exact
+-- named non-empty affirmative finite-investigation evidence ref (generic prose does not
+-- satisfy the gate). Covered by the graph manifest.
+ALTER TABLE watchdog_metric_observation ADD COLUMN affirmative_investigation_evidence_ref TEXT;
+`,
+  },
 ]
 
 export function migrationChecksum(sql: string): string {

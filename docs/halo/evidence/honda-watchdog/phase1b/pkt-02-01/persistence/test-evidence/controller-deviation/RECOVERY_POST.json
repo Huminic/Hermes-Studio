@@ -1,0 +1,1105 @@
+{
+  "packet": "SW-CONTROLLER-RECOVERY-EVIDENCE-20260903-B — RECOVERY_POST (written last; self-exempt)",
+  "supersedes": "SW-CONTROLLER-RECOVERY-20260903-A",
+  "branch": "codex/halo-295-unshrinkable-inputs",
+  "head": "ecc1f6ec97da9bff66fa03df2f139ddfb1c74ddf",
+  "head_matches_expected": true,
+  "two_authorized_paths": [
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/RECOVERY_POST.json"
+  ],
+  "disclosure_pre": {
+    "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md",
+    "sha256": "d82d82220b510840abcc57b5929e5389bafead57ff166363e0f8176a488e00ac",
+    "size": 5976
+  },
+  "disclosure_post": {
+    "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md",
+    "sha256": "7951b1e79d213fab35196f82c031af73a063f2c502fd0b213a621a5daa8283fa",
+    "size": 13020
+  },
+  "recovery_post_pre": {
+    "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/RECOVERY_POST.json",
+    "sha256": "09646fe147d0987ea7112dfd48c842519dfcc454c4573b985e5d38b5bb384454",
+    "size": 11148,
+    "self_exempt_final_write": true
+  },
+  "restored_accepted_files": {
+    "src/server/watchdog/canonical-watchdog-store.ts": {
+      "sha256": "8209ee7c591dfe698e6848375a096838b54b7bc4cd95bd01f5f2a4c8e8b41741",
+      "size": 103871,
+      "expected_sha256": "8209ee7c591dfe698e6848375a096838b54b7bc4cd95bd01f5f2a4c8e8b41741",
+      "expected_size": 103871,
+      "matches": true
+    },
+    "src/server/watchdog/watchdog-run-store.ts": {
+      "sha256": "90e0adb4f1b00a3e30041b2b63ede541349fdd66b746dde0822d780c9d7ff6a2",
+      "size": 4862,
+      "expected_sha256": "90e0adb4f1b00a3e30041b2b63ede541349fdd66b746dde0822d780c9d7ff6a2",
+      "expected_size": 4862,
+      "matches": true
+    },
+    "src/test/pkt-02-01-canonical-watchdog-store.test.ts": {
+      "sha256": "2aee17aedf24650bdc10989dd80a2ca82cecaff6da791314ef60ce0e3af903a8",
+      "size": 55026,
+      "expected_sha256": "2aee17aedf24650bdc10989dd80a2ca82cecaff6da791314ef60ce0e3af903a8",
+      "expected_size": 55026,
+      "matches": true
+    }
+  },
+  "all_restored_match": true,
+  "source_reconciliation_absent": true,
+  "quarantined_document": {
+    "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/quarantine/FIXTURE_DB_RECONCILIATION.stale-prompt.md",
+    "sha256": "5655274632c36561676a8a8c6d5c19de5af4ab164c73b0b9b3c701fffd4a96fb",
+    "size": 3922,
+    "expected_sha256": "5655274632c36561676a8a8c6d5c19de5af4ab164c73b0b9b3c701fffd4a96fb",
+    "expected_size": 3922,
+    "matches": true
+  },
+  "focused_immutable_unchanged": true,
+  "honda_fixtures": {
+    "xlsx": {
+      "sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae",
+      "size": 46940
+    },
+    "capture_manifest": {
+      "sha256": "8ae369850056c13473e211921eba5f85dc61a2fe29f9b2942e0727e33148676c",
+      "size": 6201
+    },
+    "matches": true
+  },
+  "hermes_inventory": {
+    "baseline_files": 428,
+    "identical": 428,
+    "changed_count": 0,
+    "disappeared_count": 0,
+    "content_identical": true
+  },
+  "protected_main_brain_dbs": [
+    {
+      "rel": "profiles/missfix/brain/brain.db",
+      "sha256": "96242eac0024245f50e6158179a996a76c7b7b9a2adb8e47ecaaa155da9f0b5b",
+      "size": 552960,
+      "mtime_s": 1788391492,
+      "matches": true
+    },
+    {
+      "rel": "profiles/huminic/brain/brain.db",
+      "sha256": "a757408d4f3fd733cf859505cce68117869d2814a4c958c0a05c94a73141f495",
+      "size": 352256,
+      "mtime_s": 1780635110,
+      "matches": true
+    },
+    {
+      "rel": "profiles/difix/brain/brain.db",
+      "sha256": "027b6519fcb3d54214916f4f99c63dd1c6ee263cbdc0f7a727ee762c9e950a2b",
+      "size": 544768,
+      "mtime_s": 1788391557,
+      "matches": true
+    },
+    {
+      "rel": "profiles/test/brain/brain.db",
+      "sha256": "65c1dab83b95decfccad4f14266a91964a372cdf66295faf78a8ca236c78b538",
+      "size": 552960,
+      "mtime_s": 1788391546,
+      "matches": true
+    },
+    {
+      "rel": "profiles/lsdfix-none2/brain/brain.db",
+      "sha256": "a335b92908dca4042690641f8887d96ae3c4a2f12a1574d0dcf8ba928e6965d2",
+      "size": 544768,
+      "mtime_s": 1788391493,
+      "matches": true
+    },
+    {
+      "rel": "profiles/sptfix-none/brain/brain.db",
+      "sha256": "1d917d8259b1757179cdc90322291c0f5d43d3c72a50dece25ac85c0eb96c46e",
+      "size": 544768,
+      "mtime_s": 1788391492,
+      "matches": true
+    },
+    {
+      "rel": "profiles/serra-nissan/brain/brain.db",
+      "sha256": "590f917bf905594dfd49fec46a36601e14054a92973ff18f67ef43e7dfd92f8d",
+      "size": 405504,
+      "mtime_s": 1784613186,
+      "matches": true
+    },
+    {
+      "rel": "profiles/lsdfix-none/brain/brain.db",
+      "sha256": "48ea3b3f8770ccdd2e947d658d05e09f4d87e59cc03f6c083cbc414408a6871b",
+      "size": 544768,
+      "mtime_s": 1788391493,
+      "matches": true
+    },
+    {
+      "rel": "profiles/serra-honda/brain/brain.db",
+      "sha256": "b4bee89fa022bec4bb9c68e453b78ada4b79de0dc27fa5c53f6088ed5d716c7a",
+      "size": 446464,
+      "mtime_s": 1784613295,
+      "matches": true
+    },
+    {
+      "rel": "profiles/spfix-none/brain/brain.db",
+      "sha256": "224eae257b04fc4ace1db88e1195afbdcec0b47811deda612ab7855ed9bda37c",
+      "size": 544768,
+      "mtime_s": 1788391493,
+      "matches": true
+    },
+    {
+      "rel": "profiles/hyundai-of-columbia/brain/brain.db",
+      "sha256": "7de41e1cdb995c51bfaa8248f40bbeff87abdece8b05ba02084fbfe3ed7c4c04",
+      "size": 360448,
+      "mtime_s": 1781635804,
+      "matches": true
+    },
+    {
+      "rel": "profiles/ford-of-columbia/brain/brain.db",
+      "sha256": "a126d88a8a3d355aae8138a6021979887ebe4692cbf8f6259102fc331c54c2c3",
+      "size": 360448,
+      "mtime_s": 1781635804,
+      "matches": true
+    },
+    {
+      "rel": "profiles/tony-serra-ford/brain/brain.db",
+      "sha256": "c2f1e790d3a3734b5d7db3f694349bdb0f02329d773666ea3e7d9ca44a51fa0b",
+      "size": 405504,
+      "mtime_s": 1784613186,
+      "matches": true
+    },
+    {
+      "rel": "profiles/serra-service/brain/brain.db",
+      "sha256": "62a1aab56c37e90a4c8f804f74823a41b2a4d1d5ed46163a068b63c4725feccc",
+      "size": 360448,
+      "mtime_s": 1781635804,
+      "matches": true
+    },
+    {
+      "rel": "profiles/missfix2/brain/brain.db",
+      "sha256": "2d3fabe228134c8b2406b8450604fd0d398102c85df56a930179e60512973e42",
+      "size": 552960,
+      "mtime_s": 1788391492,
+      "matches": true
+    }
+  ],
+  "main_brain_dbs_identical": true,
+  "pid_chain": [
+    {
+      "pid": 1400451,
+      "alive": false
+    },
+    {
+      "pid": 1400467,
+      "alive": false
+    },
+    {
+      "pid": 1400500,
+      "alive": false
+    },
+    {
+      "pid": 1400501,
+      "alive": false
+    }
+  ],
+  "any_accidental_pid_alive": false,
+  "wrong_root_partial_vitest_evidence": {
+    "retained_root": "/tmp/Dlc1GXz9V0hNmrGQ1rE5x",
+    "retained_ssr": "/tmp/Dlc1GXz9V0hNmrGQ1rE5x/ssr",
+    "regular_file_count": 177,
+    "regular_file_bytes": 15273875,
+    "regular_file_bytes_cmd": "find \"$SSR\" -type f -printf '%s\\n' | awk '{s+=$1} END{print s}'",
+    "ssr_du_apparent_bytes": 15294355,
+    "ssr_du_cmd": "du -sb \"$SSR\" (= regular_file_bytes + 20480 ssr dir entry)",
+    "root_du_apparent_bytes": 15298451,
+    "root_du_cmd": "du -sb /tmp/Dlc1GXz9V0hNmrGQ1rE5x (= ssr_du_apparent_bytes 15294355 + 4096 root dir entry)",
+    "manifest_cmd": "SSR=/tmp/Dlc1GXz9V0hNmrGQ1rE5x/ssr; find \"$SSR\" -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum",
+    "manifest_sha256": "01234eeedb604002d78db19c707a8d6e72f9e902907759ce86624c49b2367b11",
+    "manifest_expected": "01234eeedb604002d78db19c707a8d6e72f9e902907759ce86624c49b2367b11",
+    "manifest_matches": true,
+    "transformed_cache_records": [
+      {
+        "cache_id": "15caf4570d24ff20b52a58b1fa948f8f95a30b1f",
+        "source_basename": "mcp-message-boundary.vtest.test.ts",
+        "original_source_sha256": "4d4b2c74d330cfd15167178210029a784907c142d2beb5c17e846f5338970489",
+        "original_source_bytes": 51275
+      },
+      {
+        "cache_id": "1625ef44f26353837e4d501df889decf2cf173cd",
+        "source_basename": "accounting.test.ts",
+        "original_source_sha256": "e20ac3a7730cec52766e933e037eb28371b04f5babdc0a1f6ec6175521e18248",
+        "original_source_bytes": 59501
+      },
+      {
+        "cache_id": "1b000c475cfc25690bf6689627842dd861a0649c",
+        "source_basename": "gateway-models.profiles.live.test.ts",
+        "original_source_sha256": "7abaaf66a80ba9371dc8b8b485a6f8f2cee7f00cc9132d4858d2861a0f8b089a",
+        "original_source_bytes": 44101
+      },
+      {
+        "cache_id": "368aa4a99eba32238f5140ee8d8752f6a052fa91",
+        "source_basename": "invoice-related-scope.vtest.test.ts",
+        "original_source_sha256": "bd5b27492fc8fce075d93a2e5c4e35e3fe3e124f8a10607121c99ef510c4ab4c",
+        "original_source_bytes": 79217
+      },
+      {
+        "cache_id": "3fa9379aa609a42ffae3a9280077cbf7c605ef4b",
+        "source_basename": "pkt-02-01-canonical-watchdog-store.test.ts",
+        "original_source_sha256": "2aee17aedf24650bdc10989dd80a2ca82cecaff6da791314ef60ce0e3af903a8",
+        "original_source_bytes": 55026
+      },
+      {
+        "cache_id": "4b57036d275ea9c69d838b4066167480308341e6",
+        "source_basename": "income-child-parent-guard-b2.test.ts",
+        "original_source_sha256": "a11889685a57755acf06487609245565015f0407e7264a07ead6cffaad291c1d",
+        "original_source_bytes": 62295
+      },
+      {
+        "cache_id": "540108e5fd23a29a8faa9da0cdd4ac6de3dd5d78",
+        "source_basename": "weeklyReport.validator.test.ts",
+        "original_source_sha256": "ff0a6b137ce9a12afc9c9007fd287c10d105fb6fcbc2297b38c61a2a1220ea14",
+        "original_source_bytes": 45060
+      },
+      {
+        "cache_id": "5addb24538df5e8a32037855ad768367485501d7",
+        "source_basename": "weeklyReport.content.test.ts",
+        "original_source_sha256": "5e0f1174a9ffaaab495b0f6ae3b3764ec04f33625b32b04ea29bf9d53d2f17d7",
+        "original_source_bytes": 54125
+      },
+      {
+        "cache_id": "6fb697218234ab8de55c06ec4658b0a88de1c8d8",
+        "source_basename": "stripe-webhook.vtest.test.ts",
+        "original_source_sha256": "1a79050d1f8ccdd9cb526f7e0203c87ce21b65ee1876838e7ed6374ec7fa3e6a",
+        "original_source_bytes": 52594
+      },
+      {
+        "cache_id": "b31b2fc2a79ee6e5a8e99b1f639584119fd2de03",
+        "source_basename": "bot.test.ts",
+        "original_source_sha256": "2cd8eed39f4b6c2952084305e84bd0a06f22bb69d2a5112c2b7f9d76a87c6754",
+        "original_source_bytes": 89099
+      },
+      {
+        "cache_id": "c6f2844462db0b225d57bc4c54287e5074580a86",
+        "source_basename": "to-json-schema.test.ts",
+        "original_source_sha256": "f5c70e5db4f70be9b2fb7a24f54a329b20123fa61d54cdf120e1dc8d0d7af879",
+        "original_source_bytes": 68174
+      },
+      {
+        "cache_id": "de556c3cc69510e84c3d239feb6894dd717bffe7",
+        "source_basename": "contact-deal-reliability.vtest.test.ts",
+        "original_source_sha256": "21258ab6d2074d23eaab2c7b46835b7c021d2340731bc22d2695f75cc1ff5abe",
+        "original_source_bytes": 141186
+      },
+      {
+        "cache_id": "de7dd77437f4b95a1e82b520a4822251af0d159e",
+        "source_basename": "accounting.test.ts",
+        "original_source_sha256": "e20ac3a7730cec52766e933e037eb28371b04f5babdc0a1f6ec6175521e18248",
+        "original_source_bytes": 59501
+      },
+      {
+        "cache_id": "e5ca864b1147fb85723620c6bbd2ed392c46b2e8",
+        "source_basename": "string.test.ts",
+        "original_source_sha256": "19ac9a6b0a7c610038d93dd9f97d453ad3a54bd5e1b1dab99e25d544872d93cd",
+        "original_source_bytes": 65633
+      },
+      {
+        "cache_id": "f30e0022940eaac7be97bd6d5f2e6b1979e91657",
+        "source_basename": "monitor.test.ts",
+        "original_source_sha256": "50713bde647257ffce1d30785b4b6df9707eb6ba700c0b6fe7471649e76b9bab",
+        "original_source_bytes": 70565
+      },
+      {
+        "cache_id": "f561d671e72983b2e4445da8e168c6879a4414b4",
+        "source_basename": "invoice-approval-http.vtest.test.ts",
+        "original_source_sha256": "5b7d6206b321d55882876a844aaa2214c394411714677ad7c37f1c1157b8bded",
+        "original_source_bytes": 48917
+      },
+      {
+        "cache_id": "fc8dbd0380e0e7ce614e2ae571893a844a945d8b",
+        "source_basename": "string.test.ts",
+        "original_source_sha256": "bf41f94cf272b01900fd4cc0086aa6bc276c181ab430c45010c74ce0a7c665e8",
+        "original_source_bytes": 73515
+      }
+    ],
+    "transformed_cache_records_count": 17,
+    "all_cache_ids_present": true,
+    "npm_cache_artifacts": [
+      {
+        "path": "/home/ubuntu/.npm/_cacache/content-v2/sha512/f0/75/f7779300e2c18f63beac18261f65d92bbbfef3a4879dcc92786894f6352c10456636b06a6713be7854c7ae049bf9014c57024f5ababb3fc94cc8fc23d737",
+        "kind": "content-v2",
+        "sha256": "906b821012fd54f64db0fc899a00549d531862328787d5c4f40439739a5bb224",
+        "bytes": 1278388,
+        "mtime": "2026-09-03T03:53:15.288173206Z"
+      },
+      {
+        "path": "/home/ubuntu/.npm/_cacache/index-v5/2c/63/82205759d5f095b57bf9a97361174cf0b8ef29d9e7c0de9e77ae04cbd1b6",
+        "kind": "index-v5",
+        "sha256": "8e77601bda2e8cfbbbb61500833dbdadfcdad2855b86fd09a29f5799d7b9794e",
+        "bytes": 2219,
+        "mtime": "2026-09-03T03:53:15.292173211Z",
+        "make_fetch_happen_key": "https://registry.npmjs.org/vitest",
+        "time": 1788407595295,
+        "size": 1278388
+      }
+    ],
+    "npm_cache_verified": true,
+    "rotated_npm_debug_log": {
+      "start": "2026-09-03T03:53:14.827Z",
+      "bytes": 975,
+      "rotated_before_hashing": true
+    },
+    "accidental_cache_root_creation": "2026-09-03T03:53:27.528188923Z",
+    "ssr_final_mtime": "2026-09-03T03:53:45.672212090Z",
+    "empty_evidence_tree": "/home/ubuntu/evidence/comprehensive-testing/phase-6/{logs,screenshots}",
+    "empty_evidence_tree_mtime": "2026-09-03T03:53:45.300211617Z",
+    "zero_new_npx_files": true,
+    "zero_hermes_test_home_dirs": true,
+    "no_test_result_inferred": true,
+    "unresolved": "Collection/partial execution and NON-filesystem effects (npm registry GET, cache mutation, rotated 975B debug log) cannot be fully reconstructed. No test result is inferred; not claimed that nothing ran or nothing was touched."
+  },
+  "pre_map": {
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CANONICAL_MIGRATION_BACKFILL_RECEIPT.json": {
+      "status": " M",
+      "sha256": "950c2382b001f229b539f3cae42f3b89b16dfb33e52964193dba349ef7571341",
+      "size": 3305
+    },
+    "scripts/halo-phase1b/canonical_backfill_receipt.ts": {
+      "status": " M",
+      "sha256": "c3cca93fb12fd9e5f305706bcf53cabfc79a8c8273afcceb78c554397defd55e",
+      "size": 12582
+    },
+    "src/server/brain-schema.ts": {
+      "status": " M",
+      "sha256": "9beab4548822c480fddf639930a9f43c39e8ec8d1c2e47a70d8495235ab512b0",
+      "size": 32670
+    },
+    "src/server/watchdog/canonical-watchdog-store.ts": {
+      "status": " M",
+      "sha256": "8209ee7c591dfe698e6848375a096838b54b7bc4cd95bd01f5f2a4c8e8b41741",
+      "size": 103871
+    },
+    "src/server/watchdog/pkt-02-01-canonical-adapter.ts": {
+      "status": " M",
+      "sha256": "e6fbe11524ab5da64b80cf457bf8e3d6fb88613f36d1658715723c133c68c83c",
+      "size": 18736
+    },
+    "src/server/watchdog/watchdog-run-store.ts": {
+      "status": " M",
+      "sha256": "90e0adb4f1b00a3e30041b2b63ede541349fdd66b746dde0822d780c9d7ff6a2",
+      "size": 4862
+    },
+    "src/test/pkt-02-01-canonical-watchdog-store.test.ts": {
+      "status": " M",
+      "sha256": "2aee17aedf24650bdc10989dd80a2ca82cecaff6da791314ef60ce0e3af903a8",
+      "size": 55026
+    },
+    "vitest.config.ts": {
+      "status": " M",
+      "sha256": "46dd25af3e16abdec63969f8f8af506281122d79d50024c88769e95351b45c2c",
+      "size": 512
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CORRECTION_PACKET_PRE.json": {
+      "status": "??",
+      "sha256": "f4a9e050a0765ef598c3d35ea7d68b83c7915913187095f6513c1b4c7e5f3ec0",
+      "size": 115245
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/PART_A_ACCEPTANCE_BUNDLE.md": {
+      "status": "??",
+      "sha256": "ad16d6e3763af1b633ec0b4526473cceafdd745134cd39b710a43973aa51c6ac",
+      "size": 7619
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY.md": {
+      "status": "??",
+      "sha256": "cf1c3f4d8baa277b1dce4f96b9e6b106a96ff7b962504af6320740790307857e",
+      "size": 2015
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_POST.json": {
+      "status": "??",
+      "sha256": "31ee1bfdfb39373d34e4a53c690277e1064a74e25bcc11de2e53456ca8a28080",
+      "size": 5977
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_PRE.json": {
+      "status": "??",
+      "sha256": "31ee1bfdfb39373d34e4a53c690277e1064a74e25bcc11de2e53456ca8a28080",
+      "size": 5977
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json": {
+      "status": "??",
+      "sha256": "a17aa52ffcd367074af4ad94d8719d70cbb811a22156f19dc07ba5f08e351fe7",
+      "size": 99917
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json.sha256": {
+      "status": "??",
+      "sha256": "b6a3752f0e8c81dd2368a22d5f926e13fdfdadd321d1f6c9882694f2105c4233",
+      "size": 87
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_PRE.json": {
+      "status": "??",
+      "sha256": "7dff4876c11dda6ced6e4e6a360d8463f166b8fffc8cfe495009b04aa8cf3eca",
+      "size": 97130
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/COMMAND_MANIFEST.md": {
+      "status": "??",
+      "sha256": "5d6975ff8b96d75024748af63d9d205b405043bc78084461765516557fdcff9f",
+      "size": 5964
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/DEVIATION_DISCLOSURE.md": {
+      "status": "??",
+      "sha256": "8809bb679b1b41424d7f10f28d53da0ea9413ae83e24e78c7806e5cea22e3878",
+      "size": 9044
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_POST.json": {
+      "status": "??",
+      "sha256": "154f9475bd3e81efeebbc083bb442d2794cebbda652d88011e6607a0ebfe9361",
+      "size": 5608
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_PRE.json": {
+      "status": "??",
+      "sha256": "a519c7395878723f887bca5ddc0bb48535df0c69d0e1d4506e7e256d72cbe45f",
+      "size": 16738
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/UNPLANNED_PRECHECK_DISCLOSURE.md": {
+      "status": "??",
+      "sha256": "dbd79ed47e99dc91acf3268562a19668cd1320624144bdf018bc1ce0d032f63d",
+      "size": 2389
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md": {
+      "status": "??",
+      "sha256": "d82d82220b510840abcc57b5929e5389bafead57ff166363e0f8176a488e00ac",
+      "size": 5976
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/RECOVERY_POST.json": {
+      "status": "??",
+      "sha256": "09646fe147d0987ea7112dfd48c842519dfcc454c4573b985e5d38b5bb384454",
+      "size": 11148
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/quarantine/FIXTURE_DB_RECONCILIATION.stale-prompt.md": {
+      "status": "??",
+      "sha256": "5655274632c36561676a8a8c6d5c19de5af4ab164c73b0b9b3c701fffd4a96fb",
+      "size": 3922
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/FOCUSED_TOTALS.md": {
+      "status": "??",
+      "sha256": "53d308bd7956b82cb06c8bf9553cd86738c765605e0c12fdadbf3801e6731339",
+      "size": 1508
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.sidecar.json": {
+      "status": "??",
+      "sha256": "b7a1236ed23562da10698f9118aebc80386283920e96ae936642aefe096efe73",
+      "size": 1741
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.txt": {
+      "status": "??",
+      "sha256": "1ef08afc059fbfbf712bdb598637ef7c5952d088c33d69fb5ad48b02037d78f3",
+      "size": 1261
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/FOCUSED_TOTALS.md": {
+      "status": "??",
+      "sha256": "8cba9c2e0e1f0fb63ede70427f0fce921ac69119b84e238d9c16e1e53b3a25a9",
+      "size": 2036
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/focused.sidecar.json": {
+      "status": "??",
+      "sha256": "3f68b793c18544c10409d9ae28110c04536c603a5ff3914a8106551a48d31a7f",
+      "size": 1233
+    },
+    "src/test/setup-brain-tmp.ts": {
+      "status": "??",
+      "sha256": "33955f0ca42980f6d66503fbc69864a82f14857a7e15c9e21a56c0cc1b9af053",
+      "size": 944
+    }
+  },
+  "pre_post_map": {
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CANONICAL_MIGRATION_BACKFILL_RECEIPT.json": {
+      "status": " M",
+      "sha256": "950c2382b001f229b539f3cae42f3b89b16dfb33e52964193dba349ef7571341",
+      "size": 3305
+    },
+    "scripts/halo-phase1b/canonical_backfill_receipt.ts": {
+      "status": " M",
+      "sha256": "c3cca93fb12fd9e5f305706bcf53cabfc79a8c8273afcceb78c554397defd55e",
+      "size": 12582
+    },
+    "src/server/brain-schema.ts": {
+      "status": " M",
+      "sha256": "9beab4548822c480fddf639930a9f43c39e8ec8d1c2e47a70d8495235ab512b0",
+      "size": 32670
+    },
+    "src/server/watchdog/canonical-watchdog-store.ts": {
+      "status": " M",
+      "sha256": "8209ee7c591dfe698e6848375a096838b54b7bc4cd95bd01f5f2a4c8e8b41741",
+      "size": 103871
+    },
+    "src/server/watchdog/pkt-02-01-canonical-adapter.ts": {
+      "status": " M",
+      "sha256": "e6fbe11524ab5da64b80cf457bf8e3d6fb88613f36d1658715723c133c68c83c",
+      "size": 18736
+    },
+    "src/server/watchdog/watchdog-run-store.ts": {
+      "status": " M",
+      "sha256": "90e0adb4f1b00a3e30041b2b63ede541349fdd66b746dde0822d780c9d7ff6a2",
+      "size": 4862
+    },
+    "src/test/pkt-02-01-canonical-watchdog-store.test.ts": {
+      "status": " M",
+      "sha256": "2aee17aedf24650bdc10989dd80a2ca82cecaff6da791314ef60ce0e3af903a8",
+      "size": 55026
+    },
+    "vitest.config.ts": {
+      "status": " M",
+      "sha256": "46dd25af3e16abdec63969f8f8af506281122d79d50024c88769e95351b45c2c",
+      "size": 512
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CORRECTION_PACKET_PRE.json": {
+      "status": "??",
+      "sha256": "f4a9e050a0765ef598c3d35ea7d68b83c7915913187095f6513c1b4c7e5f3ec0",
+      "size": 115245
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/PART_A_ACCEPTANCE_BUNDLE.md": {
+      "status": "??",
+      "sha256": "ad16d6e3763af1b633ec0b4526473cceafdd745134cd39b710a43973aa51c6ac",
+      "size": 7619
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY.md": {
+      "status": "??",
+      "sha256": "cf1c3f4d8baa277b1dce4f96b9e6b106a96ff7b962504af6320740790307857e",
+      "size": 2015
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_POST.json": {
+      "status": "??",
+      "sha256": "31ee1bfdfb39373d34e4a53c690277e1064a74e25bcc11de2e53456ca8a28080",
+      "size": 5977
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_PRE.json": {
+      "status": "??",
+      "sha256": "31ee1bfdfb39373d34e4a53c690277e1064a74e25bcc11de2e53456ca8a28080",
+      "size": 5977
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json": {
+      "status": "??",
+      "sha256": "a17aa52ffcd367074af4ad94d8719d70cbb811a22156f19dc07ba5f08e351fe7",
+      "size": 99917
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json.sha256": {
+      "status": "??",
+      "sha256": "b6a3752f0e8c81dd2368a22d5f926e13fdfdadd321d1f6c9882694f2105c4233",
+      "size": 87
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_PRE.json": {
+      "status": "??",
+      "sha256": "7dff4876c11dda6ced6e4e6a360d8463f166b8fffc8cfe495009b04aa8cf3eca",
+      "size": 97130
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/COMMAND_MANIFEST.md": {
+      "status": "??",
+      "sha256": "5d6975ff8b96d75024748af63d9d205b405043bc78084461765516557fdcff9f",
+      "size": 5964
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/DEVIATION_DISCLOSURE.md": {
+      "status": "??",
+      "sha256": "8809bb679b1b41424d7f10f28d53da0ea9413ae83e24e78c7806e5cea22e3878",
+      "size": 9044
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_POST.json": {
+      "status": "??",
+      "sha256": "154f9475bd3e81efeebbc083bb442d2794cebbda652d88011e6607a0ebfe9361",
+      "size": 5608
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_PRE.json": {
+      "status": "??",
+      "sha256": "a519c7395878723f887bca5ddc0bb48535df0c69d0e1d4506e7e256d72cbe45f",
+      "size": 16738
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/UNPLANNED_PRECHECK_DISCLOSURE.md": {
+      "status": "??",
+      "sha256": "dbd79ed47e99dc91acf3268562a19668cd1320624144bdf018bc1ce0d032f63d",
+      "size": 2389
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md": {
+      "status": "??",
+      "sha256": "56cf9c32b10f1e330a617c5af0df6c26cefaf5cf30c17e77f431eabcd4bd390c",
+      "size": 12989
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/RECOVERY_POST.json": {
+      "status": "??",
+      "sha256": "09646fe147d0987ea7112dfd48c842519dfcc454c4573b985e5d38b5bb384454",
+      "size": 11148
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/quarantine/FIXTURE_DB_RECONCILIATION.stale-prompt.md": {
+      "status": "??",
+      "sha256": "5655274632c36561676a8a8c6d5c19de5af4ab164c73b0b9b3c701fffd4a96fb",
+      "size": 3922
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/FOCUSED_TOTALS.md": {
+      "status": "??",
+      "sha256": "53d308bd7956b82cb06c8bf9553cd86738c765605e0c12fdadbf3801e6731339",
+      "size": 1508
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.sidecar.json": {
+      "status": "??",
+      "sha256": "b7a1236ed23562da10698f9118aebc80386283920e96ae936642aefe096efe73",
+      "size": 1741
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.txt": {
+      "status": "??",
+      "sha256": "1ef08afc059fbfbf712bdb598637ef7c5952d088c33d69fb5ad48b02037d78f3",
+      "size": 1261
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/FOCUSED_TOTALS.md": {
+      "status": "??",
+      "sha256": "8cba9c2e0e1f0fb63ede70427f0fce921ac69119b84e238d9c16e1e53b3a25a9",
+      "size": 2036
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/focused.sidecar.json": {
+      "status": "??",
+      "sha256": "3f68b793c18544c10409d9ae28110c04536c603a5ff3914a8106551a48d31a7f",
+      "size": 1233
+    },
+    "src/test/setup-brain-tmp.ts": {
+      "status": "??",
+      "sha256": "33955f0ca42980f6d66503fbc69864a82f14857a7e15c9e21a56c0cc1b9af053",
+      "size": 944
+    }
+  },
+  "pre_to_prepost_diff": [
+    {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md",
+      "pre": {
+        "status": "??",
+        "sha256": "d82d82220b510840abcc57b5929e5389bafead57ff166363e0f8176a488e00ac",
+        "size": 5976
+      },
+      "prePost": {
+        "status": "??",
+        "sha256": "56cf9c32b10f1e330a617c5af0df6c26cefaf5cf30c17e77f431eabcd4bd390c",
+        "size": 12989
+      }
+    }
+  ],
+  "pre_to_prepost_only_disclosure_changed": true,
+  "recovery_post_byte_identical_to_pre_before_write": true,
+  "final_diff_note": "After this write, a read-only recomputation prints the machine-checkable final diff (only disclosure + RECOVERY_POST differ vs PRE; no path added/deleted/status-changed).",
+  "post_self_exempt": true,
+  "overall_clean": true,
+  "evidence_revision": 3,
+  "revision3_supersedes_post_sha256": "2dc8c86648471d7df7fb62f0cee09cbcc5ba4b1738f2e75241ba3639870363cc",
+  "revision3_pre_map": {
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CANONICAL_MIGRATION_BACKFILL_RECEIPT.json": {
+      "status": " M",
+      "sha256": "950c2382b001f229b539f3cae42f3b89b16dfb33e52964193dba349ef7571341",
+      "size": 3305
+    },
+    "scripts/halo-phase1b/canonical_backfill_receipt.ts": {
+      "status": " M",
+      "sha256": "c3cca93fb12fd9e5f305706bcf53cabfc79a8c8273afcceb78c554397defd55e",
+      "size": 12582
+    },
+    "src/server/brain-schema.ts": {
+      "status": " M",
+      "sha256": "9beab4548822c480fddf639930a9f43c39e8ec8d1c2e47a70d8495235ab512b0",
+      "size": 32670
+    },
+    "src/server/watchdog/canonical-watchdog-store.ts": {
+      "status": " M",
+      "sha256": "8209ee7c591dfe698e6848375a096838b54b7bc4cd95bd01f5f2a4c8e8b41741",
+      "size": 103871
+    },
+    "src/server/watchdog/pkt-02-01-canonical-adapter.ts": {
+      "status": " M",
+      "sha256": "e6fbe11524ab5da64b80cf457bf8e3d6fb88613f36d1658715723c133c68c83c",
+      "size": 18736
+    },
+    "src/server/watchdog/watchdog-run-store.ts": {
+      "status": " M",
+      "sha256": "90e0adb4f1b00a3e30041b2b63ede541349fdd66b746dde0822d780c9d7ff6a2",
+      "size": 4862
+    },
+    "src/test/pkt-02-01-canonical-watchdog-store.test.ts": {
+      "status": " M",
+      "sha256": "2aee17aedf24650bdc10989dd80a2ca82cecaff6da791314ef60ce0e3af903a8",
+      "size": 55026
+    },
+    "vitest.config.ts": {
+      "status": " M",
+      "sha256": "46dd25af3e16abdec63969f8f8af506281122d79d50024c88769e95351b45c2c",
+      "size": 512
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CORRECTION_PACKET_PRE.json": {
+      "status": "??",
+      "sha256": "f4a9e050a0765ef598c3d35ea7d68b83c7915913187095f6513c1b4c7e5f3ec0",
+      "size": 115245
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/PART_A_ACCEPTANCE_BUNDLE.md": {
+      "status": "??",
+      "sha256": "ad16d6e3763af1b633ec0b4526473cceafdd745134cd39b710a43973aa51c6ac",
+      "size": 7619
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY.md": {
+      "status": "??",
+      "sha256": "cf1c3f4d8baa277b1dce4f96b9e6b106a96ff7b962504af6320740790307857e",
+      "size": 2015
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_POST.json": {
+      "status": "??",
+      "sha256": "31ee1bfdfb39373d34e4a53c690277e1064a74e25bcc11de2e53456ca8a28080",
+      "size": 5977
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_PRE.json": {
+      "status": "??",
+      "sha256": "31ee1bfdfb39373d34e4a53c690277e1064a74e25bcc11de2e53456ca8a28080",
+      "size": 5977
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json": {
+      "status": "??",
+      "sha256": "a17aa52ffcd367074af4ad94d8719d70cbb811a22156f19dc07ba5f08e351fe7",
+      "size": 99917
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json.sha256": {
+      "status": "??",
+      "sha256": "b6a3752f0e8c81dd2368a22d5f926e13fdfdadd321d1f6c9882694f2105c4233",
+      "size": 87
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_PRE.json": {
+      "status": "??",
+      "sha256": "7dff4876c11dda6ced6e4e6a360d8463f166b8fffc8cfe495009b04aa8cf3eca",
+      "size": 97130
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/COMMAND_MANIFEST.md": {
+      "status": "??",
+      "sha256": "5d6975ff8b96d75024748af63d9d205b405043bc78084461765516557fdcff9f",
+      "size": 5964
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/DEVIATION_DISCLOSURE.md": {
+      "status": "??",
+      "sha256": "8809bb679b1b41424d7f10f28d53da0ea9413ae83e24e78c7806e5cea22e3878",
+      "size": 9044
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_POST.json": {
+      "status": "??",
+      "sha256": "154f9475bd3e81efeebbc083bb442d2794cebbda652d88011e6607a0ebfe9361",
+      "size": 5608
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_PRE.json": {
+      "status": "??",
+      "sha256": "a519c7395878723f887bca5ddc0bb48535df0c69d0e1d4506e7e256d72cbe45f",
+      "size": 16738
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/UNPLANNED_PRECHECK_DISCLOSURE.md": {
+      "status": "??",
+      "sha256": "dbd79ed47e99dc91acf3268562a19668cd1320624144bdf018bc1ce0d032f63d",
+      "size": 2389
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md": {
+      "status": "??",
+      "sha256": "56cf9c32b10f1e330a617c5af0df6c26cefaf5cf30c17e77f431eabcd4bd390c",
+      "size": 12989
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/RECOVERY_POST.json": {
+      "status": "??",
+      "sha256": "2dc8c86648471d7df7fb62f0cee09cbcc5ba4b1738f2e75241ba3639870363cc",
+      "size": 29514
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/quarantine/FIXTURE_DB_RECONCILIATION.stale-prompt.md": {
+      "status": "??",
+      "sha256": "5655274632c36561676a8a8c6d5c19de5af4ab164c73b0b9b3c701fffd4a96fb",
+      "size": 3922
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/FOCUSED_TOTALS.md": {
+      "status": "??",
+      "sha256": "53d308bd7956b82cb06c8bf9553cd86738c765605e0c12fdadbf3801e6731339",
+      "size": 1508
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.sidecar.json": {
+      "status": "??",
+      "sha256": "b7a1236ed23562da10698f9118aebc80386283920e96ae936642aefe096efe73",
+      "size": 1741
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.txt": {
+      "status": "??",
+      "sha256": "1ef08afc059fbfbf712bdb598637ef7c5952d088c33d69fb5ad48b02037d78f3",
+      "size": 1261
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/FOCUSED_TOTALS.md": {
+      "status": "??",
+      "sha256": "8cba9c2e0e1f0fb63ede70427f0fce921ac69119b84e238d9c16e1e53b3a25a9",
+      "size": 2036
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/focused.sidecar.json": {
+      "status": "??",
+      "sha256": "3f68b793c18544c10409d9ae28110c04536c603a5ff3914a8106551a48d31a7f",
+      "size": 1233
+    },
+    "src/test/setup-brain-tmp.ts": {
+      "status": "??",
+      "sha256": "33955f0ca42980f6d66503fbc69864a82f14857a7e15c9e21a56c0cc1b9af053",
+      "size": 944
+    }
+  },
+  "revision3_pre_post_map": {
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CANONICAL_MIGRATION_BACKFILL_RECEIPT.json": {
+      "status": " M",
+      "sha256": "950c2382b001f229b539f3cae42f3b89b16dfb33e52964193dba349ef7571341",
+      "size": 3305
+    },
+    "scripts/halo-phase1b/canonical_backfill_receipt.ts": {
+      "status": " M",
+      "sha256": "c3cca93fb12fd9e5f305706bcf53cabfc79a8c8273afcceb78c554397defd55e",
+      "size": 12582
+    },
+    "src/server/brain-schema.ts": {
+      "status": " M",
+      "sha256": "9beab4548822c480fddf639930a9f43c39e8ec8d1c2e47a70d8495235ab512b0",
+      "size": 32670
+    },
+    "src/server/watchdog/canonical-watchdog-store.ts": {
+      "status": " M",
+      "sha256": "8209ee7c591dfe698e6848375a096838b54b7bc4cd95bd01f5f2a4c8e8b41741",
+      "size": 103871
+    },
+    "src/server/watchdog/pkt-02-01-canonical-adapter.ts": {
+      "status": " M",
+      "sha256": "e6fbe11524ab5da64b80cf457bf8e3d6fb88613f36d1658715723c133c68c83c",
+      "size": 18736
+    },
+    "src/server/watchdog/watchdog-run-store.ts": {
+      "status": " M",
+      "sha256": "90e0adb4f1b00a3e30041b2b63ede541349fdd66b746dde0822d780c9d7ff6a2",
+      "size": 4862
+    },
+    "src/test/pkt-02-01-canonical-watchdog-store.test.ts": {
+      "status": " M",
+      "sha256": "2aee17aedf24650bdc10989dd80a2ca82cecaff6da791314ef60ce0e3af903a8",
+      "size": 55026
+    },
+    "vitest.config.ts": {
+      "status": " M",
+      "sha256": "46dd25af3e16abdec63969f8f8af506281122d79d50024c88769e95351b45c2c",
+      "size": 512
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CORRECTION_PACKET_PRE.json": {
+      "status": "??",
+      "sha256": "f4a9e050a0765ef598c3d35ea7d68b83c7915913187095f6513c1b4c7e5f3ec0",
+      "size": 115245
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/PART_A_ACCEPTANCE_BUNDLE.md": {
+      "status": "??",
+      "sha256": "ad16d6e3763af1b633ec0b4526473cceafdd745134cd39b710a43973aa51c6ac",
+      "size": 7619
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY.md": {
+      "status": "??",
+      "sha256": "cf1c3f4d8baa277b1dce4f96b9e6b106a96ff7b962504af6320740790307857e",
+      "size": 2015
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_POST.json": {
+      "status": "??",
+      "sha256": "31ee1bfdfb39373d34e4a53c690277e1064a74e25bcc11de2e53456ca8a28080",
+      "size": 5977
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_PRE.json": {
+      "status": "??",
+      "sha256": "31ee1bfdfb39373d34e4a53c690277e1064a74e25bcc11de2e53456ca8a28080",
+      "size": 5977
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json": {
+      "status": "??",
+      "sha256": "a17aa52ffcd367074af4ad94d8719d70cbb811a22156f19dc07ba5f08e351fe7",
+      "size": 99917
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json.sha256": {
+      "status": "??",
+      "sha256": "b6a3752f0e8c81dd2368a22d5f926e13fdfdadd321d1f6c9882694f2105c4233",
+      "size": 87
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_PRE.json": {
+      "status": "??",
+      "sha256": "7dff4876c11dda6ced6e4e6a360d8463f166b8fffc8cfe495009b04aa8cf3eca",
+      "size": 97130
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/COMMAND_MANIFEST.md": {
+      "status": "??",
+      "sha256": "5d6975ff8b96d75024748af63d9d205b405043bc78084461765516557fdcff9f",
+      "size": 5964
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/DEVIATION_DISCLOSURE.md": {
+      "status": "??",
+      "sha256": "8809bb679b1b41424d7f10f28d53da0ea9413ae83e24e78c7806e5cea22e3878",
+      "size": 9044
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_POST.json": {
+      "status": "??",
+      "sha256": "154f9475bd3e81efeebbc083bb442d2794cebbda652d88011e6607a0ebfe9361",
+      "size": 5608
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_PRE.json": {
+      "status": "??",
+      "sha256": "a519c7395878723f887bca5ddc0bb48535df0c69d0e1d4506e7e256d72cbe45f",
+      "size": 16738
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/UNPLANNED_PRECHECK_DISCLOSURE.md": {
+      "status": "??",
+      "sha256": "dbd79ed47e99dc91acf3268562a19668cd1320624144bdf018bc1ce0d032f63d",
+      "size": 2389
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md": {
+      "status": "??",
+      "sha256": "7951b1e79d213fab35196f82c031af73a063f2c502fd0b213a621a5daa8283fa",
+      "size": 13020
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/RECOVERY_POST.json": {
+      "status": "??",
+      "sha256": "2dc8c86648471d7df7fb62f0cee09cbcc5ba4b1738f2e75241ba3639870363cc",
+      "size": 29514
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/quarantine/FIXTURE_DB_RECONCILIATION.stale-prompt.md": {
+      "status": "??",
+      "sha256": "5655274632c36561676a8a8c6d5c19de5af4ab164c73b0b9b3c701fffd4a96fb",
+      "size": 3922
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/FOCUSED_TOTALS.md": {
+      "status": "??",
+      "sha256": "53d308bd7956b82cb06c8bf9553cd86738c765605e0c12fdadbf3801e6731339",
+      "size": 1508
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.sidecar.json": {
+      "status": "??",
+      "sha256": "b7a1236ed23562da10698f9118aebc80386283920e96ae936642aefe096efe73",
+      "size": 1741
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.txt": {
+      "status": "??",
+      "sha256": "1ef08afc059fbfbf712bdb598637ef7c5952d088c33d69fb5ad48b02037d78f3",
+      "size": 1261
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/FOCUSED_TOTALS.md": {
+      "status": "??",
+      "sha256": "8cba9c2e0e1f0fb63ede70427f0fce921ac69119b84e238d9c16e1e53b3a25a9",
+      "size": 2036
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/focused.sidecar.json": {
+      "status": "??",
+      "sha256": "3f68b793c18544c10409d9ae28110c04536c603a5ff3914a8106551a48d31a7f",
+      "size": 1233
+    },
+    "src/test/setup-brain-tmp.ts": {
+      "status": "??",
+      "sha256": "33955f0ca42980f6d66503fbc69864a82f14857a7e15c9e21a56c0cc1b9af053",
+      "size": 944
+    }
+  },
+  "revision3_pre_to_prepost_diff": [
+    {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md",
+      "pre": {
+        "status": "??",
+        "sha256": "56cf9c32b10f1e330a617c5af0df6c26cefaf5cf30c17e77f431eabcd4bd390c",
+        "size": 12989
+      },
+      "pre_post": {
+        "status": "??",
+        "sha256": "7951b1e79d213fab35196f82c031af73a063f2c502fd0b213a621a5daa8283fa",
+        "size": 13020
+      }
+    }
+  ],
+  "revision3_identical_path_status_set": true,
+  "revision3_non_target_byte_identical": true,
+  "revision3_only_disclosure_changed": true,
+  "revision3_post_byte_identical_before_write": true,
+  "disclosure": {
+    "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md",
+    "sha256": "7951b1e79d213fab35196f82c031af73a063f2c502fd0b213a621a5daa8283fa",
+    "size": 13020
+  },
+  "source_reconciliation_path": {
+    "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/corrective-pass/FIXTURE_DB_RECONCILIATION.md",
+    "absent": true
+  },
+  "original_focused_evidence": {
+    "log": {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/focused.log",
+      "sha256": "c432ee8f31ff4918058edf47ae1cbc7e4652d05250e8168ca2502ccfe6844a73",
+      "size": 1016
+    },
+    "sidecar": {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/focused.sidecar.json",
+      "sha256": "3f68b793c18544c10409d9ae28110c04536c603a5ff3914a8106551a48d31a7f",
+      "size": 1233
+    },
+    "totals": {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/FOCUSED_TOTALS.md",
+      "sha256": "8cba9c2e0e1f0fb63ede70427f0fce921ac69119b84e238d9c16e1e53b3a25a9",
+      "size": 2036
+    },
+    "unplanned": {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/UNPLANNED_PRECHECK_DISCLOSURE.md",
+      "sha256": "dbd79ed47e99dc91acf3268562a19668cd1320624144bdf018bc1ce0d032f63d",
+      "size": 2389
+    },
+    "rerun_txt": {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.txt",
+      "sha256": "1ef08afc059fbfbf712bdb598637ef7c5952d088c33d69fb5ad48b02037d78f3",
+      "size": 1261
+    },
+    "rerun_sidecar": {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.sidecar.json",
+      "sha256": "b7a1236ed23562da10698f9118aebc80386283920e96ae936642aefe096efe73",
+      "size": 1741
+    },
+    "rerun_pre": {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_PRE.json",
+      "sha256": "a519c7395878723f887bca5ddc0bb48535df0c69d0e1d4506e7e256d72cbe45f",
+      "size": 16738
+    },
+    "rerun_post": {
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_POST.json",
+      "sha256": "154f9475bd3e81efeebbc083bb442d2794cebbda652d88011e6607a0ebfe9361",
+      "size": 5608
+    }
+  },
+  "post_git_status_porcelain_v1": [
+    " M docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CANONICAL_MIGRATION_BACKFILL_RECEIPT.json",
+    " M scripts/halo-phase1b/canonical_backfill_receipt.ts",
+    " M src/server/brain-schema.ts",
+    " M src/server/watchdog/canonical-watchdog-store.ts",
+    " M src/server/watchdog/pkt-02-01-canonical-adapter.ts",
+    " M src/server/watchdog/watchdog-run-store.ts",
+    " M src/test/pkt-02-01-canonical-watchdog-store.test.ts",
+    " M vitest.config.ts",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CORRECTION_PACKET_PRE.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/PART_A_ACCEPTANCE_BUNDLE.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_POST.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_PRE.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json.sha256",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_PRE.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/COMMAND_MANIFEST.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/DEVIATION_DISCLOSURE.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_POST.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_PRE.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/UNPLANNED_PRECHECK_DISCLOSURE.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/RECOVERY_POST.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/quarantine/FIXTURE_DB_RECONCILIATION.stale-prompt.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/FOCUSED_TOTALS.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.sidecar.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.txt",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/FOCUSED_TOTALS.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/focused.sidecar.json",
+    "?? src/test/setup-brain-tmp.ts"
+  ],
+  "authorized_new_paths": [
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/quarantine/FIXTURE_DB_RECONCILIATION.stale-prompt.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/RECOVERY_POST.json"
+  ],
+  "appeared_since_accepted": [
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/quarantine/FIXTURE_DB_RECONCILIATION.stale-prompt.md"
+  ],
+  "appeared_unexpected": [],
+  "removed_since_accepted": [],
+  "no_unexpected_repo_path": true,
+  "unresolved_wrong_root_external_effects": "Incident-1 wrong-root partial Vitest from /home/ubuntu: collection/partial execution and NON-filesystem effects (npm registry GET, cache mutation, rotated 975B debug log) cannot be fully reconstructed. No test result is inferred; it is NOT claimed that nothing ran or nothing was touched. Accidental artifacts (/tmp/Dlc1GXz9V0hNmrGQ1rE5x, npm cache/logs, /home/ubuntu/evidence tree, brain.db-shm mtimes) are NOT cleaned this pass."
+}

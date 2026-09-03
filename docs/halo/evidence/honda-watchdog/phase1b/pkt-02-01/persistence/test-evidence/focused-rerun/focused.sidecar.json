@@ -1,0 +1,36 @@
+{
+  "phase": "focused-rerun",
+  "process_command": "HALO_LEADS_DIR=/tmp/halo-295-leads-20260831 npx vitest run src/test/pkt-02-01-canonical-watchdog-store.test.ts src/test/pkt-02-01-brain-store.test.ts src/test/brain-store.test.ts src/test/pkt-02-01-adversarial.test.ts src/test/pkt-02-01-binding.test.ts src/test/pkt-02-01-engine.test.ts src/test/pkt-02-01-report.test.ts src/test/pkt-02-01-store.test.ts src/test/pkt-02-01-leads-input.test.ts src/test/pkt-02-01-source-inventory.test.ts src/test/brain-record-families.test.ts src/test/watchdog-store.test.ts src/test/watchdog-notifications-store.test.ts --maxWorkers=2",
+  "redirection_note": "stdout+stderr redirected to focused.txt (redirection excluded from process_command); no tee/pipe/second invocation",
+  "start_utc": "2026-09-03T03:44:48Z",
+  "end_utc": "2026-09-03T03:44:58Z",
+  "cwd": "/home/ubuntu/hs-m1r-isolated-20260830",
+  "branch": "codex/halo-295-unshrinkable-inputs",
+  "head": "ecc1f6ec97da9bff66fa03df2f139ddfb1c74ddf",
+  "process_exit": 0,
+  "result_summary": {
+    "test_files_passed": 13,
+    "test_files_total": 13,
+    "tests_passed": 162,
+    "tests_total": 162,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "output_focused_txt": {
+    "sha256": "1ef08afc059fbfbf712bdb598637ef7c5952d088c33d69fb5ad48b02037d78f3",
+    "size": 1261
+  },
+  "bound_final_command_manifest": {
+    "sha256": "5d6975ff8b96d75024748af63d9d205b405043bc78084461765516557fdcff9f",
+    "size": 5964
+  },
+  "bound_focused_rerun_pre": {
+    "sha256": "a519c7395878723f887bca5ddc0bb48535df0c69d0e1d4506e7e256d72cbe45f",
+    "size": 16738
+  },
+  "bound_deviation_disclosure": {
+    "sha256": "8809bb679b1b41424d7f10f28d53da0ea9413ae83e24e78c7806e5cea22e3878",
+    "size": 9044
+  }
+}

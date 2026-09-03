@@ -1,0 +1,29 @@
+INTERLOCK_MOUNTS_BEGIN
+/dev/loop13 /tmp/sw-full-regression-deps-20260903-v5-mnt squashfs ro,relatime,errors=continue
+/dev/loop13 /home/ubuntu/Claude-store/huminic-studio/node_modules squashfs ro,relatime,errors=continue
+/dev/sdb1[/home/ubuntu/.npm] /home/ubuntu/.npm ext4   ro,relatime
+/dev/sdb1[/home/ubuntu/.local/share/pnpm] /home/ubuntu/.local/share/pnpm ext4   ro,relatime
+/dev/sdb1[/home/ubuntu/.cache/pnpm] /home/ubuntu/.cache/pnpm ext4   ro,relatime
+INTERLOCK_MOUNTS_END
+failed to load config from /home/ubuntu/hs-m1r-isolated-20260830/vitest.config.ts
+
+⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯
+Error: EROFS: read-only file system, open '/home/ubuntu/hs-m1r-isolated-20260830/node_modules/.vite-temp/vitest.config.ts.timestamp-1788417794957-24cb2184fa9ef.mjs'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1216:14)
+    at async loadConfigFromBundledFile (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:35907:3)
+    at async bundleAndLoadConfigFile (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:35797:17)
+    at async loadConfigFromFile (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:35764:42)
+    at async resolveConfig (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:35413:22)
+    at async _createServer (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vite@7.3.1_@types+node@22.19.15_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:25362:67)
+    at async createViteServer (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vitest@3.2.4_@types+debug@4.1.12_@types+node@22.19.15_jiti@2.6.1_jsdom@27.4.0_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vitest/dist/chunks/cli-api.BkDphVBG.js:6911:17)
+    at async createVitest (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vitest@3.2.4_@types+debug@4.1.12_@types+node@22.19.15_jiti@2.6.1_jsdom@27.4.0_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vitest/dist/chunks/cli-api.BkDphVBG.js:10202:17)
+    at async prepareVitest (file:///home/ubuntu/Claude-store/huminic-studio/node_modules/.pnpm/vitest@3.2.4_@types+debug@4.1.12_@types+node@22.19.15_jiti@2.6.1_jsdom@27.4.0_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vitest/dist/chunks/cli-api.BkDphVBG.js:10541:14) {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/home/ubuntu/hs-m1r-isolated-20260830/node_modules/.vite-temp/vitest.config.ts.timestamp-1788417794957-24cb2184fa9ef.mjs'
+}
+
+
+

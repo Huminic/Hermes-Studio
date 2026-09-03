@@ -1,0 +1,22 @@
+
+ RUN  v3.2.4 /home/ubuntu/hs-m1r-isolated-20260830
+
+ ✓ src/test/pkt-02-01-brain-store.test.ts (26 tests) 1787ms
+ ✓ src/test/pkt-02-01-store.test.ts (7 tests) 454ms
+ ✓ src/test/brain-record-families.test.ts (11 tests) 716ms
+ ✓ src/test/pkt-02-01-engine.test.ts (9 tests) 514ms
+ ✓ src/test/pkt-02-01-canonical-watchdog-store.test.ts (57 tests) 4851ms
+ ✓ src/test/brain-store.test.ts (7 tests) 371ms
+ ✓ src/test/watchdog-notifications-store.test.ts (12 tests) 223ms
+ ✓ src/test/watchdog-store.test.ts (4 tests) 165ms
+ ✓ src/test/pkt-02-01-report.test.ts (5 tests) 218ms
+ ✓ src/test/pkt-02-01-adversarial.test.ts (9 tests) 150ms
+ ✓ src/test/pkt-02-01-leads-input.test.ts (4 tests) 100ms
+ ✓ src/test/pkt-02-01-binding.test.ts (6 tests) 18ms
+ ✓ src/test/pkt-02-01-source-inventory.test.ts (5 tests) 7ms
+
+ Test Files  13 passed (13)
+      Tests  162 passed (162)
+   Start at  03:27:47
+   Duration  8.18s (transform 887ms, setup 174ms, collect 1.87s, tests 9.57s, environment 2ms, prepare 1.71s)
+

@@ -1,0 +1,24 @@
+
+ RUN  v3.2.4 /home/ubuntu/hs-m1r-isolated-20260830
+
+ ✓ src/test/pkt-02-01-brain-store.test.ts (26 tests) 1598ms
+ ✓ src/test/brain-record-families.test.ts (11 tests) 901ms
+ ✓ src/test/pkt-02-01-engine.test.ts (9 tests) 502ms
+ ✓ src/test/pkt-02-01-store.test.ts (7 tests) 479ms
+ ✓ src/test/pkt-02-01-canonical-watchdog-store.test.ts (57 tests) 5472ms
+   ✓ PKT-02-01 canonical persistence > persists the full graph, reconstructs the PINNED content hash, records graph sha  358ms
+   ✓ PKT-02-01 canonical persistence > is idempotent: replay verifies the full graph then changes nothing  344ms
+ ✓ src/test/brain-store.test.ts (7 tests) 345ms
+ ✓ src/test/watchdog-notifications-store.test.ts (12 tests) 216ms
+ ✓ src/test/pkt-02-01-report.test.ts (5 tests) 245ms
+ ✓ src/test/watchdog-store.test.ts (4 tests) 217ms
+ ✓ src/test/pkt-02-01-adversarial.test.ts (9 tests) 238ms
+ ✓ src/test/pkt-02-01-leads-input.test.ts (4 tests) 108ms
+ ✓ src/test/pkt-02-01-binding.test.ts (6 tests) 11ms
+ ✓ src/test/pkt-02-01-source-inventory.test.ts (5 tests) 7ms
+
+ Test Files  13 passed (13)
+      Tests  162 passed (162)
+   Start at  03:44:49
+   Duration  9.24s (transform 997ms, setup 141ms, collect 2.12s, tests 10.34s, environment 3ms, prepare 2.08s)
+

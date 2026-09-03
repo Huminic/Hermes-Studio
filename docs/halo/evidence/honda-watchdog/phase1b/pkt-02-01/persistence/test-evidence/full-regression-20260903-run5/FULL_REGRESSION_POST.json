@@ -1,0 +1,263 @@
+{
+ "packet": "SW-FULL-REGRESSION-EVIDENCE-20260903-G",
+ "run_dir": "full-regression-20260903-run5",
+ "written_utc": "2026-09-03T14:21:49Z",
+ "parsed_from": "run5 full-regression.log only",
+ "pre_sha256": "41395b4234d7802bbdf63281d37848b21740b9520d64da9d17278e94e4cdc259",
+ "pre_size": 69986,
+ "run_receipt_sha256": "9ff9f5c1497c1b33599e8655ab5231f0e860b9afca11be52f67094aafb7d98dd",
+ "raw_log_sha256": "5b0596d038a7f202ce52dd77aa70ada69b08a7c5697efd914ebd35f1b9a13e36",
+ "raw_log_size": 52807,
+ "exit_code": 0,
+ "test_files": {
+  "passed": 258,
+  "failed": 0,
+  "total": 258
+ },
+ "tests": {
+  "passed": 2337,
+  "skipped": 7,
+  "failed": 0,
+  "todo": 0,
+  "total": 2344
+ },
+ "duration_line": "Duration  133.63s (transform 10.07s, setup 2.45s, collect 43.55s, tests 99.88s, environment 20.08s, prepare 38.67s)",
+ "skip_reconciliation": {
+  "dashboard-reconciliation": 1,
+  "m1r-cage-comm": 6,
+  "sum": 7,
+  "matches_7": true
+ },
+ "interlock_mounts_log": [
+  "/dev/loop13 /tmp/sw-full-regression-deps-20260903-v8-mnt squashfs ro,relatime,errors=continue",
+  "/dev/loop13 /home/ubuntu/Claude-store/huminic-studio/node_modules squashfs ro,relatime,errors=continue",
+  "/dev/sdb1[/home/ubuntu/.npm] /home/ubuntu/.npm ext4   ro,relatime",
+  "/dev/sdb1[/home/ubuntu/.local/share/pnpm] /home/ubuntu/.local/share/pnpm ext4   ro,relatime",
+  "/dev/sdb1[/home/ubuntu/.cache/pnpm] /home/ubuntu/.cache/pnpm ext4   ro,relatime",
+  "/dev/sdb1[/tmp/sw-full-regression-config-wrapper-20260903-v8.mts] /tmp/sw-full-regression-config-wrapper-20260903-v8.mts ext4   ro,relatime",
+  "/dev/loop22 /tmp/sw-full-regression-inputs-20260903-g-mnt squashfs ro,relatime,errors=continue",
+  "/dev/loop22[/serra-honda] /srv/ingest-dev/analytics/serra-honda squashfs ro,relatime,errors=continue",
+  "/dev/loop22[/serra-nissan] /srv/ingest-dev/analytics/serra-nissan squashfs ro,relatime,errors=continue",
+  "/dev/loop22[/tony-serra-ford] /srv/ingest-dev/analytics/tony-serra-ford squashfs ro,relatime,errors=continue"
+ ],
+ "ten_ro_mounts": true,
+ "warning_inventory": {
+  "stderr_blocks": 28,
+  "stdout_blocks": 32,
+  "react_act_warnings": 37,
+  "chart_width_height_neg1": 2,
+  "unhandled": 0,
+  "failure_glyphs": 0,
+  "stderr_by_test_file": {
+   "src/test/notify-dealer.test.ts": 1,
+   "src/test/threads-assign-api.test.ts": 4,
+   "src/test/webhooks.test.ts": 2,
+   "src/test/agent-autonomous-reply.test.ts": 4,
+   "src/test/inbound-hooks-integration.test.ts": 4,
+   "src/test/customer-widgets-api.test.ts": 1,
+   "src/test/customer-reports.test.ts": 2,
+   "src/test/campaign-worker.test.ts": 1,
+   "src/test/lead-notify-cooldown.test.ts": 1,
+   "src/test/crm-guru.test.ts": 1,
+   "src/test/plugin-bootstrap.test.ts": 1,
+   "src/test/console-renderers.test.tsx": 6
+  },
+  "categories": "functional negative-test diagnostics (unconfigured notification, agent fallback, webhook/inbound negative paths, console-renderer cases); non-failing; overlapping not additive",
+  "vs_F_baseline": {
+   "stderr_blocks": 28,
+   "stdout_blocks": 32,
+   "react_act_warnings": 37,
+   "chart_width_height_neg1": 1,
+   "unhandled": 0,
+   "note": "categories overlap, not additive; non-failing diagnostics; G must inventory/classify its own log; any unexplained drift => accepted=false"
+  },
+  "matches_F_baseline": false,
+  "drift": [
+   "see counts"
+  ]
+ },
+ "live_cross_rooftop_source_pre_post": {
+  "serra-honda/brain": {
+   "pre_digest": "a9098dc001e36aa8925aab7753b4bcfbc5f5ac5f21b5cf3ee68b4201ac6bd672",
+   "post_digest": "a9098dc001e36aa8925aab7753b4bcfbc5f5ac5f21b5cf3ee68b4201ac6bd672",
+   "unchanged_incl_mtime": true,
+   "detail_identical": true
+  },
+  "serra-honda/response-times": {
+   "pre_digest": "6d7c6d21551344fab0eedbf4344e823e64948abb9d9cb2b0bda52058b57a2962",
+   "post_digest": "6d7c6d21551344fab0eedbf4344e823e64948abb9d9cb2b0bda52058b57a2962",
+   "unchanged_incl_mtime": true,
+   "detail_identical": true
+  },
+  "serra-nissan/brain": {
+   "pre_digest": "86acdc6a428b5981c25b30ff8db8582ff54be4ca92b31fdfe820b8140671a08b",
+   "post_digest": "86acdc6a428b5981c25b30ff8db8582ff54be4ca92b31fdfe820b8140671a08b",
+   "unchanged_incl_mtime": true,
+   "detail_identical": true
+  },
+  "tony-serra-ford/brain": {
+   "pre_digest": "097c085e58bce080d334793ccdb3638b5c7e3e8e86f9a3a978e5de11453fd8e5",
+   "post_digest": "097c085e58bce080d334793ccdb3638b5c7e3e8e86f9a3a978e5de11453fd8e5",
+   "unchanged_incl_mtime": true,
+   "detail_identical": true
+  }
+ },
+ "live_all_unchanged_incl_mtime": true,
+ "isolation_conclusion": "tests accessed only immutable ro snapshots (10-RO namespace proof); live Honda/Nissan/Ford brain + Honda response-times unchanged incl ns-mtime, correcting F's live -shm mtime touch; strict fail-closed: any live drift would set accepted=false",
+ "g_snapshot_post": {
+  "image_sha256": "644c2db8692ebecf7e7633a13a8cd514ea8da5e5d097189f1e006b0b7cd0c354",
+  "image_unchanged": true,
+  "stage_combined_digest": "e2335aee65373c335f836c3e77bbded219ef5675d4afe72722a93156864f2237",
+  "stage_unchanged": true,
+  "mounted_equality_proven_pre": true
+ },
+ "repo_comparison": {
+  "pre_repo_digest": "7d320ca00ef4adead71a2c0389cf2ef02747099fa7c9591ded887669d60b8859",
+  "post_repo_digest_full": "abf70890274137e4a41c2d4a755c082a6954f35958e26f0f85c63d0eaa2bf355",
+  "reduced_digest_excl_run5": "7d320ca00ef4adead71a2c0389cf2ef02747099fa7c9591ded887669d60b8859",
+  "equal_to_pre": true,
+  "excluded_run5_row_count": 7
+ },
+ "git_porcelain_new_nonrun5": [],
+ "hermes_unchanged": true,
+ "brains_unchanged": true,
+ "tmp_inputs_unchanged": {
+  "/tmp/halo-295-leads-20260831": true,
+  "/tmp/halo-295-fresh-20260831": true,
+  "/tmp/halo-295-comm-20260901": true
+ },
+ "cache_scan_windows_delta": {
+  "/home/ubuntu/.npm": {
+   "changed": true,
+   "attributed_to_run": false,
+   "enforceable_control": "ro bind-mount proven in run5 interlock"
+  },
+  "/home/ubuntu/.local/share/pnpm": {
+   "changed": false,
+   "attributed_to_run": false,
+   "enforceable_control": "ro bind-mount proven in run5 interlock"
+  },
+  "/home/ubuntu/.cache/pnpm": {
+   "changed": false,
+   "attributed_to_run": false,
+   "enforceable_control": "ro bind-mount proven in run5 interlock"
+  }
+ },
+ "snapshot_chain_post": {
+  "v5": {
+   "sha256": "ff08964ae322fd2d1e534929f7a34fc35dcc8efdc4d7975153980ea8b1a10f1c",
+   "size": 166830080
+  },
+  "v6": {
+   "sha256": "ff08964ae322fd2d1e534929f7a34fc35dcc8efdc4d7975153980ea8b1a10f1c",
+   "size": 166830080
+  },
+  "v7": {
+   "sha256": "ff08964ae322fd2d1e534929f7a34fc35dcc8efdc4d7975153980ea8b1a10f1c",
+   "size": 166830080
+  },
+  "v8": {
+   "sha256": "ff08964ae322fd2d1e534929f7a34fc35dcc8efdc4d7975153980ea8b1a10f1c",
+   "size": 166830080
+  }
+ },
+ "snapshots_preserved": true,
+ "wrappers_post": {
+  "v7": {
+   "sha256": "c6bc703385963b2a81be18d85d8dfde83d04cce7485d93386dc73bf887b07685",
+   "size": 418
+  },
+  "v8": {
+   "sha256": "c6bc703385963b2a81be18d85d8dfde83d04cce7485d93386dc73bf887b07685",
+   "size": 418
+  }
+ },
+ "wrappers_preserved": true,
+ "lock_post": {
+  "sha256": "38bf0a6699eef6d190976d2c97aa781022a979ddfcab5798b4eaa41fc40e2c03",
+  "size": 116
+ },
+ "lock_unchanged": true,
+ "run4_F_anchors_unchanged": {
+  "FULL_REGRESSION_PRE.json": true,
+  "full-regression.log": true,
+  "FULL_REGRESSION_RUN_RECEIPT.json": true,
+  "FULL_REGRESSION_POST.json": true
+ },
+ "run3_dir_absent": true,
+ "config_unchanged": {
+  "vitest.config.ts": true,
+  "src/test/setup-brain-tmp.ts": true,
+  "package.json": true,
+  "pnpm-lock.yaml": true
+ },
+ "test_home": {
+  "pre_count": 258,
+  "post_count": 516,
+  "added_count": 258,
+  "additions_outside_repo": true,
+  "no_cleanup": true
+ },
+ "skip_driving_paths_absent_post": {
+  "src/test/fixtures/reconciliation/report.csv": true,
+  "src/test/fixtures/reconciliation/api-leads.json": true,
+  ".local-fixtures/vin18-20260830": true
+ },
+ "process_proof": {
+  "method": "/proc cwd+cmdline; exclude builder+ancestors; match cwd under repo AND vitest",
+  "examined_pid_count": 730,
+  "excluded_ancestor_pids": [
+   1,
+   261173,
+   593146,
+   1976042,
+   4059577,
+   4076263
+  ],
+  "repo_matching_vitest_matches": [],
+  "no_repo_matching_vitest_process_remains": true
+ },
+ "no_service_parts": {
+  "in_snapshot": true,
+  "in_run": "only 3 Sales brains + Honda response-times overmounted; serra-service never mounted"
+ },
+ "acceptance_checks": {
+  "rc_zero": true,
+  "configured_test_files_258": true,
+  "zero_failed_files": true,
+  "files_arithmetic": true,
+  "seven_authorized_skips": true,
+  "skip_reconciliation": true,
+  "zero_failed_tests": true,
+  "zero_todo": true,
+  "zero_unhandled": true,
+  "tests_arithmetic": true,
+  "ten_ro_mounts": true,
+  "warning_inventory_matches_F_baseline": false,
+  "zero_failure_glyphs": true,
+  "live_cross_rooftop_source_unchanged_incl_mtime": true,
+  "g_image_unchanged": true,
+  "g_stage_unchanged": true,
+  "repo_equal_excl_run5": true,
+  "hermes_unchanged": true,
+  "brains_unchanged": true,
+  "tmp_inputs_unchanged": true,
+  "snapshots_preserved": true,
+  "wrappers_preserved": true,
+  "lock_unchanged": true,
+  "run4_F_anchors_unchanged": true,
+  "run3_dir_absent": true,
+  "config_unchanged": true,
+  "skip_driving_paths_absent": true,
+  "test_home_additions_outside_repo": true,
+  "no_repo_matching_vitest": true,
+  "only_run5_repo_delta": true,
+  "no_service_parts_in_snapshot": true
+ },
+ "accepted": false,
+ "rejection_reasons": [
+  "warning_inventory_matches_F_baseline"
+ ],
+ "result_phrase": null,
+ "scope_note": "Honda remains the only data/metric/report scope; Nissan/Ford used solely as read-only snapshots to exercise shared software; no customer deliverable, CRM, or Nissan/Ford report output; goal completion NOT inferred"
+}

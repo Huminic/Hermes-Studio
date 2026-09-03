@@ -8,6 +8,8 @@ export default defineConfig({
     environment: 'node',
     include: ['src/test/**/*.test.ts', 'src/test/**/*.test.tsx'],
     globals: true,
+    // Redirect per-profile Brain storage to a disposable /tmp root (never ~/.hermes).
+    setupFiles: ['src/test/setup-brain-tmp.ts'],
   },
   resolve: {
     alias: {

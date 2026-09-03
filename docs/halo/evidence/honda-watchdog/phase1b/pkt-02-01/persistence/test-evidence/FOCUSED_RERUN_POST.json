@@ -1,0 +1,104 @@
+{
+  "packet": "FOCUSED_RERUN - POST (written last; self-exempt)",
+  "branch": "codex/halo-295-unshrinkable-inputs",
+  "head": "ecc1f6ec97da9bff66fa03df2f139ddfb1c74ddf",
+  "head_matches_expected": true,
+  "helper_absent": true,
+  "required_result": {
+    "test_files": "13/13",
+    "tests": "162/162",
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0,
+    "process_exit": 0,
+    "source": "focused.txt + focused.sidecar.json"
+  },
+  "pre_bound_input_comparison": {
+    "inputs_compared": 54,
+    "unchanged": 54,
+    "changed_count": 0,
+    "changed": []
+  },
+  "fixture_comparison": {
+    "xlsx": {
+      "unchanged": true,
+      "matches_expected": true,
+      "current": {
+        "sha256": "39f0577400c912b8e0f0db4a37a35726c1a460c32df88f231aaa39aff9d100ae",
+        "size": 46940
+      }
+    },
+    "capture_manifest": {
+      "unchanged": true,
+      "matches_expected": true,
+      "current": {
+        "sha256": "8ae369850056c13473e211921eba5f85dc61a2fe29f9b2942e0727e33148676c",
+        "size": 6201
+      }
+    }
+  },
+  "post_git_status_porcelain_v1": [
+    " M docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CANONICAL_MIGRATION_BACKFILL_RECEIPT.json",
+    " M scripts/halo-phase1b/canonical_backfill_receipt.ts",
+    " M src/server/brain-schema.ts",
+    " M src/server/watchdog/canonical-watchdog-store.ts",
+    " M src/server/watchdog/pkt-02-01-canonical-adapter.ts",
+    " M src/server/watchdog/watchdog-run-store.ts",
+    " M src/test/pkt-02-01-canonical-watchdog-store.test.ts",
+    " M vitest.config.ts",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CORRECTION_PACKET_PRE.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/PART_A_ACCEPTANCE_BUNDLE.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_POST.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_PRE.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json.sha256",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_PRE.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/COMMAND_MANIFEST.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/DEVIATION_DISCLOSURE.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_PRE.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/UNPLANNED_PRECHECK_DISCLOSURE.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/FOCUSED_TOTALS.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.sidecar.json",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.txt",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/FOCUSED_TOTALS.md",
+    "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/focused.sidecar.json",
+    "?? src/test/setup-brain-tmp.ts"
+  ],
+  "appeared_since_pre": [
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_PRE.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/FOCUSED_TOTALS.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.sidecar.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.txt"
+  ],
+  "appeared_outside_allowlist": [],
+  "only_allowlisted_outputs_changed": true,
+  "six_allowlisted_artifact_hashes_self_exempt": {
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/COMMAND_MANIFEST.md": {
+      "sha256": "5d6975ff8b96d75024748af63d9d205b405043bc78084461765516557fdcff9f",
+      "size": 5964
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/DEVIATION_DISCLOSURE.md": {
+      "sha256": "8809bb679b1b41424d7f10f28d53da0ea9413ae83e24e78c7806e5cea22e3878",
+      "size": 9044
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_PRE.json": {
+      "sha256": "a519c7395878723f887bca5ddc0bb48535df0c69d0e1d4506e7e256d72cbe45f",
+      "size": 16738
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.txt": {
+      "sha256": "1ef08afc059fbfbf712bdb598637ef7c5952d088c33d69fb5ad48b02037d78f3",
+      "size": 1261
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.sidecar.json": {
+      "sha256": "b7a1236ed23562da10698f9118aebc80386283920e96ae936642aefe096efe73",
+      "size": 1741
+    },
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/FOCUSED_TOTALS.md": {
+      "sha256": "53d308bd7956b82cb06c8bf9553cd86738c765605e0c12fdadbf3801e6731339",
+      "size": 1508
+    }
+  },
+  "immutable_focused_log_unchanged": true,
+  "drift_detected": false
+}

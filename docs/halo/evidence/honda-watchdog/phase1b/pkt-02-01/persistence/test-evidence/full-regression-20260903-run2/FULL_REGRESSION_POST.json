@@ -1,0 +1,398 @@
+{
+ "packet": "SW-FULL-REGRESSION-EVIDENCE-20260903-D",
+ "accepted": false,
+ "written_utc": "2026-09-03T07:29:02Z",
+ "verdict_class": "fail-closed harness result (configLoader-runner/config-__dirname incompatibility); NOT a product-test verdict",
+ "run_receipt_sha256": "20686963b9e7c05c75f70cd42345f6b2fec1ca747a0f1d1f4c83ef382317642b",
+ "pre_sha256": "8b1c918282ab0ed7518d97bcb8c96509b8bd9feaf1c786b01206442b7d2e102c",
+ "pre_size": 58668,
+ "raw_log_sha256": "407a23d9360179ee93dadad0f7ea15a3a1806314ba12d6da22cd5c3c993f04c8",
+ "raw_log_size": 2918,
+ "exit_code": 1,
+ "observed_test_files": {
+  "passed": 0,
+  "skipped": 0,
+  "failed": 0,
+  "total": 0
+ },
+ "observed_tests": {
+  "passed": 0,
+  "skipped": 0,
+  "failed": 0,
+  "todo": 0,
+  "total": 0
+ },
+ "seven_skip_reconciliation": "N/A \u2014 no collection occurred (startup config-load error)",
+ "startup_error": {
+  "present": true,
+  "class": "ReferenceError",
+  "symbol": "__dirname is not defined",
+  "config_file": "vitest.config.ts",
+  "config_line_using_dirname": 16,
+  "loader": "runner",
+  "dispatch": "vite runnerImportConfigFile (native-ESM config evaluation)",
+  "dispatch_marker_in_log": true,
+  "note": "sibling-project stack-frame paths present in raw log but intentionally not copied into this POST writer per boundary"
+ },
+ "interlock_from_log": {
+  "mounts_ro_lines_observed": 5,
+  "expected": 5,
+  "all_ro": true,
+  "note": "v6 squashfs ro over node_modules + 3 cache roots ro + staging ro; enforceable control satisfied even though config load failed"
+ },
+ "repo_manifest_post": {
+  "digest": "ffba0ac969e1ff155db420965143124b980c8f0f44483fe7b1a67b6c64d161d8",
+  "manifest_bytes": 402528,
+  "dir_count": 363,
+  "file_count": 2152,
+  "symlink_count": 0,
+  "regular_file_bytes": 60690451,
+  "equals_pre_excluding_run2": true
+ },
+ "repo_pre_post_equal_excluding_4_run2_files_and_new_dir": true,
+ "config_hashes_post": {
+  "vitest.config.ts": "46dd25af3e16abdec63969f8f8af506281122d79d50024c88769e95351b45c2c",
+  "src/test/setup-brain-tmp.ts": "33955f0ca42980f6d66503fbc69864a82f14857a7e15c9e21a56c0cc1b9af053",
+  "package.json": "64c97d2066e4699cf37513ee8daee5d3afcf3ce019047cc90bb4451273f13545",
+  "pnpm-lock.yaml": "3c07094f3b39f5e442434f8ddb23c63911f80187b7ff4576cbc248e4b0a42119"
+ },
+ "config_unchanged": true,
+ "recovery_anchors_post": {
+  "CONTROLLER_DEVIATION_DISCLOSURE.md": "7951b1e79d213fab35196f82c031af73a063f2c502fd0b213a621a5daa8283fa",
+  "RECOVERY_POST.json": "0ce903281869c4ef6c413f33944c12245456cd00f2c7c10798a0355d690ea1fd"
+ },
+ "recovery_unchanged": true,
+ "rejected_attempt_anchors_run1_post": {
+  "FULL_REGRESSION_PRE.json": {
+   "sha256": "9eee789ff912242c3fd9743128a6ca857743aba9c13a6b29b797fa8d205ece4f",
+   "size": 57085
+  },
+  "full-regression.log": {
+   "sha256": "939f38f14b8d66ae81df9ee3c2154a77bb1640d4015c88a0788a61a8f5881d29",
+   "size": 3128
+  },
+  "FULL_REGRESSION_RUN_RECEIPT.json": {
+   "sha256": "a6bb5b5276145784800a4184331c0915adf2b8de19f937ec8cc26aa30fe5879f",
+   "size": 7904
+  },
+  "FULL_REGRESSION_POST.json": {
+   "sha256": "0f47d3047a6bd9293781b7d22bf929e18710dee60e68c075ccf93e3ad81e4d16",
+   "size": 7471
+  }
+ },
+ "run1_anchors_unchanged": true,
+ "hermes_manifest_post": {
+  "digest": "63446fa64aef1c6febb6d031b589818868132c40ce50998933ad8b456bd1b455",
+  "manifest_bytes": 92930,
+  "dir_count": 251,
+  "file_count": 428,
+  "symlink_count": 0,
+  "regular_file_bytes": 28126641,
+  "unchanged": true
+ },
+ "protected_main_brain_dbs_post": [
+  {
+   "rel": "profiles/missfix/brain/brain.db",
+   "size": 552960,
+   "mtime_ns": 1788391492840391780,
+   "sha256": "96242eac0024245f50e6158179a996a76c7b7b9a2adb8e47ecaaa155da9f0b5b",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/huminic/brain/brain.db",
+   "size": 352256,
+   "mtime_ns": 1780635110625980042,
+   "sha256": "a757408d4f3fd733cf859505cce68117869d2814a4c958c0a05c94a73141f495",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/difix/brain/brain.db",
+   "size": 544768,
+   "mtime_ns": 1788391557648465681,
+   "sha256": "027b6519fcb3d54214916f4f99c63dd1c6ee263cbdc0f7a727ee762c9e950a2b",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/test/brain/brain.db",
+   "size": 552960,
+   "mtime_ns": 1788391546140452645,
+   "sha256": "65c1dab83b95decfccad4f14266a91964a372cdf66295faf78a8ca236c78b538",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/lsdfix-none2/brain/brain.db",
+   "size": 544768,
+   "mtime_ns": 1788391493620392677,
+   "sha256": "a335b92908dca4042690641f8887d96ae3c4a2f12a1574d0dcf8ba928e6965d2",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/sptfix-none/brain/brain.db",
+   "size": 544768,
+   "mtime_ns": 1788391492556391453,
+   "sha256": "1d917d8259b1757179cdc90322291c0f5d43d3c72a50dece25ac85c0eb96c46e",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/serra-nissan/brain/brain.db",
+   "size": 405504,
+   "mtime_ns": 1784613186076921454,
+   "sha256": "590f917bf905594dfd49fec46a36601e14054a92973ff18f67ef43e7dfd92f8d",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/lsdfix-none/brain/brain.db",
+   "size": 544768,
+   "mtime_ns": 1788391493588392640,
+   "sha256": "48ea3b3f8770ccdd2e947d658d05e09f4d87e59cc03f6c083cbc414408a6871b",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/serra-honda/brain/brain.db",
+   "size": 446464,
+   "mtime_ns": 1784613295792903602,
+   "sha256": "b4bee89fa022bec4bb9c68e453b78ada4b79de0dc27fa5c53f6088ed5d716c7a",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/spfix-none/brain/brain.db",
+   "size": 544768,
+   "mtime_ns": 1788391493680392746,
+   "sha256": "224eae257b04fc4ace1db88e1195afbdcec0b47811deda612ab7855ed9bda37c",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/hyundai-of-columbia/brain/brain.db",
+   "size": 360448,
+   "mtime_ns": 1781635804954417263,
+   "sha256": "7de41e1cdb995c51bfaa8248f40bbeff87abdece8b05ba02084fbfe3ed7c4c04",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/ford-of-columbia/brain/brain.db",
+   "size": 360448,
+   "mtime_ns": 1781635804962417268,
+   "sha256": "a126d88a8a3d355aae8138a6021979887ebe4692cbf8f6259102fc331c54c2c3",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/tony-serra-ford/brain/brain.db",
+   "size": 405504,
+   "mtime_ns": 1784613186088921452,
+   "sha256": "c2f1e790d3a3734b5d7db3f694349bdb0f02329d773666ea3e7d9ca44a51fa0b",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/serra-service/brain/brain.db",
+   "size": 360448,
+   "mtime_ns": 1781635804738417122,
+   "sha256": "62a1aab56c37e90a4c8f804f74823a41b2a4d1d5ed46163a068b63c4725feccc",
+   "unchanged": true
+  },
+  {
+   "rel": "profiles/missfix2/brain/brain.db",
+   "size": 552960,
+   "mtime_ns": 1788391492828391766,
+   "sha256": "2d3fabe228134c8b2406b8450604fd0d398102c85df56a930179e60512973e42",
+   "unchanged": true
+  }
+ ],
+ "brain_dbs_unchanged": true,
+ "ingest_brain_post": {
+  "dir": "/srv/ingest-dev/analytics/serra-honda/brain",
+  "files": [
+   {
+    "name": "brain.db",
+    "size": 634880,
+    "mtime_ns": 1788133603784259240,
+    "sha256": "1a3e3bd3a56266c9b71062e72c62a2b46bfde8715e4140f5a5d1c7d356b562be"
+   },
+   {
+    "name": "brain.db-shm",
+    "size": 32768,
+    "mtime_ns": 1788398924039439534,
+    "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+   },
+   {
+    "name": "brain.db-wal",
+    "size": 0,
+    "mtime_ns": 1788168876336046036,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   }
+  ],
+  "unchanged": true
+ },
+ "tmp_input_roots_post": {
+  "/tmp/halo-295-leads-20260831": {
+   "digest": "17d44d588516c22e8f210bafb9bac7d21f90956cd3bf805f37d6cf0e351401d1",
+   "manifest_bytes": 1313,
+   "dir_count": 0,
+   "file_count": 8,
+   "symlink_count": 0,
+   "regular_file_bytes": 804258,
+   "unchanged": true
+  },
+  "/tmp/halo-295-fresh-20260831": {
+   "digest": "535cae0e4da2cf43ed6242feff4c6e1a7279574c1cdd5956f463cc2721cf034e",
+   "manifest_bytes": 17365,
+   "dir_count": 46,
+   "file_count": 57,
+   "symlink_count": 0,
+   "regular_file_bytes": 605932,
+   "unchanged": true
+  },
+  "/tmp/halo-295-comm-20260901": {
+   "digest": "cf301a9a344a8bd66dd8980a3c05a7b09cd8a1f23396ba9e1d7c1bd54e71a4c5",
+   "manifest_bytes": 1654,
+   "dir_count": 0,
+   "file_count": 10,
+   "symlink_count": 0,
+   "regular_file_bytes": 1944770,
+   "unchanged": true
+  }
+ },
+ "tmp_roots_unchanged": true,
+ "cache_scan_windows_post": {
+  "/home/ubuntu/.npm": {
+   "digest": "ee678d11b36454299b4e08b4b955df1b9026c394dd0d94c225ecad5774c679bb",
+   "manifest_bytes": 10280526,
+   "dir_count": 15389,
+   "file_count": 55520,
+   "symlink_count": 114,
+   "regular_file_bytes": 3567980523,
+   "present": true,
+   "delta_vs_pre_nonattributable": true
+  },
+  "/home/ubuntu/.local/share/pnpm": {
+   "digest": "1d0012fe914edadf9b49f37ece97398a7be8f1ba1fefd6cb3e10d2021e0390c4",
+   "manifest_bytes": 18312716,
+   "dir_count": 517,
+   "file_count": 77215,
+   "symlink_count": 3,
+   "regular_file_bytes": 747677311,
+   "present": true,
+   "delta_vs_pre_nonattributable": false
+  },
+  "/home/ubuntu/.cache/pnpm": {
+   "digest": "bf64a601088ff4bb2257b1c451d51f81b8ef16cd39f2bb759a53776973766945",
+   "manifest_bytes": 189,
+   "dir_count": 2,
+   "file_count": 1,
+   "symlink_count": 0,
+   "regular_file_bytes": 1786607,
+   "present": true,
+   "delta_vs_pre_nonattributable": false
+  }
+ },
+ "cache_note": "host-shared non-attributable scan windows; run lasted ~1s and failed at config load before any vitest cache init; enforceable control is ro bind-mount proven in log; any delta unrelated to this run",
+ "skip_driving_paths_absent_post": {
+  "src/test/fixtures/reconciliation/report.csv": true,
+  "src/test/fixtures/reconciliation/api-leads.json": true,
+  ".local-fixtures/vin18-20260830": true
+ },
+ "git_ls_files_count_post": 2149,
+ "git_status_porcelain_v1_post": [
+  "M docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CANONICAL_MIGRATION_BACKFILL_RECEIPT.json",
+  " M scripts/halo-phase1b/canonical_backfill_receipt.ts",
+  " M src/server/brain-schema.ts",
+  " M src/server/watchdog/canonical-watchdog-store.ts",
+  " M src/server/watchdog/pkt-02-01-canonical-adapter.ts",
+  " M src/server/watchdog/watchdog-run-store.ts",
+  " M src/test/pkt-02-01-canonical-watchdog-store.test.ts",
+  " M vitest.config.ts",
+  "?? .claude/scheduled_tasks.lock",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/CORRECTION_PACKET_PRE.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/PART_A_ACCEPTANCE_BUNDLE.md",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY.md",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_POST.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/HERMES_TESTDB_INVENTORY_PRE.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_POST.json.sha256",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/hermes-testdb-inventory/PROVENANCE_PRE.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/COMMAND_MANIFEST.md",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/DEVIATION_DISCLOSURE.md",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_POST.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/FOCUSED_RERUN_PRE.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/UNPLANNED_PRECHECK_DISCLOSURE.md",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/CONTROLLER_DEVIATION_DISCLOSURE.md",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/RECOVERY_POST.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/controller-deviation/quarantine/FIXTURE_DB_RECONCILIATION.stale-prompt.md",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/FOCUSED_TOTALS.md",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.sidecar.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused-rerun/focused.txt",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/FOCUSED_TOTALS.md",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/focused/focused.sidecar.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/full-regression-20260903-run2/FULL_REGRESSION_PRE.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/full-regression-20260903-run2/FULL_REGRESSION_RUN_RECEIPT.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/full-regression-20260903/FULL_REGRESSION_POST.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/full-regression-20260903/FULL_REGRESSION_PRE.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/full-regression-20260903/FULL_REGRESSION_RUN_RECEIPT.json",
+  "?? src/test/setup-brain-tmp.ts"
+ ],
+ "git_porcelain_added_vs_pre": [
+  "?? .claude/scheduled_tasks.lock",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/full-regression-20260903-run2/FULL_REGRESSION_PRE.json",
+  "?? docs/halo/evidence/honda-watchdog/phase1b/pkt-02-01/persistence/test-evidence/full-regression-20260903-run2/FULL_REGRESSION_RUN_RECEIPT.json"
+ ],
+ "git_porcelain_removed_vs_pre": [],
+ "test_home_post_set": [],
+ "test_home_post_count": 0,
+ "test_home_added": [],
+ "dependency_snapshot_post": {
+  "v5_image_sha256": "ff08964ae322fd2d1e534929f7a34fc35dcc8efdc4d7975153980ea8b1a10f1c",
+  "v5_image_size": 166830080,
+  "v6_image_sha256": "ff08964ae322fd2d1e534929f7a34fc35dcc8efdc4d7975153980ea8b1a10f1c",
+  "v6_image_size": 166830080,
+  "v5_unchanged": true,
+  "v6_unchanged": true,
+  "v6_mounted_content_digest_post": "c5e9aed01acd56d59b13e534ad082d7ff95a6c460d8693b5955bef371dfd87f5",
+  "v6_mounted_counts_post": {
+   "dirs": 10409,
+   "links": 3485,
+   "files": 93097,
+   "bytes": 826093176
+  },
+  "v6_symlink_closure_post": {
+   "total": 3485,
+   "within": 3485,
+   "broken": 0,
+   "escape": 0
+  },
+  "v6_content_eq_v5_anchor": true,
+  "v5_v6_preserved_not_deleted": true
+ },
+ "diagnostic_temp_artifacts_preserved": [
+  "/tmp/run2_canon.py",
+  "/tmp/run2_canon2.py",
+  "/tmp/run2_canon3.py",
+  "/tmp/run2-include-manifest.txt"
+ ],
+ "process_proof_note": "RUN_RECEIPT recorded zero repo-matching vitest processes (builder+ancestors excluded; unrelated HyperErp workers not counted)",
+ "no_commit_push_deploy": true,
+ "no_retry": true,
+ "no_repair": true,
+ "no_source_or_config_change": true,
+ "second_invocation": "none \u2014 packet forbids second invocation",
+ "rejection_reasons": [
+  "exit_code=1 (required 0)",
+  "Startup Error: ReferenceError __dirname is not defined while loading vitest.config.ts under --configLoader runner (vite runnerImportConfigFile ESM evaluation); __dirname is a CommonJS global undefined in native-ESM config evaluation (vitest.config.ts line 16 resolve(__dirname,'./src'))",
+  "zero test files collected and zero tests executed; config never loaded so 258-file scope and 7-skip manifest could not be exercised",
+  "packet premise that --configLoader runner is a transparent correction does not hold for this repo config; runner dispatch confirmed (runnerImportConfigFile) exactly as PRE documented, but config depends on __dirname"
+ ],
+ "acceptance_phrase": "NOT ACCEPTED \u2014 accepted=false; no accepted_with_7_authorized_skips phrase applies",
+ "post_writer_boundary_note": "POST writer performed zero sibling-project reads and contains no sibling absolute path literal and no reconstructed sibling path",
+ "harness_scheduling_lock_disclosure": {
+  "path": ".claude/scheduled_tasks.lock",
+  "size": 116,
+  "origin": "created by the assistant's ScheduleWakeup (loop-pacing) tool call at 2026-09-03T07:27Z while waiting for the POST builder; harness scheduling subsystem, this session id",
+  "classification": "harness-generated scheduling lock; NOT source/config/fixture/product/evidence content; NOT one of the four authorized run2 evidence writes",
+  "authorized_by_packet": false,
+  "content_summary": "json {sessionId,pid,procStart,acquiredAt} only",
+  "repo_manifest_relationship": "repo_manifest POST walk executed before this lock was created, so repo_manifest equality reflects packet-relevant content only; lock is captured in git_status_porcelain_v1_post and git_porcelain_added_vs_pre",
+  "action_taken": "disclosed; NOT deleted (packet no-cleanup rule; deleting to make tree appear clean would be dishonest recovery); harness expected to release lock at scheduler lifecycle end",
+  "impact_on_verdict": "none \u2014 accepted remains false on the configLoader-runner/__dirname runtime mismatch; this lock does not affect the test result, protected state, snapshot, or anchors"
+ },
+ "unauthorized_repo_tree_additions_beyond_four_evidence_files": [
+  ".claude/scheduled_tasks.lock (harness scheduling lock \u2014 see harness_scheduling_lock_disclosure)"
+ ]
+}

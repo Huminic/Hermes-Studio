@@ -26,6 +26,9 @@
  *
  * No network, no production DB, no delivery.
  */
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import { now as nowMs, openBrain } from '../brain-store'
 import { canonicalJson, sha256Hex } from '../reports/packet/canonical'
 // Type-only imports of the GENERIC metric-record contracts (erased at compile time —
@@ -73,6 +76,24 @@ export type MetricDefinitionSpec = {
   definition_status: string
 }
 
+/** Structured per-artifact admission receipt bound to the artifact's identity. Every
+ *  field is validated independently against its artifact at persist time (item 3). */
+export type StructuredAdmissionReceipt = {
+  source_sha256: string
+  schema_contract_sha256: string | null
+  bytes: number | null
+  row_count: number | null
+  profile: string
+  dealer_id: string
+  period: string
+  admitted: true
+  zero_service_parts: true
+  /** Non-empty artifact-bound Sales-only proof (item 4). */
+  sales_only_proof: string
+  /** free-form provenance (row reconciliation, etc.) — not identity-bound. */
+  provenance?: Record<string, unknown>
+}
+
 export type SourceArtifactSpec = {
   source_artifact_id: string
   family: string
@@ -87,7 +108,7 @@ export type SourceArtifactSpec = {
   bytes?: number | null
   row_count?: number | null
   dealer_period_result: string
-  admission_receipt: unknown
+  admission_receipt: StructuredAdmissionReceipt
 }
 
 export type NormalizedDatasetSpec = {
@@ -210,6 +231,105 @@ export type ReportRunSpec = {
   activation_state?: string | null
 }
 
+export type CapabilitySnapshotSpec = {
+  capability_snapshot_id: string
+  dealer_id: string
+  period: string
+  revision?: number
+  supersedes_id?: string | null
+  throughput?: string | null
+  workforce?: string | null
+  workload_capacity?: string | null
+  inventory_context?: string | null
+  source_mix?: string | null
+  dealer_history?: string | null
+  seasonality_flags?: string | null
+  manual_potential?: string | null
+  provenance?: string | null
+}
+
+/** Buckets the lifecycle partition may use — the contract's defined vocabulary only. */
+export const LIFECYCLE_BUCKETS = [
+  'accepted_measured_ids',
+  'accepted_disposition_only_ids',
+  'rejected_ids',
+  'source_investigation_pending_ids',
+  'calculation_pending_ids',
+] as const
+
+/** The lifecycle bucket is AUTHORITATIVE (from the binding's lifecycle_bucket). Bucket
+ *  validity depends on the pair (disposition, evaluation_state), NOT a one-to-one map
+ *  (Amendment 002). This is the set of dispositions each bucket admits; source
+ *  _investigation_pending is NEVER accepted_disposition_only; rejected_ids may retain
+ *  measured_validated / data_acquired_calculation_pending with measurement_rejected. */
+export const BUCKET_ALLOWED_DISPOSITIONS: Record<
+  (typeof LIFECYCLE_BUCKETS)[number],
+  ReadonlySet<string>
+> = {
+  accepted_measured_ids: new Set(['measured_validated']),
+  calculation_pending_ids: new Set(['data_acquired_calculation_pending']),
+  // ONLY source_investigation_pending — crm_available_acquisition_pending is a PROVED
+  // state and must NOT be silently absorbed here; it needs its own binding-authorized
+  // placement, which no PKT01/02 metric uses.
+  source_investigation_pending_ids: new Set(['source_investigation_pending']),
+  accepted_disposition_only_ids: new Set([
+    'external_source_required',
+    'additional_history_required',
+    'genuinely_not_available',
+    'outside_sales_domain',
+  ]),
+  rejected_ids: new Set([
+    'measured_validated',
+    'data_acquired_calculation_pending',
+  ]),
+}
+/** Evaluation states each bucket admits (used with the frozen consistency map). */
+export const BUCKET_ALLOWED_EVAL_STATES: Record<
+  (typeof LIFECYCLE_BUCKETS)[number],
+  ReadonlySet<string>
+> = {
+  accepted_measured_ids: new Set(['measured_graded', 'measured_unscored']),
+  calculation_pending_ids: new Set([
+    'not_measured',
+    'measured_unscored',
+    'measured_abstained',
+  ]),
+  source_investigation_pending_ids: new Set(['not_measured']),
+  accepted_disposition_only_ids: new Set(['not_measured']),
+  rejected_ids: new Set(['measurement_rejected']),
+}
+/** Frozen metric_evaluation_state vocabulary. */
+export const EVALUATION_STATES = new Set<string>([
+  'not_measured',
+  'measured_unscored',
+  'measured_graded',
+  'measured_abstained',
+  'measurement_rejected',
+])
+/** Frozen disposition → allowed evaluation_state map (disposition_evaluation_consistency). */
+export const DISPOSITION_EVAL_CONSISTENCY: Record<
+  string,
+  ReadonlyArray<string>
+> = {
+  measured_validated: [
+    'measured_graded',
+    'measured_unscored',
+    'measurement_rejected',
+  ],
+  data_acquired_calculation_pending: [
+    'not_measured',
+    'measured_unscored',
+    'measured_abstained',
+    'measurement_rejected',
+  ],
+  crm_available_acquisition_pending: ['not_measured'],
+  additional_history_required: ['not_measured'],
+  external_source_required: ['not_measured'],
+  genuinely_not_available: ['not_measured'],
+  outside_sales_domain: ['not_measured'],
+  source_investigation_pending: ['not_measured'],
+}
+
 /** The fully-declared, packet-agnostic unit of persistence. */
 export type CanonicalRunEnvelope = {
   profile: string
@@ -242,11 +362,34 @@ export type CanonicalRunEnvelope = {
   detection_rules: Array<DetectionRuleSpec>
   grade_targets: Array<GradeTargetSpec>
   comparison_references: Array<ComparisonReferenceSpec>
+  /** Capability snapshots EXPLICITLY supplied + linked to this run (manifest covers
+   *  exactly these; never a same-profile/dealer/period sweep). */
+  capability_snapshots: Array<CapabilitySnapshotSpec>
   finding_specs: Array<FindingSpec>
   report_run: ReportRunSpec
   sales_only_admission: SalesOnlyAdmission
-  /** normalized_dataset_id per metric_id (null for pending/no-lineage metrics). */
+  /** normalized_dataset_id per metric_id — keys EXACTLY equal expected_metric_ids;
+   *  null permitted only for disposition-only / unmeasured metrics. */
   dataset_id_by_metric: Record<string, string | null>
+  /** Explicit evaluation→detection_rule identity per metric_id (null when the metric
+   *  has no detection rule). No DR-id-by-convention guessing. */
+  detection_rule_id_by_metric: Record<string, string | null>
+  /** Binding-derived GOVERNED disposition per metric (keys EXACTLY equal expected).
+   *  Authoritative vocabulary only (see DISPOSITION_BUCKET). Persisted to
+   *  watchdog_metric_observation.disposition. */
+  disposition_by_metric: Record<string, string>
+  /** Binding-derived MEASUREMENT/evaluation state per metric (keys EXACTLY equal
+   *  expected). Distinct from disposition; persisted to
+   *  watchdog_metric_evaluation.evaluation_state. */
+  evaluation_state_by_metric: Record<string, string>
+  /** Frozen-schema exact field: the affirmative finite-investigation evidence ref per
+   *  metric (keys EXACTLY equal expected). Non-null+non-empty is REQUIRED for a
+   *  genuinely_not_available disposition; null otherwise. Persisted to
+   *  watchdog_metric_observation.affirmative_investigation_evidence_ref. */
+  affirmative_investigation_evidence_ref_by_metric: Record<
+    string,
+    string | null
+  >
 }
 
 // ── Read-back shapes ─────────────────────────────────────────────────
@@ -260,7 +403,15 @@ export type StoredAlertCandidate = {
   message: string
 }
 
+/** Read-shape version. v1 = engine-shaped record arrays only (legacy). v2 = additive
+ *  governed-field maps (disposition / evaluation_state / affirmative_investigation
+ *  _evidence_ref) exposed generically. Older code reading only the v1 fields keeps
+ *  working (backward compatible). */
+export const STORED_CANONICAL_RUN_READ_VERSION = 2 as const
+
 export type StoredCanonicalRun = {
+  /** Read-shape version (2). */
+  read_shape_version: typeof STORED_CANONICAL_RUN_READ_VERSION
   run_key: string
   profile: string
   packet_id: string
@@ -280,6 +431,16 @@ export type StoredCanonicalRun = {
   evaluations: Array<Evaluation>
   findings: Array<Finding>
   alert_candidates: Array<StoredAlertCandidate>
+  // v2 additive governed read fields (persisted columns the engine shapes cannot hold).
+  /** GOVERNED disposition per metric (watchdog_metric_observation.disposition). */
+  disposition_by_metric: Record<string, string>
+  /** MEASUREMENT state per metric (watchdog_metric_evaluation.evaluation_state). */
+  evaluation_state_by_metric: Record<string, string>
+  /** Frozen-schema affirmative_investigation_evidence_ref per metric (null when N/A). */
+  affirmative_investigation_evidence_ref_by_metric: Record<
+    string,
+    string | null
+  >
 }
 
 export type RowCounts = {
@@ -288,6 +449,7 @@ export type RowCounts = {
   detection_rule: number
   source_artifact: number
   normalized_dataset: number
+  capability_snapshot: number
   grade_target: number
   comparison_reference: number
   observation: number
@@ -296,6 +458,11 @@ export type RowCounts = {
   finding_metric_link: number
   report_run: number
   alert_candidate: number
+  // v6 run→lineage + eval→rule link families (item 8: tally all four).
+  run_source_link: number
+  run_dataset_link: number
+  run_capability_link: number
+  eval_rule_link: number
 }
 
 export type CanonicalPersistResult = {
@@ -427,9 +594,27 @@ export function validateEnvelope(env: CanonicalRunEnvelope): void {
     throw new E('empty expected_metric_ids')
   const expected = env.expected_metric_ids
   const measured = env.measured_metric_ids
+  // Unique expected/measured IDs (item 6 exact set logic).
+  if (new Set(expected).size !== expected.length)
+    throw new E(`expected_metric_ids has duplicates [${expected.join(', ')}]`)
+  if (new Set(measured).size !== measured.length)
+    throw new E(`measured_metric_ids has duplicates [${measured.join(', ')}]`)
   const expSet = new Set(expected)
   for (const id of measured)
     if (!expSet.has(id)) throw new E(`measured id ${id} not in expected set`)
+  // measured EXACTLY equals lifecycle_partition.accepted_measured_ids (item 6).
+  const acceptedMeasured = env.lifecycle_partition.accepted_measured_ids ?? []
+  const accMSet = new Set(acceptedMeasured)
+  if (accMSet.size !== acceptedMeasured.length)
+    throw new E('accepted_measured_ids has duplicates')
+  if (
+    accMSet.size !== measured.length ||
+    measured.some((id) => !accMSet.has(id))
+  )
+    throw new E(
+      `measured [${[...measured].sort().join(',')}] != accepted_measured_ids ` +
+        `[${[...acceptedMeasured].sort().join(',')}]`,
+    )
 
   assertExactIds(
     env.observations.map((o) => o.metric_id),
@@ -464,16 +649,47 @@ export function validateEnvelope(env: CanonicalRunEnvelope): void {
   for (const fs of env.finding_specs) {
     if (!expSet.has(fs.metric_id))
       throw new E(`finding_specs: unexpected metric id ${fs.metric_id}`)
-    const k = `${fs.finding_key} ${fs.metric_id}`
+    const k = JSON.stringify([fs.finding_key, fs.metric_id])
     if (linkSeen.has(k))
       throw new E(
         `finding_specs: duplicate link (${fs.finding_key}, ${fs.metric_id})`,
       )
     linkSeen.add(k)
   }
+  // Item 2: EXACT order-aware bijection between the hashed findings (content-of-record)
+  // and the persisted finding_specs (links). Same length, same per-position content, so
+  // there is exactly one authoritative finding representation.
+  if (env.findings.length !== env.finding_specs.length)
+    throw new E(
+      `finding bijection: ${env.findings.length} hashed findings != ${env.finding_specs.length} finding_specs`,
+    )
+  for (let i = 0; i < env.findings.length; i++) {
+    const f = env.findings[i]
+    const s = env.finding_specs[i]
+    if (
+      f.metric_id !== s.metric_id ||
+      f.period !== s.period ||
+      f.severity !== s.severity ||
+      f.headline !== s.headline ||
+      f.detail !== s.detail
+    )
+      throw new E(
+        `finding bijection: position ${i} content mismatch (finding ${f.metric_id}/${f.headline} != spec ${s.metric_id}/${s.headline})`,
+      )
+  }
 
-  // Lifecycle partition: buckets mutually exclusive, and their union EXACTLY equals
-  // the expected id set.
+  // Lifecycle partition: EXACTLY the five authoritative bucket keys present; only that
+  // vocabulary; buckets mutually exclusive; union EXACTLY equals the expected id set.
+  const allowedBuckets = new Set<string>(LIFECYCLE_BUCKETS)
+  const bucketKeys = Object.keys(env.lifecycle_partition)
+  for (const b of bucketKeys)
+    if (!allowedBuckets.has(b))
+      throw new E(
+        `lifecycle_partition: unknown bucket '${b}' (allowed: ${[...allowedBuckets].join(', ')})`,
+      )
+  for (const b of LIFECYCLE_BUCKETS)
+    if (!(b in env.lifecycle_partition))
+      throw new E(`lifecycle_partition: missing required bucket '${b}'`)
   const seenInBucket = new Map<string, string>()
   for (const [bucket, ids] of Object.entries(env.lifecycle_partition)) {
     for (const id of ids) {
@@ -492,11 +708,101 @@ export function validateEnvelope(env: CanonicalRunEnvelope): void {
       throw new E(
         `lifecycle_partition: expected ${id} in no bucket (union != expected)`,
       )
+  // Two binding-derived exact-key maps: GOVERNED disposition and MEASUREMENT state.
+  // Keys of each EXACTLY equal expected.
+  for (const [label, m] of [
+    ['disposition_by_metric', env.disposition_by_metric] as const,
+    ['evaluation_state_by_metric', env.evaluation_state_by_metric] as const,
+  ]) {
+    const keys = Object.keys(m)
+    if (keys.length !== expected.length || keys.some((k) => !expSet.has(k)))
+      throw new E(
+        `${label} keys [${[...keys].sort().join(',')}] != expected [${[...expected].sort().join(',')}]`,
+      )
+  }
+  const obsByMetric = new Map(env.observations.map((o) => [o.metric_id, o]))
+  const evalByMetric = new Map(env.evaluations.map((e) => [e.metric_id, e]))
+  const isGraded = (mid: string): boolean =>
+    (evalByMetric.get(mid)?.gradable_state ?? '') === 'graded'
+  for (const [id, bucketStr] of seenInBucket) {
+    const bucket = bucketStr as (typeof LIFECYCLE_BUCKETS)[number]
+    const disp = env.disposition_by_metric[id]
+    const evState = env.evaluation_state_by_metric[id]
+    if (!(disp in DISPOSITION_EVAL_CONSISTENCY))
+      throw new E(`disposition '${disp}' for ${id} is not frozen vocabulary`)
+    if (!EVALUATION_STATES.has(evState))
+      throw new E(
+        `evaluation_state '${evState}' for ${id} is not frozen vocabulary`,
+      )
+    // Frozen disposition→evaluation_state consistency map.
+    if (!DISPOSITION_EVAL_CONSISTENCY[disp].includes(evState))
+      throw new E(
+        `${id}: evaluation_state '${evState}' not allowed for disposition '${disp}' ` +
+          `(allowed: ${DISPOSITION_EVAL_CONSISTENCY[disp].join(', ')})`,
+      )
+    // Bucket is AUTHORITATIVE (from the binding). The (disposition, evaluation_state)
+    // pair must be admitted by that bucket (Amendment 002) — not a one-to-one map.
+    if (!BUCKET_ALLOWED_DISPOSITIONS[bucket].has(disp))
+      throw new E(
+        `${id}: disposition '${disp}' not admitted by bucket '${bucket}' ` +
+          `(allowed: ${[...BUCKET_ALLOWED_DISPOSITIONS[bucket]].join(', ')})`,
+      )
+    if (!BUCKET_ALLOWED_EVAL_STATES[bucket].has(evState))
+      throw new E(
+        `${id}: evaluation_state '${evState}' not admitted by bucket '${bucket}' ` +
+          `(allowed: ${[...BUCKET_ALLOWED_EVAL_STATES[bucket]].join(', ')})`,
+      )
+    // graded requires disposition measured_validated + evaluation_state measured_graded.
+    if (isGraded(id)) {
+      if (disp !== 'measured_validated')
+        throw new E(
+          `${id}: graded requires disposition measured_validated (got '${disp}')`,
+        )
+      if (evState !== 'measured_graded')
+        throw new E(
+          `${id}: graded requires evaluation_state measured_graded (got '${evState}')`,
+        )
+    }
+    const o = obsByMetric.get(id)
+    if (!o) continue
+    // Value semantics: ONLY accepted_measured may carry a value (value required).
+    // calculation_pending MUST be value===null UNCONDITIONALLY and ungraded/withheld —
+    // there is NO measured_unscored / measured_abstained value exception (Defect-A
+    // superseding correction). Open/terminal buckets must also be NULL
+    // (missing≠zero, no fabricated value). Internal evidence prose remains a
+    // companion/hypothesis note only — never a promoted value, grade, baseline, or
+    // customer projection.
+    if (bucket === 'accepted_measured_ids') {
+      if (o.value === null)
+        throw new E(`${id} accepted_measured requires a non-null value`)
+    } else if (bucket === 'calculation_pending_ids') {
+      if (isGraded(id))
+        throw new E(`${id} calculation_pending may not be graded`)
+      // value MUST be null regardless of evaluation_state (no measured_unscored /
+      // measured_abstained value carve-out).
+      if (o.value !== null)
+        throw new E(
+          `${id} calculation_pending must have NULL value ` +
+            `(ungraded/withheld; no measured_unscored/measured_abstained value exception)`,
+        )
+    } else {
+      // source_investigation_pending / accepted_disposition_only / rejected
+      if (o.value !== null)
+        throw new E(
+          `${id} (${bucket}/${disp}) must have NULL value (no fabricated value)`,
+        )
+      if (bucket !== 'rejected_ids' && isGraded(id))
+        throw new E(`${id} (${bucket}) may not be graded`)
+    }
+  }
 
   // Source / normalized-dataset / profile / dealer / period relationships + admission.
   const saById = new Map(
     env.source_artifacts.map((s) => [s.source_artifact_id, s]),
   )
+  // Item 3/6: validate EACH admitted artifact independently against a STRUCTURED
+  // admission receipt bound to the artifact's sha/schema/bytes/rows/profile/dealer/
+  // period/admitted state and zero Service/Parts.
   for (const s of env.source_artifacts) {
     if (s.dealer_id !== env.dealer_id)
       throw new E(
@@ -510,14 +816,74 @@ export function validateEnvelope(env: CanonicalRunEnvelope): void {
       throw new E(
         `source_artifact ${s.source_artifact_id}: not admitted (${s.dealer_period_result})`,
       )
-    if (s.admission_receipt === null || s.admission_receipt === undefined)
-      throw new E(
-        `source_artifact ${s.source_artifact_id}: missing admission_receipt`,
-      )
     if (!s.family || !s.source_type)
       throw new E(
         `source_artifact ${s.source_artifact_id}: family/source_type required`,
       )
+    const r = s.admission_receipt as
+      | StructuredAdmissionReceipt
+      | null
+      | undefined
+    if (r === null || r === undefined || typeof r !== 'object')
+      throw new E(
+        `source_artifact ${s.source_artifact_id}: missing admission_receipt`,
+      )
+    const need = (
+      cond: boolean,
+      field: string,
+      got: unknown,
+      want: unknown,
+    ): void => {
+      if (!cond)
+        throw new E(
+          `admission_receipt ${s.source_artifact_id}: ${field} ${JSON.stringify(got)} != ${JSON.stringify(want)}`,
+        )
+    }
+    need(
+      r.source_sha256 === s.source_sha256,
+      'source_sha256',
+      r.source_sha256,
+      s.source_sha256,
+    )
+    need(r.profile === env.profile, 'profile', r.profile, env.profile)
+    need(r.dealer_id === s.dealer_id, 'dealer_id', r.dealer_id, s.dealer_id)
+    need(r.period === s.period, 'period', r.period, s.period)
+    need(
+      r.schema_contract_sha256 === (s.schema_contract_sha256 ?? null),
+      'schema_contract_sha256',
+      r.schema_contract_sha256,
+      s.schema_contract_sha256 ?? null,
+    )
+    need(r.bytes === (s.bytes ?? null), 'bytes', r.bytes, s.bytes ?? null)
+    need(
+      r.row_count === (s.row_count ?? null),
+      'row_count',
+      r.row_count,
+      s.row_count ?? null,
+    )
+    if (r.admitted !== true)
+      throw new E(
+        `admission_receipt ${s.source_artifact_id}: admitted must be true`,
+      )
+    if (r.zero_service_parts !== true)
+      throw new E(
+        `admission_receipt ${s.source_artifact_id}: zero_service_parts must be true`,
+      )
+    // Item 4: non-empty artifact-bound Sales-only proof + non-null contracted identity.
+    if (!r.sales_only_proof || String(r.sales_only_proof).trim().length === 0)
+      throw new E(
+        `admission_receipt ${s.source_artifact_id}: empty sales_only_proof`,
+      )
+    for (const [f, val] of [
+      ['source_sha256', s.source_sha256],
+      ['schema_contract_sha256', s.schema_contract_sha256],
+      ['bytes', s.bytes],
+      ['row_count', s.row_count],
+    ] as const)
+      if (val === null || val === undefined)
+        throw new E(
+          `source_artifact ${s.source_artifact_id}: contracted identity field '${f}' is null`,
+        )
   }
   const ndById = new Map(
     env.normalized_datasets.map((n) => [n.normalized_dataset_id, n]),
@@ -536,10 +902,39 @@ export function validateEnvelope(env: CanonicalRunEnvelope): void {
         `normalized_dataset ${n.normalized_dataset_id}: profile/dealer/period mismatch`,
       )
   }
+  // Item 6/correction 4: dataset_id_by_metric keys EXACTLY equal expected_metric_ids.
+  const dsKeys = Object.keys(env.dataset_id_by_metric)
+  if (dsKeys.length !== expected.length || dsKeys.some((k) => !expSet.has(k)))
+    throw new E(
+      `dataset_id_by_metric keys [${[...dsKeys].sort().join(',')}] != expected ` +
+        `[${[...expected].sort().join(',')}]`,
+    )
   for (const [mid, dsId] of Object.entries(env.dataset_id_by_metric)) {
     if (dsId !== null && !ndById.has(dsId))
       throw new E(
         `dataset_id_by_metric[${mid}]: normalized_dataset ${dsId} not provided`,
+      )
+  }
+  // Item 6: EXACT dataset/source mapping — every MEASURED metric maps to a normalized
+  // dataset; a null mapping is allowed ONLY for a disposition-only / non-measured metric.
+  for (const id of measured) {
+    const dsId = env.dataset_id_by_metric[id] ?? null
+    if (dsId === null)
+      throw new E(
+        `measured metric ${id} has no normalized_dataset mapping (only disposition-only metrics may)`,
+      )
+  }
+  // Capability snapshots (correction 3): explicitly supplied + dealer/period match.
+  const capIds = new Set<string>()
+  for (const c of env.capability_snapshots) {
+    if (capIds.has(c.capability_snapshot_id))
+      throw new E(
+        `capability_snapshot duplicate id ${c.capability_snapshot_id}`,
+      )
+    capIds.add(c.capability_snapshot_id)
+    if (c.dealer_id !== env.dealer_id || c.period !== env.period)
+      throw new E(
+        `capability_snapshot ${c.capability_snapshot_id}: dealer/period != run`,
       )
   }
 
@@ -578,15 +973,32 @@ export function validateEnvelope(env: CanonicalRunEnvelope): void {
       `sales_only_admission dealer ${adm.dealer_id} != run ${env.dealer_id}`,
     )
 
-  // FAIL-CLOSED target authority: a non-null grade_target_id MUST have a supplied
-  // grade_target spec — no silent approval inference.
+  // FAIL-CLOSED target/reference/rule authority (item 7): a non-null grade_target_id /
+  // reference_id / detection_rule used by an evaluation MUST be supplied AND its
+  // metric_id + metric_version must EXACTLY match the evaluation's metric (per-metric,
+  // per-version authority + explicit evaluation→rule linkage — no cross-metric leakage).
+  const defVersion = new Map(
+    env.metric_definitions.map((d) => [d.metric_id, d.metric_version]),
+  )
   const gtById = new Map(env.grade_targets.map((g) => [g.grade_target_id, g]))
+  const refById = new Map(
+    env.comparison_references.map((r) => [r.reference_id, r]),
+  )
+  const ruleById = new Map(
+    env.detection_rules.map((dr) => [dr.detection_rule_id, dr]),
+  )
   for (const ev of env.evaluations) {
+    const ver = defVersion.get(ev.metric_id) ?? env.definition_version
     if (ev.grade_target_id) {
       const g = gtById.get(ev.grade_target_id)
       if (!g)
         throw new E(
           `evaluation ${ev.metric_id}: grade_target_id ${ev.grade_target_id} has no supplied target authority (fail-closed)`,
+        )
+      if (g.metric_id !== ev.metric_id || g.metric_version !== ver)
+        throw new E(
+          `evaluation ${ev.metric_id}@${ver}: grade_target ${g.grade_target_id} authority is for ` +
+            `${g.metric_id}@${g.metric_version} (metric/version mismatch)`,
         )
       // A graded evaluation may not point at an unapproved target.
       if (ev.gradable_state === 'graded' && g.approval_state !== 'approved')
@@ -595,12 +1007,258 @@ export function validateEnvelope(env: CanonicalRunEnvelope): void {
         )
     }
     if (ev.reference_id) {
-      const hasRef = env.comparison_references.some(
-        (r) => r.reference_id === ev.reference_id,
-      )
-      if (!hasRef)
+      const r = refById.get(ev.reference_id)
+      if (!r)
         throw new E(
           `evaluation ${ev.metric_id}: reference_id ${ev.reference_id} has no supplied comparison reference`,
+        )
+      if (r.metric_id !== ev.metric_id || r.metric_version !== ver)
+        throw new E(
+          `evaluation ${ev.metric_id}@${ver}: comparison_reference ${r.reference_id} authority is for ` +
+            `${r.metric_id}@${r.metric_version} (metric/version mismatch)`,
+        )
+    }
+    // Item 7 / correction 5: EXPLICIT evaluation→detection-rule identity. A detecting
+    // evaluation must name a detection_rule_id (via detection_rule_id_by_metric) that is
+    // supplied, matches this metric+version, and whose condition equals the evaluation's.
+    const drId = env.detection_rule_id_by_metric[ev.metric_id] ?? null
+    if (ev.detection_rule) {
+      if (drId === null)
+        throw new E(
+          `evaluation ${ev.metric_id}: detection_rule present but no detection_rule_id linked`,
+        )
+      const dr = ruleById.get(drId)
+      if (!dr)
+        throw new E(
+          `evaluation ${ev.metric_id}: detection_rule_id ${drId} not supplied`,
+        )
+      if (dr.metric_id !== ev.metric_id || dr.metric_version !== ver)
+        throw new E(
+          `evaluation ${ev.metric_id}@${ver}: detection_rule ${drId} authority is for ` +
+            `${dr.metric_id}@${dr.metric_version} (metric/version mismatch)`,
+        )
+      if (dr.condition !== ev.detection_rule)
+        throw new E(
+          `evaluation ${ev.metric_id}: detection_rule ${drId} condition "${dr.condition}" ` +
+            `!= evaluation condition "${ev.detection_rule}"`,
+        )
+    } else if (drId !== null) {
+      throw new E(
+        `evaluation ${ev.metric_id}: detection_rule_id ${drId} linked but no detection condition`,
+      )
+    }
+  }
+  // Correction 5.1: detection_rule_id_by_metric keys EXACTLY equal expected_metric_ids
+  // — explicit null for a metric with no rule; omission is not an explicit decision.
+  const drKeys = Object.keys(env.detection_rule_id_by_metric)
+  if (drKeys.length !== expected.length || drKeys.some((k) => !expSet.has(k)))
+    throw new E(
+      `detection_rule_id_by_metric keys [${[...drKeys].sort().join(',')}] != expected ` +
+        `[${[...expected].sort().join(',')}]`,
+    )
+
+  // Item 2: EXACTLY one metric definition per expected id; module-consistent.
+  const defIds = env.metric_definitions.map((d) => d.metric_id)
+  if (new Set(defIds).size !== defIds.length)
+    throw new E('metric_definitions: duplicate metric_id')
+  if (defIds.length !== expected.length || defIds.some((id) => !expSet.has(id)))
+    throw new E(
+      `metric_definitions set [${[...defIds].sort().join(',')}] != expected [${[...expected].sort().join(',')}]`,
+    )
+  for (const d of env.metric_definitions)
+    if (d.module !== env.module)
+      throw new E(
+        `metric_definition ${d.metric_id}: module ${d.module} != run ${env.module}`,
+      )
+
+  // Item 5: authorities are version-addressable + UNAMBIGUOUS (unique id in the envelope).
+  const dupCheck = (ids: Array<string>, label: string): void => {
+    if (new Set(ids).size !== ids.length)
+      throw new E(`${label}: ambiguous duplicate id [${ids.join(', ')}]`)
+  }
+  dupCheck(
+    env.detection_rules.map((r) => r.detection_rule_id),
+    'detection_rules',
+  )
+  dupCheck(
+    env.grade_targets.map((g) => g.grade_target_id),
+    'grade_targets',
+  )
+  dupCheck(
+    env.comparison_references.map((r) => r.reference_id),
+    'comparison_references',
+  )
+
+  // Item 2: no UNUSED/EXTRA authorities — supplied set exactly equals the linked/used set.
+  const setEq = (a: Set<string>, b: Set<string>): boolean =>
+    a.size === b.size && [...a].every((x) => b.has(x))
+  const linkedRuleIds = new Set(
+    Object.values(env.detection_rule_id_by_metric).filter(
+      (x): x is string => !!x,
+    ),
+  )
+  if (
+    !setEq(
+      new Set(env.detection_rules.map((r) => r.detection_rule_id)),
+      linkedRuleIds,
+    )
+  )
+    throw new E(
+      'detection_rules supplied != linked (unused/extra detection rule)',
+    )
+  const usedGradeIds = new Set(
+    env.evaluations
+      .map((e) => e.grade_target_id)
+      .filter((x): x is string => !!x),
+  )
+  if (
+    !setEq(
+      new Set(env.grade_targets.map((g) => g.grade_target_id)),
+      usedGradeIds,
+    )
+  )
+    throw new E('grade_targets supplied != used (unused/extra grade target)')
+  const usedRefIds = new Set(
+    env.evaluations.map((e) => e.reference_id).filter((x): x is string => !!x),
+  )
+  if (
+    !setEq(
+      new Set(env.comparison_references.map((r) => r.reference_id)),
+      usedRefIds,
+    )
+  )
+    throw new E(
+      'comparison_references supplied != used (unused/extra reference)',
+    )
+
+  // Item 5: the detecting evaluation's rule must match threshold_id/comparator/threshold
+  // AND be approved+active (not just condition/metric/version).
+  for (const ev of env.evaluations) {
+    const drId = env.detection_rule_id_by_metric[ev.metric_id]
+    if (ev.detection_rule && drId) {
+      const dr = ruleById.get(drId)!
+      if ((dr.threshold_id ?? null) !== (ev.threshold_id ?? null))
+        throw new E(`${ev.metric_id}: detection_rule threshold_id mismatch`)
+      if ((dr.comparator ?? null) !== (ev.comparator ?? null))
+        throw new E(`${ev.metric_id}: detection_rule comparator mismatch`)
+      if ((dr.threshold ?? null) !== (ev.threshold ?? null))
+        throw new E(`${ev.metric_id}: detection_rule threshold mismatch`)
+      if (dr.approval_state !== 'approved' || dr.status !== 'active')
+        throw new E(
+          `${ev.metric_id}: detecting rule ${drId} must be approved+active`,
+        )
+    }
+  }
+
+  // Item 6: any target/reference capability_snapshot_id resolves to a SUPPLIED snapshot
+  // with compatible dealer/period.
+  const capById = new Map(
+    env.capability_snapshots.map((c) => [c.capability_snapshot_id, c]),
+  )
+  const checkCap = (cid: string | null | undefined, who: string): void => {
+    if (cid == null) return
+    const c = capById.get(cid)
+    if (!c)
+      throw new E(
+        `${who}: capability_snapshot_id ${cid} not supplied/run-linked`,
+      )
+    if (c.dealer_id !== env.dealer_id || c.period !== env.period)
+      throw new E(`${who}: capability ${cid} dealer/period incompatible`)
+  }
+  for (const g of env.grade_targets)
+    checkCap(g.capability_snapshot_id, `grade_target ${g.grade_target_id}`)
+  for (const r of env.comparison_references)
+    checkCap(r.capability_snapshot_id, `comparison_reference ${r.reference_id}`)
+
+  // Item 7: report inertness — lineage == env.two_delta; undelivered; inactive.
+  const rr = env.report_run
+  if (canonicalJson(rr.report_lineage) !== canonicalJson(env.two_delta))
+    throw new E('report_run.report_lineage != env.two_delta')
+  if (rr.delivery_state !== 'undelivered')
+    throw new E(
+      `report_run delivery_state must be undelivered (got ${rr.delivery_state})`,
+    )
+  if ((rr.activation_state ?? 'inactive') !== 'inactive')
+    throw new E(
+      `report_run activation_state must be inactive (got ${rr.activation_state})`,
+    )
+
+  // Item 4 (strict): every MAPPED metric's embedded source_lineage requires NON-NULL
+  // source_sha256 + schema_contract_sha256 + receipt_sha256, each EXACTLY matching its
+  // bound artifact AND that artifact's structured admission receipt. A value-bearing
+  // measured_unscored observation must be mapped (non-null dataset lineage).
+  for (const o of env.observations) {
+    const dsId = env.dataset_id_by_metric[o.metric_id]
+    const evState = env.evaluation_state_by_metric[o.metric_id]
+    if (o.value !== null && evState === 'measured_unscored' && dsId == null)
+      throw new E(
+        `${o.metric_id}: measured_unscored value requires non-null dataset lineage`,
+      )
+    if (dsId == null) continue
+    const nd = ndById.get(dsId)!
+    const sa = saById.get(nd.source_artifact_id)!
+    const rec = sa.admission_receipt
+    const sl = o.source_lineage
+    if (
+      sl.source_sha256 == null ||
+      sl.schema_contract_sha256 == null ||
+      sl.receipt_sha256 == null
+    )
+      throw new E(
+        `${o.metric_id}: mapped source_lineage requires non-null source/schema/receipt sha`,
+      )
+    if (
+      sl.source_sha256 !== sa.source_sha256 ||
+      sl.source_sha256 !== rec.source_sha256
+    )
+      throw new E(
+        `${o.metric_id}: source_lineage source_sha256 != artifact/receipt`,
+      )
+    if (
+      sl.schema_contract_sha256 !== (sa.schema_contract_sha256 ?? null) ||
+      sl.schema_contract_sha256 !== rec.schema_contract_sha256
+    )
+      throw new E(
+        `${o.metric_id}: source_lineage schema_contract_sha256 != artifact/receipt`,
+      )
+    if (sl.receipt_sha256 !== (sa.receipt_sha256 ?? null))
+      throw new E(
+        `${o.metric_id}: source_lineage receipt_sha256 != artifact receipt_sha256`,
+      )
+    if (sl.dealer_id !== sa.dealer_id)
+      throw new E(`${o.metric_id}: source_lineage dealer != artifact dealer`)
+    if (sl.period !== sa.period)
+      throw new E(`${o.metric_id}: source_lineage period != artifact period`)
+  }
+
+  // Frozen-schema exact field: affirmative_investigation_evidence_ref_by_metric keys
+  // EXACTLY equal expected; a genuinely_not_available disposition REQUIRES the exact
+  // named non-empty ref (generic source_investigation prose does NOT satisfy this).
+  const airKeys = Object.keys(
+    env.affirmative_investigation_evidence_ref_by_metric,
+  )
+  if (airKeys.length !== expected.length || airKeys.some((k) => !expSet.has(k)))
+    throw new E(
+      `affirmative_investigation_evidence_ref_by_metric keys [${[...airKeys].sort().join(',')}] != expected`,
+    )
+  // Defect-B strict IFF. genuinely_not_available REQUIRES a trimmed non-empty STRING;
+  // EVERY non-GNA metric REQUIRES literal null — undefined, blank ('' / whitespace),
+  // and any non-blank string all reject. (A non-string type for GNA also rejects.)
+  for (const id of expected) {
+    const ref = env.affirmative_investigation_evidence_ref_by_metric[id]
+    if (env.disposition_by_metric[id] === 'genuinely_not_available') {
+      if (typeof ref !== 'string' || ref.trim().length === 0)
+        throw new E(
+          `${id}: genuinely_not_available requires a trimmed non-empty string ` +
+            `affirmative_investigation_evidence_ref (got ` +
+            `${ref === undefined ? 'undefined' : JSON.stringify(ref)})`,
+        )
+    } else {
+      if (ref !== null)
+        throw new E(
+          `${id}: non-genuinely_not_available disposition requires ` +
+            `affirmative_investigation_evidence_ref === null (got ` +
+            `${ref === undefined ? 'undefined' : JSON.stringify(ref)})`,
         )
     }
   }
@@ -622,6 +1280,7 @@ function zeroRows(): RowCounts {
     detection_rule: 0,
     source_artifact: 0,
     normalized_dataset: 0,
+    capability_snapshot: 0,
     grade_target: 0,
     comparison_reference: 0,
     observation: 0,
@@ -630,6 +1289,124 @@ function zeroRows(): RowCounts {
     finding_metric_link: 0,
     report_run: 0,
     alert_candidate: 0,
+    run_source_link: 0,
+    run_dataset_link: 0,
+    run_capability_link: 0,
+    eval_rule_link: 0,
+  }
+}
+
+/**
+ * Deterministic graph sha of an INCOMING envelope — computed by persisting it into an
+ * isolated scratch Brain and reconstructing the manifest with the EXACT same function
+ * the read path uses (zero alignment risk). Rolled back + removed; nothing durable.
+ * Enables item-1 comparison: same run_key/content_sha256 but changed semantic metadata
+ * yields a different graph sha and must fail.
+ */
+function envelopeGraphSha(env: CanonicalRunEnvelope): string {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'wd-scratch-'))
+  try {
+    const h = openBrain(env.profile, { profileRoot: tmp })
+    h.exec('BEGIN')
+    try {
+      insertGraph(h, env)
+      const manifest = reconstructGraphManifest(
+        h,
+        env.run_key,
+        env.profile,
+        env.expected_metric_ids,
+      )
+      return sha256Hex(canonicalJson(manifest))
+    } finally {
+      h.exec('ROLLBACK')
+      h.close()
+    }
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true })
+  }
+}
+
+/** Count the persisted graph rows for a run (item 8: replay reports verified, not 0). */
+function countGraphRows(h: Handle, runKey: string, profile: string): RowCounts {
+  const one = (sql: string, ...p: Array<unknown>): number =>
+    h.get<{ n: number }>(sql, ...p)?.n ?? 0
+  const rk = runKey
+  return {
+    module_run: one(
+      `SELECT COUNT(*) n FROM watchdog_module_run WHERE run_key=?`,
+      rk,
+    ),
+    metric_definition: one(
+      `SELECT COUNT(DISTINCT o.metric_id||'@'||o.metric_version) n FROM watchdog_metric_observation o WHERE o.run_key=?`,
+      rk,
+    ),
+    // exact linked graph: detection rules via the eval→rule LINK table (not condition).
+    detection_rule: one(
+      `SELECT COUNT(DISTINCT detection_rule_id) n FROM watchdog_evaluation_detection_rule WHERE run_key=?`,
+      rk,
+    ),
+    source_artifact: one(
+      `SELECT COUNT(*) n FROM watchdog_run_source_artifact WHERE run_key=?`,
+      rk,
+    ),
+    normalized_dataset: one(
+      `SELECT COUNT(*) n FROM watchdog_run_normalized_dataset WHERE run_key=?`,
+      rk,
+    ),
+    capability_snapshot: one(
+      `SELECT COUNT(*) n FROM watchdog_run_capability_snapshot WHERE run_key=?`,
+      rk,
+    ),
+    grade_target: one(
+      `SELECT COUNT(DISTINCT e.grade_target_id||'@'||e.grade_target_version) n
+         FROM watchdog_metric_evaluation e WHERE e.run_key=? AND e.grade_target_id IS NOT NULL`,
+      rk,
+    ),
+    comparison_reference: one(
+      `SELECT COUNT(DISTINCT e.reference_id||'@'||e.reference_version) n
+         FROM watchdog_metric_evaluation e WHERE e.run_key=? AND e.reference_id IS NOT NULL`,
+      rk,
+    ),
+    observation: one(
+      `SELECT COUNT(*) n FROM watchdog_metric_observation WHERE run_key=?`,
+      rk,
+    ),
+    evaluation: one(
+      `SELECT COUNT(*) n FROM watchdog_metric_evaluation WHERE run_key=?`,
+      rk,
+    ),
+    finding: one(
+      `SELECT COUNT(DISTINCT finding_key) n FROM watchdog_finding_metric_link WHERE run_key=?`,
+      rk,
+    ),
+    finding_metric_link: one(
+      `SELECT COUNT(*) n FROM watchdog_finding_metric_link WHERE run_key=?`,
+      rk,
+    ),
+    report_run: one(
+      `SELECT COUNT(*) n FROM watchdog_report_run_module_link WHERE run_key=?`,
+      rk,
+    ),
+    alert_candidate: one(
+      `SELECT COUNT(*) n FROM watchdog_alert_candidate WHERE run_key=?`,
+      rk,
+    ),
+    run_source_link: one(
+      `SELECT COUNT(*) n FROM watchdog_run_source_artifact WHERE run_key=?`,
+      rk,
+    ),
+    run_dataset_link: one(
+      `SELECT COUNT(*) n FROM watchdog_run_normalized_dataset WHERE run_key=?`,
+      rk,
+    ),
+    run_capability_link: one(
+      `SELECT COUNT(*) n FROM watchdog_run_capability_snapshot WHERE run_key=?`,
+      rk,
+    ),
+    eval_rule_link: one(
+      `SELECT COUNT(*) n FROM watchdog_evaluation_detection_rule WHERE run_key=?`,
+      rk,
+    ),
   }
 }
 
@@ -665,17 +1442,32 @@ export function persistCanonicalRunEnvelope(
       throw new CanonicalWatchdogIntegrityError(
         `run_key ${env.run_key} persisted content ${verified.content_sha256} != ${env.content_sha256}`,
       )
-    const gsha = h.get<{ graph_sha256: string | null }>(
+    const stored = h.get<{ graph_sha256: string | null }>(
       `SELECT graph_sha256 FROM watchdog_module_run WHERE run_key = ?`,
       env.run_key,
-    )
+    )?.graph_sha256
+    // Item 1: compare the INCOMING complete graph to the stored graph. Same run_key +
+    // content hash but CHANGED semantic metadata (approvals, versions, receipts, links)
+    // diverges the graph sha and MUST fail — never a false no-op.
+    const incomingGraphSha = envelopeGraphSha(env)
+    if (stored == null)
+      throw new CanonicalWatchdogIntegrityError(
+        `run_key ${env.run_key}: no stored graph_sha256 to compare on replay`,
+      )
+    if (incomingGraphSha !== stored)
+      throw new CanonicalWatchdogIntegrityError(
+        `run_key ${env.run_key}: incoming graph_sha256 ${incomingGraphSha} != stored ${stored} ` +
+          `(same content hash, changed semantic metadata)`,
+      )
     return {
       changed: false,
       runKey: env.run_key,
       profile,
-      graphSha256: gsha?.graph_sha256 ?? null,
+      graphSha256: stored,
+      // Item 8: replay reports VERIFIED counts (the persisted graph it re-verified),
+      // never verified=0.
       rows: zeroRows(),
-      verified: zeroRows(),
+      verified: countGraphRows(h, env.run_key, profile),
     }
   }
 
@@ -692,6 +1484,14 @@ export function persistCanonicalRunEnvelope(
       env.expected_metric_ids,
     )
     const graphSha256 = sha256Hex(canonicalJson(manifest))
+    // Item 1 (before first commit): the reconstructed persisted graph must equal the
+    // deterministic incoming envelope graph — no insertion loss/mangling before commit.
+    const incomingGraphSha = envelopeGraphSha(env)
+    if (graphSha256 !== incomingGraphSha)
+      throw new CanonicalWatchdogIntegrityError(
+        `run_key ${env.run_key}: persisted graph_sha256 ${graphSha256} != incoming ${incomingGraphSha} ` +
+          `(insertion did not round-trip the envelope)`,
+      )
     h.run(
       `UPDATE watchdog_module_run SET graph_manifest = ?, graph_sha256 = ? WHERE run_key = ?`,
       canonicalJson(manifest),
@@ -846,6 +1646,23 @@ const GT_COLS = [
   'status',
   'derivation_narrative',
 ]
+const CAP_COLS = [
+  'capability_snapshot_id',
+  'profile',
+  'dealer_id',
+  'period',
+  'revision',
+  'supersedes_id',
+  'throughput',
+  'workforce',
+  'workload_capacity',
+  'inventory_context',
+  'source_mix',
+  'dealer_history',
+  'seasonality_flags',
+  'manual_potential',
+  'provenance',
+]
 
 function insertGraph(
   h: Handle,
@@ -957,6 +1774,37 @@ function insertGraph(
         ],
       ),
       'normalized_dataset',
+    )
+  }
+
+  // Capability snapshots — insert-or-verify-identical; BEFORE targets/references that
+  // FK to them (item 6).
+  for (const c of env.capability_snapshots) {
+    tally(
+      upsertImmutable(
+        h,
+        'watchdog_capability_snapshot',
+        ['capability_snapshot_id'],
+        CAP_COLS,
+        [
+          c.capability_snapshot_id,
+          profile,
+          c.dealer_id,
+          c.period,
+          c.revision ?? 1,
+          c.supersedes_id ?? null,
+          c.throughput ?? null,
+          c.workforce ?? null,
+          c.workload_capacity ?? null,
+          c.inventory_context ?? null,
+          c.source_mix ?? null,
+          c.dealer_history ?? null,
+          c.seasonality_flags ?? null,
+          c.manual_potential ?? null,
+          c.provenance ?? null,
+        ],
+      ),
+      'capability_snapshot',
     )
   }
 
@@ -1106,17 +1954,53 @@ function insertGraph(
   )
   rows.module_run += 1
 
+  // Explicit run→lineage membership (FK to module_run + each parent). The manifest
+  // covers EXACTLY these linked rows — never a same-profile/dealer/period sweep.
+  for (const s of env.source_artifacts) {
+    h.run(
+      `INSERT INTO watchdog_run_source_artifact (run_key, source_artifact_id) VALUES (?, ?)`,
+      env.run_key,
+      s.source_artifact_id,
+    )
+    rows.run_source_link += 1
+  }
+  for (const n of env.normalized_datasets) {
+    h.run(
+      `INSERT INTO watchdog_run_normalized_dataset (run_key, normalized_dataset_id) VALUES (?, ?)`,
+      env.run_key,
+      n.normalized_dataset_id,
+    )
+    rows.run_dataset_link += 1
+  }
+  for (const c of env.capability_snapshots) {
+    h.run(
+      `INSERT INTO watchdog_run_capability_snapshot (run_key, capability_snapshot_id) VALUES (?, ?)`,
+      env.run_key,
+      c.capability_snapshot_id,
+    )
+    rows.run_capability_link += 1
+  }
+
   const defVersionOf: Record<string, string> = {}
   for (const d of env.metric_definitions)
     defVersionOf[d.metric_id] = d.metric_version
+  // Item 5: bind the evaluation's stored authority version to the EXACT supplied spec
+  // version (unique id → one version), not a global fallback.
+  const gtVerById = new Map(
+    env.grade_targets.map((g) => [g.grade_target_id, g.target_version]),
+  )
+  const refVerById = new Map(
+    env.comparison_references.map((r) => [r.reference_id, r.reference_version]),
+  )
   for (const o of env.observations) {
     h.run(
       `INSERT INTO watchdog_metric_observation
          (run_key, metric_id, metric_version, profile, period, status, calculation_kind,
           value, unit, numerator, denominator, missing, formula, source_fields,
           source_lineage, normalized_dataset_id, confidence, gradable, disposition,
-          unresolved_reason, detail, source_investigation)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          unresolved_reason, detail, source_investigation,
+          affirmative_investigation_evidence_ref)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       env.run_key,
       o.metric_id,
       defVersionOf[o.metric_id] ?? env.definition_version,
@@ -1135,10 +2019,12 @@ function insertGraph(
       env.dataset_id_by_metric[o.metric_id] ?? null,
       o.confidence,
       bool01(o.gradable),
-      o.status,
+      // GOVERNED disposition (binding-derived), NOT the narrow legacy status.
+      env.disposition_by_metric[o.metric_id],
       o.source_investigation?.missing_fields.join(',') ?? null,
       jsonOrNull(o.detail),
       jsonOrNull(o.source_investigation),
+      env.affirmative_investigation_evidence_ref_by_metric[o.metric_id] ?? null,
     )
     rows.observation += 1
   }
@@ -1149,8 +2035,8 @@ function insertGraph(
          (run_key, metric_id, metric_version, profile, period, gradable_state,
           threshold_id, comparator, threshold, reference_id, reference_version,
           grade_target_id, grade_target_version, detection_rule, detection_fired,
-          rating, reason)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          rating, reason, evaluation_state)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       env.run_key,
       e.metric_id,
       defVersionOf[e.metric_id] ?? env.definition_version,
@@ -1161,15 +2047,28 @@ function insertGraph(
       e.comparator,
       e.threshold,
       e.reference_id,
-      e.reference_id ? env.reference_version : null,
+      e.reference_id ? (refVerById.get(e.reference_id) ?? null) : null,
       e.grade_target_id,
-      e.grade_target_id ? env.target_version : null,
+      e.grade_target_id ? (gtVerById.get(e.grade_target_id) ?? null) : null,
       e.detection_rule,
       intOrNull(e.detection_fired),
       e.rating,
       e.reason,
+      env.evaluation_state_by_metric[e.metric_id],
     )
     rows.evaluation += 1
+    // Explicit evaluation→detection-rule identity link (correction 5).
+    const drId = env.detection_rule_id_by_metric[e.metric_id] ?? null
+    if (drId !== null) {
+      h.run(
+        `INSERT INTO watchdog_evaluation_detection_rule (run_key, metric_id, detection_rule_id)
+         VALUES (?, ?, ?)`,
+        env.run_key,
+        e.metric_id,
+        drId,
+      )
+      rows.eval_rule_link += 1
+    }
   }
 
   // Findings are persisted from finding_specs — one watchdog_finding + one link per
@@ -1181,32 +2080,62 @@ function insertGraph(
     const key = spec.finding_key
     const contentOrdinal = findingOrdinal
     findingOrdinal += 1
-    h.run(
-      `INSERT OR IGNORE INTO watchdog_finding
-         (key, profile, rule_id, category, priority, issue, name, details, evidence,
-          status, first_seen, last_seen, alerted_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'open', ?, ?, NULL)`,
+    // Item 8: finding parent is insert-or-VERIFY-identical on its IMMUTABLE columns
+    // (not INSERT OR IGNORE). Mutable operational columns (status/first_seen/last_seen/
+    // alerted_at) are excluded from the identity check.
+    const evidenceJson = canonicalJson({
+      metric_id: spec.metric_id,
+      period: spec.period,
+      severity: spec.severity,
+      headline: spec.headline,
+      detail: spec.detail,
+      run_key: env.run_key,
+      audience: spec.audience ?? 'internal',
+    })
+    const immutable: Record<string, unknown> = {
       key,
       profile,
-      spec.metric_id,
-      spec.category ?? 'semantic_watchdog_packet',
-      spec.priority,
-      spec.headline,
-      `${spec.metric_id} finding`,
-      spec.detail,
-      canonicalJson({
-        metric_id: spec.metric_id,
-        period: spec.period,
-        severity: spec.severity,
-        headline: spec.headline,
-        detail: spec.detail,
-        run_key: env.run_key,
-        audience: spec.audience ?? 'internal',
-      }),
-      ts,
-      ts,
+      rule_id: spec.metric_id,
+      category: spec.category ?? 'semantic_watchdog_packet',
+      priority: spec.priority,
+      issue: spec.headline,
+      name: `${spec.metric_id} finding`,
+      details: spec.detail,
+      evidence: evidenceJson,
+    }
+    const existing = h.get<Record<string, unknown>>(
+      `SELECT key, profile, rule_id, category, priority, issue, name, details, evidence
+         FROM watchdog_finding WHERE key = ?`,
+      key,
     )
-    rows.finding += 1
+    if (!existing) {
+      h.run(
+        `INSERT INTO watchdog_finding
+           (key, profile, rule_id, category, priority, issue, name, details, evidence,
+            status, first_seen, last_seen, alerted_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'open', ?, ?, NULL)`,
+        key,
+        profile,
+        spec.metric_id,
+        immutable.category,
+        spec.priority,
+        spec.headline,
+        immutable.name,
+        spec.detail,
+        evidenceJson,
+        ts,
+        ts,
+      )
+      rows.finding += 1
+    } else {
+      for (const col of Object.keys(immutable))
+        if (!sameVal(existing[col], immutable[col]))
+          throw new CanonicalWatchdogStoreError(
+            `watchdog_finding: immutable collision on '${col}' for key ${key}: ` +
+              `stored ${JSON.stringify(existing[col])} != incoming ${JSON.stringify(immutable[col])}`,
+          )
+      verified.finding += 1
+    }
     h.run(
       `INSERT INTO watchdog_finding_metric_link
          (finding_key, run_key, metric_id, content_ordinal, profile, period, severity,
@@ -1304,12 +2233,21 @@ function reconstructGraphManifest(
     const i = order.indexOf(id)
     return i === -1 ? order.length : i
   }
+  // Item 3: a linked parent that has vanished must FAIL the manifest, not silently
+  // disappear via filter(Boolean).
+  const req = <T>(row: T | undefined, what: string): T => {
+    if (row === undefined || row === null)
+      throw new CanonicalWatchdogIntegrityError(
+        `manifest: linked parent missing (${what})`,
+      )
+    return row
+  }
   const run = h.get<Record<string, unknown>>(
     `SELECT run_key, profile, packet_id, module, dealer_id, period, binding_sha256,
             source_sha256, engine_version, content_sha256, expected_subset,
             accepted_measured_ids, accepted_disposition_only_ids, rejected_ids,
             lifecycle_partition, report_lineage, input_hash, output_hash, reconciliation,
-            qc_result, acceptance_state
+            qc_result, acceptance_state, as_of
        FROM watchdog_module_run WHERE run_key = ? AND profile = ?`,
     runKey,
     profile,
@@ -1318,14 +2256,14 @@ function reconstructGraphManifest(
     `SELECT metric_id, metric_version, status, calculation_kind, value, unit, numerator,
             denominator, missing, formula, source_fields, source_lineage,
             normalized_dataset_id, confidence, gradable, disposition, unresolved_reason,
-            detail, source_investigation, period
+            detail, source_investigation, affirmative_investigation_evidence_ref, period
        FROM watchdog_metric_observation WHERE run_key = ? ORDER BY metric_id`,
     runKey,
   )
   const evals = h.all<Record<string, unknown>>(
     `SELECT metric_id, metric_version, gradable_state, threshold_id, comparator, threshold,
             reference_id, reference_version, grade_target_id, grade_target_version,
-            detection_rule, detection_fired, rating, reason, period
+            detection_rule, detection_fired, rating, reason, evaluation_state, period
        FROM watchdog_metric_evaluation WHERE run_key = ? ORDER BY metric_id`,
     runKey,
   )
@@ -1351,27 +2289,28 @@ function reconstructGraphManifest(
         o.metric_version,
       ),
     )
-    .filter(Boolean)
+    .map((r) => req(r, 'linked parent'))
     .sort((a, b) =>
-      `${a!.metric_id}@${a!.metric_version}`.localeCompare(
-        `${b!.metric_id}@${b!.metric_version}`,
+      `${a.metric_id}@${a.metric_version}`.localeCompare(
+        `${b.metric_id}@${b.metric_version}`,
       ),
     )
-  // detection rules for this run's metrics
-  const drIds = new Set(
-    evals.map((e) => `DR-${e.metric_id}-${e.metric_version}`),
+  // EXPLICIT evaluation→detection-rule identity links (no DR-id-by-convention guessing).
+  const evalRuleLinks = h.all<{ metric_id: string; detection_rule_id: string }>(
+    `SELECT metric_id, detection_rule_id FROM watchdog_evaluation_detection_rule
+      WHERE run_key = ? ORDER BY metric_id, detection_rule_id`,
+    runKey,
   )
+  const drIds = new Set(evalRuleLinks.map((l) => l.detection_rule_id))
   const drules = [...drIds]
+    .sort((a, b) => a.localeCompare(b))
     .map((id) =>
       h.get<Record<string, unknown>>(
         `SELECT ${DR_COLS.join(', ')} FROM watchdog_detection_rule WHERE detection_rule_id = ?`,
         id,
       ),
     )
-    .filter(Boolean)
-    .sort((a, b) =>
-      String(a!.detection_rule_id).localeCompare(String(b!.detection_rule_id)),
-    )
+    .map((r) => req(r, 'linked parent'))
   // grade targets referenced (exact version)
   const gts = evals
     .filter((e) => e.grade_target_id)
@@ -1383,18 +2322,18 @@ function reconstructGraphManifest(
         e.grade_target_version,
       ),
     )
-    .filter(Boolean)
+    .map((r) => req(r, 'linked parent'))
   const gtSeen = new Set<string>()
   const grade_targets = gts
     .filter((g) => {
-      const k = `${g!.grade_target_id}@${g!.target_version}`
+      const k = `${g.grade_target_id}@${g.target_version}`
       if (gtSeen.has(k)) return false
       gtSeen.add(k)
       return true
     })
     .sort((a, b) =>
-      `${a!.grade_target_id}@${a!.target_version}`.localeCompare(
-        `${b!.grade_target_id}@${b!.target_version}`,
+      `${a.grade_target_id}@${a.target_version}`.localeCompare(
+        `${b.grade_target_id}@${b.target_version}`,
       ),
     )
   // comparison references (exact version)
@@ -1408,26 +2347,31 @@ function reconstructGraphManifest(
         e.reference_version,
       ),
     )
-    .filter(Boolean)
+    .map((r) => req(r, 'linked parent'))
   const crSeen = new Set<string>()
   const comparison_references = crs
     .filter((c) => {
-      const k = `${c!.reference_id}@${c!.reference_version}`
+      const k = `${c.reference_id}@${c.reference_version}`
       if (crSeen.has(k)) return false
       crSeen.add(k)
       return true
     })
     .sort((a, b) =>
-      `${a!.reference_id}@${a!.reference_version}`.localeCompare(
-        `${b!.reference_id}@${b!.reference_version}`,
+      `${a.reference_id}@${a.reference_version}`.localeCompare(
+        `${b.reference_id}@${b.reference_version}`,
       ),
     )
-  // source artifacts + normalized datasets referenced by observations
-  const ndIds = [
-    ...new Set(
-      obs.map((o) => o.normalized_dataset_id).filter((x): x is string => !!x),
-    ),
-  ].sort()
+  // Correction 1: ALL normalized datasets + source artifacts EXPLICITLY LINKED to the
+  // run (via the run→lineage link tables) — including ones not referenced by an
+  // observation; never a same-profile/dealer/period sweep.
+  const ndIds = h
+    .all<{
+      normalized_dataset_id: string
+    }>(
+      `SELECT normalized_dataset_id FROM watchdog_run_normalized_dataset WHERE run_key = ? ORDER BY normalized_dataset_id`,
+      runKey,
+    )
+    .map((r) => r.normalized_dataset_id)
   const normalized_datasets = ndIds
     .map((id) =>
       h.get<Record<string, unknown>>(
@@ -1435,10 +2379,15 @@ function reconstructGraphManifest(
         id,
       ),
     )
-    .filter(Boolean)
-  const saIds = [
-    ...new Set(normalized_datasets.map((n) => n!.source_artifact_id as string)),
-  ].sort()
+    .map((r) => req(r, 'linked parent'))
+  const saIds = h
+    .all<{
+      source_artifact_id: string
+    }>(
+      `SELECT source_artifact_id FROM watchdog_run_source_artifact WHERE run_key = ? ORDER BY source_artifact_id`,
+      runKey,
+    )
+    .map((r) => r.source_artifact_id)
   const source_artifacts = saIds
     .map((id) =>
       h.get<Record<string, unknown>>(
@@ -1446,8 +2395,8 @@ function reconstructGraphManifest(
         id,
       ),
     )
-    .filter(Boolean)
-  // report linkage
+    .map((r) => req(r, 'linked parent'))
+  // Correction 2: report rows include cutoff/freshness/lineage/artifact-hashes/qa.
   const reportLinks = h
     .all<{ report_run_id: string }>(
       `SELECT report_run_id FROM watchdog_report_run_module_link WHERE run_key = ? ORDER BY report_run_id`,
@@ -1455,22 +2404,42 @@ function reconstructGraphManifest(
     )
     .map((l) =>
       h.get<Record<string, unknown>>(
-        `SELECT report_run_id, profile, period, report_version, module_run_ids,
-                delivery_state, activation_state
+        `SELECT report_run_id, profile, period, report_version, source_cutoff, freshness,
+                report_lineage, module_run_ids, pdf_artifact_sha256,
+                internal_artifact_sha256, qa_receipt, delivery_state, activation_state
            FROM watchdog_report_run WHERE report_run_id = ?`,
         l.report_run_id,
       ),
     )
-    .filter(Boolean)
+    .map((r) => req(r, 'linked parent'))
+  // Correction 3: capability snapshots EXPLICITLY LINKED to the run (never a sweep).
+  const capIds = h
+    .all<{
+      capability_snapshot_id: string
+    }>(
+      `SELECT capability_snapshot_id FROM watchdog_run_capability_snapshot WHERE run_key = ? ORDER BY capability_snapshot_id`,
+      runKey,
+    )
+    .map((r) => r.capability_snapshot_id)
+  const capability_snapshots = capIds
+    .map((id) =>
+      h.get<Record<string, unknown>>(
+        `SELECT ${CAP_COLS.join(', ')} FROM watchdog_capability_snapshot WHERE capability_snapshot_id = ?`,
+        id,
+      ),
+    )
+    .map((r) => req(r, 'linked parent'))
 
   return {
     run,
     metric_definitions: defs,
     detection_rules: drules,
+    eval_rule_links: evalRuleLinks,
     grade_targets,
     comparison_references,
     source_artifacts,
     normalized_datasets,
+    capability_snapshots,
     observations: [...obs].sort(
       (a, b) => rank(String(a.metric_id)) - rank(String(b.metric_id)),
     ),
@@ -1478,6 +2447,20 @@ function reconstructGraphManifest(
       (a, b) => rank(String(a.metric_id)) - rank(String(b.metric_id)),
     ),
     finding_links: links,
+    // Item 3: immutable watchdog_finding PARENT columns for each linked finding (a
+    // parent tamper diverges the graph sha; a missing parent fails, not filter-drops).
+    finding_parents: [...new Set(links.map((l) => String(l.finding_key)))]
+      .sort()
+      .map((k) =>
+        req(
+          h.get<Record<string, unknown>>(
+            `SELECT key, profile, rule_id, category, priority, issue, name, details, evidence
+               FROM watchdog_finding WHERE key = ?`,
+            k,
+          ),
+          `watchdog_finding ${k}`,
+        ),
+      ),
     report_runs: reportLinks,
     alert_candidates: [...alerts].sort(
       (a, b) => rank(String(a.metric_id)) - rank(String(b.metric_id)),
@@ -1661,26 +2644,52 @@ export function readCanonicalRun(
         `alert_candidate ${a.metric_id}: non-inert flags (delivered=${a.delivered}, unsent=${a.unsent})`,
       )
 
-  // source_artifact + normalized_dataset parents present for any observation lineage
-  const dsIds = h.all<{ normalized_dataset_id: string | null }>(
-    `SELECT DISTINCT normalized_dataset_id FROM watchdog_metric_observation WHERE run_key = ?`,
+  // Item 4: TRUE multi-artifact / multi-hash lineage — every dataset EXPLICITLY LINKED
+  // to the run (incl. ones not referenced by an observation) maps to its OWN source
+  // artifact with its OWN sha, validated against that artifact's structured admission
+  // receipt. No scalar "all artifacts share the run sha" assumption.
+  const dsIds = h.all<{ normalized_dataset_id: string }>(
+    `SELECT normalized_dataset_id FROM watchdog_run_normalized_dataset WHERE run_key = ?`,
     runKey,
   )
   for (const d of dsIds) {
-    if (d.normalized_dataset_id === null) continue
     const nd = h.get<{ source_artifact_id: string }>(
       `SELECT source_artifact_id FROM watchdog_normalized_dataset WHERE normalized_dataset_id = ?`,
       d.normalized_dataset_id,
     )
     if (!nd) fail(`missing normalized_dataset ${d.normalized_dataset_id}`)
-    const sa = h.get<{ source_sha256: string }>(
-      `SELECT source_sha256 FROM watchdog_source_artifact WHERE source_artifact_id = ?`,
+    const sa = h.get<{
+      source_sha256: string
+      admission_receipt: string
+      dealer_id: string
+      period: string
+    }>(
+      `SELECT source_sha256, admission_receipt, dealer_id, period FROM watchdog_source_artifact
+        WHERE source_artifact_id = ?`,
       nd.source_artifact_id,
     )
     if (!sa) fail(`missing source_artifact ${nd.source_artifact_id}`)
-    if (sa.source_sha256 !== stored.source_sha256)
+    // per-artifact admission receipt integrity (bound to THIS artifact's own sha)
+    let receipt: StructuredAdmissionReceipt
+    try {
+      receipt = parse<StructuredAdmissionReceipt>(sa.admission_receipt)
+    } catch {
       fail(
-        `source_artifact sha drift: ${sa.source_sha256} != ${stored.source_sha256}`,
+        `source_artifact ${nd.source_artifact_id}: admission_receipt not parseable`,
+      )
+    }
+    if (receipt.source_sha256 !== sa.source_sha256)
+      fail(
+        `source_artifact ${nd.source_artifact_id}: admission receipt sha ${receipt.source_sha256} ` +
+          `!= artifact sha ${sa.source_sha256}`,
+      )
+    if (receipt.admitted !== true || receipt.zero_service_parts !== true)
+      fail(
+        `source_artifact ${nd.source_artifact_id}: receipt not admitted/zero-Service-Parts`,
+      )
+    if (receipt.dealer_id !== sa.dealer_id || receipt.period !== sa.period)
+      fail(
+        `source_artifact ${nd.source_artifact_id}: receipt dealer/period drift`,
       )
   }
 
@@ -1765,87 +2774,97 @@ function loadRaw(
   )
   if (!run) return null
 
-  const observations = h
-    .all<{
-      metric_id: string
-      period: string
-      status: Observation['status']
-      calculation_kind: string
-      value: number | null
-      unit: string
-      numerator: number | null
-      denominator: number | null
-      missing: number | null
-      formula: string | null
-      source_fields: string
-      source_lineage: string
-      confidence: string
-      gradable: number
-      detail: string | null
-      source_investigation: string | null
-    }>(
-      `SELECT * FROM watchdog_metric_observation WHERE run_key = ? ORDER BY metric_id`,
-      runKey,
-    )
-    .map(
-      (o): Observation => ({
-        metric_id: o.metric_id,
-        period: o.period,
-        status: o.status,
-        calculation_kind: o.calculation_kind,
-        value: o.value,
-        unit: o.unit,
-        numerator: o.numerator,
-        denominator: o.denominator,
-        missing: o.missing,
-        formula: o.formula,
-        source_fields: parse(o.source_fields),
-        source_lineage: parse(o.source_lineage),
-        confidence: o.confidence,
-        gradable: o.gradable === 1,
-        detail: o.detail === null ? null : parse(o.detail),
-        source_investigation:
-          o.source_investigation === null
-            ? null
-            : parse(o.source_investigation),
-      }),
-    )
+  const obsRows = h.all<{
+    metric_id: string
+    period: string
+    status: Observation['status']
+    calculation_kind: string
+    value: number | null
+    unit: string
+    numerator: number | null
+    denominator: number | null
+    missing: number | null
+    formula: string | null
+    source_fields: string
+    source_lineage: string
+    confidence: string
+    gradable: number
+    detail: string | null
+    source_investigation: string | null
+    disposition: string
+    affirmative_investigation_evidence_ref: string | null
+  }>(
+    `SELECT * FROM watchdog_metric_observation WHERE run_key = ? ORDER BY metric_id`,
+    runKey,
+  )
+  // v2 governed read maps (persisted columns the engine Observation cannot hold).
+  const disposition_by_metric: Record<string, string> = {}
+  const affirmative_investigation_evidence_ref_by_metric: Record<
+    string,
+    string | null
+  > = {}
+  const observations = obsRows.map((o): Observation => {
+    disposition_by_metric[o.metric_id] = o.disposition
+    affirmative_investigation_evidence_ref_by_metric[o.metric_id] =
+      o.affirmative_investigation_evidence_ref
+    return {
+      metric_id: o.metric_id,
+      period: o.period,
+      status: o.status,
+      calculation_kind: o.calculation_kind,
+      value: o.value,
+      unit: o.unit,
+      numerator: o.numerator,
+      denominator: o.denominator,
+      missing: o.missing,
+      formula: o.formula,
+      source_fields: parse(o.source_fields),
+      source_lineage: parse(o.source_lineage),
+      confidence: o.confidence,
+      gradable: o.gradable === 1,
+      detail: o.detail === null ? null : parse(o.detail),
+      source_investigation:
+        o.source_investigation === null ? null : parse(o.source_investigation),
+    }
+  })
 
-  const evaluations = h
-    .all<{
-      metric_id: string
-      period: string
-      gradable_state: Evaluation['gradable_state']
-      threshold_id: string | null
-      comparator: string | null
-      threshold: number | null
-      reference_id: string | null
-      grade_target_id: string | null
-      detection_rule: string | null
-      detection_fired: number | null
-      rating: Evaluation['rating']
-      reason: string | null
-    }>(
-      `SELECT * FROM watchdog_metric_evaluation WHERE run_key = ? ORDER BY metric_id`,
-      runKey,
-    )
-    .map(
-      (e): Evaluation => ({
-        metric_id: e.metric_id,
-        period: e.period,
-        gradable_state: e.gradable_state,
-        threshold_id: e.threshold_id,
-        comparator: e.comparator,
-        threshold: e.threshold,
-        reference_id: e.reference_id,
-        grade_target_id: e.grade_target_id,
-        detection_rule: e.detection_rule,
-        detection_fired:
-          e.detection_fired === null ? null : e.detection_fired === 1,
-        rating: e.rating,
-        reason: e.reason,
-      }),
-    )
+  const evalRows = h.all<{
+    metric_id: string
+    period: string
+    gradable_state: Evaluation['gradable_state']
+    threshold_id: string | null
+    comparator: string | null
+    threshold: number | null
+    reference_id: string | null
+    grade_target_id: string | null
+    detection_rule: string | null
+    detection_fired: number | null
+    rating: Evaluation['rating']
+    reason: string | null
+    evaluation_state: string | null
+  }>(
+    `SELECT * FROM watchdog_metric_evaluation WHERE run_key = ? ORDER BY metric_id`,
+    runKey,
+  )
+  const evaluation_state_by_metric: Record<string, string> = {}
+  const evaluations = evalRows.map((e): Evaluation => {
+    evaluation_state_by_metric[e.metric_id] = e.evaluation_state ?? ''
+    return {
+      metric_id: e.metric_id,
+      period: e.period,
+      gradable_state: e.gradable_state,
+      threshold_id: e.threshold_id,
+      comparator: e.comparator,
+      threshold: e.threshold,
+      reference_id: e.reference_id,
+      grade_target_id: e.grade_target_id,
+      detection_rule: e.detection_rule,
+      detection_fired:
+        e.detection_fired === null ? null : e.detection_fired === 1,
+      rating: e.rating,
+      reason: e.reason,
+    }
+  })
 
   const findings = h
     .all<{
@@ -1894,6 +2913,7 @@ function loadRaw(
     )
 
   const stored: StoredCanonicalRun = {
+    read_shape_version: STORED_CANONICAL_RUN_READ_VERSION,
     run_key: run.run_key,
     profile: run.profile,
     packet_id: run.packet_id,
@@ -1913,6 +2933,10 @@ function loadRaw(
     evaluations,
     findings,
     alert_candidates,
+    // v2 additive governed read fields.
+    disposition_by_metric,
+    evaluation_state_by_metric,
+    affirmative_investigation_evidence_ref_by_metric,
   }
   return { stored, run }
 }

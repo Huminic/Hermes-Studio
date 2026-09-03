@@ -1,0 +1,33 @@
+{
+ "packet": "SW-FULL-REGRESSION-EVIDENCE-20260903-H",
+ "run_dir": "full-regression-20260903-run6",
+ "start_utc": "2026-09-03T17:19:27Z",
+ "end_utc": "2026-09-03T17:21:35Z",
+ "cwd": "/home/ubuntu/hs-m1r-isolated-20260830",
+ "argv": "sudo -n unshare -n -m sh -c '<F v8 interlock + G squashfs mount + 3 ro snapshot-profile overmounts>' exec setpriv ubuntu env -i HOME/USER/PATH/HALO_LEADS_DIR ./node_modules/.bin/vitest run --maxWorkers=2 --config /tmp/sw-full-regression-config-wrapper-20260903-v8.mts --configLoader runner",
+ "test_environment": {
+  "HOME": "/home/ubuntu",
+  "USER": "ubuntu",
+  "PATH": "/usr/local/bin:/usr/bin:/bin",
+  "HALO_LEADS_DIR": "/tmp/halo-295-leads-20260831"
+ },
+ "exit_code": 0,
+ "pre_sha256": "854f59160183e6e806e207d7c5c724015f6c0f27224d820afc11302f81ed99dd",
+ "raw_log_sha256": "7df971e17bb7364ae5511387256d54b0beea25651b9fca37ac3e86b63f5fb587",
+ "raw_log_size": 51207,
+ "log_line_count": 899,
+ "interlock_mount_count": 10,
+ "process_proof": {
+  "examined_pid_count": 763,
+  "excluded_ancestor_pids": [
+   1,
+   261173,
+   593146,
+   609901,
+   624847,
+   1976042
+  ],
+  "repo_matching_vitest_matches": [],
+  "no_repo_matching_vitest_process_remains": true
+ }
+}
