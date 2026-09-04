@@ -1,5 +1,5 @@
 {
-  "artifact": "honda-watchdog-phase1b-pkt-02-02-leads-sales-only-extraction-contract-draft",
+  "artifact": "honda-watchdog-phase1b-pkt-02-02-leads-sales-only-extraction-contract",
   "draft_status": {
     "is_draft": false,
     "accepted": true,
@@ -282,7 +282,7 @@
     "controller": "Confirms the immutable landing / pre-admission path before any landing.",
     "duane": "Unchanged business decisions from J2 (hours/holiday source; response-clock semantics; 5-minute attempt-outcome set) \u2014 NOT part of this extraction.",
     "claude_studio": "No implementation until an accepted source contract exists.",
-    "impartial_shadow": "Independent read-only review of this draft and any later evidence."
+    "impartial_shadow": "Independent read-only review of this record and any later evidence."
   },
   "next_action": "Impartial-shadow review of this contract + runbook; on pass, controller confirms landing path; only then schedule the single Codex read-only browser run.",
   "stop_conditions": [
@@ -294,7 +294,7 @@
     "Header SET differs from the exact 15 allowlisted labels (extra/missing/renamed/duplicate) => REJECT.",
     "Native header ORDER differs from the proposed order => HOLD for a reviewed canonical-order amendment; never reorder or mutate native bytes."
   ],
-  "rollback": "Delete ONLY these two J3 draft files before commit: docs/halo/contract/phase1b/pkt-02-02-leads-sales-only-extraction-contract-draft.json and docs/halo/contract/phase1b/PKT-02-02_LEADS_SALES_ONLY_RUNBOOK_DRAFT.md. No other artifact is touched.",
+  "rollback": "git revert the freeze commit 2807c88a0874fd29ba0f9c4cc52f372497946e77 and this follow-up correction commit; the reviewed content is preserved in git history. No untracked draft files exist to delete.",
   "expected_evidence_artifacts_from_later_run": [
     "capture receipt (capture_id, source/final URL host, dealer/period context) with no rows/PII",
     "UI-definition proof (fields, filters, dealer, period, filter summary) with no rows/PII",
@@ -303,7 +303,7 @@
     "PASS / HOLD / REJECT receipt with exact reasons",
     "receipt semantics: PASS requires all three proof layers (UI-definition + raw-byte + row-content) clean; a no-raw-bytes run can only be HOLD (never PASS, never admission)."
   ],
-  "no_acceptance_statement": "No source admission, export acceptance, join, dedup, calculation, grade, lifecycle change, or customer narrative is accepted by this draft. The existing PKT-02-02 binding remains the sole authority. No PKT-02-02 or full-goal completion is inferred.",
+  "no_acceptance_statement": "No source admission, export acceptance, join, dedup, calculation, grade, lifecycle change, or customer narrative is accepted by this frozen record. The existing PKT-02-02 binding remains the sole authority. No PKT-02-02 or full-goal completion is inferred.",
   "receipt_semantics": {
     "pass_requires": [
       "all three proof layers clean (UI-definition + raw-byte + row-content)",

@@ -61,5 +61,43 @@
     "no merge/deploy",
     ".claude/ excluded"
   ],
-  "runtime_data_behavior_unchanged": true
+  "runtime_data_behavior_unchanged": true,
+  "followup_correction": {
+    "packet": "POST-FREEZE SHADOW VERDICT \u2014 stale draft-era operational-instruction correction (documentation-only)",
+    "starting_commit": "2807c88a0874fd29ba0f9c4cc52f372497946e77",
+    "note": "Corrected ACTIVE stale instructions ONLY: artifact identity dropped the -draft suffix; 'this draft' current-status prose reworded to the frozen record; rollback now uses git revert (no untracked draft files exist to delete); active companion/contract links point to the frozen non-draft filenames. Historical lineage fields (prior_reviewed_sha256, name_before, pins to reviewed draft hashes, 'reviewed draft' notes) are UNCHANGED. No content semantics changed; SW-016/SW-017/SW-042 remain HELD.",
+    "prior_hashes_preserved": true,
+    "corrected_artifacts": [
+      {
+        "path": "docs/halo/contract/phase1b/pkt-02-02-source-dependency-amendment.json",
+        "initial_freeze_sha256": "5846bccb1f8591052201601e80cac7b4cdf3a6970914e98b9bb15be4a3c4ec9b",
+        "corrected_sha256": "41ad3360605d90c6ca7bd70f669f12d7b093ee9fbd9b822bf40fe7cb3ba730e2"
+      },
+      {
+        "path": "docs/halo/contract/phase1b/pkt-02-02-leads-sales-only-extraction-contract.json",
+        "initial_freeze_sha256": "bff0e061338150b5f0363cc3c2cbc9a29e569c9ff16b08fd59d7ac63f34b6f99",
+        "corrected_sha256": "d43067650a7a478c3549962acf4ac9d92edbfedbb1df74b6fd0d077dfdeb5624"
+      },
+      {
+        "path": "docs/halo/contract/phase1b/MODULE3_APPT_CONFIRMATION_SW-042_EVIDENCE_GAP.json",
+        "initial_freeze_sha256": "daad80b7c9d7fb2f2b48eddeeeb9d72eef0ac63e777493f8e5cfe7e282d75da0",
+        "corrected_sha256": "1714aad7b8cd4eaf44e4f3a62ba652b0f61886e61f042b274377deee0e1fab7b"
+      },
+      {
+        "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-02/PKT-02-02_J4_LEADS_ACQUISITION_HOLD.json",
+        "initial_freeze_sha256": "277707621baa7a71c5c932a4bf27fd5177fe9d19ce2359561655242bc03504ed",
+        "corrected_sha256": "6d852f5ae2d4b3388daec43368ec60f6e484019a4839ac60387c4632a4f7f434"
+      },
+      {
+        "path": "docs/halo/contract/phase1b/PKT-02-02_SEMANTIC_DECISION_BRIEF.md",
+        "initial_freeze_sha256": "6b2be6321fad1e8477c39f8a7850ad1cc4f43c7d31b1d299ae733d270dc89e4a",
+        "corrected_sha256": "b950c164c2b2d8118caebdbb62562d175c94c865680a6663d2dedac366dc1609"
+      },
+      {
+        "path": "docs/halo/contract/phase1b/PKT-02-02_LEADS_SALES_ONLY_RUNBOOK.md",
+        "initial_freeze_sha256": "b74fc1d82e4c1bb32c8c1945626119e838f399eb27eda09e50c9153467b9d048",
+        "corrected_sha256": "b1e13af92e5e27d6c6a40db587923c4209139f6eac3f46f59d2692f8c8783231"
+      }
+    ]
+  }
 }

@@ -3,7 +3,7 @@
 **Status:** ACCEPTED (frozen by SW-HONDA-PKT-02-02-J5-MEMORIALIZE-AND-FREEZE; independent impartial-shadow review completed, corrections applied). Design/evidence reconciliation only; no metric/source admitted; SW-016/SW-017 remain HELD. Prior reviewed draft SHA-256 3203de77d54e53bba749283801c4463579f228739703f4c6bfa09dee152f2687; semantics unchanged.
 **Scope:** Serra Honda of Sylacauga (`serra-honda`, Dealer ID `21043`), Sales only. Metrics `SW-016` and `SW-017` only.
 **Starting HEAD:** `43a3f47c135c570809bb43dbc78b9ce066045a45`, branch `codex/halo-295-unshrinkable-inputs`.
-**Companion:** `pkt-02-02-source-dependency-amendment-draft.json` (machine-readable, pins every governing/J1 hash).
+**Companion:** `pkt-02-02-source-dependency-amendment.json` (machine-readable, pins every governing/J1 hash).
 
 This brief changes no product, source, schedule, CRM, production, or acceptance. It proposes; it does not ratify. No source was exported and no rows were retrieved in J1.
 
@@ -11,7 +11,7 @@ Canonical conditions (verbatim, unchanged):
 - **SW-016** — "Weekend/holiday response SLA breach rate >20%."
 - **SW-017** — "Phone leads with no outbound call attempt within 5 minutes."
 
-Authoritative lifecycle (unchanged by this draft): **SW-016** stays `data_acquired_calculation_pending` / measured-unscored; **SW-017** stays `source_investigation_pending` / not measured.
+Authoritative lifecycle (frozen; unchanged): **SW-016** stays `data_acquired_calculation_pending` / measured-unscored; **SW-017** stays `source_investigation_pending` / not measured.
 
 ---
 
@@ -87,4 +87,4 @@ Each is a genuine business decision the data cannot make. Recommended defaults a
 
 ---
 
-**No acceptance.** This draft performs no DAG amendment, source admission, export, acquisition, calculation, grade, alert, report, or implementation. **Rollback:** delete only these two draft files before commit. No PKT-02-02 or full-goal completion is inferred.
+**Freeze status.** This frozen record performs no DAG amendment, source admission, export, acquisition, calculation, grade, alert, report, or implementation; SW-016/SW-017 remain HELD. **Rollback:** `git revert` the freeze commit `2807c88a0874fd29ba0f9c4cc52f372497946e77` and this follow-up correction commit (reviewed content preserved in git history; no untracked draft files exist to delete). No PKT-02-02 or full-goal completion is inferred.

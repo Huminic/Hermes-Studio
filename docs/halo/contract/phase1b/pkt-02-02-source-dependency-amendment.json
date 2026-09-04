@@ -1,5 +1,5 @@
 {
-  "artifact": "honda-watchdog-phase1b-pkt-02-02-source-dependency-amendment-draft",
+  "artifact": "honda-watchdog-phase1b-pkt-02-02-source-dependency-amendment",
   "draft_status": {
     "is_draft": false,
     "accepted": true,
@@ -54,7 +54,7 @@
     "source": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json (byte-for-byte) == docs/halo/contract/phase1b/pkt-02-02-binding.json canonical_condition"
   },
   "authoritative_lifecycle_unchanged": {
-    "authority": "docs/halo/contract/phase1b/pkt-02-02-binding.json (unchanged by this draft)",
+    "authority": "docs/halo/contract/phase1b/pkt-02-02-binding.json (unchanged by this frozen record)",
     "SW-016": {
       "disposition": "data_acquired_calculation_pending",
       "evaluation_state": "measured_unscored",
@@ -70,7 +70,7 @@
       "gradable": false
     },
     "no_authoritative_lifecycle_change": true,
-    "note": "This draft KEEPS SW-016 data_acquired_calculation_pending / measured-unscored and SW-017 source_investigation_pending / not measured. J1's provisional discovery-time note ('source_investigation_pending' for both) is discovery framing only and does NOT change the binding's authoritative dispositions."
+    "note": "This frozen record KEEPS SW-016 data_acquired_calculation_pending / measured-unscored and SW-017 source_investigation_pending / not measured. J1's provisional discovery-time note ('source_investigation_pending' for both) is discovery framing only and does NOT change the binding's authoritative dispositions."
   },
   "supplemental_unpromoted_observation": {
     "metric_id": "SW-016",
@@ -449,7 +449,7 @@
     "codex": "Read-only VinSolutions discovery, Sales-only field-minimized export-contract drafting, evidence, acceptance controller.",
     "claude_studio": "Implementation only AFTER accepted source contracts; no browsing, no schedule change.",
     "duane": "The three business-decision points below (hours/holiday source; Actual-vs-Adjusted clock + qualifying response event; 5-minute boundary + attempt-outcome set).",
-    "impartial_shadow": "Independent read-only review of this draft and any downstream evidence."
+    "impartial_shadow": "Independent read-only review of this record and any downstream evidence."
   },
   "stop_conditions": [
     "Any Service/Parts selection, field, or data entering scope (esp. Daily Communication Summary Service defaults).",
@@ -460,7 +460,7 @@
     "Using an aggregate (daily summary) or snapshot (customer contact) or key-less export (communication log) as a substitute for lead-grain event truth.",
     "Any authoritative lifecycle/DAG change, or promotion of the supplemental SW-016 figure."
   ],
-  "rollback": "Delete ONLY these two draft files before commit: docs/halo/contract/phase1b/pkt-02-02-source-dependency-amendment-draft.json and docs/halo/contract/phase1b/PKT-02-02_SEMANTIC_DECISION_BRIEF_DRAFT.md. No other artifact is touched, so there is nothing else to revert.",
-  "no_acceptance_statement": "No DAG amendment, source admission, export, acquisition, calculation, grade, alert, report, or implementation is accepted by this draft. SW-016 remains data_acquired_calculation_pending / measured-unscored; SW-017 remains source_investigation_pending / not measured. The existing PKT-02-02 binding remains the sole authority.",
+  "rollback": "git revert the freeze commit 2807c88a0874fd29ba0f9c4cc52f372497946e77 and this follow-up correction commit; the reviewed content is preserved in git history. No untracked draft files exist to delete.",
+  "no_acceptance_statement": "No DAG amendment, source admission, export, acquisition, calculation, grade, alert, report, or implementation is accepted by this frozen record. SW-016 remains data_acquired_calculation_pending / measured-unscored; SW-017 remains source_investigation_pending / not measured. The existing PKT-02-02 binding remains the sole authority.",
   "does_not_infer": "No PKT-02-02 completion and no full-goal completion is inferred."
 }

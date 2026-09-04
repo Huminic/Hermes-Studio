@@ -1,5 +1,5 @@
 {
-  "artifact": "honda-watchdog-phase1b-module3-appointment-confirmation-sw-042-evidence-gap-draft",
+  "artifact": "honda-watchdog-phase1b-module3-appointment-confirmation-sw-042-evidence-gap",
   "draft_status": {
     "is_draft": false,
     "accepted": true,
@@ -47,7 +47,7 @@
     "module": "Module 3 \u2014 Funnel, appointment, and showroom conversion",
     "source_family": "appointments (accepted governed native XLSX; Appt Reason='Sales Appointment'; Sales-only)",
     "source_family_accepted": true,
-    "current_disposition": "HELD \u2014 not measured for SW-042. The Appointments SOURCE is accepted and carries a Confirmed Date, but that field is CALENDAR-DATE ONLY; and the 24-hour anchor event is an unresolved semantic rule. SW-042 is blocked by both. This draft makes NO lifecycle change.",
+    "current_disposition": "HELD \u2014 not measured for SW-042. The Appointments SOURCE is accepted and carries a Confirmed Date, but that field is CALENDAR-DATE ONLY; and the 24-hour anchor event is an unresolved semantic rule. SW-042 is blocked by both. This frozen record makes NO lifecycle change.",
     "gradable": false,
     "grade_target_id": null,
     "source_prerequisites": [
@@ -118,7 +118,7 @@
     "rule": "ONE module/metric only; no other module is touched, implemented, or calculated."
   },
   "no_implementation_statement": "No implementation, ingest, calculation, render, commit, push, merge, or deploy. SW-042 remains HELD (not measured). No lifecycle change to any metric.",
-  "rollback": "Delete only this untracked draft; no other artifact is touched.",
+  "rollback": "git revert the freeze commit 2807c88a0874fd29ba0f9c4cc52f372497946e77 and this follow-up correction commit; the reviewed content is preserved in git history. No untracked draft files exist to delete.",
   "accepted_appointments_workbook_facts": {
     "landing_path": "/Users/duanewells/Documents/LifePath 2/outputs/vinsolutions-report-landing/inbox/serra-honda/2026-08-24_to_2026-08-30/appointments/Report-4800.xlsx",
     "inspection": "schema + aggregate timing only; no names or row content exposed",

@@ -1,5 +1,5 @@
 {
-  "artifact": "honda-watchdog-phase1b-pkt-02-02-j4-leads-acquisition-hold-draft",
+  "artifact": "honda-watchdog-phase1b-pkt-02-02-j4-leads-acquisition-hold",
   "draft_status": {
     "is_draft": false,
     "accepted": true,
@@ -87,6 +87,6 @@
     "SW-016": "data_acquired_calculation_pending / measured_unscored",
     "SW-017": "source_investigation_pending / not_measured"
   },
-  "rollback": "Delete only this untracked draft; no other artifact is touched.",
+  "rollback": "git revert the freeze commit 2807c88a0874fd29ba0f9c4cc52f372497946e77 and this follow-up correction commit; the reviewed content is preserved in git history. No untracked draft files exist to delete.",
   "no_acceptance_statement": "HOLD only. No PASS, admission, metric completion, or general VinSolutions unavailability is claimed."
 }

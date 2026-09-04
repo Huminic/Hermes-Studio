@@ -2,7 +2,7 @@
 
 **Status:** ACCEPTED (frozen by SW-HONDA-PKT-02-02-J5-MEMORIALIZE-AND-FREEZE; independent impartial-shadow review completed, corrections applied). Documentation/design only. This runbook is a *prospective* procedure for a later, separately-controlled, read-only Codex Computer Use browser run; running it remains separately controlled and is not authorized by this freeze. Prior reviewed draft SHA-256 d5f1d6250ace6a2704b25396fed396162cae0083c0b3b04d20266da97a8909ac; semantics unchanged.
 **Scope:** Serra Honda of Sylacauga (`serra-honda`, Dealer ID `21043`), Sales only. Dataset: Custom Reporting `Leads`. Period: **2026-08-24 → 2026-08-30**, labeled **America/New_York**.
-**Companion contract:** `pkt-02-02-leads-sales-only-extraction-contract-draft.json`.
+**Companion contract:** `pkt-02-02-leads-sales-only-extraction-contract.json`.
 **Purpose:** prove live field availability, Sales-only controls, row/cardinality behavior, and timestamps; assess candidate support for SW-016/SW-017 only. **Not** source admission; **no** metric semantics selected; **no** join/dedup/calculation.
 
 ## Three proof layers (keep separate throughout)
@@ -57,4 +57,4 @@ Never let a later layer's evidence stand in for an earlier one (a clean derivati
 
 No join, no dedup, no SW-016/SW-017 calculation/score/grade, no lifecycle change, no source admission, no customer narrative. Any future Response Times ↔ Leads join requires accepted event-selection/dedup rules and proven key representation/cardinality on both sources (per the J2 amendment draft).
 
-**Rollback:** delete only the two J3 draft files before commit. No PKT-02-02 or full-goal completion is inferred.
+**Rollback:** `git revert` the freeze commit `2807c88a0874fd29ba0f9c4cc52f372497946e77` and this follow-up correction commit; the reviewed content is preserved in git history (no untracked draft files exist to delete). No PKT-02-02 or full-goal completion is inferred.
