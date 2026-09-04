@@ -1,0 +1,82 @@
+{
+  "artifact": "honda-watchdog-phase1b-pkt-02-02-j5-leads-retry-hold",
+  "record_status": {
+    "is_draft": false,
+    "accepted": true,
+    "frozen": true,
+    "packet": "SW-HONDA-PKT-02-02-J5-MEMORIALIZE-AND-FREEZE",
+    "independent_shadow_verdict": "PASS/GO to memorialize",
+    "note": "Sanitized HOLD evidence record. Aggregate facts + hashes only; NO screenshot bytes or restricted local-path content reproduced. No source admission, calculation, grade, lifecycle change, or implementation."
+  },
+  "pins": {
+    "head": "43a3f47c135c570809bb43dbc78b9ce066045a45",
+    "branch": "codex/halo-295-unshrinkable-inputs"
+  },
+  "attempt": {
+    "capture_id": "20260904T013829Z-j5",
+    "scope": {
+      "dealer": "Serra Honda of Sylacauga",
+      "dealer_id": "21043",
+      "domain": "Sales",
+      "dataset": "Leads (Custom Reporting)",
+      "metrics": [
+        "SW-016",
+        "SW-017"
+      ],
+      "relationship": "the promised ONE retry after the next-source packet was shadow-cleared"
+    },
+    "rooftop_context": "Authenticated Honda #21043 context is OPERATOR-OBSERVED from the Reports Center start surface; NOT screenshot-proved.",
+    "observed_behavior": "Create Report opened the reporting-vinsolutions Custom Reporting host, but the builder remained an EMPTY SHELL after bounded wait.",
+    "flags": {
+      "query_executed": false,
+      "result_rows_observed": null,
+      "export_files_found": 0,
+      "filter_state_proved": false
+    },
+    "no_actions": [
+      "no fields selected",
+      "no filters applied",
+      "no query run",
+      "no rows viewed",
+      "no export",
+      "no save",
+      "no schedule",
+      "no admission",
+      "no Service/Parts access",
+      "no PII access",
+      "no CRM/customer mutation"
+    ],
+    "cleanup": "blank tab closed as local browser cleanup only"
+  },
+  "status": "HOLD",
+  "missing_is_not_zero": "An empty reporting shell does not prove there are no leads, activity, or available fields; it proves only that retrieval failed.",
+  "no_overclaim": "Do NOT call the Leads source generally unavailable; only this retry's builder shell failed to render.",
+  "restricted_evidence": {
+    "note": "Restricted OUTSIDE the repo; NOT copied here (no screenshot bytes, no restricted local path content).",
+    "capture_id": "20260904T013829Z-j5",
+    "active_receipt_sha256": "fac4a0f165f255b55c26428a268b0b868aeebaaee677cca6307888d79973b4fe",
+    "screenshot_sha256": "4ef0ebb31b744a2e7ceaccdb30e363f51d861075254a3dadb829739ec626e816",
+    "screenshot_bytes": 41012
+  },
+  "next_action": "Official support/admin resolution, OR retry only after materially fresh reporting-session conditions. No more identical retry in the same session.",
+  "leads_lifecycle": "HOLD \u2014 SW-016 data_acquired_calculation_pending / measured_unscored; SW-017 source_investigation_pending / not_measured (unchanged).",
+  "safety_boundaries": [
+    "Serra Honda 21043 Sales only",
+    "zero Service/Parts",
+    "no PII",
+    "no export/admission/calculation/grade/narrative",
+    "no CRM/report/schedule/production/external mutation"
+  ],
+  "self_check": {
+    "hashes_recorded_match_source_facts": true,
+    "screenshot_or_restricted_path_copied": false,
+    "aggregate_and_hashes_only": true,
+    "status_hold": true,
+    "missing_is_not_zero": true,
+    "not_generally_unavailable": true,
+    "no_actions_taken": true,
+    "one_promised_retry": true,
+    "rooftop_operator_observed_not_screenshot_proved": true
+  },
+  "rollback": "git revert the freeze commit; this record is additive evidence."
+}

@@ -1,0 +1,92 @@
+{
+  "artifact": "honda-watchdog-phase1b-pkt-02-02-j4-leads-acquisition-hold-draft",
+  "draft_status": {
+    "is_draft": false,
+    "accepted": true,
+    "authoritative": true,
+    "packet": "SW-HONDA-PKT-02-02-J4-HOLD-AND-NEXT-SOURCE",
+    "task": "1 of 2 \u2014 memorialize J4 HOLD (aggregate/non-PII only)",
+    "note": "ACCEPTED / FROZEN packet record. Design/evidence only \u2014 NO source admission, calculation, grade, lifecycle change, or implementation. SW-016/SW-017 remain HELD; SW-042 remains HELD. Content semantics are UNCHANGED from the reviewed draft; only draft-status metadata and filename changed.",
+    "frozen": true,
+    "frozen_by": "SW-HONDA-PKT-02-02-J5-MEMORIALIZE-AND-FREEZE",
+    "prior_reviewed_sha256": "6b966a970f6e857d9507bebd38f4500695d44aad07e1c6192ae8105f184e0b91",
+    "independent_review_lineage": "Corrected per the latest independent impartial-shadow verdict (FAIL-AS-DRAFTED; 5 corrections applied); latest verdict PASS/GO.",
+    "authoritative_scope_note": "Authoritative as the ACCEPTED FREEZE RECORD only; the metric/source DECISIONS (SW-016/SW-017/SW-042) remain HELD."
+  },
+  "pins": {
+    "starting_head": "43a3f47c135c570809bb43dbc78b9ce066045a45",
+    "branch": "codex/halo-295-unshrinkable-inputs",
+    "j2_j3_drafts_sha256": {
+      "docs/halo/contract/phase1b/pkt-02-02-source-dependency-amendment-draft.json": "64d5a17c565ac24c06cda7f58d7b8238b91c3d32d7f234b10201c24928b35d4f",
+      "docs/halo/contract/phase1b/PKT-02-02_SEMANTIC_DECISION_BRIEF_DRAFT.md": "3203de77d54e53bba749283801c4463579f228739703f4c6bfa09dee152f2687",
+      "docs/halo/contract/phase1b/pkt-02-02-leads-sales-only-extraction-contract-draft.json": "f0d4f4d719d75e93bf364c3c60a9dfaec6b75853d1d0f0b8dcc3d15ae76dd354",
+      "docs/halo/contract/phase1b/PKT-02-02_LEADS_SALES_ONLY_RUNBOOK_DRAFT.md": "d5f1d6250ace6a2704b25396fed396162cae0083c0b3b04d20266da97a8909ac"
+    }
+  },
+  "attempt": {
+    "capture_id": "20260904T005040Z-j4",
+    "scope": {
+      "dealer": "Serra Honda of Sylacauga",
+      "dealer_id": "21043",
+      "domain": "Sales",
+      "target_period": "2026-08-24/2026-08-30",
+      "dataset": "Leads (Custom Reporting)",
+      "metrics": [
+        "SW-016",
+        "SW-017"
+      ]
+    },
+    "route_verified": "Authenticated rooftop #21043 verified; normal route Dashboard > Insights > Reports > Create Report; Untitled Analysis loaded.",
+    "observed_behavior": "Selecting the Leads dataset invoked reporting-vinsolutions.app.coxautoinc.com /InfoGo/rdPage.aspx with rdQbCommand=UpdateQb; the page rendered an EMPTY SHELL and remained empty through bounded waits and clean-tab retries. The full Sales-only/date filter state was therefore NOT proved.",
+    "result": "No query rows retrieved; no export/download occurred; export_files_found=0; no raw bytes exist; no source admitted; no calculation/grade/narrative produced; no CRM/report/schedule state changed."
+  },
+  "status": "HOLD",
+  "missing_is_not_zero": "An empty reporting shell does not prove there are no leads, activity, or available fields; it proves only that retrieval failed.",
+  "no_overclaim": {
+    "no_pass": true,
+    "no_admission": true,
+    "no_metric_completion": true,
+    "no_general_vinsolutions_unavailability_claim": true,
+    "note": "Only the Leads dataset builder shell failed to render on this attempt; do NOT generalize to VinSolutions availability."
+  },
+  "owner": "Cox/VinSolutions reporting surface (reporting-vinsolutions.app.coxautoinc.com Custom Reporting UpdateQb builder).",
+  "duane_action_required_now": false,
+  "restricted_evidence": {
+    "note": "Fail-closed evidence is restricted OUTSIDE the repo and is NOT copied here.",
+    "capture_id": "20260904T005040Z-j4",
+    "sanitized_receipt_sha256": "c844774f7acf5dd4c679b15a810f08c1baed4f67e9dde080075876d58e162f8e",
+    "blank_shell_screenshot_sha256": "b49f4f41319118350e9ff5ebea52c94b15d907541a4bdd11d8d7f7f9e578bd84",
+    "zero_field": {
+      "export_files_found": 0
+    },
+    "never_copied_into_repo": [
+      "screenshot bytes",
+      "restricted local path content",
+      "any row/PII value"
+    ]
+  },
+  "next_safe_retry": {
+    "leads_retry_point": "Re-attempt the Leads dataset selection in Custom Reporting (Analysis Grid, Untitled Analysis) and WAIT for the UpdateQb builder shell to fully render its field picker + filter panel BEFORE any configuration. If the shell renders empty again after bounded waits + clean-tab retries, HOLD and escalate to the Cox/VinSolutions reporting-surface owner.",
+    "on_render_follow": "the J3 Leads Sales-only extraction runbook (unsaved builder, paused retrieval, positive Sales-only proof, landing preflight).",
+    "do_not": [
+      "infer availability from an empty shell",
+      "Do not export from an empty shell or before all J3 gates are proved (this does NOT restrict a future successful render followed under the J3 runbook).",
+      "admit a source",
+      "retry beyond bounded attempts",
+      "request Duane action now"
+    ]
+  },
+  "safety_boundaries": [
+    "Serra Honda 21043 Sales only",
+    "zero Service/Parts",
+    "no PII",
+    "no export/admission/calculation/grade/narrative",
+    "no CRM/report/schedule/production/external mutation"
+  ],
+  "sw_016_017_lifecycle_unchanged": {
+    "SW-016": "data_acquired_calculation_pending / measured_unscored",
+    "SW-017": "source_investigation_pending / not_measured"
+  },
+  "rollback": "Delete only this untracked draft; no other artifact is touched.",
+  "no_acceptance_statement": "HOLD only. No PASS, admission, metric completion, or general VinSolutions unavailability is claimed."
+}

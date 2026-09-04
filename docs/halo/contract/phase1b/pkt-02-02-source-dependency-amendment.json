@@ -1,0 +1,466 @@
+{
+  "artifact": "honda-watchdog-phase1b-pkt-02-02-source-dependency-amendment-draft",
+  "draft_status": {
+    "is_draft": false,
+    "accepted": true,
+    "authoritative": true,
+    "packet": "SW-HONDA-PKT-02-02-SOURCE-AMENDMENT-J2",
+    "metrics_in_scope": [
+      "SW-016",
+      "SW-017"
+    ],
+    "kind": "design/evidence source-dependency reconciliation (additive proposal only)",
+    "note": "ACCEPTED / FROZEN packet record. Design/evidence only \u2014 NO source admission, calculation, grade, lifecycle change, or implementation. SW-016/SW-017 remain HELD; SW-042 remains HELD. Content semantics are UNCHANGED from the reviewed draft; only draft-status metadata and filename changed.",
+    "frozen": true,
+    "frozen_by": "SW-HONDA-PKT-02-02-J5-MEMORIALIZE-AND-FREEZE",
+    "prior_reviewed_sha256": "64d5a17c565ac24c06cda7f58d7b8238b91c3d32d7f234b10201c24928b35d4f",
+    "independent_review_lineage": "Created in packet J2; independent impartial-shadow review (SW-HONDA-PKT-02-02-J2-CORRECTION) found semantic/grain overstatements; corrected; the reviewed SHA equals this frozen artifact's source (pre-freeze) content.",
+    "authoritative_scope_note": "Authoritative as the ACCEPTED FREEZE RECORD only; the metric/source DECISIONS (SW-016/SW-017/SW-042) remain HELD."
+  },
+  "pins": {
+    "starting_head": "43a3f47c135c570809bb43dbc78b9ce066045a45",
+    "branch": "codex/halo-295-unshrinkable-inputs",
+    "governing_sources_sha256": {
+      "docs/halo/planning/HONDA_SEMANTIC_WATCHDOG_EXECUTION_SPEC.md": "fedd957b9431521591155763327147d86c25fe3da11e2996470c134eaf9d785e",
+      "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+      "docs/halo/contract/phase1b/pkt-02-02-binding.json": "7307e6039363fa421c217ff9c1beb1ca606dfcbcfbe083c503a65d5371c16f44",
+      "docs/halo/evidence/m1r/residual/gate4i-response-times-measured-unscored-ledger.json": "3d3e0ae280dcf740c8dab7cc0bdb32d5d1633eebfa96758c00811e91444bb779",
+      "/home/ubuntu/hs-ingest-dev/docs/watchdog-platform/SCHEMA_CONTRACT.md": "49354bdc89184454db23e4eed8f8ed037d8de2698966573fb9a2c198f1d3284f",
+      "/home/ubuntu/hs-ingest-dev/docs/watchdog-platform/SCHEMA_CONTRACT_BROWSER_EXTENSION.md": "8813f1fb349585b43c393963d24c4778f00ca5dfbfa44941c5aa4d7f7db16c84"
+    },
+    "j1_discovery_sha256": {
+      "/tmp/sw-honda-j1-20260903/discovery-receipt.json": "9bee749753275db3dcc4f094cd2315d1ceccf0c98b3d911d312a381485cbebce",
+      "/tmp/sw-honda-j1-20260903/field-matrix.md": "71097a7794861e304dc3bbf9bd3580540c74e68b606076eac867dbde4e6b2559",
+      "/tmp/sw-honda-j1-20260903/schema-discovery.json": "abd5272fb983730435bcd2a9e4c2e36ce93731c8b26e8e9086f24c8efee76bd2"
+    },
+    "j1_hash_verified": {
+      "/tmp/sw-honda-j1-20260903/discovery-receipt.json": true,
+      "/tmp/sw-honda-j1-20260903/field-matrix.md": true,
+      "/tmp/sw-honda-j1-20260903/schema-discovery.json": true
+    },
+    "j1_review_status": "J1 has passed impartial review as discovery-only (metadata-only; no export, no result rows)."
+  },
+  "permanent_boundaries": [
+    "Serra Honda of Sylacauga only: profile serra-honda, Dealer ID 21043, Sales domain only.",
+    "Zero Service/Parts admission anywhere (definition, source, landing, Brain, transform, observation, narrative, report).",
+    "Missing is not zero: no invented semantics, fields, joins, data, baselines, targets, grades, causes, units, or ROI.",
+    "No VinSolutions/Gmail/other-rooftop/customer browsing; no PII values inspected or reproduced.",
+    "No schedule/CRM/customer/production/recipient/alert/external mutation.",
+    "The existing Response Times observation (denominator 16, breaches 5, 31.3%) remains supplemental/unpromoted."
+  ],
+  "canonical_conditions_verbatim": {
+    "SW-016": "Weekend/holiday response SLA breach rate >20%.",
+    "SW-017": "Phone leads with no outbound call attempt within 5 minutes.",
+    "source": "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json (byte-for-byte) == docs/halo/contract/phase1b/pkt-02-02-binding.json canonical_condition"
+  },
+  "authoritative_lifecycle_unchanged": {
+    "authority": "docs/halo/contract/phase1b/pkt-02-02-binding.json (unchanged by this draft)",
+    "SW-016": {
+      "disposition": "data_acquired_calculation_pending",
+      "evaluation_state": "measured_unscored",
+      "lifecycle_bucket": "calculation_pending_ids",
+      "source_family": "response_times_dashboard",
+      "gradable": false
+    },
+    "SW-017": {
+      "disposition": "source_investigation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "source_investigation_pending_ids",
+      "source_family": "response_times_dashboard",
+      "gradable": false
+    },
+    "no_authoritative_lifecycle_change": true,
+    "note": "This draft KEEPS SW-016 data_acquired_calculation_pending / measured-unscored and SW-017 source_investigation_pending / not measured. J1's provisional discovery-time note ('source_investigation_pending' for both) is discovery framing only and does NOT change the binding's authoritative dispositions."
+  },
+  "supplemental_unpromoted_observation": {
+    "metric_id": "SW-016",
+    "dealer_id": "21043",
+    "dealer": "Serra Honda of Sylacauga",
+    "weekend_supplemental_open_plus_15": {
+      "denominator": 16,
+      "breaches": 5,
+      "rate_pct": 31.3
+    },
+    "layer": "measured_unscored",
+    "promoted": false,
+    "evidence_ref": "docs/halo/evidence/m1r/residual/gate4i-response-times-measured-unscored-ledger.json (Gate 4I; promotes nothing)",
+    "note": "SUPPLEMENTAL only; not a scored SW-016 result; the SW-016 SLA definition is unratified and no holiday/business-hours calendar exists."
+  },
+  "field_provenance_legend": {
+    "live_paused_schema_discovery": "Field name visible in the live VinSolutions Custom Reporting field picker during the J1 metadata-only pass (no rows retrieved).",
+    "official_help_glossary": "Field named only in the official VinSolutions Help glossary (VS Leads Data Set Glossary art. 000001225), NOT confirmed in the live J1 field picker.",
+    "earlier_governed_export": "Field proved by an earlier governed export / implemented browser contract, not re-proved in J1."
+  },
+  "sources": {
+    "response_times_dashboard": {
+      "role": "EXISTING GOVERNED family currently bound to SW-016/SW-017 (source_family=response_times_dashboard).",
+      "surfaces": [
+        "System report 'Response Times' aggregate surface (Gate 4I capture; J1 re-confirmed config only)",
+        "Implemented 39-column browser CSV canonical v1 derivative (SCHEMA_CONTRACT_BROWSER_EXTENSION \u00a7A, AGREED+IMPLEMENTED)"
+      ],
+      "direct_fields": {
+        "aggregate_report_earlier_governed_export": [
+          "Total Leads",
+          "Duplicate Leads",
+          "Bad Leads",
+          "Good Leads",
+          "Response",
+          "Average Response",
+          "within_15m",
+          "within_30m",
+          "over_30m",
+          "no_response"
+        ],
+        "event_derivative_earlier_governed_export": [
+          "lead.id",
+          "customer.id",
+          "customer.salesRepresentative.id",
+          "responseTimeActual",
+          "responseTimeAdjusted",
+          "responseTimeTarget",
+          "customerFirstContactedUtc",
+          "appointmentUtc",
+          "visitStartTimeUtc",
+          "soldDateUtc",
+          "visitDurationInMinutes",
+          "unansweredCommunication.taskDueDateUtc",
+          "unansweredCommunication.taskAgeInDays",
+          "unansweredCommunication.type",
+          "appointmentStatus",
+          "lead.leadTypeName",
+          "lead.leadStatusTypeName"
+        ]
+      },
+      "row_grain_confidence": {
+        "aggregate": "dealer/period aggregate (high confidence)",
+        "event_derivative": "row-level event feed containing lead.id and activityDateTimeUtc (per the pinned browser contract); per-lead multiplicity and uniqueness are NOT proved here"
+      },
+      "stable_ids": [
+        "lead.id",
+        "customer.id (event derivative only)"
+      ],
+      "timestamp_semantics": "All *Utc are UTC; bucket by America/New_York before window assignment; primary period activityDateTimeUtc. Does NOT carry a lead-origination timestamp, an authoritative business-hours/holiday calendar, a phone-origin indicator, or an outbound call-attempt event.",
+      "pii_by_field_name": [
+        "customer.firstName",
+        "customer.lastName",
+        "customer.id",
+        "customer.salesRepresentative.firstName/lastName (rep names, internal-only, dropped in derivative)"
+      ],
+      "sales_controls": [
+        "Lead Type default 'Sales'; report is electronic XML leads not marked bad; raw scanned for Service/Parts; derivative PII-minimized"
+      ],
+      "service_parts_hazards": [
+        "The Response Times parameter surface exposes 'Service & Parts','Service','Parts' as selectable Lead Types (unselected in evidence); selecting any would contaminate \u2014 fail-closed."
+      ],
+      "export_schedule_status": "Weekly manual browser checkpoint; implemented canonical derivative; not an automated schedule.",
+      "missing_controls_for_sw_016_017": [
+        "No lead-origination timestamp",
+        "No authoritative business-hours/holiday calendar",
+        "No phone-origin indicator (SW-017)",
+        "No outbound call-attempt event (SW-017)"
+      ]
+    },
+    "custom_reporting_leads": {
+      "role": "CANDIDATE dataset newly observed in J1 live Custom Reporting (materially improves SW-016 feasibility; NOT exported/proved).",
+      "direct_fields": {
+        "live_paused_schema_discovery": [
+          "Lead ID",
+          "Dealer ID",
+          "Lead Origination Date",
+          "Lead Last Modified Date",
+          "Lead Type",
+          "Lead Source",
+          "Lead Source Group",
+          "Lead Status",
+          "Lead Status Custom",
+          "Lead Status Type",
+          "Sold Datetime",
+          "Actual Response Time (Min)",
+          "Adjusted Response Time (Min)",
+          "Actionable Response Datetime",
+          "First Contact Attempt",
+          "First Customer Contact",
+          "Contacted Indicator",
+          "Originated After Hours",
+          "ADF/XML Indicator",
+          "Last Attempted Contact",
+          "Last Attempted Phone Contact",
+          "Last Attempted Email Contact",
+          "Last Attempted Text Contact Datetime",
+          "Last Attempted or Actual Contact",
+          "Last Customer Contact",
+          "Sales Rep",
+          "BD Agent",
+          "Created User",
+          "Last Modified User"
+        ],
+        "official_help_glossary_only": [
+          "Global Customer ID",
+          "CRM User ID"
+        ]
+      },
+      "row_grain_confidence": "Lead-level STRONGLY INDICATED by dataset name + unique Lead ID + glossary, but row cardinality was NOT run or observed (metadata-only).",
+      "stable_ids": {
+        "live_confirmed": [
+          "Lead ID (glossary alias Auto Lead ID)",
+          "Dealer ID"
+        ],
+        "glossary_only_not_confirmed_live": [
+          "Global Customer ID",
+          "CRM User ID"
+        ]
+      },
+      "timestamp_semantics": "Lead Origination Date, First Contact Attempt, First Customer Contact, Actionable Response Datetime, Sold Datetime present by NAME; exact VinSolutions definitions, timezone/DST, and deterministic tie-breaking NOT proved.",
+      "pii_by_field_name": [
+        "Customer",
+        "CoBuyer Full Name",
+        "Stock Number",
+        "VIN",
+        "Vehicle Memo"
+      ],
+      "sales_controls": [
+        "Lead Type / Lead Source classifications available for Sales scoping; which filter removes Service/Parts AT SOURCE is not yet proved (no export ran)."
+      ],
+      "service_parts_hazards": [
+        "Custom Reporting builder must be proved Sales-only at source before any retrieval; not yet exported/proved."
+      ],
+      "export_schedule_status": "NOT exported; NOT scheduled; unsaved 'Untitled Analysis' builder closed before dataset retrieval; exportability/schedulability NOT assessed.",
+      "missing_controls": {
+        "sw_016": [
+          "No authoritative dealer-hours source",
+          "No authoritative holiday calendar",
+          "Timezone/DST semantics not exposed",
+          "Exact definitions of Actual/Adjusted Response Time, Actionable Response Datetime, First Contact Attempt, First Customer Contact not in captured Help corpus"
+        ],
+        "sw_017": [
+          "First Contact Attempt not proved to be an outbound logged call",
+          "No event type/direction/channel with First Contact Attempt",
+          "No event-level call-attempt sequence",
+          "Timezone / deterministic tie-breaking not exposed"
+        ]
+      }
+    },
+    "customer_contact_snapshot": {
+      "role": "CANDIDATE dataset (Customer Contact) observed in J1 live Custom Reporting; snapshot, NOT exported/proved.",
+      "direct_fields": {
+        "live_paused_schema_discovery": [
+          "Global Customer ID",
+          "Dealer ID",
+          "Last Actual Contact - Datetime",
+          "Last Attempted Contact - Datetime",
+          "Last Actual Contact By CRM User- Datetime",
+          "Last Attempted Contact By CRM User- Datetime",
+          "Last Phone Actual Contact - Datetime",
+          "Last Phone Attempted Contact - Datetime",
+          "Last Sales Email Actual Contact - Datetime",
+          "Last Sales Email Attempted Contact - Datetime",
+          "Last Text Actual Contact - Datetime",
+          "Last Text Attempted Contact - Datetime",
+          "associated User Name / User Group per contact family (incl. CRM User and Virtual Assistant variants)"
+        ]
+      },
+      "row_grain_confidence": "Customer-contact snapshot (latest-event per channel); cardinality NOT run.",
+      "stable_ids": [
+        "Global Customer ID",
+        "Dealer ID"
+      ],
+      "no_lead_id": true,
+      "timestamp_semantics": "LATEST actual/attempted contact datetimes per channel \u2014 a snapshot, NOT a complete event stream; NO lead-origination timestamp.",
+      "pii_by_field_name": [
+        "Global Customer ID (customer identifier)",
+        "User Name (rep)"
+      ],
+      "sales_controls": [
+        "Sales email/phone/text actual+attempted contact families present."
+      ],
+      "service_parts_hazards": [
+        "Sales-only-at-source not proved; snapshot semantics unverified."
+      ],
+      "export_schedule_status": "NOT exported; NOT scheduled; metadata-only.",
+      "missing_controls": [
+        "No Lead ID",
+        "No lead-origination timestamp",
+        "Snapshot rather than a complete event stream",
+        "No deterministic lead-level join to the governed Communication Log export"
+      ]
+    },
+    "daily_communication_summary_by_user": {
+      "role": "CANDIDATE dataset (Daily Communication Summary By User) observed in J1; TRIGGERED THE J1 SERVICE STOP CONDITION.",
+      "direct_fields": {
+        "live_paused_schema_discovery_sales": [
+          "Log A Call Sales Inbound",
+          "Log A Call Sales Outbound",
+          "Log A Call Sales Outbound Contacted",
+          "Log A Call Sales Outbound Not Contacted",
+          "Log A Call Sales Outbound Answering Machine",
+          "Log A Call Sales Total",
+          "Sales Email Inbound",
+          "Sales Email Outbound",
+          "Text Inbound",
+          "Text Outbound",
+          "PBX Known Customer Inbound",
+          "PBX Known Customer Outbound",
+          "PBX Unknown Customer Inbound",
+          "PBX Unknown Customer Outbound"
+        ],
+        "live_paused_schema_discovery_service_default_selected": [
+          "Log A Call Service Inbound",
+          "Log A Call Service Outbound",
+          "Log A Call Service Total",
+          "Service Email Inbound",
+          "Service Email Outbound"
+        ]
+      },
+      "row_grain_confidence": "Dealer, CRM User, Group Name, Activity Date aggregate (day/user grain).",
+      "stable_ids": [
+        "Dealer",
+        "CRM User",
+        "Activity Date (no lead-grain key)"
+      ],
+      "timestamp_semantics": "Activity Date (day aggregate); NO per-event timestamp; cannot order lead-level events.",
+      "pii_by_field_name": [
+        "CRM User (rep); no customer identity at this grain"
+      ],
+      "sales_controls": [
+        "Sales outbound-call counts and outcomes exist as Sales-scoped columns."
+      ],
+      "service_parts_hazards": [
+        "STOP/CONTROL FACT (not an accepted source): the dataset VISIBLY INCLUDES AND DEFAULT-SELECTS Service measures. Per the platform contract a positive Service selection is a contaminated definition that quarantines the whole delivery; clean rows do NOT cure it. UNSAFE until a future accepted Sales-only extraction contract REMOVES every Service/Parts field BEFORE retrieval and the remaining Sales-only definition is independently accepted."
+      ],
+      "export_schedule_status": "NOT exported; NOT saved/scheduled; unsaved builder closed on the Service-default STOP; no result rows retrieved.",
+      "missing_controls": [
+        "No Lead ID",
+        "No lead-origination timestamp",
+        "No per-event timestamp",
+        "No Lead Type/Source at the summary grain",
+        "Cannot prove whether a specific phone-origin lead received an outbound call within five minutes"
+      ]
+    },
+    "communication_log_export": {
+      "role": "EXISTING GOVERNED export (Communication Log); NOT opened in J1; the SCHEDULED DAILY Sales Communication Log delivery is QUARANTINED for hidden Parts/Service.",
+      "direct_fields": {
+        "earlier_governed_export": [
+          "Dealer",
+          "User Group",
+          "User",
+          "Customer",
+          "Activity Date",
+          "Direction",
+          "Comm Channel",
+          "Comm Type",
+          "Interaction Result",
+          "Lead Type",
+          "Lead Status Type",
+          "Lead Status",
+          "Lead Source",
+          "Lead Created Date",
+          "Message Content"
+        ]
+      },
+      "row_grain_confidence": "Event-level (email/text/logged-call detail activity over a period for selected dealers).",
+      "stable_ids": [
+        "NONE at lead grain \u2014 no stable Lead ID and no Global Customer ID; 'Customer' is a display value, not a stable join key."
+      ],
+      "timestamp_semantics": "Activity Date (event time); Lead Created Date.",
+      "pii_by_field_name": [
+        "Customer (name)",
+        "Message Content (hashed, never stored)"
+      ],
+      "sales_controls": [
+        "Lead Type / Lead Status Type / Lead Source scanned for Service/Parts."
+      ],
+      "service_parts_hazards": [
+        "The scheduled DAILY Sales Communication Log delivery is QUARANTINED (hidden Parts/Service Lead Intent; TERMINAL). The enhanced weekly variant is pre-admission (promotes no metric)."
+      ],
+      "export_schedule_status": "Governed export exists; scheduled daily is QUARANTINED; enhanced weekly is pre-admission (proposed_extension_pending_consumer_acceptance).",
+      "missing_controls": [
+        "No stable Lead ID / Global Customer ID \u2192 cannot deterministically join to Leads at lead grain",
+        "Cannot tie an outbound call-attempt to a specific phone-origin lead"
+      ]
+    }
+  },
+  "glossary_vs_current_ui_conflict": {
+    "fields_in_official_leads_glossary_not_present_in_live_j1_picker": [
+      "Global Customer ID",
+      "CRM User ID"
+    ],
+    "official_glossary": "VS Leads Data Set Glossary, article 000001225 (captured 2026-08-17)",
+    "rule": "DO NOT infer availability or a Lead\u2194Customer/Comm join from the glossary alone. Global Customer ID and CRM User ID appear in the official Leads glossary but were NOT present in the live Leads field picker captured by J1. Presence/joinability can be established ONLY by a controlled Sales-only export that actually exposes the field.",
+    "join_impact": "If Global Customer ID is NOT actually selectable in the live Leads dataset, a Lead\u2194Customer-Contact / Lead\u2194Communication-Log join by Global Customer ID cannot be assumed for SW-017."
+  },
+  "no_export_proof": {
+    "any_source_exported_in_j1": false,
+    "row_cardinality_period_filter_proof_for_candidate_custom_datasets": "NONE",
+    "note": "J1 was metadata-only; data retrieval was paused before dataset selection; result_rows_retrieved=false; no save/export/schedule. No row grain, cardinality, period behavior, or filter behavior is proved for Leads, Customer Contact, or Daily Communication Summary."
+  },
+  "proposed_source_dags": {
+    "disclaimer": "PROPOSED ONLY. No DAG is amended or accepted; no source is admitted; nothing is joined until a controlled Sales-only export proves it.",
+    "SW-016": {
+      "proposed_inputs": [
+        "response_times_dashboard (response / first-touch timestamps, response-time fields)",
+        "custom_reporting_leads (lead-origination timestamp, Lead ID, response fields, Originated After Hours)",
+        "authoritative_business_hours_and_holiday_calendar_source (dealer hours + holiday calendar + timezone/DST) \u2014 NOT YET NAMED/ACQUIRED"
+      ],
+      "proposed_join": "response_times_dashboard <-> custom_reporting_leads by Lead ID \u2014 NOT assumed 1:1 or one row per lead; ONLY AFTER a controlled Sales-only export proves exact Lead ID key representation and cardinality on BOTH sources, AND an accepted event-selection/deduplication rule is defined, before any join.",
+      "still_blocked_by": [
+        "Authoritative business-hours/holiday/timezone source unresolved",
+        "Exact response-field semantics (Actual vs Adjusted, Actionable Response Datetime, First Contact/First Customer Contact) unratified",
+        "SW-016 SLA spec (numerator/denominator/event_sequence/window/threshold/minimum_sample/minimum_history/ambiguity_handling/unit) held/unratified",
+        "No approved operational target (absent from gate2/baseline)"
+      ],
+      "accepted": false
+    },
+    "SW-017": {
+      "proposed_inputs": [
+        "custom_reporting_leads (phone-origin identification via Lead Type/Source, lead-origination timestamp, Lead ID)",
+        "an OFFICIAL EVENT-LEVEL call source keyed by Lead ID proving an outbound call-attempt event + timestamp \u2014 NOT YET PROVED TO EXIST"
+      ],
+      "proposed_join": "custom_reporting_leads <-> event-level call source by Lead ID (or an accepted stable-ID join) \u2014 ONLY AFTER proof of exact key representation.",
+      "explicitly_rejected_as_complete_substitutes_under_current_evidence": {
+        "communication_log_export": "no stable Lead ID / Global Customer ID \u2192 cannot deterministically join at lead grain; and the scheduled daily is quarantined.",
+        "customer_contact_snapshot": "latest-event snapshot, no Lead ID, no lead-origination timestamp.",
+        "daily_communication_summary_by_user": "dealer/user/day aggregate, no lead grain, no per-event timestamp, and Service-contaminated by default selection."
+      },
+      "still_blocked_by": [
+        "No event-level outbound-call source keyed by Lead ID proved",
+        "First Contact Attempt not proved to be an outbound logged call",
+        "5-minute boundary and qualifying-attempt outcome set unratified",
+        "phone-origin lead identification unproved by a real export",
+        "No approved operational target"
+      ],
+      "accepted": false
+    }
+  },
+  "next_evidence_needed": {
+    "SW-016": [
+      "One controlled Sales-only, field-minimized Custom Reporting export of Leads proving Lead ID key representation + row cardinality (lead grain) + deterministic period/filter behavior",
+      "An authoritative dealership business-hours + holiday calendar source + timezone/DST rule (owner: Duane / named source)",
+      "Official VinSolutions definitions for Actual Response Time, Adjusted Response Time, Actionable Response Datetime, First Contact Attempt, First Customer Contact",
+      "Ratified SW-016 SLA spec + approved grade target"
+    ],
+    "SW-017": [
+      "Proof of an official event-level call source with Lead ID (or an accepted stable-ID join) exposing an outbound call-attempt event + timestamp",
+      "Proof of phone-origin lead identification via a real Sales-only export",
+      "Ratified 5-minute boundary + which outbound-call outcomes count as a qualifying attempt",
+      "Rejection of aggregate/snapshot proxies retained"
+    ]
+  },
+  "owner": {
+    "codex": "Read-only VinSolutions discovery, Sales-only field-minimized export-contract drafting, evidence, acceptance controller.",
+    "claude_studio": "Implementation only AFTER accepted source contracts; no browsing, no schedule change.",
+    "duane": "The three business-decision points below (hours/holiday source; Actual-vs-Adjusted clock + qualifying response event; 5-minute boundary + attempt-outcome set).",
+    "impartial_shadow": "Independent read-only review of this draft and any downstream evidence."
+  },
+  "stop_conditions": [
+    "Any Service/Parts selection, field, or data entering scope (esp. Daily Communication Summary Service defaults).",
+    "Any export/retrieval/save/schedule before an accepted Sales-only field-minimized export contract.",
+    "Wrong dealer or cross-rooftop data.",
+    "Any PII value beyond the retained minimal field set; any inspection/reproduction of PII.",
+    "Inventing hours/holiday/timezone or response/attempt semantics to fill a gap.",
+    "Using an aggregate (daily summary) or snapshot (customer contact) or key-less export (communication log) as a substitute for lead-grain event truth.",
+    "Any authoritative lifecycle/DAG change, or promotion of the supplemental SW-016 figure."
+  ],
+  "rollback": "Delete ONLY these two draft files before commit: docs/halo/contract/phase1b/pkt-02-02-source-dependency-amendment-draft.json and docs/halo/contract/phase1b/PKT-02-02_SEMANTIC_DECISION_BRIEF_DRAFT.md. No other artifact is touched, so there is nothing else to revert.",
+  "no_acceptance_statement": "No DAG amendment, source admission, export, acquisition, calculation, grade, alert, report, or implementation is accepted by this draft. SW-016 remains data_acquired_calculation_pending / measured-unscored; SW-017 remains source_investigation_pending / not measured. The existing PKT-02-02 binding remains the sole authority.",
+  "does_not_infer": "No PKT-02-02 completion and no full-goal completion is inferred."
+}

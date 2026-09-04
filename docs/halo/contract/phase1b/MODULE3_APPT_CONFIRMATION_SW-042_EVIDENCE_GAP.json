@@ -1,0 +1,141 @@
+{
+  "artifact": "honda-watchdog-phase1b-module3-appointment-confirmation-sw-042-evidence-gap-draft",
+  "draft_status": {
+    "is_draft": false,
+    "accepted": true,
+    "authoritative": true,
+    "packet": "SW-HONDA-PKT-02-02-J4-HOLD-AND-NEXT-SOURCE",
+    "task": "2 of 2 \u2014 next source/module (evidence-gap; ONE module/metric; HELD)",
+    "kind": "tightly-scoped EVIDENCE-GAP packet naming the exact missing field; metric remains HELD",
+    "note": "ACCEPTED / FROZEN packet record. Design/evidence only \u2014 NO source admission, calculation, grade, lifecycle change, or implementation. SW-016/SW-017 remain HELD; SW-042 remains HELD. Content semantics are UNCHANGED from the reviewed draft; only draft-status metadata and filename changed.",
+    "frozen": true,
+    "frozen_by": "SW-HONDA-PKT-02-02-J5-MEMORIALIZE-AND-FREEZE",
+    "prior_reviewed_sha256": "349d616c03593126e3b9c9432eba40b9f12fc8f10652a81754816437e6893a33",
+    "independent_review_lineage": "Corrected per the latest independent impartial-shadow verdict (FAIL-AS-DRAFTED; 5 corrections applied); latest verdict PASS/GO.",
+    "authoritative_scope_note": "Authoritative as the ACCEPTED FREEZE RECORD only; the metric/source DECISIONS (SW-016/SW-017/SW-042) remain HELD."
+  },
+  "pins": {
+    "starting_head": "43a3f47c135c570809bb43dbc78b9ce066045a45",
+    "branch": "codex/halo-295-unshrinkable-inputs",
+    "catalog_sha256": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+    "accepted_appointments_evidence_refs": [
+      "docs/halo/evidence/m1r/GATE5_READER_INTEGRATION_PREP_2026-08-30.md (readAppointments WIRED; appointmentMetrics confirmed/show/no_show/cancel_rate; 'One appointments denominator \u2014 all appt.* rates share total accepted appointment rows')",
+      "docs/halo/evidence/m1r/e2e/cards/external/serra-honda-halo-external.html (Serra Honda 21043: 14 sales appointments recorded; appointments strict/governed/accepted, 2026-08-24..2026-08-30)"
+    ],
+    "platform_schema_ref": "/home/ubuntu/hs-ingest-dev/docs/watchdog-platform/SCHEMA_CONTRACT.md \u00a73.5 Appointments (signature: Appointment ID, Dealer, Dealer ID, Appt Reason, Appointment Start Date, Appointment Status; metric cols Is Confirmed, Is Show, Is No Show, Appointment Status, Rescheduled Date, Appointment Start DateTime)",
+    "accepted_appointments_workbook": {
+      "landing_path": "/Users/duanewells/Documents/LifePath 2/outputs/vinsolutions-report-landing/inbox/serra-honda/2026-08-24_to_2026-08-30/appointments/Report-4800.xlsx",
+      "period": "2026-08-24..2026-08-30",
+      "inspection": "schema + aggregate timing only; no names or row content exposed"
+    }
+  },
+  "selection_rationale": {
+    "constraint": "one genuinely NET-NEW highest-yield metric supported by ALREADY-ACCEPTED Honda evidence, WITHOUT the J4-blocked Leads export.",
+    "accepted_families_available": [
+      "appointments (strict/governed/accepted)",
+      "crm_sales_gross (accepted)",
+      "dealership_performance (accepted)"
+    ],
+    "already_promoted_excluded": "SW-032 (appointment show rate) and SW-041 (appointment no-show rate) are ALREADY implemented/promoted from the accepted Appointments family (single appointment denominator). They are NOT re-presented as new work.",
+    "why_no_direct_promotion": "No exact NET-NEW Module-3/4 metric can be promoted from a single accepted week without another source, a trailing baseline, a lead/ups denominator, or a missing field: set-rate/funnel metrics need a Leads denominator or joins (blocked by J4); trend/anomaly metrics need trailing history; SW-034/114 need the CRM-Sales-Gross close leg joined; SW-049 needs a trailing 30-day baseline; SW-050 needs a new/used vehicle-condition field; CAGE/Comm-sourced metrics are quarantined.",
+    "module": "Module 3 \u2014 Funnel, appointment, and showroom conversion (catalog SW-031-046, 113-114, 121-123, 125-126, 154).",
+    "highest_yield_gap": "SW-042 (Module 3), on the already-accepted Appointments family. It is blocked by TWO things, not a single field: (a) a MISSING DATA ELEMENT \u2014 an hour-precision confirmation timestamp (native Confirmed Date is calendar-date only); and (b) an UNRESOLVED SEMANTIC RULE \u2014 which event anchors the 24-hour window."
+  },
+  "metric": {
+    "metric_id": "SW-042",
+    "canonical_condition": "Confirmed appointment rate (reconfirmed within 24h) below 70%.",
+    "module": "Module 3 \u2014 Funnel, appointment, and showroom conversion",
+    "source_family": "appointments (accepted governed native XLSX; Appt Reason='Sales Appointment'; Sales-only)",
+    "source_family_accepted": true,
+    "current_disposition": "HELD \u2014 not measured for SW-042. The Appointments SOURCE is accepted and carries a Confirmed Date, but that field is CALENDAR-DATE ONLY; and the 24-hour anchor event is an unresolved semantic rule. SW-042 is blocked by both. This draft makes NO lifecycle change.",
+    "gradable": false,
+    "grade_target_id": null,
+    "source_prerequisites": [
+      "Re-pin the accepted Honda Appointments artifact (Report-4800.xlsx) hash + row count for 2026-08-24..2026-08-30 before any calculation (Phase-5 gate).",
+      "Acquire an HOUR-PRECISION confirmation/reconfirmation timestamp \u2014 either time-of-day within a Confirmed DateTime field or a distinct governed Sales-only timestamp source (NOT proved; native Confirmed Date is calendar-date only).",
+      "OR obtain explicit Duane approval of a calendar-day proxy / metric-definition change (never silently substituted).",
+      "Ratify the exact SW-042 within-24h window anchor + an approved grade target."
+    ],
+    "sales_only_exclusions": [
+      "Appt Reason must equal 'Sales Appointment' on every row",
+      "Appointment Type scanned for Service/Parts",
+      "one tenant Dealer ID=21043",
+      "zero Service/Parts admitted"
+    ],
+    "missing_is_not_zero": "A blank/absent confirmation timestamp is MISSING \u2014 it is NOT 'not reconfirmed' and NOT zero. No SW-042 value may be computed or persisted from the Is Confirmed flag alone.",
+    "no_pii": "Use appointment counts and the confirmation-timestamp relationship only; no customer identity, no rep names, no PII in any derivative/metric.",
+    "acceptance_tests_to_promote": [
+      "Prove an HOUR-PRECISION confirmation-timestamp source (finite investigation: one help-contract pass + one read-only UI discovery + one controlled probe), OR record explicit Duane approval of a calendar-day proxy/definition change.",
+      "Ratify the exact SW-042 within-24h window anchor + approved target.",
+      "Independent recompute: SW-042 numerator = accepted appointments whose confirmation timestamp satisfies the ratified within-24h window; denominator = total accepted appointment rows in period (single shared appointment denominator).",
+      "Missing-not-zero negative test: a calendar-date-only or blank confirmation value does NOT count as reconfirmed-within-24h; it is never fabricated as reconfirmed.",
+      "PII negative test: no user/customer PII column is selected or emitted; only counts + the confirmation timestamp relationship.",
+      "Sales-only + one-tenant(21043) + period + unique Appointment ID gates pass (reuse the accepted Appointments hold proof)."
+    ],
+    "next_safe_action": "Finite investigation for the confirmation-event timestamp field ONLY. Do NOT promote SW-042, do NOT compute from Is Confirmed, do NOT expand to other metrics or modules.",
+    "owner": {
+      "codex": "read-only discovery of the confirmation-timestamp field",
+      "duane": "ratify the 24h window anchor + approved target \u2014 ONLY after the field is proved"
+    },
+    "held_guardrail": "Keep SW-042 HELD unless BOTH are resolved: (a) an HOUR-PRECISION confirmation-timestamp source is acquired (or Duane EXPLICITLY approves a calendar-day proxy / metric-definition change, never silently substituted), AND (b) the 24-hour anchor event is formally ratified (Appointment Start DateTime is only a candidate).",
+    "pii_guardrail": "The accepted Appointments workbook contains PII-bearing user/customer columns; these must NEVER be selected or emitted downstream. Use only appointment counts and the confirmation date/flag/timestamp relationship \u2014 no names, no row content.",
+    "exact_blocker": {
+      "observed": "'Confirmed Date' EXISTS in the accepted workbook but is CALENDAR-DATE ONLY (0 of 14 rows carry a time-of-day fraction); 'Is Confirmed'=Yes on 7 of 14 rows; 'Confirmed Date' populated on 7 of 14 rows.",
+      "missing_data_element": "an HOUR-PRECISION confirmation/reconfirmation timestamp (time-of-day within a Confirmed DateTime, or a distinct governed Sales-only timestamp source). Native 'Confirmed Date' cannot resolve a 24-hour window.",
+      "unresolved_semantic_rule": "WHICH EVENT anchors the 24-hour window is NOT settled. Comparison to 'Appointment Start DateTime' is only a CANDIDATE anchor until formally ratified; other candidate anchors (e.g., appointment-set time) must be considered. SW-042 is blocked by BOTH (a) the missing data element AND (b) this unresolved semantic rule \u2014 it is NOT a single-field gap.",
+      "not_a_substitute": [
+        "Is Confirmed = Yes (boolean flag)",
+        "Confirmed Date (calendar-date only; no time-of-day)",
+        "appt.confirmed_rate (no timestamp)",
+        "Appointment Status",
+        "Rescheduled Date"
+      ]
+    },
+    "catalog_trigger_threshold": {
+      "operator": "below",
+      "value": 0.7,
+      "status": "canonical condition only; not an accepted grading/baseline target"
+    },
+    "approved_grading_target": null,
+    "approved_grading_target_note": "No accepted grading/baseline contract exists for SW-042 (absent from gate2-evaluator-contract.json and baseline-registry.json). The catalog trigger threshold (below 70%) is the canonical condition, NOT an approved grade target."
+  },
+  "explicitly_out_of_scope": {
+    "already_promoted": [
+      "SW-032 (appointment show rate)",
+      "SW-041 (appointment no-show rate)"
+    ],
+    "blocked_needs_leads_or_join_or_quarantined": [
+      "SW-031 (set rate: lead/ups denominator)",
+      "SW-033/045 (CAGE quarantined)",
+      "SW-034/114 (CRM-Sales-Gross close leg join)",
+      "SW-035-040/044/046/057-060/121-126 (Leads/Communication/CAGE/ROI joins)",
+      "SW-043/113 (set rate + trailing history)"
+    ],
+    "needs_missing_field_or_baseline": [
+      "SW-049 (trailing 30-day baseline)",
+      "SW-050 (new/used vehicle-condition field)"
+    ],
+    "rule": "ONE module/metric only; no other module is touched, implemented, or calculated."
+  },
+  "no_implementation_statement": "No implementation, ingest, calculation, render, commit, push, merge, or deploy. SW-042 remains HELD (not measured). No lifecycle change to any metric.",
+  "rollback": "Delete only this untracked draft; no other artifact is touched.",
+  "accepted_appointments_workbook_facts": {
+    "landing_path": "/Users/duanewells/Documents/LifePath 2/outputs/vinsolutions-report-landing/inbox/serra-honda/2026-08-24_to_2026-08-30/appointments/Report-4800.xlsx",
+    "inspection": "schema + aggregate timing only; no names or row content exposed",
+    "headers_present": [
+      "Appointment Start DateTime",
+      "Confirmed Date",
+      "Is Confirmed"
+    ],
+    "pii_columns_present": "PII-bearing user/customer columns ARE present and MUST NEVER be emitted or selected downstream; use only appointment counts and confirmation date/flag/timestamp aggregates.",
+    "aggregate_facts": {
+      "data_rows": 14,
+      "confirmed_date_populated": 7,
+      "is_confirmed_yes": 7,
+      "confirmed_date_with_time_of_day_fraction": 0
+    },
+    "conclusion": "The native workbook proves a confirmation CALENDAR DATE but NOT the exact confirmation TIMESTAMP (0 of 14 rows carry a time-of-day fraction). It CANNOT prove the canonical SW-042 exact within-24-hour condition at HOUR precision.",
+    "workbook_sha256_shadow_verified": "ef2a2b1a5fb638b620bd1997ffd73f1f54a615c36fbebf9b7bdaa79508fcef4",
+    "shadow_confirmed": "14 Sales Appointment rows; Dealer ID 21043; unique IDs; zero Service/Parts gate hits; Confirmed Date 7/14; Is Confirmed=Yes 7/14; all nonblank confirmation cells date-formatted with zero time fraction. HELD remains correct; no new acquisition needed."
+  }
+}

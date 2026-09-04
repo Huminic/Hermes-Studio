@@ -1,0 +1,65 @@
+{
+  "artifact": "honda-watchdog-phase1b-pkt-02-02-j5-freeze-manifest",
+  "packet": "SW-HONDA-PKT-02-02-J5-MEMORIALIZE-AND-FREEZE",
+  "head": "43a3f47c135c570809bb43dbc78b9ce066045a45",
+  "branch": "codex/halo-295-unshrinkable-inputs",
+  "freeze_note": "Freezes ONLY artifacts with completed independent impartial-shadow review. Renames remove DRAFT and flip draft-status metadata; CONTENT SEMANTICS UNCHANGED. No metric/source is admitted; SW-016/SW-017/SW-042 remain HELD. .claude/ is excluded.",
+  "review_support_attestation": "Each frozen artifact underwent recorded independent impartial-shadow review at its prior_reviewed_sha256 (J2 via J2-CORRECTION; J3 via J3-CORRECTION+R2+R3; J4 & SW-042 via FAIL-AS-DRAFTED corrections then PASS/GO; J5 PASS/GO to memorialize). No review was invented.",
+  "frozen_artifacts": [
+    {
+      "name_before": "pkt-02-02-source-dependency-amendment-draft.json",
+      "path": "docs/halo/contract/phase1b/pkt-02-02-source-dependency-amendment.json",
+      "prior_reviewed_sha256": "64d5a17c565ac24c06cda7f58d7b8238b91c3d32d7f234b10201c24928b35d4f",
+      "frozen_sha256": "5846bccb1f8591052201601e80cac7b4cdf3a6970914e98b9bb15be4a3c4ec9b",
+      "review_lineage": "Created in packet J2; independent impartial-shadow review (SW-HONDA-PKT-02-02-J2-CORRECTION) found semantic/grain overstatements; corrected; the reviewed SHA equals this frozen artifact's source (pre-freeze) content."
+    },
+    {
+      "name_before": "pkt-02-02-leads-sales-only-extraction-contract-draft.json",
+      "path": "docs/halo/contract/phase1b/pkt-02-02-leads-sales-only-extraction-contract.json",
+      "prior_reviewed_sha256": "f0d4f4d719d75e93bf364c3c60a9dfaec6b75853d1d0f0b8dcc3d15ae76dd354",
+      "frozen_sha256": "bff0e061338150b5f0363cc3c2cbc9a29e569c9ff16b08fd59d7ac63f34b6f99",
+      "review_lineage": "Created in packet J3; independent impartial-shadow review across SW-HONDA-PKT-02-02-J3-CORRECTION, R2, and R3; corrected; the reviewed SHA equals this frozen artifact's source (pre-freeze) content."
+    },
+    {
+      "name_before": "PKT-02-02_J4_LEADS_ACQUISITION_HOLD_DRAFT.json",
+      "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-02/PKT-02-02_J4_LEADS_ACQUISITION_HOLD.json",
+      "prior_reviewed_sha256": "6b966a970f6e857d9507bebd38f4500695d44aad07e1c6192ae8105f184e0b91",
+      "frozen_sha256": "277707621baa7a71c5c932a4bf27fd5177fe9d19ce2359561655242bc03504ed",
+      "review_lineage": "Corrected per the latest independent impartial-shadow verdict (FAIL-AS-DRAFTED; 5 corrections applied); latest verdict PASS/GO."
+    },
+    {
+      "name_before": "MODULE3_APPT_CONFIRMATION_SW-042_EVIDENCE_GAP_DRAFT.json",
+      "path": "docs/halo/contract/phase1b/MODULE3_APPT_CONFIRMATION_SW-042_EVIDENCE_GAP.json",
+      "prior_reviewed_sha256": "349d616c03593126e3b9c9432eba40b9f12fc8f10652a81754816437e6893a33",
+      "frozen_sha256": "daad80b7c9d7fb2f2b48eddeeeb9d72eef0ac63e777493f8e5cfe7e282d75da0",
+      "review_lineage": "Corrected per the latest independent impartial-shadow verdict (FAIL-AS-DRAFTED; 5 corrections applied); latest verdict PASS/GO."
+    },
+    {
+      "name_before": "PKT-02-02_SEMANTIC_DECISION_BRIEF_DRAFT.md",
+      "path": "docs/halo/contract/phase1b/PKT-02-02_SEMANTIC_DECISION_BRIEF.md",
+      "prior_reviewed_sha256": "3203de77d54e53bba749283801c4463579f228739703f4c6bfa09dee152f2687",
+      "frozen_sha256": "6b2be6321fad1e8477c39f8a7850ad1cc4f43c7d31b1d299ae733d270dc89e4a",
+      "review_lineage": "Created in packet J2; independent impartial-shadow review (SW-HONDA-PKT-02-02-J2-CORRECTION) found semantic/grain overstatements; corrected; the reviewed SHA equals this frozen artifact's source (pre-freeze) content."
+    },
+    {
+      "name_before": "PKT-02-02_LEADS_SALES_ONLY_RUNBOOK_DRAFT.md",
+      "path": "docs/halo/contract/phase1b/PKT-02-02_LEADS_SALES_ONLY_RUNBOOK.md",
+      "prior_reviewed_sha256": "d5f1d6250ace6a2704b25396fed396162cae0083c0b3b04d20266da97a8909ac",
+      "frozen_sha256": "b74fc1d82e4c1bb32c8c1945626119e838f399eb27eda09e50c9153467b9d048",
+      "review_lineage": "Created in packet J3; independent impartial-shadow review across SW-HONDA-PKT-02-02-J3-CORRECTION, R2, and R3; corrected; the reviewed SHA equals this frozen artifact's source (pre-freeze) content."
+    }
+  ],
+  "j5_record": {
+    "path": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-02/PKT-02-02_J5_LEADS_RETRY_HOLD.json",
+    "sha256": "2284c1e6a7fda2163a57ede12c1b8b89bee0621a88bb6dd3f0afe0f16d057739"
+  },
+  "boundaries": [
+    "Serra Honda 21043 Sales only; zero Service/Parts",
+    "missing-is-not-zero",
+    "no PII",
+    "no implementation/ingest/calculation/render",
+    "no merge/deploy",
+    ".claude/ excluded"
+  ],
+  "runtime_data_behavior_unchanged": true
+}

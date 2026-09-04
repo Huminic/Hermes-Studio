@@ -1,0 +1,339 @@
+{
+  "artifact": "honda-watchdog-phase1b-pkt-02-02-leads-sales-only-extraction-contract-draft",
+  "draft_status": {
+    "is_draft": false,
+    "accepted": true,
+    "authoritative": true,
+    "packet": "SW-HONDA-PKT-02-02-LEADS-CONTRACT-J3",
+    "kind": "prospective, field-minimized, unsaved Custom Reporting Leads extraction CONTRACT (design/documentation only)",
+    "note": "ACCEPTED / FROZEN packet record. Design/evidence only \u2014 NO source admission, calculation, grade, lifecycle change, or implementation. SW-016/SW-017 remain HELD; SW-042 remains HELD. Content semantics are UNCHANGED from the reviewed draft; only draft-status metadata and filename changed.",
+    "frozen": true,
+    "frozen_by": "SW-HONDA-PKT-02-02-J5-MEMORIALIZE-AND-FREEZE",
+    "prior_reviewed_sha256": "f0d4f4d719d75e93bf364c3c60a9dfaec6b75853d1d0f0b8dcc3d15ae76dd354",
+    "independent_review_lineage": "Created in packet J3; independent impartial-shadow review across SW-HONDA-PKT-02-02-J3-CORRECTION, R2, and R3; corrected; the reviewed SHA equals this frozen artifact's source (pre-freeze) content.",
+    "authoritative_scope_note": "Authoritative as the ACCEPTED FREEZE RECORD only; the metric/source DECISIONS (SW-016/SW-017/SW-042) remain HELD."
+  },
+  "pins": {
+    "starting_head": "43a3f47c135c570809bb43dbc78b9ce066045a45",
+    "branch": "codex/halo-295-unshrinkable-inputs",
+    "j2_inputs_sha256": {
+      "pkt-02-02-source-dependency-amendment-draft.json": "64d5a17c565ac24c06cda7f58d7b8238b91c3d32d7f234b10201c24928b35d4f",
+      "PKT-02-02_SEMANTIC_DECISION_BRIEF_DRAFT.md": "3203de77d54e53bba749283801c4463579f228739703f4c6bfa09dee152f2687"
+    },
+    "j1_discovery_sha256": {
+      "discovery-receipt.json": "9bee749753275db3dcc4f094cd2315d1ceccf0c98b3d911d312a381485cbebce",
+      "field-matrix.md": "71097a7794861e304dc3bbf9bd3580540c74e68b606076eac867dbde4e6b2559",
+      "schema-discovery.json": "abd5272fb983730435bcd2a9e4c2e36ce93731c8b26e8e9086f24c8efee76bd2"
+    }
+  },
+  "purpose": {
+    "goals_only": [
+      "Prove LIVE field availability of the allowlisted Leads fields in the live picker",
+      "Prove Sales-only controls (affirmative Sales-only source filter; zero Service/Parts)",
+      "Prove row grain and cardinality behavior (row count, per-Lead-ID multiplicity, duplicate profile)",
+      "Prove timestamp parseability and labeling",
+      "Assess CANDIDATE support for SW-016 and SW-017 only"
+    ],
+    "explicitly_not": [
+      "source admission",
+      "metric-semantics selection",
+      "any SW-016/SW-017 calculation/score/grade",
+      "any join or dedup",
+      "any lifecycle change",
+      "any customer narrative"
+    ]
+  },
+  "permanent_boundaries": [
+    "Serra Honda of Sylacauga only: profile serra-honda, Dealer ID 21043, Sales domain only.",
+    "Zero Service/Parts admission: a hidden or positive Service/Parts selection invalidates the ENTIRE source definition; clean rows cannot cure it.",
+    "Missing is not zero: do not invent field semantics, row grain, join cardinality, source behavior, business hours, holiday rules, targets, grades, causes, units, or ROI.",
+    "No PII values: prohibit Customer, CoBuyer Full Name, VIN, Stock Number, Vehicle Memo, free text, and any other direct customer-identifying field.",
+    "No VinSolutions/Gmail/customer/other-rooftop access beyond the later controlled read-only run; no save/schedule/CRM/production/recipient/alert/external mutation.",
+    "SW-016 remains data_acquired_calculation_pending / measured-unscored; SW-017 remains source_investigation_pending / not measured (unchanged)."
+  ],
+  "scope": {
+    "profile": "serra-honda",
+    "dealer_id": "21043",
+    "dealer_name_token": "Serra Honda",
+    "domain": "Sales",
+    "dataset": "Leads (VinSolutions Custom Reporting)",
+    "period": {
+      "start_local": "2026-08-24",
+      "end_local": "2026-08-30",
+      "timezone_label": "America/New_York",
+      "completed_weekly_period": true
+    },
+    "period_and_timezone_note": "The requested window is labeled America/New_York local (start 2026-08-24 00:00:00 local; end 2026-08-30 23:59:59.999 local). The VinSolutions application's OWN timezone handling of its date pickers and of Lead Origination Date / response datetimes is NOT inferred here; it must be proved empirically in the later run and recorded, never assumed."
+  },
+  "field_allowlist": {
+    "rule": "EXACT live J1 labels only; select ONLY these fields; remove all builder defaults first.",
+    "fields": [
+      {
+        "label": "Lead ID",
+        "use": "stable lead key; cardinality/dedup evidence"
+      },
+      {
+        "label": "Dealer ID",
+        "use": "tenant proof (must equal 21043)"
+      },
+      {
+        "label": "Lead Origination Date",
+        "use": "SW-016 candidate: lead-origination timestamp"
+      },
+      {
+        "label": "Lead Type",
+        "use": "Sales-only proof; SW-017 phone-origin candidacy"
+      },
+      {
+        "label": "Lead Source",
+        "use": "Sales-only proof; source classification"
+      },
+      {
+        "label": "Lead Source Group",
+        "use": "Sales-only proof; source grouping"
+      },
+      {
+        "label": "Actual Response Time (Min)",
+        "use": "SW-016 candidate response field (semantics unproved)"
+      },
+      {
+        "label": "Adjusted Response Time (Min)",
+        "use": "SW-016 candidate response field (semantics unproved)"
+      },
+      {
+        "label": "Actionable Response Datetime",
+        "use": "SW-016 candidate clock-stop event (semantics unproved)"
+      },
+      {
+        "label": "First Contact Attempt",
+        "use": "SW-016/SW-017 candidate (NOT proved to be an outbound logged call)"
+      },
+      {
+        "label": "First Customer Contact",
+        "use": "SW-016 candidate clock-stop event (semantics unproved)"
+      },
+      {
+        "label": "Contacted Indicator",
+        "use": "contact-state evidence"
+      },
+      {
+        "label": "Originated After Hours",
+        "use": "SW-016 candidate after-hours flag (definition unproved)"
+      },
+      {
+        "label": "ADF/XML Indicator",
+        "use": "electronic-lead classification"
+      },
+      {
+        "label": "Last Attempted Phone Contact",
+        "use": "SW-017 candidate phone-contact evidence (not an event stream)"
+      }
+    ],
+    "count": 15
+  },
+  "prohibited_fields": {
+    "glossary_only_deferred": {
+      "fields": [
+        "Global Customer ID",
+        "CRM User ID"
+      ],
+      "rule": "Do NOT add. They appear in the official Leads glossary but were NOT in the live J1 picker. They may be added only if a FUTURE live picker proves them, via a separately reviewed amendment."
+    },
+    "pii_and_out_of_scope": {
+      "rule": "Do NOT add any user name, customer name, vehicle identifier, memo, free text, sold/deal/gross, or any other field.",
+      "examples": [
+        "Customer",
+        "CoBuyer Full Name",
+        "VIN",
+        "Stock Number",
+        "Vehicle Memo",
+        "Sales Rep / BD Agent / Created User / Last Modified User (names)",
+        "Sold Datetime / deal / gross fields",
+        "any free-text or message content"
+      ]
+    }
+  },
+  "pre_retrieval_gates": {
+    "builder_unsaved": "The Custom Reporting builder remains an UNSAVED 'Untitled Analysis'. Never Save.",
+    "no_scheduling": "Never schedule. Never set a recipient.",
+    "dealer_proof": "Before retrieval, PROVE exactly Dealer ID 21043 and Serra Honda of Sylacauga only (one rooftop). Any other or additional dealer => STOP.",
+    "sales_only_source_filter_proof": "Before retrieval, the FULL ACTIVE FILTER STATE must visibly prove a POSITIVE Sales-domain / Lead Intent / Department value of EXACTLY 'Sales', with NO All/blank/multi-select that includes Service or Parts. If the live builder exposes multiple related domain/intent controls, EACH must be either positively 'Sales' or visibly exclude Service and Parts, with no hidden positive Service/Parts selection. Selected Sales fields or clean row values are NOT source-definition proof.",
+    "service_parts_absence_proof": "Before retrieval, PROVE Service/Parts are ABSENT from every selected dimension, filter, and field (no positive Service/Parts selection, no hidden Service/Parts control).",
+    "stop_if_ui_cannot_prove": "If the COMPLETE active filter state cannot be surfaced, or no affirmative Sales-only source control exists, STOP before retrieval. Do NOT substitute a row scan or an exclusion-only inference for positive Sales proof.",
+    "landing_preflight": "BEFORE any Run/Retrieve/Export: the controller must confirm, and Codex must locally PREFLIGHT, the exact unsynced quarantine root /Users/duanewells/.huminic/semantic-watchdog/pre-admission/serra-honda/21043/leads/2026-08-24_2026-08-30/<capture_id>/ (directory mode 0700; raw/evidence files mode 0600; local pre-admission only, outside Honda Brain, not synced/published/ingested). Preflight BOTH the Chrome default download arrival location AND this exact quarantine destination. If the path/destination cannot be confirmed and preflighted, STOP before retrieval/download.",
+    "no_premature_retrieval": "Do NOT trigger any control that causes query/data RETRIEVAL before the pre-retrieval gate passes. A configuration-dialog Apply/OK is allowed ONLY when verified to apply metadata/configuration WITHOUT running the query. If uncertain, STOP."
+  },
+  "evidence_capture": {
+    "before_after": "Capture before/after screenshots OR metadata receipts of the builder configuration (fields selected, filters, dealer, period, filter summary) that AVOID row and PII exposure.",
+    "no_row_or_pii_in_receipts": true,
+    "distinguish_three_proof_layers": [
+      "UI definition proof (config/filters, no rows)",
+      "raw-byte proof (file magic/hash/size/header)",
+      "row-content proof (counts/cardinality/parseability/unique values, no PII values rendered)"
+    ]
+  },
+  "export_and_landing": {
+    "export_format_discovery": "Export FORMAT discovery is allowed in the future browser run; NO format is assumed here (do not presume CSV/XLSX).",
+    "export_count": "Export at most ONCE, only if offered. If not offered, capture UI-definition proof plus any safely observable non-PII AGGREGATE evidence only \u2014 this is NOT full row-content proof and cannot prove cardinality, per-row dealer/period, unique values, timestamp parsing, or source admission.",
+    "native_bytes_immutable": "Any exported native bytes are preserved IMMUTABLY on landing and remain PRE-ADMISSION until validated.",
+    "landing_location": "PRE-RETRIEVAL PRECONDITION (no longer a post-export question). The exact unsynced quarantine root is /Users/duanewells/.huminic/semantic-watchdog/pre-admission/serra-honda/21043/leads/2026-08-24_2026-08-30/<capture_id>/. It requires controller confirmation AND local preflight before any Run/Retrieve/Export. Local pre-admission ONLY, outside the Honda Brain; never synced, published, or ingested. Reuses existing platform mechanisms (browser_export provenance: capture_id + authenticated VinSolutions/Cox hosts; immutable raw preserved).",
+    "download_and_move_once": "Preflight Chrome's default download location and the quarantine destination. After a SUCCESSFUL SINGLE download, MOVE the original bytes ONCE into the quarantine capture directory, preserve them unchanged, set mode 0600, THEN hash. Do NOT leave a second copy in Downloads. If path/destination cannot be confirmed and preflighted, STOP before retrieval/download.",
+    "directory_mode": "0700",
+    "file_mode": "0600",
+    "no_export_result": "If no export / no raw bytes are available, the run may capture UI-definition proof plus any safely observable non-PII aggregate evidence ONLY. That is NOT full row-content proof (no cardinality, no per-row dealer/period, no unique values, no timestamp parsing, no source admission). No raw bytes => HOLD at most, NEVER PASS."
+  },
+  "raw_file_acceptance_checks": [
+    {
+      "check": "magic/type",
+      "detail": "File magic bytes match the actual discovered extension/media type; mismatch => REJECT."
+    },
+    {
+      "check": "native_container_inventory",
+      "detail": "Inventory the native container WITHOUT rendering values: file magic/type; ALL sheets/tables/data-bearing members; hidden state; macros; external links/connections; and every nonempty component. PASS requires EXACTLY ONE unambiguous data table AND that every nonempty or hidden data-bearing component is covered by the header-set, Dealer ID, period, PII, and Service/Parts checks. Any extra/hidden/ambiguous data table or data-bearing component => HOLD, UNLESS it positively contains Service/Parts, confirmed PII, wrong dealer, or prohibited content => REJECT. Macro-enabled content, external-link/connection payload, or unsupported/uninspectable container structure => HOLD/REJECT per exposure; NEVER execute macros or follow links. Native bytes remain unchanged and quarantined; do NOT normalize or rewrite container structure."
+    },
+    {
+      "check": "hash",
+      "detail": "Record SHA-256 of the immutable raw bytes."
+    },
+    {
+      "check": "size",
+      "detail": "Record exact byte size."
+    },
+    {
+      "check": "filename",
+      "detail": "Record exact filename."
+    },
+    {
+      "check": "capture_id",
+      "detail": "Record the browser capture ID."
+    },
+    {
+      "check": "source_download_host_chain",
+      "detail": "Capture the FULL authenticated navigation/report/download URL HOST CHAIN (record redirects/hosts WITHOUT query strings, tokens, or credentials). For this evidence run, UI/report hosts MAY be the exact observed VinSolutions/Cox hosts 'vinsolutions.app.coxautoinc.com' and 'reporting-vinsolutions.app.coxautoinc.com' (J1 used reporting-vinsolutions...). Do NOT require every final URL to be vinsolutions.app.coxautoinc.com. An unknown/different DOWNLOAD host => HOLD pending review (not silent acceptance, not an invented trust claim)."
+    },
+    {
+      "check": "dealer_id_raw_gate",
+      "detail": "Every exported 'Dealer ID' value must be nonblank and EXACTLY the string '21043'. Any null, missing, different, or multi-dealer value => REJECT the whole capture. UI rooftop context is necessary but NOT sufficient."
+    },
+    {
+      "check": "period_behavior",
+      "detail": "UI start/end controls are CONFIGURATION evidence only. 'Lead Origination Date' is MANDATORY, nonblank, and parseable for EVERY row; any blank or unparseable value => HOLD (period proof fails). Record safe AGGREGATE min/max and out-of-window COUNTS without rendering row values. Any out-of-window value, or inability to establish picker inclusivity/timezone behavior => HOLD. Never infer application timezone."
+    },
+    {
+      "check": "exact_header_set",
+      "detail": "HARD GATE: the header SET equals exactly the 15 allowlisted labels \u2014 no extra, missing, renamed, or duplicate columns. Any set difference => fail closed."
+    },
+    {
+      "check": "native_header_order",
+      "detail": "Native export ORDER is currently UNPROVED \u2014 RECORD it. A deterministic order difference ALONE => HOLD for a reviewed canonical-order amendment, NOT REJECT. Never rewrite, reorder, or mutate native bytes; only a later accepted versioned order may become a hard gate."
+    },
+    {
+      "check": "row_count",
+      "detail": "Record total row count. row_count == 0 => HOLD: NEVER interpret a header-only / zero-row result as zero leads or zero activity. A zero-row file proves NO row grain, cardinality, Dealer ID values, period behavior, timestamp behavior, or SW-016/SW-017 candidate support. PASS requires row_count > 0."
+    },
+    {
+      "check": "blank_null_profile",
+      "detail": "Profile blank/null occurrences per field (missing is not zero)."
+    },
+    {
+      "check": "duplicate_lead_id_profile",
+      "detail": "Profile duplicate Lead ID occurrences."
+    },
+    {
+      "check": "per_lead_id_multiplicity",
+      "detail": "Record per-Lead-ID row multiplicity distribution (do NOT assume 1 row per lead)."
+    },
+    {
+      "check": "timestamp_parseability",
+      "detail": "'Lead Origination Date' must be nonblank and parse for every row (see period_behavior). For 'Actionable Response Datetime', 'First Contact Attempt', 'First Customer Contact', and 'Last Attempted Phone Contact': every NONBLANK value must parse; report NULL counts SEPARATELY; a blank is MISSING (not zero, not automatically malformed). Record formats; do NOT infer timezone; report aggregate counts only, never row values."
+    },
+    {
+      "check": "lead_type_source_group_unique_values",
+      "detail": "Before unique-value profiling, SCREEN values for suspected PII. Unique Lead Type / Lead Source / Lead Source Group evidence may report APPROVED categorical values only AFTER screening; otherwise report COUNTS or approved HASHES, never the values. If suspected PII appears, REJECT/HOLD as appropriate, keep raw bytes restricted, and emit only counts/classification or approved hashes."
+    },
+    {
+      "check": "zero_service_parts",
+      "detail": "Zero Service/Parts tokens in any value, and NO hidden positive Service/Parts controls; any occurrence => REJECT (whole definition invalid)."
+    }
+  ],
+  "pii_policy": {
+    "direct_pii_prohibited": "Direct PII fields/values remain prohibited from the selected schema and from any derivative.",
+    "confirmed_pii": "Confirmed PII in the selected/exported schema or values => REJECT.",
+    "suspected_pii": "Suspected PII may be HOLD pending classification.",
+    "never_copy_or_render": "NEVER copy or render PII into derivatives, receipts, logs, screenshots, or narrative.",
+    "already_downloaded_raw_preservation": "If native raw bytes were already downloaded before suspected/confirmed PII was detected, PRESERVE that original ONLY inside the 0700 quarantine directory as a 0600 quarantined object pending controller-governed disposition; do NOT duplicate or promote it. (Immutable-quarantine preservation overrides any absolute 'do not retain' phrasing: the original bytes are preserved restricted, never rendered.)",
+    "lead_id_pseudonymous_key": "'Lead ID' is an ALLOWED pseudonymous internal join key, retained ONLY inside the 0700/0600 quarantine package; NEVER rendered in receipts, logs, customer output, screenshots, or narrative.",
+    "screen_before_profiling": "Screen every value for suspected PII BEFORE any unique-value profiling; emit only counts/classification or approved hashes \u2014 never the values."
+  },
+  "no_join_no_dedup": {
+    "no_join": true,
+    "no_dedup": true,
+    "output": "Produce ONLY a cardinality / field-semantics EVIDENCE REPORT (counts, distributions, unique values, parseability, layer-separated proofs).",
+    "future_join_precondition": "Any FUTURE Response Times <-> Leads join requires accepted event-selection/deduplication rules and proven key representation/cardinality on BOTH sources (per the J2 amendment draft); NOT performed here."
+  },
+  "no_metric_action": {
+    "no_sw016_sw017_calculation_score_grade": true,
+    "no_lifecycle_change": true,
+    "no_source_admission": true,
+    "no_customer_narrative": true
+  },
+  "owner": {
+    "codex": "Executes the later read-only browser run under separate control; assembles evidence; runs pre-admission validation.",
+    "controller": "Confirms the immutable landing / pre-admission path before any landing.",
+    "duane": "Unchanged business decisions from J2 (hours/holiday source; response-clock semantics; 5-minute attempt-outcome set) \u2014 NOT part of this extraction.",
+    "claude_studio": "No implementation until an accepted source contract exists.",
+    "impartial_shadow": "Independent read-only review of this draft and any later evidence."
+  },
+  "next_action": "Impartial-shadow review of this contract + runbook; on pass, controller confirms landing path; only then schedule the single Codex read-only browser run.",
+  "stop_conditions": [
+    "UI cannot affirmatively prove Sales-only filter or Service/Parts absence => STOP before retrieval.",
+    "Any Service/Parts token, hidden positive Service/Parts control, wrong/extra dealer, or cross-rooftop data.",
+    "Any unexpected column or any PII value.",
+    "Any prompt to Save, Schedule, set a recipient, or export more than once.",
+    "Any attempt to join, dedup, calculate, grade, or change lifecycle/source admission.",
+    "Header SET differs from the exact 15 allowlisted labels (extra/missing/renamed/duplicate) => REJECT.",
+    "Native header ORDER differs from the proposed order => HOLD for a reviewed canonical-order amendment; never reorder or mutate native bytes."
+  ],
+  "rollback": "Delete ONLY these two J3 draft files before commit: docs/halo/contract/phase1b/pkt-02-02-leads-sales-only-extraction-contract-draft.json and docs/halo/contract/phase1b/PKT-02-02_LEADS_SALES_ONLY_RUNBOOK_DRAFT.md. No other artifact is touched.",
+  "expected_evidence_artifacts_from_later_run": [
+    "capture receipt (capture_id, source/final URL host, dealer/period context) with no rows/PII",
+    "UI-definition proof (fields, filters, dealer, period, filter summary) with no rows/PII",
+    "immutable raw bytes + manifest (filename, sha256, size, magic/type)",
+    "row-content evidence report (row count, per-Lead-ID multiplicity, duplicate/blank profiles, timestamp parseability, unique Lead Type/Source/Source Group values, zero Service/Parts)",
+    "PASS / HOLD / REJECT receipt with exact reasons",
+    "receipt semantics: PASS requires all three proof layers (UI-definition + raw-byte + row-content) clean; a no-raw-bytes run can only be HOLD (never PASS, never admission)."
+  ],
+  "no_acceptance_statement": "No source admission, export acceptance, join, dedup, calculation, grade, lifecycle change, or customer narrative is accepted by this draft. The existing PKT-02-02 binding remains the sole authority. No PKT-02-02 or full-goal completion is inferred.",
+  "receipt_semantics": {
+    "pass_requires": [
+      "all three proof layers clean (UI-definition + raw-byte + row-content)",
+      "row_count > 0",
+      "exactly one unambiguous data table, with every nonempty/hidden data-bearing component covered by the checks",
+      "positive Sales-only proven; Service/Parts absent",
+      "exact allowlist header SET",
+      "every Dealer ID == '21043'",
+      "mandatory parseable in-window Lead Origination Date",
+      "no PII"
+    ],
+    "pass_means": "evidence captured, NOT source admission",
+    "hold_includes": [
+      "row_count == 0 (header-only/zero-row; never read as zero leads or activity)",
+      "no export / no raw bytes",
+      "native header ORDER difference",
+      "extra/hidden/ambiguous data table or non-prohibited data-bearing component",
+      "macro-enabled / external-link / uninspectable container per exposure",
+      "blank/unparseable Lead Origination Date or unestablished picker inclusivity/timezone",
+      "unknown download host",
+      "suspected PII pending classification",
+      "a label missing from the picker"
+    ],
+    "reject_includes": [
+      "any Service/Parts token or hidden positive Service/Parts control (including in any data-bearing component)",
+      "blank/wrong/multi-dealer Dealer ID",
+      "confirmed PII in schema/values",
+      "header SET difference",
+      "prohibited content",
+      "unexpected column/value"
+    ]
+  }
+}
