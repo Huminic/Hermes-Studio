@@ -1,0 +1,651 @@
+{
+  "check": "honda_watchdog_phase1b_pkt_02_03_sw140_discovery_memorialization",
+  "phase": "Phase 1B — SW-140 inbound-voicemail source-investigation finite read-only discovery memorialization (evidence only; CREATE-only)",
+  "scope": "evidence_memorialization_only (no acquisition/admission/calculation/grade/alert/customer/merge/deploy; SW-140 lifecycle unchanged)",
+  "baseline_commit": "9bbd5e9ec587ce0fb4d08d38dece1972800b0351",
+  "record_file": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_SW-140_DISCOVERY_RESULT.json",
+  "record_sha256": "8ea4602e5ba63e92d93ecf8298584ec4f76612b5da1d842f8a38dd5957c6d4af",
+  "allowlist_files": [
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_SW-140_DISCOVERY_CHECKS.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_SW-140_DISCOVERY_RESULT.json",
+    "scripts/halo-phase1b/validate_pkt_02_03_sw140_discovery.py"
+  ],
+  "pins_unchanged": {
+    "pkt_02_03_binding_sha256": "41531eadeca87c725c6c9b0047c30c46b6e66ac27beaf6cf94c687d8af0aa23a",
+    "master_ledger_295_sha256": "747b6d31796939ae29f3a31a0f57226e57342ad7c2b1a1737e05287a5af59d13",
+    "packet_index_sha256": "e59331434ad8d0c06abda5df0a51ff5b4dfc94e3650876f91d0f233a29bbf83b",
+    "packet_schema_1b_v2_sha256": "f137762427c74c180acf4fced19124c498a5e1fc5a8641ebc376afc47c11c5f6",
+    "source_registry_1b_v2_sha256": "bcf1bdbce0c824d495b8a6b0148fd4f65e08e0dcff6db18fa1ae6954ae4f928b",
+    "pkt_02_03_binding_validator_sha256": "0e2d4f476ba13fd1dfbff662855bc56fd4efff03dbd137b2e1bcdcd19753e3a7",
+    "pkt_02_03_sw137_discovery_result_sha256": "d07f8451b8406aab2757065544cae65f7082ad2840bbc6e09c4131dc0650fcb4",
+    "pkt_02_03_sw137_discovery_checks_sha256": "86593d628b4f9169f4a9711f629c0f32be0b60a4c83f82b7155659d6ff72a517",
+    "pkt_02_03_sw137_discovery_validator_sha256": "a599a936afe4940d4868cbb8acdf97135805e34f4939ed30a87d4f91ddf62eec"
+  },
+  "binding_prerequisite": {
+    "command": "python3 scripts/halo-phase1b/validate_pkt_02_03_binding.py --no-write",
+    "overall_pass": true,
+    "adversarial_probes": "49/49",
+    "error_count": 0,
+    "binding_sha256": "41531eadeca87c725c6c9b0047c30c46b6e66ac27beaf6cf94c687d8af0aa23a",
+    "note": "Current binding/integrity prerequisite executed exactly once; full probe array intentionally not embedded."
+  },
+  "two_delta_split": {
+    "contextual_discovery_evidence_delta": 1,
+    "contextual_delta_meaning": "ONE bounded finite read-only metadata investigation pass/result — NOT a source acquisition and NOT a metric count.",
+    "governed_source_data_acquisition_delta": 0,
+    "governed_source_data_admission_delta": 0,
+    "metric_meaning_value_lifecycle_customer_delta": 0,
+    "explanation": "Governed acquisition, admission, meaning, value, lifecycle, and customer deltas are ALL zero; only contextual discovery evidence increased by one bounded finite pass."
+  },
+  "sw140_held": "source_investigation_pending",
+  "service_parts_metadata_surface_incident": {
+    "disclosed": true,
+    "browser_scope_clean": false,
+    "incident_contained": true,
+    "service_parts_admitted": 0,
+    "note": "Contained Service/Parts metadata-surface incident is disclosed, not softened; browser_scope_clean is false; nothing opened/read/acquired/admitted."
+  },
+  "held_items_preserved": {
+    "sw140_investigation_recorded_state_unchanged": true,
+    "sw137_remains_memorialized_unchanged": true,
+    "sw035_036_037_remain_held_duane_gated": true,
+    "pkt_03_02_not_started_or_completed": true,
+    "no_silent_skip_or_completion": true,
+    "frozen_ledger_pin_preserves_all_other_held_retry_rows": true,
+    "note": "SW-140 lifecycle is unchanged by this memorialization (state_before == state_after == source_investigation_pending / not_acquired / not_measured); this pass records a finite read-only investigation only. SW-137 remains memorialized and unchanged; SW-035/036/037 remain Duane-gated and unchanged; PKT-03-02 (next provisional packet) is neither started nor completed by this step. The frozen master-ledger pin preserves every other held/retry row."
+  },
+  "touched_vs_baseline": [
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_SW-140_DISCOVERY_CHECKS.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_SW-140_DISCOVERY_RESULT.json",
+    "scripts/halo-phase1b/validate_pkt_02_03_sw140_discovery.py"
+  ],
+  "adversarial_probes_total": 84,
+  "adversarial_probes_failed": 0,
+  "adversarial_probes": [
+    {
+      "probe": "inject_value",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['value']"
+    },
+    {
+      "probe": "inject_numerator",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['numerator']"
+    },
+    {
+      "probe": "inject_denominator",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['denominator']"
+    },
+    {
+      "probe": "inject_formula",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['formula']"
+    },
+    {
+      "probe": "inject_join_proved",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['join_proved']"
+    },
+    {
+      "probe": "inject_target",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['target']"
+    },
+    {
+      "probe": "inject_grade",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['grade']"
+    },
+    {
+      "probe": "inject_rating",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['rating']"
+    },
+    {
+      "probe": "inject_detection_rule",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['detection_rule']"
+    },
+    {
+      "probe": "inject_alert",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['alert']"
+    },
+    {
+      "probe": "inject_threshold",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['threshold']"
+    },
+    {
+      "probe": "inject_customer_projection",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['customer_projection']"
+    },
+    {
+      "probe": "inject_ot_anchor",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['ot_anchor']"
+    },
+    {
+      "probe": "inject_grade_target_id",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['grade_target_id']"
+    },
+    {
+      "probe": "inject_grade_basis",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['grade_basis']"
+    },
+    {
+      "probe": "inject_grade_value_or_range",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['grade_value_or_range']"
+    },
+    {
+      "probe": "inject_measured_unscored_observation",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['measured_unscored_observation']"
+    },
+    {
+      "probe": "inject_customer_projection_obj",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['customer_projection']"
+    },
+    {
+      "probe": "nested_output_key",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present: ['value']"
+    },
+    {
+      "probe": "candidate_opened",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate[0].opened must be False"
+    },
+    {
+      "probe": "candidate_rows_viewed",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate[1].rows_viewed must be False"
+    },
+    {
+      "probe": "candidate_bytes_captured",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate[2].source_bytes_captured must be False"
+    },
+    {
+      "probe": "candidate_sales_only_proved",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate[0].sales_only_proved must be False"
+    },
+    {
+      "probe": "candidate_proves_voicemail",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate[0].proves_actual_inbound_customer_voicemail_event must be False"
+    },
+    {
+      "probe": "candidate_proves_linkage",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate[1].proves_subsequent_reply_attempt_and_stable_linkage_key must be False"
+    },
+    {
+      "probe": "candidate_proves_gcid",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate[2].proves_global_customer_id must be False"
+    },
+    {
+      "probe": "candidate_promoted_disposition",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate[0].disposition must be stopped_sales_scope_unproved"
+    },
+    {
+      "probe": "cb_proved_inbound_voicemail",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate_boundary.any_candidate_proved_inbound_voicemail_source must be False (proof-status)"
+    },
+    {
+      "probe": "cb_proved_usable_input",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate_boundary.any_candidate_proved_usable_input must be False (proof-status)"
+    },
+    {
+      "probe": "cb_accepted_governance_true",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate_boundary.any_candidate_accepted_source_governance_state must be False (proof-status)"
+    },
+    {
+      "probe": "cb_acquired_governance_true",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate_boundary.any_candidate_acquired_source_governance_state must be False (proof-status)"
+    },
+    {
+      "probe": "cb_admitted_governance_true",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate_boundary.any_candidate_admitted_source_governance_state must be False (proof-status)"
+    },
+    {
+      "probe": "cb_global_unavailability_proved",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate_boundary.global_unavailability_of_any_candidate_proved must be False (proof-status)"
+    },
+    {
+      "probe": "cb_reintroduce_old_definitive_key",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate_boundary: forbidden definitive key(s) reintroduced: ['any_candidate_is_inbound_voicemail_source']"
+    },
+    {
+      "probe": "cb_definitive_phrase_note",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "assertive forbidden claim(s): ['none is an inbound', 'definitively not a source']"
+    },
+    {
+      "probe": "start_time_manufactured",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "observation_start_utc must be null (start not recorded)"
+    },
+    {
+      "probe": "end_time_drift",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "observation_end_utc must be exactly 2026-09-04T08:01:28Z"
+    },
+    {
+      "probe": "stop_time_drift",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate_boundary.stop_candidate_at_utc drift"
+    },
+    {
+      "probe": "answering_machine_proxy",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "answering_machine inbound-voicemail proxy must be False"
+    },
+    {
+      "probe": "incident_conceal_visibility",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "incident: service_parts_metadata_labels_incidentally_visible must be True (no concealment)"
+    },
+    {
+      "probe": "incident_browser_scope_clean_true",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "incident.browser_scope_clean must be False"
+    },
+    {
+      "probe": "incident_not_contained",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "incident.incident_contained must be True"
+    },
+    {
+      "probe": "incident_service_report_opened",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "incident.service_parts_report_opened must be False"
+    },
+    {
+      "probe": "incident_service_rows_read",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "incident.service_parts_rows_content_or_data_read must be False"
+    },
+    {
+      "probe": "incident_service_admitted",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "incident.service_parts_admitted must be 0"
+    },
+    {
+      "probe": "privacy_browser_scope_clean_true",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "privacy_and_safety.browser_scope_clean must be False"
+    },
+    {
+      "probe": "privacy_candidate_verified",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.candidate_source_sales_only_verified must be False"
+    },
+    {
+      "probe": "privacy_rows_retrieved",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.rows_retrieved must be False"
+    },
+    {
+      "probe": "privacy_source_bytes",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.source_bytes_captured must be False"
+    },
+    {
+      "probe": "privacy_content_captured",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.message_content_captured must be False"
+    },
+    {
+      "probe": "privacy_restricted_id",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.restricted_id_captured must be False"
+    },
+    {
+      "probe": "privacy_customer_output",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.customer_output must be False"
+    },
+    {
+      "probe": "privacy_report_run",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.report_run must be False"
+    },
+    {
+      "probe": "privacy_report_exported",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.report_exported must be False"
+    },
+    {
+      "probe": "privacy_report_scheduled",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.report_scheduled must be False"
+    },
+    {
+      "probe": "privacy_crm_mutation",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.crm_or_customer_mutation must be False"
+    },
+    {
+      "probe": "global_unavailable_flag",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "global_unavailability.claimed must be False"
+    },
+    {
+      "probe": "missing_not_zero_false",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "global_unavailability.missing_not_zero must be True"
+    },
+    {
+      "probe": "search_sequence_drift",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "report_center_metadata_pass.search_sequence != exact sequence"
+    },
+    {
+      "probe": "report_opened_flag",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "report_center_metadata_pass.no_report_opened must be True"
+    },
+    {
+      "probe": "owner_collapse_duane_investigation",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "owners.read_only_ui_schema_or_external_source_investigation != 'Codex VinSolutions controller'"
+    },
+    {
+      "probe": "owner_collapse_duane_implementation",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "owners.linkage_acquisition_implementation_once_source_proven != 'Claude Studio engineering'"
+    },
+    {
+      "probe": "owner_immediate_duane",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "owners.immediate_action_owner != 'Codex VinSolutions controller'"
+    },
+    {
+      "probe": "sw140_promotion",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "sw140.state_after.disposition != source_investigation_pending"
+    },
+    {
+      "probe": "sw140_acquired",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "sw140.state_after.acquisition_admission_state != not_acquired"
+    },
+    {
+      "probe": "sw140_measured",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "sw140.state_after.evaluation_state != not_measured"
+    },
+    {
+      "probe": "sw140_visible",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "sw140.state_after.customer_visibility != hidden"
+    },
+    {
+      "probe": "source_existence_promotion",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "sw140.state_after.source_existence_state != investigation_pending"
+    },
+    {
+      "probe": "state_mismatch",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "sw140.state_after.evaluation_state != not_measured"
+    },
+    {
+      "probe": "required_fields_drift",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "sw140.frozen_required_fields != exact three"
+    },
+    {
+      "probe": "source_family_drift",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "sw140.source_family drift"
+    },
+    {
+      "probe": "sw137_silent_change",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held_items_preserved.sw137_remains_memorialized_unchanged must be True"
+    },
+    {
+      "probe": "sw035_037_silent_skip",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held_items_preserved.sw035_036_037_remain_held_duane_gated must be True"
+    },
+    {
+      "probe": "pkt0302_silent_completion",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held_items_preserved.pkt_03_02_not_started_or_completed must be True"
+    },
+    {
+      "probe": "wrong_binding_pin",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "record pins.pkt_02_03_binding_sha256 != committed sha"
+    },
+    {
+      "probe": "baseline_drift",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "baseline_commit drift"
+    },
+    {
+      "probe": "contextual_delta_zero",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "contextual delta must be 1"
+    },
+    {
+      "probe": "governed_delta_nonzero",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "two_delta.governed_source_data_acquisition_delta must be 0"
+    },
+    {
+      "probe": "nonallowlist_path_touch",
+      "got": "reject",
+      "pass": true,
+      "n": 1
+    },
+    {
+      "probe": "claude_staged",
+      "got": "reject",
+      "pass": true,
+      "n": 1
+    },
+    {
+      "probe": "binding_prereq_fail",
+      "got": "reject",
+      "pass": true,
+      "n": 1
+    },
+    {
+      "probe": "binding_prereq_probe_drift",
+      "got": "reject",
+      "pass": true,
+      "n": 1
+    },
+    {
+      "probe": "binding_prereq_error",
+      "got": "reject",
+      "pass": true,
+      "n": 1
+    },
+    {
+      "probe": "binding_prereq_binding_drift",
+      "got": "reject",
+      "pass": true,
+      "n": 1
+    }
+  ],
+  "errors": [],
+  "overall_pass": true,
+  "note": "Finite read-only Report Center metadata investigation for SW-140; three unopened candidate report definitions; contained Service/Parts metadata-surface incident (browser_scope_clean=false, fully disclosed). SW-140 lifecycle unchanged (source_investigation_pending / not_acquired / not_measured); contextual +1, governed deltas 0; global unavailability not claimed; missing is not zero; next action is HOLD. Binding prerequisite executed once (49/49, 0 errors)."
+}

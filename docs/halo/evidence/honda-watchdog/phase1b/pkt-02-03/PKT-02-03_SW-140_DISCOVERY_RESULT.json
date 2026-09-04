@@ -1,0 +1,203 @@
+{
+  "artifact": "honda-watchdog-phase1b-pkt-02-03-sw140-discovery-result",
+  "classification": "finite_read_only_discovery_result / evidence_memorialization_only",
+  "packet_id": "PKT-02-03",
+  "metric_id": "SW-140",
+  "baseline_commit": "9bbd5e9ec587ce0fb4d08d38dece1972800b0351",
+  "authored_at_utc": "2026-09-04T08:07:46Z",
+  "observation_start_utc": null,
+  "observation_start_note": "Observation start time was NOT recorded during the finite pass. 2026-09-04T08:00:27Z is the documented stop-candidate time, NOT the start; it must not be read as a start. Only the stop-candidate time and the observation end (2026-09-04T08:01:28Z) are known.",
+  "observation_end_utc": "2026-09-04T08:01:28Z",
+  "pins": {
+    "pkt_02_03_binding_sha256": "41531eadeca87c725c6c9b0047c30c46b6e66ac27beaf6cf94c687d8af0aa23a",
+    "master_ledger_295_sha256": "747b6d31796939ae29f3a31a0f57226e57342ad7c2b1a1737e05287a5af59d13",
+    "packet_index_sha256": "e59331434ad8d0c06abda5df0a51ff5b4dfc94e3650876f91d0f233a29bbf83b",
+    "packet_schema_1b_v2_sha256": "f137762427c74c180acf4fced19124c498a5e1fc5a8641ebc376afc47c11c5f6",
+    "source_registry_1b_v2_sha256": "bcf1bdbce0c824d495b8a6b0148fd4f65e08e0dcff6db18fa1ae6954ae4f928b",
+    "pkt_02_03_binding_validator_sha256": "0e2d4f476ba13fd1dfbff662855bc56fd4efff03dbd137b2e1bcdcd19753e3a7",
+    "pkt_02_03_sw137_discovery_result_sha256": "d07f8451b8406aab2757065544cae65f7082ad2840bbc6e09c4131dc0650fcb4",
+    "pkt_02_03_sw137_discovery_checks_sha256": "86593d628b4f9169f4a9711f629c0f32be0b60a4c83f82b7155659d6ff72a517",
+    "pkt_02_03_sw137_discovery_validator_sha256": "a599a936afe4940d4868cbb8acdf97135805e34f4939ed30a87d4f91ddf62eec"
+  },
+  "sw140": {
+    "canonical_condition": "No reply attempt after voicemail left by customer.",
+    "frozen_required_fields": [
+      "actual inbound customer-voicemail event",
+      "subsequent reply attempt + stable linkage key",
+      "Global Customer ID"
+    ],
+    "source_family": "communication_plus_external_telephony",
+    "metadata_change": "none",
+    "state_before": {
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "authoritative": false,
+      "gradable": false,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": false,
+      "customer_emission_authority": false,
+      "report_acceptance_state": "withheld_no_delivery"
+    },
+    "state_after": {
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "authoritative": false,
+      "gradable": false,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": false,
+      "customer_emission_authority": false,
+      "report_acceptance_state": "withheld_no_delivery"
+    },
+    "owners": {
+      "unanswered_and_reply_definition": "Duane Wells",
+      "read_only_ui_schema_or_external_source_investigation": "Codex VinSolutions controller",
+      "linkage_acquisition_implementation_once_source_proven": "Claude Studio engineering",
+      "immediate_action_owner": "Codex VinSolutions controller",
+      "next_action_owner": "Codex VinSolutions controller",
+      "note": "Mirrors frozen pkt-02-03-binding.json SW-140 accountable_owners exactly. Codex owns the read-only source/UI/schema investigation plus immediate/next action; Duane owns ONLY the later unanswered/reply business definition; Claude owns linkage/acquisition implementation ONLY once a source is proven. Duane owns no read-only investigation, acquisition, admission, or implementation."
+    }
+  },
+  "two_delta": {
+    "contextual_discovery_evidence_delta": 1,
+    "contextual_delta_meaning": "ONE bounded finite read-only metadata investigation pass/result — NOT a source acquisition and NOT a metric count.",
+    "governed_source_data_acquisition_delta": 0,
+    "governed_source_data_admission_delta": 0,
+    "metric_meaning_value_lifecycle_customer_delta": 0,
+    "explanation": "Governed acquisition, admission, meaning, value, lifecycle, and customer deltas are ALL zero; only contextual discovery evidence increased by one bounded finite pass."
+  },
+  "report_center_metadata_pass": {
+    "what": "authenticated Report Center metadata-only report-title/description search (read-only)",
+    "rooftop": "Serra Honda of Sylacauga #21043",
+    "search_sequence": ["voicemail", "voice mail", "call", "phone", "custom"],
+    "first_four_searches_returned_no_report_results": true,
+    "custom_search_returned_broad_mixed_report_title_list": true,
+    "no_report_opened": true,
+    "no_report_run": true,
+    "no_filter_set": true,
+    "rows_viewed": false,
+    "note": "Only report titles and descriptions were viewed. The first four searches (voicemail, voice mail, call, phone) ultimately produced no report results; 'custom' produced a broad mixed report-title list. No report was opened, run, filtered, saved, exported, downloaded, or scheduled. No rows were viewed."
+  },
+  "candidate_report_definitions": [
+    {
+      "name": "Call Detail By Salesperson",
+      "description": "Call records that have been imported from a phone system arranged by salesperson.",
+      "opened": false,
+      "rows_viewed": false,
+      "source_bytes_captured": false,
+      "sales_only_proved": false,
+      "proves_actual_inbound_customer_voicemail_event": false,
+      "proves_subsequent_reply_attempt_and_stable_linkage_key": false,
+      "proves_global_customer_id": false,
+      "disposition": "stopped_sales_scope_unproved"
+    },
+    {
+      "name": "Call Detail Records",
+      "description": "Provides information about call records that have been imported from a phone system.",
+      "opened": false,
+      "rows_viewed": false,
+      "source_bytes_captured": false,
+      "sales_only_proved": false,
+      "proves_actual_inbound_customer_voicemail_event": false,
+      "proves_subsequent_reply_attempt_and_stable_linkage_key": false,
+      "proves_global_customer_id": false,
+      "disposition": "stopped_sales_scope_unproved"
+    },
+    {
+      "name": "Message Log",
+      "description": "List of received internet leads, emails, phone calls, and other messages.",
+      "opened": false,
+      "rows_viewed": false,
+      "source_bytes_captured": false,
+      "sales_only_proved": false,
+      "proves_actual_inbound_customer_voicemail_event": false,
+      "proves_subsequent_reply_attempt_and_stable_linkage_key": false,
+      "proves_global_customer_id": false,
+      "disposition": "stopped_sales_scope_unproved"
+    }
+  ],
+  "candidate_boundary": {
+    "any_candidate_proved_inbound_voicemail_source": false,
+    "any_candidate_proved_usable_input": false,
+    "any_candidate_accepted_source_governance_state": false,
+    "any_candidate_acquired_source_governance_state": false,
+    "any_candidate_admitted_source_governance_state": false,
+    "global_unavailability_of_any_candidate_proved": false,
+    "stop_candidate_at_utc": "2026-09-04T08:00:27Z",
+    "governance_state_note": "accepted/acquired/admitted are actual governance states, all false: no candidate has been accepted, acquired, or admitted. These are governance states, NOT evidence conclusions about whether a source exists.",
+    "note": "Three contextual candidate report definitions were visible in the broad 'custom' list; none was opened. This records proof-status only: the metadata did not prove any candidate to be an inbound customer-voicemail source or a usable input; none has been accepted, acquired, or admitted as a governance state; and global unavailability of any candidate was not proved. The metadata pass makes no source-existence conclusion in either direction. Each was stopped at the metadata surface with Sales-only scope unproved and none of the three frozen required fields proved."
+  },
+  "outbound_answering_machine_boundary": {
+    "answering_machine_is_outbound_log_a_call_result_only": true,
+    "answering_machine_as_inbound_voicemail_proxy": false,
+    "note": "The existing outbound 'Answering Machine' Log-A-Call result remains explicitly forbidden as an inbound customer-voicemail proxy. It does not prove an actual inbound customer-voicemail event."
+  },
+  "service_parts_metadata_surface_incident": {
+    "service_parts_metadata_labels_incidentally_visible": true,
+    "service_parts_report_opened": false,
+    "service_parts_rows_content_or_data_read": false,
+    "service_parts_source_bytes_acquired": false,
+    "service_parts_admitted": 0,
+    "boundary_response": "stopped_and_restored_safe_no_result_view",
+    "safe_view_query": "voicemail",
+    "safe_view_no_results": true,
+    "browser_scope_clean": false,
+    "incident_contained": true,
+    "note": "CONTAINED METADATA-SURFACE INCIDENT — fully disclosed, not erased or softened. The broad mixed 'custom' report-title listing also incidentally exposed explicit Service/Parts report titles and descriptions (metadata labels only). No Service/Parts report was opened; no Service/Parts rows, content, or data were read; no Service/Parts source bytes were acquired; zero Service/Parts were admitted. On contact with the Service/Parts metadata labels the pass stopped and restored the safe no-result view (query 'voicemail', no results). Because Service/Parts metadata labels were incidentally contacted, browser_scope_clean is false; the incident was contained. This browser pass is NOT represented as clean."
+  },
+  "final_ui_state": {
+    "chrome_tabs": 1,
+    "authenticated_report_center": true,
+    "query": "voicemail",
+    "no_results": true,
+    "note": "Final UI state after containment/verification: one Chrome tab on the authenticated Honda Report Center with query 'voicemail' returning no results. Post-stop activity was only containment and verification of the restored safe no-result view."
+  },
+  "global_unavailability": {
+    "claimed": false,
+    "missing_not_zero": true,
+    "note": "This finite pass did NOT prove that VinSolutions/Cox globally lacks the needed inbound-voicemail source. Absence of a found report is not global unavailability, is not terminal unavailability, and is never read as zero unanswered voicemails. Missing is not zero."
+  },
+  "privacy_and_safety": {
+    "report_opened": false,
+    "report_run": false,
+    "filter_set": false,
+    "report_saved": false,
+    "report_exported": false,
+    "report_downloaded": false,
+    "report_scheduled": false,
+    "rows_retrieved": false,
+    "source_bytes_captured": false,
+    "message_content_captured": false,
+    "pii_captured": false,
+    "restricted_id_captured": false,
+    "crm_or_customer_mutation": false,
+    "customer_output": false,
+    "gmail_touched": false,
+    "db_touched": false,
+    "dealer_id": "21043",
+    "operation_scope_sales_only": true,
+    "candidate_source_sales_only_verified": false,
+    "browser_scope_clean": false,
+    "evidence_integrity_pass": true,
+    "no_raw_url_query_or_token_stored": true,
+    "missing_is_not_zero": true,
+    "note": "evidence_integrity_pass is true ONLY together with browser_scope_clean=false and full disclosure of the Service/Parts metadata-surface incident. operation_scope_sales_only refers to the intended Sales-only operating scope; candidate_source_sales_only_verified=false because no candidate's Sales-only scope was proved. No generic clean-pass claim is made and none may imply zero Service/Parts metadata-surface contact."
+  },
+  "held_items_preserved": {
+    "sw140_investigation_recorded_state_unchanged": true,
+    "sw137_remains_memorialized_unchanged": true,
+    "sw035_036_037_remain_held_duane_gated": true,
+    "pkt_03_02_not_started_or_completed": true,
+    "no_silent_skip_or_completion": true,
+    "frozen_ledger_pin_preserves_all_other_held_retry_rows": true,
+    "note": "SW-140 lifecycle is unchanged by this memorialization (state_before == state_after == source_investigation_pending / not_acquired / not_measured); this pass records a finite read-only investigation only. SW-137 remains memorialized and unchanged; SW-035/036/037 remain Duane-gated and unchanged; PKT-03-02 (next provisional packet) is neither started nor completed by this step. The frozen master-ledger pin preserves every other held/retry row."
+  },
+  "conclusion": "A finite read-only Report Center metadata investigation for SW-140 found no report proving an actual inbound customer-voicemail event with subsequent-reply linkage and Global Customer ID. Three contextual candidate report definitions (Call Detail By Salesperson; Call Detail Records; Message Log) were visible in the broad 'custom' list but none was opened; each was stopped with Sales-only scope unproved and none of the three frozen required fields proved. The broad 'custom' listing incidentally exposed Service/Parts metadata labels (contained incident; browser_scope_clean=false; nothing opened/read/acquired/admitted). SW-140 remains source_investigation_pending / investigation_pending / not_acquired / not_measured / hidden / non-alert / non-customer; no source acquisition, no admissibility, no metric value, no numerator/denominator/formula/join/target/grade/rating/detection-rule/alert, and no global unavailability were established.",
+  "next_safe_action": "HOLD. Do not repeat the broad 'custom' search. Any future pass must be separately bounded to official report metadata/documentation that proves BOTH inbound-voicemail semantics AND Sales-only scope without opening rows. Stop before any data acquisition, before Duane's unanswered/reply definition, and before Claude implementation. No proxy from the outbound Answering-Machine result; no calculation; missing is not zero.",
+  "no_action_statement": "No source acquisition, admission, calculation, grade, alert, customer output, merge, deploy, Gmail, DB write, schedule change, filter, report run, report save, export, download, CRM/customer mutation, or VinSolutions write. No new source/vocabulary/value/denominator/join/formula/grade/target/detection-rule/transition/customer projection. No substitution or inference of any candidate report, outbound Answering-Machine result, or metadata label into the frozen SW-140 required fields."
+}
