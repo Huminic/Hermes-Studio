@@ -1,0 +1,988 @@
+{
+  "artifact": "honda-watchdog-phase1b-packet-PKT-02-03",
+  "schema": "docs/halo/contract/phase1b/packet-schema-1b-v2.json",
+  "packet_id": "PKT-02-03",
+  "module": 2,
+  "period": "2026-08-24..2026-08-30",
+  "management_question": "Are Serra Honda’s Sales conversations respecting customer timing, channel, urgency, and contact preferences—and can the available evidence safely support better follow-up cadence and individualized best-time/best-channel recommendations?",
+  "target_ids": [
+    "SW-135",
+    "SW-136",
+    "SW-137",
+    "SW-138",
+    "SW-139",
+    "SW-140",
+    "SW-141",
+    "SW-261",
+    "SW-262",
+    "SW-288",
+    "SW-295"
+  ],
+  "source_reuse_note": "Registers/reuses the already-acquired/held enhanced_sales_communication_log_weekly source (SRC-...-0002) for the six enhanced metrics' source-dependency integrity ONLY. No acquisition/admission/promotion; capability-only; promotes no value.",
+  "source_dependencies": [
+    {
+      "source_id": "SRC-enhanced_sales_communication_log_weekly-0002",
+      "reuse_or_fresh": "reuse",
+      "dependent_metric_ids": [
+        "SW-135",
+        "SW-136",
+        "SW-137",
+        "SW-138",
+        "SW-139",
+        "SW-141"
+      ]
+    }
+  ],
+  "metric_definitions": [
+    {
+      "metric_id": "SW-135",
+      "canonical_condition": "Rep's reply arrives after customer's stated deadline (\"I need to decide by Friday\").",
+      "business_question": "How many Sales replies arrived after a customer's stated deadline in the message content?",
+      "population": "Serra Honda 21043 Sales threads containing a customer-stated deadline, period 2026-08-24..2026-08-30.",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "event_follow_forward_to_stated_deadline_boundary_required",
+      "calculation_kind": "count",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "threads",
+      "required_direct_fields_or_keys": [
+        "stated-deadline content (protected Message Content)",
+        "reply timestamp vs stated deadline",
+        "thread grouping key",
+        "admitted Communication ID + Lead ID + Global Customer ID"
+      ],
+      "direct_source_fields": [],
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_family_slice": "slice_content_semantic",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "disposition": "data_acquired_calculation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "calculation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "missing_or_quarantine_evidence": [
+        "Metric-specific protected semantic derivation over Message Content is neither authorized nor implemented: message text sits in the enhanced raw but is excluded from the permitted analytical derivative and may not be read without Duane's protected-content envelope (SPEC §5.5); no keyword proxy.",
+        "Enhanced weekly raw for 21043 is acquired locally and held (admitted_held, not promoted); the source contract remains proposed_extension_pending_consumer_acceptance, so it proves capability but promotes no value.",
+        "Enhanced 24-column source schema contains Communication ID, Lead ID, and Global Customer ID; 21043 admission aggregates confirm 1530 Sales rows with 1530 unique Communication IDs and 386 unique Lead IDs (service_parts_signal_rows=0, wrong_dealer_rows=0). These keys reside in restricted, unadmitted/protected raw bytes, are excluded from the permitted analytical derivative, and no per-row committed analytical derivative carrying them is available; no content or PII was read.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "required_future_contract": [
+        "Duane-authorized protected semantic-content envelope (SPEC §5.5) + a pinned semantic evaluator (model/prompt/taxonomy/calibration/precision-recall/abstention/evidence-hash/drift).",
+        "Ratified 'stated deadline' extraction definition + deadline-vs-reply comparison rule.",
+        "Consumer-accepted admission of the enhanced stable keys (Communication ID + Lead ID + Global Customer ID) into a per-row committed Sales-only analytical derivative (raw currently unadmitted/protected)."
+      ],
+      "cadence": "Daily source; downstream daily/weekly semantic job (held)",
+      "accountable_owners": {
+        "protected_content_authorization_and_definition": "Duane Wells",
+        "read_only_source_investigation_and_governed_acquisition": "Codex VinSolutions controller",
+        "protected_semantic_provider_implementation_and_admission": "Claude Studio engineering"
+      },
+      "next_action_owner": "Duane Wells",
+      "immediate_action": {
+        "owner": "Duane Wells",
+        "action": "Authorize the protected-content envelope (SPEC §5.5) and ratify the 'stated deadline' extraction + deadline-vs-reply rule — authority/definition decision only."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller",
+          "action": "Governed read-only acquisition and consumer-accepted admission of a Sales-only per-row derivative carrying the stable keys (Communication ID/Lead ID/Global Customer ID)."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the pinned semantic provider/evaluator and admit it once authorized."
+        }
+      ],
+      "review_point": "PKT-02-03 pre-commit shadow + Duane protected-content / definition / source-contract decisions",
+      "next_safe_source_action": "Duane Wells authorizes the protected-content envelope (SPEC §5.5) and ratifies the definition; then Codex VinSolutions controller performs governed read-only acquisition + consumer-accepted admission of a Sales-only per-row derivative with the stable keys; then Claude Studio engineering implements the semantic provider/evaluator. No content read, no proxy, no calculation now.",
+      "authority": "catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": [
+        "SRC-enhanced_sales_communication_log_weekly-0002"
+      ]
+    },
+    {
+      "metric_id": "SW-136",
+      "canonical_condition": "Message thread goes silent >72h after a \"hot\" signal (payment, financing, delivery question).",
+      "business_question": "How many threads went silent >72h after a customer 'hot' signal (payment/financing/delivery)?",
+      "population": "Serra Honda 21043 Sales threads with a 'hot' signal, period 2026-08-24..2026-08-30.",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "min_72h_follow_forward_after_hot_signal_event",
+      "calculation_kind": "count",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "threads",
+      "required_direct_fields_or_keys": [
+        "'hot signal' content classification (protected Message Content)",
+        "hot-signal anchor event + 72h silence window",
+        "thread grouping key",
+        "admitted Communication ID + Lead ID + Global Customer ID"
+      ],
+      "direct_source_fields": [],
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_family_slice": "slice_content_semantic",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "disposition": "data_acquired_calculation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "calculation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "missing_or_quarantine_evidence": [
+        "Metric-specific protected semantic derivation over Message Content is neither authorized nor implemented: message text sits in the enhanced raw but is excluded from the permitted analytical derivative and may not be read without Duane's protected-content envelope (SPEC §5.5); no keyword proxy.",
+        "The 72h silence window is anchored on a content-identified hot-signal event that cannot be located without the semantic provider.",
+        "Enhanced weekly raw for 21043 is acquired locally and held (admitted_held, not promoted); the source contract remains proposed_extension_pending_consumer_acceptance, so it proves capability but promotes no value.",
+        "Enhanced 24-column source schema contains Communication ID, Lead ID, and Global Customer ID; 21043 admission aggregates confirm 1530 Sales rows with 1530 unique Communication IDs and 386 unique Lead IDs (service_parts_signal_rows=0, wrong_dealer_rows=0). These keys reside in restricted, unadmitted/protected raw bytes, are excluded from the permitted analytical derivative, and no per-row committed analytical derivative carrying them is available; no content or PII was read.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "required_future_contract": [
+        "Duane-authorized protected semantic-content envelope (SPEC §5.5) + a pinned semantic evaluator (model/prompt/taxonomy/calibration/precision-recall/abstention/evidence-hash/drift).",
+        "Ratified 'hot signal' taxonomy + explicit 72h silence window + anchor-event definition.",
+        "Consumer-accepted admission of the enhanced stable keys (Communication ID + Lead ID + Global Customer ID) into a per-row committed Sales-only analytical derivative (raw currently unadmitted/protected)."
+      ],
+      "cadence": "Daily source; downstream daily/weekly semantic job (held)",
+      "accountable_owners": {
+        "protected_content_authorization_and_definition": "Duane Wells",
+        "read_only_source_investigation_and_governed_acquisition": "Codex VinSolutions controller",
+        "protected_semantic_provider_implementation_and_admission": "Claude Studio engineering"
+      },
+      "next_action_owner": "Duane Wells",
+      "immediate_action": {
+        "owner": "Duane Wells",
+        "action": "Authorize the protected-content envelope (SPEC §5.5) and ratify the 'hot signal' taxonomy + explicit 72h silence window + anchor-event definition — authority/definition decision only."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller",
+          "action": "Governed read-only acquisition and consumer-accepted admission of a Sales-only per-row derivative carrying the stable keys (Communication ID/Lead ID/Global Customer ID)."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the pinned semantic provider/evaluator and admit it once authorized."
+        }
+      ],
+      "review_point": "PKT-02-03 pre-commit shadow + Duane protected-content / definition / source-contract decisions",
+      "next_safe_source_action": "Duane Wells authorizes the protected-content envelope (SPEC §5.5) and ratifies the taxonomy/window; then Codex VinSolutions controller performs governed acquisition + admission of a Sales-only per-row derivative with the stable keys; then Claude Studio engineering implements the hot-signal classifier. No content read, no proxy, no calculation now.",
+      "authority": "catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": [
+        "SRC-enhanced_sales_communication_log_weekly-0002"
+      ]
+    },
+    {
+      "metric_id": "SW-137",
+      "canonical_condition": "Rep replies to text with email (channel mismatch — customer disengages).",
+      "business_question": "How many times did a rep reply to a customer text with an email (channel mismatch)?",
+      "population": "Serra Honda 21043 Sales reply events adjacent to a prior inbound text, period 2026-08-24..2026-08-30.",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "single_week_sufficient_once_ordering_definition_and_admission_resolved",
+      "calculation_kind": "count",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "replies",
+      "required_direct_fields_or_keys": [
+        "ordered inbound/outbound sequence at authoritative resolution",
+        "channel per message (text vs email)",
+        "ratified reply-adjacency window",
+        "thread grouping key",
+        "admitted stable keys"
+      ],
+      "direct_source_fields": [],
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_family_slice": "slice_structural_sequence",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "disposition": "data_acquired_calculation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "calculation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "missing_or_quarantine_evidence": [
+        "Acquired raw structural fields (Direction, Comm Channel, Activity Date) exist, but Activity Date is minute-resolution and all observed adjacent candidates are same-minute ambiguous, so reply adjacency cannot be ordered deterministically.",
+        "Held pending authoritative sub-minute/sequence ordering evidence and a ratified channel-adjacency/window definition; not a history gap — one week suffices once ordering + definition + admission are resolved.",
+        "Enhanced weekly raw for 21043 is acquired locally and held (admitted_held, not promoted); the source contract remains proposed_extension_pending_consumer_acceptance, so it proves capability but promotes no value.",
+        "Enhanced 24-column source schema contains Communication ID, Lead ID, and Global Customer ID; 21043 admission aggregates confirm 1530 Sales rows with 1530 unique Communication IDs and 386 unique Lead IDs (service_parts_signal_rows=0, wrong_dealer_rows=0). These keys reside in restricted, unadmitted/protected raw bytes, are excluded from the permitted analytical derivative, and no per-row committed analytical derivative carrying them is available; no content or PII was read.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "required_future_contract": [
+        "Authoritative sub-minute or message-sequence ordering evidence (deterministic).",
+        "Ratified channel-adjacency/window definition.",
+        "Consumer-accepted admission of the enhanced stable keys (Communication ID + Lead ID + Global Customer ID) into a per-row committed Sales-only analytical derivative (raw currently unadmitted/protected)."
+      ],
+      "cadence": "Daily source; downstream daily/weekly semantic job (held)",
+      "accountable_owners": {
+        "adjacency_window_definition_ratification": "Duane Wells",
+        "authoritative_sequence_evidence_investigation_and_admission": "Codex VinSolutions controller",
+        "ordering_normalization_implementation": "Claude Studio engineering"
+      },
+      "next_action_owner": "Codex VinSolutions controller",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller",
+        "action": "Bounded read-only investigation of whether authoritative sub-minute/message-sequence ordering is obtainable."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane Wells",
+          "action": "Ratify the channel-adjacency/window definition (business decision)."
+        },
+        {
+          "owner": "Codex VinSolutions controller",
+          "action": "Consumer-accepted admission of a per-row Sales-only derivative once ordering is proven."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement ordering normalization/calculation once admitted."
+        }
+      ],
+      "review_point": "PKT-02-03 pre-commit shadow + Duane protected-content / definition / source-contract decisions",
+      "next_safe_source_action": "Codex VinSolutions controller runs a bounded read-only investigation for authoritative sub-minute/sequence ordering; Duane Wells ratifies the adjacency/window definition; then Codex admits a per-row Sales-only derivative and Claude Studio engineering implements ordering/normalization. No calculation on same-minute-ambiguous data; no proxy.",
+      "authority": "catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": [
+        "SRC-enhanced_sales_communication_log_weekly-0002"
+      ]
+    },
+    {
+      "metric_id": "SW-138",
+      "canonical_condition": "Multiple rapid-fire messages from rep with no customer reply in between (spammy cadence).",
+      "business_question": "How many rapid-fire rep message bursts occurred with no customer reply in between (spammy cadence)?",
+      "population": "Serra Honda 21043 Sales outbound message sequences with no intervening inbound, period 2026-08-24..2026-08-30.",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "single_week_sufficient_once_definition_and_admission_resolved",
+      "calculation_kind": "count",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "sequences",
+      "required_direct_fields_or_keys": [
+        "ordered outbound messages with no intervening inbound",
+        "ratified rapid-fire count N",
+        "ratified time window T",
+        "thread grouping key",
+        "admitted stable keys"
+      ],
+      "direct_source_fields": [],
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_family_slice": "slice_structural_sequence",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "disposition": "data_acquired_calculation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "calculation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "missing_or_quarantine_evidence": [
+        "Acquired raw Direction + Activity Date fields exist (structural, no content needed), but the rapid-fire count N and time window T are unratified definitions (semantic_definition_pending).",
+        "Not a history gap — one week suffices once the N/T definition and a consumer-accepted admission are resolved.",
+        "Enhanced weekly raw for 21043 is acquired locally and held (admitted_held, not promoted); the source contract remains proposed_extension_pending_consumer_acceptance, so it proves capability but promotes no value.",
+        "Enhanced 24-column source schema contains Communication ID, Lead ID, and Global Customer ID; 21043 admission aggregates confirm 1530 Sales rows with 1530 unique Communication IDs and 386 unique Lead IDs (service_parts_signal_rows=0, wrong_dealer_rows=0). These keys reside in restricted, unadmitted/protected raw bytes, are excluded from the permitted analytical derivative, and no per-row committed analytical derivative carrying them is available; no content or PII was read.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "required_future_contract": [
+        "Ratified rapid-fire count N + window T + no-intervening-inbound rule.",
+        "Consumer-accepted admission of the enhanced stable keys (Communication ID + Lead ID + Global Customer ID) into a per-row committed Sales-only analytical derivative (raw currently unadmitted/protected)."
+      ],
+      "cadence": "Daily source; downstream daily/weekly semantic job (held)",
+      "accountable_owners": {
+        "rapid_fire_N_and_window_T_definition_ratification": "Duane Wells",
+        "consumer_acceptance_and_governed_admission": "Codex VinSolutions controller",
+        "calculation_implementation_once_admitted": "Claude Studio engineering"
+      },
+      "next_action_owner": "Duane Wells",
+      "immediate_action": {
+        "owner": "Duane Wells",
+        "action": "Ratify the rapid-fire count N + window T + no-intervening-inbound rule — definition decision only."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller",
+          "action": "Obtain consumer-accepted admission of a per-row Sales-only derivative with the stable keys."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the calculation once admitted."
+        }
+      ],
+      "review_point": "PKT-02-03 pre-commit shadow + Duane protected-content / definition / source-contract decisions",
+      "next_safe_source_action": "Duane Wells ratifies the N/T rapid-fire definition; then Codex VinSolutions controller obtains consumer-accepted admission of a per-row Sales-only derivative with the stable keys; then Claude Studio engineering implements the calculation. No promotion, no grade, no proxy now.",
+      "authority": "catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": [
+        "SRC-enhanced_sales_communication_log_weekly-0002"
+      ]
+    },
+    {
+      "metric_id": "SW-139",
+      "canonical_condition": "Rep sends follow-up before customer's stated callback time (\"call me after 5\" ignored).",
+      "business_question": "How many rep follow-ups were sent before a customer's stated callback time ('call me after 5' ignored)?",
+      "population": "Serra Honda 21043 Sales follow-ups against a customer-stated callback time, period 2026-08-24..2026-08-30.",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "event_follow_forward_to_stated_callback_boundary_required",
+      "calculation_kind": "count",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "follow_ups",
+      "required_direct_fields_or_keys": [
+        "stated-callback-time content (protected Message Content)",
+        "follow-up timestamp vs stated callback time",
+        "thread grouping key",
+        "admitted stable keys"
+      ],
+      "direct_source_fields": [],
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_family_slice": "slice_content_semantic",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "disposition": "data_acquired_calculation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "calculation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "missing_or_quarantine_evidence": [
+        "Metric-specific protected semantic derivation over Message Content is neither authorized nor implemented: message text sits in the enhanced raw but is excluded from the permitted analytical derivative and may not be read without Duane's protected-content envelope (SPEC §5.5); no keyword proxy.",
+        "Enhanced weekly raw for 21043 is acquired locally and held (admitted_held, not promoted); the source contract remains proposed_extension_pending_consumer_acceptance, so it proves capability but promotes no value.",
+        "Enhanced 24-column source schema contains Communication ID, Lead ID, and Global Customer ID; 21043 admission aggregates confirm 1530 Sales rows with 1530 unique Communication IDs and 386 unique Lead IDs (service_parts_signal_rows=0, wrong_dealer_rows=0). These keys reside in restricted, unadmitted/protected raw bytes, are excluded from the permitted analytical derivative, and no per-row committed analytical derivative carrying them is available; no content or PII was read.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "required_future_contract": [
+        "Duane-authorized protected semantic-content envelope (SPEC §5.5) + a pinned semantic evaluator (model/prompt/taxonomy/calibration/precision-recall/abstention/evidence-hash/drift).",
+        "Ratified 'stated callback time' extraction + follow-up-before-callback comparison rule.",
+        "Consumer-accepted admission of the enhanced stable keys (Communication ID + Lead ID + Global Customer ID) into a per-row committed Sales-only analytical derivative (raw currently unadmitted/protected)."
+      ],
+      "cadence": "Daily source; downstream daily/weekly semantic job (held)",
+      "accountable_owners": {
+        "protected_content_authorization_and_definition": "Duane Wells",
+        "read_only_source_investigation_and_governed_acquisition": "Codex VinSolutions controller",
+        "protected_semantic_provider_implementation_and_admission": "Claude Studio engineering"
+      },
+      "next_action_owner": "Duane Wells",
+      "immediate_action": {
+        "owner": "Duane Wells",
+        "action": "Authorize the protected-content envelope (SPEC §5.5) and ratify the 'stated callback time' extraction + follow-up-before-callback rule — authority/definition decision only."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller",
+          "action": "Governed read-only acquisition and consumer-accepted admission of a Sales-only per-row derivative carrying the stable keys (Communication ID/Lead ID/Global Customer ID)."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the pinned semantic provider/evaluator and admit it once authorized."
+        }
+      ],
+      "review_point": "PKT-02-03 pre-commit shadow + Duane protected-content / definition / source-contract decisions",
+      "next_safe_source_action": "Duane Wells authorizes the protected-content envelope (SPEC §5.5) and ratifies the definition; then Codex VinSolutions controller performs governed acquisition + admission of a Sales-only per-row derivative with the stable keys; then Claude Studio engineering implements the callback-time extractor. No content read, no proxy, no calculation now.",
+      "authority": "catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": [
+        "SRC-enhanced_sales_communication_log_weekly-0002"
+      ]
+    },
+    {
+      "metric_id": "SW-140",
+      "canonical_condition": "No reply attempt after voicemail left by customer.",
+      "business_question": "How many inbound customer voicemails received no reply attempt?",
+      "population": "Serra Honda 21043 inbound customer-voicemail events, period 2026-08-24..2026-08-30.",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "not_history_blocked_absent_inbound_voicemail_event_source",
+      "calculation_kind": "count",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "voicemails",
+      "required_direct_fields_or_keys": [
+        "actual inbound customer-voicemail event",
+        "subsequent reply attempt + stable linkage key",
+        "Global Customer ID"
+      ],
+      "direct_source_fields": [],
+      "source_family": "communication_plus_external_telephony",
+      "source_family_slice": "slice_voicemail_inbound",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "disposition": "source_investigation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "source_investigation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "missing_or_quarantine_evidence": [
+        "Blocked by an absent source, not by history: current evidence exposes 'Answering Machine' only as an OUTBOUND Log-A-Call result and zero inbound customer-voicemail events; the required inbound-voicemail event and its reply linkage do not exist in the acquired enhanced raw.",
+        "Missing is never zero: absence of an inbound-voicemail field may not be read as zero unanswered voicemails.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "required_future_contract": [
+        "A field-minimized, positive-Sales-only, read-only UI/schema contract proving an inbound customer-voicemail event + subsequent-reply linkage and a stable key, OR a named external telephony source.",
+        "Explicit unanswered / reply definitions. Never a proxy; never call missing zero."
+      ],
+      "cadence": "Daily source; downstream daily/weekly semantic job (held)",
+      "accountable_owners": {
+        "unanswered_and_reply_definition": "Duane Wells",
+        "read_only_ui_schema_or_external_source_investigation": "Codex VinSolutions controller",
+        "linkage_acquisition_implementation_once_source_proven": "Claude Studio engineering"
+      },
+      "next_action_owner": "Codex VinSolutions controller",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller",
+        "action": "Finite, read-only UI/schema investigation for an inbound customer-voicemail event (or identify a named external telephony source)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane Wells",
+          "action": "Define the unanswered / reply semantics (business decision)."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement linkage/acquisition once the source is proven."
+        }
+      ],
+      "review_point": "PKT-02-03 pre-commit shadow + Duane protected-content / definition / source-contract decisions",
+      "next_safe_source_action": "Codex VinSolutions controller runs a finite read-only UI/schema investigation for an inbound customer-voicemail event (or names an external telephony source); Duane Wells defines the unanswered/reply semantics; then Claude Studio engineering implements linkage/acquisition once the source is proven. No proxy from outbound Answering-Machine; no calculation; missing is not zero.",
+      "authority": "catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-141",
+      "canonical_condition": "Weekend/evening message from customer with high intent, no response until 2+ days later.",
+      "business_question": "How many weekend/evening high-intent customer messages went unanswered for 2+ days?",
+      "population": "Serra Honda 21043 weekend/evening inbound high-intent Sales messages, period 2026-08-24..2026-08-30.",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "min_2d_follow_forward_after_high_intent_event_weekend_evening_ratified",
+      "calculation_kind": "count",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "threads",
+      "required_direct_fields_or_keys": [
+        "'high intent' content classification (protected Message Content)",
+        "ratified weekend/evening window",
+        "2-day no-response rule",
+        "thread grouping key",
+        "admitted stable keys"
+      ],
+      "direct_source_fields": [],
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_family_slice": "slice_content_semantic",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "disposition": "data_acquired_calculation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "calculation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "missing_or_quarantine_evidence": [
+        "Metric-specific protected semantic derivation over Message Content is neither authorized nor implemented: message text sits in the enhanced raw but is excluded from the permitted analytical derivative and may not be read without Duane's protected-content envelope (SPEC §5.5); no keyword proxy.",
+        "The weekend/evening window and the 2-day no-response rule elements must be explicit/ratified.",
+        "Enhanced weekly raw for 21043 is acquired locally and held (admitted_held, not promoted); the source contract remains proposed_extension_pending_consumer_acceptance, so it proves capability but promotes no value.",
+        "Enhanced 24-column source schema contains Communication ID, Lead ID, and Global Customer ID; 21043 admission aggregates confirm 1530 Sales rows with 1530 unique Communication IDs and 386 unique Lead IDs (service_parts_signal_rows=0, wrong_dealer_rows=0). These keys reside in restricted, unadmitted/protected raw bytes, are excluded from the permitted analytical derivative, and no per-row committed analytical derivative carrying them is available; no content or PII was read.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "required_future_contract": [
+        "Duane-authorized protected semantic-content envelope (SPEC §5.5) + a pinned semantic evaluator (model/prompt/taxonomy/calibration/precision-recall/abstention/evidence-hash/drift).",
+        "Explicit weekend/evening window + 2-day no-response rule + high-intent classifier taxonomy.",
+        "Consumer-accepted admission of the enhanced stable keys (Communication ID + Lead ID + Global Customer ID) into a per-row committed Sales-only analytical derivative (raw currently unadmitted/protected)."
+      ],
+      "cadence": "Daily source; downstream daily/weekly semantic job (held)",
+      "accountable_owners": {
+        "protected_content_authorization_and_definition": "Duane Wells",
+        "read_only_source_investigation_and_governed_acquisition": "Codex VinSolutions controller",
+        "protected_semantic_provider_implementation_and_admission": "Claude Studio engineering"
+      },
+      "next_action_owner": "Duane Wells",
+      "immediate_action": {
+        "owner": "Duane Wells",
+        "action": "Authorize the protected-content envelope (SPEC §5.5) and ratify the high-intent taxonomy + explicit weekend/evening window + 2-day no-response rule — authority/definition decision only."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller",
+          "action": "Governed read-only acquisition and consumer-accepted admission of a Sales-only per-row derivative carrying the stable keys (Communication ID/Lead ID/Global Customer ID)."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the pinned semantic provider/evaluator and admit it once authorized."
+        }
+      ],
+      "review_point": "PKT-02-03 pre-commit shadow + Duane protected-content / definition / source-contract decisions",
+      "next_safe_source_action": "Duane Wells authorizes the protected-content envelope (SPEC §5.5) and ratifies the taxonomy + weekend/evening + 2-day rule; then Codex VinSolutions controller performs governed acquisition + admission of a Sales-only per-row derivative with the stable keys; then Claude Studio engineering implements the high-intent classifier. No content read, no proxy, no calculation now.",
+      "authority": "catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": [
+        "SRC-enhanced_sales_communication_log_weekly-0002"
+      ]
+    },
+    {
+      "metric_id": "SW-261",
+      "canonical_condition": "Best-time-to-contact model per customer based on prior response times.",
+      "business_question": "What is each customer's best time to contact, modeled from prior response times?",
+      "population": "Serra Honda 21043 per-customer response history, multi-week (one week 2026-08-24..2026-08-30 is insufficient).",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "multi_week_required",
+      "calculation_kind": "semantic",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "model",
+      "required_direct_fields_or_keys": [
+        "multi-week per-customer response history",
+        "admitted stable pseudonymous customer key",
+        "pairing/model + minimum-history spec"
+      ],
+      "direct_source_fields": [],
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_family_slice": "slice_history_model",
+      "source_existence_state": "proved_requires_more_history",
+      "acquisition_admission_state": "not_acquired",
+      "disposition": "additional_history_required",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "accepted_disposition_only_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "missing_or_quarantine_evidence": [
+        "A per-customer best-time model requires multi-week response history; a single proven week is insufficient (catalog-logic history requirement).",
+        "Requires an agreed model / minimum-history / accuracy-abstention spec (none ratified) and an admitted stable pseudonymous key.",
+        "Enhanced weekly raw for 21043 is acquired locally and held (admitted_held, not promoted); the source contract remains proposed_extension_pending_consumer_acceptance, so it proves capability but promotes no value.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "required_future_contract": [
+        "Multi-week per-customer response history accumulation.",
+        "Model + minimum-history spec + accuracy/abstention thresholds + admitted stable pseudonymous key."
+      ],
+      "cadence": "Daily source; downstream daily/weekly semantic job (held)",
+      "accountable_owners": {
+        "model_minimum_history_and_threshold_decision": "Duane Wells",
+        "multi_week_history_and_stable_key_acquisition": "Codex VinSolutions controller",
+        "model_evaluator_implementation_and_admission": "Claude Studio engineering"
+      },
+      "next_action_owner": "Duane Wells",
+      "immediate_action": {
+        "owner": "Duane Wells",
+        "action": "Ratify the best-time model + minimum-history spec + accuracy/abstention thresholds — business decision only."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller",
+          "action": "Accumulate multi-week per-customer response history and acquire an admitted stable pseudonymous key."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the model/evaluator and admission once authorized."
+        }
+      ],
+      "review_point": "PKT-02-03 pre-commit shadow + Duane protected-content / definition / source-contract decisions",
+      "next_safe_source_action": "Duane Wells ratifies the model/minimum-history spec + thresholds; then Codex VinSolutions controller accumulates multi-week history and acquires an admitted stable pseudonymous key; then Claude Studio engineering implements the model/evaluator. No single-week model, no promotion, no grade.",
+      "authority": "catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-262",
+      "canonical_condition": "Customers historically responsive to Saturday outreach — batch there.",
+      "business_question": "Which customers are historically responsive to Saturday outreach (batch there)?",
+      "population": "Serra Honda 21043 per-customer Saturday outreach/response history, multi-week (one week insufficient).",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "multi_week_required",
+      "calculation_kind": "semantic",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "segment",
+      "required_direct_fields_or_keys": [
+        "multi-week Saturday outreach/response history",
+        "stable pseudonymous customer key",
+        "exact multi-source join dependency + formula decision"
+      ],
+      "direct_source_fields": [],
+      "source_family": "multi_source_join_leads_comm_appointments_sales_cage_roi",
+      "source_family_slice": "slice_multi_source_join",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "disposition": "source_investigation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "source_investigation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "missing_or_quarantine_evidence": [
+        "The catalog names a multi-source join (Leads + Communication Log + Appointments + CRM Sales + CAGE and/or ROI); the exact dependency and formula are undefined and must be frozen BEFORE a source is chosen — the join source itself is not yet acquired.",
+        "Requires multi-week Saturday history; a single week is insufficient (catalog-logic history requirement).",
+        "Component legs exist (enhanced comm raw acquired/held; Leads admitted/promoted), but admitted/promoted Leads supports this only as a possible future join leg after an exact contract; communication-only substitution is prohibited.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "required_future_contract": [
+        "Freeze the exact multi-source join dependency + formula decision (which of Leads/Comm/Appointments/CRM Sales/CAGE/ROI) BEFORE choosing a source.",
+        "Multi-week Saturday history + stable pseudonymous key. No communication-only substitution."
+      ],
+      "cadence": "Daily source; downstream daily/weekly semantic job (held)",
+      "accountable_owners": {
+        "join_dependency_and_formula_decision": "Duane Wells",
+        "multi_source_stable_key_extract_investigation_and_acquisition": "Codex VinSolutions controller",
+        "join_implementation_once_contracted": "Claude Studio engineering"
+      },
+      "next_action_owner": "Duane Wells",
+      "immediate_action": {
+        "owner": "Duane Wells",
+        "action": "Freeze the exact multi-source join dependency + formula decision (which of Leads/Comm/Appointments/CRM Sales/CAGE/ROI) — business decision only, before any source is chosen."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller",
+          "action": "Acquire/validate multi-source stable-key extracts across multiple weeks once the dependency is frozen."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the join once contracted."
+        }
+      ],
+      "review_point": "PKT-02-03 pre-commit shadow + Duane protected-content / definition / source-contract decisions",
+      "next_safe_source_action": "Duane Wells freezes the join dependency/formula decision; then Codex VinSolutions controller acquires/validates multi-source stable-key extracts across multiple weeks; then Claude Studio engineering implements the join. No source substitution, no single-week calculation.",
+      "authority": "catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-288",
+      "canonical_condition": "Cadence health score: response times, message balance, thread momentum.",
+      "business_question": "What is the cadence health score (response times, message balance, thread momentum)?",
+      "population": "Serra Honda 21043 Sales thread cadence composite, multi-week (components/formula unresolved).",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "multi_week_required",
+      "calculation_kind": "semantic",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "score",
+      "required_direct_fields_or_keys": [
+        "ratified component set: response-time, message-balance, thread-momentum",
+        "resolution of SW-134 (widening-gap)",
+        "component weights + composite formula",
+        "multi-week history"
+      ],
+      "direct_source_fields": [],
+      "source_family": "cadence_composite_communication",
+      "source_family_slice": "slice_composite_cadence",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "disposition": "source_investigation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "source_investigation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "missing_or_quarantine_evidence": [
+        "The cadence health score is a composite whose defined source does not yet exist: it depends on unresolved components (including SW-134, itself calculation_pending), undefined component weights, an undefined composite formula, and multi-week history.",
+        "Component comm raw is acquired/held, but the composite metric's authoritative source/formula is under investigation; held pending ratified components/formula. No component is presently promoted or scored.",
+        "Enhanced weekly raw for 21043 is acquired locally and held (admitted_held, not promoted); the source contract remains proposed_extension_pending_consumer_acceptance, so it proves capability but promotes no value.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "required_future_contract": [
+        "Ratified component set (response-time, message-balance, thread-momentum) + resolution of SW-134.",
+        "Component weights + composite formula + multi-week history + abstention rules."
+      ],
+      "cadence": "Daily source; downstream daily/weekly semantic job (held)",
+      "accountable_owners": {
+        "component_set_weights_formula_and_sw134_resolution_decision": "Duane Wells",
+        "history_and_component_evidence_acquisition": "Codex VinSolutions controller",
+        "composite_implementation_once_ratified": "Claude Studio engineering"
+      },
+      "next_action_owner": "Duane Wells",
+      "immediate_action": {
+        "owner": "Duane Wells",
+        "action": "Ratify the component set (response-time, message-balance, thread-momentum) + weights + composite formula, and decide the SW-134 resolution — business decision only."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller",
+          "action": "Accumulate multi-week history and acquire component evidence once components are ratified."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the composite once ratified."
+        }
+      ],
+      "review_point": "PKT-02-03 pre-commit shadow + Duane protected-content / definition / source-contract decisions",
+      "next_safe_source_action": "Duane Wells ratifies the component set + weights + formula (and SW-134 resolution); then Codex VinSolutions controller accumulates multi-week history and component evidence; then Claude Studio engineering implements the composite. No composite from unresolved components, no promotion.",
+      "authority": "catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-295",
+      "canonical_condition": "Best-channel/best-time model: per-customer optimal contact strategy.",
+      "business_question": "What is each customer's optimal contact channel and time (per-customer strategy)?",
+      "population": "Serra Honda 21043 per-customer channel/time/response history, multi-week (one week 2026-08-24..2026-08-30 is insufficient).",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "multi_week_required",
+      "calculation_kind": "semantic",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "model",
+      "required_direct_fields_or_keys": [
+        "multi-week per-customer channel/time/response history",
+        "admitted stable pseudonymous customer key",
+        "model + minimum-history spec"
+      ],
+      "direct_source_fields": [],
+      "source_family": "enhanced_sales_communication_log_weekly",
+      "source_family_slice": "slice_history_model",
+      "source_existence_state": "proved_requires_more_history",
+      "acquisition_admission_state": "not_acquired",
+      "disposition": "additional_history_required",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "accepted_disposition_only_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "missing_or_quarantine_evidence": [
+        "A per-customer best-channel/best-time model requires multi-week channel/time/response history; a single proven week is insufficient (catalog-logic history requirement).",
+        "Requires an agreed model / minimum-history / accuracy-abstention spec (none ratified) and an admitted stable pseudonymous key.",
+        "Enhanced weekly raw for 21043 is acquired locally and held (admitted_held, not promoted); the source contract remains proposed_extension_pending_consumer_acceptance, so it proves capability but promotes no value.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "required_future_contract": [
+        "Multi-week per-customer channel/time/response history accumulation.",
+        "Model + minimum-history spec + accuracy/abstention thresholds + admitted stable pseudonymous key."
+      ],
+      "cadence": "Daily source; downstream daily/weekly semantic job (held)",
+      "accountable_owners": {
+        "model_minimum_history_and_threshold_decision": "Duane Wells",
+        "multi_week_history_and_stable_key_acquisition": "Codex VinSolutions controller",
+        "model_evaluator_implementation_and_admission": "Claude Studio engineering"
+      },
+      "next_action_owner": "Duane Wells",
+      "immediate_action": {
+        "owner": "Duane Wells",
+        "action": "Ratify the best-channel/best-time model + minimum-history spec + accuracy/abstention thresholds — business decision only."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller",
+          "action": "Accumulate multi-week per-customer channel/time/response history and acquire an admitted stable pseudonymous key."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the model/evaluator and admission once authorized."
+        }
+      ],
+      "review_point": "PKT-02-03 pre-commit shadow + Duane protected-content / definition / source-contract decisions",
+      "next_safe_source_action": "Duane Wells ratifies the model/minimum-history spec + thresholds; then Codex VinSolutions controller accumulates multi-week channel/time history and acquires an admitted stable pseudonymous key; then Claude Studio engineering implements the model/evaluator. No single-week model, no promotion, no grade.",
+      "authority": "catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": []
+    }
+  ],
+  "lifecycle_partition": {
+    "accepted_measured_ids": [],
+    "accepted_disposition_only_ids": [
+      "SW-261",
+      "SW-295"
+    ],
+    "rejected_ids": [],
+    "source_investigation_pending_ids": [
+      "SW-140",
+      "SW-262",
+      "SW-288"
+    ],
+    "calculation_pending_ids": [
+      "SW-135",
+      "SW-136",
+      "SW-137",
+      "SW-138",
+      "SW-139",
+      "SW-141"
+    ]
+  },
+  "stop_conditions": {
+    "inherited_canonical": [
+      "wrong_dealer",
+      "service_parts_in_sales",
+      "ambiguous_period",
+      "schema_drift",
+      "missing_provenance",
+      "protected_content_or_pii_outside_envelope",
+      "formula_or_denominator_ambiguity",
+      "incompatible_baseline",
+      "source_substitution_or_skip",
+      "dirty_or_competing_writer",
+      "production_or_customer_behavior_change"
+    ],
+    "packet_specific": [
+      "No message content read/persisted/analyzed without Duane's protected-content envelope (SPEC §5.5); no keyword proxy.",
+      "Enhanced source is capability-only (pre-admission); promotes no value; no source substitution.",
+      "Missing is never zero; no customer output; all IDs hidden."
+    ]
+  },
+  "two_delta_proof": {
+    "evidence_delta": {
+      "count": 0,
+      "of": 11,
+      "note": "J2 acquired/admitted/normalized/promoted nothing new; enhanced raw already held; registry addition is not acquisition."
+    },
+    "meaning_delta": {
+      "count": 0,
+      "of": 11,
+      "note": "No value/formula/threshold/grade authored; nothing measured/graded/scored."
+    }
+  },
+  "authority_binding": {
+    "ref": "docs/halo/contract/phase1b/pkt-02-03-binding.json",
+    "sha256": "41531eadeca87c725c6c9b0047c30c46b6e66ac27beaf6cf94c687d8af0aa23a"
+  },
+  "customer_projection": {
+    "accepted_measured_ids": [],
+    "customer_visible_ids": [],
+    "customer_report_emitted": false,
+    "note": "All 11 IDs are customer_visibility=hidden. Zero accepted_measured ⇒ no customer mini-report, finding, grade, narrative, ROI/opportunity claim, or alert. Internal coverage/two-delta evidence only."
+  },
+  "accountable_owner_roster": {
+    "Duane Wells": "protected-content authority + business definition/threshold/formula decisions (never routine technical execution)",
+    "Codex VinSolutions controller": "bounded read-only source/UI/schema investigation + governed acquisition/evidence",
+    "Claude Studio engineering": "protected provider/model/evaluator implementation + consumer admission once authorized"
+  },
+  "status": "active_authored"
+}

@@ -1,0 +1,237 @@
+{
+  "artifact": "honda-watchdog-phase1b-packet-schema-v2",
+  "schema_version": "2.0.0",
+  "frozen": true,
+  "phase": "Phase 1B — packet instance schema. Additive extension of the Phase 1A packet-schema (does not modify it): adds the lifecycle partition + partition-conditional pipeline for the finite-investigation closing model (Amendment 002).",
+  "base": "docs/halo/contract/phase1/packet-schema.json (5-12 IDs, one module, two-delta, inherited stops)",
+  "vocab_ref": "docs/halo/contract/phase1/frozen-vocabularies.json",
+  "packet_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "packet_id",
+      "module",
+      "management_question",
+      "target_ids",
+      "source_dependencies",
+      "metric_definitions",
+      "lifecycle_partition",
+      "stop_conditions",
+      "two_delta_proof",
+      "authority_binding",
+      "status"
+    ],
+    "properties": {
+      "artifact": {
+        "type": "string",
+        "nonempty": true
+      },
+      "schema": {
+        "type": "string",
+        "nonempty": true
+      },
+      "period": {
+        "type": "string",
+        "nonempty": true
+      },
+      "source_reuse_note": {
+        "type": "string",
+        "nonempty": true
+      },
+      "packet_id": {
+        "type": "string",
+        "pattern": "^PKT-\\d{2}[A-Z]?-\\d{2}$"
+      },
+      "module": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 11
+      },
+      "management_question": {
+        "type": "string",
+        "nonempty": true
+      },
+      "target_ids": {
+        "type": "array",
+        "minItems": 5,
+        "maxItems": 12,
+        "items": {
+          "type": "string",
+          "pattern": "^SW-\\d{3}$"
+        }
+      },
+      "size_reason": {
+        "type": "string",
+        "nonempty": true
+      },
+      "prerequisites": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "nonempty": true
+        }
+      },
+      "source_dependencies": {
+        "type": "array",
+        "items": {
+          "$ref": "source_dependency"
+        }
+      },
+      "metric_definitions": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "lifecycle_partition": {
+        "$ref": "lifecycle_partition"
+      },
+      "stop_conditions": {
+        "type": "object",
+        "required": [
+          "inherited_canonical",
+          "packet_specific"
+        ]
+      },
+      "two_delta_proof": {
+        "type": "object",
+        "required": [
+          "evidence_delta",
+          "meaning_delta"
+        ]
+      },
+      "acceptance": {
+        "type": "object"
+      },
+      "authority_binding": {
+        "type": "object",
+        "required": [
+          "ref",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "type": "string",
+            "pattern": "^docs/halo/contract/phase1b/pkt-\\d{2}[a-z]?-\\d{2}-binding\\.json$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "note": "Pins the exact per-metric semantic binding artifact. ref MUST equal the packet-specific canonical binding path DERIVED from packet_id (PKT-XX-YY -> docs/halo/contract/phase1b/pkt-xx-yy-binding.json), enforced by the packet validator; sha256 MUST be a lowercase 64-hex digest matching that binding file. Each metric def must EQUAL its binding record field-for-field."
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "active_authored",
+          "planned"
+        ]
+      }
+    }
+  },
+  "source_dependency_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "source_id",
+      "reuse_or_fresh",
+      "dependent_metric_ids"
+    ],
+    "properties": {
+      "source_id": {
+        "type": "string",
+        "pattern": "^SRC-[a-z_]+-\\d{4}$"
+      },
+      "reuse_or_fresh": {
+        "type": "string",
+        "enum": [
+          "reuse",
+          "fresh_acquisition"
+        ]
+      },
+      "dependent_metric_ids": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^SW-\\d{3}$"
+        }
+      }
+    }
+  },
+  "lifecycle_partition_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "accepted_measured_ids",
+      "accepted_disposition_only_ids",
+      "rejected_ids",
+      "source_investigation_pending_ids",
+      "calculation_pending_ids"
+    ],
+    "properties": {
+      "accepted_measured_ids": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^SW-\\d{3}$"
+        }
+      },
+      "accepted_disposition_only_ids": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^SW-\\d{3}$"
+        }
+      },
+      "rejected_ids": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^SW-\\d{3}$"
+        }
+      },
+      "source_investigation_pending_ids": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^SW-\\d{3}$"
+        }
+      },
+      "calculation_pending_ids": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^SW-\\d{3}$"
+        }
+      }
+    },
+    "notes": {
+      "closed": [
+        "accepted_measured_ids",
+        "accepted_disposition_only_ids"
+      ],
+      "open_blocks_module_and_final_only": [
+        "rejected_ids",
+        "source_investigation_pending_ids",
+        "calculation_pending_ids"
+      ]
+    }
+  },
+  "invariants": [
+    "module is one frozen integer 1..11; every target_id is owned by module per the frozen 295->11 map.",
+    "5 <= len(target_ids) <= 12 (or size_reason present); target_ids unique; == this packet's assignment in packet-index.json.",
+    "lifecycle_partition's five id-sets are pairwise disjoint and their union == target_ids.",
+    "source_investigation_pending_ids and accepted_disposition_only_ids are disjoint (SIP is NEVER accepted_disposition_only).",
+    "each accepted_disposition_only id has an evidence-backed terminal/allowed disposition (external_source_required / additional_history_required / genuinely_not_available / outside_sales_domain), never source_investigation_pending.",
+    "each source_dependencies[i] references a registered source_id (single fan-out; no per-packet reacquisition) and is labelled reuse vs fresh_acquisition.",
+    "PIPELINE (partition-conditional): only accepted_measured_ids may carry value/baseline/grade/narrative/customer-mini-report; accepted_disposition_only appears only in safe appendix/internal companion (ID+label, no value); rejected has no customer projection; source_investigation_pending/calculation_pending are open (no value/grade/narrative/customer projection).",
+    "open ids block only this module + final completion; they never block unrelated packets.",
+    "stop_conditions.inherited_canonical equals the Phase 1A canonical fail-closed stop names; two_delta_proof requires both deltas.",
+    "metric_definitions (when status=active_authored) each validate against the Phase 1A metric_row schema.",
+    "authority_binding.ref MUST equal the binding path derived from packet_id: PKT-XX-YY -> docs/halo/contract/phase1b/pkt-xx-yy-binding.json (lowercased); the validator derives and enforces this equality (not any-path acceptance).",
+    "authority_binding.sha256 MUST equal the sha256 of the derived binding file."
+  ],
+  "supersedes_for_new_packets": "docs/halo/contract/phase1b/packet-schema-1b.json (v1 frozen; NOT edited). Additive: identical to v1 except authority_binding.ref is packet-specific (v1 hard-coded PKT-02-01's binding path). Retains ALL frozen requirements."
+}

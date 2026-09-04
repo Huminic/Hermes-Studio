@@ -1,0 +1,457 @@
+{
+  "check": "honda_watchdog_phase1b_pkt_02_03_j2_activation",
+  "phase": "Phase 1B — PKT-02-03 J2 metadata/control activation (additive v2 packet/schema/registry; no acquisition/value)",
+  "scope": "metadata_activation_only (no acquire/read/export/analyze/admit/promote/calculate/grade/alert/customer/merge/deploy)",
+  "baseline_commit": "9837bb9f2c5e7ea753deeb2db8005e64a8852294",
+  "allowlist_files": [
+    "docs/halo/contract/phase1b/master-ledger-295.json",
+    "docs/halo/contract/phase1b/packet-index.json",
+    "docs/halo/contract/phase1b/packet-schema-1b-v2.json",
+    "docs/halo/contract/phase1b/packets/PKT-02-03.json",
+    "docs/halo/contract/phase1b/source-registry-1b-v2.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_EXECUTION_CHECKS.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_J2_TWO_DELTA.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_J2_internal_companion.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_J2_run_manifest.json",
+    "scripts/halo-phase1b/validate_pkt_02_03.py"
+  ],
+  "frozen_j1_artifacts": {
+    "docs/halo/contract/phase1b/pkt-02-03-binding.json": "41531eadeca87c725c6c9b0047c30c46b6e66ac27beaf6cf94c687d8af0aa23a",
+    "scripts/halo-phase1b/validate_pkt_02_03_binding.py": "0e2d4f476ba13fd1dfbff662855bc56fd4efff03dbd137b2e1bcdcd19753e3a7",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_BINDING_CHECKS.json": "7c0c1f858eb54ce664a193591ed4ca58dc5e029c8a889fa7ad52800569045868",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_J1_TWO_DELTA.md": "e2381804a1048d487c2d938af3300f04693d0c1365517bab021546cd7c530b52",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_J1_internal_coverage_roadmap.md": "afcaff1b1977761c17c98e91bcf38ff94c3a3a022a6b26e4b9a4ebcb9a859421"
+  },
+  "target_ids": [
+    "SW-135",
+    "SW-136",
+    "SW-137",
+    "SW-138",
+    "SW-139",
+    "SW-140",
+    "SW-141",
+    "SW-261",
+    "SW-262",
+    "SW-288",
+    "SW-295"
+  ],
+  "enhanced_source_id": "SRC-enhanced_sales_communication_log_weekly-0002",
+  "activation_time_utc": "2026-09-04T03:57:17Z",
+  "lifecycle_partition_sizes": {
+    "accepted_measured_ids": 0,
+    "accepted_disposition_only_ids": 2,
+    "rejected_ids": 0,
+    "source_investigation_pending_ids": 3,
+    "calculation_pending_ids": 6
+  },
+  "transitions_appended_total": 14,
+  "v2_controls_frozen": {
+    "packet-schema-1b-v2.json": true,
+    "source-registry-1b-v2.json": true
+  },
+  "legacy_validate_phase1b": {
+    "classification": "v1 cannot read the additive v2 source registry; the six new errors are the expected source-ID recognition consequence, not a passing result. v2 dependencies are validated by THIS validator.",
+    "expected_new_errors": [
+      "ledger SW-135: source SRC-enhanced_sales_communication_log_weekly-0002 not registered",
+      "ledger SW-136: source SRC-enhanced_sales_communication_log_weekly-0002 not registered",
+      "ledger SW-137: source SRC-enhanced_sales_communication_log_weekly-0002 not registered",
+      "ledger SW-138: source SRC-enhanced_sales_communication_log_weekly-0002 not registered",
+      "ledger SW-139: source SRC-enhanced_sales_communication_log_weekly-0002 not registered",
+      "ledger SW-141: source SRC-enhanced_sales_communication_log_weekly-0002 not registered"
+    ],
+    "now_error_count": 30,
+    "pinned_baseline_error_count": 24,
+    "pinned_baseline_signature_sha256": "f8b9496337c6ad9a1c2a80ba1dc5465062000322e8e962919c05708ba5a2e7eb",
+    "exactness": "now == pinned-baseline-24 (canonical hash) UNION exactly the six expected v2-source errors; same-count swap rejected"
+  },
+  "touched_vs_baseline": [
+    "docs/halo/contract/phase1b/master-ledger-295.json",
+    "docs/halo/contract/phase1b/packet-index.json",
+    "docs/halo/contract/phase1b/packet-schema-1b-v2.json",
+    "docs/halo/contract/phase1b/packets/PKT-02-03.json",
+    "docs/halo/contract/phase1b/source-registry-1b-v2.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_EXECUTION_CHECKS.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_J2_TWO_DELTA.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_J2_internal_companion.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_J2_run_manifest.json",
+    "scripts/halo-phase1b/validate_pkt_02_03.py"
+  ],
+  "artifact_hashes": {
+    "docs/halo/contract/phase1b/master-ledger-295.json": "b77c3c74f5e94ed5429ba8289cae82b839f98b3fd4e66db7575289499cdfd018",
+    "docs/halo/contract/phase1b/packet-index.json": "64d4bd02623302c246eda21a27de2e93aad6f43d30646e601828f6f8ade2ac72",
+    "docs/halo/contract/phase1b/packet-schema-1b-v2.json": "f137762427c74c180acf4fced19124c498a5e1fc5a8641ebc376afc47c11c5f6",
+    "docs/halo/contract/phase1b/packets/PKT-02-03.json": "71c5a2a086ba9ebcb6ad8dede26774499f9bfa7063022d10c372a268ad44b100",
+    "docs/halo/contract/phase1b/source-registry-1b-v2.json": "bcf1bdbce0c824d495b8a6b0148fd4f65e08e0dcff6db18fa1ae6954ae4f928b",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_J2_TWO_DELTA.md": "7c2406c795dc641b5c31439eeb396197bcf24f557c769c290d4bdc5dcec2dbdc",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_J2_internal_companion.md": "ca212141717f348f75ad68012fa817e8a34450682e31544e10ce77068127a775",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_J2_run_manifest.json": "c9426d5bda970ad8c7fa9d49d7cead2587918912d54f50bb2799e778d71405e8",
+    "scripts/halo-phase1b/validate_pkt_02_03.py": "9862c42efdde2f9317894ed9b3c3fdc1038d539c1d0e9302f00ed8beb165127f"
+  },
+  "adversarial_probes_total": 45,
+  "adversarial_probes_failed": 0,
+  "adversarial_probes": [
+    {
+      "probe": "self_transition",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 4,
+      "sample": "transitions SW-135: added 3 != expected 2"
+    },
+    {
+      "probe": "source_dependency_omission",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "parity SW-135: ledger.source_dependency_ids != ['SRC-enhanced_sales_communication_log_weekly-0002']"
+    },
+    {
+      "probe": "packet_dep_omission",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "parity SW-135: packet.source_dependency_ids != ['SRC-enhanced_sales_communication_log_weekly-0002']"
+    },
+    {
+      "probe": "schema_v1_hardcoded_ref",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet authority_binding.ref 'docs/halo/contract/phase1b/pkt-02-01-binding.json' != derived-from-packet-id path 'docs/halo/contract/phase1b/pkt-02-03-binding.json'"
+    },
+    {
+      "probe": "arbitrary_binding_ref",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet authority_binding.ref 'docs/halo/contract/phase1b/some-other-binding.json' != derived-from-packet-id path 'docs/halo/contract/phase1b/pkt-02-03-binding.json'"
+    },
+    {
+      "probe": "binding_sha_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet authority_binding.sha256 != pinned J1 binding sha"
+    },
+    {
+      "probe": "schema_v2_const_ref",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet-schema-v2 authority_binding.ref must NOT be a hard-coded const (packet-specific)"
+    },
+    {
+      "probe": "source_node_promotion",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "enhanced node must be acquired_local + admitted_held"
+    },
+    {
+      "probe": "source_leakage_content",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "enhanced node: stable keys / message content must be EXCLUDED from permitted committed derivative"
+    },
+    {
+      "probe": "source_freshness_corruption",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "enhanced node captured_at must reflect source freshness, not J2 activation time"
+    },
+    {
+      "probe": "source_counts_corruption",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "enhanced node aggregate_21043 counts != pinned (1530/1530/386/0/0)"
+    },
+    {
+      "probe": "v1_node_mutation",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "source-registry-v2 v1 node SRC-vinsolutions_custom_reporting_leads-0001 changed (must be byte-semantic identical)"
+    },
+    {
+      "probe": "nontarget_ledger_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "non-target ledger row SW-011 changed (must be byte-identical)"
+    },
+    {
+      "probe": "authoritative_count_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "ledger top-level (counts/version/provenance/truth) changed"
+    },
+    {
+      "probe": "service_overlay_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "non-target ledger row SW-079 changed (must be byte-identical)"
+    },
+    {
+      "probe": "customer_projection_nonempty",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet customer_projection must be empty / no report emitted"
+    },
+    {
+      "probe": "value_injection",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "parity SW-135: packet.formula != binding"
+    },
+    {
+      "probe": "binding_value_injection",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "parity SW-135: packet.formula != binding"
+    },
+    {
+      "probe": "service_parts_admitted",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "service_parts_admitted != 0"
+    },
+    {
+      "probe": "sw262_substitution",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "SW-262: source substitution (must remain multi-source join)"
+    },
+    {
+      "probe": "index_other_packet_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet-index record PKT-01-01 changed (only PKT-02-03 may change)"
+    },
+    {
+      "probe": "index_status_wrong",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "PKT-02-03 status != active_authored"
+    },
+    {
+      "probe": "enhanced_missing_second_step",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 4,
+      "sample": "transitions SW-135: added 1 != expected 2"
+    },
+    {
+      "probe": "sip_self_transition_append",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 4,
+      "sample": "transitions SW-140: added 1 != expected 0"
+    },
+    {
+      "probe": "duane_technical_next_action",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "parity SW-135: ledger.next_action != binding immediate_action.action"
+    },
+    {
+      "probe": "owner_mismap",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "parity SW-135: ledger.owner 'codex' != mapped immediate owner 'duane'"
+    },
+    {
+      "probe": "report_state_invalid",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "parity SW-135: ledger.report_acceptance_state 'authored_non_measured' not in frozen vocab"
+    },
+    {
+      "probe": "catalog_condition_tamper",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet SW-135: canonical_condition != catalog (byte)"
+    },
+    {
+      "probe": "target_id_drop",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.target_ids != exact ordered 11"
+    },
+    {
+      "probe": "registry_changed_profile",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "source-registry-v2 profile != v1 profile"
+    },
+    {
+      "probe": "registry_changed_dealer",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "source-registry-v2 dealer_id != v1 dealer_id"
+    },
+    {
+      "probe": "registry_dropped_sw013_014_invariant",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "source-registry-v2 dropped/changed a v1 invariant (additive-only)"
+    },
+    {
+      "probe": "registry_changed_v1_invariant",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "source-registry-v2 dropped/changed a v1 invariant (additive-only)"
+    },
+    {
+      "probe": "registry_changed_v1_node",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "source-registry-v2 v1 node SRC-vinsolutions_custom_reporting_leads-0001 changed (must be byte-semantic identical)"
+    },
+    {
+      "probe": "registry_changed_v1_reuse_receipt",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "source-registry-v2 v1 reuse_receipt SRC-vinsolutions_custom_reporting_leads-0001 changed (must be byte-semantic identical)"
+    },
+    {
+      "probe": "registry_frozen_false",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "source-registry-v2 must be frozen:true (frozen control at pre-commit freeze state)"
+    },
+    {
+      "probe": "schema_module_maximum_change",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet-schema-v2 packet_schema changed OUTSIDE authority_binding (non-additive: e.g. module.maximum / target_ids / required)"
+    },
+    {
+      "probe": "schema_target_ids_change",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet-schema-v2 packet_schema changed OUTSIDE authority_binding (non-additive: e.g. module.maximum / target_ids / required)"
+    },
+    {
+      "probe": "schema_source_dep_pattern_change",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet-schema-v2 source_dependency_schema != v1 (must be byte-semantic identical; non-additive change)"
+    },
+    {
+      "probe": "schema_dropped_v1_invariant",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet-schema-v2 dropped/changed a v1 invariant (must be additive)"
+    },
+    {
+      "probe": "schema_frozen_false",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet-schema-v2 must be frozen:true (frozen control at pre-commit freeze state)"
+    },
+    {
+      "probe": "legacy_same_count_swap",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "legacy: baseline 24-error signature changed (same-count swap / removed / added baseline error)"
+    },
+    {
+      "probe": "legacy_missing_expected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "legacy: total error count 29 != 24+6"
+    },
+    {
+      "probe": "legacy_extra_expected",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 5,
+      "sample": "legacy: total error count 31 != 24+6"
+    },
+    {
+      "probe": "legacy_removed_baseline_error",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 3,
+      "sample": "legacy: total error count 29 != 24+6"
+    }
+  ],
+  "errors": [],
+  "overall_pass": true,
+  "note": "Metadata-only activation: no values/formulas/grades/alerts/customer output; no content/PII/raw rows; enhanced source registered as already-held capability-only (no acquisition/admission/promotion)."
+}

@@ -3897,18 +3897,20 @@
       "packet_id": "PKT-02-03",
       "boundary_class": "sales",
       "definition_version": "0.0.0",
-      "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
-      "source_dependency_ids": [],
+      "owner": "duane",
+      "evidence_as_of": "2026-09-04T03:57:17Z",
+      "source_dependency_ids": [
+        "SRC-enhanced_sales_communication_log_weekly-0002"
+      ],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
-      "acquisition_admission_state": "not_acquired",
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-03 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "withheld_no_delivery",
+      "evidence_ref": "PKT-02-03 activation; authority pkt-02-03-binding.json (sha 41531eadeca8…); catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "next_action": "Authorize the protected-content envelope (SPEC §5.5) and ratify the 'stated deadline' extraction + deadline-vs-reply rule — authority/definition decision only.",
+      "review_point": "PKT-02-03 investigation close",
       "transitions": [
         {
           "from": null,
@@ -3916,6 +3918,20 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "crm_available_acquisition_pending",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: source field proved available in CRM (enhanced 24-col schema; capability-only, no value)"
+        },
+        {
+          "from": "crm_available_acquisition_pending",
+          "to": "data_acquired_calculation_pending",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: enhanced raw acquired locally and held (admitted_held); calculation pending, no promotion"
         }
       ]
     },
@@ -3925,18 +3941,20 @@
       "packet_id": "PKT-02-03",
       "boundary_class": "sales",
       "definition_version": "0.0.0",
-      "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
-      "source_dependency_ids": [],
+      "owner": "duane",
+      "evidence_as_of": "2026-09-04T03:57:17Z",
+      "source_dependency_ids": [
+        "SRC-enhanced_sales_communication_log_weekly-0002"
+      ],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
-      "acquisition_admission_state": "not_acquired",
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-03 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "withheld_no_delivery",
+      "evidence_ref": "PKT-02-03 activation; authority pkt-02-03-binding.json (sha 41531eadeca8…); catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "next_action": "Authorize the protected-content envelope (SPEC §5.5) and ratify the 'hot signal' taxonomy + explicit 72h silence window + anchor-event definition — authority/definition decision only.",
+      "review_point": "PKT-02-03 investigation close",
       "transitions": [
         {
           "from": null,
@@ -3944,6 +3962,20 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "crm_available_acquisition_pending",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: source field proved available in CRM (enhanced 24-col schema; capability-only, no value)"
+        },
+        {
+          "from": "crm_available_acquisition_pending",
+          "to": "data_acquired_calculation_pending",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: enhanced raw acquired locally and held (admitted_held); calculation pending, no promotion"
         }
       ]
     },
@@ -3954,17 +3986,19 @@
       "boundary_class": "sales",
       "definition_version": "0.0.0",
       "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
-      "source_dependency_ids": [],
+      "evidence_as_of": "2026-09-04T03:57:17Z",
+      "source_dependency_ids": [
+        "SRC-enhanced_sales_communication_log_weekly-0002"
+      ],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
-      "acquisition_admission_state": "not_acquired",
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-03 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "withheld_no_delivery",
+      "evidence_ref": "PKT-02-03 activation; authority pkt-02-03-binding.json (sha 41531eadeca8…); catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "next_action": "Bounded read-only investigation of whether authoritative sub-minute/message-sequence ordering is obtainable.",
+      "review_point": "PKT-02-03 investigation close",
       "transitions": [
         {
           "from": null,
@@ -3972,6 +4006,20 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "crm_available_acquisition_pending",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: source field proved available in CRM (enhanced 24-col schema; capability-only, no value)"
+        },
+        {
+          "from": "crm_available_acquisition_pending",
+          "to": "data_acquired_calculation_pending",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: enhanced raw acquired locally and held (admitted_held); calculation pending, no promotion"
         }
       ]
     },
@@ -3981,18 +4029,20 @@
       "packet_id": "PKT-02-03",
       "boundary_class": "sales",
       "definition_version": "0.0.0",
-      "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
-      "source_dependency_ids": [],
+      "owner": "duane",
+      "evidence_as_of": "2026-09-04T03:57:17Z",
+      "source_dependency_ids": [
+        "SRC-enhanced_sales_communication_log_weekly-0002"
+      ],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
-      "acquisition_admission_state": "not_acquired",
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-03 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "withheld_no_delivery",
+      "evidence_ref": "PKT-02-03 activation; authority pkt-02-03-binding.json (sha 41531eadeca8…); catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "next_action": "Ratify the rapid-fire count N + window T + no-intervening-inbound rule — definition decision only.",
+      "review_point": "PKT-02-03 investigation close",
       "transitions": [
         {
           "from": null,
@@ -4000,6 +4050,20 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "crm_available_acquisition_pending",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: source field proved available in CRM (enhanced 24-col schema; capability-only, no value)"
+        },
+        {
+          "from": "crm_available_acquisition_pending",
+          "to": "data_acquired_calculation_pending",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: enhanced raw acquired locally and held (admitted_held); calculation pending, no promotion"
         }
       ]
     },
@@ -4009,18 +4073,20 @@
       "packet_id": "PKT-02-03",
       "boundary_class": "sales",
       "definition_version": "0.0.0",
-      "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
-      "source_dependency_ids": [],
+      "owner": "duane",
+      "evidence_as_of": "2026-09-04T03:57:17Z",
+      "source_dependency_ids": [
+        "SRC-enhanced_sales_communication_log_weekly-0002"
+      ],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
-      "acquisition_admission_state": "not_acquired",
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-03 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "withheld_no_delivery",
+      "evidence_ref": "PKT-02-03 activation; authority pkt-02-03-binding.json (sha 41531eadeca8…); catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "next_action": "Authorize the protected-content envelope (SPEC §5.5) and ratify the 'stated callback time' extraction + follow-up-before-callback rule — authority/definition decision only.",
+      "review_point": "PKT-02-03 investigation close",
       "transitions": [
         {
           "from": null,
@@ -4028,6 +4094,20 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "crm_available_acquisition_pending",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: source field proved available in CRM (enhanced 24-col schema; capability-only, no value)"
+        },
+        {
+          "from": "crm_available_acquisition_pending",
+          "to": "data_acquired_calculation_pending",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: enhanced raw acquired locally and held (admitted_held); calculation pending, no promotion"
         }
       ]
     },
@@ -4038,17 +4118,17 @@
       "boundary_class": "sales",
       "definition_version": "0.0.0",
       "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "evidence_as_of": "2026-09-04T03:57:17Z",
       "source_dependency_ids": [],
       "authoritative": false,
       "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
+      "source_existence_state": "investigation_pending",
       "acquisition_admission_state": "not_acquired",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-03 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "withheld_no_delivery",
+      "evidence_ref": "PKT-02-03 activation; authority pkt-02-03-binding.json (sha 41531eadeca8…); catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "next_action": "Finite, read-only UI/schema investigation for an inbound customer-voicemail event (or identify a named external telephony source).",
+      "review_point": "PKT-02-03 investigation close",
       "transitions": [
         {
           "from": null,
@@ -4065,18 +4145,20 @@
       "packet_id": "PKT-02-03",
       "boundary_class": "sales",
       "definition_version": "0.0.0",
-      "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
-      "source_dependency_ids": [],
+      "owner": "duane",
+      "evidence_as_of": "2026-09-04T03:57:17Z",
+      "source_dependency_ids": [
+        "SRC-enhanced_sales_communication_log_weekly-0002"
+      ],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
-      "acquisition_admission_state": "not_acquired",
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-03 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "withheld_no_delivery",
+      "evidence_ref": "PKT-02-03 activation; authority pkt-02-03-binding.json (sha 41531eadeca8…); catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "next_action": "Authorize the protected-content envelope (SPEC §5.5) and ratify the high-intent taxonomy + explicit weekend/evening window + 2-day no-response rule — authority/definition decision only.",
+      "review_point": "PKT-02-03 investigation close",
       "transitions": [
         {
           "from": null,
@@ -4084,6 +4166,20 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "crm_available_acquisition_pending",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: source field proved available in CRM (enhanced 24-col schema; capability-only, no value)"
+        },
+        {
+          "from": "crm_available_acquisition_pending",
+          "to": "data_acquired_calculation_pending",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: enhanced raw acquired locally and held (admitted_held); calculation pending, no promotion"
         }
       ]
     },
@@ -7438,18 +7534,18 @@
       "packet_id": "PKT-02-03",
       "boundary_class": "sales",
       "definition_version": "0.0.0",
-      "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "owner": "duane",
+      "evidence_as_of": "2026-09-04T03:57:17Z",
       "source_dependency_ids": [],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
+      "disposition": "additional_history_required",
+      "source_existence_state": "proved_requires_more_history",
       "acquisition_admission_state": "not_acquired",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-03 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "withheld_no_delivery",
+      "evidence_ref": "PKT-02-03 activation; authority pkt-02-03-binding.json (sha 41531eadeca8…); catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "next_action": "Ratify the best-time model + minimum-history spec + accuracy/abstention thresholds — business decision only.",
+      "review_point": "PKT-02-03 investigation close",
       "transitions": [
         {
           "from": null,
@@ -7457,6 +7553,13 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "additional_history_required",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: proved requires more history (multi-week); non-authoritative, no value"
         }
       ]
     },
@@ -7466,18 +7569,18 @@
       "packet_id": "PKT-02-03",
       "boundary_class": "sales",
       "definition_version": "0.0.0",
-      "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "owner": "duane",
+      "evidence_as_of": "2026-09-04T03:57:17Z",
       "source_dependency_ids": [],
       "authoritative": false,
       "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
+      "source_existence_state": "investigation_pending",
       "acquisition_admission_state": "not_acquired",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-03 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "withheld_no_delivery",
+      "evidence_ref": "PKT-02-03 activation; authority pkt-02-03-binding.json (sha 41531eadeca8…); catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "next_action": "Freeze the exact multi-source join dependency + formula decision (which of Leads/Comm/Appointments/CRM Sales/CAGE/ROI) — business decision only, before any source is chosen.",
+      "review_point": "PKT-02-03 investigation close",
       "transitions": [
         {
           "from": null,
@@ -8197,18 +8300,18 @@
       "packet_id": "PKT-02-03",
       "boundary_class": "sales",
       "definition_version": "0.0.0",
-      "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "owner": "duane",
+      "evidence_as_of": "2026-09-04T03:57:17Z",
       "source_dependency_ids": [],
       "authoritative": false,
       "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
+      "source_existence_state": "investigation_pending",
       "acquisition_admission_state": "not_acquired",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-03 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "withheld_no_delivery",
+      "evidence_ref": "PKT-02-03 activation; authority pkt-02-03-binding.json (sha 41531eadeca8…); catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "next_action": "Ratify the component set (response-time, message-balance, thread-momentum) + weights + composite formula, and decide the SW-134 resolution — business decision only.",
+      "review_point": "PKT-02-03 investigation close",
       "transitions": [
         {
           "from": null,
@@ -8394,18 +8497,18 @@
       "packet_id": "PKT-02-03",
       "boundary_class": "sales",
       "definition_version": "0.0.0",
-      "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "owner": "duane",
+      "evidence_as_of": "2026-09-04T03:57:17Z",
       "source_dependency_ids": [],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
+      "disposition": "additional_history_required",
+      "source_existence_state": "proved_requires_more_history",
       "acquisition_admission_state": "not_acquired",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-03 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "withheld_no_delivery",
+      "evidence_ref": "PKT-02-03 activation; authority pkt-02-03-binding.json (sha 41531eadeca8…); catalog condition (verbatim) + SPEC §5.5 (protected-content) + enhanced-weekly pre-admission contract + comm-admission-aggregates (21043) + Gate 4H accountability; no gate2/baseline authority exists for this ID",
+      "next_action": "Ratify the best-channel/best-time model + minimum-history spec + accuracy/abstention thresholds — business decision only.",
+      "review_point": "PKT-02-03 investigation close",
       "transitions": [
         {
           "from": null,
@@ -8413,6 +8516,13 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "additional_history_required",
+          "at": "2026-09-04T03:57:17Z",
+          "by": "codex",
+          "reason": "PKT-02-03 activation: proved requires more history (multi-week); non-authoritative, no value"
         }
       ]
     }
