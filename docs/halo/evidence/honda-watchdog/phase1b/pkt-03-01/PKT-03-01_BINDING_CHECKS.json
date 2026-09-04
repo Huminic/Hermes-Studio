@@ -1,0 +1,521 @@
+{
+  "check": "honda_watchdog_phase1b_pkt_03_01_binding",
+  "phase": "Phase 1B — PKT-03-01 J1 authority binding (Module 3; 4 accepted carry-forward + 8 held; design-only, additive)",
+  "scope": "authority_binding_and_validation_gate_only (no calculate/acquire/admit/promote/grade/alert/customer output)",
+  "baseline_commit": "c9e4c760ad72ad6620e20a094c5530a3a69e0791",
+  "binding_file": "docs/halo/contract/phase1b/pkt-03-01-binding.json",
+  "binding_sha256": "e92a181f2a8016085011358ff256f627b2c11f09e4f37109f4276ecbfce10f8e",
+  "target_ids": [
+    "SW-031",
+    "SW-032",
+    "SW-033",
+    "SW-034",
+    "SW-035",
+    "SW-036",
+    "SW-037",
+    "SW-038",
+    "SW-039",
+    "SW-040",
+    "SW-041",
+    "SW-042"
+  ],
+  "accepted_measured_ids": [
+    "SW-031",
+    "SW-032",
+    "SW-033",
+    "SW-041"
+  ],
+  "held_ids": [
+    "SW-034",
+    "SW-035",
+    "SW-036",
+    "SW-037",
+    "SW-038",
+    "SW-039",
+    "SW-040",
+    "SW-042"
+  ],
+  "customer_emission_authority": false,
+  "lifecycle_partition_sizes": {
+    "accepted_measured_ids": 4,
+    "accepted_disposition_only_ids": 0,
+    "rejected_ids": 0,
+    "source_investigation_pending_ids": 8,
+    "calculation_pending_ids": 0
+  },
+  "pinned_source_hashes": {
+    "feasibility_matrix": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+    "gate2_evaluator": "9bdc266438befe562b5197891e68afc15c797338b29152bb3aaf341a6f28fdd4",
+    "baseline_registry": "86de75c49946557153e0e46e2131302a6fc12117862fdd6383c0c88c320da8c4",
+    "gate5b_report_model_21043": "04c3f965e1d087e9f5835d69e14a368d24c6af5a10743e593d9dc54516f129eb",
+    "master_ledger_295": "b77c3c74f5e94ed5429ba8289cae82b839f98b3fd4e66db7575289499cdfd018",
+    "sw042_evidence_gap": "1714aad7b8cd4eaf44e4f3a62ba652b0f61886e61f042b274377deee0e1fab7b",
+    "native_scheduled_evidence": "13c0fca11241c5608d7da1e434383a4e881c886ecbd696414bebdd5a8db636c6",
+    "appointments_workbook_report_4800": "ef2a2b1a5fb638b620bd1997ffd73f1f54a615c36fbebf9b7bdaa79508fcef4"
+  },
+  "two_delta": {
+    "evidence_delta": {
+      "count": 0,
+      "of": 12,
+      "note": "the four accepted metrics are carry-forward (not new evidence); the eight held acquired nothing."
+    },
+    "meaning_delta": {
+      "count": 0,
+      "of": 12,
+      "note": "no value/grade authored or changed; carry-forward preserved; held produce none."
+    }
+  },
+  "allowlist_files": [
+    "docs/halo/contract/phase1b/pkt-03-01-binding.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_BINDING_CHECKS.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_J1_TWO_DELTA.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_J1_internal_coverage_roadmap.md",
+    "scripts/halo-phase1b/validate_pkt_03_01_binding.py"
+  ],
+  "touched_vs_baseline": [
+    "docs/halo/contract/phase1b/pkt-03-01-binding.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_BINDING_CHECKS.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_J1_TWO_DELTA.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_J1_internal_coverage_roadmap.md",
+    "scripts/halo-phase1b/validate_pkt_03_01_binding.py"
+  ],
+  "adversarial_probes_total": 54,
+  "adversarial_probes_failed": 0,
+  "adversarial_probes": [
+    {
+      "probe": "accepted_value_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "accepted SW-032: accepted_evaluation != pinned gate5b evaluation (value/target/rating/provenance drift)"
+    },
+    {
+      "probe": "accepted_target_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "accepted SW-031: ot_anchor.threshold != baseline OT (target drift)"
+    },
+    {
+      "probe": "accepted_threshold_field_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "accepted SW-031: threshold != baseline OT"
+    },
+    {
+      "probe": "accepted_provenance_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "accepted SW-041: accepted_evaluation != pinned gate5b evaluation (value/target/rating/provenance drift)"
+    },
+    {
+      "probe": "accepted_regrade",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "accepted SW-033: accepted_evaluation != pinned gate5b evaluation (value/target/rating/provenance drift)"
+    },
+    {
+      "probe": "gate2_anchor_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "accepted SW-032: formula != gate2"
+    },
+    {
+      "probe": "current_truth_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "carry-forward SW-031: binding current_truth_ref != ledger current_truth_ref"
+    },
+    {
+      "probe": "carry_forward_ledger_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "carry-forward SW-031: master-ledger row changed vs baseline (must be byte-identical)"
+    },
+    {
+      "probe": "authoritative_count_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "authoritative_evaluated != 17"
+    },
+    {
+      "probe": "customer_emission_true",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "customer_emission_authority must be FALSE in J1"
+    },
+    {
+      "probe": "customer_visible_nonempty",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "customer_projection: no visible ids / no report emitted"
+    },
+    {
+      "probe": "accepted_customer_projection_value",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "SW-032: customer_projection must be null (no customer output)"
+    },
+    {
+      "probe": "sw042_pii_read",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held SW-042: missing_not_zero true + content_bytes_read false required"
+    },
+    {
+      "probe": "sw042_promotion",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 3,
+      "sample": "held SW-042: must be source_investigation_pending / not_measured"
+    },
+    {
+      "probe": "sw042_unbounded_discovery",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "SW-042: immediate discovery must be the bounded one-help/one-UI/one-probe pass"
+    },
+    {
+      "probe": "sw034_candidate_as_accepted",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "SW-034: source_family must be crm_sales_gross (Deal Performance is candidate-only, not accepted)"
+    },
+    {
+      "probe": "fabricated_value_on_held",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held SW-035: formula must be null"
+    },
+    {
+      "probe": "held_accepted_evaluation_injection",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held SW-036: must not carry an accepted_evaluation / carry_forward"
+    },
+    {
+      "probe": "sw038_absence_inference_unavailable",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 3,
+      "sample": "held SW-038: must be source_investigation_pending / not_measured"
+    },
+    {
+      "probe": "sw039_premature_external",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 3,
+      "sample": "held SW-039: must be source_investigation_pending / not_measured"
+    },
+    {
+      "probe": "stage_history_requirement_drop",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "SW-040: missing_or_quarantine_evidence must describe the missing status/transition export (no blank/fabricated requirement)"
+    },
+    {
+      "probe": "sw035_90d_drop",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "SW-035: must preserve the 90-day baseline requirement"
+    },
+    {
+      "probe": "quarantined_source_use",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "SW-034: source_family must be crm_sales_gross (Deal Performance is candidate-only, not accepted)"
+    },
+    {
+      "probe": "service_parts_admitted",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "service_parts_admitted must be 0"
+    },
+    {
+      "probe": "generic_owner",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 3,
+      "sample": "SW-035: owner 'Huminic Semantic Watchdog pipeline' not accountable"
+    },
+    {
+      "probe": "duane_technical_role",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "SW-042: Duane on technical role 'timestamp_acquisition'"
+    },
+    {
+      "probe": "duane_technical_action",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "SW-035: Duane owns a technical action (forbidden)"
+    },
+    {
+      "probe": "nonzero_two_delta",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "two_delta evidence must be 0/12"
+    },
+    {
+      "probe": "order_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "metrics keys != exact ordered 12 (got ['SW-042', 'SW-041', 'SW-040', 'SW-039', 'SW-038', 'SW-037', 'SW-036', 'SW-035', 'SW-034', 'SW-033', 'SW-032', 'SW-031'])"
+    },
+    {
+      "probe": "id_drop",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "metrics keys != exact ordered 12 (got ['SW-031', 'SW-032', 'SW-033', 'SW-034', 'SW-035', 'SW-036', 'SW-037', 'SW-038', 'SW-039', 'SW-041', 'SW-042'])"
+    },
+    {
+      "probe": "scope_drift_question",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "management_question != exact required text (scope drift)"
+    },
+    {
+      "probe": "accepted_partition_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "lifecycle_partition overlap/union != 12"
+    },
+    {
+      "probe": "held_gradable_true",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held SW-034: gradable/alert must be False"
+    },
+    {
+      "probe": "held_future_display_true",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held SW-036: future_display_eligibility must be False"
+    },
+    {
+      "probe": "vocab_violation",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "held SW-037: must be source_investigation_pending / not_measured"
+    },
+    {
+      "probe": "accepted_owner_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "SW-031: accountable_owners role->owner map drift (immutable)"
+    },
+    {
+      "probe": "accepted_immediate_owner_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "SW-032: immediate_action.owner != next_action_owner"
+    },
+    {
+      "probe": "accepted_next_owner_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "SW-033: immediate_action.owner != next_action_owner"
+    },
+    {
+      "probe": "held_action_owner_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "SW-035: next_action_owner drift (expected Duane Wells)"
+    },
+    {
+      "probe": "role_owner_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "SW-034: Duane on technical role 'read_only_dated_pull_and_bridge_investigation'"
+    },
+    {
+      "probe": "sw036_delete_missing",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 6,
+      "sample": "SW-036: missing_or_quarantine_evidence must not be empty"
+    },
+    {
+      "probe": "sw036_drop_last_activity",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "SW-036: required gap marker 'last-activity' missing from missing_or_quarantine_evidence (open-pipeline/last-activity/21-day/join-formula)"
+    },
+    {
+      "probe": "sw037_delete_missing",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 6,
+      "sample": "SW-037: missing_or_quarantine_evidence must not be empty"
+    },
+    {
+      "probe": "sw037_drop_intake_window",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "SW-037: required gap marker '7-day' missing from missing_or_quarantine_evidence (pipeline-denominator/7-day-intake/join-formula)"
+    },
+    {
+      "probe": "sw038_absence_as_proof_text",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "SW-038: absence-inference language asserts ['means zero', 'nothing found means'] (absence/negative-search is not proof; missing is not zero)"
+    },
+    {
+      "probe": "sw039_conclude_unavailable_on_empty",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "SW-039: absence-inference language asserts ['record zero', 'conclude unavailable'] (absence/negative-search is not proof; missing is not zero)"
+    },
+    {
+      "probe": "sw040_missing_as_zero",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "SW-040: absence-inference language asserts ['missing as zero'] (absence/negative-search is not proof; missing is not zero)"
+    },
+    {
+      "probe": "sw042_retain_raw_rows_text",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 3,
+      "sample": "SW-042: 'raw row' appears without a nearby negation in its clause (must be explicitly excluded, per-target)"
+    },
+    {
+      "probe": "sw042_export_pii_text",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "SW-042: 'message content' appears without a nearby negation in its clause (must be explicitly excluded, per-target)"
+    },
+    {
+      "probe": "sw042_drop_exclusion_language",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 4,
+      "sample": "SW-042: discovery must be field-minimized/aggregate-only with no PII"
+    },
+    {
+      "probe": "sw042_partial_negation_raw_row",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "SW-042: 'raw row' appears without a nearby negation in its clause (must be explicitly excluded, per-target)"
+    },
+    {
+      "probe": "sw042_partial_negation_message_content",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "SW-042: 'message content' appears without a nearby negation in its clause (must be explicitly excluded, per-target)"
+    },
+    {
+      "probe": "nonallowlist_path_touch",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "files touched outside allowlist: ['src/server/brain-schema.ts']"
+    },
+    {
+      "probe": "claude_staged",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": ".claude/ is staged (forbidden)"
+    }
+  ],
+  "errors": [],
+  "overall_pass": true,
+  "note": "Four accepted metrics are carry-forward (pinned gate5b/gate2/baseline; not recalculated/regraded); eight held are source_investigation_pending. No customer output; missing is not zero; zero Service/Parts; quarantined families unusable."
+}
