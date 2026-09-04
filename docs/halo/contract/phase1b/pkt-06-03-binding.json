@@ -1,0 +1,1275 @@
+{
+  "artifact": "pkt-06-03-binding",
+  "version": "1.0.0",
+  "packet_id": "PKT-06-03",
+  "module": 6,
+  "scope": "authority_binding_and_validation_gate_only",
+  "state": "freeze_candidate",
+  "immutable_after_independent_pass": false,
+  "note": "PKT-06-03 J1 freeze-candidate binding. Design-only, additive, CREATE-only. ALL twelve are held source_investigation_pending (none accepted/measured/graded). The communication corpus is SUPPORTING context only (never promoted); it lacks stable Communication/Lead/Global-Customer/native-thread IDs and labels are not identifiers or findings. Every condition uses conditional presently-not-proved wording and is content-dependent (reads no content; future evaluation requires a protected-content/NLP envelope). Interpretation labels (didn't read / unclear discovery / dodging / emotion / intent / alignment / personalization) are unproved labels, not facts. SW-158: no missing-handoff inference without a governed event/source; SW-200: no poor-discovery inference from changing interest without a rule and stable chronology. No target appears in any evaluation authority; authoritative_evaluated remains exactly 17. No activation, no ledger/index change, no J2. Evidence delta 0/12, meaning delta 0/12. J1 customer emission authority=false.",
+  "management_question": "How effectively do Serra Honda Sales conversations recognize customer needs, mirror urgency, preserve prior context, support finance handoffs, communicate at the customer's language and reading level, answer repeated questions, and personalize next steps—and which signals can be governed without turning semantic interpretations into accusations?",
+  "dealer_scope": {
+    "profile": "serra-honda",
+    "dealer_name": "Serra Honda of Sylacauga",
+    "dealer_id": "21043",
+    "domain": "Sales",
+    "service_parts_admitted": 0,
+    "service_source_admitted": 0,
+    "cross_rooftop_admitted": 0
+  },
+  "period": "2026-08-24..2026-08-30",
+  "customer_emission_authority": false,
+  "customer_projection": null,
+  "packet_accounting_assertion": {
+    "conditions": 295,
+    "modules": 11,
+    "packets": 30
+  },
+  "packet_membership_order": [
+    "SW-158",
+    "SW-159",
+    "SW-185",
+    "SW-200",
+    "SW-201",
+    "SW-202",
+    "SW-203",
+    "SW-205",
+    "SW-206",
+    "SW-285",
+    "SW-287",
+    "SW-289"
+  ],
+  "accountable_owner_roster": {
+    "codex": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+    "studio": "Claude Studio engineering (binding author; later implementer)",
+    "duane": "Duane (business/design/protected-content/threshold decision authority only)"
+  },
+  "accepted_measured_authority": {
+    "ids": [],
+    "authoritative_evaluated_total": 17,
+    "carry_forward": false,
+    "recomputed": false,
+    "sources": [],
+    "note": "PKT-06-03 introduces ZERO authoritative/accepted metrics; all twelve are held source_investigation_pending. authoritative_evaluated remains exactly 17 (unchanged)."
+  },
+  "authority_absence_assertion": {
+    "ids_checked": [
+      "SW-158",
+      "SW-159",
+      "SW-185",
+      "SW-200",
+      "SW-201",
+      "SW-202",
+      "SW-203",
+      "SW-205",
+      "SW-206",
+      "SW-285",
+      "SW-287",
+      "SW-289"
+    ],
+    "in_gate2_evaluable_conditions": [],
+    "in_baseline_operational_targets": [],
+    "in_gate5b_evaluated": [],
+    "statement": "None of the 12 target IDs appears in any evaluation authority; therefore no value/grade/formula/threshold/baseline/detection rule may be authored for any of them; all remain held source_investigation_pending."
+  },
+  "permanent_rules": [
+    "Honda Serra 21043 Sales only; Service/Parts/service-source/cross-rooftop admitted = 0.",
+    "Missing is not zero; unproved is not unavailable. No proxy, inference, synthetic source, invented denominator, or inferred history.",
+    "The communication corpus is held as SUPPORTING context only; never erased, never promoted; it lacks stable Communication/Lead/Global-Customer/native-thread IDs; labels are not identifiers or findings; component classes support only.",
+    "For every condition no absolute claim of source/export absence or predetermined external requirement is made; a finite read-only VinSolutions field/key/cardinality/chronology check runs first, then a named external/product-support source only if necessary.",
+    "Every condition is content-dependent: J1 reads NO message content and stores no raw content/quotes/PII/customer/employee identifiers; any future evaluation requires an explicit protected-content/NLP envelope, data minimization, stable identities, and Duane authority; no accusations or quotes.",
+    "Interpretation labels (didn't read / unclear discovery / dodging / emotion / intent / alignment / personalization) are unproved labels, not facts; cause and motive must not be diagnosed.",
+    "SW-158: a missing special-finance handoff must NOT be inferred without a governed handoff event/source.",
+    "SW-200: poor discovery must NOT be inferred from changing vehicle interest without a rule and a stable chronology.",
+    "Do not use, normalize, or cure any quarantined source family based on clean rows.",
+    "J1 customer emission authority=false: no customer-visible output/report/finding/alert/notification.",
+    "Duane owns only semantics, thresholds, handoff/urgency/needs definitions, protected-content authority, and outcome changes; never technical investigation/acquisition/admission/accumulation/normalization/calculation/implementation; a named external/Vin owner only after a finite investigation proves need.",
+    "Catalog starter phrases (e.g. '3+ times', 'twice') are NOT ratified thresholds and must not be treated as authority."
+  ],
+  "source_family_slices": {
+    "credit_urgency": [
+      "SW-158",
+      "SW-159"
+    ],
+    "repeated_info_context": [
+      "SW-185"
+    ],
+    "vehicle_needs_discovery": [
+      "SW-200",
+      "SW-201"
+    ],
+    "language_readability": [
+      "SW-202",
+      "SW-203"
+    ],
+    "emotional_repeated_questions": [
+      "SW-205",
+      "SW-206"
+    ],
+    "intent_alignment_personalization": [
+      "SW-285",
+      "SW-287",
+      "SW-289"
+    ]
+  },
+  "lifecycle_partition": {
+    "target_ids": [
+      "SW-158",
+      "SW-159",
+      "SW-185",
+      "SW-200",
+      "SW-201",
+      "SW-202",
+      "SW-203",
+      "SW-205",
+      "SW-206",
+      "SW-285",
+      "SW-287",
+      "SW-289"
+    ],
+    "accepted_measured_ids": [],
+    "accepted_disposition_only_ids": [],
+    "rejected_ids": [],
+    "source_investigation_pending_ids": [
+      "SW-158",
+      "SW-159",
+      "SW-185",
+      "SW-200",
+      "SW-201",
+      "SW-202",
+      "SW-203",
+      "SW-205",
+      "SW-206",
+      "SW-285",
+      "SW-287",
+      "SW-289"
+    ],
+    "calculation_pending_ids": []
+  },
+  "service_parts_zero_admission": {
+    "service_parts_admitted": 0,
+    "held_families": [
+      "finance_handoff_source_unproved",
+      "urgency_mirror_source_unproved",
+      "repeated_info_source_unproved",
+      "changing_interest_source_unproved",
+      "need_confirmation_source_unproved",
+      "language_mismatch_source_unproved",
+      "reading_level_source_unproved",
+      "emotional_escalation_source_unproved",
+      "dodging_source_unproved",
+      "intent_classifier_source_unproved",
+      "answer_alignment_source_unproved",
+      "personalization_source_unproved"
+    ],
+    "quarantined_families": [
+      "cage_kpi",
+      "lead_source_roi",
+      "sales_comm_log"
+    ],
+    "quarantine_rule": "quarantined families are TERMINAL and must not be used/normalized/cured on clean rows",
+    "note": "The communication corpus and known component classes are SUPPORTING context only. The twelve conditions require a finite VinSolutions-or-named-external read-only check (no CRM proxy) and read no content. None uses a quarantined family; none admits Service/Parts."
+  },
+  "cross_dealer_exclusion": {
+    "excluded_dealers": [
+      {
+        "profile": "serra-nissan",
+        "dealer_id": "21044"
+      },
+      {
+        "profile": "tony-serra-ford",
+        "dealer_id": "21047"
+      }
+    ],
+    "note": "No Nissan (21044) or Ford (21047) source, delivery, or scope is admitted."
+  },
+  "prior_packets_preserved": {
+    "pkt_02_03_status": "open/held (not reopened, not closed)",
+    "sw_137_investigation": "exhausted; not repeated",
+    "sw_140_investigation": "exhausted; not repeated",
+    "files_must_remain_byte_identical": [
+      "docs/halo/contract/phase1b/pkt-02-03-binding.json",
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_SW-137_DISCOVERY_RESULT.json",
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_SW-140_DISCOVERY_RESULT.json"
+    ]
+  },
+  "two_delta": {
+    "evidence_delta": {
+      "count": 0,
+      "of": 12,
+      "reason": "design-only; no source acquired/admitted this tranche"
+    },
+    "meaning_delta": {
+      "count": 0,
+      "of": 12,
+      "reason": "no value/grade/finding produced; all twelve held"
+    }
+  },
+  "pins": {
+    "baseline_commit": "76ddfde6ffc52233b04155409f22e67c6242f5dd",
+    "catalog_sha256_expected": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1"
+  },
+  "pinned_source_hashes": {
+    "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+    "docs/halo/contract/gate2-evaluator-contract.json": "9bdc266438befe562b5197891e68afc15c797338b29152bb3aaf341a6f28fdd4",
+    "docs/halo/contract/baseline-registry.json": "86de75c49946557153e0e46e2131302a6fc12117862fdd6383c0c88c320da8c4",
+    "docs/halo/evidence/m1r/gate5b/gate5b-report-model-21043.json": "04c3f965e1d087e9f5835d69e14a368d24c6af5a10743e593d9dc54516f129eb",
+    "docs/halo/contract/phase1b/master-ledger-295.json": "a5e4dd0b00ddfb48642d342a0bef0c49cb40a85d3bb375879e636b3d5cc7543a",
+    "docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json": "13c0fca11241c5608d7da1e434383a4e881c886ecbd696414bebdd5a8db636c6"
+  },
+  "legacy_validator": {
+    "file": "scripts/halo-phase1b/validate_phase1b.py",
+    "pinned_baseline_count": 30,
+    "pinned_baseline_signature_sha256": "2cbf86a6361f4c67803807d5d7d7d496413a4b20924da42516ff80d7d3d46783",
+    "delta_new": 0,
+    "classification": "J1 is CREATE-only and changes no ledger/gate authority, so validate_phase1b.py remains the pinned canonical 30-error signature UNION 0 new; same-count substitution rejected."
+  },
+  "validator": "scripts/halo-phase1b/validate_pkt_06_03_binding.py",
+  "checks_receipt": "docs/halo/evidence/honda-watchdog/phase1b/pkt-06-03/PKT-06-03_BINDING_CHECKS.json",
+  "metrics": [
+    {
+      "id": "SW-158",
+      "canonical_condition": "Customer mentions credit challenge — no special finance handoff.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does a customer mention a credit challenge with no special-finance handoff (a provisional signal)?",
+      "population": "Serra Honda 21043 Sales customer communications only",
+      "history_requirement": "Requires stable identity/chronology (and governed event source where applicable) and ratified semantics; corpus supports investigation only.",
+      "calculation_kind_intent": "finance_handoff_flag",
+      "unit_intent": "flag/score (undefined until stable identity/chronology + semantics are proved/ratified)",
+      "source_family_intent": "finance_handoff_source_unproved",
+      "source_family_slice": "credit_urgency",
+      "required_direct_fields_or_keys": [
+        "stable_message_identity",
+        "stable_thread_identity",
+        "message_chronology",
+        "finance_handoff_semantics"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the governed communication corpus (3,211 sales-only events across 905 customer labels; 370 inbound / 2,841 outbound; 1,517 texts / 1,133 logged calls / 561 emails; 36 provisional high-intent rows; 49 repeated-template groups; 34 provisional chasing threads) is KNOWN and supports investigation only, held as SUPPORTING context only",
+        "the source lacks stable Communication, Lead, Global Customer, and native thread IDs; customer labels and provisional labels are NOT stable linkage and are not identifiers or findings; known finance/urgency/context component classes support only",
+        "no condition-complete governed source/key/history/rule is presently proved or found; a finite read-only VinSolutions field/key/cardinality/chronology check must run first, then a named external/product-support source only if necessary; this is NOT predetermined and nonexistence is NOT claimed",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; the corpus must not be promoted for clean rows; no quarantined-source cure",
+        "it does NOT prove a credit-challenge mention, a special-finance handoff event/source, or the linkage; a missing handoff must NOT be inferred without a governed handoff event/source; stable identity is unproved; cause/motive must not be diagnosed",
+        "message content is NOT read in J1; no raw content, quotes, PII, or customer/employee identifiers are stored; any future finance-handoff evaluation requires an explicit protected-content/NLP envelope, data minimization, stable identities, and Duane authority; no accusations or quotes"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of stable message/thread identity and chronology (and governed handoff/event source where applicable; no content read)",
+        "Duane authorization of the protected-content/NLP envelope and ratification of the finance-handoff rule/definition",
+        "Studio implementation under the authorized protected envelope after identity/chronology proof + rule (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "finance_handoff_identity_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_finance_handoff_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "finance_handoff_nlp_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether stable message/thread identity, chronology, and (where applicable) a governed handoff/event source exist for this condition; aggregate-only, NO content read, no PII/raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the finance-handoff rule/definition (authority/definition decision only; content remains unread; interpretation labels are not diagnoses or accusations)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the finance-handoff classifier/detection under the authorized protected envelope after identity/chronology proof + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-06-03 activation (J2), after identity/chronology proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only stable-identity/chronology (and governed event source where applicable) check; aggregate-only, NO content read, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-159",
+      "canonical_condition": "Customer expresses urgency (\"this weekend\", \"before month-end\") with no urgency mirrored back.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does a customer express urgency with no urgency mirrored back (a provisional signal)?",
+      "population": "Serra Honda 21043 Sales customer communications only",
+      "history_requirement": "Requires stable identity/chronology (and governed event source where applicable) and ratified semantics; corpus supports investigation only.",
+      "calculation_kind_intent": "urgency_mirror_flag",
+      "unit_intent": "flag/score (undefined until stable identity/chronology + semantics are proved/ratified)",
+      "source_family_intent": "urgency_mirror_source_unproved",
+      "source_family_slice": "credit_urgency",
+      "required_direct_fields_or_keys": [
+        "stable_message_identity",
+        "stable_thread_identity",
+        "message_chronology",
+        "urgency_mirror_semantics"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the governed communication corpus (3,211 sales-only events across 905 customer labels; 370 inbound / 2,841 outbound; 1,517 texts / 1,133 logged calls / 561 emails; 36 provisional high-intent rows; 49 repeated-template groups; 34 provisional chasing threads) is KNOWN and supports investigation only, held as SUPPORTING context only",
+        "the source lacks stable Communication, Lead, Global Customer, and native thread IDs; customer labels and provisional labels are NOT stable linkage and are not identifiers or findings; known finance/urgency/context component classes support only",
+        "no condition-complete governed source/key/history/rule is presently proved or found; a finite read-only VinSolutions field/key/cardinality/chronology check must run first, then a named external/product-support source only if necessary; this is NOT predetermined and nonexistence is NOT claimed",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; the corpus must not be promoted for clean rows; no quarantined-source cure",
+        "it does NOT prove urgency-expression detection or the mirrored-urgency semantics; stable identity is unproved; cause/motive must not be diagnosed",
+        "message content is NOT read in J1; no raw content, quotes, PII, or customer/employee identifiers are stored; any future urgency-mirroring evaluation requires an explicit protected-content/NLP envelope, data minimization, stable identities, and Duane authority; no accusations or quotes"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of stable message/thread identity and chronology (and governed handoff/event source where applicable; no content read)",
+        "Duane authorization of the protected-content/NLP envelope and ratification of the urgency-mirroring rule/definition",
+        "Studio implementation under the authorized protected envelope after identity/chronology proof + rule (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "urgency_mirror_identity_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_urgency_mirror_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "urgency_mirror_nlp_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether stable message/thread identity, chronology, and (where applicable) a governed handoff/event source exist for this condition; aggregate-only, NO content read, no PII/raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the urgency-mirroring rule/definition (authority/definition decision only; content remains unread; interpretation labels are not diagnoses or accusations)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the urgency-mirroring classifier/detection under the authorized protected envelope after identity/chronology proof + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-06-03 activation (J2), after identity/chronology proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only stable-identity/chronology (and governed event source where applicable) check; aggregate-only, NO content read, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-185",
+      "canonical_condition": "Rep asks customer for the same info twice (didn't read prior messages).",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does the rep ask the customer for the same info twice (a provisional signal)?",
+      "population": "Serra Honda 21043 Sales customer communications only",
+      "history_requirement": "Requires stable identity/chronology (and governed event source where applicable) and ratified semantics; corpus supports investigation only.",
+      "calculation_kind_intent": "repeated_info_flag",
+      "unit_intent": "flag/score (undefined until stable identity/chronology + semantics are proved/ratified)",
+      "source_family_intent": "repeated_info_source_unproved",
+      "source_family_slice": "repeated_info_context",
+      "required_direct_fields_or_keys": [
+        "stable_message_identity",
+        "stable_thread_identity",
+        "message_chronology",
+        "repeated_info_semantics"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the governed communication corpus (3,211 sales-only events across 905 customer labels; 370 inbound / 2,841 outbound; 1,517 texts / 1,133 logged calls / 561 emails; 36 provisional high-intent rows; 49 repeated-template groups; 34 provisional chasing threads) is KNOWN and supports investigation only, held as SUPPORTING context only",
+        "the source lacks stable Communication, Lead, Global Customer, and native thread IDs; customer labels and provisional labels are NOT stable linkage and are not identifiers or findings; known finance/urgency/context component classes support only",
+        "no condition-complete governed source/key/history/rule is presently proved or found; a finite read-only VinSolutions field/key/cardinality/chronology check must run first, then a named external/product-support source only if necessary; this is NOT predetermined and nonexistence is NOT claimed",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; the corpus must not be promoted for clean rows; no quarantined-source cure",
+        "it does NOT prove the repeated-ask ('didn't read prior messages') semantics, stable thread identity, or chronology; 'didn't read' is an unproved motive label, not a fact; no accusation; cause/motive must not be diagnosed",
+        "message content is NOT read in J1; no raw content, quotes, PII, or customer/employee identifiers are stored; any future repeated-ask evaluation requires an explicit protected-content/NLP envelope, data minimization, stable identities, and Duane authority; no accusations or quotes"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of stable message/thread identity and chronology (and governed handoff/event source where applicable; no content read)",
+        "Duane authorization of the protected-content/NLP envelope and ratification of the repeated-ask rule/definition",
+        "Studio implementation under the authorized protected envelope after identity/chronology proof + rule (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "repeated_info_identity_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_repeated_info_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "repeated_info_nlp_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether stable message/thread identity, chronology, and (where applicable) a governed handoff/event source exist for this condition; aggregate-only, NO content read, no PII/raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the repeated-ask rule/definition (authority/definition decision only; content remains unread; interpretation labels are not diagnoses or accusations)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the repeated-ask classifier/detection under the authorized protected envelope after identity/chronology proof + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-06-03 activation (J2), after identity/chronology proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only stable-identity/chronology (and governed event source where applicable) check; aggregate-only, NO content read, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-200",
+      "canonical_condition": "Customer's stated vehicle interest changes 3+ times in a thread (unclear discovery).",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does the customer's stated vehicle interest change three or more times in a thread (a provisional signal)?",
+      "population": "Serra Honda 21043 Sales customer communications only",
+      "history_requirement": "Requires stable identity/chronology (and governed event source where applicable) and ratified semantics; corpus supports investigation only.",
+      "calculation_kind_intent": "changing_interest_flag",
+      "unit_intent": "flag/score (undefined until stable identity/chronology + semantics are proved/ratified)",
+      "source_family_intent": "changing_interest_source_unproved",
+      "source_family_slice": "vehicle_needs_discovery",
+      "required_direct_fields_or_keys": [
+        "stable_message_identity",
+        "stable_thread_identity",
+        "message_chronology",
+        "changing_interest_semantics"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the governed communication corpus (3,211 sales-only events across 905 customer labels; 370 inbound / 2,841 outbound; 1,517 texts / 1,133 logged calls / 561 emails; 36 provisional high-intent rows; 49 repeated-template groups; 34 provisional chasing threads) is KNOWN and supports investigation only, held as SUPPORTING context only",
+        "the source lacks stable Communication, Lead, Global Customer, and native thread IDs; customer labels and provisional labels are NOT stable linkage and are not identifiers or findings; known finance/urgency/context component classes support only",
+        "no condition-complete governed source/key/history/rule is presently proved or found; a finite read-only VinSolutions field/key/cardinality/chronology check must run first, then a named external/product-support source only if necessary; this is NOT predetermined and nonexistence is NOT claimed",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; the corpus must not be promoted for clean rows; no quarantined-source cure",
+        "it does NOT prove the changing-vehicle-interest ('3+ times') detection, chronology, or a discovery rule; poor discovery must NOT be inferred from changing interest without a rule and a stable chronology; 'unclear discovery' is an unproved label, not a fact; cause/motive must not be diagnosed",
+        "message content is NOT read in J1; no raw content, quotes, PII, or customer/employee identifiers are stored; any future changing-interest evaluation requires an explicit protected-content/NLP envelope, data minimization, stable identities, and Duane authority; no accusations or quotes"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of stable message/thread identity and chronology (and governed handoff/event source where applicable; no content read)",
+        "Duane authorization of the protected-content/NLP envelope and ratification of the changing-interest rule/definition",
+        "Studio implementation under the authorized protected envelope after identity/chronology proof + rule (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "changing_interest_identity_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_changing_interest_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "changing_interest_nlp_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether stable message/thread identity, chronology, and (where applicable) a governed handoff/event source exist for this condition; aggregate-only, NO content read, no PII/raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the changing-interest rule/definition (authority/definition decision only; content remains unread; interpretation labels are not diagnoses or accusations)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the changing-interest classifier/detection under the authorized protected envelope after identity/chronology proof + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-06-03 activation (J2), after identity/chronology proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only stable-identity/chronology (and governed event source where applicable) check; aggregate-only, NO content read, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-201",
+      "canonical_condition": "Rep never confirms customer's actual need (family size, use case, budget).",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does the rep never confirm the customer's actual need (a provisional signal)?",
+      "population": "Serra Honda 21043 Sales customer communications only",
+      "history_requirement": "Requires stable identity/chronology (and governed event source where applicable) and ratified semantics; corpus supports investigation only.",
+      "calculation_kind_intent": "need_confirmation_flag",
+      "unit_intent": "flag/score (undefined until stable identity/chronology + semantics are proved/ratified)",
+      "source_family_intent": "need_confirmation_source_unproved",
+      "source_family_slice": "vehicle_needs_discovery",
+      "required_direct_fields_or_keys": [
+        "stable_message_identity",
+        "stable_thread_identity",
+        "message_chronology",
+        "need_confirmation_semantics"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the governed communication corpus (3,211 sales-only events across 905 customer labels; 370 inbound / 2,841 outbound; 1,517 texts / 1,133 logged calls / 561 emails; 36 provisional high-intent rows; 49 repeated-template groups; 34 provisional chasing threads) is KNOWN and supports investigation only, held as SUPPORTING context only",
+        "the source lacks stable Communication, Lead, Global Customer, and native thread IDs; customer labels and provisional labels are NOT stable linkage and are not identifiers or findings; known finance/urgency/context component classes support only",
+        "no condition-complete governed source/key/history/rule is presently proved or found; a finite read-only VinSolutions field/key/cardinality/chronology check must run first, then a named external/product-support source only if necessary; this is NOT predetermined and nonexistence is NOT claimed",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; the corpus must not be promoted for clean rows; no quarantined-source cure",
+        "it does NOT prove the customer-need confirmation (family size / use case / budget) semantics or stable identity; cause/motive must not be diagnosed",
+        "message content is NOT read in J1; no raw content, quotes, PII, or customer/employee identifiers are stored; any future need-confirmation evaluation requires an explicit protected-content/NLP envelope, data minimization, stable identities, and Duane authority; no accusations or quotes"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of stable message/thread identity and chronology (and governed handoff/event source where applicable; no content read)",
+        "Duane authorization of the protected-content/NLP envelope and ratification of the need-confirmation rule/definition",
+        "Studio implementation under the authorized protected envelope after identity/chronology proof + rule (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "need_confirmation_identity_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_need_confirmation_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "need_confirmation_nlp_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether stable message/thread identity, chronology, and (where applicable) a governed handoff/event source exist for this condition; aggregate-only, NO content read, no PII/raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the need-confirmation rule/definition (authority/definition decision only; content remains unread; interpretation labels are not diagnoses or accusations)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the need-confirmation classifier/detection under the authorized protected envelope after identity/chronology proof + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-06-03 activation (J2), after identity/chronology proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only stable-identity/chronology (and governed event source where applicable) check; aggregate-only, NO content read, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-202",
+      "canonical_condition": "Language mismatch — customer writes in Spanish/other, rep replies in English only.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Is there a language mismatch between customer and rep (a provisional signal)?",
+      "population": "Serra Honda 21043 Sales customer communications only",
+      "history_requirement": "Requires stable identity/chronology (and governed event source where applicable) and ratified semantics; corpus supports investigation only.",
+      "calculation_kind_intent": "language_mismatch_flag",
+      "unit_intent": "flag/score (undefined until stable identity/chronology + semantics are proved/ratified)",
+      "source_family_intent": "language_mismatch_source_unproved",
+      "source_family_slice": "language_readability",
+      "required_direct_fields_or_keys": [
+        "stable_message_identity",
+        "stable_thread_identity",
+        "message_chronology",
+        "language_mismatch_semantics"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the governed communication corpus (3,211 sales-only events across 905 customer labels; 370 inbound / 2,841 outbound; 1,517 texts / 1,133 logged calls / 561 emails; 36 provisional high-intent rows; 49 repeated-template groups; 34 provisional chasing threads) is KNOWN and supports investigation only, held as SUPPORTING context only",
+        "the source lacks stable Communication, Lead, Global Customer, and native thread IDs; customer labels and provisional labels are NOT stable linkage and are not identifiers or findings; known finance/urgency/context component classes support only",
+        "no condition-complete governed source/key/history/rule is presently proved or found; a finite read-only VinSolutions field/key/cardinality/chronology check must run first, then a named external/product-support source only if necessary; this is NOT predetermined and nonexistence is NOT claimed",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; the corpus must not be promoted for clean rows; no quarantined-source cure",
+        "it does NOT prove language detection, the customer/rep language-mismatch pairing, or stable identity; cause/motive must not be diagnosed",
+        "message content is NOT read in J1; no raw content, quotes, PII, or customer/employee identifiers are stored; any future language-mismatch evaluation requires an explicit protected-content/NLP envelope, data minimization, stable identities, and Duane authority; no accusations or quotes"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of stable message/thread identity and chronology (and governed handoff/event source where applicable; no content read)",
+        "Duane authorization of the protected-content/NLP envelope and ratification of the language-mismatch rule/definition",
+        "Studio implementation under the authorized protected envelope after identity/chronology proof + rule (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "language_mismatch_identity_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_language_mismatch_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "language_mismatch_nlp_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether stable message/thread identity, chronology, and (where applicable) a governed handoff/event source exist for this condition; aggregate-only, NO content read, no PII/raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the language-mismatch rule/definition (authority/definition decision only; content remains unread; interpretation labels are not diagnoses or accusations)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the language-mismatch classifier/detection under the authorized protected envelope after identity/chronology proof + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-06-03 activation (J2), after identity/chronology proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only stable-identity/chronology (and governed event source where applicable) check; aggregate-only, NO content read, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-203",
+      "canonical_condition": "Reading level of rep's messages far above/below customer's (mismatch).",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Is the reading level of the rep's messages mismatched to the customer's (a provisional signal)?",
+      "population": "Serra Honda 21043 Sales customer communications only",
+      "history_requirement": "Requires stable identity/chronology (and governed event source where applicable) and ratified semantics; corpus supports investigation only.",
+      "calculation_kind_intent": "reading_level_flag",
+      "unit_intent": "flag/score (undefined until stable identity/chronology + semantics are proved/ratified)",
+      "source_family_intent": "reading_level_source_unproved",
+      "source_family_slice": "language_readability",
+      "required_direct_fields_or_keys": [
+        "stable_message_identity",
+        "stable_thread_identity",
+        "message_chronology",
+        "reading_level_semantics"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the governed communication corpus (3,211 sales-only events across 905 customer labels; 370 inbound / 2,841 outbound; 1,517 texts / 1,133 logged calls / 561 emails; 36 provisional high-intent rows; 49 repeated-template groups; 34 provisional chasing threads) is KNOWN and supports investigation only, held as SUPPORTING context only",
+        "the source lacks stable Communication, Lead, Global Customer, and native thread IDs; customer labels and provisional labels are NOT stable linkage and are not identifiers or findings; known finance/urgency/context component classes support only",
+        "no condition-complete governed source/key/history/rule is presently proved or found; a finite read-only VinSolutions field/key/cardinality/chronology check must run first, then a named external/product-support source only if necessary; this is NOT predetermined and nonexistence is NOT claimed",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; the corpus must not be promoted for clean rows; no quarantined-source cure",
+        "it does NOT prove reading-level estimation, the customer/rep mismatch, or stable identity; cause/motive must not be diagnosed",
+        "message content is NOT read in J1; no raw content, quotes, PII, or customer/employee identifiers are stored; any future reading-level-mismatch evaluation requires an explicit protected-content/NLP envelope, data minimization, stable identities, and Duane authority; no accusations or quotes"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of stable message/thread identity and chronology (and governed handoff/event source where applicable; no content read)",
+        "Duane authorization of the protected-content/NLP envelope and ratification of the reading-level-mismatch rule/definition",
+        "Studio implementation under the authorized protected envelope after identity/chronology proof + rule (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "reading_level_identity_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_reading_level_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "reading_level_nlp_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether stable message/thread identity, chronology, and (where applicable) a governed handoff/event source exist for this condition; aggregate-only, NO content read, no PII/raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the reading-level-mismatch rule/definition (authority/definition decision only; content remains unread; interpretation labels are not diagnoses or accusations)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the reading-level-mismatch classifier/detection under the authorized protected envelope after identity/chronology proof + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-06-03 activation (J2), after identity/chronology proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only stable-identity/chronology (and governed event source where applicable) check; aggregate-only, NO content read, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-205",
+      "canonical_condition": "Emotional escalation curve — sentiment worsens across each message.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does customer sentiment worsen across each message (a provisional emotional-escalation signal)?",
+      "population": "Serra Honda 21043 Sales customer communications only",
+      "history_requirement": "Requires stable identity/chronology (and governed event source where applicable) and ratified semantics; corpus supports investigation only.",
+      "calculation_kind_intent": "emotional_escalation_flag",
+      "unit_intent": "flag/score (undefined until stable identity/chronology + semantics are proved/ratified)",
+      "source_family_intent": "emotional_escalation_source_unproved",
+      "source_family_slice": "emotional_repeated_questions",
+      "required_direct_fields_or_keys": [
+        "stable_message_identity",
+        "stable_thread_identity",
+        "message_chronology",
+        "emotional_escalation_semantics"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the governed communication corpus (3,211 sales-only events across 905 customer labels; 370 inbound / 2,841 outbound; 1,517 texts / 1,133 logged calls / 561 emails; 36 provisional high-intent rows; 49 repeated-template groups; 34 provisional chasing threads) is KNOWN and supports investigation only, held as SUPPORTING context only",
+        "the source lacks stable Communication, Lead, Global Customer, and native thread IDs; customer labels and provisional labels are NOT stable linkage and are not identifiers or findings; known finance/urgency/context component classes support only",
+        "no condition-complete governed source/key/history/rule is presently proved or found; a finite read-only VinSolutions field/key/cardinality/chronology check must run first, then a named external/product-support source only if necessary; this is NOT predetermined and nonexistence is NOT claimed",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; the corpus must not be promoted for clean rows; no quarantined-source cure",
+        "it does NOT prove the emotional-escalation trajectory (worsening sentiment across messages), chronology, or stable identity; 'emotional escalation' is an unproved label, not a fact; cause/motive must not be diagnosed",
+        "message content is NOT read in J1; no raw content, quotes, PII, or customer/employee identifiers are stored; any future emotional-trajectory evaluation requires an explicit protected-content/NLP envelope, data minimization, stable identities, and Duane authority; no accusations or quotes"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of stable message/thread identity and chronology (and governed handoff/event source where applicable; no content read)",
+        "Duane authorization of the protected-content/NLP envelope and ratification of the emotional-trajectory rule/definition",
+        "Studio implementation under the authorized protected envelope after identity/chronology proof + rule (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "emotional_escalation_identity_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_emotional_escalation_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "emotional_escalation_nlp_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether stable message/thread identity, chronology, and (where applicable) a governed handoff/event source exist for this condition; aggregate-only, NO content read, no PII/raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the emotional-trajectory rule/definition (authority/definition decision only; content remains unread; interpretation labels are not diagnoses or accusations)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the emotional-trajectory classifier/detection under the authorized protected envelope after identity/chronology proof + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-06-03 activation (J2), after identity/chronology proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only stable-identity/chronology (and governed event source where applicable) check; aggregate-only, NO content read, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-206",
+      "canonical_condition": "Repeated question (customer asks same thing 3+ times) — rep is dodging.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does the customer ask the same thing three or more times (a provisional signal)?",
+      "population": "Serra Honda 21043 Sales customer communications only",
+      "history_requirement": "Requires stable identity/chronology (and governed event source where applicable) and ratified semantics; corpus supports investigation only.",
+      "calculation_kind_intent": "dodging_flag",
+      "unit_intent": "flag/score (undefined until stable identity/chronology + semantics are proved/ratified)",
+      "source_family_intent": "dodging_source_unproved",
+      "source_family_slice": "emotional_repeated_questions",
+      "required_direct_fields_or_keys": [
+        "stable_message_identity",
+        "stable_thread_identity",
+        "message_chronology",
+        "dodging_semantics"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the governed communication corpus (3,211 sales-only events across 905 customer labels; 370 inbound / 2,841 outbound; 1,517 texts / 1,133 logged calls / 561 emails; 36 provisional high-intent rows; 49 repeated-template groups; 34 provisional chasing threads) is KNOWN and supports investigation only, held as SUPPORTING context only",
+        "the source lacks stable Communication, Lead, Global Customer, and native thread IDs; customer labels and provisional labels are NOT stable linkage and are not identifiers or findings; known finance/urgency/context component classes support only",
+        "no condition-complete governed source/key/history/rule is presently proved or found; a finite read-only VinSolutions field/key/cardinality/chronology check must run first, then a named external/product-support source only if necessary; this is NOT predetermined and nonexistence is NOT claimed",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; the corpus must not be promoted for clean rows; no quarantined-source cure",
+        "it does NOT prove the repeated-question ('3+ times') detection or stable identity; 'dodging' is an unproved motive label, not a fact; no accusation; cause/motive must not be diagnosed",
+        "message content is NOT read in J1; no raw content, quotes, PII, or customer/employee identifiers are stored; any future repeated-question evaluation requires an explicit protected-content/NLP envelope, data minimization, stable identities, and Duane authority; no accusations or quotes"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of stable message/thread identity and chronology (and governed handoff/event source where applicable; no content read)",
+        "Duane authorization of the protected-content/NLP envelope and ratification of the repeated-question rule/definition",
+        "Studio implementation under the authorized protected envelope after identity/chronology proof + rule (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "dodging_identity_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_dodging_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "dodging_nlp_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether stable message/thread identity, chronology, and (where applicable) a governed handoff/event source exist for this condition; aggregate-only, NO content read, no PII/raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the repeated-question rule/definition (authority/definition decision only; content remains unread; interpretation labels are not diagnoses or accusations)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the repeated-question classifier/detection under the authorized protected envelope after identity/chronology proof + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-06-03 activation (J2), after identity/chronology proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only stable-identity/chronology (and governed event source where applicable) check; aggregate-only, NO content read, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-285",
+      "canonical_condition": "Intent classifier: buying-signal, information-seeking, objection, complaint, exit.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Which intent does a customer message express (a provisional classification signal)?",
+      "population": "Serra Honda 21043 Sales customer communications only",
+      "history_requirement": "Requires stable identity/chronology (and governed event source where applicable) and ratified semantics; corpus supports investigation only.",
+      "calculation_kind_intent": "intent_classifier_flag",
+      "unit_intent": "flag/score (undefined until stable identity/chronology + semantics are proved/ratified)",
+      "source_family_intent": "intent_classifier_source_unproved",
+      "source_family_slice": "intent_alignment_personalization",
+      "required_direct_fields_or_keys": [
+        "stable_message_identity",
+        "stable_thread_identity",
+        "message_chronology",
+        "intent_classifier_semantics"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the governed communication corpus (3,211 sales-only events across 905 customer labels; 370 inbound / 2,841 outbound; 1,517 texts / 1,133 logged calls / 561 emails; 36 provisional high-intent rows; 49 repeated-template groups; 34 provisional chasing threads) is KNOWN and supports investigation only, held as SUPPORTING context only",
+        "the source lacks stable Communication, Lead, Global Customer, and native thread IDs; customer labels and provisional labels are NOT stable linkage and are not identifiers or findings; known finance/urgency/context component classes support only",
+        "no condition-complete governed source/key/history/rule is presently proved or found; a finite read-only VinSolutions field/key/cardinality/chronology check must run first, then a named external/product-support source only if necessary; this is NOT predetermined and nonexistence is NOT claimed",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; the corpus must not be promoted for clean rows; no quarantined-source cure",
+        "it does NOT prove the intent-classification (buying-signal / information-seeking / objection / complaint / exit) semantics or stable identity; provisional intent labels are not facts; cause/motive must not be diagnosed",
+        "message content is NOT read in J1; no raw content, quotes, PII, or customer/employee identifiers are stored; any future intent-classification evaluation requires an explicit protected-content/NLP envelope, data minimization, stable identities, and Duane authority; no accusations or quotes"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of stable message/thread identity and chronology (and governed handoff/event source where applicable; no content read)",
+        "Duane authorization of the protected-content/NLP envelope and ratification of the intent-classification rule/definition",
+        "Studio implementation under the authorized protected envelope after identity/chronology proof + rule (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "intent_classifier_identity_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_intent_classifier_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "intent_classifier_nlp_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether stable message/thread identity, chronology, and (where applicable) a governed handoff/event source exist for this condition; aggregate-only, NO content read, no PII/raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the intent-classification rule/definition (authority/definition decision only; content remains unread; interpretation labels are not diagnoses or accusations)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the intent-classification classifier/detection under the authorized protected envelope after identity/chronology proof + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-06-03 activation (J2), after identity/chronology proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only stable-identity/chronology (and governed event source where applicable) check; aggregate-only, NO content read, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-287",
+      "canonical_condition": "Question-answer alignment: did rep's reply address customer's actual question?",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does the rep's reply address the customer's actual question (a provisional alignment signal)?",
+      "population": "Serra Honda 21043 Sales customer communications only",
+      "history_requirement": "Requires stable identity/chronology (and governed event source where applicable) and ratified semantics; corpus supports investigation only.",
+      "calculation_kind_intent": "answer_alignment_flag",
+      "unit_intent": "flag/score (undefined until stable identity/chronology + semantics are proved/ratified)",
+      "source_family_intent": "answer_alignment_source_unproved",
+      "source_family_slice": "intent_alignment_personalization",
+      "required_direct_fields_or_keys": [
+        "stable_message_identity",
+        "stable_thread_identity",
+        "message_chronology",
+        "answer_alignment_semantics"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the governed communication corpus (3,211 sales-only events across 905 customer labels; 370 inbound / 2,841 outbound; 1,517 texts / 1,133 logged calls / 561 emails; 36 provisional high-intent rows; 49 repeated-template groups; 34 provisional chasing threads) is KNOWN and supports investigation only, held as SUPPORTING context only",
+        "the source lacks stable Communication, Lead, Global Customer, and native thread IDs; customer labels and provisional labels are NOT stable linkage and are not identifiers or findings; known finance/urgency/context component classes support only",
+        "no condition-complete governed source/key/history/rule is presently proved or found; a finite read-only VinSolutions field/key/cardinality/chronology check must run first, then a named external/product-support source only if necessary; this is NOT predetermined and nonexistence is NOT claimed",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; the corpus must not be promoted for clean rows; no quarantined-source cure",
+        "it does NOT prove the question-answer alignment semantics or stable thread identity; alignment labels are not facts; cause/motive must not be diagnosed",
+        "message content is NOT read in J1; no raw content, quotes, PII, or customer/employee identifiers are stored; any future answer-alignment evaluation requires an explicit protected-content/NLP envelope, data minimization, stable identities, and Duane authority; no accusations or quotes"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of stable message/thread identity and chronology (and governed handoff/event source where applicable; no content read)",
+        "Duane authorization of the protected-content/NLP envelope and ratification of the answer-alignment rule/definition",
+        "Studio implementation under the authorized protected envelope after identity/chronology proof + rule (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "answer_alignment_identity_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_answer_alignment_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "answer_alignment_nlp_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether stable message/thread identity, chronology, and (where applicable) a governed handoff/event source exist for this condition; aggregate-only, NO content read, no PII/raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the answer-alignment rule/definition (authority/definition decision only; content remains unread; interpretation labels are not diagnoses or accusations)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the answer-alignment classifier/detection under the authorized protected envelope after identity/chronology proof + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-06-03 activation (J2), after identity/chronology proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only stable-identity/chronology (and governed event source where applicable) check; aggregate-only, NO content read, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-289",
+      "canonical_condition": "Personalization score: template detection vs custom content ratio.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "What is the personalization score (template vs custom) of the rep's messages (a provisional signal)?",
+      "population": "Serra Honda 21043 Sales customer communications only",
+      "history_requirement": "Requires stable identity/chronology (and governed event source where applicable) and ratified semantics; corpus supports investigation only.",
+      "calculation_kind_intent": "personalization_flag",
+      "unit_intent": "flag/score (undefined until stable identity/chronology + semantics are proved/ratified)",
+      "source_family_intent": "personalization_source_unproved",
+      "source_family_slice": "intent_alignment_personalization",
+      "required_direct_fields_or_keys": [
+        "stable_message_identity",
+        "stable_thread_identity",
+        "message_chronology",
+        "personalization_semantics"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the governed communication corpus (3,211 sales-only events across 905 customer labels; 370 inbound / 2,841 outbound; 1,517 texts / 1,133 logged calls / 561 emails; 36 provisional high-intent rows; 49 repeated-template groups; 34 provisional chasing threads) is KNOWN and supports investigation only, held as SUPPORTING context only",
+        "the source lacks stable Communication, Lead, Global Customer, and native thread IDs; customer labels and provisional labels are NOT stable linkage and are not identifiers or findings; known finance/urgency/context component classes support only",
+        "no condition-complete governed source/key/history/rule is presently proved or found; a finite read-only VinSolutions field/key/cardinality/chronology check must run first, then a named external/product-support source only if necessary; this is NOT predetermined and nonexistence is NOT claimed",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; the corpus must not be promoted for clean rows; no quarantined-source cure",
+        "it does NOT prove the personalization scoring (template-detection vs custom-content ratio) semantics or stable identity; personalization labels are not facts; cause/motive must not be diagnosed",
+        "message content is NOT read in J1; no raw content, quotes, PII, or customer/employee identifiers are stored; any future personalization-scoring evaluation requires an explicit protected-content/NLP envelope, data minimization, stable identities, and Duane authority; no accusations or quotes"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of stable message/thread identity and chronology (and governed handoff/event source where applicable; no content read)",
+        "Duane authorization of the protected-content/NLP envelope and ratification of the personalization-scoring rule/definition",
+        "Studio implementation under the authorized protected envelope after identity/chronology proof + rule (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "personalization_identity_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_personalization_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "personalization_nlp_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether stable message/thread identity, chronology, and (where applicable) a governed handoff/event source exist for this condition; aggregate-only, NO content read, no PII/raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the personalization-scoring rule/definition (authority/definition decision only; content remains unread; interpretation labels are not diagnoses or accusations)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the personalization-scoring classifier/detection under the authorized protected envelope after identity/chronology proof + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-06-03 activation (J2), after identity/chronology proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only stable-identity/chronology (and governed event source where applicable) check; aggregate-only, NO content read, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    }
+  ]
+}
