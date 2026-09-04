@@ -1,0 +1,132 @@
+{
+  "artifact": "honda-watchdog-phase1b-pkt-03-01-sw042-discovery-result",
+  "classification": "finite_read_only_discovery_result / evidence_memorialization_design_only",
+  "packet_id": "PKT-03-01",
+  "metric_id": "SW-042",
+  "baseline_commit": "24c3223b010b7fcc345c57d124d589c3e8d3b0b6",
+  "authored_at_utc": "2026-09-04T05:50:36Z",
+  "pins": {
+    "pkt_03_01_binding_sha256": "e92a181f2a8016085011358ff256f627b2c11f09e4f37109f4276ecbfce10f8e",
+    "master_ledger_295_sha256": "747b6d31796939ae29f3a31a0f57226e57342ad7c2b1a1737e05287a5af59d13",
+    "sw042_evidence_gap_sha256": "1714aad7b8cd4eaf44e4f3a62ba652b0f61886e61f042b274377deee0e1fab7b",
+    "pkt_03_01_packet_sha256": "a35319fe19061dfe0cf09a5557f9212ff2c7c396cfa5243388cc038675283cae",
+    "note": "These four committed artifacts are UNCHANGED by this memorialization; the validator asserts them live. SW-042 lifecycle stays exactly as committed."
+  },
+  "sw042_metadata_change": "none",
+  "sw042_lifecycle_unchanged": {
+    "disposition": "source_investigation_pending",
+    "source_existence_state": "investigation_pending",
+    "acquisition_admission_state": "not_acquired",
+    "evaluation_state": "not_measured",
+    "gradable": false,
+    "alert_eligible": false,
+    "customer_visibility": "hidden",
+    "future_display_eligibility": false,
+    "customer_emission_authority": false
+  },
+  "two_delta": {
+    "contextual_discovery_evidence_delta": 1,
+    "governed_source_data_acquisition_delta": 0,
+    "governed_source_data_admission_delta": 0,
+    "metric_meaning_value_lifecycle_customer_delta": 0,
+    "explanation": "The existing governed two-delta remains ZERO for source-data acquisition, source-data admission, and metric meaning/value/lifecycle/customer. Contextual discovery evidence increased by exactly ONE: a single candidate aggregate observation that is non-admitted and cannot advance SW-042."
+  },
+  "candidate_observation": {
+    "candidate_context_only": true,
+    "non_admitted": true,
+    "sales_only_scope_unverified": true,
+    "sales_only_scope_note": "Source cleanliness is UNVERIFIED: the aggregate surface provided no row, filter, or period proof. Zero Service/Parts were ADMITTED because no source data was acquired or admitted — NOT because the candidate was proved clean.",
+    "report_name": "_*Future Appointments & Confirmations",
+    "display_aggregates_only": true,
+    "confirmed_rate_display": "61/76 = 80% — DISPLAY aggregate only; NOT SW-042 numerator, denominator, value, target comparison, grade, alert, or customer fact.",
+    "unconfirmed_display": "15/76 = 20% — DISPLAY aggregate only; the 15 are NOT within-24h failures and NOT an SW-042 fact.",
+    "additional_aggregates_display": "58 confirmed shown; 14 confirmed sold; 4 unconfirmed shown; 0 unconfirmed sold — DISPLAY aggregates only.",
+    "future_pipeline_count": {
+      "value": 4,
+      "date": "2026-09-04",
+      "note": "Separate CURRENT UI context; NOT frozen-week (2026-08-24..2026-08-30) evidence and NOT period evidence; never mixed into the frozen week."
+    },
+    "not_proved": [
+      "period",
+      "filter",
+      "exportability",
+      "scheduleability",
+      "stable grain",
+      "event-level availability",
+      "hour precision",
+      "reconfirmation semantics",
+      "24-hour anchor",
+      "SW-042 numerator",
+      "SW-042 denominator",
+      "SW-042 value",
+      "SW-042 target",
+      "grade"
+    ]
+  },
+  "non_substitute_fields": [
+    "Confirmed Date",
+    "Is Confirmed",
+    "Confirmed User",
+    "Last Modified Date",
+    "all aggregate counts (76/61/15/58/14/4/0)"
+  ],
+  "non_substitute_statement": "None of these proves an hour-precision confirmation/reconfirmation timestamp; none may substitute for SW-042's required source, value, or 24-hour logic.",
+  "anchor_24h": {
+    "inferred": false,
+    "ratified": false
+  },
+  "global_unavailable_conclusion": false,
+  "global_note": "Do NOT conclude VinSolutions lacks such a source globally; the finite one-help/one-UI/one-probe pass exhausted only the contracted step.",
+  "help_pass": {
+    "article_number": "000001289",
+    "article_title": "VS Appointment Data Set Glossary",
+    "article_dated": "2025-12-02",
+    "source_file_local_mirror": "/Users/duanewells/Documents/LifePath 2/outputs/local-controller-mirrors/vinsolutions-help-corpus/browser-captures/articles/vs-appointment-data-set-glossary-b8762c42.md (cited path on the local controller mirror; not accessed or retained by this repo)",
+    "confirmed_date_definition": "the date the customer appointment was confirmed; example 9/15/2015 (calendar date, no time-of-day)",
+    "corroborates": "Confirmed Date is calendar-date only; Confirmed User and Last Modified Date do not prove an hour-precision confirmation/reconfirmation timestamp."
+  },
+  "ui_pass": {
+    "rooftop": "Serra Honda of Sylacauga #21043",
+    "catalog": "Insights > Reports",
+    "catalog_host": "vinsolutions.app.coxautoinc.com (query string and tokens omitted)",
+    "report_host": "reporting-vinsolutions.app.coxautoinc.com (query string and tokens omitted)",
+    "is_bookmark_read_only": true,
+    "no_definition_schedule_crm_filter_change": true
+  },
+  "probe_pass": {
+    "opened_one_read_only_report": true,
+    "downloaded_or_exported_or_pdf": false,
+    "drilled_rows": false,
+    "opened_customer_data": false,
+    "tab_closed": true,
+    "returned_to_report_center": true,
+    "no_mutation": true
+  },
+  "observation_time": {
+    "date": "2026-09-04",
+    "timezone": "America/New_York (EDT)",
+    "method": "Computer Use against authenticated local Chrome",
+    "note": "the discovery result records the observation date and timezone; an exact clock time was not specified in the source result and is not fabricated here."
+  },
+  "privacy_and_safety": {
+    "pii_captured": false,
+    "raw_rows_captured": false,
+    "message_content_captured": false,
+    "no_identified_service_parts_rows_or_fields_captured": true,
+    "source_files_captured": false,
+    "service_parts_admitted": 0,
+    "dealer_id": "21043",
+    "operation_scope_sales_only": true,
+    "candidate_source_sales_only_verified": false,
+    "candidate_service_free_note": "Aggregate membership was NOT verified: the read-only aggregate surface provided no row, filter, or period proof. Zero Service/Parts were ADMITTED only because no source data was acquired or admitted; this does NOT prove the candidate aggregate is Service-free.",
+    "missing_is_not_zero": true
+  },
+  "conclusion": "Positive candidate source discovery; the required SW-042 source remains UNPROVED (no hour-precision confirmation/reconfirmation timestamp; no ratified 24-hour anchor); NOT globally unavailable. SW-042 remains source_investigation_pending, not measured, not gradable, not alert-eligible, hidden, customer emission false. The aggregate report is candidate context only and cannot substitute for SW-042.",
+  "owners": {
+    "read_only_discovery_completed": "Codex VinSolutions controller",
+    "future_24h_anchor_and_target_decision_after_proof": "Duane Wells",
+    "future_implementation_after_contract": "Claude Studio engineering"
+  },
+  "next_safe_action": "No promotion. If pursued later, prove an hour-precision confirmation-timestamp source in a further authorized finite step; Duane ratifies the 24-hour anchor and approved target ONLY after the field is proved.",
+  "no_action_statement": "No acquisition admission, metric calculation, regrade, alert, customer output, merge, deploy, Gmail, schedule change, or VinSolutions mutation. No new source, vocabulary, value, grade, transition, or customer projection."
+}
