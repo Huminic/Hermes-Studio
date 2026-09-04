@@ -1,0 +1,359 @@
+{
+  "artifact": "PKT-03-02_BINDING_CHECKS",
+  "baseline_commit": "f1119dba71d0fe195eab250a33c139197fe1d692",
+  "binding": "docs/halo/contract/phase1b/pkt-03-02-binding.json",
+  "checks": {
+    "accepted_ids": [
+      "SW-045",
+      "SW-046"
+    ],
+    "accounting": {
+      "conditions": 295,
+      "modules": 11,
+      "packets": 30
+    },
+    "allowlist_absent_at_baseline": {
+      "docs/halo/contract/phase1b/pkt-03-02-binding.json": true,
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_BINDING_CHECKS.json": true,
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J1_TWO_DELTA.md": true,
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J1_internal_coverage_roadmap.md": true,
+      "scripts/halo-phase1b/validate_pkt_03_02_binding.py": true
+    },
+    "authoritative_evaluated_total": 17,
+    "claude_staged": false,
+    "dealer_scope": {
+      "cross_rooftop_admitted": 0,
+      "dealer_id": "21043",
+      "dealer_name": "Serra Honda of Sylacauga",
+      "domain": "Sales",
+      "profile": "serra-honda",
+      "service_parts_admitted": 0,
+      "service_source_admitted": 0
+    },
+    "held_ids": [
+      "SW-043",
+      "SW-044",
+      "SW-113",
+      "SW-114",
+      "SW-121",
+      "SW-122",
+      "SW-123",
+      "SW-125",
+      "SW-126",
+      "SW-154"
+    ],
+    "ids_order_membership": [
+      "SW-043",
+      "SW-044",
+      "SW-045",
+      "SW-046",
+      "SW-113",
+      "SW-114",
+      "SW-121",
+      "SW-122",
+      "SW-123",
+      "SW-125",
+      "SW-126",
+      "SW-154"
+    ],
+    "module": 3,
+    "out_of_allowlist_changes": [],
+    "overwrite_guard_selftest": true,
+    "pinned_hashes_ok": true,
+    "prior_packets_preserved": true,
+    "two_delta": {
+      "evidence_delta": {
+        "count": 0,
+        "of": 12,
+        "reason": "design-only; no source acquired/admitted"
+      },
+      "meaning_delta": {
+        "count": 0,
+        "of": 12,
+        "reason": "carry-forward is not new evidence; no new finding/grade/value"
+      }
+    }
+  },
+  "error_count": 0,
+  "errors": [],
+  "pinned_source_hashes": {
+    "docs/halo/contract/baseline-registry.json": {
+      "expected": "86de75c49946557153e0e46e2131302a6fc12117862fdd6383c0c88c320da8c4",
+      "got": "86de75c49946557153e0e46e2131302a6fc12117862fdd6383c0c88c320da8c4",
+      "match": true
+    },
+    "docs/halo/contract/gate2-evaluator-contract.json": {
+      "expected": "9bdc266438befe562b5197891e68afc15c797338b29152bb3aaf341a6f28fdd4",
+      "got": "9bdc266438befe562b5197891e68afc15c797338b29152bb3aaf341a6f28fdd4",
+      "match": true
+    },
+    "docs/halo/contract/phase1b/master-ledger-295.json": {
+      "expected": "747b6d31796939ae29f3a31a0f57226e57342ad7c2b1a1737e05287a5af59d13",
+      "got": "747b6d31796939ae29f3a31a0f57226e57342ad7c2b1a1737e05287a5af59d13",
+      "match": true
+    },
+    "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json": {
+      "expected": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+      "got": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+      "match": true
+    },
+    "docs/halo/evidence/m1r/gate5b/gate5b-report-model-21043.json": {
+      "expected": "04c3f965e1d087e9f5835d69e14a368d24c6af5a10743e593d9dc54516f129eb",
+      "got": "04c3f965e1d087e9f5835d69e14a368d24c6af5a10743e593d9dc54516f129eb",
+      "match": true
+    },
+    "docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json": {
+      "expected": "13c0fca11241c5608d7da1e434383a4e881c886ecbd696414bebdd5a8db636c6",
+      "got": "13c0fca11241c5608d7da1e434383a4e881c886ecbd696414bebdd5a8db636c6",
+      "match": true
+    }
+  },
+  "probe_not_rejected": 0,
+  "probe_rejected": 60,
+  "probe_total": 60,
+  "probes": [
+    {
+      "probe": "acc_field_source_family",
+      "rejected": true
+    },
+    {
+      "probe": "acc_field_metric_slug",
+      "rejected": true
+    },
+    {
+      "probe": "acc_field_formula",
+      "rejected": true
+    },
+    {
+      "probe": "acc_field_direct_source_fields",
+      "rejected": true
+    },
+    {
+      "probe": "acc_field_unit",
+      "rejected": true
+    },
+    {
+      "probe": "acc_field_value_display",
+      "rejected": true
+    },
+    {
+      "probe": "acc_field_rating",
+      "rejected": true
+    },
+    {
+      "probe": "acc_field_grade_value_or_range",
+      "rejected": true
+    },
+    {
+      "probe": "acc_field_numerator",
+      "rejected": true
+    },
+    {
+      "probe": "acc_field_denominator",
+      "rejected": true
+    },
+    {
+      "probe": "acc_field_grade_basis",
+      "rejected": true
+    },
+    {
+      "probe": "acc_field_detection_rule",
+      "rejected": true
+    },
+    {
+      "probe": "acc_report_state",
+      "rejected": true
+    },
+    {
+      "probe": "acc_authoritative",
+      "rejected": true
+    },
+    {
+      "probe": "acc_source_existence",
+      "rejected": true
+    },
+    {
+      "probe": "acc_acquisition",
+      "rejected": true
+    },
+    {
+      "probe": "acc_evaluation_state",
+      "rejected": true
+    },
+    {
+      "probe": "acc_next_owner_mismatch",
+      "rejected": true
+    },
+    {
+      "probe": "acc_next_owner_not_accountable",
+      "rejected": true
+    },
+    {
+      "probe": "held_report_state",
+      "rejected": true
+    },
+    {
+      "probe": "held_authoritative",
+      "rejected": true
+    },
+    {
+      "probe": "held_recomputed",
+      "rejected": true
+    },
+    {
+      "probe": "held_next_owner_mismatch",
+      "rejected": true
+    },
+    {
+      "probe": "held_next_owner_not_accountable",
+      "rejected": true
+    },
+    {
+      "probe": "q_remove_quarantine",
+      "rejected": true
+    },
+    {
+      "probe": "q_surface_peer_rank",
+      "rejected": true
+    },
+    {
+      "probe": "q_permit_legacy_field",
+      "rejected": true
+    },
+    {
+      "probe": "q_drop_forbidden_use",
+      "rejected": true
+    },
+    {
+      "probe": "q_legacy_label_leak",
+      "rejected": true
+    },
+    {
+      "probe": "q_peer_rank_of_change",
+      "rejected": true
+    },
+    {
+      "probe": "drop_id",
+      "rejected": true
+    },
+    {
+      "probe": "reorder",
+      "rejected": true
+    },
+    {
+      "probe": "duplicate_id",
+      "rejected": true
+    },
+    {
+      "probe": "condition_drift",
+      "rejected": true
+    },
+    {
+      "probe": "shrink_295",
+      "rejected": true
+    },
+    {
+      "probe": "accepted_value_change",
+      "rejected": true
+    },
+    {
+      "probe": "accepted_recompute_flag",
+      "rejected": true
+    },
+    {
+      "probe": "accepted_anchor_tamper",
+      "rejected": true
+    },
+    {
+      "probe": "authoritative_evaluated_18",
+      "rejected": true
+    },
+    {
+      "probe": "held_promote",
+      "rejected": true
+    },
+    {
+      "probe": "held_value",
+      "rejected": true
+    },
+    {
+      "probe": "held_formula",
+      "rejected": true
+    },
+    {
+      "probe": "held_target",
+      "rejected": true
+    },
+    {
+      "probe": "held_grade",
+      "rejected": true
+    },
+    {
+      "probe": "held_detection",
+      "rejected": true
+    },
+    {
+      "probe": "held_future_display",
+      "rejected": true
+    },
+    {
+      "probe": "held_invent_source_field",
+      "rejected": true
+    },
+    {
+      "probe": "held_missing_equals_zero",
+      "rejected": true
+    },
+    {
+      "probe": "held_proxy",
+      "rejected": true
+    },
+    {
+      "probe": "customer_emission",
+      "rejected": true
+    },
+    {
+      "probe": "customer_projection",
+      "rejected": true
+    },
+    {
+      "probe": "two_delta_nonzero",
+      "rejected": true
+    },
+    {
+      "probe": "service_parts_admitted",
+      "rejected": true
+    },
+    {
+      "probe": "nissan_scope",
+      "rejected": true
+    },
+    {
+      "probe": "quarantined_family_use",
+      "rejected": true
+    },
+    {
+      "probe": "causal_diagnosis_fact",
+      "rejected": true
+    },
+    {
+      "probe": "duane_technical_action",
+      "rejected": true
+    },
+    {
+      "probe": "held_blocker_marker_strip",
+      "rejected": true
+    },
+    {
+      "probe": "sw154_content_read",
+      "rejected": true
+    },
+    {
+      "probe": "held_vocab_inconsistency",
+      "rejected": true
+    }
+  ],
+  "result": "PASS",
+  "structural_error_count": 0,
+  "validator": "scripts/halo-phase1b/validate_pkt_03_02_binding.py"
+}

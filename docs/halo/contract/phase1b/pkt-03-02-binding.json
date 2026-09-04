@@ -1,0 +1,1359 @@
+{
+  "artifact": "pkt-03-02-binding",
+  "version": "1.0.0",
+  "packet_id": "PKT-03-02",
+  "module": 3,
+  "scope": "authority_binding_and_validation_gate_only",
+  "state": "freeze_candidate",
+  "immutable_after_independent_pass": false,
+  "note": "PKT-03-02 J1 freeze-candidate binding. Design-only, additive, CREATE-only. Converts the 12 provisional Module-3 rows into one reviewable machine-validated binding: SW-045/046 authoritative carry-forward (byte-semantic, no recompute); ten honest source_investigation_pending held states. No activation, no ledger/index change, no J2. Evidence delta 0/12, meaning delta 0/12. J1 customer emission authority=false.",
+  "management_question": "Are Serra Honda's Sales appointment, showroom, and be-back/test-drive dynamics healthy, and where cross-functional and statistical-anomaly signals could flag momentum loss, does the available evidence safely support DEFINING and triggering those signals for management action without inventing thresholds, sources, history, or reading protected customer content?",
+  "dealer_scope": {
+    "profile": "serra-honda",
+    "dealer_name": "Serra Honda of Sylacauga",
+    "dealer_id": "21043",
+    "domain": "Sales",
+    "service_parts_admitted": 0,
+    "service_source_admitted": 0,
+    "cross_rooftop_admitted": 0
+  },
+  "period": "2026-08-24..2026-08-30",
+  "customer_emission_authority": false,
+  "customer_projection": null,
+  "packet_accounting_assertion": {
+    "conditions": 295,
+    "modules": 11,
+    "packets": 30
+  },
+  "packet_membership_order": [
+    "SW-043",
+    "SW-044",
+    "SW-045",
+    "SW-046",
+    "SW-113",
+    "SW-114",
+    "SW-121",
+    "SW-122",
+    "SW-123",
+    "SW-125",
+    "SW-126",
+    "SW-154"
+  ],
+  "accountable_owner_roster": {
+    "codex": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+    "studio": "Claude Studio engineering (binding author; later implementer)",
+    "duane": "Duane (business/design/protected-content/threshold decision authority only)"
+  },
+  "accepted_measured_authority": {
+    "ids": [
+      "SW-045",
+      "SW-046"
+    ],
+    "authoritative_evaluated_total": 17,
+    "carry_forward": true,
+    "recomputed": false,
+    "sources": [
+      "gate5b-report-model-21043.json (evaluated)",
+      "gate2-evaluator-contract.json",
+      "baseline-registry.json"
+    ],
+    "note": "SW-045/046 carried forward byte-semantically from the frozen authoritative accepted+evaluated Honda state; no recompute/regrade/period/numerator/denominator/confidence/target change; authoritative_evaluated remains exactly 17."
+  },
+  "permanent_rules": [
+    "Honda Serra 21043 Sales only; Service/Parts/service-source/cross-rooftop admitted = 0.",
+    "Missing is not zero. No proxy, inference, synthetic source, invented denominator, or inferred history.",
+    "Do not use, normalize, or cure any quarantined source family based on clean rows.",
+    "Business-language causal labels in the catalog are NOT factual diagnoses.",
+    "J1 customer emission authority=false: no customer-visible output/report/finding/alert/notification.",
+    "Carry-forward is not new evidence; held rows acquire nothing (evidence delta 0/12, meaning delta 0/12).",
+    "Duane owns only genuine business/design/protected-content/threshold decisions; never technical investigation/acquisition/admission/accumulation/normalization/calculation/implementation.",
+    "PKT-02-03 remains open/held; SW-137 and SW-140 investigations are exhausted and not repeated."
+  ],
+  "source_family_slices": {
+    "slice_dealership_performance_accepted": [
+      "SW-045",
+      "SW-046"
+    ],
+    "slice_appointments_trend_history": [
+      "SW-043"
+    ],
+    "slice_appointments_operating_hours": [
+      "SW-044"
+    ],
+    "slice_appointment_outcome_composite": [
+      "SW-113",
+      "SW-114"
+    ],
+    "slice_kpi_anomaly_engine": [
+      "SW-121",
+      "SW-122",
+      "SW-123",
+      "SW-125",
+      "SW-126"
+    ],
+    "slice_protected_content_appointment_join": [
+      "SW-154"
+    ]
+  },
+  "lifecycle_partition": {
+    "target_ids": [
+      "SW-043",
+      "SW-044",
+      "SW-045",
+      "SW-046",
+      "SW-113",
+      "SW-114",
+      "SW-121",
+      "SW-122",
+      "SW-123",
+      "SW-125",
+      "SW-126",
+      "SW-154"
+    ],
+    "accepted_measured_ids": [
+      "SW-045",
+      "SW-046"
+    ],
+    "accepted_disposition_only_ids": [],
+    "rejected_ids": [],
+    "source_investigation_pending_ids": [
+      "SW-043",
+      "SW-044",
+      "SW-113",
+      "SW-114",
+      "SW-121",
+      "SW-122",
+      "SW-123",
+      "SW-125",
+      "SW-126",
+      "SW-154"
+    ],
+    "calculation_pending_ids": []
+  },
+  "service_parts_zero_admission": {
+    "service_parts_admitted": 0,
+    "held_families": [
+      "appointments",
+      "crm_sales_gross",
+      "dealership_performance"
+    ],
+    "quarantined_families": [
+      "cage_kpi",
+      "lead_source_roi",
+      "sales_comm_log"
+    ],
+    "quarantine_rule": "quarantined families are TERMINAL and must not be used/normalized/cured on clean rows",
+    "note": "SW-045/046 use the HELD dealership_performance Dashboard source (Gate 4B ratified), not any quarantined family."
+  },
+  "cross_dealer_exclusion": {
+    "excluded_dealers": [
+      {
+        "profile": "serra-nissan",
+        "dealer_id": "21044"
+      },
+      {
+        "profile": "tony-serra-ford",
+        "dealer_id": "21047"
+      }
+    ],
+    "note": "No Nissan (21044) or Ford (21047) source, delivery, or scope is admitted."
+  },
+  "prior_packets_preserved": {
+    "pkt_02_03_status": "open/held (not reopened, not closed)",
+    "sw_137_investigation": "exhausted; not repeated",
+    "sw_140_investigation": "exhausted; not repeated",
+    "files_must_remain_byte_identical": [
+      "docs/halo/contract/phase1b/pkt-02-03-binding.json",
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_SW-137_DISCOVERY_RESULT.json",
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_SW-140_DISCOVERY_RESULT.json"
+    ]
+  },
+  "two_delta": {
+    "evidence_delta": {
+      "count": 0,
+      "of": 12,
+      "reason": "design-only; no source acquired/admitted"
+    },
+    "meaning_delta": {
+      "count": 0,
+      "of": 12,
+      "reason": "carry-forward is not new evidence; no new finding/grade/value"
+    }
+  },
+  "pins": {
+    "baseline_commit": "f1119dba71d0fe195eab250a33c139197fe1d692",
+    "catalog_sha256_expected": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1"
+  },
+  "pinned_source_hashes": {
+    "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+    "docs/halo/contract/gate2-evaluator-contract.json": "9bdc266438befe562b5197891e68afc15c797338b29152bb3aaf341a6f28fdd4",
+    "docs/halo/contract/baseline-registry.json": "86de75c49946557153e0e46e2131302a6fc12117862fdd6383c0c88c320da8c4",
+    "docs/halo/evidence/m1r/gate5b/gate5b-report-model-21043.json": "04c3f965e1d087e9f5835d69e14a368d24c6af5a10743e593d9dc54516f129eb",
+    "docs/halo/contract/phase1b/master-ledger-295.json": "747b6d31796939ae29f3a31a0f57226e57342ad7c2b1a1737e05287a5af59d13",
+    "docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json": "13c0fca11241c5608d7da1e434383a4e881c886ecbd696414bebdd5a8db636c6"
+  },
+  "validator": "scripts/halo-phase1b/validate_pkt_03_02_binding.py",
+  "checks_receipt": "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_BINDING_CHECKS.json",
+  "metrics": [
+    {
+      "id": "SW-043",
+      "canonical_condition": "Same-day appointment set rate declining 3 weeks in a row.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Is the same-day appointment-set rate declining across three consecutive weeks?",
+      "population": "Serra Honda 21043 Sales appointments only",
+      "history_requirement": "REQUIRES three consecutive weeks of comparable same-day set-rate history; a single week is insufficient and must not be extrapolated into a trend.",
+      "calculation_kind_intent": "rate_trend_over_three_weeks",
+      "unit_intent": "rate_ratio (undefined until definition ratified)",
+      "source_family_intent": "appointments",
+      "source_family_slice": "slice_appointments_trend_history",
+      "required_direct_fields_or_keys": [
+        "appointment_created_date",
+        "appointment_target_date",
+        "same_day_flag (derived from a ratified same-day definition)",
+        "weekly_set_counts"
+      ],
+      "missing_or_quarantine_evidence": [
+        "'same-day' is not defined by existing authority; must not be invented",
+        "the three-week (three consecutive weeks) history series is NOT acquired; missing is not zero",
+        "no single-week inference of a declining trend is permitted",
+        "no proxy source may substitute for the appointment same-day series"
+      ],
+      "required_future_contract": [
+        "Duane-ratified 'same-day appointment set' definition and 3-week decline/trend rule",
+        "Codex read-only proof + governed acquisition of the 3-week appointment same-day series",
+        "Studio implementation of the trend metric after definition + acquisition"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "same_day_and_trend_definition_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "read_only_source_proof_and_history_acquisition": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "trend_metric_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Duane (business/design/protected-content/threshold decision authority only)",
+      "immediate_action": {
+        "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+        "action": "Ratify the 'same-day appointment set' definition and the 3-week decline/trend rule (business definition decision only; no inference from a single week)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+          "action": "Read-only proof and governed acquisition of the three-consecutive-week same-day appointment series (Sales only; no proxy)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the trend metric after definition and acquisition."
+        }
+      ],
+      "review_point": "on PKT-03-02 activation (J2), after same-day definition + 3-week acquisition",
+      "next_safe_source_action": "Codex bounded read-only confirmation that a same-day-derivable appointment series with creation and target dates exists; aggregate-only, no PII/raw rows.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-044",
+      "canonical_condition": "Appointments set outside dealership operating hours.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Are appointments being set outside dealership operating hours?",
+      "population": "Serra Honda 21043 Sales appointments only",
+      "history_requirement": "Not primarily a history question; blocked on source existence + definition.",
+      "calculation_kind_intent": "count_or_rate_outside_hours",
+      "unit_intent": "count_or_rate (undefined until definition ratified)",
+      "source_family_intent": "appointments",
+      "source_family_slice": "slice_appointments_operating_hours",
+      "required_direct_fields_or_keys": [
+        "appointment_created_timestamp (with time-of-day)",
+        "dealership_operating_hours_reference",
+        "timezone/calendar_exception_reference"
+      ],
+      "missing_or_quarantine_evidence": [
+        "appointment-created timestamp availability (with time-of-day) is UNPROVED; must not be assumed",
+        "dealership operating hours are not defined by existing authority; must not be invented",
+        "timezone / calendar exceptions and comparison semantics are undefined; must not be invented",
+        "no proxy timestamp or inferred hours may substitute"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of an appointment-created timestamp with time-of-day",
+        "Duane-ratified dealership operating hours, timezone/calendar exceptions, and comparison semantics",
+        "Studio implementation of the outside-hours metric after both"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "appointment_created_timestamp_read_only_investigation": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "operating_hours_and_comparison_definition_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "outside_hours_metric_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only investigation of whether an appointment-created timestamp with time-of-day exists in Sales-clean source; aggregate-only, no PII, no raw rows, no message content."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify dealership operating hours, timezone/calendar exceptions, and outside-hours comparison semantics (definition decision only)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the outside-hours metric after proof and definition."
+        }
+      ],
+      "review_point": "on PKT-03-02 activation (J2), after timestamp proof + operating-hours definition",
+      "next_safe_source_action": "Codex bounded read-only schema/UI check for an appointment-created time-of-day field; aggregate-only, no PII/raw rows.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-045",
+      "canonical_condition": "Ratio of \"be-backs\" to fresh ups inverted (retention symptom).",
+      "disposition": "measured_validated",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "evaluation_state": "measured_graded",
+      "report_acceptance_state": "accepted",
+      "authoritative": true,
+      "carry_forward": true,
+      "recomputed_this_tranche": false,
+      "future_display_eligibility": true,
+      "customer_projection_authored_this_tranche": false,
+      "source_family": "dealership_performance",
+      "metric_slug": "dashboard.beback_to_freshup_ratio",
+      "gate2_anchor": {
+        "source_family": "dealership_performance",
+        "metric_slug": "dashboard.beback_to_freshup_ratio",
+        "formula": "be_backs / initial_visits",
+        "source_fields": [
+          "Be Backs (Visit Summary TOTAL)",
+          "Initial Visits (Visit Summary TOTAL)"
+        ],
+        "numerator_field": "Be Backs (Visit Summary TOTAL)",
+        "denominator_field": "Initial Visits (Visit Summary TOTAL)",
+        "unit": "ratio",
+        "value_kind": "ratio",
+        "baseline_id": "OT-SW-045",
+        "baseline_basis": "operational_target",
+        "comparator": ">",
+        "reconciliation": "Gate 4B ratified Dashboard substitution; Initial Visits is the governed fresh-up denominator; inverted = ratio > 1.0; Initial Visits=0 & Be Backs>0 is an inverted/infinite firing signal not representable as a finite evaluated ratio (absent in the accepted period); both zero stays unresolved",
+        "direction": "lower_is_better"
+      },
+      "ot_anchor": {
+        "id": "OT-SW-045",
+        "metric_id": "SW-045",
+        "basis": "operational_target",
+        "label": "Be-backs to fresh-ups ratio — inverted when > 1.0",
+        "definition": "Be Backs / Initial Visits from the Dashboard Visit Summary TOTAL (Initial Visits is the governed fresh-up denominator). Unbounded ratio: Be Backs may exceed Initial Visits so the value can be > 1.0. 'Inverted' (retention symptom) means the ratio exceeds 1.0. If Initial Visits=0 and Be Backs>0 it is an inverted/infinite firing signal not representable as a finite evaluated ratio; if both are zero the cell stays unresolved.",
+        "unit": "ratio",
+        "comparator": ">",
+        "threshold": 1,
+        "direction": "lower_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+        "verified_date": "2026-09-01",
+        "confidence": "operator_defined"
+      },
+      "grade_target_id": "GT-SW-045",
+      "grade_basis": "operational_target",
+      "threshold": 1,
+      "comparator": ">",
+      "direction": "lower_is_better",
+      "unit": "ratio",
+      "value": 0.08333333333333333,
+      "value_display": "8.3%",
+      "rating": "healthy",
+      "grade_value_or_range": "healthy",
+      "numerator": 2,
+      "denominator": 24,
+      "formula": "be_backs / initial_visits",
+      "detection_rule": "SW-045: authoritative evaluated ratio vs > 1 (lower_is_better); carried forward, not recomputed.",
+      "direct_source_fields": [
+        "Be Backs (Visit Summary TOTAL)",
+        "Initial Visits (Visit Summary TOTAL)"
+      ],
+      "accepted_evaluation": {
+        "claim": "fact",
+        "metric_id": "SW-045",
+        "label": "Be-backs vs fresh-ups balance",
+        "value": 0.08333333333333333,
+        "value_display": "8.3%",
+        "unit": "ratio",
+        "operational_target": {
+          "kind": "operational_target",
+          "value": 1,
+          "value_display": "100%",
+          "comparator": ">",
+          "direction": "lower_is_better"
+        },
+        "variance": {
+          "native": -0.9166666666666666,
+          "display": "-91.7 pp"
+        },
+        "rating": "healthy",
+        "peer_rank": {
+          "rank": 2,
+          "tie": false,
+          "of": 3
+        },
+        "confidence": "medium",
+        "evidence": {
+          "source": "CRM Sales report",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+          "numerator": 2,
+          "denominator": 24
+        },
+        "industry_reference": null,
+        "text": "Be-backs vs fresh-ups balance: 8.3% (target at or below 100%; on target; middle of the three rooftops)."
+      },
+      "j2_quarantine": {
+        "byte_carried_but_not_usable_in_j2": [
+          "peer_rank",
+          "industry_reference",
+          "text",
+          "label",
+          "evidence.source",
+          "value_display",
+          "variance"
+        ],
+        "forbidden_uses": [
+          "calculation",
+          "narrative",
+          "display",
+          "ranking",
+          "source_attribution",
+          "customer_projection"
+        ],
+        "permitted_j2_fields": [
+          "value",
+          "evidence.numerator",
+          "evidence.denominator"
+        ],
+        "true_authority": "Dashboard (Gate 4B ratified dealership_performance)",
+        "legacy_peer_rank_of": 3,
+        "note": "accepted_evaluation is byte-carried for equality with the frozen Gate 5B model; its legacy three-rooftop peer_rank (of=3), industry_reference, narrative text, label, and 'CRM Sales report' source label are QUARANTINED from Honda-only J2 calculation/narrative/display/ranking/source-attribution/customer-projection. Only Honda-native value/numerator/denominator and the true Dashboard authority may be used in J2."
+      },
+      "current_truth_ref": "gate5b-report-model-21043.json (evaluated); gate2-evaluator-contract.json; baseline-registry.json",
+      "accountable_owners": {
+        "authoritative_carry_forward_preservation": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "future_customer_display_authorization": "Duane (business/design/protected-content/threshold decision authority only)"
+      },
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Preserve the authoritative evaluated Honda state for SW-045 byte-for-byte; do not recompute, regrade, or change period/numerator/denominator/target/confidence in this design-only tranche."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize future customer display of SW-045 only under a separate customer-emission decision; J1 emission authority remains false."
+        }
+      ],
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "review_point": "next accepted period (recompute on new governed delivery)",
+      "authority": "authoritative accepted+evaluated Honda truth carried forward byte-semantically; authoritative_evaluated remains exactly 17"
+    },
+    {
+      "id": "SW-046",
+      "canonical_condition": "Test drive completion rate <50% of showroom visits.",
+      "disposition": "measured_validated",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "evaluation_state": "measured_graded",
+      "report_acceptance_state": "accepted",
+      "authoritative": true,
+      "carry_forward": true,
+      "recomputed_this_tranche": false,
+      "future_display_eligibility": true,
+      "customer_projection_authored_this_tranche": false,
+      "source_family": "dealership_performance",
+      "metric_slug": "dashboard.test_drive_completion_rate",
+      "gate2_anchor": {
+        "source_family": "dealership_performance",
+        "metric_slug": "dashboard.test_drive_completion_rate",
+        "formula": "demo / total_visits",
+        "source_fields": [
+          "Demo (Visit Summary TOTAL)",
+          "Total Visits (Visit Summary TOTAL)"
+        ],
+        "numerator_field": "Demo (Visit Summary TOTAL)",
+        "denominator_field": "Total Visits (Visit Summary TOTAL)",
+        "unit": "ratio_0_1",
+        "value_kind": "ratio",
+        "baseline_id": "OT-SW-046",
+        "baseline_basis": "operational_target",
+        "comparator": "<",
+        "reconciliation": "Gate 4B ratified definition-compatible Dashboard substitution; Demo is the test-drive-completion count; trigger when rate < 0.50; if Total Visits=0 stays unresolved",
+        "direction": "higher_is_better"
+      },
+      "ot_anchor": {
+        "id": "OT-SW-046",
+        "metric_id": "SW-046",
+        "basis": "operational_target",
+        "label": "Test-drive completion rate floor",
+        "definition": "Demo / Total Visits from the Dashboard Visit Summary TOTAL (Demo is the test-drive-completion count). Definition-compatible substitution for the multi-family quarantined source. If Total Visits=0 the cell stays unresolved (missing is not zero).",
+        "unit": "ratio_0_1",
+        "comparator": "<",
+        "threshold": 0.5,
+        "direction": "higher_is_better",
+        "source": "Duane-supplied starter condition (catalog threshold_provenance); Gate 4B ratified Dashboard substitution",
+        "verified_date": "2026-09-01",
+        "confidence": "operator_defined"
+      },
+      "grade_target_id": "GT-SW-046",
+      "grade_basis": "operational_target",
+      "threshold": 0.5,
+      "comparator": "<",
+      "direction": "higher_is_better",
+      "unit": "ratio_0_1",
+      "value": 0,
+      "value_display": "0%",
+      "rating": "breach",
+      "grade_value_or_range": "breach",
+      "numerator": 0,
+      "denominator": 26,
+      "formula": "demo / total_visits",
+      "detection_rule": "SW-046: authoritative evaluated ratio vs < 0.5 (higher_is_better); carried forward, not recomputed.",
+      "direct_source_fields": [
+        "Demo (Visit Summary TOTAL)",
+        "Total Visits (Visit Summary TOTAL)"
+      ],
+      "accepted_evaluation": {
+        "claim": "fact",
+        "metric_id": "SW-046",
+        "label": "Test-drive completion rate",
+        "value": 0,
+        "value_display": "0%",
+        "unit": "ratio_0_1",
+        "operational_target": {
+          "kind": "operational_target",
+          "value": 0.5,
+          "value_display": "50%",
+          "comparator": "<",
+          "direction": "higher_is_better"
+        },
+        "variance": {
+          "native": -0.5,
+          "display": "-50 pp"
+        },
+        "rating": "breach",
+        "peer_rank": {
+          "rank": 2,
+          "tie": true,
+          "of": 3
+        },
+        "confidence": "medium",
+        "evidence": {
+          "source": "CRM Sales report",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+          "numerator": 0,
+          "denominator": 26
+        },
+        "industry_reference": null,
+        "text": "Test-drive completion rate: 0% (target at or above 50%; off target; middle of the three rooftops)."
+      },
+      "j2_quarantine": {
+        "byte_carried_but_not_usable_in_j2": [
+          "peer_rank",
+          "industry_reference",
+          "text",
+          "label",
+          "evidence.source",
+          "value_display",
+          "variance"
+        ],
+        "forbidden_uses": [
+          "calculation",
+          "narrative",
+          "display",
+          "ranking",
+          "source_attribution",
+          "customer_projection"
+        ],
+        "permitted_j2_fields": [
+          "value",
+          "evidence.numerator",
+          "evidence.denominator"
+        ],
+        "true_authority": "Dashboard (Gate 4B ratified dealership_performance)",
+        "legacy_peer_rank_of": 3,
+        "note": "accepted_evaluation is byte-carried for equality with the frozen Gate 5B model; its legacy three-rooftop peer_rank (of=3), industry_reference, narrative text, label, and 'CRM Sales report' source label are QUARANTINED from Honda-only J2 calculation/narrative/display/ranking/source-attribution/customer-projection. Only Honda-native value/numerator/denominator and the true Dashboard authority may be used in J2."
+      },
+      "current_truth_ref": "gate5b-report-model-21043.json (evaluated); gate2-evaluator-contract.json; baseline-registry.json",
+      "accountable_owners": {
+        "authoritative_carry_forward_preservation": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "future_customer_display_authorization": "Duane (business/design/protected-content/threshold decision authority only)"
+      },
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Preserve the authoritative evaluated Honda state for SW-046 byte-for-byte; do not recompute, regrade, or change period/numerator/denominator/target/confidence in this design-only tranche."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize future customer display of SW-046 only under a separate customer-emission decision; J1 emission authority remains false."
+        }
+      ],
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "review_point": "next accepted period (recompute on new governed delivery)",
+      "authority": "authoritative accepted+evaluated Honda truth carried forward byte-semantically; authoritative_evaluated remains exactly 17"
+    },
+    {
+      "id": "SW-113",
+      "canonical_condition": "High appointment set rate + low show rate = quality-of-set problem.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Is a high appointment-set rate combined with a low show rate (quality-of-set)?",
+      "population": "Serra Honda 21043 Sales appointments only",
+      "history_requirement": "Components may be measurable; the composite threshold logic is undefined.",
+      "calculation_kind_intent": "composite_two_rate_threshold_flag",
+      "unit_intent": "composite_flag (undefined until thresholds ratified)",
+      "source_family_intent": "appointments",
+      "source_family_slice": "slice_appointment_outcome_composite",
+      "required_direct_fields_or_keys": [
+        "appointment_set_count",
+        "appointment_show_count",
+        "high_set_threshold (Duane)",
+        "low_show_threshold (Duane)"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the 'high' set-rate and 'low' show-rate business thresholds are undefined; must not be invented",
+        "existing appointment evidence may prove components but NOT the composite thresholds",
+        "the catalog phrase 'quality-of-set problem' is a business label, NOT a factual diagnosis; cause must not be diagnosed",
+        "no proxy or inference may set the thresholds; missing is not zero"
+      ],
+      "required_future_contract": [
+        "Duane-ratified 'high' set-rate and 'low' show-rate thresholds",
+        "Codex confirmation of governed set/show component sources",
+        "Studio implementation of the composite flag (no causal claim)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "high_low_threshold_definition_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "component_source_read_only_confirmation": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "composite_flag_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Duane (business/design/protected-content/threshold decision authority only)",
+      "immediate_action": {
+        "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+        "action": "Ratify the 'high' set-rate and 'low' show-rate business thresholds (definition decision only; cause is not to be diagnosed)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+          "action": "Confirm governed set-count and show-count component sources (read-only)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the composite flag after thresholds; assert no causal diagnosis."
+        }
+      ],
+      "review_point": "on PKT-03-02 activation (J2), after thresholds ratified",
+      "next_safe_source_action": "Codex bounded read-only confirmation of set/show component sources; aggregate-only.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-114",
+      "canonical_condition": "High show rate + low close rate = desking or product problem.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Is a high show rate combined with a low close rate (desking/product)?",
+      "population": "Serra Honda 21043 Sales appointments only",
+      "history_requirement": "Components partly measurable; close denominator + thresholds undefined.",
+      "calculation_kind_intent": "composite_two_rate_threshold_flag",
+      "unit_intent": "composite_flag (undefined until thresholds ratified)",
+      "source_family_intent": "crm_sales_gross",
+      "source_family_slice": "slice_appointment_outcome_composite",
+      "required_direct_fields_or_keys": [
+        "appointment_show_count",
+        "close/sale_count",
+        "close_denominator (undefined)",
+        "high_show_threshold (Duane)",
+        "low_close_threshold (Duane)"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the 'high' show-rate and 'low' close-rate thresholds are undefined; must not be invented",
+        "the close join / close denominator is undefined and unacquired; must not be invented",
+        "the catalog phrase 'desking or product problem' is a business label, NOT a factual diagnosis; cause must not be diagnosed",
+        "no proxy or inference may supply the close denominator; missing is not zero"
+      ],
+      "required_future_contract": [
+        "Duane-ratified 'high' show-rate and 'low' close-rate thresholds and close denominator semantics",
+        "Codex read-only proof + governed acquisition of a valid close join/denominator source",
+        "Studio implementation of the composite flag (no causal claim)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "high_low_threshold_and_close_denominator_definition_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "close_join_source_read_only_investigation_and_acquisition": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "composite_flag_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Duane (business/design/protected-content/threshold decision authority only)",
+      "immediate_action": {
+        "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+        "action": "Ratify the 'high' show-rate and 'low' close-rate thresholds and the close denominator semantics (definition decision only; cause is not to be diagnosed)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+          "action": "Read-only proof and governed acquisition of a valid close join/denominator source (Sales only; no proxy)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the composite flag after thresholds + close source; assert no causal diagnosis."
+        }
+      ],
+      "review_point": "on PKT-03-02 activation (J2), after thresholds + close source",
+      "next_safe_source_action": "Codex bounded read-only investigation of a governed close/sale source join; aggregate-only.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-121",
+      "canonical_condition": "Any KPI moves >2σ from trailing 30-day mean → soft alert.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does any chosen KPI move >2 sigma from its trailing 30-day mean (soft alert)?",
+      "population": "Serra Honda 21043 Sales KPI universe only",
+      "history_requirement": "REQUIRES a defined KPI universe and a trailing daily history sufficient for the rule; the trailing history is NOT acquired; missing is not zero.",
+      "calculation_kind_intent": "statistical_anomaly_rule",
+      "unit_intent": "alert_signal (undefined until method ratified)",
+      "source_family_intent": "dealership_performance",
+      "source_family_slice": "slice_kpi_anomaly_engine",
+      "required_direct_fields_or_keys": [
+        "chosen_kpi_series (Duane universe)",
+        "daily_grain_values",
+        "trailing_window_history"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the KPI universe is not chosen; must not be invented",
+        "the statistical method (2-sigma-over-trailing-30-day-mean) parameters are undefined; must not be invented",
+        "daily grain, missing-day handling, sample-size rule are undefined; must not be invented",
+        "the 2-sigma method over the trailing 30-day mean is undefined; must not be invented",
+        "soft-alert semantics are undefined; must not be invented",
+        "no proxy KPI, inferred history, or synthetic denominator; missing is not zero",
+        "no soft/hard/trend alert may be emitted (J1 emission authority=false)"
+      ],
+      "required_future_contract": [
+        "Duane-ratified KPI universe, daily grain, missing-day handling, sample-size rule, 2-sigma method, soft-alert semantics",
+        "Codex read-only proof + acquisition of the KPI series and trailing 30-day history",
+        "Studio implementation of the 2-sigma soft-alert rule (no alert emitted in J1)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "kpi_universe_and_method_definition_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "kpi_series_read_only_proof_and_history_acquisition": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "anomaly_engine_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Duane (business/design/protected-content/threshold decision authority only)",
+      "immediate_action": {
+        "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+        "action": "Ratify the KPI universe, daily grain, missing-day handling, sample-size rule, 2-sigma method over the trailing 30-day mean, and soft-alert semantics (definition decisions only)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+          "action": "Read-only proof and governed acquisition of the ratified KPI series and trailing daily history (Sales only; no proxy)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the 2-sigma-over-trailing-30-day-mean anomaly rule after definition + acquisition; no alert emitted in J1."
+        }
+      ],
+      "review_point": "on PKT-03-02 activation (J2), after KPI universe + method + history",
+      "next_safe_source_action": "Codex bounded read-only confirmation that the ratified KPI series exist; aggregate-only.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-122",
+      "canonical_condition": "Any KPI moves >3σ or breaches hard SLA → hard alert.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does any chosen KPI move >3 sigma or breach a hard SLA (hard alert)?",
+      "population": "Serra Honda 21043 Sales KPI universe only",
+      "history_requirement": "REQUIRES a defined KPI universe and a trailing daily history sufficient for the rule; the trailing history is NOT acquired; missing is not zero.",
+      "calculation_kind_intent": "statistical_anomaly_rule",
+      "unit_intent": "alert_signal (undefined until method ratified)",
+      "source_family_intent": "dealership_performance",
+      "source_family_slice": "slice_kpi_anomaly_engine",
+      "required_direct_fields_or_keys": [
+        "chosen_kpi_series (Duane universe)",
+        "daily_grain_values",
+        "trailing_window_history"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the KPI universe is not chosen; must not be invented",
+        "the statistical method (3-sigma-or-hard-SLA) parameters are undefined; must not be invented",
+        "the hard-SLA inventory and precedence are undefined; must not be invented",
+        "the 3-sigma method is undefined; must not be invented",
+        "hard-alert semantics are undefined; must not be invented",
+        "no proxy KPI, inferred history, or synthetic denominator; missing is not zero",
+        "no soft/hard/trend alert may be emitted (J1 emission authority=false)"
+      ],
+      "required_future_contract": [
+        "Duane-ratified KPI universe, 3-sigma method, hard-SLA inventory, precedence, hard-alert semantics",
+        "Codex read-only proof + acquisition of the KPI series and SLA reference",
+        "Studio implementation of the 3-sigma/SLA hard-alert rule (no alert emitted in J1)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "kpi_universe_and_method_definition_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "kpi_series_read_only_proof_and_history_acquisition": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "anomaly_engine_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Duane (business/design/protected-content/threshold decision authority only)",
+      "immediate_action": {
+        "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+        "action": "Ratify the KPI universe, 3-sigma method, hard-SLA inventory, precedence, and hard-alert semantics (definition decisions only)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+          "action": "Read-only proof and governed acquisition of the ratified KPI series and trailing daily history (Sales only; no proxy)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the 3-sigma-or-hard-SLA anomaly rule after definition + acquisition; no alert emitted in J1."
+        }
+      ],
+      "review_point": "on PKT-03-02 activation (J2), after KPI universe + method + history",
+      "next_safe_source_action": "Codex bounded read-only confirmation that the ratified KPI series exist; aggregate-only.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-123",
+      "canonical_condition": "3 consecutive days of same-direction drift on a KPI → trend alert.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Do 3 consecutive days of same-direction drift occur on a chosen KPI (trend alert)?",
+      "population": "Serra Honda 21043 Sales KPI universe only",
+      "history_requirement": "REQUIRES a defined KPI universe and a trailing daily history sufficient for the rule; the trailing history is NOT acquired; missing is not zero.",
+      "calculation_kind_intent": "statistical_anomaly_rule",
+      "unit_intent": "alert_signal (undefined until method ratified)",
+      "source_family_intent": "dealership_performance",
+      "source_family_slice": "slice_kpi_anomaly_engine",
+      "required_direct_fields_or_keys": [
+        "chosen_kpi_series (Duane universe)",
+        "daily_grain_values",
+        "trailing_window_history"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the KPI universe is not chosen; must not be invented",
+        "the statistical method (3-consecutive-day-drift) parameters are undefined; must not be invented",
+        "daily grain and missing-day handling are undefined; must not be invented",
+        "the same-direction drift definition is undefined; must not be invented",
+        "trend-alert semantics are undefined; must not be invented",
+        "no proxy KPI, inferred history, or synthetic denominator; missing is not zero",
+        "no soft/hard/trend alert may be emitted (J1 emission authority=false)"
+      ],
+      "required_future_contract": [
+        "Duane-ratified KPI universe, daily grain, same-direction drift definition, missing-day handling, trend-alert semantics",
+        "Codex read-only proof + acquisition of the KPI series and daily history",
+        "Studio implementation of the 3-day drift trend-alert rule (no alert emitted in J1)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "kpi_universe_and_method_definition_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "kpi_series_read_only_proof_and_history_acquisition": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "anomaly_engine_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Duane (business/design/protected-content/threshold decision authority only)",
+      "immediate_action": {
+        "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+        "action": "Ratify the KPI universe, daily grain, same-direction drift definition, missing-day handling, and trend-alert semantics (definition decisions only)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+          "action": "Read-only proof and governed acquisition of the ratified KPI series and trailing daily history (Sales only; no proxy)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the 3-consecutive-day-drift anomaly rule after definition + acquisition; no alert emitted in J1."
+        }
+      ],
+      "review_point": "on PKT-03-02 activation (J2), after KPI universe + method + history",
+      "next_safe_source_action": "Codex bounded read-only confirmation that the ratified KPI series exist; aggregate-only.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-125",
+      "canonical_condition": "Correlated-metric decoupling (e.g., calls up, appointments flat) → investigate.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Are correlated metrics decoupling (e.g., calls up while appointments flat)?",
+      "population": "Serra Honda 21043 Sales metric pairs only",
+      "history_requirement": "REQUIRES a defined correlation window of comparable history that is NOT acquired; missing is not zero.",
+      "calculation_kind_intent": "correlation_decoupling_rule",
+      "unit_intent": "investigation_signal (undefined until method ratified)",
+      "source_family_intent": "dealership_performance",
+      "source_family_slice": "slice_kpi_anomaly_engine",
+      "required_direct_fields_or_keys": [
+        "chosen_metric_pairs (Duane)",
+        "paired_series_history",
+        "correlation_window (Duane)"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the metric pairs are not chosen; must not be invented",
+        "the correlation window/method and expected relationship are undefined; must not be invented",
+        "the decoupling review threshold is undefined; must not be invented",
+        "no proxy pairing or inferred correlation; missing is not zero"
+      ],
+      "required_future_contract": [
+        "Duane-ratified metric pairs, correlation window/method, expected relationship, decoupling review threshold",
+        "Codex read-only proof + acquisition of the paired series history",
+        "Studio implementation of the decoupling rule (no alert/customer output in J1)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "metric_pair_and_correlation_definition_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "paired_series_read_only_proof_and_acquisition": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "decoupling_rule_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Duane (business/design/protected-content/threshold decision authority only)",
+      "immediate_action": {
+        "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+        "action": "Ratify the correlated metric pairs, correlation window/method, expected relationship, and the decoupling review threshold (definition decisions only)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+          "action": "Read-only proof and governed acquisition of the paired series history."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the decoupling rule after definition + acquisition; no output in J1."
+        }
+      ],
+      "review_point": "on PKT-03-02 activation (J2), after pairs + window + history",
+      "next_safe_source_action": "Codex bounded read-only confirmation that the ratified paired series exist; aggregate-only.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-126",
+      "canonical_condition": "Segment slice anomaly (one source/rep/model driving aggregate drop) → root-cause flag.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Is one segment slice (source/rep/model) driving an aggregate drop (root-cause flag)?",
+      "population": "Serra Honda 21043 Sales segments only",
+      "history_requirement": "Requires segment-level history; not acquired; missing is not zero.",
+      "calculation_kind_intent": "segment_anomaly_attribution_rule",
+      "unit_intent": "root_cause_flag (undefined until method ratified)",
+      "source_family_intent": "dealership_performance",
+      "source_family_slice": "slice_kpi_anomaly_engine",
+      "required_direct_fields_or_keys": [
+        "segment_universe (Duane)",
+        "segment_level_series",
+        "minimum_segment_volume (Duane)"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the segment universe is not chosen; must not be invented",
+        "the minimum segment volume and anomaly method are undefined; must not be invented",
+        "the aggregate-drop attribution rule is undefined; a root-cause claim must not be asserted as fact",
+        "no proxy segmentation or inferred attribution; missing is not zero"
+      ],
+      "required_future_contract": [
+        "Duane-ratified segment universe, minimum segment volume, anomaly method, aggregate-drop attribution rule",
+        "Codex read-only proof + acquisition of the segment-level series",
+        "Studio implementation of the segment anomaly flag (no root-cause claim, no output in J1)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "segment_universe_and_anomaly_method_definition_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "segment_series_read_only_proof_and_acquisition": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "segment_anomaly_flag_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Duane (business/design/protected-content/threshold decision authority only)",
+      "immediate_action": {
+        "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+        "action": "Ratify the segment universe, minimum segment volume, anomaly method, and aggregate-drop attribution rule (definition decisions only; no root-cause claim)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+          "action": "Read-only proof and governed acquisition of the segment-level series."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the segment anomaly flag after definition + acquisition; no root-cause claim; no output in J1."
+        }
+      ],
+      "review_point": "on PKT-03-02 activation (J2), after segment universe + method + history",
+      "next_safe_source_action": "Codex bounded read-only confirmation that segment-level series exist; aggregate-only.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-154",
+      "canonical_condition": "Customer says \"I'm ready\" / \"let's do it\" / \"when can I come in\" — no appointment set within 1h.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Did a high-intent customer phrase occur with no appointment set within 1 hour?",
+      "population": "Serra Honda 21043 Sales customer messages + appointments only",
+      "history_requirement": "Not a history question; blocked on protected-content authorization + join + keys.",
+      "calculation_kind_intent": "protected_content_phrase_plus_appointment_window_join",
+      "unit_intent": "protected_signal (undefined until envelope + join ratified)",
+      "source_family_intent": "protected_content_appointment_join",
+      "source_family_slice": "slice_protected_content_appointment_join",
+      "required_direct_fields_or_keys": [
+        "admitted_stable_message_keys",
+        "admitted_stable_customer_keys",
+        "admitted_appointment_keys",
+        "appointment_created_timestamp (for the within-1h window)"
+      ],
+      "missing_or_quarantine_evidence": [
+        "message content is NOT read in this tranche (content_bytes_read=false)",
+        "keyword/phrase results are NOT authoritative and must not be claimed as such",
+        "provisional thread/customer labels are NOT stable linkage and must not be used as stable keys",
+        "the high-intent phrase / NLP semantics and the appointment-within-1h window are undefined; must not be invented",
+        "the appointment join requires admitted stable keys that are unproved; must not be inferred",
+        "requires the SPEC 5.5 authorized protected/reproducible NLP envelope before any calculation",
+        "missing is not zero; no proxy or inference"
+      ],
+      "required_future_contract": [
+        "Duane authorization of the SPEC 5.5 protected-content NLP envelope and high-intent phrase/appointment-window definition",
+        "Codex read-only proof + admission of stable message/customer/appointment keys and a valid appointment join",
+        "Studio implementation of the phrase+window join under the protected envelope (content stays governed; no output in J1)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "protected_content_authorization_and_definition": "Duane (business/design/protected-content/threshold decision authority only)",
+        "stable_key_and_appointment_join_read_only_investigation": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_join_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Duane (business/design/protected-content/threshold decision authority only)",
+      "immediate_action": {
+        "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+        "action": "Authorize the SPEC 5.5 protected-content NLP envelope and ratify the high-intent phrase/NLP definition and the appointment-within-1h join window (authority/definition decision only; content remains unread)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+          "action": "Under the authorized envelope, read-only proof + admission of stable message/customer/appointment keys and a valid appointment join; no content persisted."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the phrase+window join after envelope + keys + join; no output in J1."
+        }
+      ],
+      "review_point": "on PKT-03-02 activation (J2), after protected envelope + stable keys + appointment join",
+      "next_safe_source_action": "Codex bounded read-only confirmation of admitted stable keys and a valid appointment join under the authorized protected envelope; NO content read/persisted.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8).",
+      "content_bytes_read": false,
+      "keyword_results_authoritative": false,
+      "provisional_labels_are_stable_linkage": false,
+      "protected_content_envelope_required": "SPEC 5.5",
+      "protected_content_precedent": "PKT-02-03 (SW-135/139/141/154 protected-content discipline)"
+    }
+  ]
+}
