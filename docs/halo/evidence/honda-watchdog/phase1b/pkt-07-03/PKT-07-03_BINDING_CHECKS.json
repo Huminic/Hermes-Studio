@@ -1,0 +1,559 @@
+{
+  "artifact": "PKT-07-03_BINDING_CHECKS",
+  "baseline_commit": "b5684577c0e0b768c0176e99c0b94d3ded978aa2",
+  "binding": "docs/halo/contract/phase1b/pkt-07-03-binding.json",
+  "checks": {
+    "accepted_disposition_only_ids": [
+      "SW-199"
+    ],
+    "accepted_measured_ids": [],
+    "accounting": {
+      "conditions": 295,
+      "modules": 11,
+      "packets": 30
+    },
+    "allowlist_absent_at_baseline": {
+      "docs/halo/contract/phase1b/pkt-07-03-binding.json": true,
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-07-03/PKT-07-03_BINDING_CHECKS.json": true,
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-07-03/PKT-07-03_J1_TWO_DELTA.md": true,
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-07-03/PKT-07-03_J1_internal_coverage_roadmap.md": true,
+      "scripts/halo-phase1b/validate_pkt_07_03_binding.py": true
+    },
+    "authoritative_evaluated_total": 17,
+    "authority_absence": {
+      "in_baseline_operational_targets": [],
+      "in_gate2_evaluable_conditions": [],
+      "in_gate5b_evaluated": []
+    },
+    "carry_forward": false,
+    "claude_staged": false,
+    "compliance_id": "SW-193",
+    "conditional_source_ids": [
+      "SW-181",
+      "SW-182",
+      "SW-183",
+      "SW-193",
+      "SW-198",
+      "SW-286",
+      "SW-290"
+    ],
+    "dealer_scope": {
+      "cross_rooftop_admitted": 0,
+      "dealer_id": "21043",
+      "dealer_name": "Serra Honda of Sylacauga",
+      "domain": "Sales",
+      "profile": "serra-honda",
+      "service_parts_admitted": 0,
+      "service_source_admitted": 0
+    },
+    "ids_order_membership": [
+      "SW-181",
+      "SW-182",
+      "SW-183",
+      "SW-193",
+      "SW-198",
+      "SW-199",
+      "SW-286",
+      "SW-290"
+    ],
+    "lifecycle_id": "SW-198",
+    "module": 7,
+    "multiweek_id": "SW-290",
+    "out_of_allowlist_changes": [],
+    "overwrite_guard_selftest": true,
+    "pinned_hashes_ok": true,
+    "prior_packets_preserved": true,
+    "protected_future_ids": [
+      "SW-181",
+      "SW-182",
+      "SW-183",
+      "SW-193",
+      "SW-198",
+      "SW-286",
+      "SW-290"
+    ],
+    "review_ids": [
+      "SW-181",
+      "SW-182",
+      "SW-183",
+      "SW-193",
+      "SW-198",
+      "SW-286",
+      "SW-290"
+    ],
+    "service_domain_overlay": {
+      "file": "docs/halo/contract/service-domain-overlay.json",
+      "member_count": 18,
+      "members": [
+        "SW-079",
+        "SW-081",
+        "SW-083",
+        "SW-115",
+        "SW-118",
+        "SW-199",
+        "SW-222",
+        "SW-223",
+        "SW-224",
+        "SW-225",
+        "SW-226",
+        "SW-227",
+        "SW-228",
+        "SW-229",
+        "SW-263",
+        "SW-270",
+        "SW-279",
+        "SW-294"
+      ],
+      "sha256": "53f5dadebda15ef286356f9e8c862351e835d48b7b5cc8c91bc70d1ea5e779bb",
+      "sw_199_member": true
+    },
+    "slices": {
+      "lifecycle_and_domain_coordination": [
+        "SW-198",
+        "SW-199"
+      ],
+      "manager_claim_substantiation": [
+        "SW-183"
+      ],
+      "promise_followthrough": [
+        "SW-181"
+      ],
+      "sentiment_and_escalation_models": [
+        "SW-286",
+        "SW-290"
+      ],
+      "unsubstantiated_compliance_promises": [
+        "SW-193"
+      ],
+      "vehicle_claim_validation": [
+        "SW-182"
+      ]
+    },
+    "source_investigation_pending_ids": [
+      "SW-181",
+      "SW-182",
+      "SW-183",
+      "SW-193",
+      "SW-198",
+      "SW-286",
+      "SW-290"
+    ],
+    "substantiation_ids": [
+      "SW-181",
+      "SW-182",
+      "SW-183",
+      "SW-193"
+    ],
+    "supporting_ids": [
+      "SW-181",
+      "SW-182",
+      "SW-183",
+      "SW-193",
+      "SW-198",
+      "SW-286",
+      "SW-290"
+    ],
+    "sw_199_outside_sales_domain": {
+      "acquisition_admission_state": "not_acquired",
+      "counted_in_evaluated": false,
+      "disposition": "outside_sales_domain",
+      "evaluation_state": "not_measured",
+      "next_action_owner": "Service domain owner (separately authorized Service workspace/governance/owner; not Sales)",
+      "preserved": true,
+      "sales_source_action": "none",
+      "source_existence_state": "proved_outside_sales_domain"
+    },
+    "two_delta": {
+      "evidence_delta": {
+        "count": 0,
+        "of": 8,
+        "reason": "design-only; no source acquired/admitted this tranche"
+      },
+      "meaning_delta": {
+        "count": 0,
+        "of": 8,
+        "reason": "no value/grade/finding produced; seven held, SW-199 outside Sales"
+      }
+    }
+  },
+  "error_count": 0,
+  "errors": [],
+  "legacy_validate_phase1b": {
+    "delta_new": 0,
+    "exactness": "post-J1 == pinned canonical 30-error signature UNION 0 new; same-count substitution rejected",
+    "file": "scripts/halo-phase1b/validate_phase1b.py",
+    "now_error_count": 30,
+    "pinned_baseline_count": 30,
+    "pinned_baseline_signature_sha256": "2cbf86a6361f4c67803807d5d7d7d496413a4b20924da42516ff80d7d3d46783"
+  },
+  "pinned_source_hashes": {
+    "docs/halo/contract/baseline-registry.json": {
+      "expected": "86de75c49946557153e0e46e2131302a6fc12117862fdd6383c0c88c320da8c4",
+      "got": "86de75c49946557153e0e46e2131302a6fc12117862fdd6383c0c88c320da8c4",
+      "match": true
+    },
+    "docs/halo/contract/gate2-evaluator-contract.json": {
+      "expected": "9bdc266438befe562b5197891e68afc15c797338b29152bb3aaf341a6f28fdd4",
+      "got": "9bdc266438befe562b5197891e68afc15c797338b29152bb3aaf341a6f28fdd4",
+      "match": true
+    },
+    "docs/halo/contract/phase1b/master-ledger-295.json": {
+      "expected": "a5e4dd0b00ddfb48642d342a0bef0c49cb40a85d3bb375879e636b3d5cc7543a",
+      "got": "a5e4dd0b00ddfb48642d342a0bef0c49cb40a85d3bb375879e636b3d5cc7543a",
+      "match": true
+    },
+    "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json": {
+      "expected": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+      "got": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+      "match": true
+    },
+    "docs/halo/evidence/m1r/gate5b/gate5b-report-model-21043.json": {
+      "expected": "04c3f965e1d087e9f5835d69e14a368d24c6af5a10743e593d9dc54516f129eb",
+      "got": "04c3f965e1d087e9f5835d69e14a368d24c6af5a10743e593d9dc54516f129eb",
+      "match": true
+    },
+    "docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json": {
+      "expected": "13c0fca11241c5608d7da1e434383a4e881c886ecbd696414bebdd5a8db636c6",
+      "got": "13c0fca11241c5608d7da1e434383a4e881c886ecbd696414bebdd5a8db636c6",
+      "match": true
+    }
+  },
+  "probe_not_rejected": 0,
+  "probe_rejected": 66,
+  "probe_total": 66,
+  "probes": [
+    {
+      "kind": "structural",
+      "probe": "drop_id",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "reorder",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "duplicate_id",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "extra_metric_path",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "condition_drift",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "shrink_295",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "shrink_packets",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "module_drift",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "baseline_drift",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "catalog_pin_drift",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "hash_tamper",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "customer_emission",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "customer_projection",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "two_delta_nonzero",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "two_delta_of_wrong",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "service_parts_admitted",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "nissan_scope",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "accepted_bucket_nonempty",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "calc_bucket_nonempty",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "disposition_only_wrong_member",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "authoritative_evaluated_18",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "carry_forward_true",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "authority_absence_false_claim",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "slices_incomplete",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "overlay_count_break",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "overlay_member_break",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "sw199_demote_to_sip",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "sw199_admit_measured",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "sw199_value",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "sw199_sales_source_action",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "sw199_reopen_in_sales",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "sw199_counted_in_evaluated",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "sw199_codex_owner",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "sw199_truthref_drift",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "sw199_source_existence_promote",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "held_promote",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "falsely_promote_supporting",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "erase_supporting_evidence",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "absolute_source_absence_claim",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "customer_label_as_identity",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "proxy_flag",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "protected_content_strip",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "review_discipline_strip",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "legal_conclusion_claim",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "substantiation_as_proof",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "lifecycle_label_identity",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "multiweek_strip",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "held_value",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "held_threshold",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "held_detection",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "held_future_display",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "held_invent_source_field",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "held_missing_equals_zero",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "held_authoritative",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "held_report_state",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "held_recomputed",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "held_next_owner_mismatch",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "quarantined_family_use",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "held_blocker_marker_strip",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "causal_accusation_fact",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "held_vocab_inconsistency",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "technical_ownership_to_duane",
+      "rejected": true
+    },
+    {
+      "kind": "structural",
+      "probe": "unproved_intent_break",
+      "rejected": true
+    },
+    {
+      "kind": "legacy",
+      "probe": "legacy_same_count_substitution",
+      "rejected": true
+    },
+    {
+      "kind": "legacy",
+      "probe": "legacy_new_error_added",
+      "rejected": true
+    },
+    {
+      "kind": "legacy",
+      "probe": "legacy_removed_error",
+      "rejected": true
+    }
+  ],
+  "result": "PASS",
+  "structural_error_count": 0,
+  "validator": "scripts/halo-phase1b/validate_pkt_07_03_binding.py"
+}
