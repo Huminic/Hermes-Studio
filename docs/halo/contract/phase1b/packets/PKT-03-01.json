@@ -1,0 +1,1286 @@
+{
+  "artifact": "honda-watchdog-phase1b-packet-PKT-03-01",
+  "schema": "docs/halo/contract/phase1b/packet-schema-1b-v2.json",
+  "packet_id": "PKT-03-01",
+  "module": 3,
+  "period": "2026-08-24..2026-08-30",
+  "management_question": "Where is Serra Honda’s Sales funnel losing momentum—from lead through appointment, showroom, write-up, and close—and do appointment confirmation, pipeline aging, and stage-history evidence support timely management intervention?",
+  "target_ids": [
+    "SW-031",
+    "SW-032",
+    "SW-033",
+    "SW-034",
+    "SW-035",
+    "SW-036",
+    "SW-037",
+    "SW-038",
+    "SW-039",
+    "SW-040",
+    "SW-041",
+    "SW-042"
+  ],
+  "source_reuse_note": "No source dependency is added: the 4 accepted metrics are authoritative carry-forward (current_truth_ref); the 8 held metrics are source_investigation_pending with empty dependencies. No new source-registry node; schema-v2/registry-v2 unmodified.",
+  "source_dependencies": [],
+  "metric_definitions": [
+    {
+      "metric_id": "SW-031",
+      "canonical_condition": "Lead-to-appointment set rate falls below 25%.",
+      "business_question": "Is the lead-to-appointment set rate at or above the 25% floor?",
+      "population": "Serra Honda 21043 Sales dealership_performance weekly, accepted period 2026-08-24..2026-08-30.",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "single_accepted_week_carry_forward",
+      "calculation_kind": "rate",
+      "numerator": "Appts Set (TOTAL)",
+      "denominator": "Leads (TOTAL)",
+      "formula": "appts_set_total / leads_total",
+      "unit": "ratio_0_1",
+      "required_direct_fields_or_keys": [
+        "Leads (TOTAL)",
+        "Appts Set (TOTAL)",
+        "Appts Set % (TOTAL)"
+      ],
+      "direct_source_fields": [
+        "Leads (TOTAL)",
+        "Appts Set (TOTAL)",
+        "Appts Set % (TOTAL)"
+      ],
+      "source_family": "dealership_performance",
+      "source_family_slice": "slice_dealership_performance_accepted",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "disposition": "measured_validated",
+      "evaluation_state": "measured_graded",
+      "lifecycle_bucket": "accepted_measured_ids",
+      "boundary_class": "sales",
+      "gradable": true,
+      "grade_target_id": "GT-OT-SW-031",
+      "grade_approval": "approved",
+      "grade_status": "active",
+      "grade_basis": "operational_target",
+      "grade_value_or_range": "< 0.25",
+      "detection_rule": "trigger when value < 0.25 (Lead-to-appointment set rate floor)",
+      "threshold": 0.25,
+      "ot_anchor": {
+        "baseline_id": "OT-SW-031",
+        "comparator": "<",
+        "threshold": 0.25,
+        "unit": "ratio_0_1",
+        "direction": "higher_is_better",
+        "basis": "operational_target"
+      },
+      "gate2_anchor": {
+        "source_family": "dealership_performance",
+        "metric_slug": "dashboard.lead_to_appt_set_rate",
+        "formula": "appts_set_total / leads_total",
+        "source_fields": [
+          "Leads (TOTAL)",
+          "Appts Set (TOTAL)",
+          "Appts Set % (TOTAL)"
+        ],
+        "numerator_field": "Appts Set (TOTAL)",
+        "denominator_field": "Leads (TOTAL)",
+        "unit": "ratio_0_1",
+        "baseline_id": "OT-SW-031",
+        "baseline_basis": "operational_target",
+        "comparator": "<",
+        "reconciliation": "computed rate must equal the source 'Appts Set %' TOTAL cell within 1e-6",
+        "direction": "higher_is_better"
+      },
+      "accepted_evaluation": {
+        "claim": "fact",
+        "metric_id": "SW-031",
+        "label": "Lead-to-appointment set rate",
+        "value": 0.10869565217391304,
+        "value_display": "10.9%",
+        "unit": "ratio_0_1",
+        "operational_target": {
+          "kind": "operational_target",
+          "value": 0.25,
+          "value_display": "25%",
+          "comparator": "<",
+          "direction": "higher_is_better"
+        },
+        "variance": {
+          "native": -0.14130434782608697,
+          "display": "-14.1 pp"
+        },
+        "rating": "breach",
+        "peer_rank": {
+          "rank": 3,
+          "tie": false,
+          "of": 3
+        },
+        "confidence": "medium",
+        "evidence": {
+          "source": "CRM Sales report",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+          "numerator": 10,
+          "denominator": 92
+        },
+        "industry_reference": {
+          "publisher": "Foureyes",
+          "usage": "reference_only",
+          "note": "shown for context only; not used to score this metric"
+        },
+        "text": "Lead-to-appointment set rate: 10.9% (target at or above 25%; off target; weakest of the three rooftops)."
+      },
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": true,
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "carry_forward": true,
+      "current_truth_ref": "gate5b-report-model-21043.json (evaluated); gate2-evaluator-contract.json; baseline-registry.json",
+      "missing_or_quarantine_evidence": [
+        "Accepted+evaluated authoritative Honda state carried forward byte-semantically (current_truth_ref: gate5b-report-model-21043.json (evaluated); gate2-evaluator-contract.json; baseline-registry.json); NOT recalculated or regraded in this binding."
+      ],
+      "required_future_contract": [
+        "None for measurement (already accepted/evaluated). Any future customer display is a separate Duane-authorized business decision; J1 emission authority is FALSE."
+      ],
+      "cadence": "Weekly native scheduled; accepted",
+      "accountable_owners": {
+        "authoritative_carry_forward_preservation": "Codex VinSolutions controller",
+        "future_customer_display_authorization": "Duane Wells"
+      },
+      "next_action_owner": "Codex VinSolutions controller",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller",
+        "action": "Carry forward the accepted+evaluated authoritative state byte-semantically (value/target/rating/numerator/denominator/period/provenance/current_truth_ref); no recalculation or regrade."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane Wells",
+          "action": "Authorize future customer display of this accepted metric only as a separate business decision (metadata eligibility is not authorization; not exercised in J1)."
+        }
+      ],
+      "review_point": "PKT-03-01 activation (carry-forward preservation)",
+      "next_safe_source_action": "Preserve the accepted authoritative row unchanged; no measurement/grade/customer emission in J1.",
+      "authority": "carry-forward accepted+evaluated Honda truth: gate5b-report-model-21043.json (evaluated) + gate2-evaluator-contract.json (dashboard.lead_to_appt_set_rate) + baseline-registry.json (OT-SW-031)",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-032",
+      "canonical_condition": "Appointment show rate drops below 55%.",
+      "business_question": "Is the appointment show rate at or above the 55% floor?",
+      "population": "Serra Honda 21043 Sales appointments weekly, accepted period 2026-08-24..2026-08-30.",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "single_accepted_week_carry_forward",
+      "calculation_kind": "rate",
+      "numerator": "Is Show=Yes",
+      "denominator": "appointment rows (total)",
+      "formula": "count(Is Show=Yes) / count(appointment rows)",
+      "unit": "ratio_0_1",
+      "required_direct_fields_or_keys": [
+        "Is Show",
+        "appointment rows (total)"
+      ],
+      "direct_source_fields": [
+        "Is Show",
+        "appointment rows (total)"
+      ],
+      "source_family": "appointments",
+      "source_family_slice": "slice_appointments_accepted",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "disposition": "measured_validated",
+      "evaluation_state": "measured_graded",
+      "lifecycle_bucket": "accepted_measured_ids",
+      "boundary_class": "sales",
+      "gradable": true,
+      "grade_target_id": "GT-OT-SW-032",
+      "grade_approval": "approved",
+      "grade_status": "active",
+      "grade_basis": "operational_target",
+      "grade_value_or_range": "< 0.55",
+      "detection_rule": "trigger when value < 0.55 (Appointment show rate floor)",
+      "threshold": 0.55,
+      "ot_anchor": {
+        "baseline_id": "OT-SW-032",
+        "comparator": "<",
+        "threshold": 0.55,
+        "unit": "ratio_0_1",
+        "direction": "higher_is_better",
+        "basis": "operational_target"
+      },
+      "gate2_anchor": {
+        "source_family": "appointments",
+        "metric_slug": "appt.show_rate",
+        "formula": "count(Is Show=Yes) / count(appointment rows)",
+        "source_fields": [
+          "Is Show",
+          "appointment rows (total)"
+        ],
+        "numerator_field": "Is Show=Yes",
+        "denominator_field": "appointment rows (total)",
+        "unit": "ratio_0_1",
+        "baseline_id": "OT-SW-032",
+        "baseline_basis": "operational_target",
+        "comparator": "<",
+        "reconciliation": "matches RATIFIED R2 appt.show_rate definition",
+        "direction": "higher_is_better"
+      },
+      "accepted_evaluation": {
+        "claim": "fact",
+        "metric_id": "SW-032",
+        "label": "Appointment show rate",
+        "value": 0.5714285714285714,
+        "value_display": "57.1%",
+        "unit": "ratio_0_1",
+        "operational_target": {
+          "kind": "operational_target",
+          "value": 0.55,
+          "value_display": "55%",
+          "comparator": "<",
+          "direction": "higher_is_better"
+        },
+        "variance": {
+          "native": 0.021428571428571352,
+          "display": "+2.1 pp"
+        },
+        "rating": "watch",
+        "peer_rank": {
+          "rank": 1,
+          "tie": false,
+          "of": 3
+        },
+        "confidence": "low",
+        "evidence": {
+          "source": "CRM appointment report",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+          "numerator": 8,
+          "denominator": 14
+        },
+        "industry_reference": {
+          "publisher": "Foureyes",
+          "usage": "reference_only",
+          "note": "shown for context only; not used to score this metric"
+        },
+        "text": "Appointment show rate: 57.1% (target at or above 55%; near the target line; strongest of the three rooftops)."
+      },
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": true,
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "carry_forward": true,
+      "current_truth_ref": "gate5b-report-model-21043.json (evaluated); gate2-evaluator-contract.json; baseline-registry.json",
+      "missing_or_quarantine_evidence": [
+        "Accepted+evaluated authoritative Honda state carried forward byte-semantically (current_truth_ref: gate5b-report-model-21043.json (evaluated); gate2-evaluator-contract.json; baseline-registry.json); NOT recalculated or regraded in this binding."
+      ],
+      "required_future_contract": [
+        "None for measurement (already accepted/evaluated). Any future customer display is a separate Duane-authorized business decision; J1 emission authority is FALSE."
+      ],
+      "cadence": "Weekly native scheduled; accepted",
+      "accountable_owners": {
+        "authoritative_carry_forward_preservation": "Codex VinSolutions controller",
+        "future_customer_display_authorization": "Duane Wells"
+      },
+      "next_action_owner": "Codex VinSolutions controller",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller",
+        "action": "Carry forward the accepted+evaluated authoritative state byte-semantically (value/target/rating/numerator/denominator/period/provenance/current_truth_ref); no recalculation or regrade."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane Wells",
+          "action": "Authorize future customer display of this accepted metric only as a separate business decision (metadata eligibility is not authorization; not exercised in J1)."
+        }
+      ],
+      "review_point": "PKT-03-01 activation (carry-forward preservation)",
+      "next_safe_source_action": "Preserve the accepted authoritative row unchanged; no measurement/grade/customer emission in J1.",
+      "authority": "carry-forward accepted+evaluated Honda truth: gate5b-report-model-21043.json (evaluated) + gate2-evaluator-contract.json (appt.show_rate) + baseline-registry.json (OT-SW-032)",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-033",
+      "canonical_condition": "Show-to-write rate below 60%.",
+      "business_question": "Is the show-to-write rate at or above the 60% floor?",
+      "population": "Serra Honda 21043 Sales dealership_performance weekly, accepted period 2026-08-24..2026-08-30.",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "single_accepted_week_carry_forward",
+      "calculation_kind": "rate",
+      "numerator": "Writeup (Visit Summary TOTAL)",
+      "denominator": "Appts Show (Dealership Summary TOTAL)",
+      "formula": "writeup / appts_show",
+      "unit": "ratio_0_1",
+      "required_direct_fields_or_keys": [
+        "Writeup (Visit Summary TOTAL)",
+        "Appts Show (Dealership Summary TOTAL)"
+      ],
+      "direct_source_fields": [
+        "Writeup (Visit Summary TOTAL)",
+        "Appts Show (Dealership Summary TOTAL)"
+      ],
+      "source_family": "dealership_performance",
+      "source_family_slice": "slice_dealership_performance_accepted",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "disposition": "measured_validated",
+      "evaluation_state": "measured_graded",
+      "lifecycle_bucket": "accepted_measured_ids",
+      "boundary_class": "sales",
+      "gradable": true,
+      "grade_target_id": "GT-OT-SW-033",
+      "grade_approval": "approved",
+      "grade_status": "active",
+      "grade_basis": "operational_target",
+      "grade_value_or_range": "< 0.6",
+      "detection_rule": "trigger when value < 0.6 (Show-to-write rate floor)",
+      "threshold": 0.6,
+      "ot_anchor": {
+        "baseline_id": "OT-SW-033",
+        "comparator": "<",
+        "threshold": 0.6,
+        "unit": "ratio_0_1",
+        "direction": "higher_is_better",
+        "basis": "operational_target"
+      },
+      "gate2_anchor": {
+        "source_family": "dealership_performance",
+        "metric_slug": "dashboard.show_to_write_rate",
+        "formula": "writeup / appts_show",
+        "source_fields": [
+          "Writeup (Visit Summary TOTAL)",
+          "Appts Show (Dealership Summary TOTAL)"
+        ],
+        "numerator_field": "Writeup (Visit Summary TOTAL)",
+        "denominator_field": "Appts Show (Dealership Summary TOTAL)",
+        "unit": "ratio_0_1",
+        "value_kind": "ratio",
+        "baseline_id": "OT-SW-033",
+        "baseline_basis": "operational_target",
+        "comparator": "<",
+        "reconciliation": "Gate 4B ratified definition-compatible Dashboard substitution for the quarantined CAGE source; trigger when rate < 0.60; if Appts Show=0 stays unresolved",
+        "direction": "higher_is_better"
+      },
+      "accepted_evaluation": {
+        "claim": "fact",
+        "metric_id": "SW-033",
+        "label": "Show-to-write rate",
+        "value": 0,
+        "value_display": "0%",
+        "unit": "ratio_0_1",
+        "operational_target": {
+          "kind": "operational_target",
+          "value": 0.6,
+          "value_display": "60%",
+          "comparator": "<",
+          "direction": "higher_is_better"
+        },
+        "variance": {
+          "native": -0.6,
+          "display": "-60 pp"
+        },
+        "rating": "breach",
+        "peer_rank": {
+          "rank": 1,
+          "tie": true,
+          "of": 3
+        },
+        "confidence": "low",
+        "evidence": {
+          "source": "CRM Sales report",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+          "numerator": 0,
+          "denominator": 8
+        },
+        "industry_reference": null,
+        "text": "Show-to-write rate: 0% (target at or above 60%; off target; strongest of the three rooftops)."
+      },
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": true,
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "carry_forward": true,
+      "current_truth_ref": "gate5b-report-model-21043.json (evaluated); gate2-evaluator-contract.json; baseline-registry.json",
+      "missing_or_quarantine_evidence": [
+        "Accepted+evaluated authoritative Honda state carried forward byte-semantically (current_truth_ref: gate5b-report-model-21043.json (evaluated); gate2-evaluator-contract.json; baseline-registry.json); NOT recalculated or regraded in this binding."
+      ],
+      "required_future_contract": [
+        "None for measurement (already accepted/evaluated). Any future customer display is a separate Duane-authorized business decision; J1 emission authority is FALSE."
+      ],
+      "cadence": "Weekly native scheduled; accepted",
+      "accountable_owners": {
+        "authoritative_carry_forward_preservation": "Codex VinSolutions controller",
+        "future_customer_display_authorization": "Duane Wells"
+      },
+      "next_action_owner": "Codex VinSolutions controller",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller",
+        "action": "Carry forward the accepted+evaluated authoritative state byte-semantically (value/target/rating/numerator/denominator/period/provenance/current_truth_ref); no recalculation or regrade."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane Wells",
+          "action": "Authorize future customer display of this accepted metric only as a separate business decision (metadata eligibility is not authorization; not exercised in J1)."
+        }
+      ],
+      "review_point": "PKT-03-01 activation (carry-forward preservation)",
+      "next_safe_source_action": "Preserve the accepted authoritative row unchanged; no measurement/grade/customer emission in J1.",
+      "authority": "carry-forward accepted+evaluated Honda truth: gate5b-report-model-21043.json (evaluated) + gate2-evaluator-contract.json (dashboard.show_to_write_rate) + baseline-registry.json (OT-SW-033)",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-034",
+      "canonical_condition": "Write-to-close rate below 40%.",
+      "business_question": "What share of written-up Sales deals close (write-to-close rate)?",
+      "population": "Serra Honda 21043 Sales write-ups and closes, period 2026-08-24..2026-08-30 (denominator + bridge pending).",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "dated_sales_only_pull_and_join_bridge_pending",
+      "calculation_kind": "rate",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "ratio_0_1",
+      "required_direct_fields_or_keys": [
+        "dated Sales-only CRM Sales Gross close outcomes",
+        "written-up denominator",
+        "supported stable lead/customer join bridge"
+      ],
+      "direct_source_fields": [],
+      "source_family": "crm_sales_gross",
+      "source_family_slice": "slice_crm_sales_gross_join",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "disposition": "source_investigation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "source_investigation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": false,
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "carry_forward": false,
+      "missing_or_quarantine_evidence": [
+        "CRM Sales Gross is held/accepted-eligible, but write-to-close needs a written-up DENOMINATOR joined to close outcomes; Deal/Dealership Performance is a CANDIDATE join bridge ONLY, not accepted for this join.",
+        "No dated Sales-only pull re-pinned by hash and no supported stable lead/customer bridge is proven.",
+        "Missing is not zero; no source substitution/inference; quarantined cage_kpi/lead_source_roi/sales_comm_log remain unusable; missing is not zero; zero Service/Parts admitted.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "required_future_contract": [
+        "A dated Sales-only CRM Sales Gross pull re-pinned by hash + a supported stable lead/customer join bridge (Deal Performance candidate only).",
+        "Duane ratifies the write-to-close denominator semantics + approved target."
+      ],
+      "cadence": "Weekly native scheduled / downstream calculation (held)",
+      "accountable_owners": {
+        "write_to_close_denominator_and_target_decision": "Duane Wells",
+        "read_only_dated_pull_and_bridge_investigation": "Codex VinSolutions controller",
+        "join_and_calculation_implementation": "Claude Studio engineering"
+      },
+      "next_action_owner": "Codex VinSolutions controller",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller",
+        "action": "Bounded read-only investigation of a dated Sales-only CRM Sales Gross pull and a supported lead/customer join bridge (Deal Performance is candidate only, never treated as accepted)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane Wells",
+          "action": "Ratify the write-to-close denominator semantics + approved target (business decision)."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the join + calculation once contracted."
+        }
+      ],
+      "review_point": "PKT-03-01 investigation close",
+      "next_safe_source_action": "Investigate a dated Sales-only CRM Sales Gross pull + candidate bridge; do not treat Deal Performance as an accepted bridge; no calculation, no promotion.",
+      "authority": "catalog condition (verbatim) + native-scheduled held crm_sales_gross; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-035",
+      "canonical_condition": "Funnel stage conversion drops >15% vs 90-day baseline at any step.",
+      "business_question": "Does any funnel step's conversion drop more than 15% versus its 90-day baseline?",
+      "population": "Serra Honda 21043 Sales funnel steps, period 2026-08-24..2026-08-30 (join + 90-day baseline pending).",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "trailing_90_day_baseline_plus_join_formula_required",
+      "calculation_kind": "rate",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "ratio_0_1",
+      "required_direct_fields_or_keys": [
+        "defined funnel-step join (Leads->Appointments->Dealership/CRM Sales)",
+        "trailing 90-day per-step baseline",
+        "stable keys"
+      ],
+      "direct_source_fields": [],
+      "source_family": "multi_source_funnel_join",
+      "source_family_slice": "slice_multi_source_funnel_join",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "disposition": "source_investigation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "source_investigation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": false,
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "carry_forward": false,
+      "missing_or_quarantine_evidence": [
+        "Requires a defined funnel-step join AND a trailing 90-DAY baseline; neither the join formula nor the 90-day history exists.",
+        "Missing is not zero; no source substitution/inference; quarantined cage_kpi/lead_source_roi/sales_comm_log remain unusable; missing is not zero; zero Service/Parts admitted.",
+        "No approved operational target."
+      ],
+      "required_future_contract": [
+        "Duane ratifies the exact funnel-step join formula and the 90-day baseline window.",
+        "Codex acquires the trailing 90-day stable-key history; Claude implements."
+      ],
+      "cadence": "Weekly native scheduled / downstream calculation (held)",
+      "accountable_owners": {
+        "funnel_join_formula_and_90d_baseline_decision": "Duane Wells",
+        "trailing_history_acquisition": "Codex VinSolutions controller",
+        "baseline_comparison_implementation": "Claude Studio engineering"
+      },
+      "next_action_owner": "Duane Wells",
+      "immediate_action": {
+        "owner": "Duane Wells",
+        "action": "Ratify the exact funnel-step join formula and the 90-day baseline window (business decision)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller",
+          "action": "Acquire the trailing 90-day stable-key funnel history once the formula is ratified."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the funnel-conversion baseline comparison once contracted."
+        }
+      ],
+      "review_point": "PKT-03-01 investigation close",
+      "next_safe_source_action": "Ratify the funnel join formula + 90-day baseline before any calculation; acquire history only after; no substitution/inference, no promotion.",
+      "authority": "catalog condition (verbatim); scheduled-source-plus-downstream join; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-036",
+      "canonical_condition": "Pipeline aging: >30% of open leads are >21 days old with no activity.",
+      "business_question": "Are more than 30% of open Sales leads older than 21 days with no activity?",
+      "population": "Serra Honda 21043 open Sales leads, period 2026-08-24..2026-08-30 (pipeline join + aging rule pending).",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "open_pipeline_snapshot_plus_21d_no_activity_join_formula_required",
+      "calculation_kind": "rate",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "ratio_0_1",
+      "required_direct_fields_or_keys": [
+        "open-lead pipeline denominator",
+        "last-activity timestamp per lead",
+        "21-day no-activity rule",
+        "stable keys"
+      ],
+      "direct_source_fields": [],
+      "source_family": "multi_source_funnel_join",
+      "source_family_slice": "slice_multi_source_funnel_join",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "disposition": "source_investigation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "source_investigation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": false,
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "carry_forward": false,
+      "missing_or_quarantine_evidence": [
+        "Requires an open-lead pipeline denominator + a last-activity timestamp + a 21-day no-activity rule; the pipeline join/formula is undefined.",
+        "Missing is not zero: absent activity is not proven inactivity without a last-activity field; no source substitution/inference; quarantined cage_kpi/lead_source_roi/sales_comm_log remain unusable; missing is not zero; zero Service/Parts admitted.",
+        "No approved operational target."
+      ],
+      "required_future_contract": [
+        "Duane ratifies the open-pipeline denominator + the 21-day no-activity rule.",
+        "Codex acquires the pipeline+activity extract; Claude implements."
+      ],
+      "cadence": "Weekly native scheduled / downstream calculation (held)",
+      "accountable_owners": {
+        "open_pipeline_and_21d_rule_decision": "Duane Wells",
+        "pipeline_activity_extract_acquisition": "Codex VinSolutions controller",
+        "aging_detection_implementation": "Claude Studio engineering"
+      },
+      "next_action_owner": "Duane Wells",
+      "immediate_action": {
+        "owner": "Duane Wells",
+        "action": "Ratify the open-pipeline denominator and the 21-day no-activity rule (business decision)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller",
+          "action": "Acquire the open-pipeline + last-activity stable-key extract once the rule is ratified."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the pipeline-aging detection once contracted."
+        }
+      ],
+      "review_point": "PKT-03-01 investigation close",
+      "next_safe_source_action": "Ratify the open-pipeline denominator + 21-day rule before any calculation; no proxy for last-activity; no promotion.",
+      "authority": "catalog condition (verbatim); scheduled-source-plus-downstream join; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-037",
+      "canonical_condition": "\"Hot\" leads (last-7-day intake) as % of pipeline drops below 40%.",
+      "business_question": "Do 'hot' leads (last-7-day intake) fall below 40% of the pipeline?",
+      "population": "Serra Honda 21043 Sales pipeline, period 2026-08-24..2026-08-30 (pipeline denominator + intake window pending).",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "current_pipeline_denominator_plus_7d_intake_window_join_formula_required",
+      "calculation_kind": "rate",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "ratio_0_1",
+      "required_direct_fields_or_keys": [
+        "current pipeline denominator",
+        "lead intake timestamp",
+        "7-day intake window",
+        "stable keys"
+      ],
+      "direct_source_fields": [],
+      "source_family": "multi_source_funnel_join",
+      "source_family_slice": "slice_multi_source_funnel_join",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "disposition": "source_investigation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "source_investigation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": false,
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "carry_forward": false,
+      "missing_or_quarantine_evidence": [
+        "Requires a current pipeline denominator + a 7-day intake window; the pipeline join/formula is undefined.",
+        "Missing is not zero; no source substitution/inference; quarantined cage_kpi/lead_source_roi/sales_comm_log remain unusable; missing is not zero; zero Service/Parts admitted.",
+        "No approved operational target."
+      ],
+      "required_future_contract": [
+        "Duane ratifies the pipeline denominator + the 7-day intake window.",
+        "Codex acquires the pipeline+intake extract; Claude implements."
+      ],
+      "cadence": "Weekly native scheduled / downstream calculation (held)",
+      "accountable_owners": {
+        "pipeline_denominator_and_7d_window_decision": "Duane Wells",
+        "pipeline_intake_extract_acquisition": "Codex VinSolutions controller",
+        "hot_lead_mix_implementation": "Claude Studio engineering"
+      },
+      "next_action_owner": "Duane Wells",
+      "immediate_action": {
+        "owner": "Duane Wells",
+        "action": "Ratify the pipeline denominator and the 7-day intake window (business decision)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller",
+          "action": "Acquire the pipeline + intake-timestamp stable-key extract once the window is ratified."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the hot-lead mix calculation once contracted."
+        }
+      ],
+      "review_point": "PKT-03-01 investigation close",
+      "next_safe_source_action": "Ratify the pipeline denominator + 7-day intake window before any calculation; no promotion.",
+      "authority": "catalog condition (verbatim); scheduled-source-plus-downstream join; no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-038",
+      "canonical_condition": "Stage skipping: leads jumping from \"new\" to \"lost\" without intermediate touches.",
+      "business_question": "How many leads jumped from 'new' to 'lost' without intermediate touches?",
+      "population": "Serra Honda 21043 Sales lead stage-history, period 2026-08-24..2026-08-30 (stage-skipping; no bulk transition export proven).",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "not_history_blocked_pending_positive_stage_history_export_investigation",
+      "calculation_kind": "count",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "leads",
+      "required_direct_fields_or_keys": [
+        "bulk old-status/new-status/transition-timestamp export",
+        "lead/customer stable key"
+      ],
+      "direct_source_fields": [],
+      "source_family": "stage_history_audit",
+      "source_family_slice": "slice_stage_history_audit",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "disposition": "source_investigation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "source_investigation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": false,
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "carry_forward": false,
+      "missing_or_quarantine_evidence": [
+        "Requires a bulk status/transition-timestamp export; no such export is proven (retention-limited).",
+        "A finite POSITIVE retention/stage-history investigation is required BEFORE any terminal 'unavailable' conclusion; absence is NOT proven and is NOT zero.",
+        "no source substitution/inference; quarantined cage_kpi/lead_source_roi/sales_comm_log remain unusable; missing is not zero; zero Service/Parts admitted.",
+        "No approved operational target."
+      ],
+      "required_future_contract": [
+        "A finite positive read-only investigation of whether an authoritative exportable status/transition audit dataset exists (retention/stage-history).",
+        "Duane decides whether to request/commission the audit dataset ONLY after the investigation."
+      ],
+      "cadence": "Weekly native scheduled / downstream calculation (held)",
+      "accountable_owners": {
+        "status_audit_request_decision": "Duane Wells",
+        "positive_stage_history_export_investigation": "Codex VinSolutions controller",
+        "stage_history_detection_implementation": "Claude Studio engineering"
+      },
+      "next_action_owner": "Codex VinSolutions controller",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller",
+        "action": "Finite positive read-only investigation of whether an authoritative status/transition audit export exists (retention/stage-history); do NOT conclude unavailable without proof, do NOT infer from absence."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane Wells",
+          "action": "Decide whether to request/commission the status-audit dataset (business decision, only after the source is proven)."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the stage-history detection once a source is contracted."
+        }
+      ],
+      "review_point": "PKT-03-01 investigation close",
+      "next_safe_source_action": "Run a finite positive stage-history export investigation; never conclude unavailable from absence; missing is not zero; no substitution; no promotion.",
+      "authority": "catalog condition (verbatim); acquisition_class unavailable/retention-limited (finite positive investigation required); no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-039",
+      "canonical_condition": "Deals stuck in \"working\" stage >14 days without status change.",
+      "business_question": "How many deals sat in 'working' >14 days without a status change?",
+      "population": "Serra Honda 21043 Sales lead stage-history, period 2026-08-24..2026-08-30 (stuck-in-working; no bulk transition export proven).",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "not_history_blocked_pending_positive_stage_history_export_investigation",
+      "calculation_kind": "count",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "leads",
+      "required_direct_fields_or_keys": [
+        "bulk old-status/new-status/transition-timestamp export",
+        "lead/customer stable key"
+      ],
+      "direct_source_fields": [],
+      "source_family": "stage_history_audit",
+      "source_family_slice": "slice_stage_history_audit",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "disposition": "source_investigation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "source_investigation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": false,
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "carry_forward": false,
+      "missing_or_quarantine_evidence": [
+        "Requires a bulk status/transition-timestamp export; no such export is proven (retention-limited).",
+        "A finite POSITIVE retention/stage-history investigation is required BEFORE any terminal 'unavailable' conclusion; absence is NOT proven and is NOT zero.",
+        "no source substitution/inference; quarantined cage_kpi/lead_source_roi/sales_comm_log remain unusable; missing is not zero; zero Service/Parts admitted.",
+        "No approved operational target."
+      ],
+      "required_future_contract": [
+        "A finite positive read-only investigation of whether an authoritative exportable status/transition audit dataset exists (retention/stage-history).",
+        "Duane decides whether to request/commission the audit dataset ONLY after the investigation."
+      ],
+      "cadence": "Weekly native scheduled / downstream calculation (held)",
+      "accountable_owners": {
+        "status_audit_request_decision": "Duane Wells",
+        "positive_stage_history_export_investigation": "Codex VinSolutions controller",
+        "stage_history_detection_implementation": "Claude Studio engineering"
+      },
+      "next_action_owner": "Codex VinSolutions controller",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller",
+        "action": "Finite positive read-only investigation of whether an authoritative status/transition audit export exists (retention/stage-history); do NOT conclude unavailable without proof, do NOT infer from absence."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane Wells",
+          "action": "Decide whether to request/commission the status-audit dataset (business decision, only after the source is proven)."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the stage-history detection once a source is contracted."
+        }
+      ],
+      "review_point": "PKT-03-01 investigation close",
+      "next_safe_source_action": "Run a finite positive stage-history export investigation; never conclude unavailable from absence; missing is not zero; no substitution; no promotion.",
+      "authority": "catalog condition (verbatim); acquisition_class unavailable/retention-limited (finite positive investigation required); no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-040",
+      "canonical_condition": "Backwards stage movement (e.g., \"sold\" reverted to \"working\") without note.",
+      "business_question": "How many deals moved backwards (e.g., 'sold'->'working') without a note?",
+      "population": "Serra Honda 21043 Sales lead stage-history, period 2026-08-24..2026-08-30 (backwards-movement; no bulk transition/note export proven).",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "not_history_blocked_pending_positive_stage_history_export_investigation",
+      "calculation_kind": "count",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "leads",
+      "required_direct_fields_or_keys": [
+        "bulk old-status/new-status/transition-timestamp export",
+        "lead/customer stable key"
+      ],
+      "direct_source_fields": [],
+      "source_family": "stage_history_audit",
+      "source_family_slice": "slice_stage_history_audit",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "disposition": "source_investigation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "source_investigation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": false,
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "carry_forward": false,
+      "missing_or_quarantine_evidence": [
+        "Requires a bulk status/transition-timestamp export; no such export is proven (retention-limited).",
+        "A finite POSITIVE retention/stage-history investigation is required BEFORE any terminal 'unavailable' conclusion; absence is NOT proven and is NOT zero.",
+        "no source substitution/inference; quarantined cage_kpi/lead_source_roi/sales_comm_log remain unusable; missing is not zero; zero Service/Parts admitted.",
+        "No approved operational target."
+      ],
+      "required_future_contract": [
+        "A finite positive read-only investigation of whether an authoritative exportable status/transition audit dataset exists (retention/stage-history).",
+        "Duane decides whether to request/commission the audit dataset ONLY after the investigation."
+      ],
+      "cadence": "Weekly native scheduled / downstream calculation (held)",
+      "accountable_owners": {
+        "status_audit_request_decision": "Duane Wells",
+        "positive_stage_history_export_investigation": "Codex VinSolutions controller",
+        "stage_history_detection_implementation": "Claude Studio engineering"
+      },
+      "next_action_owner": "Codex VinSolutions controller",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller",
+        "action": "Finite positive read-only investigation of whether an authoritative status/transition audit export exists (retention/stage-history); do NOT conclude unavailable without proof, do NOT infer from absence."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane Wells",
+          "action": "Decide whether to request/commission the status-audit dataset (business decision, only after the source is proven)."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the stage-history detection once a source is contracted."
+        }
+      ],
+      "review_point": "PKT-03-01 investigation close",
+      "next_safe_source_action": "Run a finite positive stage-history export investigation; never conclude unavailable from absence; missing is not zero; no substitution; no promotion.",
+      "authority": "catalog condition (verbatim); acquisition_class unavailable/retention-limited (finite positive investigation required); no gate2/baseline authority exists for this ID",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-041",
+      "canonical_condition": "Appointment no-show rate exceeds 45%.",
+      "business_question": "Is the appointment no-show rate at or below the 45% ceiling?",
+      "population": "Serra Honda 21043 Sales appointments weekly, accepted period 2026-08-24..2026-08-30.",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "single_accepted_week_carry_forward",
+      "calculation_kind": "rate",
+      "numerator": "Is No Show=Yes",
+      "denominator": "appointment rows (total)",
+      "formula": "count(Is No Show=Yes) / count(appointment rows)",
+      "unit": "ratio_0_1",
+      "required_direct_fields_or_keys": [
+        "Is No Show",
+        "appointment rows (total)"
+      ],
+      "direct_source_fields": [
+        "Is No Show",
+        "appointment rows (total)"
+      ],
+      "source_family": "appointments",
+      "source_family_slice": "slice_appointments_accepted",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "disposition": "measured_validated",
+      "evaluation_state": "measured_graded",
+      "lifecycle_bucket": "accepted_measured_ids",
+      "boundary_class": "sales",
+      "gradable": true,
+      "grade_target_id": "GT-OT-SW-041",
+      "grade_approval": "approved",
+      "grade_status": "active",
+      "grade_basis": "operational_target",
+      "grade_value_or_range": "> 0.45",
+      "detection_rule": "trigger when value > 0.45 (Appointment no-show rate ceiling)",
+      "threshold": 0.45,
+      "ot_anchor": {
+        "baseline_id": "OT-SW-041",
+        "comparator": ">",
+        "threshold": 0.45,
+        "unit": "ratio_0_1",
+        "direction": "lower_is_better",
+        "basis": "operational_target"
+      },
+      "gate2_anchor": {
+        "source_family": "appointments",
+        "metric_slug": "appt.no_show_rate",
+        "formula": "count(Is No Show=Yes) / count(appointment rows)",
+        "source_fields": [
+          "Is No Show",
+          "appointment rows (total)"
+        ],
+        "numerator_field": "Is No Show=Yes",
+        "denominator_field": "appointment rows (total)",
+        "unit": "ratio_0_1",
+        "baseline_id": "OT-SW-041",
+        "baseline_basis": "operational_target",
+        "comparator": ">",
+        "reconciliation": "matches RATIFIED R2 appt.no_show_rate definition",
+        "direction": "lower_is_better"
+      },
+      "accepted_evaluation": {
+        "claim": "fact",
+        "metric_id": "SW-041",
+        "label": "Appointment no-show rate",
+        "value": 0.35714285714285715,
+        "value_display": "35.7%",
+        "unit": "ratio_0_1",
+        "operational_target": {
+          "kind": "operational_target",
+          "value": 0.45,
+          "value_display": "45%",
+          "comparator": ">",
+          "direction": "lower_is_better"
+        },
+        "variance": {
+          "native": -0.09285714285714286,
+          "display": "-9.3 pp"
+        },
+        "rating": "healthy",
+        "peer_rank": {
+          "rank": 1,
+          "tie": false,
+          "of": 3
+        },
+        "confidence": "low",
+        "evidence": {
+          "source": "CRM appointment report",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+          "numerator": 5,
+          "denominator": 14
+        },
+        "industry_reference": null,
+        "text": "Appointment no-show rate: 35.7% (target at or below 45%; on target; strongest of the three rooftops)."
+      },
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": true,
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "carry_forward": true,
+      "current_truth_ref": "gate5b-report-model-21043.json (evaluated); gate2-evaluator-contract.json; baseline-registry.json",
+      "missing_or_quarantine_evidence": [
+        "Accepted+evaluated authoritative Honda state carried forward byte-semantically (current_truth_ref: gate5b-report-model-21043.json (evaluated); gate2-evaluator-contract.json; baseline-registry.json); NOT recalculated or regraded in this binding."
+      ],
+      "required_future_contract": [
+        "None for measurement (already accepted/evaluated). Any future customer display is a separate Duane-authorized business decision; J1 emission authority is FALSE."
+      ],
+      "cadence": "Weekly native scheduled; accepted",
+      "accountable_owners": {
+        "authoritative_carry_forward_preservation": "Codex VinSolutions controller",
+        "future_customer_display_authorization": "Duane Wells"
+      },
+      "next_action_owner": "Codex VinSolutions controller",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller",
+        "action": "Carry forward the accepted+evaluated authoritative state byte-semantically (value/target/rating/numerator/denominator/period/provenance/current_truth_ref); no recalculation or regrade."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane Wells",
+          "action": "Authorize future customer display of this accepted metric only as a separate business decision (metadata eligibility is not authorization; not exercised in J1)."
+        }
+      ],
+      "review_point": "PKT-03-01 activation (carry-forward preservation)",
+      "next_safe_source_action": "Preserve the accepted authoritative row unchanged; no measurement/grade/customer emission in J1.",
+      "authority": "carry-forward accepted+evaluated Honda truth: gate5b-report-model-21043.json (evaluated) + gate2-evaluator-contract.json (appt.no_show_rate) + baseline-registry.json (OT-SW-041)",
+      "source_dependency_ids": []
+    },
+    {
+      "metric_id": "SW-042",
+      "canonical_condition": "Confirmed appointment rate (reconfirmed within 24h) below 70%.",
+      "business_question": "Is the confirmed-appointment rate (reconfirmed within 24h) below 70%?",
+      "population": "Serra Honda 21043 Sales appointments, period 2026-08-24..2026-08-30 (hour-precision confirmation timestamp missing).",
+      "period": "2026-08-24..2026-08-30",
+      "history_requirement": "not_history_blocked_pending_hour_precision_confirmation_timestamp_field",
+      "calculation_kind": "rate",
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "unit": "ratio_0_1",
+      "required_direct_fields_or_keys": [
+        "hour-precision confirmation/reconfirmation timestamp",
+        "ratified 24h window anchor",
+        "approved target"
+      ],
+      "direct_source_fields": [],
+      "source_family": "appointments",
+      "source_family_slice": "slice_appointments_confirmation_field",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "disposition": "source_investigation_pending",
+      "evaluation_state": "not_measured",
+      "lifecycle_bucket": "source_investigation_pending_ids",
+      "boundary_class": "sales",
+      "gradable": false,
+      "grade_target_id": null,
+      "grade_approval": "none",
+      "grade_status": "none",
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "threshold": null,
+      "ot_anchor": null,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": false,
+      "customer_projection": null,
+      "missing_not_zero": true,
+      "content_bytes_read": false,
+      "measured_unscored_observation": null,
+      "carry_forward": false,
+      "missing_or_quarantine_evidence": [
+        "Appointments source is accepted, but 'Confirmed Date' is CALENDAR-DATE ONLY (0/14 rows carry time-of-day); the required hour-precision confirmation timestamp is a proven MISSING field (SW-042 evidence-gap, frozen).",
+        "The 24-hour window ANCHOR event is unratified (candidate: Appointment Start DateTime).",
+        "Missing is not zero: a blank/calendar-only confirmation is NOT 'not reconfirmed'; no value may be computed from 'Is Confirmed'.",
+        "The accepted Appointments workbook contains PII user/customer columns; these are NEVER selected or emitted — counts + the confirmation-timestamp relationship only; no raw row or message content.",
+        "No approved operational target (catalog trigger <0.70 is condition-only)."
+      ],
+      "required_future_contract": [
+        "A future FINITE read-only hour-precision confirmation-timestamp discovery: one help-contract pass + one read-only UI pass + one controlled probe; field-minimized, aggregate-only; no PII/raw row/message content; no promotion.",
+        "Duane ratifies the 24h window anchor + approved target ONLY AFTER the hour-precision field is proved."
+      ],
+      "cadence": "Weekly native scheduled / downstream calculation (held)",
+      "accountable_owners": {
+        "window_anchor_and_target_decision_after_proof": "Duane Wells",
+        "read_only_hour_precision_timestamp_discovery": "Codex VinSolutions controller",
+        "confirmation_window_implementation": "Claude Studio engineering"
+      },
+      "next_action_owner": "Codex VinSolutions controller",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller",
+        "action": "Run the future finite read-only hour-precision confirmation-timestamp discovery (one help pass, one UI pass, one controlled probe); field-minimized, aggregate-only, no PII/raw/content, no promotion."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane Wells",
+          "action": "Ratify the 24h window anchor + approved target ONLY after the hour-precision field is proved (business decision)."
+        },
+        {
+          "owner": "Claude Studio engineering",
+          "action": "Implement the SW-042 confirmation-window calculation once the field + anchor are contracted."
+        }
+      ],
+      "review_point": "PKT-03-01 investigation close",
+      "next_safe_source_action": "Field-minimized aggregate-only read-only discovery of an hour-precision confirmation timestamp; no PII/raw/content; no calculation from 'Is Confirmed'; no promotion; Duane anchor/target only after field proof.",
+      "authority": "catalog condition (verbatim) + SW-042 evidence-gap (frozen; calendar-date-only Confirmed Date) + accepted appointments hold; no gate2/baseline authority exists for this ID",
+      "pii_capture": false,
+      "raw_row_capture": false,
+      "message_content_capture": false,
+      "source_dependency_ids": []
+    }
+  ],
+  "lifecycle_partition": {
+    "accepted_measured_ids": [
+      "SW-031",
+      "SW-032",
+      "SW-033",
+      "SW-041"
+    ],
+    "accepted_disposition_only_ids": [],
+    "rejected_ids": [],
+    "source_investigation_pending_ids": [
+      "SW-034",
+      "SW-035",
+      "SW-036",
+      "SW-037",
+      "SW-038",
+      "SW-039",
+      "SW-040",
+      "SW-042"
+    ],
+    "calculation_pending_ids": []
+  },
+  "stop_conditions": {
+    "inherited_canonical": [
+      "wrong_dealer",
+      "service_parts_in_sales",
+      "ambiguous_period",
+      "schema_drift",
+      "missing_provenance",
+      "protected_content_or_pii_outside_envelope",
+      "formula_or_denominator_ambiguity",
+      "incompatible_baseline",
+      "source_substitution_or_skip",
+      "dirty_or_competing_writer",
+      "production_or_customer_behavior_change"
+    ],
+    "packet_specific": [
+      "Four accepted metrics are carry-forward measured_validated; no recalculation/regrade; authoritative_evaluated=17.",
+      "Eight held metrics remain source_investigation_pending (no value/grade/alert/customer projection); missing is not zero.",
+      "Zero Service/Parts; cage_kpi/lead_source_roi/sales_comm_log quarantined and unusable; no substitution/inference.",
+      "Customer emission authority FALSE; no PII/raw/message content."
+    ]
+  },
+  "two_delta_proof": {
+    "evidence_delta": {
+      "count": 0,
+      "of": 12,
+      "note": "4 accepted are carry-forward (not new evidence); 8 held acquired nothing."
+    },
+    "meaning_delta": {
+      "count": 0,
+      "of": 12,
+      "note": "no value/grade authored or changed; accepted preserved; held produce none."
+    }
+  },
+  "authority_binding": {
+    "ref": "docs/halo/contract/phase1b/pkt-03-01-binding.json",
+    "sha256": "e92a181f2a8016085011358ff256f627b2c11f09e4f37109f4276ecbfce10f8e"
+  },
+  "customer_emission_authority": false,
+  "customer_projection": {
+    "accepted_measured_ids": [
+      "SW-031",
+      "SW-032",
+      "SW-033",
+      "SW-041"
+    ],
+    "customer_visible_ids": [],
+    "customer_report_emitted": false,
+    "note": "Four accepted metrics are display-ELIGIBLE (metadata only); J1 authorizes NO customer file/output/send. Emission requires a separate Duane business decision. Eight held metrics are hidden."
+  },
+  "accountable_owner_roster": {
+    "Duane Wells": "business meaning/threshold/formula/target decisions + future customer-display authorization (never acquisition/investigation/accumulation/admission/normalization/promotion/calculation/implementation)",
+    "Codex VinSolutions controller": "bounded read-only source/UI/schema investigation + governed acquisition/evidence + authoritative carry-forward preservation",
+    "Claude Studio engineering": "implementation + admission once contracts exist"
+  },
+  "status": "active_authored"
+}

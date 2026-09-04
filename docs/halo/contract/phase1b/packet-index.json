@@ -2,8 +2,8 @@
   "artifact": "honda-watchdog-phase1b-packet-index",
   "pinned_at_utc": "2026-09-02T06:51:10Z",
   "assignment_kind": "mechanically_balanced_provisional",
-  "note": "Packet assignments are PROVISIONAL PLANNING assignments (mechanically balanced by module: 5-12 IDs, union == exact 295, no overlap). They are NOT yet logically grouped: each packet's management question and metric cohesion is authored/reviewed only on activation. PKT-02-01, PKT-02-02, and PKT-02-03 are active/authored. Any reassignment must be versioned and preserve the exact 295 union.",
-  "version": 4,
+  "note": "Packet assignments are PROVISIONAL PLANNING assignments (mechanically balanced by module: 5-12 IDs, union == exact 295, no overlap). They are NOT yet logically grouped: each packet's management question and metric cohesion is authored/reviewed only on activation. PKT-02-01, PKT-02-02, PKT-02-03, and PKT-03-01 are active/authored. Any reassignment must be versioned and preserve the exact 295 union.",
+  "version": 5,
   "packets": [
     {
       "packet_id": "PKT-01-01",
@@ -133,8 +133,8 @@
         "SW-042"
       ],
       "size": 12,
-      "status": "provisional_planning",
-      "management_question": null
+      "status": "active_authored",
+      "management_question": "Where is Serra Honda’s Sales funnel losing momentum—from lead through appointment, showroom, write-up, and close—and do appointment confirmation, pipeline aging, and stage-history evidence support timely management intervention?"
     },
     {
       "packet_id": "PKT-03-02",
