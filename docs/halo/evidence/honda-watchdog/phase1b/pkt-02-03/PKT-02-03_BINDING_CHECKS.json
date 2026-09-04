@@ -1,0 +1,510 @@
+{
+  "check": "honda_watchdog_phase1b_pkt_02_03_binding",
+  "phase": "Phase 1B — PKT-02-03 authority binding + validation gate (design-only, additive, freeze-candidate)",
+  "scope": "authority_binding_and_validation_gate_only (no calculate/acquire/admit/normalize/promote/grade/alert/report)",
+  "baseline_commit": "4fb0b664d42780632f32aa40a52f9f6b36162323",
+  "reuses": "scripts/halo-phase1/validate_phase1_contracts.py (frozen vocabularies + sha256 only; unmodified)",
+  "binding_file": "docs/halo/contract/phase1b/pkt-02-03-binding.json",
+  "binding_sha256": "41531eadeca87c725c6c9b0047c30c46b6e66ac27beaf6cf94c687d8af0aa23a",
+  "target_ids": [
+    "SW-135",
+    "SW-136",
+    "SW-137",
+    "SW-138",
+    "SW-139",
+    "SW-140",
+    "SW-141",
+    "SW-261",
+    "SW-262",
+    "SW-288",
+    "SW-295"
+  ],
+  "id_count": 11,
+  "source_family_slices": {
+    "slice_content_semantic": [
+      "SW-135",
+      "SW-136",
+      "SW-139",
+      "SW-141"
+    ],
+    "slice_structural_sequence": [
+      "SW-137",
+      "SW-138"
+    ],
+    "slice_voicemail_inbound": [
+      "SW-140"
+    ],
+    "slice_history_model": [
+      "SW-261",
+      "SW-295"
+    ],
+    "slice_multi_source_join": [
+      "SW-262"
+    ],
+    "slice_composite_cadence": [
+      "SW-288"
+    ]
+  },
+  "lifecycle_partition": {
+    "accepted_measured_ids": [],
+    "accepted_disposition_only_ids": [
+      "SW-261",
+      "SW-295"
+    ],
+    "rejected_ids": [],
+    "source_investigation_pending_ids": [
+      "SW-140",
+      "SW-262",
+      "SW-288"
+    ],
+    "calculation_pending_ids": [
+      "SW-135",
+      "SW-136",
+      "SW-137",
+      "SW-138",
+      "SW-139",
+      "SW-141"
+    ]
+  },
+  "authority_absence_proof": {
+    "gate2_evaluable_overlap": [],
+    "baseline_operational_target_overlap": [],
+    "meaning": "empty overlaps ⇒ none of the 11 has an accepted meaning or an approved target ⇒ none is measured/gradable/alertable"
+  },
+  "content_boundary": {
+    "content_derived_ids": [
+      "SW-135",
+      "SW-136",
+      "SW-139",
+      "SW-141"
+    ],
+    "content_bytes_read": false,
+    "protected_content_envelope_required": "SPEC §5.5 (Duane authorization pending)"
+  },
+  "service_parts_zero_admission": {
+    "communication_source": "enhanced-sales-communication-log-weekly-contract.json 21043: Sales-only provenance; 1530/1530/0/0 (rows/unique-comm/service-parts/wrong-dealer); promotes NO metric",
+    "quarantined_families": [
+      "cage_kpi",
+      "lead_source_roi",
+      "sales_comm_log"
+    ],
+    "quarantine_cause": "positively select hidden Lead Intents of Parts and Service; TERMINAL — never promote or calculate"
+  },
+  "customer_projection": {
+    "accepted_measured_ids": [],
+    "customer_visible_ids": [],
+    "customer_report_emitted": false,
+    "note": "All 11 IDs are customer_visibility=hidden. Zero accepted_measured ⇒ no customer mini-report, finding, grade, narrative, ROI/opportunity claim, or alert. Internal coverage/two-delta evidence only."
+  },
+  "packet_accounting": {
+    "conditions": 295,
+    "modules": 11,
+    "packets": 30
+  },
+  "frozen_prior_artifacts": {
+    "pkt_02_01_binding_sha256": "1c1c98a2e7b3be8d10eea9495861b7a33e65a00020ab7c9e756da363b69f2082",
+    "pkt_02_01_packet_sha256": "89de72da33a5459d1aedd69cbc92a1fc347f3d589d8cbfd1ecf13bad1890d97d",
+    "pkt_02_02_binding_sha256": "7307e6039363fa421c217ff9c1beb1ca606dfcbcfbe083c503a65d5371c16f44",
+    "pkt_02_02_packet_sha256": "c18a2bc9a8d73e363a9696071adf4b2f8896397eaddef47ef2b631609fe4ab80",
+    "unchanged": true
+  },
+  "adversarial_probes_total": 49,
+  "adversarial_probes_failed": 0,
+  "adversarial_probes": [
+    {
+      "probe": "A_condition_tamper",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-135: canonical_condition != matrix condition (exact byte)"
+    },
+    {
+      "probe": "B_inject_formula",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-138: formula must be null (no authority resolves it — no synthetic value)"
+    },
+    {
+      "probe": "C_inject_grade_target",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 3,
+      "sample_error": "SW-141: grade_approval 'approved' forbidden (no accepted target exists)"
+    },
+    {
+      "probe": "D_mark_measured_validated",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 7,
+      "sample_error": "SW-135: disposition 'measured_validated' not allowed for bucket 'calculation_pending_ids'"
+    },
+    {
+      "probe": "E_move_to_accepted_measured",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "accepted_measured_ids must be EMPTY (no ID has an accepted target)"
+    },
+    {
+      "probe": "F_slice_misassignment",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 3,
+      "sample_error": "slice slice_content_semantic != expected exact membership"
+    },
+    {
+      "probe": "G_promote_enhanced_pre_admission",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 5,
+      "sample_error": "SW-136: gradable must be False (no accepted target)"
+    },
+    {
+      "probe": "H_gradable_true_no_target",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-261: gradable must be False (no accepted target)"
+    },
+    {
+      "probe": "I_alert_eligible_true",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-140: alert_eligible must be False (nothing measured/graded)"
+    },
+    {
+      "probe": "J_customer_visible",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-288: customer_visibility must be 'hidden'"
+    },
+    {
+      "probe": "K_customer_projection_value",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-295: customer_projection must be null (no customer narrative/finding)"
+    },
+    {
+      "probe": "L_customer_report_emitted",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "customer_report_emitted must be False (zero accepted_measured)"
+    },
+    {
+      "probe": "M_content_bytes_read",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-135: content_bytes_read must be False (message content not read in J1)"
+    },
+    {
+      "probe": "N_content_detection_rule_proxy",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "SW-136: detection_rule must be null (no authority resolves it — no synthetic value)"
+    },
+    {
+      "probe": "O_drop_one_id",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 3,
+      "sample_error": "metrics keys != exact ordered 11 target ids (got ['SW-135', 'SW-136', 'SW-137', 'SW-138', 'SW-139', 'SW-140', 'SW-141', 'SW-261', 'SW-288', 'SW-295'])"
+    },
+    {
+      "probe": "P_reorder_ids",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "metrics keys != exact ordered 11 target ids (got ['SW-295', 'SW-288', 'SW-262', 'SW-261', 'SW-141', 'SW-140', 'SW-139', 'SW-138', 'SW-137', 'SW-136', 'SW-135'])"
+    },
+    {
+      "probe": "Q_duplicate_slice_member",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "source_family_slices overlap (an id in >1 slice)"
+    },
+    {
+      "probe": "R_vocab_violation",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 3,
+      "sample_error": "SW-137: disposition 'totally_made_up_state' not allowed for bucket 'calculation_pending_ids'"
+    },
+    {
+      "probe": "S_ses_disposition_inconsistent",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "SW-140: source_existence 'acquired_local' inconsistent with disposition 'source_investigation_pending'"
+    },
+    {
+      "probe": "T_sw262_comm_only_substitution",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-262: source_family 'enhanced_sales_communication_log_weekly' is a substitution — must remain the multi-source join"
+    },
+    {
+      "probe": "U_quarantined_family_source",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-140: source_family 'sales_comm_log' is a quarantined legacy family (forbidden)"
+    },
+    {
+      "probe": "V_accounting_break",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "packet_accounting_assertion != {295,11,30}"
+    },
+    {
+      "probe": "W_pkt0202_pin_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "binding pins.pkt_02_02_binding_sha256 != pinned value"
+    },
+    {
+      "probe": "X_baseline_commit_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "binding pins.baseline_commit != pinned value"
+    },
+    {
+      "probe": "Y_rejected_bucket_nonempty",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "rejected_ids must be EMPTY (nothing rejected in this binding)"
+    },
+    {
+      "probe": "Z_empty_blocker",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "SW-137: enhanced row must state stable keys exist in restricted/unadmitted raw (truthful key state)"
+    },
+    {
+      "probe": "AA_false_missing_stable_key",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 4,
+      "sample_error": "SW-135: false missing-stable-key claim for enhanced source (Communication ID)"
+    },
+    {
+      "probe": "AB_enhanced_not_acquired",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 4,
+      "sample_error": "SW-136: lifecycle_bucket 'source_investigation_pending_ids' != partition membership 'calculation_pending_ids'"
+    },
+    {
+      "probe": "AC_enhanced_acquisition_pending",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 3,
+      "sample_error": "SW-138: acquisition 'acquisition_pending' invalid for source_existence 'acquired_local'"
+    },
+    {
+      "probe": "AD_blanket_single_week",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "SW-135: history_requirement 'single_week_observed_insufficient_for_value' != expected 'event_follow_forward_to_stated_deadline_boundary_required'"
+    },
+    {
+      "probe": "AE_wrong_multiweek_structural",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 2,
+      "sample_error": "SW-137: history_requirement 'multi_week_required' != expected 'single_week_sufficient_once_ordering_definition_and_admission_resolved'"
+    },
+    {
+      "probe": "AF_generic_owner",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 3,
+      "sample_error": "SW-135: owner 'Huminic Semantic Watchdog pipeline' for role 'protected_content_authorization_and_definition' not an accountable owner"
+    },
+    {
+      "probe": "AG_duane_technical_role",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-140: Duane Wells assigned to technical-execution role 'read_only_ui_schema_or_external_source_investigation' (forbidden)"
+    },
+    {
+      "probe": "AH_next_owner_generic",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 3,
+      "sample_error": "SW-262: next_action_owner 'Huminic Semantic Watchdog pipeline' not an accountable owner"
+    },
+    {
+      "probe": "BA_duane_owns_tech_immediate",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-261: Duane Wells owns a technical action (forbidden): Accumulate multi-week history and admit a stable pseudonymous key."
+    },
+    {
+      "probe": "BB_duane_owns_tech_subsequent",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-288: Duane Wells owns a technical action (forbidden): Acquire component evidence and implement the composite."
+    },
+    {
+      "probe": "BC_duane_nsa_tech_no_handoff",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-295: Duane next_action_owner with technical verbs but no explicit Codex/Claude handoff in next_safe_source_action"
+    },
+    {
+      "probe": "BD_immediate_owner_mismatch",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-135: immediate_action.owner 'Codex VinSolutions controller' != next_action_owner 'Duane Wells'"
+    },
+    {
+      "probe": "BE_subsequent_not_dict",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-262: subsequent_actions[0] invalid (not a dict)"
+    },
+    {
+      "probe": "BF_subsequent_blank_action",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-262: subsequent_actions[0] invalid (action must be a nonblank string)"
+    },
+    {
+      "probe": "BG_subsequent_extra_key",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-262: subsequent_actions[0] invalid (keys ['action', 'owner', 'owner_note'] != exactly {owner, action})"
+    },
+    {
+      "probe": "BH_immediate_missing_key",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-138: immediate_action invalid (keys ['owner'] != exactly {owner, action})"
+    },
+    {
+      "probe": "BI_immediate_extra_key",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-138: immediate_action invalid (keys ['action', 'owner', 'priority'] != exactly {owner, action})"
+    },
+    {
+      "probe": "BJ_subsequent_unaccountable_owner",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-261: subsequent_actions[0] invalid (owner 'Some Vendor Inc' not an accountable owner)"
+    },
+    {
+      "probe": "BK_duane_accumulation_role",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-261: Duane Wells assigned to technical-execution role 'history_accumulation' (forbidden)"
+    },
+    {
+      "probe": "BL_duane_admission_role",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-138: Duane Wells assigned to technical-execution role 'consumer_admission' (forbidden)"
+    },
+    {
+      "probe": "BM_duane_normalization_role",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-137: Duane Wells assigned to technical-execution role 'ordering_normalization' (forbidden)"
+    },
+    {
+      "probe": "BN_duane_promotion_role",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-136: Duane Wells assigned to technical-execution role 'value_promotion' (forbidden)"
+    },
+    {
+      "probe": "BO_duane_calculation_role",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n_errors": 1,
+      "sample_error": "SW-141: Duane Wells assigned to technical-execution role 'metric_calculation' (forbidden)"
+    }
+  ],
+  "errors": [],
+  "overall_pass": true,
+  "note": "Binding-only: NO metric value, grade, alert, or customer projection is authored. No Vin/Gmail/browser/runtime/DB/schedule action. No ledger/index update in J1."
+}
