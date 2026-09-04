@@ -1,0 +1,881 @@
+{
+  "check": "honda_watchdog_phase1b_pkt_03_01_sw034_discovery_memorialization",
+  "phase": "Phase 1B — SW-034 write-to-close finite read-only discovery memorialization (design/evidence only; CREATE-only)",
+  "scope": "evidence_memorialization_only (no acquisition/admission/calculation/regrade/alert/customer/merge/deploy; SW-034 unchanged)",
+  "baseline_commit": "4f03833d8150ddf31fa139cf172c6d542ac50d31",
+  "record_file": "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-034_DISCOVERY_RESULT.json",
+  "record_sha256": "12021ce778d768587d345ce5a4659afc8e683769632143ab2911d95ae20bb7fc",
+  "allowlist_files": [
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-034_DISCOVERY_CHECKS.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-034_DISCOVERY_RESULT.json",
+    "scripts/halo-phase1b/validate_pkt_03_01_sw034_discovery.py"
+  ],
+  "pins_unchanged": {
+    "pkt_03_01_binding_sha256": "e92a181f2a8016085011358ff256f627b2c11f09e4f37109f4276ecbfce10f8e",
+    "master_ledger_295_sha256": "747b6d31796939ae29f3a31a0f57226e57342ad7c2b1a1737e05287a5af59d13",
+    "pkt_03_01_packet_sha256": "a35319fe19061dfe0cf09a5557f9212ff2c7c396cfa5243388cc038675283cae",
+    "sw042_evidence_gap_sha256": "1714aad7b8cd4eaf44e4f3a62ba652b0f61886e61f042b274377deee0e1fab7b",
+    "sw042_discovery_result_sha256": "05987ed463930dcc3f0b2d2d34fed2203cac5c6ccb4e475ea801715d1ea65551",
+    "sw042_discovery_checks_sha256": "0f5494129396d1037d18e5e42af52719886a67803d05b4251255341a0413eaf3",
+    "sw042_discovery_validator_sha256": "729d0736b80240ecd088306a973410c1096087a2b898dd0ca249409fa26653c5",
+    "sw038_040_discovery_result_sha256": "6c5398584efe702b1994f99604911c3dcac3bd87d693315299c9d66102434a23",
+    "sw038_040_discovery_checks_sha256": "bb38e300150ff8964b46c160f4057971114194dcee925dd5c0d12b004d61f2d0",
+    "sw038_040_discovery_validator_sha256": "e78654323ae0b05d72e57fd6d03847669d0625f4a1779ca8072eaedc0882e3dc"
+  },
+  "two_delta_split": {
+    "contextual_discovery_evidence_delta": 1,
+    "contextual_delta_meaning": "ONE bounded finite discovery pass/result — NOT a source acquisition and NOT a metric count.",
+    "governed_source_data_acquisition_delta": 0,
+    "governed_source_data_admission_delta": 0,
+    "metric_meaning_value_lifecycle_customer_delta": 0,
+    "explanation": "Governed source-data acquisition, admission, and metric meaning/value/lifecycle/customer deltas are ALL zero. Only contextual discovery evidence increased, by exactly one bounded finite pass; nothing was acquired, admitted, measured, graded, promoted, or emitted."
+  },
+  "sw034_held": "source_investigation_pending",
+  "target_status": {
+    "catalog_condition_only": true,
+    "operational_target_approved": false,
+    "note": "40% is the catalog CONDITION wording only; it is NOT an approved operational target until Duane ratifies one."
+  },
+  "prior_validators_post_discovery": {
+    "j1": {
+      "classification": "expected_stage_scope_only",
+      "command": "python3 scripts/halo-phase1b/validate_pkt_03_01_binding.py --no-write",
+      "overall_pass": false,
+      "adversarial_probes": "54/54",
+      "binding_sha256": "e92a181f2a8016085011358ff256f627b2c11f09e4f37109f4276ecbfce10f8e",
+      "expected_error_count": 16,
+      "actual_error_count": 16,
+      "raw_error_array": [
+        "pinned_source_hashes[master_ledger_295] != live sha (source drift)",
+        "files touched outside allowlist: ['docs/halo/contract/phase1b/master-ledger-295.json', 'docs/halo/contract/phase1b/packet-index.json', 'docs/halo/contract/phase1b/packets/PKT-03-01.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_EXECUTION_CHECKS.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_J2_TWO_DELTA.md', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_J2_internal_companion.md', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_J2_run_manifest.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-034_DISCOVERY_CHECKS.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-034_DISCOVERY_RESULT.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_CHECKS.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_RESULT.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-042_DISCOVERY_CHECKS.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-042_DISCOVERY_RESULT.json', 'scripts/halo-phase1b/validate_pkt_03_01.py', 'scripts/halo-phase1b/validate_pkt_03_01_sw034_discovery.py', 'scripts/halo-phase1b/validate_pkt_03_01_sw038_040_discovery.py', 'scripts/halo-phase1b/validate_pkt_03_01_sw042_discovery.py']",
+        "non-allowlisted tracked file mutated: docs/halo/contract/phase1b/master-ledger-295.json",
+        "non-allowlisted tracked file mutated: docs/halo/contract/phase1b/packet-index.json",
+        "non-allowlisted tracked file mutated: docs/halo/contract/phase1b/packets/PKT-03-01.json",
+        "non-allowlisted tracked file mutated: docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_EXECUTION_CHECKS.json",
+        "non-allowlisted tracked file mutated: docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_J2_TWO_DELTA.md",
+        "non-allowlisted tracked file mutated: docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_J2_internal_companion.md",
+        "non-allowlisted tracked file mutated: docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_J2_run_manifest.json",
+        "non-allowlisted tracked file mutated: docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_CHECKS.json",
+        "non-allowlisted tracked file mutated: docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_RESULT.json",
+        "non-allowlisted tracked file mutated: docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-042_DISCOVERY_CHECKS.json",
+        "non-allowlisted tracked file mutated: docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-042_DISCOVERY_RESULT.json",
+        "non-allowlisted tracked file mutated: scripts/halo-phase1b/validate_pkt_03_01.py",
+        "non-allowlisted tracked file mutated: scripts/halo-phase1b/validate_pkt_03_01_sw038_040_discovery.py",
+        "non-allowlisted tracked file mutated: scripts/halo-phase1b/validate_pkt_03_01_sw042_discovery.py"
+      ],
+      "canonicalization": "compact UTF-8 JSON (separators (',',':'), ensure_ascii=False) of the ordered array",
+      "error_signature_sha256": "b824a35dba197f68fe1644a0419125f55cf3284668c9baa01ebe15b7ec9ffda3",
+      "expected_error_signature_sha256": "b824a35dba197f68fe1644a0419125f55cf3284668c9baa01ebe15b7ec9ffda3"
+    },
+    "j2": {
+      "classification": "expected_stage_scope_only",
+      "command": "python3 scripts/halo-phase1b/validate_pkt_03_01.py --no-write",
+      "overall_pass": false,
+      "adversarial_probes": "67/67",
+      "binding_sha256": null,
+      "expected_error_count": 9,
+      "actual_error_count": 9,
+      "raw_error_array": [
+        "files touched outside allowlist: ['docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-034_DISCOVERY_CHECKS.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-034_DISCOVERY_RESULT.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_CHECKS.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_RESULT.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-042_DISCOVERY_CHECKS.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-042_DISCOVERY_RESULT.json', 'scripts/halo-phase1b/validate_pkt_03_01_sw034_discovery.py', 'scripts/halo-phase1b/validate_pkt_03_01_sw038_040_discovery.py', 'scripts/halo-phase1b/validate_pkt_03_01_sw042_discovery.py']",
+        "non-allowlisted tracked file mutated: docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_CHECKS.json",
+        "non-allowlisted tracked file mutated: docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_RESULT.json",
+        "non-allowlisted tracked file mutated: docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-042_DISCOVERY_CHECKS.json",
+        "non-allowlisted tracked file mutated: docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-042_DISCOVERY_RESULT.json",
+        "non-allowlisted tracked file mutated: scripts/halo-phase1b/validate_pkt_03_01_sw038_040_discovery.py",
+        "non-allowlisted tracked file mutated: scripts/halo-phase1b/validate_pkt_03_01_sw042_discovery.py",
+        "j1_stage_scope: error count 16 != 4",
+        "j1_stage_scope: error-array canonical sha != pinned expected_stage_scope signature (swap/add/delete/semantic)"
+      ],
+      "canonicalization": "compact UTF-8 JSON (separators (',',':'), ensure_ascii=False) of the ordered array",
+      "error_signature_sha256": "65d1c24912883426aebcdacf7eee8bc304bc48b9435c7402cfb1be0db51783e1",
+      "expected_error_signature_sha256": "65d1c24912883426aebcdacf7eee8bc304bc48b9435c7402cfb1be0db51783e1"
+    },
+    "sw042": {
+      "classification": "expected_stage_scope_only",
+      "command": "python3 scripts/halo-phase1b/validate_pkt_03_01_sw042_discovery.py --no-write",
+      "overall_pass": false,
+      "adversarial_probes": "58/58",
+      "binding_sha256": null,
+      "expected_error_count": 17,
+      "actual_error_count": 17,
+      "raw_error_array": [
+        "prior_j2: error count 9 != 3",
+        "prior_j2: canonical signature mismatch (swap/add/delete/semantic)",
+        "prior_j2: non-stage-scope error present: non-allowlisted tracked file mutated: docs/halo/evidence/hon",
+        "prior_j2: non-stage-scope error present: non-allowlisted tracked file mutated: docs/halo/evidence/hon",
+        "prior_j2: non-stage-scope error present: non-allowlisted tracked file mutated: docs/halo/evidence/hon",
+        "prior_j2: non-stage-scope error present: non-allowlisted tracked file mutated: docs/halo/evidence/hon",
+        "prior_j2: non-stage-scope error present: non-allowlisted tracked file mutated: scripts/halo-phase1b/v",
+        "prior_j2: non-stage-scope error present: non-allowlisted tracked file mutated: scripts/halo-phase1b/v",
+        "nested_j1: error count 16 != 10",
+        "nested_j1: canonical signature mismatch",
+        "files touched outside allowlist: ['docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-034_DISCOVERY_CHECKS.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-034_DISCOVERY_RESULT.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_CHECKS.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_RESULT.json', 'scripts/halo-phase1b/validate_pkt_03_01_sw034_discovery.py', 'scripts/halo-phase1b/validate_pkt_03_01_sw038_040_discovery.py']",
+        "tracked file mutated (must be zero): docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_CHECKS.json",
+        "tracked file mutated (must be zero): docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_RESULT.json",
+        "tracked file mutated (must be zero): docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-042_DISCOVERY_CHECKS.json",
+        "tracked file mutated (must be zero): docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-042_DISCOVERY_RESULT.json",
+        "tracked file mutated (must be zero): scripts/halo-phase1b/validate_pkt_03_01_sw038_040_discovery.py",
+        "tracked file mutated (must be zero): scripts/halo-phase1b/validate_pkt_03_01_sw042_discovery.py"
+      ],
+      "canonicalization": "compact UTF-8 JSON (separators (',',':'), ensure_ascii=False) of the ordered array",
+      "error_signature_sha256": "f6e7e5caf41d7ac590ab7ac91ab0dc18bcee6a781667d39bde9b28a5df574ac5",
+      "expected_error_signature_sha256": "f6e7e5caf41d7ac590ab7ac91ab0dc18bcee6a781667d39bde9b28a5df574ac5"
+    },
+    "sw038_040": {
+      "classification": "expected_stage_scope_only",
+      "command": "python3 scripts/halo-phase1b/validate_pkt_03_01_sw038_040_discovery.py --no-write",
+      "overall_pass": false,
+      "adversarial_probes": "73/73",
+      "binding_sha256": null,
+      "expected_error_count": 10,
+      "actual_error_count": 10,
+      "raw_error_array": [
+        "prior[j1]: error count 16 != 13",
+        "prior[j1]: canonical signature mismatch (swap/add/delete/omitted/extra/wrong path/semantic)",
+        "prior[j2]: error count 9 != 6",
+        "prior[j2]: canonical signature mismatch (swap/add/delete/omitted/extra/wrong path/semantic)",
+        "prior[sw042]: error count 17 != 11",
+        "prior[sw042]: canonical signature mismatch (swap/add/delete/omitted/extra/wrong path/semantic)",
+        "files touched outside allowlist: ['docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-034_DISCOVERY_CHECKS.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-034_DISCOVERY_RESULT.json', 'scripts/halo-phase1b/validate_pkt_03_01_sw034_discovery.py']",
+        "tracked file mutated (must be zero): docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_CHECKS.json",
+        "tracked file mutated (must be zero): docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-038-040_DISCOVERY_RESULT.json",
+        "tracked file mutated (must be zero): scripts/halo-phase1b/validate_pkt_03_01_sw038_040_discovery.py"
+      ],
+      "canonicalization": "compact UTF-8 JSON (separators (',',':'), ensure_ascii=False) of the ordered array",
+      "error_signature_sha256": "3b89ac0daa38bf81257fa3264402c4e02d84810b3a799fc5cc94294df2d87655",
+      "expected_error_signature_sha256": "3b89ac0daa38bf81257fa3264402c4e02d84810b3a799fc5cc94294df2d87655"
+    }
+  },
+  "touched_vs_baseline": [
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-034_DISCOVERY_CHECKS.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-01/PKT-03-01_SW-034_DISCOVERY_RESULT.json",
+    "scripts/halo-phase1b/validate_pkt_03_01_sw034_discovery.py"
+  ],
+  "adversarial_probes_total": 90,
+  "adversarial_probes_failed": 0,
+  "adversarial_probes": [
+    {
+      "probe": "aggregate_writeup_as_denominator",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate_pieces.non_substitutes.aggregate_writeup_is_accepted_denominator must be False"
+    },
+    {
+      "probe": "pdf_is_denominator_semantics",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "source_pdf_context.is_denominator_semantics must be False"
+    },
+    {
+      "probe": "customer_as_join_key",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate_pieces.non_substitutes.customer_is_join_key must be False"
+    },
+    {
+      "probe": "matching_workflow_export_proof",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "help_dms_to_crm_matching.proves_exportable_bulk_stable_key_bridge must be False"
+    },
+    {
+      "probe": "matching_workflow_ns_flag",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate_pieces.non_substitutes.matching_workflow_existence_is_export_proof must be False"
+    },
+    {
+      "probe": "truncated_tooltip_absence_proof",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "custom_reporting_pass: truncated tooltip must not be treated as absence proof"
+    },
+    {
+      "probe": "stale_dms_as_evidence",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "report_center_pass.dms_to_crm_sales_attempt must be ambiguous_ignored / not-evidence"
+    },
+    {
+      "probe": "stale_dms_reclassified",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "report_center_pass.dms_to_crm_sales_attempt must be ambiguous_ignored / not-evidence"
+    },
+    {
+      "probe": "current_period_acquisition",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "source_pdf_context.is_acquisition_or_admission must be False"
+    },
+    {
+      "probe": "acquisition_delta_one",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "two_delta.governed_source_data_acquisition_delta must be 0"
+    },
+    {
+      "probe": "target_40_approved",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "target_status: catalog_condition_only True + operational_target_approved False (40% not approved)"
+    },
+    {
+      "probe": "status_promotion",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "sw034.state_after.disposition != source_investigation_pending (held state must be preserved)"
+    },
+    {
+      "probe": "measured",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "sw034.state_after.evaluation_state != not_measured (held state must be preserved)"
+    },
+    {
+      "probe": "gradable",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "sw034.state_after.gradable != False (held state must be preserved)"
+    },
+    {
+      "probe": "acquired_admitted",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "sw034.state_after.acquisition_admission_state != not_acquired (held state must be preserved)"
+    },
+    {
+      "probe": "visible",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "sw034.state_after.customer_visibility != hidden (held state must be preserved)"
+    },
+    {
+      "probe": "emission_true",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "sw034.state_after.customer_emission_authority != False (held state must be preserved)"
+    },
+    {
+      "probe": "state_before_after_mismatch",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "sw034.state_after.evaluation_state != not_measured (held state must be preserved)"
+    },
+    {
+      "probe": "metadata_change_not_none",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "sw034.metadata_change must be 'none'"
+    },
+    {
+      "probe": "global_unavailable_flag",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "global_unavailability.claimed must be False"
+    },
+    {
+      "probe": "global_unavailable_text",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "assertive forbidden claim(s) present un-negated: ['globally unavailable', 'missing is zero']"
+    },
+    {
+      "probe": "service_touch_authorized",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "service_dataset_excursion.is_authorized_service_investigation must be False"
+    },
+    {
+      "probe": "service_touch_acquisition",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "service_dataset_excursion.is_source_acquisition must be False"
+    },
+    {
+      "probe": "service_touch_sales_only_proof",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "service_dataset_excursion.is_sales_only_proof must be False"
+    },
+    {
+      "probe": "service_touch_clean_proof",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "service_dataset_excursion.is_clean_source_proof must be False"
+    },
+    {
+      "probe": "service_touch_admitted",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "service_dataset_excursion.is_admitted_data must be False"
+    },
+    {
+      "probe": "service_touch_reclassified",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "service_dataset_excursion must be classified unintended_metadata_only_scope_excursion"
+    },
+    {
+      "probe": "service_parts_admitted_nonzero",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety: Service/Parts admitted 0 + dealer 21043 required"
+    },
+    {
+      "probe": "candidate_source_verified_true",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.candidate_source_sales_only_verified must be False"
+    },
+    {
+      "probe": "operation_scope_false",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.operation_scope_sales_only must be True"
+    },
+    {
+      "probe": "sales_only_conflation",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.sales_only removed (use operation_scope_sales_only + candidate_source_sales_only_verified)"
+    },
+    {
+      "probe": "pii_captured",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.pii_captured must be False"
+    },
+    {
+      "probe": "raw_query_token_stored",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "privacy_and_safety.no_raw_url_query_or_token_stored must be True"
+    },
+    {
+      "probe": "candidate_satisfies_frozen",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate_pieces: satisfies_frozen_requirements False + substitution_or_inference_forbidden True"
+    },
+    {
+      "probe": "inferred_ids_bridge",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "candidate_pieces.non_substitutes.inferred_ids_are_stable_bridge must be False"
+    },
+    {
+      "probe": "owner_collapse_duane_investigation",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "owners.read_only_dated_pull_and_bridge_investigation != 'Codex VinSolutions controller'"
+    },
+    {
+      "probe": "owner_collapse_duane_implementation",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "owners.join_and_calculation_implementation != 'Claude Studio engineering'"
+    },
+    {
+      "probe": "owner_wrong_decision",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "owners.write_to_close_denominator_and_target_decision != 'Duane Wells'"
+    },
+    {
+      "probe": "owner_role_missing",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "owners: required role 'read_only_dated_pull_and_bridge_investigation' missing"
+    },
+    {
+      "probe": "immediate_owner_duane",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "owners.immediate_action_owner != 'Codex VinSolutions controller'"
+    },
+    {
+      "probe": "wrong_binding_pin",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "record pins.pkt_03_01_binding_sha256 != committed sha"
+    },
+    {
+      "probe": "wrong_sw038_040_pin",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "record pins.sw038_040_discovery_result_sha256 != committed sha"
+    },
+    {
+      "probe": "baseline_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "baseline_commit != 4f03833d8"
+    },
+    {
+      "probe": "contextual_delta_zero",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "contextual_discovery_evidence_delta must be 1"
+    },
+    {
+      "probe": "inject_value",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['value']"
+    },
+    {
+      "probe": "inject_numerator",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['numerator']"
+    },
+    {
+      "probe": "inject_denominator",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['denominator']"
+    },
+    {
+      "probe": "inject_formula",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['formula']"
+    },
+    {
+      "probe": "inject_join_proved",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['join_proved']"
+    },
+    {
+      "probe": "inject_target",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['target']"
+    },
+    {
+      "probe": "inject_grade",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['grade']"
+    },
+    {
+      "probe": "inject_alert",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['alert']"
+    },
+    {
+      "probe": "inject_calculated_value",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['calculated_value']"
+    },
+    {
+      "probe": "inject_bridge_proved",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['bridge_proved']"
+    },
+    {
+      "probe": "inject_operational_target",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['operational_target']"
+    },
+    {
+      "probe": "inject_threshold",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['threshold']"
+    },
+    {
+      "probe": "inject_rating",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['rating']"
+    },
+    {
+      "probe": "inject_detection_rule",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['detection_rule']"
+    },
+    {
+      "probe": "inject_nested_value_candidate",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prohibited metric-output key(s) present anywhere in record: ['value']"
+    },
+    {
+      "probe": "nonallowlist_path_touch",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "files touched outside allowlist: ['docs/halo/contract/phase1b/master-ledger-295.json']"
+    },
+    {
+      "probe": "claude_staged",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": ".claude/ is staged (forbidden)"
+    },
+    {
+      "probe": "prior_j1_same_count_swap",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[j1]: canonical signature mismatch (swap/add/delete/omitted/extra/wrong-path/semantic)"
+    },
+    {
+      "probe": "prior_j1_delete_one",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "prior[j1]: error count 15 != 16"
+    },
+    {
+      "probe": "prior_j1_add_one",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "prior[j1]: error count 17 != 16"
+    },
+    {
+      "probe": "prior_j1_semantic_error",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[j1]: canonical signature mismatch (swap/add/delete/omitted/extra/wrong-path/semantic)"
+    },
+    {
+      "probe": "prior_j1_probe_total_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[j1]: probe total 53 != 54"
+    },
+    {
+      "probe": "prior_j1_failed_probe",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[j1]: failed probe != 0"
+    },
+    {
+      "probe": "prior_j1_overall_pass",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[j1]: older validator reported PASS (must be expected_stage_scope_only, never PASS)"
+    },
+    {
+      "probe": "prior_j2_same_count_swap",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[j2]: canonical signature mismatch (swap/add/delete/omitted/extra/wrong-path/semantic)"
+    },
+    {
+      "probe": "prior_j2_delete_one",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "prior[j2]: error count 8 != 9"
+    },
+    {
+      "probe": "prior_j2_add_one",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "prior[j2]: error count 10 != 9"
+    },
+    {
+      "probe": "prior_j2_semantic_error",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[j2]: canonical signature mismatch (swap/add/delete/omitted/extra/wrong-path/semantic)"
+    },
+    {
+      "probe": "prior_j2_probe_total_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[j2]: probe total 66 != 67"
+    },
+    {
+      "probe": "prior_j2_failed_probe",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[j2]: failed probe != 0"
+    },
+    {
+      "probe": "prior_j2_overall_pass",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[j2]: older validator reported PASS (must be expected_stage_scope_only, never PASS)"
+    },
+    {
+      "probe": "prior_sw042_same_count_swap",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[sw042]: canonical signature mismatch (swap/add/delete/omitted/extra/wrong-path/semantic)"
+    },
+    {
+      "probe": "prior_sw042_delete_one",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "prior[sw042]: error count 16 != 17"
+    },
+    {
+      "probe": "prior_sw042_add_one",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "prior[sw042]: error count 18 != 17"
+    },
+    {
+      "probe": "prior_sw042_semantic_error",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[sw042]: canonical signature mismatch (swap/add/delete/omitted/extra/wrong-path/semantic)"
+    },
+    {
+      "probe": "prior_sw042_probe_total_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[sw042]: probe total 57 != 58"
+    },
+    {
+      "probe": "prior_sw042_failed_probe",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[sw042]: failed probe != 0"
+    },
+    {
+      "probe": "prior_sw042_overall_pass",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[sw042]: older validator reported PASS (must be expected_stage_scope_only, never PASS)"
+    },
+    {
+      "probe": "prior_sw038_040_same_count_swap",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[sw038_040]: canonical signature mismatch (swap/add/delete/omitted/extra/wrong-path/semantic)"
+    },
+    {
+      "probe": "prior_sw038_040_delete_one",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "prior[sw038_040]: error count 9 != 10"
+    },
+    {
+      "probe": "prior_sw038_040_add_one",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "prior[sw038_040]: error count 11 != 10"
+    },
+    {
+      "probe": "prior_sw038_040_semantic_error",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[sw038_040]: canonical signature mismatch (swap/add/delete/omitted/extra/wrong-path/semantic)"
+    },
+    {
+      "probe": "prior_sw038_040_probe_total_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[sw038_040]: probe total 72 != 73"
+    },
+    {
+      "probe": "prior_sw038_040_failed_probe",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[sw038_040]: failed probe != 0"
+    },
+    {
+      "probe": "prior_sw038_040_overall_pass",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[sw038_040]: older validator reported PASS (must be expected_stage_scope_only, never PASS)"
+    },
+    {
+      "probe": "prior_j1_binding_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "prior[j1]: binding sha drift"
+    }
+  ],
+  "errors": [],
+  "overall_pass": true,
+  "note": "Positive candidate pieces; frozen SW-034 requirements (dated Sales-only CRM Sales Gross source + written-up denominator + supported stable join bridge) unproved. Service dataset touch recorded as an unintended metadata-only excursion (never admission/clean-proof). 40% is catalog wording only. Contextual +1; governed deltas 0. Four older validators classified expected_stage_scope_only (never PASS)."
+}

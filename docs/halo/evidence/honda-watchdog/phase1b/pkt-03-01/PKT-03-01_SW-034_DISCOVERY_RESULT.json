@@ -1,0 +1,243 @@
+{
+  "artifact": "honda-watchdog-phase1b-pkt-03-01-sw034-discovery-result",
+  "classification": "finite_read_only_discovery_result / evidence_memorialization_design_only",
+  "packet_id": "PKT-03-01",
+  "metric_id": "SW-034",
+  "baseline_commit": "4f03833d8150ddf31fa139cf172c6d542ac50d31",
+  "authored_at_utc": "2026-09-04T06:58:24Z",
+  "pins": {
+    "pkt_03_01_binding_sha256": "e92a181f2a8016085011358ff256f627b2c11f09e4f37109f4276ecbfce10f8e",
+    "master_ledger_295_sha256": "747b6d31796939ae29f3a31a0f57226e57342ad7c2b1a1737e05287a5af59d13",
+    "pkt_03_01_packet_sha256": "a35319fe19061dfe0cf09a5557f9212ff2c7c396cfa5243388cc038675283cae",
+    "sw042_evidence_gap_sha256": "1714aad7b8cd4eaf44e4f3a62ba652b0f61886e61f042b274377deee0e1fab7b",
+    "sw042_discovery_result_sha256": "05987ed463930dcc3f0b2d2d34fed2203cac5c6ccb4e475ea801715d1ea65551",
+    "sw042_discovery_checks_sha256": "0f5494129396d1037d18e5e42af52719886a67803d05b4251255341a0413eaf3",
+    "sw042_discovery_validator_sha256": "729d0736b80240ecd088306a973410c1096087a2b898dd0ca249409fa26653c5",
+    "sw038_040_discovery_result_sha256": "6c5398584efe702b1994f99604911c3dcac3bd87d693315299c9d66102434a23",
+    "sw038_040_discovery_checks_sha256": "bb38e300150ff8964b46c160f4057971114194dcee925dd5c0d12b004d61f2d0",
+    "sw038_040_discovery_validator_sha256": "e78654323ae0b05d72e57fd6d03847669d0625f4a1779ca8072eaedc0882e3dc",
+    "note": "All pinned artifacts are UNCHANGED by this memorialization; the validator asserts them live. SW-034 lifecycle state_before == state_after == live."
+  },
+  "sw034": {
+    "canonical_condition": "Write-to-close rate below 40%.",
+    "business_question": "What share of written-up Sales deals close (write-to-close rate)?",
+    "frozen_required_fields": [
+      "dated Sales-only CRM Sales Gross close outcomes",
+      "written-up denominator",
+      "supported stable lead/customer join bridge"
+    ],
+    "source_family": "crm_sales_gross",
+    "source_family_slice": "slice_crm_sales_gross_join",
+    "metadata_change": "none",
+    "state_before": {
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "authoritative": false,
+      "gradable": false,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": false,
+      "customer_emission_authority": false,
+      "report_acceptance_state": "withheld_no_delivery"
+    },
+    "state_after": {
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "authoritative": false,
+      "gradable": false,
+      "alert_eligible": false,
+      "customer_visibility": "hidden",
+      "future_display_eligibility": false,
+      "customer_emission_authority": false,
+      "report_acceptance_state": "withheld_no_delivery"
+    },
+    "owners": {
+      "write_to_close_denominator_and_target_decision": "Duane Wells",
+      "read_only_dated_pull_and_bridge_investigation": "Codex VinSolutions controller",
+      "join_and_calculation_implementation": "Claude Studio engineering",
+      "immediate_action_owner": "Codex VinSolutions controller",
+      "next_action_owner": "Codex VinSolutions controller",
+      "note": "Roles mirror the frozen pkt-03-01-binding.json SW-034 accountable_owners exactly. Duane owns only the write-to-close denominator + operational-target business decision; Codex owns the read-only dated-pull/bridge investigation and immediate/next action; Claude owns later join/calculation implementation. Duane is never assigned technical investigation, acquisition, or implementation."
+    }
+  },
+  "two_delta": {
+    "contextual_discovery_evidence_delta": 1,
+    "contextual_delta_meaning": "ONE bounded finite discovery pass/result — NOT a source acquisition and NOT a metric count.",
+    "governed_source_data_acquisition_delta": 0,
+    "governed_source_data_admission_delta": 0,
+    "metric_meaning_value_lifecycle_customer_delta": 0,
+    "explanation": "Governed source-data acquisition, admission, and metric meaning/value/lifecycle/customer deltas are ALL zero. Only contextual discovery evidence increased, by exactly one bounded finite pass; nothing was acquired, admitted, measured, graded, promoted, or emitted."
+  },
+  "source_pdf_context": {
+    "path": "/Users/duanewells/Downloads/July 20-8-2/SerraHondaDealershipPerformanceDashboard_2026-08-03.pdf",
+    "period": "2026-07-20..2026-08-02",
+    "is_governed_current_week_input": false,
+    "is_historical_customer_example": true,
+    "aggregate_columns_present": [
+      "Writeup",
+      "Desking",
+      "sold/visit aggregates"
+    ],
+    "row_level_stable_join_keys_present": false,
+    "contextual_schema_evidence_only": true,
+    "is_acquisition_or_admission": false,
+    "is_denominator_semantics": false,
+    "is_current_period_value": false,
+    "proves_supported_join": false,
+    "note": "Historical customer/example report, NOT the governed current-week input. Aggregate Writeup/Desking are contextual schema evidence only; not a denominator, value, acquisition, admission, or join proof."
+  },
+  "help_dms_to_crm_matching": {
+    "article_number": "000001252",
+    "article_file": "vs-dms-to-crm-sales-customer-matching-report-f445d72e.md",
+    "article_updated": "2025-12-09",
+    "internal_matching_workflow_exists": true,
+    "proves_exportable_bulk_stable_key_bridge": false,
+    "proves_exact_export_fields": false,
+    "proves_scheduleability": false,
+    "proves_sales_only_filters": false,
+    "proves_denominator_semantics": false,
+    "read_only_boundary_no_match_reconcile_add_update_click": true,
+    "note": "An INTERNAL matching workflow exists (Connect matches sold DMS deals to lead info; manual reconciliation can match/add/update). Existence of the workflow is NOT proof of an exportable bulk stable-key bridge, export fields, scheduleability, Sales-only filters, or denominator semantics. Read-only boundary prohibits any Match/Reconcile/Add/Update click."
+  },
+  "report_center_pass": {
+    "authenticated_rooftop": "Serra Honda of Sylacauga #21043",
+    "read_only": true,
+    "finite_search_terms": [
+      "write",
+      "deal performance",
+      "gross"
+    ],
+    "no_data_state": "Current selections did not return any data. Review the filter settings.",
+    "finite_catalog_evidence_only": true,
+    "supports_global_unavailability": false,
+    "dms_to_crm_sales_attempt": {
+      "classification": "ambiguous_ignored",
+      "reason": "search did not refresh; displayed stale Communication Log results",
+      "treated_as_positive_or_negative_evidence": false
+    }
+  },
+  "custom_reporting_pass": {
+    "unsaved_builder": true,
+    "data_retrieval_paused_before_dataset_selection": true,
+    "data_retrieval_visibly_paused": true,
+    "crm_sales_help_exposed_fields": [
+      "Dealer",
+      "Dealer ID",
+      "Deal Number",
+      "Customer",
+      "Sale ID",
+      "Sales Representative/user groups",
+      "inventory/vehicle fields",
+      "Lead Status",
+      "Sale Price",
+      "Front Gross",
+      "Back Gross",
+      "Total Gross",
+      "payment/finance fields",
+      "Sold Date",
+      "Origination Date",
+      "Days To Sell From Lead Creation",
+      "Days To Sell From First Contact",
+      "Created By"
+    ],
+    "lead_id_showroom_visit_id_writeup_exposed_in_crm_sales_help": false,
+    "showroom_visits_help_exposed_fields": [
+      "Showroom Visit ID",
+      "Dealer/ID",
+      "Customer",
+      "assigned/TO/created/completed users",
+      "Visit Start/End dates/times/datetimes",
+      "last edited user",
+      "location type",
+      "visit length",
+      "end reason",
+      "result",
+      "status",
+      "Lead Source",
+      "Lead Type",
+      "Be Back"
+    ],
+    "showroom_visits_tooltip_truncated_after": "Contac",
+    "later_fields_absent_claim": false,
+    "stable_bridge_crm_sales_proved": false,
+    "columns_added": false,
+    "filters_set": false,
+    "rows_retrieved": false,
+    "report_saved": false,
+    "report_exported": false,
+    "report_run": false,
+    "report_scheduled": false,
+    "temp_tab_closed": true,
+    "only_vinconnect_tab_remains": true
+  },
+  "service_dataset_excursion": {
+    "occurred": true,
+    "cause": "keyboard navigation briefly selected the Service dataset label/Help while retrieval was paused",
+    "classification": "unintended_metadata_only_scope_excursion",
+    "is_authorized_service_investigation": false,
+    "is_source_acquisition": false,
+    "is_sales_only_proof": false,
+    "is_clean_source_proof": false,
+    "is_admitted_data": false,
+    "rows_or_source_bytes_or_pii_or_customer_content_retrieved": false,
+    "filter_save_export_run_schedule_occurred": false,
+    "service_parts_admitted": 0,
+    "note": "UNINTENDED metadata-only excursion; NOT authorized Service investigation, source acquisition, Sales-only proof, clean-source proof, or admitted data. Zero Service/Parts data admitted. Does not prove any candidate source clean."
+  },
+  "candidate_pieces": {
+    "pieces": [
+      "Deal Performance / PDF aggregate Writeup",
+      "DMS-to-CRM matching workflow",
+      "Showroom Visit ID",
+      "Customer",
+      "CRM Sales fields",
+      "inferred IDs"
+    ],
+    "candidate_only": true,
+    "prospective": true,
+    "satisfies_frozen_requirements": false,
+    "substitution_or_inference_forbidden": true,
+    "cannot_backfill": true,
+    "non_substitutes": {
+      "aggregate_writeup_is_accepted_denominator": false,
+      "customer_is_join_key": false,
+      "matching_workflow_existence_is_export_proof": false,
+      "truncated_tooltip_is_absence_proof": false,
+      "stale_dms_search_is_evidence": false,
+      "inferred_ids_are_stable_bridge": false
+    },
+    "note": "All pieces are candidate/prospective context only. None satisfies the frozen SW-034 requirements (dated Sales-only CRM Sales Gross close outcomes + written-up denominator + supported stable lead/customer join bridge). No substitution or inference permitted."
+  },
+  "target_status": {
+    "catalog_condition_only": true,
+    "operational_target_approved": false,
+    "note": "40% is the catalog CONDITION wording only; it is NOT an approved operational target until Duane ratifies one."
+  },
+  "privacy_and_safety": {
+    "pii_captured": false,
+    "raw_rows_captured": false,
+    "message_content_captured": false,
+    "source_bytes_captured": false,
+    "source_files_captured": false,
+    "no_identified_service_parts_rows_or_fields_captured": true,
+    "service_parts_admitted": 0,
+    "dealer_id": "21043",
+    "operation_scope_sales_only": true,
+    "candidate_source_sales_only_verified": false,
+    "candidate_service_free_note": "The candidate CRM Sales Gross / bridge source's Sales-only scope was NOT verified: no row/filter/period proof was obtained and the brief Service dataset label/Help touch was an unintended metadata-only excursion. Zero Service/Parts were ADMITTED only because no bytes/rows/source were acquired or admitted; this is NOT proof the candidate source is Service-free.",
+    "report_run_save_export_download_schedule_filter_crm_mutation": false,
+    "no_raw_url_query_or_token_stored": true,
+    "missing_is_not_zero": true
+  },
+  "global_unavailability": {
+    "claimed": false,
+    "note": "Report-center no-data states and the ambiguous DMS-search attempt are FINITE-PASS evidence only. NEVER a global VinSolutions/Cox unavailability claim, never missing=zero, never terminal-unavailable."
+  },
+  "conclusion": "Positive candidate pieces exist (aggregate Writeup schema, an internal DMS-to-CRM matching workflow, Showroom Visit ID, CRM Sales fields), but the frozen SW-034 requirements remain UNPROVED: no supported stable lead/customer join bridge, no current governed dated CRM Sales Gross source acquired/re-pinned, and no written-up denominator semantics. Finite pass only; NOT globally unavailable. SW-034 remains source_investigation_pending, not acquired, not measured, not gradable, hidden, non-alert, no customer emission/value/denominator/join/target.",
+  "next_safe_action": "No promotion. A future separately authorized finite step must prove a dated Sales-only CRM Sales Gross pull re-pinned by hash AND a supported stable lead/customer join bridge (e.g., an exportable bulk stable-key DMS-to-CRM bridge), then Duane ratifies the written-up denominator semantics + an approved operational target ONLY after the bridge is proved. No Match/Reconcile/Add/Update clicks; no current-period acquisition now.",
+  "no_action_statement": "No acquisition, admission, calculation, regrade, alert, customer output, merge, deploy, Gmail, schedule change, filter, CRM mutation, or VinSolutions write. No new source/vocabulary/value/denominator/join/grade/target/transition/customer projection. No substitution or inference of aggregate Writeup, Customer/PII, the matching workflow, Showroom Visit ID, or inferred IDs into the frozen requirements."
+}
