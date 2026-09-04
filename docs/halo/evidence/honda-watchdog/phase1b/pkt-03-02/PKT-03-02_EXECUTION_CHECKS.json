@@ -1,0 +1,809 @@
+{
+  "check": "honda_watchdog_phase1b_pkt_03_02_j2_activation",
+  "phase": "Phase 1B — PKT-03-02 J2 metadata/control activation (2 accepted carry-forward preserved + 10 held activated; 0 new transitions)",
+  "scope": "metadata_activation_only (no acquire/read/export/admit/promote/calculate/grade/alert/customer output/merge/deploy)",
+  "baseline_commit": "82d5893123f2ecb21538a84d4cb97d373b89b3ad",
+  "allowlist_files": [
+    "docs/halo/contract/phase1b/master-ledger-295.json",
+    "docs/halo/contract/phase1b/packet-index.json",
+    "docs/halo/contract/phase1b/packets/PKT-03-02.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_EXECUTION_CHECKS.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_TWO_DELTA.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_internal_companion.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_run_manifest.json",
+    "scripts/halo-phase1b/validate_pkt_03_02.py"
+  ],
+  "frozen_artifacts": {
+    "docs/halo/contract/phase1b/pkt-03-02-binding.json": "d20c35c026c73fa7929b21022c986bf0117769b428e7f22a6837d5f1827433a0",
+    "scripts/halo-phase1b/validate_pkt_03_02_binding.py": "55ab22f2c838e662aaf78b51c8064af25519d89f75f9412658c4c119685af3cc",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_BINDING_CHECKS.json": "3b7e0a6ad6561a15e30cc226cde754b184927851156dbed60a1923ce855371fa",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J1_TWO_DELTA.md": "9cf104d1e4440e4b7d7849ea33a20b48545f225ef1d653299905f9c658962288",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J1_internal_coverage_roadmap.md": "8e05ccd0cbc809329f7a7c260a5259dbd24f6402ed9bb25cc4f8fe3d3ba2cec9",
+    "docs/halo/contract/phase1b/packet-schema-1b-v2.json": "f137762427c74c180acf4fced19124c498a5e1fc5a8641ebc376afc47c11c5f6",
+    "docs/halo/contract/phase1b/source-registry-1b-v2.json": "bcf1bdbce0c824d495b8a6b0148fd4f65e08e0dcff6db18fa1ae6954ae4f928b"
+  },
+  "activation_time_utc": "2026-09-04T09:40:19Z",
+  "accepted_measured_ids": [
+    "SW-045",
+    "SW-046"
+  ],
+  "held_ids": [
+    "SW-043",
+    "SW-044",
+    "SW-113",
+    "SW-114",
+    "SW-121",
+    "SW-122",
+    "SW-123",
+    "SW-125",
+    "SW-126",
+    "SW-154"
+  ],
+  "transitions_appended_total": 0,
+  "held_metadata_fields": [
+    "evidence_as_of",
+    "evidence_ref",
+    "next_action",
+    "owner",
+    "report_acceptance_state",
+    "review_point",
+    "source_existence_state"
+  ],
+  "v2_controls_unmodified": {
+    "packet-schema-1b-v2.json": "f137762427c74c180acf4fced19124c498a5e1fc5a8641ebc376afc47c11c5f6",
+    "source-registry-1b-v2.json": "bcf1bdbce0c824d495b8a6b0148fd4f65e08e0dcff6db18fa1ae6954ae4f928b"
+  },
+  "frozen_j1_validator_post_j2": {
+    "classification": "expected_stage_scope_only",
+    "command": "python3 scripts/halo-phase1b/validate_pkt_03_02_binding.py --no-write",
+    "probe_total": 60,
+    "probe_rejected": 60,
+    "probe_not_rejected": 0,
+    "semantic_probes": "60/60",
+    "expected_error_count": 2,
+    "unexpected_error_count": 0,
+    "raw_error_array": [
+      "HASH: docs/halo/contract/phase1b/master-ledger-295.json expected 747b6d31796939ae29f3a31a0f57226e57342ad7c2b1a1737e05287a5af59d13 got a5e4dd0b00ddfb48642d342a0bef0c49cb40a85d3bb375879e636b3d5cc7543a",
+      "ALLOWLIST: changes outside allowlist vs baseline: ['docs/halo/contract/phase1b/master-ledger-295.json', 'docs/halo/contract/phase1b/packet-index.json', 'docs/halo/contract/phase1b/packets/PKT-03-02.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_EXECUTION_CHECKS.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_TWO_DELTA.md', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_internal_companion.md', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_run_manifest.json', 'scripts/halo-phase1b/validate_pkt_03_02.py']"
+    ],
+    "expected_error_array": [
+      "HASH: docs/halo/contract/phase1b/master-ledger-295.json expected 747b6d31796939ae29f3a31a0f57226e57342ad7c2b1a1737e05287a5af59d13 got a5e4dd0b00ddfb48642d342a0bef0c49cb40a85d3bb375879e636b3d5cc7543a",
+      "ALLOWLIST: changes outside allowlist vs baseline: ['docs/halo/contract/phase1b/master-ledger-295.json', 'docs/halo/contract/phase1b/packet-index.json', 'docs/halo/contract/phase1b/packets/PKT-03-02.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_EXECUTION_CHECKS.json', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_TWO_DELTA.md', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_internal_companion.md', 'docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_run_manifest.json', 'scripts/halo-phase1b/validate_pkt_03_02.py']"
+    ],
+    "canonicalization": "compact UTF-8 JSON (separators (',',':'), ensure_ascii=False) of the ordered array",
+    "error_signature_sha256": "742545ca628c866ec36bf30ec4f81cc02fc6d54705c427a166743ca6a49ee898",
+    "expected_error_signature_sha256": "742545ca628c866ec36bf30ec4f81cc02fc6d54705c427a166743ca6a49ee898",
+    "rationale": "The frozen J1 binding validator's pinned master-ledger source hash + its 5-file allowlist react to J2's legitimate ledger/index/packet changes. No binding-content failure (probes 60/60). Acceptable ONLY with the J2 proof: exact ten held metadata updates, accepted two byte-identical, all transition arrays unchanged, 0 new transitions, post-J2 ledger hash pinned."
+  },
+  "run_manifest_j1_binding": {
+    "bound_to": "live frozen_j1_validator_post_j2 result + pinned expected signature",
+    "asserts": [
+      "commands[0] states the actual post-J2 result (no 'unchanged'/'PASS' claim; 60/60 + HASH/ALLOWLIST)",
+      "J1 block classification/probes/count/signature/error-array == live",
+      "rationale states the frozen J1 5-file allowlist (not '8-file allowlist')"
+    ],
+    "errors": [],
+    "pass": true
+  },
+  "legacy_validate_phase1b": {
+    "pinned_baseline_count": 30,
+    "pinned_baseline_signature_sha256": "2cbf86a6361f4c67803807d5d7d7d496413a4b20924da42516ff80d7d3d46783",
+    "now_error_count": 30,
+    "delta_new": 0,
+    "exactness": "post-J2 == pinned canonical 30-error signature UNION 0 new; same-count substitution rejected"
+  },
+  "touched_vs_baseline": [
+    "docs/halo/contract/phase1b/master-ledger-295.json",
+    "docs/halo/contract/phase1b/packet-index.json",
+    "docs/halo/contract/phase1b/packets/PKT-03-02.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_EXECUTION_CHECKS.json",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_TWO_DELTA.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_internal_companion.md",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_run_manifest.json",
+    "scripts/halo-phase1b/validate_pkt_03_02.py"
+  ],
+  "artifact_hashes": {
+    "docs/halo/contract/phase1b/master-ledger-295.json": "a5e4dd0b00ddfb48642d342a0bef0c49cb40a85d3bb375879e636b3d5cc7543a",
+    "docs/halo/contract/phase1b/packet-index.json": "6c49b7e09bcbf6254a8b2585851d08b842d9efd3c579e8fb1beea400fc6aedb6",
+    "docs/halo/contract/phase1b/packets/PKT-03-02.json": "60c065d9b5a76e80cb801735f3d29f3392fc91d1ab5f9d57dd7fb9df7758d678",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_TWO_DELTA.md": "6a3a57046fd6a59dd545fe2ea8dee0318fd1b1487caba99d25fec94867cb1616",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_internal_companion.md": "70cbec2ebe59d4e71237fb00520aca2cc6fdb4f50a543575b236b989fd0fa3be",
+    "docs/halo/evidence/honda-watchdog/phase1b/pkt-03-02/PKT-03-02_J2_run_manifest.json": "b8ee3eb89be1a5bed5159502dd57ab843ec3c0e07e32891bb7ae5c8989d9ec69",
+    "scripts/halo-phase1b/validate_pkt_03_02.py": "20973b82459950c620457b4b97e3be066f7604adb62683d4cdab324dc9fce27a"
+  },
+  "adversarial_probes_total": 86,
+  "adversarial_probes_failed": 0,
+  "adversarial_probes": [
+    {
+      "probe": "accepted_row_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "accepted SW-045: ledger row changed vs baseline (byte-identical required; no recalc/regrade)"
+    },
+    {
+      "probe": "accepted_value_regrade",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "accepted SW-046: ledger row changed vs baseline (byte-identical required; no recalc/regrade)"
+    },
+    {
+      "probe": "authoritative_count_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "authoritative_evaluated != 17"
+    },
+    {
+      "probe": "held_disposition_promotion",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "held SW-043: changed fields ['disposition'] outside metadata allowlist"
+    },
+    {
+      "probe": "held_evaluation_injection",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "held SW-044: changed fields ['evaluation_state'] outside metadata allowlist"
+    },
+    {
+      "probe": "held_acquisition_injection",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "held SW-113: changed fields ['acquisition_admission_state'] outside metadata allowlist"
+    },
+    {
+      "probe": "held_authoritative_injection",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "held SW-114: changed fields ['authoritative'] outside metadata allowlist"
+    },
+    {
+      "probe": "held_source_dep_injection",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "held SW-121: changed fields ['source_dependency_ids'] outside metadata allowlist"
+    },
+    {
+      "probe": "held_self_transition_add",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "held SW-122: changed fields ['transitions'] outside metadata allowlist"
+    },
+    {
+      "probe": "held_transition_delete",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "held SW-123: changed fields ['transitions'] outside metadata allowlist"
+    },
+    {
+      "probe": "held_field_outside_allowlist",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held SW-125: changed fields ['boundary_class'] outside metadata allowlist"
+    },
+    {
+      "probe": "held_wrong_owner",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held SW-044: owner must map from binding immediate owner"
+    },
+    {
+      "probe": "held_wrong_next_action",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held SW-113: next_action must equal binding immediate_action.action"
+    },
+    {
+      "probe": "held_evidence_ref_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held SW-114: evidence_ref must reference the J1 binding + authority"
+    },
+    {
+      "probe": "held_report_state_invalid",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held SW-121: report_acceptance_state must be withheld_no_delivery (vocab-valid)"
+    },
+    {
+      "probe": "held_ses_wrong",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held SW-122: source_existence_state must be investigation_pending"
+    },
+    {
+      "probe": "held_evidence_as_of_freshness",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held SW-123: evidence_as_of must equal J2 activation time (labeled, not source freshness)"
+    },
+    {
+      "probe": "held_review_point_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "held SW-126: review_point drift"
+    },
+    {
+      "probe": "accepted_partition_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet.lifecycle_partition drift (accepted 2 / held 10 / others empty; no target_ids bucket)"
+    },
+    {
+      "probe": "packet_dep_nonempty",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet.source_dependencies must be [] (no new registry node)"
+    },
+    {
+      "probe": "metric_dep_nonempty",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet SW-113: source_dependency_ids must be [] (no dependency)"
+    },
+    {
+      "probe": "packet_parity_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet SW-043: field 'business_question' != J1 binding (exact deep equality)"
+    },
+    {
+      "probe": "packet_binding_sha_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet authority_binding.sha256 != frozen J1 binding sha"
+    },
+    {
+      "probe": "customer_emission_true",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "customer_emission_authority must be exactly False (binding)"
+    },
+    {
+      "probe": "customer_report_emitted",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet.customer_projection drift (accepted 2 / visible [] / emitted false / note)"
+    },
+    {
+      "probe": "value_injection_on_held",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet SW-043: field 'formula' != J1 binding (exact deep equality)"
+    },
+    {
+      "probe": "grade_injection_on_held",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet SW-113: field 'value' != J1 binding (exact deep equality)"
+    },
+    {
+      "probe": "held_display_eligible_true",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet SW-114: field 'future_display_eligibility' != J1 binding (exact deep equality)"
+    },
+    {
+      "probe": "held_projection_allowed_true",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet SW-121: field 'customer_projection_allowed' != J1 binding (exact deep equality)"
+    },
+    {
+      "probe": "accepted_recomputed_true",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet SW-045: field 'recomputed_this_tranche' != J1 binding (exact deep equality)"
+    },
+    {
+      "probe": "accepted_display_eligible_false",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet SW-046: field 'future_display_eligibility' != J1 binding (exact deep equality)"
+    },
+    {
+      "probe": "accepted_quarantine_forbidden_weakened",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet SW-045: field 'j2_quarantine' != J1 binding (exact deep equality)"
+    },
+    {
+      "probe": "accepted_true_authority_to_crm",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet SW-045: field 'j2_quarantine' != J1 binding (exact deep equality)"
+    },
+    {
+      "probe": "sw154_content_read_true",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet SW-154: field 'content_bytes_read' != J1 binding (exact deep equality)"
+    },
+    {
+      "probe": "service_parts_admitted",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "Service/Parts/service-source/cross-rooftop admitted must all be 0"
+    },
+    {
+      "probe": "cross_rooftop_admitted",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "Service/Parts/service-source/cross-rooftop admitted must all be 0"
+    },
+    {
+      "probe": "accepted_substitution",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet SW-045: field 'source_family' != J1 binding (exact deep equality)"
+    },
+    {
+      "probe": "quarantined_source_held",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet SW-113: field 'source_family_intent' != J1 binding (exact deep equality)"
+    },
+    {
+      "probe": "index_other_packet_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet-index record PKT-01-01 changed (only PKT-03-02 may change)"
+    },
+    {
+      "probe": "index_status_wrong",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "PKT-03-02 status != active_authored"
+    },
+    {
+      "probe": "index_question_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "PKT-03-02 management_question drift"
+    },
+    {
+      "probe": "index_version_not_bumped",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet-index version not bumped by 1"
+    },
+    {
+      "probe": "nontarget_ledger_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "non-target/accepted ledger row SW-011 changed (must be byte-identical)"
+    },
+    {
+      "probe": "overlay_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "non-target/accepted ledger row SW-079 changed (must be byte-identical)"
+    },
+    {
+      "probe": "two_delta_nonzero",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "packet.two_delta_proof drift (must be exactly 0/12 + 0/12 with denominators + notes)"
+    },
+    {
+      "probe": "target_order_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.target_ids != exact ordered 12"
+    },
+    {
+      "probe": "held_extra_calculated_value",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet SW-113: metric_definition key set != binding + {metric_id, source_dependency_ids} (extra=['calculated_value'], missing=[])"
+    },
+    {
+      "probe": "accepted_extra_new_grade",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet SW-045: metric_definition key set != binding + {metric_id, source_dependency_ids} (extra=['new_grade'], missing=[])"
+    },
+    {
+      "probe": "extra_toplevel_deployment_authorized",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet top-level key set drift (extra=['deployment_authorized'], missing=[])"
+    },
+    {
+      "probe": "evidence_delta_of_11",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.two_delta_proof drift (must be exactly 0/12 + 0/12 with denominators + notes)"
+    },
+    {
+      "probe": "meaning_delta_of_11",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.two_delta_proof drift (must be exactly 0/12 + 0/12 with denominators + notes)"
+    },
+    {
+      "probe": "customer_accepted_ids_emptied",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.customer_projection drift (accepted 2 / visible [] / emitted false / note)"
+    },
+    {
+      "probe": "status_changed_to_planned",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.status != active_authored"
+    },
+    {
+      "probe": "period_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.period drift (must equal binding 2026-08-24..2026-08-30)"
+    },
+    {
+      "probe": "module_changed_to_4",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.module != 3"
+    },
+    {
+      "probe": "inherited_wrong_dealer_removed",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.stop_conditions.inherited_canonical drift (all 11 canonical stops required, exact order)"
+    },
+    {
+      "probe": "service_parts_packet_stop_weakened",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.stop_conditions.packet_specific drift (all four statements required; no deletion/weakening, esp. Service/Parts)"
+    },
+    {
+      "probe": "accountable_owner_roster_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.accountable_owner_roster drift (exact three-owner roster)"
+    },
+    {
+      "probe": "source_reuse_note_claims_new_source",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.source_reuse_note drift (must be the exact no-source note; no new source claim)"
+    },
+    {
+      "probe": "lifecycle_extra_bucket",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.lifecycle_partition drift (accepted 2 / held 10 / others empty; no target_ids bucket)"
+    },
+    {
+      "probe": "lifecycle_target_ids_leak",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.lifecycle_partition drift (accepted 2 / held 10 / others empty; no target_ids bucket)"
+    },
+    {
+      "probe": "customer_note_says_authorized",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "packet.customer_projection drift (accepted 2 / visible [] / emitted false / note)"
+    },
+    {
+      "probe": "nonallowlist_path_touch",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "files touched outside allowlist: ['src/server/brain-schema.ts']"
+    },
+    {
+      "probe": "claude_staged",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": ".claude/ is staged (forbidden)"
+    },
+    {
+      "probe": "legacy_same_count_substitution",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "legacy: canonical 30-error signature changed (new error / same-count substitution / removed error)"
+    },
+    {
+      "probe": "legacy_new_error_added",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "legacy: error count 31 != pinned 30"
+    },
+    {
+      "probe": "legacy_removed_error",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "legacy: error count 29 != pinned 30"
+    },
+    {
+      "probe": "j1_same_count_fabricated_swap",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 3,
+      "sample": "j1_stage_scope: error-array canonical sha != pinned expected_stage_scope signature (swap/add/delete/semantic)"
+    },
+    {
+      "probe": "j1_delete_one",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 3,
+      "sample": "j1_stage_scope: error count 1 != 2"
+    },
+    {
+      "probe": "j1_add_one",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 4,
+      "sample": "j1_stage_scope: error count 3 != 2"
+    },
+    {
+      "probe": "j1_mutate_ledger_hash",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "j1_stage_scope: error-array canonical sha != pinned expected_stage_scope signature (swap/add/delete/semantic)"
+    },
+    {
+      "probe": "j1_mutate_allowlist_list",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "j1_stage_scope: error-array canonical sha != pinned expected_stage_scope signature (swap/add/delete/semantic)"
+    },
+    {
+      "probe": "j1_omit_one_j2_path",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "j1_stage_scope: error-array canonical sha != pinned expected_stage_scope signature (swap/add/delete/semantic)"
+    },
+    {
+      "probe": "j1_semantic_error_present",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 3,
+      "sample": "j1_stage_scope: error-array canonical sha != pinned expected_stage_scope signature (swap/add/delete/semantic)"
+    },
+    {
+      "probe": "j1_probe_total_59",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "j1_stage_scope: probe_total 59 != 60"
+    },
+    {
+      "probe": "j1_not_rejected_1",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "j1_stage_scope: probe_not_rejected 1 != 0"
+    },
+    {
+      "probe": "j1_replace_hash_with_binding_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 3,
+      "sample": "j1_stage_scope: error-array canonical sha != pinned expected_stage_scope signature (swap/add/delete/semantic)"
+    },
+    {
+      "probe": "manifest_commands_claims_unchanged_pass",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 4,
+      "sample": "manifest commands[0] must not claim the frozen J1 validator is 'unchanged' post-J2"
+    },
+    {
+      "probe": "manifest_commands_drops_probes_and_errors",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "manifest commands[0] must state the actual semantic probes 60/60"
+    },
+    {
+      "probe": "manifest_rationale_says_8_file_allowlist",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "manifest J1 rationale falsely says '8-file allowlist' (frozen J1 has a 5-file allowlist)"
+    },
+    {
+      "probe": "manifest_j1_signature_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "manifest J1 error_signature_sha256 != live frozen-J1 signature"
+    },
+    {
+      "probe": "manifest_j1_probes_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "manifest J1 semantic_probes != live frozen-J1 result"
+    },
+    {
+      "probe": "manifest_j1_raw_array_swap",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 2,
+      "sample": "manifest J1 raw_error_array != live frozen-J1 error array"
+    },
+    {
+      "probe": "manifest_j1_count_drift",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "manifest J1 expected_error_count != live / pinned 2"
+    },
+    {
+      "probe": "manifest_stale_vs_live_signature",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "manifest J1 error_signature_sha256 != live frozen-J1 signature"
+    },
+    {
+      "probe": "manifest_stale_vs_live_probes",
+      "expected": "reject",
+      "got": "reject",
+      "pass": true,
+      "n": 1,
+      "sample": "manifest J1 semantic_probes != live frozen-J1 result"
+    }
+  ],
+  "errors": [],
+  "overall_pass": true,
+  "note": "Truthful activation: 0 new transitions (existing arrays byte-identical); accepted rows byte-identical (no recalc/regrade); held rows metadata-only; accepted legacy fields byte-carried but quarantined (true authority = Dashboard); no new registry node; schema-v2/registry-v2 unmodified; no customer output; missing not zero; zero Service/Parts."
+}
