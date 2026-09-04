@@ -1,0 +1,1159 @@
+{
+  "artifact": "pkt-04-01-binding",
+  "version": "1.0.0",
+  "packet_id": "PKT-04-01",
+  "module": 4,
+  "scope": "authority_binding_and_validation_gate_only",
+  "state": "freeze_candidate",
+  "immutable_after_independent_pass": false,
+  "note": "PKT-04-01 J1 freeze-candidate binding. Design-only, additive, CREATE-only. Converts the 11 provisional Module-4 rows into one reviewable machine-validated binding. Two rows (SW-049, SW-050) preserve PROVEN Honda crm_sales_gross evidence (Report-1275) as admitted_held / data_acquired_calculation_pending (NOT measured/graded); the other nine are honest source_investigation_pending. No target appears in the Gate 2 evaluable set, baseline operational targets, or the Gate 5B accepted/evaluated model, so no value/grade/formula/threshold/baseline is authored. No activation, no ledger/index change, no J2. Evidence delta 0/11, meaning delta 0/11. J1 customer emission authority=false.",
+  "management_question": "Where is Serra Honda losing gross and deal efficiency—from desking speed and negotiation drag through front-end gross, F&I capture, deal compliance, incentive accuracy, and aged-inventory pull-through—and which signals can be supported from governed Sales evidence without substituting CRM proxies for DMS, accounting, inventory, or protected-note data?",
+  "dealer_scope": {
+    "profile": "serra-honda",
+    "dealer_name": "Serra Honda of Sylacauga",
+    "dealer_id": "21043",
+    "domain": "Sales",
+    "service_parts_admitted": 0,
+    "service_source_admitted": 0,
+    "cross_rooftop_admitted": 0
+  },
+  "period": "2026-08-24..2026-08-30",
+  "customer_emission_authority": false,
+  "customer_projection": null,
+  "packet_accounting_assertion": {
+    "conditions": 295,
+    "modules": 11,
+    "packets": 30
+  },
+  "packet_membership_order": [
+    "SW-047",
+    "SW-048",
+    "SW-049",
+    "SW-050",
+    "SW-051",
+    "SW-052",
+    "SW-053",
+    "SW-054",
+    "SW-055",
+    "SW-056",
+    "SW-057"
+  ],
+  "accountable_owner_roster": {
+    "codex": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+    "studio": "Claude Studio engineering (binding author; later implementer)",
+    "duane": "Duane (business/design/protected-content/threshold decision authority only)"
+  },
+  "accepted_measured_authority": {
+    "ids": [],
+    "authoritative_evaluated_total": 17,
+    "carry_forward": false,
+    "recomputed": false,
+    "sources": [],
+    "note": "PKT-04-01 introduces ZERO authoritative/accepted metrics. SW-049/050 are proven crm_sales_gross evidence held for calculation (admitted_held, not measured/graded); the other nine are source_investigation_pending. authoritative_evaluated remains exactly 17 (unchanged)."
+  },
+  "authority_absence_assertion": {
+    "ids_checked": [
+      "SW-047",
+      "SW-048",
+      "SW-049",
+      "SW-050",
+      "SW-051",
+      "SW-052",
+      "SW-053",
+      "SW-054",
+      "SW-055",
+      "SW-056",
+      "SW-057"
+    ],
+    "in_gate2_evaluable_conditions": [],
+    "in_baseline_operational_targets": [],
+    "in_gate5b_evaluated": [],
+    "statement": "None of the 11 target IDs appears in any evaluation authority (Gate 2 evaluable, baseline operational targets, or Gate 5B evaluated). Therefore no value, grade, formula, threshold, comparator, direction, baseline, or detection rule may be authored for any of them; SW-049/050 are proven-but-calculation-pending and the other nine are held."
+  },
+  "permanent_rules": [
+    "Honda Serra 21043 Sales only; Service/Parts/service-source/cross-rooftop admitted = 0.",
+    "Missing is not zero; unproved is not unavailable. No proxy, inference, synthetic source, invented denominator, or inferred history.",
+    "No source substitution: CRM data must not be simulated/proxied/substituted for required external DMS/F&I/accounting/inventory truth.",
+    "Do not use, normalize, or cure any quarantined source family based on clean rows.",
+    "Business-language causal labels in the catalog are NOT factual diagnoses.",
+    "J1 customer emission authority=false: no customer-visible output/report/finding/alert/notification.",
+    "SW-049/SW-050 preserve PROVEN Honda crm_sales_gross evidence (Report-1275) as admitted_held / calculation-pending; not measured, graded, recomputed, or carried forward.",
+    "For SW-051..056 no absolute claim of VinSolutions-export absence or predetermined external requirement is made; a finite read-only check determines whether the exact fields exist in VinSolutions or a named external source would be needed.",
+    "SW-057 join design/definition/implementation is technical (Codex source-key/cardinality proof + acquisition; Studio join design + implementation); Duane owns only the 'lead interest' business meaning and the >30%/>60-day business thresholds.",
+    "Duane owns only genuine business/design/protected-content/threshold decisions; never technical investigation/acquisition/admission/accumulation/normalization/calculation/implementation.",
+    "Catalog starter phrases (e.g. '20 minutes', '>4', '15%', '20%', '1.2', '$1,200', '$1,500', '48 hours', '30%', '60 days') are NOT ratified thresholds and must not be treated as authority."
+  ],
+  "source_family_slices": {
+    "slice_desking_speed_manual": [
+      "SW-047",
+      "SW-048"
+    ],
+    "slice_front_end_gross_crm_candidate": [
+      "SW-049",
+      "SW-050"
+    ],
+    "slice_fi_capture_external": [
+      "SW-051",
+      "SW-052",
+      "SW-053"
+    ],
+    "slice_deal_compliance_incentive_external": [
+      "SW-054",
+      "SW-055",
+      "SW-056"
+    ],
+    "slice_aged_inventory_pull_through_join": [
+      "SW-057"
+    ]
+  },
+  "lifecycle_partition": {
+    "target_ids": [
+      "SW-047",
+      "SW-048",
+      "SW-049",
+      "SW-050",
+      "SW-051",
+      "SW-052",
+      "SW-053",
+      "SW-054",
+      "SW-055",
+      "SW-056",
+      "SW-057"
+    ],
+    "accepted_measured_ids": [],
+    "accepted_disposition_only_ids": [],
+    "rejected_ids": [],
+    "source_investigation_pending_ids": [
+      "SW-047",
+      "SW-048",
+      "SW-051",
+      "SW-052",
+      "SW-053",
+      "SW-054",
+      "SW-055",
+      "SW-056",
+      "SW-057"
+    ],
+    "calculation_pending_ids": [
+      "SW-049",
+      "SW-050"
+    ]
+  },
+  "service_parts_zero_admission": {
+    "service_parts_admitted": 0,
+    "held_families": [
+      "desking_manual",
+      "crm_sales_gross",
+      "fi_products_source_unproved",
+      "fi_pvr_source_unproved",
+      "cash_deal_fi_source_unproved",
+      "trade_valuation_source_unproved",
+      "deal_jacket_compliance_source_unproved",
+      "incentive_reconciliation_source_unproved",
+      "inventory_lead_age_join"
+    ],
+    "quarantined_families": [
+      "cage_kpi",
+      "lead_source_roi",
+      "sales_comm_log"
+    ],
+    "quarantine_rule": "quarantined families are TERMINAL and must not be used/normalized/cured on clean rows",
+    "note": "SW-049/050 use PROVEN Honda crm_sales_gross (admitted_held, calculation-pending). SW-051..056 have no presently-proved VinSolutions export; a finite read-only check determines VinSolutions-fields-or-named-external (no CRM proxy). SW-057 requires a technical join. None uses a quarantined family; none admits Service/Parts."
+  },
+  "cross_dealer_exclusion": {
+    "excluded_dealers": [
+      {
+        "profile": "serra-nissan",
+        "dealer_id": "21044"
+      },
+      {
+        "profile": "tony-serra-ford",
+        "dealer_id": "21047"
+      }
+    ],
+    "note": "No Nissan (21044) or Ford (21047) source, delivery, or scope is admitted."
+  },
+  "prior_packets_preserved": {
+    "pkt_02_03_status": "open/held (not reopened, not closed)",
+    "sw_137_investigation": "exhausted; not repeated",
+    "sw_140_investigation": "exhausted; not repeated",
+    "files_must_remain_byte_identical": [
+      "docs/halo/contract/phase1b/pkt-02-03-binding.json",
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_SW-137_DISCOVERY_RESULT.json",
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_SW-140_DISCOVERY_RESULT.json"
+    ]
+  },
+  "two_delta": {
+    "evidence_delta": {
+      "count": 0,
+      "of": 11,
+      "reason": "design-only; no source acquired this tranche (SW-049/050 reference pre-existing proven evidence)"
+    },
+    "meaning_delta": {
+      "count": 0,
+      "of": 11,
+      "reason": "no value/grade/finding produced; SW-049/050 remain not_measured"
+    }
+  },
+  "pins": {
+    "baseline_commit": "f51ebb974c010e92b945d2612111eecbd154299a",
+    "catalog_sha256_expected": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1"
+  },
+  "pinned_source_hashes": {
+    "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+    "docs/halo/contract/gate2-evaluator-contract.json": "9bdc266438befe562b5197891e68afc15c797338b29152bb3aaf341a6f28fdd4",
+    "docs/halo/contract/baseline-registry.json": "86de75c49946557153e0e46e2131302a6fc12117862fdd6383c0c88c320da8c4",
+    "docs/halo/evidence/m1r/gate5b/gate5b-report-model-21043.json": "04c3f965e1d087e9f5835d69e14a368d24c6af5a10743e593d9dc54516f129eb",
+    "docs/halo/contract/phase1b/master-ledger-295.json": "a5e4dd0b00ddfb48642d342a0bef0c49cb40a85d3bb375879e636b3d5cc7543a",
+    "docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json": "13c0fca11241c5608d7da1e434383a4e881c886ecbd696414bebdd5a8db636c6"
+  },
+  "legacy_validator": {
+    "file": "scripts/halo-phase1b/validate_phase1b.py",
+    "pinned_baseline_count": 30,
+    "pinned_baseline_signature_sha256": "2cbf86a6361f4c67803807d5d7d7d496413a4b20924da42516ff80d7d3d46783",
+    "delta_new": 0,
+    "classification": "J1 is CREATE-only and changes no ledger/gate authority, so validate_phase1b.py remains the pinned canonical 30-error signature UNION 0 new; same-count substitution rejected."
+  },
+  "validator": "scripts/halo-phase1b/validate_pkt_04_01_binding.py",
+  "checks_receipt": "docs/halo/evidence/honda-watchdog/phase1b/pkt-04-01/PKT-04-01_BINDING_CHECKS.json",
+  "metrics": [
+    {
+      "id": "SW-047",
+      "canonical_condition": "Time from write-up to first pencil exceeds 20 minutes.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does the elapsed time from write-up to first pencil exceed the desking-speed limit?",
+      "population": "Serra Honda 21043 Sales desking events only",
+      "history_requirement": "Not primarily a history question; blocked on manual-desking timestamp source existence + definition.",
+      "calculation_kind_intent": "elapsed_time_threshold_flag",
+      "unit_intent": "minutes (undefined until desking timestamps are proved and the limit is ratified)",
+      "source_family_intent": "desking_manual",
+      "source_family_slice": "slice_desking_speed_manual",
+      "required_direct_fields_or_keys": [
+        "write_up_timestamp",
+        "first_pencil_timestamp",
+        "deal_or_desking_record_key"
+      ],
+      "missing_or_quarantine_evidence": [
+        "manual desking evidence is UNPROVED: only a Desking/Dashboard UI surface is known, no governed bulk row export is presently proved",
+        "write-up and first-pencil timestamps are not proved to exist as governed data; must not be assumed",
+        "the 20-minute limit is a catalog starter phrase, NOT a ratified operational target/threshold; must not be treated as authority",
+        "no proxy timestamp or inference may substitute; missing is not zero"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of governed write-up and first-pencil timestamps (Sales only; no proxy)",
+        "Duane-ratified desking-speed limit and write-up/first-pencil definitions",
+        "Studio implementation of the elapsed-time flag after proof + definition"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "desking_timestamp_read_only_investigation": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "desking_speed_limit_definition_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "elapsed_time_flag_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only investigation of whether governed write-up and first-pencil timestamps exist in Sales-clean source; aggregate-only, no PII, no raw rows."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify the desking-speed limit and the write-up/first-pencil definitions (definition decision only)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the elapsed-time flag after timestamp proof + definition."
+        }
+      ],
+      "review_point": "on PKT-04-01 activation (J2), after desking-timestamp proof + limit definition",
+      "next_safe_source_action": "Codex bounded read-only schema/UI check for governed write-up/first-pencil timestamps; aggregate-only, no PII/raw rows.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-048",
+      "canonical_condition": "Deal has >4 pencils/counters before close (negotiation drag).",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Do more than four pencils/counters occur before close (negotiation drag)?",
+      "population": "Serra Honda 21043 Sales desking events only",
+      "history_requirement": "Not primarily a history question; blocked on manual-desking pencil/counter source existence + definition.",
+      "calculation_kind_intent": "count_threshold_flag",
+      "unit_intent": "count (undefined until pencil/counter events are proved and the limit is ratified)",
+      "source_family_intent": "desking_manual",
+      "source_family_slice": "slice_desking_speed_manual",
+      "required_direct_fields_or_keys": [
+        "pencil_or_counter_event_records",
+        "deal_or_desking_record_key",
+        "close_event_marker"
+      ],
+      "missing_or_quarantine_evidence": [
+        "manual desking evidence is UNPROVED: only a Desking/Dashboard UI surface is known, no governed bulk row export of pencils/counters is presently proved",
+        "the per-deal pencil/counter event count is not proved to exist as governed data; must not be assumed",
+        "the '>4 pencils/counters' limit is a catalog starter phrase, NOT a ratified operational threshold; must not be treated as authority",
+        "the catalog phrase 'negotiation drag' is a business label, NOT a factual diagnosis; cause must not be diagnosed",
+        "no proxy count or inference may substitute; missing is not zero"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of governed per-deal pencil/counter events (Sales only; no proxy)",
+        "Duane-ratified pencil/counter limit and 'before close' definition",
+        "Studio implementation of the count flag (no causal claim) after proof + definition"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "pencil_counter_read_only_investigation": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "pencil_counter_limit_definition_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "count_flag_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only investigation of whether governed per-deal pencil/counter events exist in Sales-clean source; aggregate-only, no PII, no raw rows."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify the pencil/counter limit and the 'before close' definition (definition decision only; cause is not to be diagnosed)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the count flag after event proof + definition; assert no causal diagnosis."
+        }
+      ],
+      "review_point": "on PKT-04-01 activation (J2), after pencil/counter proof + limit definition",
+      "next_safe_source_action": "Codex bounded read-only schema/UI check for governed pencil/counter events; aggregate-only, no PII/raw rows.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-049",
+      "canonical_condition": "Gross-per-unit falls >15% below trailing 30-day average.",
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does gross-per-unit fall more than 15% below its trailing 30-day average?",
+      "population": "Serra Honda 21043 Sales sale/deal rows only",
+      "history_requirement": "REQUIRES a trailing 30-day gross-per-unit history that is NOT accumulated; a single week is insufficient; missing is not zero.",
+      "calculation_kind_intent": "rate_variance_vs_trailing_window",
+      "unit_intent": "currency_per_unit (undefined until the metric definition + trailing window are ratified/accumulated)",
+      "source_family_intent": "crm_sales_gross",
+      "source_family_slice": "slice_front_end_gross_crm_candidate",
+      "required_direct_fields_or_keys": [
+        "gross_per_unit_per_sale",
+        "sale_or_deal_row_key",
+        "trailing_30_day_history"
+      ],
+      "missing_or_quarantine_evidence": [
+        "Honda CRM Sales Gross evidence is PROVEN and admitted_held (native-scheduled-evidence.json delivery Report-1275: family crm_sales_gross, held, period 2026-08-24..2026-08-30, 6 rows, sha256 baf44eb4…) and corroborated by the E2E readCrmSalesGross receipt (docs/halo/evidence/m1r/e2e/real-data-e2e-receipt.json)",
+        "held for CALCULATION-pending, NOT measured: the ratified gross-per-unit definition and the >15%-below-trailing-30-day threshold are undecided and the trailing-30-day history is not accumulated",
+        "no value, grade, formula, threshold, or baseline is authored; missing is not zero; no single-week inference of a trend",
+        "no proxy series may substitute for the trailing-30-day gross-per-unit history"
+      ],
+      "required_future_contract": [
+        "Duane-ratified gross-per-unit definition and the >15%-below-trailing-30-day rule",
+        "Codex governed accumulation of the trailing-30-day gross-per-unit history (Sales only; no proxy)",
+        "Studio implementation of the variance metric after definition + history"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "gross_per_unit_definition_and_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "proven_evidence_preservation_and_history_accumulation": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "variance_metric_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Duane (business/design/protected-content/threshold decision authority only)",
+      "immediate_action": {
+        "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+        "action": "Ratify the exact gross-per-unit metric definition and the >15%-below-trailing-30-day-average rule (business definition decision only; no inference from a single week)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+          "action": "Preserve the proven admitted_held crm_sales_gross evidence byte-for-byte and accumulate the trailing-30-day gross-per-unit history (Sales only; no proxy)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the variance metric after definition + trailing-30-day history."
+        }
+      ],
+      "review_point": "on PKT-04-01 activation (J2), after gross-per-unit definition + trailing-30-day history",
+      "next_safe_source_action": "Codex bounded read-only confirmation that the admitted_held crm_sales_gross rows carry gross-per-unit with dates; aggregate-only, no PII/raw rows.",
+      "authority": "non-authoritative held state; proven Honda crm_sales_gross evidence is admitted_held but calculation-pending (no ratified definition/threshold/history); not measured, graded, recomputed, or carried forward.",
+      "held_source_evidence_ref": "native-scheduled-evidence.json Report-1275 (family crm_sales_gross; validation_state held; period 2026-08-24..2026-08-30; 6 rows; sha256 baf44eb4211a0db022f64f1fd952a7a74cdecd67fc619fad9b4a7d0d01d19daa); corroborated by the E2E readCrmSalesGross receipt at docs/halo/evidence/m1r/e2e/real-data-e2e-receipt.json",
+      "held_reason": "Proven crm_sales_gross evidence (Report-1275) is admitted_held but calculation-pending: the ratified gross-per-unit definition and the >15%-below-trailing-30-day threshold are undecided and the trailing-30-day history is not accumulated; no value/grade authored."
+    },
+    {
+      "id": "SW-050",
+      "canonical_condition": "Front-end gross negative on >20% of new car deals in a week.",
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Is front-end gross negative on more than 20% of new-car deals in a week?",
+      "population": "Serra Honda 21043 Sales new-car deal rows only",
+      "history_requirement": "Blocked on the eligible new-car-deal denominator (observed zero in the acquired sample; missing is not zero) plus population definition/threshold.",
+      "calculation_kind_intent": "share_threshold_flag",
+      "unit_intent": "share_ratio (undefined until the metric definition + population are ratified; denominator observed zero)",
+      "source_family_intent": "crm_sales_gross",
+      "source_family_slice": "slice_front_end_gross_crm_candidate",
+      "required_direct_fields_or_keys": [
+        "front_end_gross_per_deal",
+        "new_car_deal_flag",
+        "weekly_deal_population_key"
+      ],
+      "missing_or_quarantine_evidence": [
+        "Honda CRM Sales Gross evidence is PROVEN and admitted_held (native-scheduled-evidence.json delivery Report-1275: family crm_sales_gross, held, period 2026-08-24..2026-08-30, 6 rows, sha256 baf44eb4…) and corroborated by the E2E readCrmSalesGross receipt (docs/halo/evidence/m1r/e2e/real-data-e2e-receipt.json)",
+        "held for CALCULATION-pending, NOT measured: in the acquired Honda sample the eligible new-car-deal denominator is observed as zero — missing is not zero, so neither a breach nor a no-breach may be asserted",
+        "the 'new car deal' population definition, the front-end-gross-negative rule, and the >20%-in-a-week share threshold are undecided; no value/grade/threshold authored",
+        "no proxy population may substitute for the governed new-car front-end-gross rows"
+      ],
+      "required_future_contract": [
+        "Duane-ratified 'new car deal' population definition, front-end-gross-negative rule, and the >20%-in-a-week share threshold",
+        "Codex governed accumulation of an eligible new-car-deal population (Sales only; no proxy)",
+        "Studio implementation of the share-threshold flag after definition + population"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "new_car_population_and_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "proven_evidence_preservation_and_population_accumulation": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "share_threshold_flag_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Duane (business/design/protected-content/threshold decision authority only)",
+      "immediate_action": {
+        "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+        "action": "Ratify the 'new car deal' population definition, the front-end-gross-negative rule, and the >20%-in-a-week share threshold (business definition decision only)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+          "action": "Preserve the proven admitted_held crm_sales_gross evidence byte-for-byte and accumulate an eligible new-car-deal population (Sales only; no proxy)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the share-threshold flag after definition + eligible population."
+        }
+      ],
+      "review_point": "on PKT-04-01 activation (J2), after new-car population definition + eligible denominator",
+      "next_safe_source_action": "Codex bounded read-only confirmation of whether the admitted_held crm_sales_gross rows carry an eligible new-car-deal flag; aggregate-only, no PII/raw rows.",
+      "authority": "non-authoritative held state; proven Honda crm_sales_gross evidence is admitted_held but calculation-pending (no ratified definition/threshold/history); not measured, graded, recomputed, or carried forward.",
+      "held_source_evidence_ref": "native-scheduled-evidence.json Report-1275 (family crm_sales_gross; validation_state held; period 2026-08-24..2026-08-30; 6 rows; sha256 baf44eb4211a0db022f64f1fd952a7a74cdecd67fc619fad9b4a7d0d01d19daa); corroborated by the E2E readCrmSalesGross receipt at docs/halo/evidence/m1r/e2e/real-data-e2e-receipt.json",
+      "held_reason": "Proven crm_sales_gross evidence (Report-1275) is admitted_held but calculation-pending: the eligible new-car-deal denominator is observed as zero (missing is not zero) and the population definition + >20% threshold are undecided; no value/grade authored."
+    },
+    {
+      "id": "SW-051",
+      "canonical_condition": "F&I product penetration drops below 1.2 products/deal.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does F&I product penetration drop below the products-per-deal floor?",
+      "population": "Serra Honda 21043 Sales F&I deals only",
+      "history_requirement": "Blocked on a finite read-only source check (VinSolutions-fields-or-named-external, not predetermined); not a CRM-native history question.",
+      "calculation_kind_intent": "rate_floor_flag",
+      "unit_intent": "products_per_deal (undefined until the source is proved and the floor is ratified)",
+      "source_family_intent": "fi_products_source_unproved",
+      "source_family_slice": "slice_fi_capture_external",
+      "required_direct_fields_or_keys": [
+        "fi_products_per_deal",
+        "deal_key",
+        "governed_identity_key"
+      ],
+      "missing_or_quarantine_evidence": [
+        "no supporting VinSolutions export is presently proved or found for this condition in governed evidence (docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json)",
+        "a finite read-only check must test whether the exact fields exist in governed VinSolutions evidence, or whether a named external (non-CRM) source would be needed; this is NOT predetermined",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable",
+        "F&I product penetration is an F&I/menu-system fact; the '1.2 products/deal' figure is a catalog starter phrase, not a ratified floor"
+      ],
+      "required_future_contract": [
+        "Codex read-only check of whether F&I product-penetration fields exist in governed VinSolutions evidence, or whether a named external source would be needed",
+        "Duane-ratified products-per-deal floor (1.2 or store-specific)",
+        "Studio implementation of the penetration floor flag after the source is proved + threshold"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "fi_penetration_source_read_only_check": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "products_per_deal_floor_threshold_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "penetration_flag_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only check of whether the exact F&I product-penetration fields exist in governed VinSolutions evidence, or whether a named external (non-CRM) source would be needed; aggregate-only, no PII, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify the products-per-deal floor (1.2 or store-specific threshold) (threshold decision only)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the penetration floor flag after the source is proved + threshold."
+        }
+      ],
+      "review_point": "on PKT-04-01 activation (J2), after the source check + floor threshold",
+      "next_safe_source_action": "Codex bounded read-only field check (VinSolutions-or-named-external) for F&I product penetration; aggregate-only, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-052",
+      "canonical_condition": "F&I PVR falls below $1,200 (or store threshold).",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does F&I PVR fall below the per-vehicle-revenue threshold?",
+      "population": "Serra Honda 21043 Sales F&I deals only",
+      "history_requirement": "Blocked on a finite read-only source check (VinSolutions-fields-or-named-external, not predetermined); not a CRM-native history question.",
+      "calculation_kind_intent": "value_floor_flag",
+      "unit_intent": "currency_per_vehicle (undefined until the source is proved and the threshold is ratified)",
+      "source_family_intent": "fi_pvr_source_unproved",
+      "source_family_slice": "slice_fi_capture_external",
+      "required_direct_fields_or_keys": [
+        "fi_pvr_per_deal",
+        "deal_key",
+        "governed_identity_key"
+      ],
+      "missing_or_quarantine_evidence": [
+        "no supporting VinSolutions export is presently proved or found for this condition in governed evidence (docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json)",
+        "a finite read-only check must test whether the exact fields exist in governed VinSolutions evidence, or whether a named external (non-CRM) source would be needed; this is NOT predetermined",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable",
+        "F&I PVR is an F&I/accounting fact; the '$1,200 (or store threshold)' figure is a catalog starter phrase, not a ratified floor"
+      ],
+      "required_future_contract": [
+        "Codex read-only check of whether F&I PVR fields exist in governed VinSolutions evidence, or whether a named external source would be needed",
+        "Duane-ratified PVR floor ($1,200 or store-specific)",
+        "Studio implementation of the PVR floor flag after the source is proved + threshold"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "fi_pvr_source_read_only_check": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "pvr_floor_threshold_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "pvr_flag_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only check of whether the exact F&I PVR fields exist in governed VinSolutions evidence, or whether a named external (non-CRM) source would be needed; aggregate-only, no PII, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify the PVR floor ($1,200 or store-specific threshold) (threshold decision only)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the PVR floor flag after the source is proved + threshold."
+        }
+      ],
+      "review_point": "on PKT-04-01 activation (J2), after the source check + PVR threshold",
+      "next_safe_source_action": "Codex bounded read-only field check (VinSolutions-or-named-external) for F&I PVR; aggregate-only, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-053",
+      "canonical_condition": "Cash deals bypassing F&I entirely (missed product opportunity).",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Are cash deals bypassing F&I entirely (missed product opportunity)?",
+      "population": "Serra Honda 21043 Sales cash deals only",
+      "history_requirement": "Blocked on a finite read-only source check (VinSolutions-fields-or-named-external, not predetermined); not a CRM-native history question.",
+      "calculation_kind_intent": "bypass_flag",
+      "unit_intent": "flag (undefined until the source is proved and definitions are ratified)",
+      "source_family_intent": "cash_deal_fi_source_unproved",
+      "source_family_slice": "slice_fi_capture_external",
+      "required_direct_fields_or_keys": [
+        "deal_payment_type",
+        "fi_product_attachment_per_deal",
+        "deal_key",
+        "governed_identity_key"
+      ],
+      "missing_or_quarantine_evidence": [
+        "no supporting VinSolutions export is presently proved or found for this condition in governed evidence (docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json)",
+        "a finite read-only check must test whether the exact fields exist in governed VinSolutions evidence, or whether a named external (non-CRM) source would be needed; this is NOT predetermined",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable",
+        "'cash deal' payment classification and 'bypassing F&I' are undefined; must not be inferred",
+        "the catalog phrase 'missed product opportunity' is a business label, NOT a factual diagnosis; cause must not be diagnosed"
+      ],
+      "required_future_contract": [
+        "Codex read-only check of whether cash-deal / F&I-attachment fields exist in governed VinSolutions evidence, or whether a named external source would be needed",
+        "Duane-ratified 'cash deal' and 'F&I bypass' definitions",
+        "Studio implementation of the bypass flag (no causal claim) after the source is proved + definitions"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "cash_deal_fi_source_read_only_check": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "cash_deal_and_bypass_definition_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "bypass_flag_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only check of whether the exact cash-deal / F&I-attachment fields exist in governed VinSolutions evidence, or whether a named external (non-CRM) source would be needed; aggregate-only, no PII, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify the 'cash deal' and 'F&I bypass' definitions (definition decision only; cause is not to be diagnosed)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the bypass flag after the source is proved + definitions; assert no causal diagnosis."
+        }
+      ],
+      "review_point": "on PKT-04-01 activation (J2), after the source check + cash/bypass definitions",
+      "next_safe_source_action": "Codex bounded read-only field check (VinSolutions-or-named-external) for cash-deal/F&I attachment; aggregate-only, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-054",
+      "canonical_condition": "Trade valuation variance >$1,500 vs book average without manager note.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Is trade valuation variance greater than the book-average tolerance without a manager note?",
+      "population": "Serra Honda 21043 Sales trade-in deals only",
+      "history_requirement": "Blocked on a finite read-only source check (VinSolutions-fields-or-named-external, not predetermined); not a CRM-native history question.",
+      "calculation_kind_intent": "variance_threshold_with_exception_flag",
+      "unit_intent": "currency (undefined until the source is proved and the tolerance is ratified)",
+      "source_family_intent": "trade_valuation_source_unproved",
+      "source_family_slice": "slice_deal_compliance_incentive_external",
+      "required_direct_fields_or_keys": [
+        "trade_valuation",
+        "book_average_reference",
+        "manager_note_marker",
+        "deal_key",
+        "governed_identity_key"
+      ],
+      "missing_or_quarantine_evidence": [
+        "no supporting VinSolutions export is presently proved or found for this condition in governed evidence (docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json)",
+        "a finite read-only check must test whether the exact fields exist in governed VinSolutions evidence, or whether a named external (non-CRM) source would be needed; this is NOT predetermined",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable",
+        "trade valuation, book-average reference, and manager-note presence are undefined here; the '$1,500 vs book average' figure is a catalog starter phrase, not a ratified tolerance"
+      ],
+      "required_future_contract": [
+        "Codex read-only check of whether trade-valuation / book-average / manager-note fields exist in governed VinSolutions evidence, or whether a named external source would be needed",
+        "Duane-ratified trade-variance tolerance and manager-note semantics",
+        "Studio implementation of the variance-with-exception flag after the source is proved + definitions"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "trade_valuation_source_read_only_check": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "trade_variance_tolerance_and_note_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "trade_variance_flag_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only check of whether the exact trade-valuation / book-average / manager-note fields exist in governed VinSolutions evidence, or whether a named external (non-CRM) source would be needed; aggregate-only, no PII, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify the trade-variance tolerance and manager-note semantics (threshold/definition decision only)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the variance-with-exception flag after the source is proved + definitions."
+        }
+      ],
+      "review_point": "on PKT-04-01 activation (J2), after the source check + tolerance definition",
+      "next_safe_source_action": "Codex bounded read-only field check (VinSolutions-or-named-external) for trade valuation/book/manager-note; aggregate-only, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-055",
+      "canonical_condition": "Deal jacket missing required stips >48 hours after delivery.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Is a deal jacket missing required stips beyond the post-delivery window?",
+      "population": "Serra Honda 21043 Sales delivered deals only",
+      "history_requirement": "Blocked on a finite read-only source check (VinSolutions-fields-or-named-external, not predetermined); not a CRM-native history question.",
+      "calculation_kind_intent": "compliance_completeness_flag",
+      "unit_intent": "flag (undefined until the source is proved and the stip list + window are ratified)",
+      "source_family_intent": "deal_jacket_compliance_source_unproved",
+      "source_family_slice": "slice_deal_compliance_incentive_external",
+      "required_direct_fields_or_keys": [
+        "deal_jacket_stip_status",
+        "required_stip_list",
+        "delivery_timestamp",
+        "deal_key",
+        "governed_identity_key"
+      ],
+      "missing_or_quarantine_evidence": [
+        "no supporting VinSolutions export is presently proved or found for this condition in governed evidence (docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json)",
+        "a finite read-only check must test whether the exact fields exist in governed VinSolutions evidence, or whether a named external (non-CRM) source would be needed; this is NOT predetermined",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable",
+        "deal-jacket stip completeness and delivery timing are undefined here; the required-stips list and the '>48 hours after delivery' window are catalog starter phrases, not ratified thresholds"
+      ],
+      "required_future_contract": [
+        "Codex read-only check of whether deal-jacket stip-status / delivery-timing fields exist in governed VinSolutions evidence, or whether a named external source would be needed",
+        "Duane-ratified required-stips list and post-delivery window",
+        "Studio implementation of the completeness flag after the source is proved + definitions"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "deal_jacket_source_read_only_check": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "required_stips_and_window_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "completeness_flag_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only check of whether the exact deal-jacket stip-status / delivery-timing fields exist in governed VinSolutions evidence, or whether a named external (non-CRM) source would be needed; aggregate-only, no PII, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify the required-stips list and the post-delivery window (definition/threshold decision only)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the completeness flag after the source is proved + definitions."
+        }
+      ],
+      "review_point": "on PKT-04-01 activation (J2), after the source check + stips/window definition",
+      "next_safe_source_action": "Codex bounded read-only field check (VinSolutions-or-named-external) for deal-jacket stip status; aggregate-only, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-056",
+      "canonical_condition": "Rebate/incentive stacking error flagged by DMS reconciliation.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Is a rebate/incentive stacking error present on incentivized deals?",
+      "population": "Serra Honda 21043 Sales incentivized deals only",
+      "history_requirement": "Blocked on a finite read-only source check (VinSolutions-fields-or-named-external, not predetermined); not a CRM-native history question.",
+      "calculation_kind_intent": "reconciliation_error_flag",
+      "unit_intent": "flag (undefined until the source is proved and the rule is ratified)",
+      "source_family_intent": "incentive_reconciliation_source_unproved",
+      "source_family_slice": "slice_deal_compliance_incentive_external",
+      "required_direct_fields_or_keys": [
+        "rebate_incentive_records",
+        "reconciliation_result",
+        "deal_key",
+        "governed_identity_key"
+      ],
+      "missing_or_quarantine_evidence": [
+        "no supporting VinSolutions export is presently proved or found for this condition in governed evidence (docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json)",
+        "a finite read-only check must test whether the exact fields exist in governed VinSolutions evidence, or whether a named external (non-CRM) source would be needed; this is NOT predetermined",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable",
+        "rebate/incentive stacking and reconciliation are undefined here; the stacking-error / reconciliation rule is not ratified; must not be invented"
+      ],
+      "required_future_contract": [
+        "Codex read-only check of whether rebate/incentive + reconciliation fields exist in governed VinSolutions evidence, or whether a named external source would be needed",
+        "Duane-ratified stacking-error / reconciliation rule",
+        "Studio implementation of the reconciliation-error flag after the source is proved + rule"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "incentive_reconciliation_source_read_only_check": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "stacking_error_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "reconciliation_flag_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only check of whether the exact rebate/incentive + reconciliation fields exist in governed VinSolutions evidence, or whether a named external (non-CRM) source would be needed; aggregate-only, no PII, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify the stacking-error / reconciliation rule (definition decision only)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the reconciliation-error flag after the source is proved + rule."
+        }
+      ],
+      "review_point": "on PKT-04-01 activation (J2), after the source check + reconciliation rule",
+      "next_safe_source_action": "Codex bounded read-only field check (VinSolutions-or-named-external) for rebate/incentive + reconciliation; aggregate-only, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-057",
+      "canonical_condition": "Lead interest concentrated (>30%) on units aged >60 days (aging pull-through opportunity).",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Is lead interest concentrated on aged units (aging pull-through opportunity)?",
+      "population": "Serra Honda 21043 Sales leads + inventory only",
+      "history_requirement": "REQUIRES a governed join of lead interest to inventory age that is NOT defined/acquired; missing is not zero.",
+      "calculation_kind_intent": "concentration_threshold_over_join",
+      "unit_intent": "share_ratio (undefined until the business thresholds + technical join are ratified/acquired)",
+      "source_family_intent": "inventory_lead_age_join",
+      "source_family_slice": "slice_aged_inventory_pull_through_join",
+      "required_direct_fields_or_keys": [
+        "lead_interest_vehicle_reference",
+        "inventory_age_days",
+        "lead_or_customer_or_communication_keys",
+        "join_cardinality_proof"
+      ],
+      "missing_or_quarantine_evidence": [
+        "this condition requires a technical join of lead interest to inventory age across Leads, Communication Log, Appointments, and CRM Sales; the join source keys and cardinality are UNPROVED; must not be inferred",
+        "the >30% concentration threshold and the >60-day aging definition are catalog starter phrases, NOT ratified thresholds; the business meaning of 'lead interest' and these thresholds are Duane business decisions",
+        "quarantined families (cage_kpi, lead_source_roi, sales_comm_log) must NOT be used, normalized, or cured to build this join",
+        "the catalog phrase 'aging pull-through opportunity' is a business label, NOT a factual diagnosis; cause must not be diagnosed",
+        "no proxy join or inferred concentration; missing is not zero"
+      ],
+      "required_future_contract": [
+        "Duane-ratified business meaning of 'lead interest' and the >30% concentration and >60-day aging business thresholds (business only; not the technical join)",
+        "Codex read-only proof of the join source keys and cardinality, then governed acquisition (Sales only; no quarantined-family cure)",
+        "Studio design and implementation of the technical lead-interest-to-inventory-age join after thresholds + key proof"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "lead_interest_business_meaning_and_threshold_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "join_source_key_and_cardinality_read_only_proof_and_acquisition": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "join_design_and_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Duane (business/design/protected-content/threshold decision authority only)",
+      "immediate_action": {
+        "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+        "action": "Ratify the business meaning of 'lead interest' and the >30% concentration and >60-day aging business thresholds (business decision only)."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+          "action": "Read-only proof of the join source keys and cardinality across Leads, Communication Log, Appointments, and CRM Sales, then governed acquisition (Sales only; no quarantined-family cure, no proxy)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Design and implement the technical lead-interest-to-inventory-age join after the business thresholds + key proof; assert no causal diagnosis."
+        }
+      ],
+      "review_point": "on PKT-04-01 activation (J2), after business thresholds + key/cardinality proof + acquisition",
+      "next_safe_source_action": "Codex bounded read-only confirmation of candidate join source keys and cardinality; aggregate-only, no PII/raw rows.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    }
+  ]
+}
