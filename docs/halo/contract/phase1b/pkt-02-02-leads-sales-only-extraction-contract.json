@@ -269,7 +269,7 @@
     "no_join": true,
     "no_dedup": true,
     "output": "Produce ONLY a cardinality / field-semantics EVIDENCE REPORT (counts, distributions, unique values, parseability, layer-separated proofs).",
-    "future_join_precondition": "Any FUTURE Response Times <-> Leads join requires accepted event-selection/deduplication rules and proven key representation/cardinality on BOTH sources (per the J2 amendment draft); NOT performed here."
+    "future_join_precondition": "Any FUTURE Response Times <-> Leads join requires accepted event-selection/deduplication rules and proven key representation/cardinality on BOTH sources (per the frozen J2 source-dependency amendment); NOT performed here."
   },
   "no_metric_action": {
     "no_sw016_sw017_calculation_score_grade": true,

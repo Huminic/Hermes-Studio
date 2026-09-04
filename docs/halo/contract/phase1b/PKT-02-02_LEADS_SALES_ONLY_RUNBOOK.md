@@ -55,6 +55,6 @@ Never let a later layer's evidence stand in for an earlier one (a clean derivati
 
 ## What this run does NOT do
 
-No join, no dedup, no SW-016/SW-017 calculation/score/grade, no lifecycle change, no source admission, no customer narrative. Any future Response Times ↔ Leads join requires accepted event-selection/dedup rules and proven key representation/cardinality on both sources (per the J2 amendment draft).
+No join, no dedup, no SW-016/SW-017 calculation/score/grade, no lifecycle change, no source admission, no customer narrative. Any future Response Times ↔ Leads join requires accepted event-selection/dedup rules and proven key representation/cardinality on both sources (per the frozen J2 source-dependency amendment).
 
 **Rollback:** `git revert` the freeze commit `2807c88a0874fd29ba0f9c4cc52f372497946e77` and this follow-up correction commit; the reviewed content is preserved in git history (no untracked draft files exist to delete). No PKT-02-02 or full-goal completion is inferred.

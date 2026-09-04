@@ -56,7 +56,7 @@ The dataset **visibly includes and default-selects Service measures** (`Log A Ca
 Routine, evidence-only work inside the existing boundaries:
 
 - **Documentation** of J1 findings and this reconciliation (this brief + the companion JSON).
-- **Source-contract drafting**: a Sales-only, field-minimized Custom Reporting export contract for `Leads` (columns, types, dealer/period/Sales-only proof, PII-minimized derivative, stable-ID join keys) — as a *draft*, not an export.
+- **Source-contract drafting**: a Sales-only, field-minimized Custom Reporting export contract for `Leads` (columns, types, dealer/period/Sales-only proof, PII-minimized derivative, stable-ID join keys) — as the accepted/frozen contract, not an export.
 - **Test-fixture design** that is **structural and parameterized only**.
 
 **Constraint on no-Duane test fixtures:** fixtures may define shape, keys, and parameter *slots* only. They must **not** encode or choose any unresolved semantic: not the business-hours/holiday calendar, not Actual-vs-Adjusted or the qualifying-response event, and not the 5-minute boundary or which outbound-call outcomes count as an attempt. Those remain open parameters until Duane decides.
