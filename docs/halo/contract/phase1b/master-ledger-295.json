@@ -472,17 +472,17 @@
       "boundary_class": "sales",
       "definition_version": "0.0.0",
       "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
       "source_dependency_ids": [],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
-      "acquisition_admission_state": "not_acquired",
-      "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-02 is activated",
-      "review_point": "on packet activation",
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "evaluation_state": "measured_unscored",
+      "report_acceptance_state": "authored_non_measured",
+      "evidence_ref": "PKT-02-02 activation; authority pkt-02-02-binding.json; catalog condition (verbatim) + Gate 4I measured-unscored ledger (Gate-4G HOLD, promotes nothing); no gate2/baseline authority exists for this ID",
+      "next_action": "Ratify the SW-016 SLA spec and acquire an authoritative holiday/business-hours calendar + origination time; retain the weekend figure as measured-unscored only. No promotion, no grade.",
+      "review_point": "PKT-02-02 investigation close",
       "transitions": [
         {
           "from": null,
@@ -490,6 +490,13 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "data_acquired_calculation_pending",
+          "at": "2026-09-04T02:32:50Z",
+          "by": "codex",
+          "reason": "PKT-02-02 activation: carry evidence-backed disposition from frozen binding (non-authoritative; no promotion)"
         }
       ]
     },
@@ -500,17 +507,17 @@
       "boundary_class": "sales",
       "definition_version": "0.0.0",
       "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
       "source_dependency_ids": [],
       "authoritative": false,
       "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
+      "source_existence_state": "investigation_pending",
       "acquisition_admission_state": "not_acquired",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-02 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "authored_non_measured",
+      "evidence_ref": "PKT-02-02 activation; authority pkt-02-02-binding.json; catalog condition (verbatim) + Gate 4H accountability (unsupported_field); no gate2/baseline authority exists for this ID",
+      "next_action": "Finite investigation (one help-contract pass + one read-only UI discovery pass + one controlled probe) to prove a direct phone-lead origination timestamp and an outbound call-attempt event. No calculation, no promotion.",
+      "review_point": "PKT-02-02 investigation close",
       "transitions": [
         {
           "from": null,
@@ -518,6 +525,13 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "source_investigation_pending",
+          "at": "2026-09-04T02:32:50Z",
+          "by": "codex",
+          "reason": "PKT-02-02 activation: carry evidence-backed disposition from frozen binding (non-authoritative; no promotion)"
         }
       ]
     },
@@ -528,17 +542,17 @@
       "boundary_class": "sales",
       "definition_version": "0.0.0",
       "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
       "source_dependency_ids": [],
       "authoritative": false,
       "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
+      "source_existence_state": "investigation_pending",
       "acquisition_admission_state": "not_acquired",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-02 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "authored_non_measured",
+      "evidence_ref": "PKT-02-02 activation; authority pkt-02-02-binding.json; catalog condition (verbatim) + Gate 4H (other_source_or_join, external chat); no gate2/baseline authority exists for this ID",
+      "next_action": "Finite investigation to determine whether chat-abandonment + CRM-logging status is obtainable (VinSolutions vs a named external chat platform). No calculation, no proxy.",
+      "review_point": "PKT-02-02 investigation close",
       "transitions": [
         {
           "from": null,
@@ -546,6 +560,13 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "source_investigation_pending",
+          "at": "2026-09-04T02:32:50Z",
+          "by": "codex",
+          "reason": "PKT-02-02 activation: carry evidence-backed disposition from frozen binding (non-authoritative; no promotion)"
         }
       ]
     },
@@ -2387,17 +2408,17 @@
       "boundary_class": "sales",
       "definition_version": "0.0.0",
       "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
       "source_dependency_ids": [],
       "authoritative": false,
       "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
+      "source_existence_state": "investigation_pending",
       "acquisition_admission_state": "not_acquired",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-02 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "authored_non_measured",
+      "evidence_ref": "PKT-02-02 activation; authority pkt-02-02-binding.json; catalog condition (verbatim) + native-scheduled quarantine evidence + Gate 4H (semantic_definition_pending); no gate2/baseline authority exists for this ID",
+      "next_action": "Acquire a Sales-only-clean CAGE source and ratify the connect definition + Serra roster/numeric User ID bridge before any calculation. Do NOT calculate from the quarantined artifact.",
+      "review_point": "PKT-02-02 investigation close",
       "transitions": [
         {
           "from": null,
@@ -2405,6 +2426,13 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "source_investigation_pending",
+          "at": "2026-09-04T02:32:50Z",
+          "by": "codex",
+          "reason": "PKT-02-02 activation: carry evidence-backed disposition from frozen binding (non-authoritative; no promotion)"
         }
       ]
     },
@@ -2415,17 +2443,17 @@
       "boundary_class": "sales",
       "definition_version": "0.0.0",
       "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
       "source_dependency_ids": [],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
+      "disposition": "external_source_required",
+      "source_existence_state": "proved_requires_external",
       "acquisition_admission_state": "not_acquired",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-02 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "authored_non_measured",
+      "evidence_ref": "PKT-02-02 activation; authority pkt-02-02-binding.json; catalog condition (verbatim) + matrix acquisition_class (external source required) + Gate 4H (unsupported_field); no gate2/baseline authority exists for this ID",
+      "next_action": "Acquire source-native telephony call-duration data via a separate governed external-acquisition action and define privacy-safe joins. No CRM proxy.",
+      "review_point": "PKT-02-02 investigation close",
       "transitions": [
         {
           "from": null,
@@ -2433,6 +2461,13 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "external_source_required",
+          "at": "2026-09-04T02:32:50Z",
+          "by": "codex",
+          "reason": "PKT-02-02 activation: carry evidence-backed disposition from frozen binding (non-authoritative; no promotion)"
         }
       ]
     },
@@ -2443,17 +2478,17 @@
       "boundary_class": "sales",
       "definition_version": "0.0.0",
       "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
       "source_dependency_ids": [],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
-      "acquisition_admission_state": "not_acquired",
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-02 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "authored_non_measured",
+      "evidence_ref": "PKT-02-02 activation; authority pkt-02-02-binding.json; catalog condition (verbatim) + comm-admission-aggregates (pre-admission) + Gate 4H (semantic_definition_pending); no gate2/baseline authority exists for this ID",
+      "next_action": "Ratify the voicemail + 15-minute follow-up definition, obtain consumer acceptance for the enhanced weekly source + stable keys, then calculate. No promotion, no grade.",
+      "review_point": "PKT-02-02 investigation close",
       "transitions": [
         {
           "from": null,
@@ -2461,6 +2496,13 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "data_acquired_calculation_pending",
+          "at": "2026-09-04T02:32:50Z",
+          "by": "codex",
+          "reason": "PKT-02-02 activation: carry evidence-backed disposition from frozen binding (non-authoritative; no promotion)"
         }
       ]
     },
@@ -2471,17 +2513,17 @@
       "boundary_class": "sales",
       "definition_version": "0.0.0",
       "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
       "source_dependency_ids": [],
       "authoritative": false,
       "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
+      "source_existence_state": "investigation_pending",
       "acquisition_admission_state": "not_acquired",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-02 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "authored_non_measured",
+      "evidence_ref": "PKT-02-02 activation; authority pkt-02-02-binding.json; catalog condition (verbatim) + native-scheduled admission/quarantine evidence + Gate 4H (other_source_or_join); no gate2/baseline authority exists for this ID",
+      "next_action": "Define the set-to-show numerator/denominator + Serra roster bridge and acquire a Sales-clean CAGE leg, then calculate. No promotion, no grade.",
+      "review_point": "PKT-02-02 investigation close",
       "transitions": [
         {
           "from": null,
@@ -2489,6 +2531,13 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "source_investigation_pending",
+          "at": "2026-09-04T02:32:50Z",
+          "by": "codex",
+          "reason": "PKT-02-02 activation: carry evidence-backed disposition from frozen binding (non-authoritative; no promotion)"
         }
       ]
     },
@@ -2499,17 +2548,17 @@
       "boundary_class": "sales",
       "definition_version": "0.0.0",
       "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
       "source_dependency_ids": [],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
+      "disposition": "external_source_required",
+      "source_existence_state": "proved_requires_external",
       "acquisition_admission_state": "not_acquired",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-02 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "authored_non_measured",
+      "evidence_ref": "PKT-02-02 activation; authority pkt-02-02-binding.json; catalog condition (verbatim) + matrix acquisition_class (external source required) + Gate 4H (unsupported_field); no gate2/baseline authority exists for this ID",
+      "next_action": "Acquire source-native recording-system data via a separate governed external-acquisition action and define privacy-safe joins. No CRM proxy.",
+      "review_point": "PKT-02-02 investigation close",
       "transitions": [
         {
           "from": null,
@@ -2517,6 +2566,13 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "external_source_required",
+          "at": "2026-09-04T02:32:50Z",
+          "by": "codex",
+          "reason": "PKT-02-02 activation: carry evidence-backed disposition from frozen binding (non-authoritative; no promotion)"
         }
       ]
     },
@@ -2527,17 +2583,17 @@
       "boundary_class": "sales",
       "definition_version": "0.0.0",
       "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
       "source_dependency_ids": [],
       "authoritative": false,
       "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
+      "source_existence_state": "investigation_pending",
       "acquisition_admission_state": "not_acquired",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-02 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "authored_non_measured",
+      "evidence_ref": "PKT-02-02 activation; authority pkt-02-02-binding.json; catalog condition (verbatim) + Gate 4H (unsupported_field, telephony join); no gate2/baseline authority exists for this ID",
+      "next_action": "Finite investigation into telephony/ANI source availability and a governed cross-system identity strategy. No calculation, no proxy from Global Customer ID.",
+      "review_point": "PKT-02-02 investigation close",
       "transitions": [
         {
           "from": null,
@@ -2545,6 +2601,13 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "source_investigation_pending",
+          "at": "2026-09-04T02:32:50Z",
+          "by": "codex",
+          "reason": "PKT-02-02 activation: carry evidence-backed disposition from frozen binding (non-authoritative; no promotion)"
         }
       ]
     },
@@ -3736,17 +3799,17 @@
       "boundary_class": "sales",
       "definition_version": "0.0.0",
       "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
       "source_dependency_ids": [],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
-      "acquisition_admission_state": "not_acquired",
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-02 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "authored_non_measured",
+      "evidence_ref": "PKT-02-02 activation; authority pkt-02-02-binding.json; catalog condition (verbatim) + comm-admission-aggregates (pre-admission) + Gate 4H (semantic_definition_pending, external calendar); no gate2/baseline authority exists for this ID",
+      "next_action": "Acquire an authoritative business-hours calendar and configure/ratify the active-thread definition; obtain consumer acceptance, then calculate. No promotion, no grade.",
+      "review_point": "PKT-02-02 investigation close",
       "transitions": [
         {
           "from": null,
@@ -3754,6 +3817,13 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "data_acquired_calculation_pending",
+          "at": "2026-09-04T02:32:50Z",
+          "by": "codex",
+          "reason": "PKT-02-02 activation: carry evidence-backed disposition from frozen binding (non-authoritative; no promotion)"
         }
       ]
     },
@@ -3793,17 +3863,17 @@
       "boundary_class": "sales",
       "definition_version": "0.0.0",
       "owner": "codex",
-      "evidence_as_of": "2026-09-02T06:51:10Z",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
       "source_dependency_ids": [],
       "authoritative": false,
-      "disposition": "source_investigation_pending",
-      "source_existence_state": "unproved",
-      "acquisition_admission_state": "not_acquired",
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
       "evaluation_state": "not_measured",
-      "report_acceptance_state": "draft",
-      "evidence_ref": "provisional planning placeholder (NON-AUTHORITATIVE); existence unproved",
-      "next_action": "provisional; investigated when packet PKT-02-02 is activated",
-      "review_point": "on packet activation",
+      "report_acceptance_state": "authored_non_measured",
+      "evidence_ref": "PKT-02-02 activation; authority pkt-02-02-binding.json; catalog condition (verbatim) + comm-admission-aggregates (pre-admission) + Gate 4H (semantic_definition_pending); no gate2/baseline authority exists for this ID",
+      "next_action": "Ratify the widening-pattern definition + thread key and obtain consumer acceptance, then calculate. No promotion, no grade.",
+      "review_point": "PKT-02-02 investigation close",
       "transitions": [
         {
           "from": null,
@@ -3811,6 +3881,13 @@
           "at": "2026-09-02T06:51:10Z",
           "by": "codex",
           "reason": "ledger init: provisional non-authoritative placeholder"
+        },
+        {
+          "from": "source_investigation_pending",
+          "to": "data_acquired_calculation_pending",
+          "at": "2026-09-04T02:32:50Z",
+          "by": "codex",
+          "reason": "PKT-02-02 activation: carry evidence-backed disposition from frozen binding (non-authoritative; no promotion)"
         }
       ]
     },

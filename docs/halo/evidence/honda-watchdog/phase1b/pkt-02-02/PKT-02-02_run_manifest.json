@@ -1,62 +1,267 @@
 {
-  "artifact": "PKT-02-02_run_manifest",
+  "artifact": "honda-watchdog-pkt-02-02-run-manifest",
   "packet_id": "PKT-02-02",
-  "module": 2,
-  "scope": "authority_binding_and_validation_gate_only",
-  "dealer": {
-    "profile": "serra-honda",
-    "dealer_id": "21043",
-    "domain": "Sales",
-    "service_parts_admitted": 0
-  },
   "period": "2026-08-24..2026-08-30",
-  "target_ids": [
-    "SW-016",
-    "SW-017",
-    "SW-018",
-    "SW-084",
-    "SW-085",
-    "SW-086",
-    "SW-087",
-    "SW-088",
-    "SW-089",
-    "SW-132",
-    "SW-133",
-    "SW-134"
-  ],
-  "files": {
-    "docs/halo/contract/phase1b/pkt-02-02-binding.json": "7307e6039363fa421c217ff9c1beb1ca606dfcbcfbe083c503a65d5371c16f44",
-    "scripts/halo-phase1b/build_pkt_02_02_binding.py": "acf9d98bb5d29fc2b862bf6ae90c470af7086d0c756a78e50d2a51a0e005801f",
-    "scripts/halo-phase1b/validate_pkt_02_02_binding.py": "1044cadcf28312f7e5eaff8516d07ce7913faf348e5a91bca1cc87ccb082b142",
-    "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-02/PKT-02-02_BINDING_CHECKS.json": "13e2b5c841a393e2ac5bc1234dcaa249f1d634ba807d0fc8b7d439d2c1930cce"
-  },
-  "frozen_untouched": {
-    "docs/halo/contract/phase1b/pkt-02-01-binding.json": "1c1c98a2e7b3be8d10eea9495861b7a33e65a00020ab7c9e756da363b69f2082",
-    "docs/halo/contract/phase1b/packets/PKT-02-01.json": "89de72da33a5459d1aedd69cbc92a1fc347f3d589d8cbfd1ecf13bad1890d97d",
-    "docs/halo/contract/phase1b/packet-index.json": "dd7a5cb1946ccc5345264acd39fc63d5b80cca3eb89a2f3df9d974d61caac542",
-    "docs/halo/contract/phase1b/master-ledger-295.json": "3406ca4ff8d90ce94e5f08f8929e393b34cb246267dc2ed942dc7a7d878fc7b8"
-  },
-  "validators_run": [
-    {
-      "cmd": "python3 scripts/halo-phase0/validate_phase0_catalog.py",
-      "result": "PASS (exit 0)"
+  "binding_sha256": "7307e6039363fa421c217ff9c1beb1ca606dfcbcfbe083c503a65d5371c16f44",
+  "content": {
+    "dealer_id": "21043",
+    "profile": "serra-honda",
+    "engine_version": "pkt-exec-1",
+    "measured_count": 0,
+    "unscored_supplemental_count": 1,
+    "disposition_only_count": 2,
+    "held_or_investigation_count": 8,
+    "authority_conflict_held_count": 1,
+    "alert_simulations": [
+      {
+        "metric_id": "SW-016",
+        "channel": "none",
+        "alert_eligible": false,
+        "would_fire": false,
+        "delivered": false,
+        "unsent": true,
+        "message": "[NO ALERT - ALERT-INELIGIBLE] SW-016: no ratified detection threshold / approved grade target; nothing sent."
+      },
+      {
+        "metric_id": "SW-017",
+        "channel": "none",
+        "alert_eligible": false,
+        "would_fire": false,
+        "delivered": false,
+        "unsent": true,
+        "message": "[NO ALERT - ALERT-INELIGIBLE] SW-017: no ratified detection threshold / approved grade target; nothing sent."
+      },
+      {
+        "metric_id": "SW-018",
+        "channel": "none",
+        "alert_eligible": false,
+        "would_fire": false,
+        "delivered": false,
+        "unsent": true,
+        "message": "[NO ALERT - ALERT-INELIGIBLE] SW-018: no ratified detection threshold / approved grade target; nothing sent."
+      },
+      {
+        "metric_id": "SW-084",
+        "channel": "none",
+        "alert_eligible": false,
+        "would_fire": false,
+        "delivered": false,
+        "unsent": true,
+        "message": "[NO ALERT - ALERT-INELIGIBLE] SW-084: no ratified detection threshold / approved grade target; nothing sent."
+      },
+      {
+        "metric_id": "SW-085",
+        "channel": "none",
+        "alert_eligible": false,
+        "would_fire": false,
+        "delivered": false,
+        "unsent": true,
+        "message": "[NO ALERT - ALERT-INELIGIBLE] SW-085: no ratified detection threshold / approved grade target; nothing sent."
+      },
+      {
+        "metric_id": "SW-086",
+        "channel": "none",
+        "alert_eligible": false,
+        "would_fire": false,
+        "delivered": false,
+        "unsent": true,
+        "message": "[NO ALERT - ALERT-INELIGIBLE] SW-086: no ratified detection threshold / approved grade target; nothing sent."
+      },
+      {
+        "metric_id": "SW-087",
+        "channel": "none",
+        "alert_eligible": false,
+        "would_fire": false,
+        "delivered": false,
+        "unsent": true,
+        "message": "[NO ALERT - ALERT-INELIGIBLE] SW-087: no ratified detection threshold / approved grade target; nothing sent."
+      },
+      {
+        "metric_id": "SW-088",
+        "channel": "none",
+        "alert_eligible": false,
+        "would_fire": false,
+        "delivered": false,
+        "unsent": true,
+        "message": "[NO ALERT - ALERT-INELIGIBLE] SW-088: no ratified detection threshold / approved grade target; nothing sent."
+      },
+      {
+        "metric_id": "SW-089",
+        "channel": "none",
+        "alert_eligible": false,
+        "would_fire": false,
+        "delivered": false,
+        "unsent": true,
+        "message": "[NO ALERT - ALERT-INELIGIBLE] SW-089: no ratified detection threshold / approved grade target; nothing sent."
+      },
+      {
+        "metric_id": "SW-132",
+        "channel": "none",
+        "alert_eligible": false,
+        "would_fire": false,
+        "delivered": false,
+        "unsent": true,
+        "message": "[NO ALERT - ALERT-INELIGIBLE] SW-132: no ratified detection threshold / approved grade target; nothing sent."
+      },
+      {
+        "metric_id": "SW-134",
+        "channel": "none",
+        "alert_eligible": false,
+        "would_fire": false,
+        "delivered": false,
+        "unsent": true,
+        "message": "[NO ALERT - ALERT-INELIGIBLE] SW-134: no ratified detection threshold / approved grade target; nothing sent."
+      }
+    ],
+    "evaluations": [
+      {
+        "metric_id": "SW-016",
+        "evaluation_state": "measured_unscored",
+        "disposition": "data_acquired_calculation_pending",
+        "gradable_state": "not_gradable",
+        "detection_fired": false,
+        "rating": "not_evaluated",
+        "reason": "held / non-measured per frozen binding; missing is not zero"
+      },
+      {
+        "metric_id": "SW-017",
+        "evaluation_state": "not_measured",
+        "disposition": "source_investigation_pending",
+        "gradable_state": "not_gradable",
+        "detection_fired": false,
+        "rating": "not_evaluated",
+        "reason": "held / non-measured per frozen binding; missing is not zero"
+      },
+      {
+        "metric_id": "SW-018",
+        "evaluation_state": "not_measured",
+        "disposition": "source_investigation_pending",
+        "gradable_state": "not_gradable",
+        "detection_fired": false,
+        "rating": "not_evaluated",
+        "reason": "held / non-measured per frozen binding; missing is not zero"
+      },
+      {
+        "metric_id": "SW-084",
+        "evaluation_state": "not_measured",
+        "disposition": "source_investigation_pending",
+        "gradable_state": "not_gradable",
+        "detection_fired": false,
+        "rating": "not_evaluated",
+        "reason": "held / non-measured per frozen binding; missing is not zero"
+      },
+      {
+        "metric_id": "SW-085",
+        "evaluation_state": "not_measured",
+        "disposition": "external_source_required",
+        "gradable_state": "not_gradable",
+        "detection_fired": false,
+        "rating": "not_evaluated",
+        "reason": "held / non-measured per frozen binding; missing is not zero"
+      },
+      {
+        "metric_id": "SW-086",
+        "evaluation_state": "not_measured",
+        "disposition": "data_acquired_calculation_pending",
+        "gradable_state": "not_gradable",
+        "detection_fired": false,
+        "rating": "not_evaluated",
+        "reason": "held / non-measured per frozen binding; missing is not zero"
+      },
+      {
+        "metric_id": "SW-087",
+        "evaluation_state": "not_measured",
+        "disposition": "source_investigation_pending",
+        "gradable_state": "not_gradable",
+        "detection_fired": false,
+        "rating": "not_evaluated",
+        "reason": "held / non-measured per frozen binding; missing is not zero"
+      },
+      {
+        "metric_id": "SW-088",
+        "evaluation_state": "not_measured",
+        "disposition": "external_source_required",
+        "gradable_state": "not_gradable",
+        "detection_fired": false,
+        "rating": "not_evaluated",
+        "reason": "held / non-measured per frozen binding; missing is not zero"
+      },
+      {
+        "metric_id": "SW-089",
+        "evaluation_state": "not_measured",
+        "disposition": "source_investigation_pending",
+        "gradable_state": "not_gradable",
+        "detection_fired": false,
+        "rating": "not_evaluated",
+        "reason": "held / non-measured per frozen binding; missing is not zero"
+      },
+      {
+        "metric_id": "SW-132",
+        "evaluation_state": "not_measured",
+        "disposition": "data_acquired_calculation_pending",
+        "gradable_state": "not_gradable",
+        "detection_fired": false,
+        "rating": "not_evaluated",
+        "reason": "held / non-measured per frozen binding; missing is not zero"
+      },
+      {
+        "metric_id": "SW-134",
+        "evaluation_state": "not_measured",
+        "disposition": "data_acquired_calculation_pending",
+        "gradable_state": "not_gradable",
+        "detection_fired": false,
+        "rating": "not_evaluated",
+        "reason": "held / non-measured per frozen binding; missing is not zero"
+      }
+    ],
+    "supplemental_unscored": {
+      "SW-016": {
+        "denominator": 16,
+        "breaches": 5,
+        "rate_pct": 31.3,
+        "scored": false,
+        "promoted": false
+      }
     },
-    {
-      "cmd": "python3 scripts/halo-phase1/validate_phase1_contracts.py --no-write",
-      "result": "PASS self_tests 956/956, probes 61/61, fuzz 2118/2118"
-    },
-    {
-      "cmd": "python3 scripts/halo-phase1b/validate_phase1b.py --no-write",
-      "result": "PASS errors 0, probes 25/25"
-    },
-    {
-      "cmd": "node scripts/halo-phase1b/validate_pkt_02_01_execution.mjs",
-      "result": "PASS checks 42/42"
-    },
-    {
-      "cmd": "python3 scripts/halo-phase1b/validate_pkt_02_02_binding.py",
-      "result": "PASS errors 0, probes 17/17"
+    "sw133_excluded_pending_adjudication": true,
+    "no_notification_sent": true,
+    "no_source_admitted": true,
+    "no_value_promoted": true,
+    "service_parts_admitted": 0,
+    "pii_in_output": 0,
+    "customer_projection": {
+      "accepted_measured_ids_empty": true,
+      "customer_mini_report_emitted": false,
+      "internal_coverage_roadmap": "PKT-02-02_internal_coverage_roadmap.md",
+      "customer_facing_claims_from_this_packet": 0
     }
+  },
+  "commands": [
+    "python3 scripts/halo-phase1b/validate_pkt_02_02.py  # 10 core checks + 8 adversarial probes, overall_pass=true",
+    "python3 scripts/halo-phase1b/validate_pkt_02_02_binding.py --no-write  # existing binding validator (read-only), overall_pass=true"
   ],
-  "note": "Binding + validation gate only. No calculate/persist/grade/alert/report/acquire. No Vin/Gmail/browser/DB/INGEST/production action. PKT-02-01 and packet-index/master-ledger unchanged."
+  "artifact_hashes": {
+    "packet": "c18a2bc9a8d73e363a9696071adf4b2f8896397eaddef47ef2b631609fe4ab80",
+    "master_ledger_295": "a64c886e494fc72afae736ff097c2c1e852f4d629b9865218f0e51346daba7c5",
+    "packet_index": "01063cbd6bfd8dc3b36584f2294992e9c37cefe320717720aff9e4c6a8403b73",
+    "j6_hold_record": "084aa51d3788bf14a8555fd29360da7416370e1ca2b5f1bad04c39b3884d710b",
+    "sw133_authority_conflict": "bc721697d1e14f02219617fafe916b9366c572b953ab9317c2f1a2ce1b6f570b",
+    "execution_checks": "8e14c42a645aa0d7f55618acd03db45d627ec47843ae95c42c3afa9e0ce90c87",
+    "internal_companion": "05578083ea4f5800a8bd815cbaf38807b3939beb20532ca25db5c80740c680ff",
+    "two_delta": "61bca274b76d154380f22f14c9d95a2e242c0039819f9ae80ae39b52d5ea1ca2",
+    "internal_coverage_roadmap": "b59a6c27240c1499204d1254f87893f7c85c2e259ebca4acdd28c5b2af6b120c",
+    "validator": "1d1fb71f9ddde8debe2e9a379584d5986cbd409812c96b0a85e417dbf9d51e7d"
+  },
+  "generated_utc": "2026-09-04T02:49:46Z",
+  "no_commit_no_push_pending_sw133_ruling": true,
+  "validation": {
+    "core_checks": 10,
+    "core_checks_passed": 10,
+    "adversarial_probes": 8,
+    "adversarial_probes_passed": 8,
+    "overall_pass": true,
+    "authoritative_evaluated": 17,
+    "nontarget_semantic_diff_count": 0
+  },
+  "sw133_state": "AUTHORITY_CONFLICT_HOLD_PENDING_DUANE_DECISION (shadow ruling complete; excluded from this packet; master truth unchanged)"
 }

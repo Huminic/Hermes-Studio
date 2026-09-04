@@ -1,0 +1,940 @@
+{
+  "artifact": "honda-watchdog-phase1b-packet",
+  "schema": "docs/halo/contract/phase1b/packet-schema-1b.json",
+  "packet_id": "PKT-02-02",
+  "module": 2,
+  "status": "active_authored",
+  "management_question": "Are Sales leads across phone, chat, voicemail, and messaging being answered and followed up promptly and consistently, and which follow-up/communication gaps need management action?",
+  "target_ids": [
+    "SW-016",
+    "SW-017",
+    "SW-018",
+    "SW-084",
+    "SW-085",
+    "SW-086",
+    "SW-087",
+    "SW-088",
+    "SW-089",
+    "SW-132",
+    "SW-133",
+    "SW-134"
+  ],
+  "prerequisites": [
+    "Phase 1A contracts (binding PASS)",
+    "master-ledger-295.json",
+    "source-registry-1b.json",
+    "gate2-evaluator-contract.json (accepted meanings)",
+    "pkt-02-02-binding.json (frozen authority)"
+  ],
+  "period": "2026-08-24..2026-08-30",
+  "source_dependencies": [],
+  "source_reuse_note": "PKT-02-02 admits NO new source and promotes NO value. All 12 IDs are non-measured/held or disposition-only per the frozen pkt-02-02-binding.json. The Leads Custom Reporting family remains HOLD before retrieval (J6: no affirmative Sales-domain control; no rows; no export). Quarantined CAGE and Sales Communication families remain unusable; clean rows cannot cure a contaminated definition. External telephony/recording sources (SW-085/088) require a separately governed non-VinSolutions acquisition.",
+  "lifecycle_partition": {
+    "accepted_measured_ids": [],
+    "accepted_disposition_only_ids": [
+      "SW-085",
+      "SW-088"
+    ],
+    "rejected_ids": [],
+    "source_investigation_pending_ids": [
+      "SW-017",
+      "SW-018",
+      "SW-084",
+      "SW-087",
+      "SW-089"
+    ],
+    "calculation_pending_ids": [
+      "SW-016",
+      "SW-086",
+      "SW-132",
+      "SW-134"
+    ],
+    "authority_conflict_held_ids": [
+      "SW-133"
+    ],
+    "accounting_note": "12 = 0 measured + 2 disposition-only + 0 rejected + 5 source-investigation + 4 calculation-pending + 1 authority-conflict-held (SW-133). 'authority_conflict_held_ids' is a packet-level accounting field, NOT a frozen-vocabulary lifecycle value."
+  },
+  "supplemental_unscored_observations": {
+    "SW-016": {
+      "weekend_open_plus_15": {
+        "denominator": 16,
+        "breaches": 5,
+        "rate_pct": 31.3
+      },
+      "scored": false,
+      "promoted": false,
+      "evidence_ref": "gate4i-response-times-measured-unscored-ledger.json"
+    }
+  },
+  "stop_conditions": {
+    "inherited_canonical": [
+      "wrong_dealer",
+      "service_parts_in_sales",
+      "ambiguous_period",
+      "schema_drift",
+      "missing_provenance",
+      "protected_content_or_pii_outside_envelope",
+      "formula_or_denominator_ambiguity",
+      "incompatible_baseline",
+      "source_substitution_or_skip",
+      "dirty_or_competing_writer",
+      "production_or_customer_behavior_change"
+    ],
+    "packet_specific": [
+      "no_promote_from_quarantined_or_pre_admission_source",
+      "no_proxy_or_inferred_value_for_any_held_metric",
+      "missing_is_not_zero",
+      "no_alert_without_ratified_threshold",
+      "SW-133_held_under_authority_conflict_no_new_assertion",
+      "leads_family_hold_no_retrieval_without_affirmative_sales_only_control",
+      "external_telephony_recording_requires_separately_governed_acquisition"
+    ]
+  },
+  "two_delta_proof_ref": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-02/PKT-02-02_TWO_DELTA.md",
+  "metric_definitions": [
+    {
+      "metric_id": "SW-016",
+      "definition_version": "0.1.0",
+      "module": 2,
+      "canonical_condition": "Weekend/holiday response SLA breach rate >20%.",
+      "business_question": "What share of weekend/holiday-originated Sales leads breach the response SLA (target >20%)?",
+      "boundary_class": "sales",
+      "population": "Serra Honda 21043 Sales leads originated on a weekend or holiday, period 2026-08-24..2026-08-30 (business/holiday calendar unresolved).",
+      "calculation_kind": "rate",
+      "null_missing_behavior": "missing_not_zero",
+      "unit": "ratio_0_1",
+      "polarity": "lower_is_better",
+      "window": "2026-08-24..2026-08-30",
+      "timezone": "America/New_York",
+      "cadence": "Manual weekly checkpoint",
+      "impact_method": "operational_only",
+      "impact_status": "not_applicable",
+      "gradable": false,
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "evaluation_state": "measured_unscored",
+      "source_dependency_ids": [],
+      "required_direct_fields_or_keys": [
+        "lead-origination timestamp",
+        "authoritative holiday/business-hours calendar",
+        "response/first-touch timestamp",
+        "Lead ID"
+      ],
+      "direct_source_fields": [],
+      "missing_or_quarantine_evidence": [
+        "No authoritative holiday/business-hours calendar in the Response Times family (committed_blocker_class other_source_or_join).",
+        "Committed SW-016 SLA definition (numerator, denominator, event_sequence, window, threshold, minimum_sample, minimum_history, ambiguity_handling, unit) is entirely held/unratified.",
+        "Lead-origination time needed to separate weekend/holiday origination; not present as a Response Times field.",
+        "No approved operational target (absent from gate2-evaluator-contract.json and baseline-registry.json)."
+      ],
+      "evidence_ref": "catalog condition (verbatim) + Gate 4I measured-unscored ledger (Gate-4G HOLD, promotes nothing); no gate2/baseline authority exists for this ID",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
+      "owner": "claude_studio",
+      "internal_visibility": true,
+      "customer_visibility": "hidden",
+      "confidence": "not_applicable",
+      "alert_eligible": false,
+      "alert_ineligible_reason": "no ratified detection threshold / approved grade target (absent from gate2-evaluator-contract.json and baseline-registry.json)",
+      "explainability_ref": "Weekend/holiday lead response speed. A supplemental weekend figure is available as context only and is not yet a scored result; the business-hours calendar and exact response definition are being finalized.",
+      "next_action": "Ratify the SW-016 SLA spec and acquire an authoritative holiday/business-hours calendar + origination time; retain the weekend figure as measured-unscored only. No promotion, no grade.",
+      "review_point": "PKT-02-02 investigation close / source-contract review",
+      "detection_threshold_contract": {
+        "threshold_id": null,
+        "rule": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "comparison_reference_contract": {
+        "reference_id": null,
+        "basis": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "grade_target_contract": {
+        "grade_target_id": null,
+        "value_or_range": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "measured_unscored_observation": {
+        "layer": "measured_unscored",
+        "claim_layer": "computed_observation",
+        "promoted": false,
+        "observation": "Supplemental weekend open+15 figure (21043): denominator 16, breaches 5, rate 31.3% — SUPPLEMENTAL only, not a scored SW-016 result.",
+        "evidence_ref": "docs/halo/evidence/m1r/residual/gate4i-response-times-measured-unscored-ledger.json (Gate 4I; promotes nothing)",
+        "scored": false,
+        "alert_eligible": false,
+        "note": "Supplemental / provisional observation only. Clearly UNSCORED; cannot support a grade, alert, or customer claim."
+      }
+    },
+    {
+      "metric_id": "SW-017",
+      "definition_version": "0.1.0",
+      "module": 2,
+      "canonical_condition": "Phone leads with no outbound call attempt within 5 minutes.",
+      "business_question": "How many phone Sales leads had no outbound call attempt within 5 minutes of the lead?",
+      "boundary_class": "sales",
+      "population": "Serra Honda 21043 phone-origin Sales leads, period 2026-08-24..2026-08-30 (phone-origin identification unresolved).",
+      "calculation_kind": "count",
+      "null_missing_behavior": "missing_not_zero",
+      "unit": "leads",
+      "polarity": "lower_is_better",
+      "window": "2026-08-24..2026-08-30",
+      "timezone": "America/New_York",
+      "cadence": "Manual weekly checkpoint",
+      "impact_method": "operational_only",
+      "impact_status": "not_applicable",
+      "gradable": false,
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "source_dependency_ids": [],
+      "required_direct_fields_or_keys": [
+        "phone-lead origination timestamp",
+        "outbound call-attempt event with timestamp",
+        "phone-origin lead identifier",
+        "Lead ID"
+      ],
+      "direct_source_fields": [],
+      "missing_or_quarantine_evidence": [
+        "Evidence absent: the Response Times table does not identify phone-lead origin or an outbound call attempt (committed_blocker_class unsupported_field).",
+        "'within 5 min of the lead' needs a lead-origination timestamp; the derivative emits comm/response timestamps only.",
+        "Missing is never zero: no observation may be persisted.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "evidence_ref": "catalog condition (verbatim) + Gate 4H accountability (unsupported_field); no gate2/baseline authority exists for this ID",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
+      "owner": "codex",
+      "internal_visibility": true,
+      "customer_visibility": "hidden",
+      "confidence": "not_applicable",
+      "alert_eligible": false,
+      "alert_ineligible_reason": "no ratified detection threshold / approved grade target (absent from gate2-evaluator-contract.json and baseline-registry.json)",
+      "explainability_ref": "Whether phone leads get a quick outbound call. Being set up: a lead-level call source with exact timing is still needed before this can be reported.",
+      "next_action": "Finite investigation (one help-contract pass + one read-only UI discovery pass + one controlled probe) to prove a direct phone-lead origination timestamp and an outbound call-attempt event. No calculation, no promotion.",
+      "review_point": "PKT-02-02 investigation close / source-contract review",
+      "detection_threshold_contract": {
+        "threshold_id": null,
+        "rule": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "comparison_reference_contract": {
+        "reference_id": null,
+        "basis": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "grade_target_contract": {
+        "grade_target_id": null,
+        "value_or_range": "pending",
+        "approval_state": "none",
+        "status": "none"
+      }
+    },
+    {
+      "metric_id": "SW-018",
+      "definition_version": "0.1.0",
+      "module": 2,
+      "canonical_condition": "Chat leads abandoned mid-conversation without CRM logging.",
+      "business_question": "How many chat Sales leads were abandoned mid-conversation without CRM logging?",
+      "boundary_class": "sales",
+      "population": "Serra Honda 21043 chat Sales leads, period 2026-08-24..2026-08-30 (chat-transcript + CRM-logging linkage unresolved).",
+      "calculation_kind": "count",
+      "null_missing_behavior": "missing_not_zero",
+      "unit": "leads",
+      "polarity": "lower_is_better",
+      "window": "2026-08-24..2026-08-30",
+      "timezone": "America/New_York",
+      "cadence": "Daily or weekly downstream calculation",
+      "impact_method": "operational_only",
+      "impact_status": "not_applicable",
+      "gradable": false,
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "source_dependency_ids": [],
+      "required_direct_fields_or_keys": [
+        "chat transcript/abandonment event",
+        "CRM chat-logging status",
+        "Communication ID",
+        "Lead ID",
+        "Global Customer ID"
+      ],
+      "direct_source_fields": [],
+      "missing_or_quarantine_evidence": [
+        "Chat abandonment is an external chat-system metric (committed_blocker_class other_source_or_join); no chat-transcript/abandonment event exists in the admitted communication family.",
+        "No CRM chat-logging linkage and no stable Communication/Lead/Global-Customer key join in the current communication file.",
+        "The scheduled Sales Communication Log daily delivery is QUARANTINED for hidden Parts/Service and cannot be used; the read-only enhanced weekly is admitted_held/pre-admission (promotes no metric).",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "evidence_ref": "catalog condition (verbatim) + Gate 4H (other_source_or_join, external chat); no gate2/baseline authority exists for this ID",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
+      "owner": "codex",
+      "internal_visibility": true,
+      "customer_visibility": "hidden",
+      "confidence": "not_applicable",
+      "alert_eligible": false,
+      "alert_ineligible_reason": "no ratified detection threshold / approved grade target (absent from gate2-evaluator-contract.json and baseline-registry.json)",
+      "explainability_ref": "Chat leads left mid-conversation without a logged follow-up. Being set up: a chat-transcript source is still needed.",
+      "next_action": "Finite investigation to determine whether chat-abandonment + CRM-logging status is obtainable (VinSolutions vs a named external chat platform). No calculation, no proxy.",
+      "review_point": "PKT-02-02 investigation close / source-contract review",
+      "detection_threshold_contract": {
+        "threshold_id": null,
+        "rule": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "comparison_reference_contract": {
+        "reference_id": null,
+        "basis": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "grade_target_contract": {
+        "grade_target_id": null,
+        "value_or_range": "pending",
+        "approval_state": "none",
+        "status": "none"
+      }
+    },
+    {
+      "metric_id": "SW-084",
+      "definition_version": "0.1.0",
+      "module": 2,
+      "canonical_condition": "BDC connect rate falls below 35%.",
+      "business_question": "Does the BDC connect rate fall below 35%?",
+      "boundary_class": "sales",
+      "population": "Serra Honda 21043 BDC Sales activity, period 2026-08-24..2026-08-30 (connect definition + Sales-clean CAGE unresolved).",
+      "calculation_kind": "rate",
+      "null_missing_behavior": "missing_not_zero",
+      "unit": "ratio_0_1",
+      "polarity": "lower_is_better",
+      "window": "2026-08-24..2026-08-30",
+      "timezone": "America/New_York",
+      "cadence": "Weekly native Excel",
+      "impact_method": "operational_only",
+      "impact_status": "not_applicable",
+      "gradable": false,
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "source_dependency_ids": [],
+      "required_direct_fields_or_keys": [
+        "Sales-clean CAGE connect/attempt counts",
+        "BDC user_group",
+        "call channel",
+        "interaction_result",
+        "authoritative numeric User ID/roster bridge"
+      ],
+      "direct_source_fields": [],
+      "missing_or_quarantine_evidence": [
+        "The delivered Serra Honda 21043 CAGE KPI weekly artifact is QUARANTINED (native-scheduled-evidence.json; filename Report-4189.xlsx sha256 a79315a3238376a624e72f28b8a159efef233e3f0772931fed744f2a64b8c630; quarantine_reason non-sales-lead-type: positively selects hidden Parts/Service Lead Intents; TERMINAL — never promote or calculate).",
+        "A Sales-only-clean CAGE source (hidden Parts/Service excluded at source, not by row filter) is NOT yet acquired; clean visible rows and a Lead-Sources-Excluded filter do not cure the contamination.",
+        "'connect' definition (mapping interaction_result to a connect) is an unratified choice; aggregate report lacks event IDs and a stable numeric User ID.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "evidence_ref": "catalog condition (verbatim) + native-scheduled quarantine evidence + Gate 4H (semantic_definition_pending); no gate2/baseline authority exists for this ID",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
+      "owner": "codex",
+      "internal_visibility": true,
+      "customer_visibility": "hidden",
+      "confidence": "not_applicable",
+      "alert_eligible": false,
+      "alert_ineligible_reason": "no ratified detection threshold / approved grade target (absent from gate2-evaluator-contract.json and baseline-registry.json)",
+      "explainability_ref": "BDC phone connect rate. Being set up: a clean Sales-only call-activity source is still needed.",
+      "next_action": "Acquire a Sales-only-clean CAGE source and ratify the connect definition + Serra roster/numeric User ID bridge before any calculation. Do NOT calculate from the quarantined artifact.",
+      "review_point": "PKT-02-02 investigation close / source-contract review",
+      "detection_threshold_contract": {
+        "threshold_id": null,
+        "rule": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "comparison_reference_contract": {
+        "reference_id": null,
+        "basis": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "grade_target_contract": {
+        "grade_target_id": null,
+        "value_or_range": "pending",
+        "approval_state": "none",
+        "status": "none"
+      }
+    },
+    {
+      "metric_id": "SW-085",
+      "definition_version": "0.1.0",
+      "module": 2,
+      "canonical_condition": "Average call duration <45 seconds (drop-off/hangup pattern).",
+      "business_question": "Is the average call duration under 45 seconds (a drop-off/hangup pattern)?",
+      "boundary_class": "external_noncrm",
+      "population": "Serra Honda 21043 Sales calls, period depends on the external telephony system (no VinSolutions export exists).",
+      "calculation_kind": "duration",
+      "null_missing_behavior": "missing_not_zero",
+      "unit": "seconds",
+      "polarity": "lower_is_better",
+      "window": "2026-08-24..2026-08-30",
+      "timezone": "America/New_York",
+      "cadence": "External connector/export cadence",
+      "impact_method": "operational_only",
+      "impact_status": "not_applicable",
+      "gradable": false,
+      "disposition": "external_source_required",
+      "source_existence_state": "proved_requires_external",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "source_dependency_ids": [],
+      "required_direct_fields_or_keys": [
+        "per-call call-length/duration (external telephony)",
+        "governed cross-system identity strategy"
+      ],
+      "direct_source_fields": [],
+      "missing_or_quarantine_evidence": [
+        "No supporting VinSolutions export exists (acquisition_class: Separate external source required); average call duration needs per-call call-length, not a derivative field (committed_blocker_class unsupported_field).",
+        "Requires a named non-VinSolutions telephony/call source and a governed cross-system identity strategy; do NOT simulate external truth from CRM proxies.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "evidence_ref": "catalog condition (verbatim) + matrix acquisition_class (external source required) + Gate 4H (unsupported_field); no gate2/baseline authority exists for this ID",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
+      "owner": "codex",
+      "internal_visibility": true,
+      "customer_visibility": "hidden",
+      "confidence": "not_applicable",
+      "alert_eligible": false,
+      "alert_ineligible_reason": "no ratified detection threshold / approved grade target (absent from gate2-evaluator-contract.json and baseline-registry.json)",
+      "explainability_ref": "Very short average call length (drop-off pattern). Requires a phone-system source outside the CRM.",
+      "next_action": "Acquire source-native telephony call-duration data via a separate governed external-acquisition action and define privacy-safe joins. No CRM proxy.",
+      "review_point": "PKT-02-02 investigation close / source-contract review",
+      "detection_threshold_contract": {
+        "threshold_id": null,
+        "rule": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "comparison_reference_contract": {
+        "reference_id": null,
+        "basis": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "grade_target_contract": {
+        "grade_target_id": null,
+        "value_or_range": "pending",
+        "approval_state": "none",
+        "status": "none"
+      }
+    },
+    {
+      "metric_id": "SW-086",
+      "definition_version": "0.1.0",
+      "module": 2,
+      "canonical_condition": "Voicemails left without follow-up text/email within 15 minutes.",
+      "business_question": "How many voicemails were left without a follow-up text/email within 15 minutes?",
+      "boundary_class": "sales",
+      "population": "Serra Honda 21043 Sales voicemail events, period 2026-08-24..2026-08-30 (voicemail + follow-up-window definition unresolved).",
+      "calculation_kind": "count",
+      "null_missing_behavior": "missing_not_zero",
+      "unit": "events",
+      "polarity": "lower_is_better",
+      "window": "2026-08-24..2026-08-30",
+      "timezone": "America/New_York",
+      "cadence": "Daily source; downstream daily semantic job",
+      "impact_method": "operational_only",
+      "impact_status": "not_applicable",
+      "gradable": false,
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "evaluation_state": "not_measured",
+      "source_dependency_ids": [],
+      "required_direct_fields_or_keys": [
+        "outbound Answering-Machine interaction_result",
+        "subsequent text/email follow-up timestamp",
+        "Communication ID",
+        "Lead ID",
+        "Global Customer ID"
+      ],
+      "direct_source_fields": [],
+      "missing_or_quarantine_evidence": [
+        "Voicemail 'left' event and the 15-minute follow-up window are unratified definitions (committed_blocker_class semantic_definition_pending); held in comm-evaluation-ledger.json (held_ids).",
+        "The enhanced Sales Communication Log weekly source is pre-admission: contract_state proposed_extension_pending_consumer_acceptance (admits family provenance/schema/Sales-only; promotes NO SW metric).",
+        "Current file lacks stable Communication ID / Lead ID / Global Customer ID keys.",
+        "The scheduled daily Sales Communication Log delivery is QUARANTINED for hidden Parts/Service and cannot be used.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "evidence_ref": "catalog condition (verbatim) + comm-admission-aggregates (pre-admission) + Gate 4H (semantic_definition_pending); no gate2/baseline authority exists for this ID",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
+      "owner": "claude_studio",
+      "internal_visibility": true,
+      "customer_visibility": "hidden",
+      "confidence": "not_applicable",
+      "alert_eligible": false,
+      "alert_ineligible_reason": "no ratified detection threshold / approved grade target (absent from gate2-evaluator-contract.json and baseline-registry.json)",
+      "explainability_ref": "Voicemails without a quick text/email follow-up. Being set up: the follow-up definition and source keys are still needed.",
+      "next_action": "Ratify the voicemail + 15-minute follow-up definition, obtain consumer acceptance for the enhanced weekly source + stable keys, then calculate. No promotion, no grade.",
+      "review_point": "PKT-02-02 investigation close / source-contract review",
+      "detection_threshold_contract": {
+        "threshold_id": null,
+        "rule": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "comparison_reference_contract": {
+        "reference_id": null,
+        "basis": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "grade_target_contract": {
+        "grade_target_id": null,
+        "value_or_range": "pending",
+        "approval_state": "none",
+        "status": "none"
+      }
+    },
+    {
+      "metric_id": "SW-087",
+      "definition_version": "0.1.0",
+      "module": 2,
+      "canonical_condition": "BDC appointment-set-to-show rate diverges >20% from floor-set rate.",
+      "business_question": "Does the BDC appointment-set-to-show rate diverge by more than 20% from the floor-set rate?",
+      "boundary_class": "sales",
+      "population": "Serra Honda 21043 BDC-set vs floor-set appointments, period 2026-08-24..2026-08-30 (set-to-show join + roster unresolved).",
+      "calculation_kind": "rate",
+      "null_missing_behavior": "missing_not_zero",
+      "unit": "ratio_0_1",
+      "polarity": "lower_is_better",
+      "window": "2026-08-24..2026-08-30",
+      "timezone": "America/New_York",
+      "cadence": "Weekly downstream calculation from existing schedules",
+      "impact_method": "operational_only",
+      "impact_status": "not_applicable",
+      "gradable": false,
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "source_dependency_ids": [],
+      "required_direct_fields_or_keys": [
+        "Sales-clean CAGE/Enterprise Performance rep activity",
+        "Appointments set/show outcomes",
+        "CRM Sales Gross sold outcomes",
+        "authoritative Serra roster/numeric User ID bridge",
+        "set-vs-floor attribution"
+      ],
+      "direct_source_fields": [],
+      "missing_or_quarantine_evidence": [
+        "Set-to-show divergence is an appointment metric requiring a defined join across CAGE/Enterprise Performance + Appointments + CRM Sales Gross (committed_blocker_class other_source_or_join).",
+        "The CAGE/Enterprise Performance leg is QUARANTINED for hidden Parts/Service (see SW-084 evidence); Appointments and CRM Sales Gross are admitted_held (accepted-eligible, not promoted).",
+        "Set-vs-floor numerator/denominator attribution and an authoritative Serra roster/numeric User ID bridge are undefined.",
+        "Aggregate sources can show divergence but cannot prove a specific missed handoff; no approved operational target (absent from gate2/baseline)."
+      ],
+      "evidence_ref": "catalog condition (verbatim) + native-scheduled admission/quarantine evidence + Gate 4H (other_source_or_join); no gate2/baseline authority exists for this ID",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
+      "owner": "codex",
+      "internal_visibility": true,
+      "customer_visibility": "hidden",
+      "confidence": "not_applicable",
+      "alert_eligible": false,
+      "alert_ineligible_reason": "no ratified detection threshold / approved grade target (absent from gate2-evaluator-contract.json and baseline-registry.json)",
+      "explainability_ref": "Appointment set-to-show consistency for BDC vs floor. Being set up: an appointments/activity join is still needed.",
+      "next_action": "Define the set-to-show numerator/denominator + Serra roster bridge and acquire a Sales-clean CAGE leg, then calculate. No promotion, no grade.",
+      "review_point": "PKT-02-02 investigation close / source-contract review",
+      "detection_threshold_contract": {
+        "threshold_id": null,
+        "rule": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "comparison_reference_contract": {
+        "reference_id": null,
+        "basis": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "grade_target_contract": {
+        "grade_target_id": null,
+        "value_or_range": "pending",
+        "approval_state": "none",
+        "status": "none"
+      }
+    },
+    {
+      "metric_id": "SW-088",
+      "definition_version": "0.1.0",
+      "module": 2,
+      "canonical_condition": "Call recording missing/unlogged on >10% of connected calls.",
+      "business_question": "Is a call recording missing/unlogged on more than 10% of connected calls?",
+      "boundary_class": "external_noncrm",
+      "population": "Serra Honda 21043 connected Sales calls, period depends on the external telephony/recording system (no VinSolutions export exists).",
+      "calculation_kind": "rate",
+      "null_missing_behavior": "missing_not_zero",
+      "unit": "ratio_0_1",
+      "polarity": "lower_is_better",
+      "window": "2026-08-24..2026-08-30",
+      "timezone": "America/New_York",
+      "cadence": "External connector/export cadence",
+      "impact_method": "operational_only",
+      "impact_status": "not_applicable",
+      "gradable": false,
+      "disposition": "external_source_required",
+      "source_existence_state": "proved_requires_external",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "source_dependency_ids": [],
+      "required_direct_fields_or_keys": [
+        "connected-call event",
+        "call-recording presence/logged flag (external recording system)",
+        "governed cross-system identity strategy"
+      ],
+      "direct_source_fields": [],
+      "missing_or_quarantine_evidence": [
+        "No supporting VinSolutions export exists (acquisition_class: Separate external source required); call-recording-logged is not a derivative field (committed_blocker_class unsupported_field).",
+        "Requires a named non-VinSolutions telephony/recording source and a governed cross-system identity strategy; do NOT simulate external truth from CRM proxies.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "evidence_ref": "catalog condition (verbatim) + matrix acquisition_class (external source required) + Gate 4H (unsupported_field); no gate2/baseline authority exists for this ID",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
+      "owner": "codex",
+      "internal_visibility": true,
+      "customer_visibility": "hidden",
+      "confidence": "not_applicable",
+      "alert_eligible": false,
+      "alert_ineligible_reason": "no ratified detection threshold / approved grade target (absent from gate2-evaluator-contract.json and baseline-registry.json)",
+      "explainability_ref": "Missing/unlogged call recordings. Requires a phone-recording source outside the CRM.",
+      "next_action": "Acquire source-native recording-system data via a separate governed external-acquisition action and define privacy-safe joins. No CRM proxy.",
+      "review_point": "PKT-02-02 investigation close / source-contract review",
+      "detection_threshold_contract": {
+        "threshold_id": null,
+        "rule": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "comparison_reference_contract": {
+        "reference_id": null,
+        "basis": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "grade_target_contract": {
+        "grade_target_id": null,
+        "value_or_range": "pending",
+        "approval_state": "none",
+        "status": "none"
+      }
+    },
+    {
+      "metric_id": "SW-089",
+      "definition_version": "0.1.0",
+      "module": 2,
+      "canonical_condition": "Repeated inbound calls from same number unanswered (missed opportunity).",
+      "business_question": "Were there repeated inbound calls from the same number left unanswered (missed opportunity)?",
+      "boundary_class": "sales",
+      "population": "Serra Honda 21043 inbound Sales calls, period 2026-08-24..2026-08-30 (phone/ANI identity + unanswered state unresolved).",
+      "calculation_kind": "count",
+      "null_missing_behavior": "missing_not_zero",
+      "unit": "calls",
+      "polarity": "lower_is_better",
+      "window": "2026-08-24..2026-08-30",
+      "timezone": "America/New_York",
+      "cadence": "Daily source; downstream daily semantic job",
+      "impact_method": "operational_only",
+      "impact_status": "not_applicable",
+      "gradable": false,
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "investigation_pending",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "source_dependency_ids": [],
+      "required_direct_fields_or_keys": [
+        "phone/call-ANI number",
+        "inbound-call answered/unanswered state",
+        "telephony-system call event join",
+        "Global Customer ID"
+      ],
+      "direct_source_fields": [],
+      "missing_or_quarantine_evidence": [
+        "'same number' cannot be proven: person_token is derived from Global Customer ID, NOT a phone/call-ANI number (committed_blocker_class unsupported_field).",
+        "No inbound answered/unanswered call state in the communication family; a telephony-system join would be required.",
+        "The scheduled daily Sales Communication Log delivery is QUARANTINED for hidden Parts/Service; the enhanced weekly is pre-admission (promotes no metric).",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "evidence_ref": "catalog condition (verbatim) + Gate 4H (unsupported_field, telephony join); no gate2/baseline authority exists for this ID",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
+      "owner": "codex",
+      "internal_visibility": true,
+      "customer_visibility": "hidden",
+      "confidence": "not_applicable",
+      "alert_eligible": false,
+      "alert_ineligible_reason": "no ratified detection threshold / approved grade target (absent from gate2-evaluator-contract.json and baseline-registry.json)",
+      "explainability_ref": "Repeated unanswered inbound calls from the same caller. Requires a phone-system source outside the CRM.",
+      "next_action": "Finite investigation into telephony/ANI source availability and a governed cross-system identity strategy. No calculation, no proxy from Global Customer ID.",
+      "review_point": "PKT-02-02 investigation close / source-contract review",
+      "detection_threshold_contract": {
+        "threshold_id": null,
+        "rule": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "comparison_reference_contract": {
+        "reference_id": null,
+        "basis": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "grade_target_contract": {
+        "grade_target_id": null,
+        "value_or_range": "pending",
+        "approval_state": "none",
+        "status": "none"
+      }
+    },
+    {
+      "metric_id": "SW-132",
+      "definition_version": "0.1.0",
+      "module": 2,
+      "canonical_condition": "Customer's last message unanswered >4 business hours during active thread.",
+      "business_question": "Did the customer's last message go unanswered for more than 4 business hours during an active thread?",
+      "boundary_class": "sales",
+      "population": "Serra Honda 21043 active Sales communication threads, period 2026-08-24..2026-08-30 (business-hours calendar + active-thread definition unresolved).",
+      "calculation_kind": "count",
+      "null_missing_behavior": "missing_not_zero",
+      "unit": "threads",
+      "polarity": "lower_is_better",
+      "window": "2026-08-24..2026-08-30",
+      "timezone": "America/New_York",
+      "cadence": "Daily source; downstream daily semantic job",
+      "impact_method": "operational_only",
+      "impact_status": "not_applicable",
+      "gradable": false,
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "evaluation_state": "not_measured",
+      "source_dependency_ids": [],
+      "required_direct_fields_or_keys": [
+        "last inbound message timestamp",
+        "subsequent outbound message timestamp",
+        "external business-hours calendar",
+        "active-thread grouping key",
+        "Communication ID"
+      ],
+      "direct_source_fields": [],
+      "missing_or_quarantine_evidence": [
+        "Last-inbound + subsequent-outbound timing exists, but the >4 BUSINESS-hours rule needs an external business-hours calendar that this derivative does NOT contain (committed_blocker_class semantic_definition_pending); no evaluation until configured/ratified.",
+        "Active-thread grouping is derived; no native thread ID; enhanced weekly source is pre-admission (proposed_extension_pending_consumer_acceptance; promotes no metric).",
+        "The scheduled daily Sales Communication Log delivery is QUARANTINED for hidden Parts/Service.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "evidence_ref": "catalog condition (verbatim) + comm-admission-aggregates (pre-admission) + Gate 4H (semantic_definition_pending, external calendar); no gate2/baseline authority exists for this ID",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
+      "owner": "claude_studio",
+      "internal_visibility": true,
+      "customer_visibility": "hidden",
+      "confidence": "not_applicable",
+      "alert_eligible": false,
+      "alert_ineligible_reason": "no ratified detection threshold / approved grade target (absent from gate2-evaluator-contract.json and baseline-registry.json)",
+      "explainability_ref": "Customer's last message left unanswered during business hours. Being set up: a business-hours calendar and message keys are still needed.",
+      "next_action": "Acquire an authoritative business-hours calendar and configure/ratify the active-thread definition; obtain consumer acceptance, then calculate. No promotion, no grade.",
+      "review_point": "PKT-02-02 investigation close / source-contract review",
+      "detection_threshold_contract": {
+        "threshold_id": null,
+        "rule": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "comparison_reference_contract": {
+        "reference_id": null,
+        "basis": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "grade_target_contract": {
+        "grade_target_id": null,
+        "value_or_range": "pending",
+        "approval_state": "none",
+        "status": "none"
+      }
+    },
+    {
+      "metric_id": "SW-134",
+      "definition_version": "0.1.0",
+      "module": 2,
+      "canonical_condition": "Response gap widens across a thread (2h → 8h → 24h — fade-out pattern).",
+      "business_question": "Does the response gap widen across a thread (2h -> 8h -> 24h fade-out pattern)?",
+      "boundary_class": "sales",
+      "population": "Serra Honda 21043 Sales communication threads, period 2026-08-24..2026-08-30 (widening-pattern definition unresolved).",
+      "calculation_kind": "count",
+      "null_missing_behavior": "missing_not_zero",
+      "unit": "threads",
+      "polarity": "lower_is_better",
+      "window": "2026-08-24..2026-08-30",
+      "timezone": "America/New_York",
+      "cadence": "Daily source; downstream daily semantic job",
+      "impact_method": "operational_only",
+      "impact_status": "not_applicable",
+      "gradable": false,
+      "disposition": "data_acquired_calculation_pending",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "evaluation_state": "not_measured",
+      "source_dependency_ids": [],
+      "required_direct_fields_or_keys": [
+        "ordered within-thread response gaps",
+        "widening-pattern definition",
+        "active-thread grouping key",
+        "Communication ID"
+      ],
+      "direct_source_fields": [],
+      "missing_or_quarantine_evidence": [
+        "Successive within-thread gaps exist, but the widening pattern (2h -> 8h -> 24h) needs a ratified definition (committed_blocker_class semantic_definition_pending); held in comm-evaluation-ledger.json.",
+        "Active-thread grouping is derived; no native thread ID; enhanced weekly source is pre-admission (proposed_extension_pending_consumer_acceptance; promotes no metric).",
+        "The scheduled daily Sales Communication Log delivery is QUARANTINED for hidden Parts/Service.",
+        "No approved operational target (absent from gate2/baseline)."
+      ],
+      "evidence_ref": "catalog condition (verbatim) + comm-admission-aggregates (pre-admission) + Gate 4H (semantic_definition_pending); no gate2/baseline authority exists for this ID",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
+      "owner": "claude_studio",
+      "internal_visibility": true,
+      "customer_visibility": "hidden",
+      "confidence": "not_applicable",
+      "alert_eligible": false,
+      "alert_ineligible_reason": "no ratified detection threshold / approved grade target (absent from gate2-evaluator-contract.json and baseline-registry.json)",
+      "explainability_ref": "Response gaps widening across a conversation. Being set up: the widening definition and message keys are still needed.",
+      "next_action": "Ratify the widening-pattern definition + thread key and obtain consumer acceptance, then calculate. No promotion, no grade.",
+      "review_point": "PKT-02-02 investigation close / source-contract review",
+      "detection_threshold_contract": {
+        "threshold_id": null,
+        "rule": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "comparison_reference_contract": {
+        "reference_id": null,
+        "basis": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "grade_target_contract": {
+        "grade_target_id": null,
+        "value_or_range": "pending",
+        "approval_state": "none",
+        "status": "none"
+      }
+    },
+    {
+      "metric_id": "SW-133",
+      "definition_version": "0.1.0",
+      "module": 2,
+      "canonical_condition": "Rep replies after customer has sent 2+ consecutive messages (customer chasing rep).",
+      "business_question": "Does the rep reply only after the customer has sent 2+ consecutive messages (customer chasing the rep)?",
+      "boundary_class": "sales",
+      "population": "Serra Honda 21043 Sales communication threads, period 2026-08-24..2026-08-30 (chasing definition ratified downstream; source pre-admission).",
+      "calculation_kind": "rate",
+      "null_missing_behavior": "missing_not_zero",
+      "unit": "ratio_0_1",
+      "polarity": "lower_is_better",
+      "window": "2026-08-24..2026-08-30",
+      "timezone": "America/New_York",
+      "cadence": "Daily source; downstream daily semantic job",
+      "impact_method": "operational_only",
+      "impact_status": "not_applicable",
+      "gradable": false,
+      "disposition": "measured_validated",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "evaluation_state": "measured_graded",
+      "source_dependency_ids": [],
+      "required_direct_fields_or_keys": [
+        "ordered inbound/outbound message sequence per thread",
+        "active-thread grouping key",
+        "Communication ID",
+        "Lead ID"
+      ],
+      "direct_source_fields": [],
+      "missing_or_quarantine_evidence": [
+        "A prior provisional chasing calculation exists (comm-evaluation-ledger.json), but it promotes ZERO metrics into the core spine and rides the enhanced weekly source that is pre-admission (proposed_extension_pending_consumer_acceptance).",
+        "An older provisional communication calculation cannot be promoted through a pre-admission / quarantined source (permanent rule); the scheduled daily Sales Communication Log delivery is QUARANTINED for hidden Parts/Service.",
+        "Chasing-thread grouping is derived; no native thread ID; no accepted grade target (absent from gate2/baseline)."
+      ],
+      "evidence_ref": "catalog condition (verbatim) + comm-evaluation-ledger (provisional, promotes zero) + comm-admission-aggregates (pre-admission); no gate2/baseline authority exists for this ID",
+      "evidence_as_of": "2026-09-04T02:32:50Z",
+      "owner": "claude_studio",
+      "internal_visibility": true,
+      "customer_visibility": "hidden",
+      "confidence": "not_applicable",
+      "alert_eligible": false,
+      "alert_ineligible_reason": "no ratified detection threshold / approved grade target (absent from gate2-evaluator-contract.json and baseline-registry.json)",
+      "explainability_ref": "",
+      "next_action": "Retain the provisional value as measured-unscored only; obtain consumer acceptance + stable keys + a ratified chasing definition + an approved target before any promotion. No grade here.",
+      "review_point": "PKT-02-02 investigation close / source-contract review",
+      "detection_threshold_contract": {
+        "threshold_id": null,
+        "rule": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "comparison_reference_contract": {
+        "reference_id": null,
+        "basis": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "grade_target_contract": {
+        "grade_target_id": null,
+        "value_or_range": "pending",
+        "approval_state": "none",
+        "status": "none"
+      },
+      "measured_unscored_observation": {
+        "layer": "measured_unscored",
+        "claim_layer": "provisional_overlay",
+        "promoted": false,
+        "observation": "Provisional chasing-thread rate in comm-evaluation-ledger.json (21043 ~0.0357); an aggregate overlay observation, NOT a scored/promoted SW-133 result.",
+        "evidence_ref": "docs/halo/evidence/m1r/comms/comm-evaluation-ledger.json (note: 'Promotes zero metrics into the core spine ledger')",
+        "scored": false,
+        "alert_eligible": false,
+        "note": "Supplemental / provisional observation only. Clearly UNSCORED; cannot support a grade, alert, or customer claim."
+      },
+      "pkt_02_02_assertion": "withheld_pending_adjudication",
+      "authority_conflict": {
+        "status": "UNDER_INDEPENDENT_IMPARTIAL_SHADOW_REVIEW",
+        "resolution": "pending",
+        "field_scope": "represented OUTSIDE the lifecycle field; no new frozen-vocabulary value invented; no accepted-truth change made",
+        "master_ledger": {
+          "disposition": "measured_validated",
+          "evaluation_state": "measured_graded",
+          "authoritative": true,
+          "source": "authoritative_current_truth.evaluated_17 (gate5b-report-model-21043.json)"
+        },
+        "pkt_02_02_binding": {
+          "disposition": "data_acquired_calculation_pending",
+          "evaluation_state": "measured_unscored",
+          "promoted": false,
+          "note": "measured_unscored provisional overlay; not promoted (pre-admission communication source)"
+        },
+        "pkt_02_02_treatment": "EXCLUDED from all PKT-02-02 customer assertions, grades, alerts, and notifications until adjudicated. Ledger row, 17-count, gate5b model, frozen binding, and customer claims are UNCHANGED by this packet.",
+        "evidence_ref": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-02/PKT-02-02_SW-133_AUTHORITY_CONFLICT.json"
+      }
+    }
+  ],
+  "authority_binding": {
+    "ref": "docs/halo/contract/phase1b/pkt-02-02-binding.json",
+    "sha256": "7307e6039363fa421c217ff9c1beb1ca606dfcbcfbe083c503a65d5371c16f44"
+  },
+  "customer_projection": {
+    "accepted_measured_ids": [],
+    "accepted_measured_ids_empty": true,
+    "no_customer_mini_report_emitted": true,
+    "customer_facing_claims_from_this_packet": 0,
+    "internal_coverage_roadmap_ref": "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-02/PKT-02-02_internal_coverage_roadmap.md",
+    "rule": "Frozen packet-schema customer-projection rule: with zero accepted_measured_ids, NO metric (source_investigation_pending, calculation_pending, disposition-only, or authority-conflict) is projected to a customer mini-report. The prior customer mini-report is reclassified as an INTERNAL coverage roadmap (no customer visibility). The final customer report receives NO claims from this packet until accepted_measured_ids is non-empty. It is NOT asserted that all 12 are unscored (SW-133 remains measured_graded in frozen master truth pending adjudication)."
+  }
+}

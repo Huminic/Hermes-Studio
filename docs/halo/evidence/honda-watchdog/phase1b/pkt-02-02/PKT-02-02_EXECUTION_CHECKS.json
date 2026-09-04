@@ -1,0 +1,108 @@
+{
+  "artifact": "honda-watchdog-pkt-02-02-execution-checks",
+  "packet_id": "PKT-02-02",
+  "frozen_binding_sha256": "7307e6039363fa421c217ff9c1beb1ca606dfcbcfbe083c503a65d5371c16f44",
+  "baseline_commit": "6951c3282c6c024bee2c9242e4913f8ec2cec532",
+  "authoritative_evaluated": 17,
+  "nontarget_semantic_diff_count": 0,
+  "checks_run": 18,
+  "checks_passed": 18,
+  "adversarial_probes_run": 8,
+  "adversarial_probes_passed": 8,
+  "customer_projection": "zero accepted_measured_ids -> no customer mini-report emitted; prior customer report reclassified to internal_coverage_roadmap (no customer visibility)",
+  "regression_note": "No product source, test, or config file changed by PKT-02-02 (only docs/contract/evidence + scripts/halo-phase1b/validate_pkt_02_02.py). Frozen 258-file Vitest regression unaffected; last accepted = Packet H run6 (258/258, 2337 passed, 7 authorized skips, 0 failed).",
+  "checks": [
+    {
+      "name": "target_conservation_exact",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "dispositions_match_binding_no_promotion",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no_quarantined_or_unratified_promotion",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "sw133_held_unchanged",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "ledger_nontarget_and_service_overlay_immutable",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "authoritative_evaluated_is_17_measured_graded",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "evaluated_17_unchanged",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "index_activation_scoped",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "index_note_consistency",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "customer_projection_compliance",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "probe_service_overlay_counted_fails",
+      "pass": true,
+      "detail": "adversarial probe (expected to fail on mutation)"
+    },
+    {
+      "name": "probe_nontarget_row_change_fails",
+      "pass": true,
+      "detail": "adversarial probe (expected to fail on mutation)"
+    },
+    {
+      "name": "probe_sw133_change_fails",
+      "pass": true,
+      "detail": "adversarial probe (expected to fail on mutation)"
+    },
+    {
+      "name": "probe_accepted17_change_fails",
+      "pass": true,
+      "detail": "adversarial probe (expected to fail on mutation)"
+    },
+    {
+      "name": "probe_quarantined_promotes_fails",
+      "pass": true,
+      "detail": "adversarial probe (expected to fail on mutation)"
+    },
+    {
+      "name": "probe_target_conservation_break_fails",
+      "pass": true,
+      "detail": "adversarial probe (expected to fail on mutation)"
+    },
+    {
+      "name": "probe_index_note_stale_fails",
+      "pass": true,
+      "detail": "adversarial probe (expected to fail on mutation)"
+    },
+    {
+      "name": "probe_customer_projection_when_empty_fails",
+      "pass": true,
+      "detail": "adversarial probe (expected to fail on mutation)"
+    }
+  ],
+  "errors": [],
+  "overall_pass": true
+}

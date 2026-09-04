@@ -1,69 +1,39 @@
-# PKT-02-02 — Authority Binding + Validation Gate (internal companion)
+# PKT-02-02 internal companion — Module 2 follow-up & communication (12 IDs)
 
-**Scope of this step:** authority binding and validation gate ONLY. No calculation, persistence, grading,
-alerting, reporting, or new acquisition. No Vin/Gmail/browser/DB/INGEST/production action. Honda dealer
-21043 Sales only; zero Service/Parts admitted. This is an internal engineering artifact — it contains no
-customer-facing content and no customer-facing limitations section.
+Generated 2026-09-04T02:36:31Z. Authority: frozen `pkt-02-02-binding.json`. Dealer 21043 (serra-honda), Sales only, period 2026-08-24..2026-08-30.
+Design/evidence only — no calculation, promotion, notification, or source admission. Missing is not zero.
 
-**Frozen and untouched:** `pkt-02-01-binding.json`, `packets/PKT-02-01.json`, `packet-index.json`,
-`master-ledger-295.json`. Packet accounting unchanged: **295 conditions / 11 modules / 30 packets.**
+## Per-metric detail
 
-## 1. What was produced
+| ID | Condition | Source family | Required direct fields/keys | Disposition | Evaluation | Owner | Primary blocker / next action |
+|---|---|---|---|---|---|---|---|
+| SW-016 | Weekend/holiday response SLA breach rate >20%. | Response Times / Custom Reporting Leads (Sales-only; Leads family HOLD before retrieval per J6) | lead-origination timestamp; authoritative holiday/business-hours calendar; response/first-touch timestamp; Lead ID | data_acquired_calculation_pending | measured_unscored | claude_studio | No authoritative holiday/business-hours calendar in the Response Times family (committed_blocker_class other_source_or_join). |
+| SW-017 | Phone leads with no outbound call attempt within 5 minutes. | Response Times / Custom Reporting Leads (Sales-only; Leads family HOLD before retrieval per J6) | phone-lead origination timestamp; outbound call-attempt event with timestamp; phone-origin lead identifier; Lead ID | source_investigation_pending | not_measured | codex | Evidence absent: the Response Times table does not identify phone-lead origin or an outbound call attempt (committed_blocker_class unsupported_field). |
+| SW-018 | Chat leads abandoned mid-conversation without CRM logging. | Communication + external chat system (chat transcript not in admitted family) | chat transcript/abandonment event; CRM chat-logging status; Communication ID; Lead ID; Global Customer ID | source_investigation_pending | not_measured | codex | Chat abandonment is an external chat-system metric (committed_blocker_class other_source_or_join); no chat-transcript/abandonment event exists in the admitted communication family. |
+| SW-084 | BDC connect rate falls below 35%. | CAGE / Enterprise Performance (QUARANTINED: hidden Parts/Service Lead Intent) | Sales-clean CAGE connect/attempt counts; BDC user_group; call channel; interaction_result; authoritative numeric User ID/roster bridge | source_investigation_pending | not_measured | codex | The delivered Serra Honda 21043 CAGE KPI weekly artifact is QUARANTINED (native-scheduled-evidence.json; filename Report-4189.xlsx sha256 a79315a3238376a624e72f28b8a159efef233e3f0772931fed744f2a64b8c630; quarantine_reason non-sales-lead-type: positively selects hidden Parts/Service Lead Intents; TERMINAL — never promote or calculate). |
+| SW-085 | Average call duration <45 seconds (drop-off/hangup pattern). | External telephony/recording system (outside VinSolutions) | per-call call-length/duration (external telephony); governed cross-system identity strategy | external_source_required | not_measured | codex | No supporting VinSolutions export exists (acquisition_class: Separate external source required); average call duration needs per-call call-length, not a derivative field (committed_blocker_class unsupported_field). |
+| SW-086 | Voicemails left without follow-up text/email within 15 minutes. | Enhanced Sales Communication Log weekly (pre-admission; NOT promotable) | outbound Answering-Machine interaction_result; subsequent text/email follow-up timestamp; Communication ID; Lead ID; Global Customer ID | data_acquired_calculation_pending | not_measured | claude_studio | Voicemail 'left' event and the 15-minute follow-up window are unratified definitions (committed_blocker_class semantic_definition_pending); held in comm-evaluation-ledger.json (held_ids). |
+| SW-087 | BDC appointment-set-to-show rate diverges >20% from floor-set rate. | CAGE + Appointments + CRM Sales Gross join (CAGE leg quarantined) | Sales-clean CAGE/Enterprise Performance rep activity; Appointments set/show outcomes; CRM Sales Gross sold outcomes; authoritative Serra roster/numeric User ID bridge; set-vs-floor attribution | source_investigation_pending | not_measured | codex | Set-to-show divergence is an appointment metric requiring a defined join across CAGE/Enterprise Performance + Appointments + CRM Sales Gross (committed_blocker_class other_source_or_join). |
+| SW-088 | Call recording missing/unlogged on >10% of connected calls. | External telephony/recording system (outside VinSolutions) | connected-call event; call-recording presence/logged flag (external recording system); governed cross-system identity strategy | external_source_required | not_measured | codex | No supporting VinSolutions export exists (acquisition_class: Separate external source required); call-recording-logged is not a derivative field (committed_blocker_class unsupported_field). |
+| SW-089 | Repeated inbound calls from same number unanswered (missed opportunity). | Communication + external telephony (ANI/answered-state not in CRM) | phone/call-ANI number; inbound-call answered/unanswered state; telephony-system call event join; Global Customer ID | source_investigation_pending | not_measured | codex | 'same number' cannot be proven: person_token is derived from Global Customer ID, NOT a phone/call-ANI number (committed_blocker_class unsupported_field). |
+| SW-132 | Customer's last message unanswered >4 business hours during active thread. | Enhanced Sales Communication Log weekly (pre-admission; NOT promotable) | last inbound message timestamp; subsequent outbound message timestamp; external business-hours calendar; active-thread grouping key; Communication ID | data_acquired_calculation_pending | not_measured | claude_studio | Last-inbound + subsequent-outbound timing exists, but the >4 BUSINESS-hours rule needs an external business-hours calendar that this derivative does NOT contain (committed_blocker_class semantic_definition_pending); no evaluation until configured/ratified. |
+| SW-133 | Rep replies after customer has sent 2+ consecutive messages (customer chasing rep). | Enhanced Sales Communication Log weekly (pre-admission; NOT promotable) | ordered inbound/outbound message sequence per thread; active-thread grouping key; Communication ID; Lead ID | AUTHORITY CONFLICT (held) | held — see conflict record | claude_studio | A prior provisional chasing calculation exists (comm-evaluation-ledger.json), but it promotes ZERO metrics into the core spine and rides the enhanced weekly source that is pre-admission (proposed_extension_pending_consumer_acceptance). |
+| SW-134 | Response gap widens across a thread (2h → 8h → 24h — fade-out pattern). | Enhanced Sales Communication Log weekly (pre-admission; NOT promotable) | ordered within-thread response gaps; widening-pattern definition; active-thread grouping key; Communication ID | data_acquired_calculation_pending | not_measured | claude_studio | Successive within-thread gaps exist, but the widening pattern (2h -> 8h -> 24h) needs a ratified definition (committed_blocker_class semantic_definition_pending); held in comm-evaluation-ledger.json. |
 
-| Artifact | Purpose |
-|---|---|
-| `docs/halo/contract/phase1b/pkt-02-02-binding.json` | Exact per-metric authority record for the 12 IDs. `canonical_condition` equals the immutable catalog byte-for-byte. |
-| `scripts/halo-phase1b/build_pkt_02_02_binding.py` | Deterministic generator (conditions pulled verbatim from the matrix; authority decisions embedded). |
-| `scripts/halo-phase1b/validate_pkt_02_02_binding.py` | Focused + adversarial machine validator (17 probes). |
-| `docs/halo/evidence/.../pkt-02-02/PKT-02-02_BINDING_CHECKS.json` | Validator output (0 errors, 17/17 probes reject). |
-| `.../PKT-02-02_run_manifest.json` | File digests + validators run. |
+## Denominator / null / missing-is-not-zero
 
-## 2. The decisive gate
+- Every metric uses `null_missing_behavior = missing_not_zero`. A blank/absent field is MISSING, never 0; no metric may emit a fabricated 0, proxy, or inferred value.
+- No metric has a ratified numerator/denominator, threshold, or approved grade target (absent from gate2-evaluator-contract.json and baseline-registry.json); all are `gradable=false` and `alert_eligible=false`.
+- Supplemental/provisional observations (SW-016 weekend open+15: denom 16, breaches 5, 31.3%) are UNSCORED and cannot support a grade or alert. SW-133's provisional overlay is excluded pending adjudication.
 
-None of the 12 IDs appears in `gate2-evaluator-contract.json` (accepted meanings) or in
-`baseline-registry.json` (operational targets). Overlap is **empty** on both. Therefore **no ID may be
-marked measured or gradable**: every `numerator`/`denominator`/`formula` and every
-`threshold`/`detection_rule`/`grade_*`/`ot_anchor` is `null` (not invented), `gradable=false`, and no
-`measured_graded`/`measured_validated` state is used. `accepted_measured_ids` and `rejected_ids` are empty.
+## Coverage / freshness / confidence
 
-## 3. Four source-family slices (exact partition)
+- Coverage: no rows admitted for any of the 12 in this packet (Leads family HOLD; CAGE/Comm quarantined/pre-admission; external telephony out of CRM). Freshness: n/a (no measurement). Confidence: not_applicable for all 12.
 
-| Slice | IDs | Current state |
-|---|---|---|
-| `slice_response_times` | SW-016, SW-017 | SW-016 = data_acquired_calculation_pending / **measured_unscored** (supplemental weekend open+15 retained, NOT promoted — no holiday calendar, spec held). SW-017 = source_investigation_pending (evidence absent: no phone-origin/outbound field). |
-| `slice_cage_appointments_gross` | SW-084, SW-087 | Both source_investigation_pending. CAGE KPI weekly delivery is **QUARANTINED** (hidden Parts/Service; TERMINAL). SW-087 also needs an undefined Appointments+CRM-Sales-Gross join + Serra roster. |
-| `slice_communication` | SW-018, SW-086, SW-089, SW-132, SW-133, SW-134 | SW-018/089 = source_investigation_pending (external chat / telephony ANI join). SW-086/132/133/134 = data_acquired_calculation_pending on the **pre-admission** enhanced weekly source (promotes no metric). SW-133 carries a **provisional** value as measured_unscored only (comm-evaluation-ledger: "promotes zero into core spine"). |
-| `slice_external_phone` | SW-085, SW-088 | Both external_source_required (accepted_disposition_only), boundary `external_noncrm`; no VinSolutions export exists; no CRM proxy. |
+## J6 Leads acquisition evidence
 
-## 4. Lifecycle partition (12 = 5 + 5 + 2 + 0 + 0)
+- J6 (capture 20260904T021150Z-j6): the Leads builder rendered (58 fields), but the complete filter menu exposed NO affirmative Sales-domain / Lead Intent / Department control. Pre-retrieval gate FAIL CLOSED; no query, rows, or export. HOLD before retrieval. Evidence recorded as hashes/aggregate only (screenshot local-only, not committed). See `PKT-02-02_J6_LEADS_NO_RETRIEVAL_HOLD.json`.
 
-- `source_investigation_pending_ids` (5): SW-017, SW-018, SW-084, SW-087, SW-089
-- `calculation_pending_ids` (5): SW-016, SW-086, SW-132, SW-133, SW-134
-- `accepted_disposition_only_ids` (2): SW-085, SW-088
-- `accepted_measured_ids` (0), `rejected_ids` (0)
+## SW-133 authority conflict
 
-## 5. Service/Parts zero-admission
-
-- Leads source: `service_parts_leakage_rows=0` (Sales-only).
-- Communication (enhanced weekly): `service_parts_signal_rows=0`, `wrong_dealer_rows=0` — Sales-only, but promotes **no** metric (`proposed_extension_pending_consumer_acceptance`).
-- Quarantined families (hidden Parts/Service Lead Intents; clean visible rows do **not** cure; TERMINAL — never promote or calculate): `cage_kpi`, `lead_source_roi`, `sales_comm_log`.
-
-## 6. Validators run (all PASS)
-
-| Command | Result |
-|---|---|
-| `validate_phase0_catalog.py` | PASS (exit 0) |
-| `validate_phase1_contracts.py --no-write` | PASS — self_tests 956/956, probes 61/61, fuzz 2118/2118 |
-| `validate_phase1b.py --no-write` | PASS — errors 0, probes 25/25 |
-| `validate_pkt_02_01_execution.mjs` | PASS — checks 42/42 |
-| `validate_pkt_02_02_binding.py` | PASS — errors 0, probes 17/17 |
-
-## 7. Unresolved execution dependencies (carried forward for later slices)
-
-1. **SW-016** — ratify SLA spec + acquire authoritative holiday/business-hours calendar + lead-origination time.
-2. **SW-017** — prove a direct phone-lead origination timestamp + outbound call-attempt event (finite investigation).
-3. **SW-084 / SW-087** — acquire a Sales-only-clean CAGE source (quarantine cannot be cured by row filter); ratify the "connect" definition; define set-to-show numerator/denominator + Serra roster/numeric-User-ID bridge.
-4. **SW-018** — determine whether chat-abandonment + CRM-logging status is obtainable (VinSolutions vs external chat platform).
-5. **SW-086 / SW-132 / SW-133 / SW-134** — consumer acceptance for the enhanced weekly source + stable Communication/Lead/Global-Customer keys; ratify voicemail/business-hours/chasing/widening definitions; SW-133 stays measured-unscored until an approved target exists.
-6. **SW-089** — telephony/ANI source availability + governed cross-system identity strategy.
-7. **SW-085 / SW-088** — separate governed external telephony/recording acquisition + privacy-safe joins (no CRM proxy).
+- master-ledger-295 records SW-133 as `measured_validated`/`measured_graded` (in the authoritative evaluated-17, from gate5b); the frozen binding records it `data_acquired_calculation_pending`/`measured_unscored` (not promoted; pre-admission source). Held under independent shadow review. NOT changed here; excluded from all PKT-02-02 assertions/grades/alerts. See `PKT-02-02_SW-133_AUTHORITY_CONFLICT.json`.

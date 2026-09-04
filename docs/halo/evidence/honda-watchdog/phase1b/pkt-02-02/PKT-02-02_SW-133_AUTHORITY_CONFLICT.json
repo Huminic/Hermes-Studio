@@ -1,0 +1,44 @@
+{
+  "artifact": "honda-watchdog-phase1b-pkt-02-02-sw133-authority-conflict",
+  "packet": "SW-HONDA-PKT-02-02-J7-FULL-EXECUTION",
+  "metric_id": "SW-133",
+  "status": "AUTHORITY_CONFLICT_HOLD_PENDING_DUANE_DECISION",
+  "resolution": "pending",
+  "accepted_truth_changed": false,
+  "canonical_condition": "Rep replies after customer has sent 2+ consecutive messages (customer chasing rep).",
+  "conflict": {
+    "master_ledger_295": {
+      "disposition": "measured_validated",
+      "evaluation_state": "measured_graded",
+      "authoritative": true,
+      "in_authoritative_evaluated_17": true,
+      "source": "authoritative_current_truth.evaluated_17 carried from gate5b-report-model-21043.json"
+    },
+    "pkt_02_02_binding": {
+      "disposition": "data_acquired_calculation_pending",
+      "evaluation_state": "measured_unscored",
+      "promoted": false,
+      "measured_unscored_observation": {
+        "layer": "measured_unscored",
+        "claim_layer": "provisional_overlay",
+        "promoted": false,
+        "observation": "Provisional chasing-thread rate in comm-evaluation-ledger.json (21043 ~0.0357); an aggregate overlay observation, NOT a scored/promoted SW-133 result.",
+        "evidence_ref": "docs/halo/evidence/m1r/comms/comm-evaluation-ledger.json (note: 'Promotes zero metrics into the core spine ledger')"
+      },
+      "permanent_rule": "Older provisional communication calculations cannot be promoted through a presently quarantined/pre-admission source (pkt-02-02-binding permanent_rules)."
+    }
+  },
+  "reconciliation_branches": {
+    "branch_A_binding_authoritative": "De-promote SW-133 in the ledger to measured_unscored/not-graded; authoritative_evaluated 17->16; reconcile authoritative_current_truth.evaluated_17 and gate5b/customer linkage. Changes an accepted customer-facing evaluated outcome => requires Duane decision.",
+    "branch_B_ledger_authoritative": "Keep SW-133 measured_graded; requires amending the frozen pkt-02-02-binding to permit promotion from the communication source. Contradicts the current binding and the no-promote-from-pre-admission rule.",
+    "note": "Prepared as documented branches only. NEITHER is applied. No ledger row, 17-count, gate5b model, binding, or customer claim changed."
+  },
+  "pkt_02_02_treatment": "SW-133 held; EXCLUDED from this packet's calculations, grading, narratives, alerts, and customer projection. Represented via an authority_conflict object outside the lifecycle field. No new frozen-vocabulary value invented. Ledger row, 17-count, gate5b model, frozen binding, and customer claims UNCHANGED.",
+  "owner": "Codex evidence acceptance + impartial shadow (ruling) + Duane (only if the accepted 17-result outcome changes)",
+  "next_action": "Await Duane's decision: (A) de-promote/reconcile 17->16, or (B) formally ratify source/formula/target and retain. The impartial shadow ruling is complete; the unrelated 11-ID PKT-02-02 packet proceeds to commit/push now. SW-133 stays held until Duane decides.",
+  "impartial_shadow_ruling": "COMPLETE — the impartial shadow ruling is complete. The master-ledger SW-133 row and the authoritative evaluated-17 remain UNCHANGED. SW-133 remains excluded from this packet's calculations, grading, narratives, alerts, and customer projection. The unrelated 11-ID PKT-02-02 packet is cleared to proceed to commit/push.",
+  "duane_decision_required": {
+    "option_A_de_promote_reconcile": "De-promote SW-133 to measured_unscored/not-graded; authoritative_evaluated 17 -> 16; reconcile authoritative_current_truth.evaluated_17 and gate5b/customer linkage.",
+    "option_B_ratify_and_retain": "Formally ratify the communication source/formula/approved target and RETAIN SW-133 measured_graded (17 retained; requires amending the frozen binding)."
+  }
+}
