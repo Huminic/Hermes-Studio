@@ -1,0 +1,259 @@
+{
+  "artifact": "honda-watchdog-phase1b-pkt-03-01-sw038-040-discovery-result",
+  "classification": "finite_read_only_discovery_result / evidence_memorialization_design_only",
+  "packet_id": "PKT-03-01",
+  "metric_ids": [
+    "SW-038",
+    "SW-039",
+    "SW-040"
+  ],
+  "baseline_commit": "0b38168fe5fa448253d4898f9ac220ac9aec09ef",
+  "authored_at_utc": "2026-09-04T06:28:04Z",
+  "pins": {
+    "pkt_03_01_binding_sha256": "e92a181f2a8016085011358ff256f627b2c11f09e4f37109f4276ecbfce10f8e",
+    "master_ledger_295_sha256": "747b6d31796939ae29f3a31a0f57226e57342ad7c2b1a1737e05287a5af59d13",
+    "pkt_03_01_packet_sha256": "a35319fe19061dfe0cf09a5557f9212ff2c7c396cfa5243388cc038675283cae",
+    "sw042_evidence_gap_sha256": "1714aad7b8cd4eaf44e4f3a62ba652b0f61886e61f042b274377deee0e1fab7b",
+    "sw042_discovery_result_sha256": "05987ed463930dcc3f0b2d2d34fed2203cac5c6ccb4e475ea801715d1ea65551",
+    "sw042_discovery_checks_sha256": "0f5494129396d1037d18e5e42af52719886a67803d05b4251255341a0413eaf3",
+    "sw042_discovery_validator_sha256": "729d0736b80240ecd088306a973410c1096087a2b898dd0ca249409fa26653c5",
+    "note": "All pinned artifacts are UNCHANGED by this memorialization; the validator asserts them live. SW-038/039/040 lifecycle state_before == state_after == live."
+  },
+  "metrics": {
+    "SW-038": {
+      "canonical_condition": "Stage skipping: leads jumping from \"new\" to \"lost\" without intermediate touches.",
+      "frozen_required_fields": [
+        "bulk old-status export",
+        "bulk new-status export",
+        "transition timestamp",
+        "stable lead/customer key"
+      ],
+      "metadata_change": "none",
+      "state_before": {
+        "disposition": "source_investigation_pending",
+        "source_existence_state": "investigation_pending",
+        "acquisition_admission_state": "not_acquired",
+        "evaluation_state": "not_measured",
+        "authoritative": false,
+        "gradable": false,
+        "alert_eligible": false,
+        "customer_visibility": "hidden",
+        "future_display_eligibility": false,
+        "customer_emission_authority": false,
+        "report_acceptance_state": "withheld_no_delivery"
+      },
+      "state_after": {
+        "disposition": "source_investigation_pending",
+        "source_existence_state": "investigation_pending",
+        "acquisition_admission_state": "not_acquired",
+        "evaluation_state": "not_measured",
+        "authoritative": false,
+        "gradable": false,
+        "alert_eligible": false,
+        "customer_visibility": "hidden",
+        "future_display_eligibility": false,
+        "customer_emission_authority": false,
+        "report_acceptance_state": "withheld_no_delivery"
+      }
+    },
+    "SW-039": {
+      "canonical_condition": "Deals stuck in \"working\" stage >14 days without status change.",
+      "frozen_required_fields": [
+        "bulk old-status export",
+        "bulk new-status export",
+        "transition timestamp",
+        "stable lead/customer key"
+      ],
+      "metadata_change": "none",
+      "state_before": {
+        "disposition": "source_investigation_pending",
+        "source_existence_state": "investigation_pending",
+        "acquisition_admission_state": "not_acquired",
+        "evaluation_state": "not_measured",
+        "authoritative": false,
+        "gradable": false,
+        "alert_eligible": false,
+        "customer_visibility": "hidden",
+        "future_display_eligibility": false,
+        "customer_emission_authority": false,
+        "report_acceptance_state": "withheld_no_delivery"
+      },
+      "state_after": {
+        "disposition": "source_investigation_pending",
+        "source_existence_state": "investigation_pending",
+        "acquisition_admission_state": "not_acquired",
+        "evaluation_state": "not_measured",
+        "authoritative": false,
+        "gradable": false,
+        "alert_eligible": false,
+        "customer_visibility": "hidden",
+        "future_display_eligibility": false,
+        "customer_emission_authority": false,
+        "report_acceptance_state": "withheld_no_delivery"
+      }
+    },
+    "SW-040": {
+      "canonical_condition": "Backwards stage movement (e.g., \"sold\" reverted to \"working\") without note.",
+      "frozen_required_fields": [
+        "bulk old-status export",
+        "bulk new-status export",
+        "transition timestamp",
+        "stable lead/customer key",
+        "transition note/annotation (whether a qualifying note/context exists and why)"
+      ],
+      "metadata_change": "none",
+      "state_before": {
+        "disposition": "source_investigation_pending",
+        "source_existence_state": "investigation_pending",
+        "acquisition_admission_state": "not_acquired",
+        "evaluation_state": "not_measured",
+        "authoritative": false,
+        "gradable": false,
+        "alert_eligible": false,
+        "customer_visibility": "hidden",
+        "future_display_eligibility": false,
+        "customer_emission_authority": false,
+        "report_acceptance_state": "withheld_no_delivery"
+      },
+      "state_after": {
+        "disposition": "source_investigation_pending",
+        "source_existence_state": "investigation_pending",
+        "acquisition_admission_state": "not_acquired",
+        "evaluation_state": "not_measured",
+        "authoritative": false,
+        "gradable": false,
+        "alert_eligible": false,
+        "customer_visibility": "hidden",
+        "future_display_eligibility": false,
+        "customer_emission_authority": false,
+        "report_acceptance_state": "withheld_no_delivery"
+      },
+      "note_requirement_hard": true,
+      "note_requirement_detail": "SW-040 additionally requires, per the frozen contract, the transition note/annotation context: old status, new status, transition timestamp, stable key, AND whether/why a qualifying note existed. This is a HARD additional requirement and may not be downgraded or dropped."
+    }
+  },
+  "two_delta": {
+    "contextual_discovery_evidence_delta": 1,
+    "contextual_delta_meaning": "ONE bounded finite discovery pass/result — NOT a source acquisition and NOT a metric count.",
+    "governed_source_data_acquisition_delta": 0,
+    "governed_source_data_admission_delta": 0,
+    "metric_meaning_value_lifecycle_customer_delta": 0,
+    "explanation": "Governed source-data acquisition, admission, and metric meaning/value/lifecycle/customer deltas are ALL zero. Only contextual discovery evidence increased, by exactly one bounded finite pass; nothing was acquired, admitted, measured, graded, promoted, or emitted."
+  },
+  "help_pass": {
+    "article_number": "000001225",
+    "article_file": "vs-leads-data-set-glossary-218430c2.md",
+    "article_updated": "2025-12-02",
+    "lists_current_fields": [
+      "Lead Status",
+      "Lead Status Type",
+      "Lead Last Modified Date (generic CRM modification date)",
+      "Auto Lead ID",
+      "Global Customer ID",
+      "CRM User ID",
+      "other current-lead fields"
+    ],
+    "does_not_list": [
+      "old status",
+      "new status",
+      "transition timestamp",
+      "transition note"
+    ],
+    "last_modified_is_status_specific": false,
+    "note": "Lead Last Modified Date is a GENERIC CRM modification date, not a status-specific transition timestamp; current state cannot reconstruct old/new status, the actual transition time, or a causal note."
+  },
+  "report_center_pass": {
+    "authenticated_rooftop": "Serra Honda of Sylacauga #21043",
+    "read_only": true,
+    "finite_search_terms": [
+      "status",
+      "history",
+      "audit",
+      "transition",
+      "change"
+    ],
+    "title_metadata_matches": [
+      "Deals in Pending Finance Status - Last 30 Days",
+      "MTD Lead Stats by Sales Rep & Lead Type",
+      "Survey Performance for the CSI Agents",
+      "nVision - Analyze Sales",
+      "Survey Completion"
+    ],
+    "no_data_terms": [
+      "audit",
+      "change"
+    ],
+    "finite_catalog_evidence_only": true,
+    "metadata_matches_may_be_semantically_irrelevant": true,
+    "supports_global_unavailability": false
+  },
+  "custom_reporting_pass": {
+    "unsaved_builder": true,
+    "data_retrieval_paused_before_dataset_selection": true,
+    "data_retrieval_visibly_paused": true,
+    "leads_schema_exposed": [
+      "Lead ID",
+      "current Lead Status",
+      "current Lead Status Custom",
+      "current Lead Status Type",
+      "Lead Last Modified Date (generic)",
+      "current contact timestamps",
+      "sales/user/vehicle fields"
+    ],
+    "old_new_status_transition_timestamp_or_note_present": false,
+    "columns_added": false,
+    "filters_set": false,
+    "rows_retrieved": false,
+    "report_saved": false,
+    "report_exported": false,
+    "report_run": false,
+    "report_scheduled": false,
+    "temp_tab_closed": true
+  },
+  "candidate_snapshot_method": {
+    "ingredients": "current Lead Status/Type + generic Lead Last Modified Date + stable IDs",
+    "candidate_only": true,
+    "prospective": true,
+    "satisfies_frozen_direct_stage_history": false,
+    "can_miss_intermediate_transitions_and_notes": true,
+    "cannot_backfill_history": true,
+    "snapshot_change_time_only_brackets_event_between_captures": true,
+    "is_crm_transition_timestamp": false,
+    "requires_separately_authorized_sales_only_source": true,
+    "requires_cadence_retention_stable_key_privacy_admission_design": true,
+    "scheduled_now": false,
+    "substitution_or_inference_forbidden": true,
+    "note": "A prospective snapshot idea only. Snapshot change time merely brackets an event between two captures; it is NOT the CRM transition timestamp and cannot reconstruct old/new status or the causal note. It requires a separately authorized/contracted Sales-only source with cadence, retention, stable-key, privacy, and admission design before any use; nothing is scheduled now."
+  },
+  "privacy_and_safety": {
+    "pii_captured": false,
+    "raw_rows_captured": false,
+    "message_content_captured": false,
+    "source_bytes_captured": false,
+    "source_files_captured": false,
+    "no_identified_service_parts_rows_or_fields_captured": true,
+    "service_parts_admitted": 0,
+    "dealer_id": "21043",
+    "operation_scope_sales_only": true,
+    "candidate_source_sales_only_verified": false,
+    "candidate_service_free_note": "The candidate Leads dataset's Sales-only scope was NOT verified: the Leads domain permits Service/Parts lead types and no row/filter/period proof was obtained. Zero Service/Parts were ADMITTED only because no bytes/rows/source were acquired or admitted; this is NOT proof the candidate source is Service-free.",
+    "report_run_save_export_download_schedule_filter_crm_mutation": false,
+    "no_raw_url_query_or_token_stored": true,
+    "missing_is_not_zero": true
+  },
+  "global_unavailability": {
+    "claimed": false,
+    "note": "Search misses / unrelated / metadata-only matches are FINITE-PASS evidence only. This is NEVER a global VinSolutions/Cox unavailability claim, never missing=zero, and never a terminal-unavailable conclusion."
+  },
+  "conclusion": "Candidate ingredients (current status/type, generic last-modified, stable IDs) exist, but the frozen DIRECT stage-history source (bulk old-status + new-status + transition timestamp + stable key, plus the transition note for SW-040) remains UNPROVED. Finite pass only; NOT globally unavailable. SW-038/039/040 remain source_investigation_pending, not acquired, not measured, not gradable, hidden, non-alert, no customer emission/value/target/grade.",
+  "owners": {
+    "status_audit_request_decision": "Duane Wells",
+    "positive_stage_history_export_investigation": "Codex VinSolutions controller",
+    "stage_history_detection_implementation": "Claude Studio engineering",
+    "immediate_action_owner": "Codex VinSolutions controller",
+    "next_action_owner": "Codex VinSolutions controller",
+    "note": "Roles mirror the frozen pkt-03-01-binding.json SW-038/039/040 accountable_owners exactly; Duane owns only the business status-audit-request decision; Codex owns the read-only positive stage-history investigation and immediate/next action; Claude owns later implementation. Duane is never assigned technical source investigation or implementation."
+  },
+  "next_safe_action": "No promotion. If pursued later, a separately authorized finite step must prove a bulk stage-history/transition-audit export (old/new status + transition timestamp + stable key + note) or a governed prospective snapshot source with cadence/retention/privacy/admission design. Schedule nothing now.",
+  "no_action_statement": "No acquisition, admission, calculation, regrade, alert, customer output, merge, deploy, Gmail, schedule change, filter, CRM mutation, or VinSolutions write. No new source/vocabulary/value/grade/transition/customer projection. No substitution or inference from current-state snapshot into frozen stage-history requirements."
+}
