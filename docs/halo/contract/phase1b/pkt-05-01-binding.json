@@ -1,0 +1,981 @@
+{
+  "artifact": "pkt-05-01-binding",
+  "version": "1.0.0",
+  "packet_id": "PKT-05-01",
+  "module": 5,
+  "scope": "authority_binding_and_validation_gate_only",
+  "state": "freeze_candidate",
+  "immutable_after_independent_pass": false,
+  "note": "PKT-05-01 J1 freeze-candidate binding. Design-only, additive, CREATE-only. Two rows (SW-021, SW-022) are authoritative accepted carry-forward from the frozen Gate 5B model (byte-semantic; not recomputed/regraded/reinterpreted); the other seven are honest source_investigation_pending. Known scheduled-CRM / communication component evidence is SUPPORTING context only; external/unproved-source conditions use conditional presently-not-proved wording (never nonexistent); content-dependent conditions read no content and require a future protected-content/NLP envelope. No target other than the two accepted appears in any evaluation authority. authoritative_evaluated remains exactly 17. No activation, no ledger/index change, no J2. Evidence delta 0/9, meaning delta 0/9. J1 customer emission authority=false.",
+  "management_question": "Which observable Sales-rep activity and communication patterns at Serra Honda—contact cadence, call depth, personalization, channel balance, lead disposition, aging follow-up, CRM engagement, personalized-media use, and BDC-to-floor handoff—can be evaluated reliably from governed evidence, and which still require exact source, history, stable-key, or business-rule proof?",
+  "dealer_scope": {
+    "profile": "serra-honda",
+    "dealer_name": "Serra Honda of Sylacauga",
+    "dealer_id": "21043",
+    "domain": "Sales",
+    "service_parts_admitted": 0,
+    "service_source_admitted": 0,
+    "cross_rooftop_admitted": 0
+  },
+  "period": "2026-08-24..2026-08-30",
+  "customer_emission_authority": false,
+  "customer_projection": null,
+  "packet_accounting_assertion": {
+    "conditions": 295,
+    "modules": 11,
+    "packets": 30
+  },
+  "packet_membership_order": [
+    "SW-019",
+    "SW-020",
+    "SW-021",
+    "SW-022",
+    "SW-023",
+    "SW-024",
+    "SW-025",
+    "SW-026",
+    "SW-027"
+  ],
+  "accountable_owner_roster": {
+    "codex": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+    "studio": "Claude Studio engineering (binding author; later implementer)",
+    "duane": "Duane (business/design/protected-content/threshold decision authority only)"
+  },
+  "accepted_measured_authority": {
+    "ids": [
+      "SW-021",
+      "SW-022"
+    ],
+    "authoritative_evaluated_total": 17,
+    "carry_forward": true,
+    "recomputed": false,
+    "sources": [
+      "gate5b-report-model-21043.json (evaluated)"
+    ],
+    "note": "SW-021/022 carried forward byte-semantically from the frozen Gate 5B evaluated Honda state (their only authority; no Gate 2 anchor, no baseline operational target); no recompute/regrade/reinterpret/period/numerator/denominator/target/confidence change; authoritative_evaluated remains exactly 17."
+  },
+  "authority_absence_assertion": {
+    "ids_checked": [
+      "SW-019",
+      "SW-020",
+      "SW-023",
+      "SW-024",
+      "SW-025",
+      "SW-026",
+      "SW-027"
+    ],
+    "in_gate2_evaluable_conditions": [],
+    "in_baseline_operational_targets": [],
+    "in_gate5b_evaluated": [],
+    "statement": "None of the seven source_investigation_pending IDs appears in any evaluation authority; therefore no value/grade/formula/threshold/baseline/detection rule may be authored for them. Only SW-021/022 are authoritative (Gate 5B evaluated)."
+  },
+  "permanent_rules": [
+    "Honda Serra 21043 Sales only; Service/Parts/service-source/cross-rooftop admitted = 0.",
+    "Missing is not zero; unproved is not unavailable. No proxy, inference, synthetic source, invented denominator, or inferred history.",
+    "SW-021/022 are authoritative accepted carry-forward (Gate 5B evaluated); preserved byte-semantically; not recomputed, regraded, or reinterpreted; no content reopened.",
+    "Known scheduled-CRM / communication component evidence is held as SUPPORTING context only; never erased, never promoted to acquired/admitted; stable IDs/joins/history/rules remain unproved.",
+    "For unproved-source conditions no absolute claim of export/source absence or predetermined external requirement is made; a finite read-only VinSolutions field/export check runs first, then a named external/product-support route only if needed.",
+    "Content-dependent conditions read NO message/note content in J1 and store no raw content/PII; future detection requires an explicit protected-content/NLP envelope, stable keys, data minimization, and Duane authority.",
+    "Current status / last-edited time must NEVER substitute for status-transition history (SW-023).",
+    "Do not use, normalize, or cure any quarantined source family based on clean rows.",
+    "Business-language causal labels in the catalog are NOT factual diagnoses.",
+    "J1 customer emission authority=false: no customer-visible output/report/finding/alert/notification.",
+    "Duane owns only business definitions, starter-threshold ratification, protected-content authority, and outcome changes; never technical investigation/acquisition/admission/accumulation/normalization/calculation/implementation; product/named-external owner only after a finite investigation proves need.",
+    "Catalog starter phrases (e.g. '<3', '2 consecutive days', '90 seconds', '>70%', '5:1', '>2x', '>72 hours', '>24 hours', '24 hours') are NOT ratified thresholds and must not be treated as authority."
+  ],
+  "source_family_slices": {
+    "slice_outbound_activity_cadence": [
+      "SW-019"
+    ],
+    "slice_call_depth_external": [
+      "SW-020"
+    ],
+    "slice_accepted_message_behavior": [
+      "SW-021",
+      "SW-022"
+    ],
+    "slice_lead_disposition_and_aging": [
+      "SW-023",
+      "SW-024"
+    ],
+    "slice_crm_engagement_and_media": [
+      "SW-025",
+      "SW-026"
+    ],
+    "slice_bdc_floor_handoff": [
+      "SW-027"
+    ]
+  },
+  "lifecycle_partition": {
+    "target_ids": [
+      "SW-019",
+      "SW-020",
+      "SW-021",
+      "SW-022",
+      "SW-023",
+      "SW-024",
+      "SW-025",
+      "SW-026",
+      "SW-027"
+    ],
+    "accepted_measured_ids": [
+      "SW-021",
+      "SW-022"
+    ],
+    "accepted_disposition_only_ids": [],
+    "rejected_ids": [],
+    "source_investigation_pending_ids": [
+      "SW-019",
+      "SW-020",
+      "SW-023",
+      "SW-024",
+      "SW-025",
+      "SW-026",
+      "SW-027"
+    ],
+    "calculation_pending_ids": []
+  },
+  "service_parts_zero_admission": {
+    "service_parts_admitted": 0,
+    "held_families": [
+      "outbound_call_cadence",
+      "talk_duration_source_unproved",
+      "lead_disposition_history_source_unproved",
+      "lead_aging_join",
+      "crm_login_event_source_unproved",
+      "personalized_media_usage",
+      "bdc_handoff_followup_identity"
+    ],
+    "quarantined_families": [
+      "cage_kpi",
+      "lead_source_roi",
+      "sales_comm_log"
+    ],
+    "quarantine_rule": "quarantined families are TERMINAL and must not be used/normalized/cured on clean rows",
+    "note": "SW-021/022 accepted from Gate 5B (CRM messaging log). Known scheduled-CRM/communication classes are SUPPORTING context only. Unproved-source conditions require a finite VinSolutions-or-named-external read-only check (no CRM proxy). Content-dependent conditions read no content. None uses a quarantined family; none admits Service/Parts."
+  },
+  "cross_dealer_exclusion": {
+    "excluded_dealers": [
+      {
+        "profile": "serra-nissan",
+        "dealer_id": "21044"
+      },
+      {
+        "profile": "tony-serra-ford",
+        "dealer_id": "21047"
+      }
+    ],
+    "note": "No Nissan (21044) or Ford (21047) source, delivery, or scope is admitted."
+  },
+  "prior_packets_preserved": {
+    "pkt_02_03_status": "open/held (not reopened, not closed)",
+    "sw_137_investigation": "exhausted; not repeated",
+    "sw_140_investigation": "exhausted; not repeated",
+    "files_must_remain_byte_identical": [
+      "docs/halo/contract/phase1b/pkt-02-03-binding.json",
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_SW-137_DISCOVERY_RESULT.json",
+      "docs/halo/evidence/honda-watchdog/phase1b/pkt-02-03/PKT-02-03_SW-140_DISCOVERY_RESULT.json"
+    ]
+  },
+  "two_delta": {
+    "evidence_delta": {
+      "count": 0,
+      "of": 9,
+      "reason": "design-only; no source acquired/admitted this tranche (accepted rows are carry-forward, not new evidence)"
+    },
+    "meaning_delta": {
+      "count": 0,
+      "of": 9,
+      "reason": "no new value/grade/finding; accepted rows preserved byte-semantically; held produce none"
+    }
+  },
+  "pins": {
+    "baseline_commit": "11ecd2835efb1cfbe3cad00d1fef045be3db4ec9",
+    "catalog_sha256_expected": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1"
+  },
+  "pinned_source_hashes": {
+    "docs/halo/contract/semantic-watchdog-feasibility-matrix-295.json": "29c7ac06130f9b4fe8d5df0a2d0d6fffed7c6ff4dc02eca96e0f44d109a04fc1",
+    "docs/halo/contract/gate2-evaluator-contract.json": "9bdc266438befe562b5197891e68afc15c797338b29152bb3aaf341a6f28fdd4",
+    "docs/halo/contract/baseline-registry.json": "86de75c49946557153e0e46e2131302a6fc12117862fdd6383c0c88c320da8c4",
+    "docs/halo/evidence/m1r/gate5b/gate5b-report-model-21043.json": "04c3f965e1d087e9f5835d69e14a368d24c6af5a10743e593d9dc54516f129eb",
+    "docs/halo/contract/phase1b/master-ledger-295.json": "a5e4dd0b00ddfb48642d342a0bef0c49cb40a85d3bb375879e636b3d5cc7543a",
+    "docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json": "13c0fca11241c5608d7da1e434383a4e881c886ecbd696414bebdd5a8db636c6"
+  },
+  "legacy_validator": {
+    "file": "scripts/halo-phase1b/validate_phase1b.py",
+    "pinned_baseline_count": 30,
+    "pinned_baseline_signature_sha256": "2cbf86a6361f4c67803807d5d7d7d496413a4b20924da42516ff80d7d3d46783",
+    "delta_new": 0,
+    "classification": "J1 is CREATE-only and changes no ledger/gate authority, so validate_phase1b.py remains the pinned canonical 30-error signature UNION 0 new; same-count substitution rejected."
+  },
+  "validator": "scripts/halo-phase1b/validate_pkt_05_01_binding.py",
+  "checks_receipt": "docs/halo/evidence/honda-watchdog/phase1b/pkt-05-01/PKT-05-01_BINDING_CHECKS.json",
+  "metrics": [
+    {
+      "id": "SW-019",
+      "canonical_condition": "Rep logs fewer than 3 outbound calls/day for 2 consecutive days.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does the rep log fewer than 3 outbound calls/day for 2 consecutive days?",
+      "population": "Serra Honda 21043 Sales rep outbound-call activity only",
+      "history_requirement": "Requires a governed outbound-call source with stable rep/day keys and daily grain over consecutive days; unproved.",
+      "calculation_kind_intent": "consecutive_day_cadence_flag",
+      "unit_intent": "count/day (undefined until source/keys + rule are proved/ratified)",
+      "source_family_intent": "outbound_call_cadence",
+      "source_family_slice": "slice_outbound_activity_cadence",
+      "required_direct_fields_or_keys": [
+        "outbound_call_events",
+        "rep_key",
+        "call_date",
+        "daily_grain_aggregation"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the sales-only communication corpus is KNOWN and supports investigation of outbound-call activity, held as SUPPORTING context only; it does NOT prove the consecutive-day logic, stable rep/day keys, or the required joins for this condition",
+        "the '<3 outbound calls/day for 2 consecutive days' rule, the daily-grain aggregation, and stable keys are UNPROVED; the numbers are catalog starter phrases, not ratified thresholds",
+        "missing is not zero; not-yet-proved is not unavailable; no proxy or inference; no quarantined-source cure"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of a governed outbound-call source with stable rep/day keys + daily grain (Sales only; no proxy)",
+        "Duane-ratified consecutive-day cadence rule and thresholds",
+        "Studio implementation of the cadence flag after source/key proof + rule"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "outbound_call_source_and_key_read_only_proof_and_acquisition": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "cadence_rule_business_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "cadence_calculation_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether a governed outbound-call source with stable rep/day keys and daily grain exists (Sales only); aggregate-only, no PII, no raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify the consecutive-day cadence rule and thresholds (definition decision only)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the cadence flag after source/key proof + rule."
+        }
+      ],
+      "review_point": "on PKT-05-01 activation (J2), after source/key proof + cadence rule",
+      "next_safe_source_action": "Codex bounded read-only source/key check for the outbound-call series (stable rep/day keys, daily grain); aggregate-only, no PII/raw rows.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-020",
+      "canonical_condition": "Rep's talk-time-per-lead falls below 90 seconds average (skim behavior).",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does the rep's talk-time-per-lead fall below the depth threshold (skim behavior)?",
+      "population": "Serra Honda 21043 Sales rep call activity only",
+      "history_requirement": "Blocked on an exact talk-duration source; not a CRM-native history question.",
+      "calculation_kind_intent": "talk_time_threshold_flag",
+      "unit_intent": "seconds (undefined until the source is proved and the threshold is ratified)",
+      "source_family_intent": "talk_duration_source_unproved",
+      "source_family_slice": "slice_call_depth_external",
+      "required_direct_fields_or_keys": [
+        "talk_duration_per_call",
+        "rep_key",
+        "lead_key"
+      ],
+      "missing_or_quarantine_evidence": [
+        "no exact governed export/source is presently proved or found for this condition in governed evidence (docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json)",
+        "a finite read-only check must test whether the exact fields/export exist in governed VinSolutions evidence, then a named external / product-support route only if needed; this is NOT predetermined and data/export is NOT claimed to not exist",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; no quarantined-source cure",
+        "no exact talk-duration source is presently proved; the '90 seconds' figure is a catalog starter phrase, not a ratified threshold; 'skim behavior' is a business label, not a factual diagnosis; cause must not be diagnosed"
+      ],
+      "required_future_contract": [
+        "Codex read-only check of whether exact talk-duration fields exist in governed VinSolutions evidence, then a named external/product-support source only if needed",
+        "Duane-ratified talk-time-per-lead threshold",
+        "Studio implementation of the talk-time flag after the source is proved + threshold"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "talk_duration_source_read_only_check": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "talk_time_threshold_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "talk_time_calculation_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only check of whether exact talk-duration fields exist in governed VinSolutions evidence, or whether a named external/product-support source would be needed; aggregate-only, no PII, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify the talk-time-per-lead threshold (threshold decision only)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the talk-time flag after the source is proved + threshold."
+        }
+      ],
+      "review_point": "on PKT-05-01 activation (J2), after the source check + talk-time threshold",
+      "next_safe_source_action": "Codex bounded read-only field check (VinSolutions-or-named-external) for talk duration; aggregate-only, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-021",
+      "canonical_condition": "Rep sends identical templated message to >70% of leads (no personalization).",
+      "disposition": "measured_validated",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "evaluation_state": "measured_graded",
+      "report_acceptance_state": "accepted",
+      "authoritative": true,
+      "carry_forward": true,
+      "recomputed_this_tranche": false,
+      "future_display_eligibility": true,
+      "customer_projection_authored_this_tranche": false,
+      "value": 0.18181818181818182,
+      "value_display": "18.2%",
+      "unit": "ratio",
+      "numerator": 2,
+      "denominator": 11,
+      "rating": "breach",
+      "grade_value_or_range": "breach",
+      "threshold": 0,
+      "comparator": ">",
+      "direction": "lower_is_better",
+      "grade_target_id": "GT-SW-021",
+      "grade_basis": "operational_target",
+      "formula": null,
+      "gate2_anchor": null,
+      "ot_anchor": null,
+      "detection_rule": "SW-021: authoritative evaluated ratio vs > 0 (lower_is_better); carried forward, not recomputed.",
+      "direct_source_fields": [],
+      "accepted_evaluation": {
+        "claim": "fact",
+        "metric_id": "SW-021",
+        "label": "Templated messages with no personalization",
+        "value": 0.18181818181818182,
+        "value_display": "18.2%",
+        "unit": "ratio",
+        "operational_target": {
+          "kind": "operational_target",
+          "value": 0,
+          "value_display": "0%",
+          "comparator": ">",
+          "direction": "lower_is_better"
+        },
+        "variance": {
+          "native": 0.18181818181818182,
+          "display": "+18.2 pp"
+        },
+        "rating": "breach",
+        "peer_rank": {
+          "rank": 2,
+          "tie": false,
+          "of": 3
+        },
+        "confidence": "low",
+        "evidence": {
+          "source": "CRM messaging log",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+          "numerator": 2,
+          "denominator": 11
+        },
+        "industry_reference": null,
+        "text": "Templated messages with no personalization: 18.2% (target at or below 0%; off target; middle of the three rooftops)."
+      },
+      "current_truth_ref": "gate5b-report-model-21043.json (evaluated)",
+      "source_family_slice": "slice_accepted_message_behavior",
+      "accountable_owners": {
+        "authoritative_carry_forward_preservation": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "future_customer_display_authorization": "Duane (business/design/protected-content/threshold decision authority only)"
+      },
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Preserve the authoritative evaluated Honda state for SW-021 byte-for-byte; do not recompute, regrade, reinterpret, or change period/numerator/denominator/target/confidence in this design-only tranche; no message content is reopened."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize future customer display of SW-021 only under a separate customer-emission decision; J1 emission authority remains false."
+        }
+      ],
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "review_point": "next accepted period (recompute on new governed delivery)",
+      "authority": "authoritative accepted+evaluated Honda truth carried forward byte-semantically; authoritative_evaluated remains exactly 17"
+    },
+    {
+      "id": "SW-022",
+      "canonical_condition": "Rep's text-to-call ratio exceeds 5:1 (avoiding voice contact).",
+      "disposition": "measured_validated",
+      "source_existence_state": "acquired_local",
+      "acquisition_admission_state": "admitted_held",
+      "evaluation_state": "measured_graded",
+      "report_acceptance_state": "accepted",
+      "authoritative": true,
+      "carry_forward": true,
+      "recomputed_this_tranche": false,
+      "future_display_eligibility": true,
+      "customer_projection_authored_this_tranche": false,
+      "value": 0.1,
+      "value_display": "10%",
+      "unit": "ratio",
+      "numerator": 1,
+      "denominator": 10,
+      "rating": "breach",
+      "grade_value_or_range": "breach",
+      "threshold": 0,
+      "comparator": ">",
+      "direction": "lower_is_better",
+      "grade_target_id": "GT-SW-022",
+      "grade_basis": "operational_target",
+      "formula": null,
+      "gate2_anchor": null,
+      "ot_anchor": null,
+      "detection_rule": "SW-022: authoritative evaluated ratio vs > 0 (lower_is_better); carried forward, not recomputed.",
+      "direct_source_fields": [],
+      "accepted_evaluation": {
+        "claim": "fact",
+        "metric_id": "SW-022",
+        "label": "Text-vs-call balance (voice avoidance)",
+        "value": 0.1,
+        "value_display": "10%",
+        "unit": "ratio",
+        "operational_target": {
+          "kind": "operational_target",
+          "value": 0,
+          "value_display": "0%",
+          "comparator": ">",
+          "direction": "lower_is_better"
+        },
+        "variance": {
+          "native": 0.1,
+          "display": "+10 pp"
+        },
+        "rating": "breach",
+        "peer_rank": {
+          "rank": 1,
+          "tie": false,
+          "of": 3
+        },
+        "confidence": "low",
+        "evidence": {
+          "source": "CRM messaging log",
+          "period": {
+            "start": "2026-08-24",
+            "end": "2026-08-30"
+          },
+          "freshness": "weekly; accepted period 2026-08-24..2026-08-30",
+          "numerator": 1,
+          "denominator": 10
+        },
+        "industry_reference": null,
+        "text": "Text-vs-call balance (voice avoidance): 10% (target at or below 0%; off target; strongest of the three rooftops)."
+      },
+      "current_truth_ref": "gate5b-report-model-21043.json (evaluated)",
+      "source_family_slice": "slice_accepted_message_behavior",
+      "accountable_owners": {
+        "authoritative_carry_forward_preservation": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "future_customer_display_authorization": "Duane (business/design/protected-content/threshold decision authority only)"
+      },
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Preserve the authoritative evaluated Honda state for SW-022 byte-for-byte; do not recompute, regrade, reinterpret, or change period/numerator/denominator/target/confidence in this design-only tranche; no message content is reopened."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize future customer display of SW-022 only under a separate customer-emission decision; J1 emission authority remains false."
+        }
+      ],
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "review_point": "next accepted period (recompute on new governed delivery)",
+      "authority": "authoritative accepted+evaluated Honda truth carried forward byte-semantically; authoritative_evaluated remains exactly 17"
+    },
+    {
+      "id": "SW-023",
+      "canonical_condition": "Rep marks leads \"bad/lost\" at >2x team average (premature disqualification).",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does the rep mark leads bad/lost at more than twice the team average (premature disqualification)?",
+      "population": "Serra Honda 21043 Sales rep lead-disposition activity only",
+      "history_requirement": "Requires status-transition history; current status/last-edited time must never substitute for it; unproved.",
+      "calculation_kind_intent": "disposition_rate_vs_team_flag",
+      "unit_intent": "rate ratio (undefined until history + baseline + rule are proved/ratified)",
+      "source_family_intent": "lead_disposition_history_source_unproved",
+      "source_family_slice": "slice_lead_disposition_and_aging",
+      "required_direct_fields_or_keys": [
+        "lead_status_transition_history",
+        "rep_key",
+        "team_average_baseline",
+        "stable_lead_key"
+      ],
+      "missing_or_quarantine_evidence": [
+        "no exact governed export/source is presently proved or found for this condition in governed evidence (docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json)",
+        "a finite read-only check must test whether the exact fields/export exist in governed VinSolutions evidence, then a named external / product-support route only if needed; this is NOT predetermined and data/export is NOT claimed to not exist",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; no quarantined-source cure",
+        "current Lead Log / current-process 'Last Edited By' context is KNOWN and held as SUPPORTING context only; the current status or last-edited time must NEVER substitute for status-transition history",
+        "the status-transition history, stable keys, team-average baseline, and the '>2x team average' rule are UNPROVED; '>2x' is a catalog starter phrase, not a ratified threshold; 'premature disqualification' is a business label, not a factual diagnosis; cause must not be diagnosed"
+      ],
+      "required_future_contract": [
+        "Codex read-only check of whether a governed lead-status-transition-history export exists in VinSolutions, then a named external/product-support source only if needed",
+        "Duane-ratified disqualification rule and team-average baseline",
+        "Studio implementation of the disposition-rate flag after history proof + rule"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "status_transition_history_source_read_only_check": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "disqualification_rule_and_baseline_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "disposition_calculation_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only check of whether a governed lead-status-transition-history export exists in VinSolutions, or whether a named external/product-support source would be needed (current status/last-edited time is not a substitute); aggregate-only, no PII, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify the disqualification rule and the team-average baseline (definition decision only; cause is not to be diagnosed)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the disposition-rate flag after status-transition-history proof + rule."
+        }
+      ],
+      "review_point": "on PKT-05-01 activation (J2), after status-transition-history proof + rule/baseline",
+      "next_safe_source_action": "Codex bounded read-only field/export check (VinSolutions-or-named-external) for lead status-transition history; aggregate-only, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-024",
+      "canonical_condition": "Rep hasn't touched an open lead in >72 hours (aging neglect).",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Has the rep not touched an open lead beyond the aging window (aging neglect)?",
+      "population": "Serra Honda 21043 Sales open leads only",
+      "history_requirement": "Requires open-state history + last-touch linkage + period alignment; components known, joins/keys unproved.",
+      "calculation_kind_intent": "aging_window_flag",
+      "unit_intent": "hours (undefined until the join/keys + window are proved/ratified)",
+      "source_family_intent": "lead_aging_join",
+      "source_family_slice": "slice_lead_disposition_and_aging",
+      "required_direct_fields_or_keys": [
+        "open_lead_state_history",
+        "last_touch_event",
+        "stable_lead_key",
+        "period_alignment"
+      ],
+      "missing_or_quarantine_evidence": [
+        "known lead and communication component classes are KNOWN and held as SUPPORTING context only, but the open-state history, last-touch linkage, period alignment, and stable keys are UNPROVED",
+        "the '>72 hours' aging window is a catalog starter phrase, not a ratified threshold; 'aging neglect' is a business label, not a factual diagnosis; cause must not be diagnosed",
+        "missing is not zero; not-yet-proved is not unavailable; no proxy or inference; no quarantined-source cure"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of open-state history, last-touch linkage, stable keys, and period alignment (Sales only; no proxy)",
+        "Duane-ratified aging window",
+        "Studio implementation of the aging flag after join/key proof + window"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "open_state_history_and_key_read_only_proof_and_acquisition": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "aging_window_business_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "aging_join_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of open-state history, last-touch linkage, stable keys, and period alignment (Sales only); aggregate-only, no PII, no raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify the aging window (threshold decision only)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the aging flag after join/key proof + window."
+        }
+      ],
+      "review_point": "on PKT-05-01 activation (J2), after open-state history/key proof + aging window",
+      "next_safe_source_action": "Codex bounded read-only key/cardinality check for open-state history + last-touch linkage; aggregate-only, no PII/raw rows.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-025",
+      "canonical_condition": "Rep's CRM login gap exceeds 24 hours during active shift.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does the rep's CRM login gap exceed the threshold during an active shift?",
+      "population": "Serra Honda 21043 Sales rep CRM login activity only",
+      "history_requirement": "Blocked on a governed bulk login-event source; only a dashboard/UI surface is known.",
+      "calculation_kind_intent": "login_gap_flag",
+      "unit_intent": "hours (undefined until the source is proved and the definitions are ratified)",
+      "source_family_intent": "crm_login_event_source_unproved",
+      "source_family_slice": "slice_crm_engagement_and_media",
+      "required_direct_fields_or_keys": [
+        "crm_login_events",
+        "rep_key",
+        "active_shift_reference"
+      ],
+      "missing_or_quarantine_evidence": [
+        "no exact governed export/source is presently proved or found for this condition in governed evidence (docs/halo/evidence/m1r/scheduled/native-scheduled-evidence.json)",
+        "a finite read-only check must test whether the exact fields/export exist in governed VinSolutions evidence, then a named external / product-support route only if needed; this is NOT predetermined and data/export is NOT claimed to not exist",
+        "no CRM data may be used as a proxy, simulated, or substituted; missing is not zero; not-yet-proved is not unavailable; no quarantined-source cure",
+        "only a dashboard/UI surface is KNOWN; no governed bulk CRM login-event source is presently proved; the '>24 hours during active shift' rule and the 'active shift' definition are UNPROVED and are catalog starter phrases, not ratified thresholds"
+      ],
+      "required_future_contract": [
+        "Codex read-only check of whether a governed bulk CRM login-event source exists in VinSolutions, then a named external/product-support source only if needed",
+        "Duane-ratified active-shift definition and login-gap threshold",
+        "Studio implementation of the login-gap flag after the source is proved + definitions"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "login_event_source_read_only_check": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "active_shift_and_gap_threshold_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "login_gap_calculation_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only check of whether a governed bulk CRM login-event source exists in VinSolutions, or whether a named external/product-support source would be needed; aggregate-only, no PII, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Ratify the active-shift definition and the login-gap threshold (definition/threshold decision only)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the login-gap flag after the source is proved + definitions."
+        }
+      ],
+      "review_point": "on PKT-05-01 activation (J2), after the source check + active-shift/gap definitions",
+      "next_safe_source_action": "Codex bounded read-only field/export check (VinSolutions-or-named-external) for CRM login events; aggregate-only, no PII/raw rows, no proxy.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-026",
+      "canonical_condition": "Rep never uses video/personalized media while peers do (engagement gap).",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does the rep never use video/personalized media while peers do (engagement gap)?",
+      "population": "Serra Honda 21043 Sales rep media-usage activity only",
+      "history_requirement": "Requires personalized-media usage semantics + peer baseline + stable keys; corpus supports but does not prove.",
+      "calculation_kind_intent": "media_usage_gap_flag",
+      "unit_intent": "flag (undefined until media semantics + keys + baseline are proved/ratified)",
+      "source_family_intent": "personalized_media_usage",
+      "source_family_slice": "slice_crm_engagement_and_media",
+      "required_direct_fields_or_keys": [
+        "personalized_media_usage_events",
+        "rep_key",
+        "peer_comparison_baseline",
+        "stable_key"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the sales-only communication corpus is KNOWN and supports investigation, held as SUPPORTING context only; it does NOT prove the personalized-media (video) semantics, stable keys, peer-comparison baseline, or joins",
+        "message/media content is NOT read in J1; future content-dependent detection requires an explicit protected-content/NLP envelope, stable keys, data minimization, and Duane authority; provisional labels are not stable linkage",
+        "'engagement gap' is a business label, not a factual diagnosis; missing is not zero; not-yet-proved is not unavailable; no proxy; no quarantined-source cure"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of a governed personalized-media usage source with stable keys (metadata only, NO content read)",
+        "Duane authorization of the protected-content/NLP envelope and the personalized-media rule + peer baseline",
+        "Studio implementation of the media-usage NLP under the protected envelope (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "personalized_media_source_and_key_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_media_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "media_usage_nlp_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of whether a governed personalized-media (video) usage source with stable keys exists (metadata only, NO content read); aggregate-only, no PII, no raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the personalized-media rule and peer baseline (authority/definition decision only; content remains unread)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the media-usage NLP under the authorized protected envelope after keys + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-05-01 activation (J2), after media-source/key proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only source/key check for personalized-media usage (metadata only); aggregate-only, NO content read, no PII/raw rows.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    },
+    {
+      "id": "SW-027",
+      "canonical_condition": "Manager BDC-to-floor handoff has no follow-up note within 24 hours.",
+      "disposition": "source_investigation_pending",
+      "source_existence_state": "unproved",
+      "acquisition_admission_state": "not_acquired",
+      "evaluation_state": "not_measured",
+      "report_acceptance_state": "draft",
+      "authoritative": false,
+      "carry_forward": false,
+      "recomputed_this_tranche": false,
+      "gradable": false,
+      "value_allowed": false,
+      "grade_allowed": false,
+      "narrative_allowed": false,
+      "customer_projection_allowed": false,
+      "future_display_eligibility": false,
+      "customer_projection_authored_this_tranche": false,
+      "value": null,
+      "value_display": null,
+      "numerator": null,
+      "denominator": null,
+      "formula": null,
+      "threshold": null,
+      "comparator": null,
+      "direction": null,
+      "grade_target_id": null,
+      "grade_basis": null,
+      "grade_value_or_range": null,
+      "detection_rule": null,
+      "ot_anchor": null,
+      "gate2_anchor": null,
+      "accepted_evaluation": null,
+      "direct_source_fields": [],
+      "business_question": "Does a manager BDC-to-floor handoff have no follow-up note within the window?",
+      "population": "Serra Honda 21043 Sales BDC-to-floor handoffs only",
+      "history_requirement": "Requires handoff/follow-up identity + note-within-window join + stable keys; corpus supports but does not prove.",
+      "calculation_kind_intent": "handoff_followup_flag",
+      "unit_intent": "flag (undefined until identity/keys + window are proved/ratified)",
+      "source_family_intent": "bdc_handoff_followup_identity",
+      "source_family_slice": "slice_bdc_floor_handoff",
+      "required_direct_fields_or_keys": [
+        "bdc_to_floor_handoff_event",
+        "follow_up_note_marker",
+        "stable_handoff_key",
+        "note_timestamp"
+      ],
+      "missing_or_quarantine_evidence": [
+        "the sales-only communication corpus is KNOWN and supports investigation, held as SUPPORTING context only; it does NOT prove the handoff/follow-up identity, stable keys, or the note-within-window join",
+        "note content is NOT read in J1; future content-dependent detection requires an explicit protected-content/NLP envelope, stable keys, data minimization, and Duane authority; provisional labels are not stable linkage",
+        "the '24 hours' follow-up window is a catalog starter phrase, not a ratified threshold; missing is not zero; not-yet-proved is not unavailable; no proxy; no quarantined-source cure"
+      ],
+      "required_future_contract": [
+        "Codex read-only proof of the BDC-to-floor handoff and follow-up identity keys and the note-within-window join (metadata only, NO content read)",
+        "Duane authorization of the protected-content/NLP envelope and the handoff/follow-up rule",
+        "Studio implementation of the handoff/follow-up detection under the protected envelope (no content emitted)"
+      ],
+      "missing_is_not_zero": true,
+      "no_proxy_or_inference": true,
+      "no_causal_diagnosis_asserted": true,
+      "accountable_owners": {
+        "handoff_identity_and_key_read_only_proof": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "protected_content_authorization_and_handoff_rule_decision": "Duane (business/design/protected-content/threshold decision authority only)",
+        "handoff_followup_implementation": "Claude Studio engineering (binding author; later implementer)"
+      },
+      "next_action_owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+      "immediate_action": {
+        "owner": "Codex VinSolutions controller (read-only source/admission authority; governed acquisition)",
+        "action": "Bounded read-only proof of the BDC-to-floor handoff and follow-up identity keys and the note-within-window join (metadata only, NO content read); aggregate-only, no PII, no raw rows, no proxy."
+      },
+      "subsequent_actions": [
+        {
+          "owner": "Duane (business/design/protected-content/threshold decision authority only)",
+          "action": "Authorize the protected-content/NLP envelope and ratify the handoff/follow-up rule (authority/definition decision only; content remains unread)."
+        },
+        {
+          "owner": "Claude Studio engineering (binding author; later implementer)",
+          "action": "Implement the handoff/follow-up detection under the authorized protected envelope after identity/keys + rule; no content emitted."
+        }
+      ],
+      "review_point": "on PKT-05-01 activation (J2), after handoff-identity/key proof + protected envelope + rule",
+      "next_safe_source_action": "Codex bounded read-only identity/key check for the BDC-to-floor handoff + follow-up (metadata only); aggregate-only, NO content read, no PII/raw rows.",
+      "authority": "non-authoritative provisional planning state; Sales source EXISTENCE unproved; a finite read-only investigation is required before any other disposition may be asserted (AMENDMENT_001 state #8)."
+    }
+  ]
+}
