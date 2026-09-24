@@ -198,3 +198,72 @@ otherwise ask Duane; report to Duane in three to five lines each time something 
 tmux new-session -d -s serra-S0 -c /home/ubuntu/Claude-store/huminic-studio \
   'claude --model sonnet --dangerously-skip-permissions "Read /home/ubuntu/Claude-store/huminic-studio/2026-09-24-serra-recovery-finish-plan.md. Execute tranche S0 only, following the Rules section exactly. End with READY <sha> or BLOCKED <reason>."'
 ```
+
+
+## NIGHT TRANCHE (added 2026-09-24 ~00:00 CT by Major; supersedes S1–S3 ordering for tonight)
+
+Deadline: customers at Serra Ford and Serra Nissan get their catch-up text at 08:00 CT today, and the
+store managers get the Daily AI Management Report by email at 08:00 CT today. You have ~90 minutes. Prefer
+the simplest correct change. Everything you write is read-only against live systems: NO docker, NO sends.
+
+### N1 — Catch-up audience flags + live preview runner + report emailer (opus; ~90 min)
+Baseline: `defects/finish-plan-evidence/test-baseline-be8556ae2.txt` (1279 passed / 1 skipped). Start by
+reading `scripts/catchup-followup.ts`, `src/server/catchup-followup.ts`, `src/server/comms-preview.ts`,
+`src/server/daily-management-report.ts`, `src/server/lead-source-report.ts`, `src/server/text-report.ts`,
+`src/server/lead-aging.ts`, `src/server/messaging-hub-store.ts` (message/thread readers) and
+`src/server/vin-client.ts` (lead query + `resolveLeadNames`). Commit `wip(N1.x)` after each step.
+
+**N1.1 — Catch-up script flags** (`scripts/catchup-followup.ts` + `src/server/catchup-followup.ts`):
+- `--since YYYY-MM-DD`: explicit `createdUtc` floor (UTC midnight). When given, the lead query window starts
+  there (overrides `--days`), and any lead with `createdUtc < since` is dropped with reason `before since floor`.
+- `--exclude-source "<name>"` (repeatable): drop a lead whose lead-source NAME (resolved the way the rest of
+  the codebase resolves source ids to names; fall back to the raw id string) equals the value,
+  case-insensitive, reason `excluded source: <name>`.
+- `--skip-texted-since YYYY-MM-DD`: drop a candidate whose canonical phone has ANY outbound `sms` message in
+  the profile's messaging-hub `messages` table on/after that date (read through the existing store helpers,
+  read-only), reason `already texted since <date>`. This covers Ford customers who were texted 2026-08-15→25
+  through the reply path and are not in the automation ledger.
+- `--csv <path>`: in dry-run, ALSO write a CSV: `decision,phone_last4,firstName,leadId,createdUtc,leadType,
+  leadSource,reason` with one row per candidate (`SEND`) and per dropped lead (`DROP`), plus a
+  `<path>.summary.json` with every count (polled, active, sales, dropped-by-reason, candidates).
+- Dry-run stays the default; `--send` semantics unchanged; the CommGate path is untouched.
+- Tests: fixture tests in `src/test/` for each flag through `gatherFollowupCandidates` (inject deps as the
+  existing tests do). Do not touch the existing behaviour when the flags are absent (existing tests stay green).
+
+**N1.2 — Live preview runner** (`scripts/comms-preview.ts`, new): `--profile <p> --date <YYYY-MM-DD, default
+today in the store's comms.business_hours tz> --out <dir>`. Fetch, read-only, everything `assemblePreviewBundle`
+needs and write `<out>/<profile>-preview.txt` (from `renderPreviewText`), `<out>/<profile>-daily-management.json`,
+`<out>/<profile>-lead-source.json`, `<out>/<profile>-text-report.txt`, `<out>/<profile>-alerts.json` and
+`<out>/<profile>-raw-counts.json`. The raw-counts file must hold, for every figure, the raw inputs it was
+computed from (counts, window bounds in ISO, the query used) so Major can reconcile by hand.
+Derivations (use the store's `comms.business_hours` for day/after-hours; "report day" = the previous
+business day 08:00 → today 08:00 local, so overnight rolls in):
+- leadsDuringDay / leadsAfterHours: VIN leads (sales types only, service/parts dropped) by `createdUtc`.
+- afterHoursInboundCalls: inbound `voice` messages/threads in the window created outside business hours.
+- textsSentOnBehalf: outbound `sms` messages in the window. businessHoursTextCount: those inside business hours.
+- teamboxSent / teamboxReceived: from the existing Teambox aggregate helpers (if none exist, count messages by
+  direction on non-sms channels and SAY SO in raw-counts).
+- afterHoursAvgTimeToTextMin: `avgAfterHoursTimeToTextMin` over (inbound, first outbound after it) pairs
+  per thread in the window.
+- leadsLeftBehind: sales leads created ≥24h before window end still in `ACTIVE_NEW_LEAD` with no outbound sms.
+- activeLeads30d: ACTIVE sales leads created in the last 30 days.
+- leadSource windows (24h/7d/30d/prev24h) and the text-report input from the same lead pulls; alerts from
+  `lead-aging.ts` over the current lead set; `staleStatus` = [] tonight (snapshot has no history yet) and say so.
+If a figure cannot be derived from available data, write `null` and the reason; never invent.
+Tests: a fixture test that the runner's pure assembly function writes the six files from an injected input;
+a test that the runner's module graph does not include `dispatchSms`, `dispatchOutbound`, `sendAutomationNow`
+or the TextMagic client.
+
+**N1.3 — Report emailer** (`scripts/send-daily-report.ts`, new): `--profile <p> --from <dir written by N1.2>
+--to a@x,b@y --store-name "<Display name>"`. Renders the Daily AI Management Report as an HTML email using the
+existing email rendering/sending helpers in `src/server/lead-notifications.ts` / `notifications.ts` (export
+what is private; do not fork the template). Subject: `Daily AI Management Report — <Store> — <date>`. Body:
+the report lines as a two-column table, the footnote, and a one-line "Sales only; generated <ISO time>".
+Dry-run by default: prints recipients + the rendered HTML to stdout and writes `<from>/<profile>-email.html`.
+`--send` required to send. Tests: rendering from a fixture bundle; `--send` absent ⇒ no send function called.
+
+**Gate + finish:** `npx vitest run` fully green (≥ baseline passes), `npx vite build` exit 0. Evidence in
+`defects/finish-plan-evidence/N1.md`: the new test names + counts, `--help`/usage of each script, `git diff
+--stat be8556ae2..HEAD`, the suite and build lines. Commit `finish(N1): catch-up flags, live preview runner,
+report emailer`. Print `READY <sha>`. If blocked, `BLOCKED: <reason>` + the question in
+`defects/finish-plan-questions.md`.
