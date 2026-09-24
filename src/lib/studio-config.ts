@@ -477,6 +477,15 @@ const CommsSchema = z
       })
       .optional()
       .default({}),
+    /**
+     * MONITORING (AC8): expected minimum outbound SMS over a rolling 24h for a
+     * store that should be actively texting. When set (>0), the Sentinel raises
+     * a per-store volume-floor alert if the store sent FEWER than this in 24h —
+     * the blind spot that let two dark stores hide behind a healthy one. OPT-IN:
+     * undefined/0 => the store is not expected to send, so no alert. Enable per
+     * store as it goes live.
+     */
+    sms_volume_floor_24h: z.number().int().nonnegative().optional(),
     /** TCPA window applied to sms + voice. */
     business_hours: BusinessHoursSchema,
     /** Check live VinSolutions lead status (DNC / opted-out) before sms/voice. */

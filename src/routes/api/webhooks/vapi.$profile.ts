@@ -32,7 +32,17 @@ import {
   upsertContact,
 } from '../../../server/messaging-hub-store'
 import { dispatchLeadNotification } from '../../../server/lead-notifications'
+import { downloadRecording, recordingPublicUrl } from '../../../server/call-recording'
 import type { AdfLead } from '../../../server/adf-xml'
+
+/** Base URL for links we hand to dealers (mirrors the takeover-link base). */
+function recordingBaseUrl(): string {
+  return (
+    process.env.PUBLIC_BASE_URL ||
+    process.env.STUDIO_PUBLIC_URL ||
+    'https://studio.huminic.app'
+  ).replace(/\/+$/, '')
+}
 
 function readSecret(profile: string): string | null {
   try {
@@ -188,6 +198,30 @@ export const Route = createFileRoute('/api/webhooks/vapi/$profile')({
         })
 
         const lead = buildLeadFromCall(call, event)
+        // P3 (recording-link fix): Vapi hands us a short-lived presigned R2 URL
+        // that rots (dealer later sees an R2 "InvalidArgument/Authorization"
+        // 400). Download the audio to our own disk and hand the dealer an
+        // AUTHENTICATED link to our serving route instead. On any download
+        // failure we keep the raw URL as a (short-lived) fallback + log.
+        if (lead.recording_url && call.id) {
+          const callId = String(call.id)
+          const saved = await downloadRecording({
+            profile,
+            callId,
+            url: lead.recording_url,
+          })
+          if (saved) {
+            const ourUrl = recordingPublicUrl(profile, callId, {
+              baseUrl: recordingBaseUrl(),
+            })
+            if (ourUrl) lead.recording_url = ourUrl
+          } else {
+            console.warn(
+              `[vapi:${profile}] recording download failed for call ${callId}; ` +
+                `falling back to the expiring provider URL`,
+            )
+          }
+        }
         // WS-4 + #207: per-profile dealer notification, routed through the
         // notification matrix (event: inbound_call → configured recipients,
         // else lead_recipient). Format (adf-xml vs plain email) comes from the

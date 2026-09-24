@@ -184,6 +184,7 @@ import { Route as ApiWebhooksTavusProfileRouteImport } from './routes/api/webhoo
 import { Route as ApiTasksTaskIdMoveRouteImport } from './routes/api/tasks/$taskId.move'
 import { Route as ApiSessionsSessionKeyStatusRouteImport } from './routes/api/sessions/$sessionKey.status'
 import { Route as ApiSessionsSessionKeyActiveRunRouteImport } from './routes/api/sessions/$sessionKey.active-run'
+import { Route as ApiRecordingsProfileCallIdRouteImport } from './routes/api/recordings/$profile/$callId'
 import { Route as ApiPublicWidgetsWidgetKeyRouteImport } from './routes/api/public/widgets/$widgetKey'
 import { Route as ApiPublicWidgetJsRouteImport } from './routes/api/public/widget.js'
 import { Route as ApiPublicWidgetConfigIdRouteImport } from './routes/api/public/widget-config/$id'
@@ -1098,6 +1099,12 @@ const ApiSessionsSessionKeyActiveRunRoute =
     path: '/$sessionKey/active-run',
     getParentRoute: () => ApiSessionsRoute,
   } as any)
+const ApiRecordingsProfileCallIdRoute =
+  ApiRecordingsProfileCallIdRouteImport.update({
+    id: '/api/recordings/$profile/$callId',
+    path: '/api/recordings/$profile/$callId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicWidgetsWidgetKeyRoute =
   ApiPublicWidgetsWidgetKeyRouteImport.update({
     id: '/api/public/widgets/$widgetKey',
@@ -1437,6 +1444,7 @@ export interface FileRoutesByFullPath {
   '/api/public/widget-config/$id': typeof ApiPublicWidgetConfigIdRoute
   '/api/public/widget/js': typeof ApiPublicWidgetJsRoute
   '/api/public/widgets/$widgetKey': typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
+  '/api/recordings/$profile/$callId': typeof ApiRecordingsProfileCallIdRoute
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
@@ -1640,6 +1648,7 @@ export interface FileRoutesByTo {
   '/api/public/widget-config/$id': typeof ApiPublicWidgetConfigIdRoute
   '/api/public/widget/js': typeof ApiPublicWidgetJsRoute
   '/api/public/widgets/$widgetKey': typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
+  '/api/recordings/$profile/$callId': typeof ApiRecordingsProfileCallIdRoute
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
@@ -1845,6 +1854,7 @@ export interface FileRoutesById {
   '/api/public/widget-config/$id': typeof ApiPublicWidgetConfigIdRoute
   '/api/public/widget/js': typeof ApiPublicWidgetJsRoute
   '/api/public/widgets/$widgetKey': typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
+  '/api/recordings/$profile/$callId': typeof ApiRecordingsProfileCallIdRoute
   '/api/sessions/$sessionKey/active-run': typeof ApiSessionsSessionKeyActiveRunRoute
   '/api/sessions/$sessionKey/status': typeof ApiSessionsSessionKeyStatusRoute
   '/api/tasks/$taskId/move': typeof ApiTasksTaskIdMoveRoute
@@ -2051,6 +2061,7 @@ export interface FileRouteTypes {
     | '/api/public/widget-config/$id'
     | '/api/public/widget/js'
     | '/api/public/widgets/$widgetKey'
+    | '/api/recordings/$profile/$callId'
     | '/api/sessions/$sessionKey/active-run'
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
@@ -2254,6 +2265,7 @@ export interface FileRouteTypes {
     | '/api/public/widget-config/$id'
     | '/api/public/widget/js'
     | '/api/public/widgets/$widgetKey'
+    | '/api/recordings/$profile/$callId'
     | '/api/sessions/$sessionKey/active-run'
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
@@ -2458,6 +2470,7 @@ export interface FileRouteTypes {
     | '/api/public/widget-config/$id'
     | '/api/public/widget/js'
     | '/api/public/widgets/$widgetKey'
+    | '/api/recordings/$profile/$callId'
     | '/api/sessions/$sessionKey/active-run'
     | '/api/sessions/$sessionKey/status'
     | '/api/tasks/$taskId/move'
@@ -2636,6 +2649,7 @@ export interface RootRouteChildren {
   ApiPublicWidgetConfigIdRoute: typeof ApiPublicWidgetConfigIdRoute
   ApiPublicWidgetJsRoute: typeof ApiPublicWidgetJsRoute
   ApiPublicWidgetsWidgetKeyRoute: typeof ApiPublicWidgetsWidgetKeyRouteWithChildren
+  ApiRecordingsProfileCallIdRoute: typeof ApiRecordingsProfileCallIdRoute
   ApiWebhooksTavusProfileRoute: typeof ApiWebhooksTavusProfileRoute
   ApiWebhooksTextmagicProfileRoute: typeof ApiWebhooksTextmagicProfileRoute
   ApiWebhooksVapiProfileRoute: typeof ApiWebhooksVapiProfileRoute
@@ -3872,6 +3886,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSessionsSessionKeyActiveRunRouteImport
       parentRoute: typeof ApiSessionsRoute
     }
+    '/api/recordings/$profile/$callId': {
+      id: '/api/recordings/$profile/$callId'
+      path: '/api/recordings/$profile/$callId'
+      fullPath: '/api/recordings/$profile/$callId'
+      preLoaderRoute: typeof ApiRecordingsProfileCallIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/widgets/$widgetKey': {
       id: '/api/public/widgets/$widgetKey'
       path: '/api/public/widgets/$widgetKey'
@@ -4477,6 +4498,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWidgetConfigIdRoute: ApiPublicWidgetConfigIdRoute,
   ApiPublicWidgetJsRoute: ApiPublicWidgetJsRoute,
   ApiPublicWidgetsWidgetKeyRoute: ApiPublicWidgetsWidgetKeyRouteWithChildren,
+  ApiRecordingsProfileCallIdRoute: ApiRecordingsProfileCallIdRoute,
   ApiWebhooksTavusProfileRoute: ApiWebhooksTavusProfileRoute,
   ApiWebhooksTextmagicProfileRoute: ApiWebhooksTextmagicProfileRoute,
   ApiWebhooksVapiProfileRoute: ApiWebhooksVapiProfileRoute,

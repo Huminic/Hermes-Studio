@@ -58,6 +58,7 @@ import {
 } from './widget-monitor'
 import { sampleHostStats, formatUptime, type HostStats } from './host-stats'
 import { runDailyBackup, type BackupReport } from './sentinel-backup'
+import { reapOldRecordings } from './call-recording'
 import { readStudioConfig } from './studio-config'
 import { resolveVinOrgId } from './vin-client'
 
@@ -323,6 +324,11 @@ const RECIPIENT_WINDOW_MS = DELIVERY_RATE_WINDOW_MS
 const RECIPIENT_MIN_VOLUME = 6 // ≥6 sends to this address before judging it
 const RECIPIENT_FAIL_WARN = 0.5 // ≥50% of sends to ONE address failing ⇒ warn
 const RECIPIENT_FAIL_CRIT = 0.9 // ≥90% (e.g. a fully dead mailbox) ⇒ critical
+// AC8 per-store SMS volume floor — a store expected to be actively texting that
+// sends BELOW its floor over 24h (0 = fully dark) is the exact blind spot that
+// hid the Aug-15 Ford/Nissan outage behind Honda's healthy volume. Opt-in per
+// store (comms.sms_volume_floor_24h); dark-by-design stores set no floor.
+const VOLUME_FLOOR_WINDOW_MS = 24 * 60 * 60_000
 const AUTOMATION_OVERDUE_MS = 30 * 60_000 // due > 30m ago + unsent ⇒ tick not advancing
 const REPLY_FAIL_WINDOW_MS = 60 * 60_000 // look back 1h for failed agent replies
 const DATA_STALE_MS = 48 * 60 * 60_000 // no inbound for 48h ⇒ data may not be flowing
@@ -1039,6 +1045,123 @@ export const notificationRecipientHealthCheck: SentinelCheck = {
 }
 
 /**
+ * AC8 — PER-STORE SMS VOLUME FLOOR. The single gap that hid the Aug-15 outage:
+ * every prior notification check is FAILURE-driven (needs error rows) and the
+ * rate/recipient checks early-return under a min volume — so a fully dark store
+ * (total=0) produces nothing while a healthy sibling keeps the aggregate green.
+ * This is the inverse: for a store that OPTED IN as expected-to-send
+ * (comms.sms_volume_floor_24h > 0), alert when its 24h outbound SMS count falls
+ * below the floor. Dark-by-design stores set no floor → no alert. Per profile.
+ */
+export const smsVolumeFloorCheck: SentinelCheck = {
+  name: 'sms-volume-floor',
+  category: 'notifications',
+  scope: 'profile',
+  async run({ profile, now, store }) {
+    if (!profile) return []
+    let floor = 0
+    try {
+      floor = readStudioConfig(profile).config.comms?.sms_volume_floor_24h ?? 0
+    } catch {
+      return []
+    }
+    if (!floor || floor <= 0) return [] // opt-in: store not expected to send
+    const { total } = store.countCommsByOutcome(
+      profile,
+      VOLUME_FLOOR_WINDOW_MS,
+      now,
+      'sms',
+    )
+    if (total >= floor) return []
+    const hrs = Math.round(VOLUME_FLOOR_WINDOW_MS / 3_600_000)
+    return [
+      {
+        key: `notifications:${profile}:sms-volume-floor`,
+        severity: total === 0 ? 'critical' : 'warning',
+        category: 'notifications',
+        title:
+          total === 0
+            ? `No SMS sent in ${hrs}h (expected ≥${floor})`
+            : `Only ${total} SMS in ${hrs}h (expected ≥${floor})`,
+        detail: `${profile}: ${total} outbound SMS in the last ${hrs}h, below the expected floor of ${floor}. A store that should be actively texting has gone quiet — the per-store blind spot that hid the Aug-15 outage for ~5 weeks. Check the send scheduler/automations (active vs draft) and TextMagic balance for this store.`,
+        profile,
+      },
+    ]
+  },
+}
+
+/**
+ * AC8 — SMS delivery RATE (24h). The email rate check (above) is channel-scoped
+ * to email; a sustained SMS send-failure ran invisibly to it. Same thresholds,
+ * channel='sms'. Per profile.
+ */
+export const smsDeliveryRateCheck: SentinelCheck = {
+  name: 'sms-delivery-rate',
+  category: 'notifications',
+  scope: 'profile',
+  async run({ profile, now, store }) {
+    if (!profile) return []
+    const { error, total } = store.countCommsByOutcome(
+      profile,
+      DELIVERY_RATE_WINDOW_MS,
+      now,
+      'sms',
+    )
+    if (total < DELIVERY_RATE_MIN_VOLUME) return []
+    const rate = error / total
+    if (rate < DELIVERY_RATE_WARN) return []
+    const pct = Math.round(rate * 100)
+    const hrs = Math.round(DELIVERY_RATE_WINDOW_MS / 3_600_000)
+    return [
+      {
+        key: `notifications:${profile}:sms-delivery-rate`,
+        severity: rate >= DELIVERY_RATE_CRIT ? 'critical' : 'warning',
+        category: 'notifications',
+        title: `${pct}% of SMS sends failed over ${hrs}h`,
+        detail: `${profile}: ${error}/${total} outbound SMS recorded outcome=error over the last ${hrs}h (${pct}% failure). Customer texts may not be reaching handsets — check the provider/balance and comms_log.body_summary.`,
+        profile,
+      },
+    ]
+  },
+}
+
+/**
+ * AC8 — SMS per-RECIPIENT health (24h). Names a single failing number in a
+ * store's SMS traffic, mirroring the email recipient check. Per profile.
+ */
+export const smsRecipientHealthCheck: SentinelCheck = {
+  name: 'sms-recipient-health',
+  category: 'notifications',
+  scope: 'profile',
+  async run({ profile, now, store }) {
+    if (!profile) return []
+    const recipients = store.countCommsByRecipient(
+      profile,
+      RECIPIENT_WINDOW_MS,
+      now,
+      'sms',
+    )
+    const hrs = Math.round(RECIPIENT_WINDOW_MS / 3_600_000)
+    const findings: Array<Finding> = []
+    for (const r of recipients) {
+      if (r.total < RECIPIENT_MIN_VOLUME) continue
+      const rate = r.error / r.total
+      if (rate < RECIPIENT_FAIL_WARN) continue
+      const pct = Math.round(rate * 100)
+      findings.push({
+        key: `notifications:${profile}:sms-recipient:${r.recipient}`,
+        severity: rate >= RECIPIENT_FAIL_CRIT ? 'critical' : 'warning',
+        category: 'notifications',
+        title: `SMS recipient failing: ${r.recipient} (${pct}%)`,
+        detail: `${profile}: ${r.error}/${r.total} SMS to ${r.recipient} failed over the last ${hrs}h (${pct}% failure) — likely an invalid/unreachable number.`,
+        profile,
+      })
+    }
+    return findings
+  },
+}
+
+/**
  * Automations firing — runs/enrollments that are due but un-advanced past the
  * overdue window mean the tick is not processing work (even if it is ticking).
  * Per profile.
@@ -1481,6 +1604,9 @@ export const DEFAULT_CHECKS: Array<SentinelCheck> = [
   notificationsDeliveryCheck,
   notificationsDeliveryRateCheck,
   notificationRecipientHealthCheck,
+  smsVolumeFloorCheck,
+  smsDeliveryRateCheck,
+  smsRecipientHealthCheck,
   automationsFiringCheck,
   dataCollectionCheck,
   conversationOpsCheck,
@@ -1619,6 +1745,16 @@ export async function runSentinelPass(
           at: now,
           errors: [e instanceof Error ? e.message : String(e)],
         }
+      }
+      // P3: prune stored Vapi call recordings older than 30 days (HIPAA
+      // retention). Best-effort — never break the daily digest.
+      try {
+        const reaped = reapOldRecordings({ now })
+        if (reaped.length > 0) {
+          console.info(`[sentinel] reaped ${reaped.length} call recording(s) older than 30d`)
+        }
+      } catch {
+        // ignore — reaping is best-effort maintenance
       }
       const open = brain
         .all<{ severity: Severity; profile: string; title: string; detail: string; category: string }>(
