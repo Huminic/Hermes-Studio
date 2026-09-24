@@ -185,3 +185,150 @@ describe('gatherFollowupCandidates', () => {
     expect(res.nextOpenMs).toBe(Date.parse('2026-07-09T08:00:00-05:00'))
   })
 })
+
+/** A lead row carrying an explicit createdUtc + optional leadSource href. */
+function leadAt(
+  id: number,
+  contactId: number,
+  createdUtc: string,
+  opts: { leadType?: string; leadSource?: string } = {},
+): Lead {
+  return {
+    leadId: id,
+    contact: `https://api.vinsolutions.com/contacts/id/${contactId}?dealerid=21043`,
+    leadStatusType: 'ACTIVE',
+    leadType: opts.leadType ?? 'INTERNET',
+    ...(opts.leadSource ? { leadSource: opts.leadSource } : {}),
+    createdUtc,
+  }
+}
+
+describe('gatherFollowupCandidates — N1.1 flags', () => {
+  it('--since drops leads created before the UTC-midnight floor and overrides the window start', async () => {
+    const leads = [
+      leadAt(1, 101, '2026-06-28T12:00:00Z'), // before 2026-07-01 floor → dropped
+      leadAt(2, 102, '2026-07-05T12:00:00Z'), // after floor + due → candidate
+    ]
+    const contacts = {
+      '101': { firstName: 'Old', phone: '7313946907' },
+      '102': { firstName: 'New', phone: '2055550104' },
+    }
+    const res = await gatherFollowupCandidates({
+      profile: 'serra-honda',
+      now: NOW,
+      config: CONFIG,
+      since: '2026-07-01',
+      deps: { call: fakeCall(leads, contacts), hasRun: () => false },
+    })
+    expect(res.startDate).toBe('2026-07-01T00:00:00.000Z')
+    expect(res.candidates.map((c) => c.phone)).toEqual(['+12055550104'])
+    expect(res.dropped).toContainEqual(
+      expect.objectContaining({ leadId: '1', reason: 'before since floor' }),
+    )
+  })
+
+  it('--exclude-source drops by resolved source name (case-insensitive), keeps others', async () => {
+    const leads = [
+      leadAt(1, 101, '2026-07-07T00:00:00Z', {
+        leadSource: 'https://api.vinsolutions.com/leadsources/id/555?dealerid=21043',
+      }),
+      leadAt(2, 102, '2026-07-07T00:00:00Z', {
+        leadSource: 'https://api.vinsolutions.com/leadsources/id/777?dealerid=21043',
+      }),
+    ]
+    const contacts = {
+      '101': { firstName: 'Ann', phone: '7313946907' },
+      '102': { firstName: 'Bob', phone: '2055550104' },
+    }
+    const res = await gatherFollowupCandidates({
+      profile: 'serra-honda',
+      now: NOW,
+      config: CONFIG,
+      excludeSources: ['service dept'],
+      sourceNames: new Map([
+        ['555', 'Service Dept'],
+        ['777', 'Cars.com'],
+      ]),
+      deps: { call: fakeCall(leads, contacts), hasRun: () => false },
+    })
+    expect(res.candidates.map((c) => c.phone)).toEqual(['+12055550104'])
+    expect(res.candidates[0].leadSource).toBe('Cars.com')
+    expect(res.dropped).toContainEqual(
+      expect.objectContaining({ leadId: '1', reason: 'excluded source: service dept', leadSource: 'Service Dept' }),
+    )
+  })
+
+  it('--exclude-source falls back to the raw id string when the name is unresolved', async () => {
+    const leads = [
+      leadAt(1, 101, '2026-07-07T00:00:00Z', {
+        leadSource: 'https://api.vinsolutions.com/leadsources/id/999?dealerid=21043',
+      }),
+    ]
+    const res = await gatherFollowupCandidates({
+      profile: 'serra-honda',
+      now: NOW,
+      config: CONFIG,
+      excludeSources: ['999'],
+      deps: {
+        call: fakeCall(leads, { '101': { firstName: 'Ann', phone: '7313946907' } }),
+        hasRun: () => false,
+      },
+    })
+    expect(res.candidates).toHaveLength(0)
+    expect(res.dropped).toContainEqual(
+      expect.objectContaining({ leadId: '1', reason: 'excluded source: 999' }),
+    )
+  })
+
+  it('--skip-texted-since drops a candidate already texted via the reply path', async () => {
+    const leads = [
+      leadAt(1, 101, '2026-07-06T00:00:00Z'),
+      leadAt(2, 102, '2026-07-06T00:00:00Z'),
+    ]
+    const contacts = {
+      '101': { firstName: 'Ann', phone: '7313946907' }, // → +17313946907, already texted
+      '102': { firstName: 'Bob', phone: '2055550104' },
+    }
+    const alreadyTexted = new Set(['+17313946907'])
+    const res = await gatherFollowupCandidates({
+      profile: 'serra-honda',
+      now: NOW,
+      config: CONFIG,
+      skipTextedSince: '2026-08-15',
+      deps: {
+        call: fakeCall(leads, contacts),
+        hasRun: () => false,
+        hasTextedSince: (phone) => alreadyTexted.has(phone),
+      },
+    })
+    expect(res.candidates.map((c) => c.phone)).toEqual(['+12055550104'])
+    expect(res.dropped).toContainEqual(
+      expect.objectContaining({
+        leadId: '1',
+        phone: '+17313946907',
+        reason: 'already texted since 2026-08-15',
+      }),
+    )
+  })
+
+  it('populates salesCount and candidate.leadSource; flags absent ⇒ unchanged behaviour', async () => {
+    const leads = [
+      leadAt(1, 101, '2026-07-06T00:00:00Z', {
+        leadSource: 'https://api.vinsolutions.com/leadsources/id/777?dealerid=21043',
+      }),
+      leadAt(2, 102, '2026-07-06T00:00:00Z', { leadType: 'SERVICE' }),
+    ]
+    const contacts = { '101': { firstName: 'Ann', phone: '7313946907' } }
+    const res = await gatherFollowupCandidates({
+      profile: 'serra-honda',
+      now: NOW,
+      config: CONFIG,
+      sourceNames: new Map([['777', 'Cars.com']]),
+      deps: { call: fakeCall(leads, contacts), hasRun: () => false },
+    })
+    // one SERVICE lead dropped by the default sales-only filter → 1 sales lead
+    expect(res.salesCount).toBe(1)
+    expect(res.candidates).toHaveLength(1)
+    expect(res.candidates[0].leadSource).toBe('Cars.com')
+  })
+})

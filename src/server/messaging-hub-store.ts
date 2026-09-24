@@ -2750,6 +2750,41 @@ export function hasInboundSince(
   return false
 }
 
+/**
+ * Did the store send ANY outbound SMS to one of these handles at or after
+ * `sinceMs`? Read-only. Used by the catch-up gather's `--skip-texted-since`
+ * floor to avoid re-texting a customer who was already reached through the
+ * reply path (which the automation ledger does NOT record). Matches on the
+ * thread contact_handle + message direction='outbound' + channel='sms'.
+ */
+export function hasOutboundSmsSince(
+  profile: string,
+  handles: Array<string>,
+  sinceMs: number,
+): boolean {
+  const uniq = [...new Set(handles.filter(Boolean))]
+  if (uniq.length === 0) return false
+  const db = getDb(profile)
+  if (db) {
+    const placeholders = uniq.map(() => '?').join(',')
+    const row = db
+      .prepare(
+        `SELECT 1 FROM messages m JOIN threads t ON t.id = m.thread_id
+         WHERE t.profile=? AND t.contact_handle IN (${placeholders})
+           AND m.direction='outbound' AND m.channel='sms' AND m.created_at >= ? LIMIT 1`,
+      )
+      .get(profile, ...uniq, sinceMs) as { 1: number } | undefined
+    return !!row
+  }
+  for (const t of getStore(profile).threads.values()) {
+    if (!uniq.includes(t.contact_handle)) continue
+    for (const m of t.messages) {
+      if (m.direction === 'outbound' && m.channel === 'sms' && m.created_at >= sinceMs) return true
+    }
+  }
+  return false
+}
+
 // ─── Test helpers ───────────────────────────────────────────────────────────
 
 export function _resetForTests(profile?: string): void {

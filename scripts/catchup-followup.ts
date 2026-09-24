@@ -19,9 +19,16 @@
  *     npx tsx scripts/catchup-followup.ts [--profile serra-honda] [--send] \
  *     [--days N] [--limit N] [--ignore-window]
  */
+import { writeFileSync } from 'node:fs'
 import { readStudioConfig } from '../src/server/studio-config'
 import { listAutomations } from '../src/server/messaging-hub-store'
-import { gatherFollowupCandidates } from '../src/server/catchup-followup'
+import {
+  gatherFollowupCandidates,
+  type FollowupCandidate,
+  type FollowupDrop,
+} from '../src/server/catchup-followup'
+import { resolveVinOrgId } from '../src/server/vin-client'
+import { fetchLeadSources } from '../src/server/lead-opportunities'
 import { sendAutomationNow } from '../src/server/automations'
 import {
   prelaunchLockEngaged,
@@ -36,7 +43,29 @@ type Args = {
   limit: number | null
   ignoreWindow: boolean
   includeService: boolean
+  since: string | null
+  excludeSources: string[]
+  skipTextedSince: string | null
+  csv: string | null
+  help: boolean
 }
+
+const USAGE = `catchup-followup.ts — 24-hour follow-up catch-up (DRY-RUN by default)
+
+  --profile <p>            store profile (default serra-honda)
+  --send                   dispatch (else dry-run); every send still passes the comms-gate
+  --days <n>               look-back window in days (default 7)
+  --since YYYY-MM-DD       explicit createdUtc floor (UTC midnight); overrides --days for the
+                           window start; leads older than it are dropped 'before since floor'
+  --exclude-source "<name>"  drop leads whose resolved lead-source name matches (repeatable,
+                           case-insensitive), reason 'excluded source: <name>'
+  --skip-texted-since YYYY-MM-DD  drop a candidate already texted (outbound sms) on/after the
+                           date via the reply path (not in the automation ledger)
+  --csv <path>             dry-run only: write a decision CSV + <path>.summary.json
+  --include-service        include SERVICE/PARTS leads (default sales-only)
+  --limit <n>              cap the recipient list
+  --ignore-window          send outside the A2P window (locked self-test only)
+  --help                   this message`
 
 function parseArgs(argv: string[]): Args {
   const a: Args = {
@@ -46,18 +75,32 @@ function parseArgs(argv: string[]): Args {
     limit: null,
     ignoreWindow: false,
     includeService: false,
+    since: null,
+    excludeSources: [],
+    skipTextedSince: null,
+    csv: null,
+    help: false,
   }
   for (let i = 0; i < argv.length; i++) {
     const t = argv[i]
     if (t === '--send') a.send = true
     else if (t === '--ignore-window') a.ignoreWindow = true
     else if (t === '--include-service') a.includeService = true
+    else if (t === '--help' || t === '-h') a.help = true
     else if (t === '--profile') a.profile = argv[++i]
     else if (t.startsWith('--profile=')) a.profile = t.slice('--profile='.length)
     else if (t === '--days') a.days = Number(argv[++i])
     else if (t.startsWith('--days=')) a.days = Number(t.slice('--days='.length))
     else if (t === '--limit') a.limit = Number(argv[++i])
     else if (t.startsWith('--limit=')) a.limit = Number(t.slice('--limit='.length))
+    else if (t === '--since') a.since = argv[++i]
+    else if (t.startsWith('--since=')) a.since = t.slice('--since='.length)
+    else if (t === '--exclude-source') a.excludeSources.push(argv[++i])
+    else if (t.startsWith('--exclude-source=')) a.excludeSources.push(t.slice('--exclude-source='.length))
+    else if (t === '--skip-texted-since') a.skipTextedSince = argv[++i]
+    else if (t.startsWith('--skip-texted-since=')) a.skipTextedSince = t.slice('--skip-texted-since='.length)
+    else if (t === '--csv') a.csv = argv[++i]
+    else if (t.startsWith('--csv=')) a.csv = t.slice('--csv='.length)
   }
   return a
 }
@@ -66,8 +109,63 @@ function fmtTs(ms: number | null): string {
   return ms == null ? 'n/a' : new Date(ms).toISOString()
 }
 
+/** RFC-4180-ish field quoting for the decision CSV. */
+function csvCell(v: string | number | null | undefined): string {
+  const s = v == null ? '' : String(v)
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
+}
+
+const CSV_HEADER = 'decision,phone_last4,firstName,leadId,createdUtc,leadType,leadSource,reason'
+
+function last4(phone: string | null | undefined): string {
+  const digits = (phone ?? '').replace(/\D/g, '')
+  return digits ? digits.slice(-4) : ''
+}
+
+/** Build the dry-run decision CSV (one SEND row per candidate, one DROP per dropped lead). */
+function buildDecisionCsv(candidates: FollowupCandidate[], dropped: FollowupDrop[]): string {
+  const rows = [CSV_HEADER]
+  for (const c of candidates) {
+    rows.push(
+      [
+        'SEND',
+        last4(c.phone),
+        c.firstName,
+        c.leadId,
+        c.createdUtc,
+        c.leadType,
+        c.leadSource,
+        '',
+      ]
+        .map(csvCell)
+        .join(','),
+    )
+  }
+  for (const d of dropped) {
+    rows.push(
+      [
+        'DROP',
+        last4(d.phone),
+        d.firstName,
+        d.leadId,
+        d.createdUtc,
+        d.leadType,
+        d.leadSource,
+        d.reason,
+      ]
+        .map(csvCell)
+        .join(','),
+    )
+  }
+  return rows.join('\n') + '\n'
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2))
+  if (args.help) {
+    console.log(USAGE)
+    process.exit(0)
+  }
   const now = Date.now()
   const { config } = readStudioConfig(args.profile)
 
@@ -81,6 +179,14 @@ async function main() {
     process.exit(0)
   }
 
+  // Resolve lead-source id→name only when a flag needs it (--exclude-source or --csv),
+  // so a plain run makes no extra broker call. Best-effort; empty map on failure.
+  let sourceNames: Map<string, string> | undefined
+  if (args.excludeSources.length || args.csv) {
+    const org = resolveVinOrgId(args.profile, config)
+    if (org.ok) sourceNames = await fetchLeadSources({ orgId: org.orgId })
+  }
+
   const res = await gatherFollowupCandidates({
     profile: args.profile,
     now,
@@ -88,6 +194,10 @@ async function main() {
     followupAutomationId: followup.id,
     days: args.days ?? undefined,
     salesOnly: !args.includeService,
+    since: args.since ?? undefined,
+    excludeSources: args.excludeSources.length ? args.excludeSources : undefined,
+    skipTextedSince: args.skipTextedSince ?? undefined,
+    sourceNames,
   })
 
   const limited = args.limit != null ? res.candidates.slice(0, args.limit) : res.candidates
@@ -105,8 +215,11 @@ async function main() {
     `prelaunch lock: ${prelaunchLockEngaged() ? `ENGAGED (allow: ${prelaunchAllowList().join(', ') || 'none'})` : 'OFF (real sends can reach any number)'}`,
   )
   if (res.skipped) console.log(`skipped:     ${res.skipped}`)
+  if (args.since) console.log(`since floor:  ${args.since} (createdUtc >= ${args.since}T00:00:00Z)`)
+  if (args.excludeSources.length) console.log(`exclude src:  ${args.excludeSources.join(', ')}`)
+  if (args.skipTextedSince) console.log(`skip texted:  since ${args.skipTextedSince}`)
   console.log(
-    `polled=${res.polledTotal} active=${res.activeCount} due(24h)=${res.dueCount} ` +
+    `polled=${res.polledTotal} active=${res.activeCount} due(24h)=${res.dueCount} sales=${res.salesCount} ` +
       `candidates=${res.candidates.length} dropped=${res.dropped.length}` +
       (args.limit != null ? ` (limited to ${limited.length})` : ''),
   )
@@ -123,6 +236,30 @@ async function main() {
     const byReason: Record<string, number> = {}
     for (const d of res.dropped) byReason[d.reason] = (byReason[d.reason] ?? 0) + 1
     for (const [reason, n] of Object.entries(byReason)) console.log(`  ${n}× ${reason}`)
+  }
+
+  if (args.csv) {
+    const byReason: Record<string, number> = {}
+    for (const d of res.dropped) byReason[d.reason] = (byReason[d.reason] ?? 0) + 1
+    const summary = {
+      profile: args.profile,
+      window: { start: res.startDate, end: res.endDate },
+      since: args.since ?? null,
+      excludeSources: args.excludeSources,
+      skipTextedSince: args.skipTextedSince ?? null,
+      counts: {
+        polled: res.polledTotal,
+        active: res.activeCount,
+        due: res.dueCount,
+        sales: res.salesCount,
+        candidates: res.candidates.length,
+        dropped: res.dropped.length,
+        droppedByReason: byReason,
+      },
+    }
+    writeFileSync(args.csv, buildDecisionCsv(res.candidates, res.dropped))
+    writeFileSync(`${args.csv}.summary.json`, JSON.stringify(summary, null, 2) + '\n')
+    console.log(`\n[csv] wrote ${args.csv} and ${args.csv}.summary.json`)
   }
 
   if (!args.send) {
