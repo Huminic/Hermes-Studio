@@ -62,7 +62,7 @@ supervisor can verify each step from the outside. No customer contact happens in
   TextMagic, signs each store's dry-run CSV.
 
 ## Progress
-Progress: plan written 2026-09-24; next = S0 (awaiting Duane's go). Reviews in `defects/finish-plan-reviews/`.
+Progress: S0 DONE 2026-09-24 (4097cdcc4); N1 APPROVED 2026-09-24 ~01:20 CT at d6ffc352f (flags, preview runner, emailer; 1289 green); next = D1 deploy (needs Duane) → S4 artifacts → 08:00 CT report + Ford/Nissan catch-up. Reviews in defects/finish-plan-reviews/.
 
 ## Plan (tranches)
 
