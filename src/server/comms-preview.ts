@@ -7,6 +7,8 @@
  * is unit-tested without MCP. The live shell (a script) fetches read-only data
  * inside the studio container and calls these — it NEVER sends.
  */
+import { writeFileSync } from 'node:fs'
+import { join } from 'node:path'
 import {
   buildDailyManagementReport,
   type DailyMgmtMetrics,
@@ -84,4 +86,43 @@ export function renderPreviewText(b: PreviewBundle): string {
   out.push(`  Sitting >3 days: ${b.alerts.sittingOver3Days.length}`)
   out.push(`  Same status >1 week: ${b.alerts.staleStatus.length}`)
   return out.join('\n')
+}
+
+/**
+ * Free-form provenance the runner attaches so a supervisor can reconcile every
+ * figure by hand (raw counts, ISO window bounds, the query used, any caveats).
+ */
+export type PreviewRawCounts = Record<string, unknown>
+
+/** Injected file writer (default: fs.writeFileSync) — kept injectable for tests. */
+export type WriteFileFn = (path: string, contents: string) => void
+
+/**
+ * Write the six preview artifacts for `input.profile` into `outDir`. Pure over
+ * the injected bundle input + rawCounts; the writer is injectable, so this never
+ * touches the network and never sends. Returns the paths written.
+ */
+export function writePreviewArtifacts(input: {
+  bundle: PreviewInput
+  outDir: string
+  rawCounts: PreviewRawCounts
+  writeFile?: WriteFileFn
+}): { files: string[] } {
+  const bundle = assemblePreviewBundle(input.bundle)
+  const write = input.writeFile ?? ((p: string, c: string) => writeFileSync(p, c))
+  const profile = input.bundle.profile
+  const files: string[] = []
+  const emit = (suffix: string, contents: string) => {
+    const path = join(input.outDir, `${profile}-${suffix}`)
+    write(path, contents)
+    files.push(path)
+  }
+  const json = (v: unknown) => JSON.stringify(v, null, 2) + '\n'
+  emit('preview.txt', renderPreviewText(bundle) + '\n')
+  emit('daily-management.json', json(bundle.dailyManagement))
+  emit('lead-source.json', json(bundle.leadSource))
+  emit('text-report.txt', bundle.textReport + '\n')
+  emit('alerts.json', json(bundle.alerts))
+  emit('raw-counts.json', json(input.rawCounts))
+  return { files }
 }

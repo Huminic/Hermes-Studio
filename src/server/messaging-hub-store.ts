@@ -1880,6 +1880,53 @@ export function aggregateMessages(profile: string, sinceMs?: number): MessageSta
   return stats
 }
 
+export type WindowMessage = {
+  thread_id: string
+  direction: MessageDirection
+  role: MessageRole
+  channel: string
+  created_at: number
+}
+
+/**
+ * Read-only: every message in `[startMs, endMs)` for a profile, with enough
+ * shape (direction/channel/role/created_at) for the comms-preview runner to
+ * split by business hours and by channel. Ordered oldest→newest. Never sends.
+ */
+export function listMessagesInWindow(
+  profile: string,
+  startMs: number,
+  endMs: number,
+): Array<WindowMessage> {
+  const db = getDb(profile)
+  if (db) {
+    return db
+      .prepare(
+        `SELECT m.thread_id, m.direction, m.role, m.channel, m.created_at
+           FROM messages m JOIN threads t ON t.id = m.thread_id
+          WHERE t.profile=? AND m.created_at >= ? AND m.created_at < ?
+          ORDER BY m.created_at ASC`,
+      )
+      .all(profile, startMs, endMs) as Array<WindowMessage>
+  }
+  const out: Array<WindowMessage> = []
+  for (const t of getStore(profile).threads.values()) {
+    if (t.profile !== profile) continue
+    for (const m of t.messages) {
+      if (m.created_at >= startMs && m.created_at < endMs) {
+        out.push({
+          thread_id: t.id,
+          direction: m.direction,
+          role: m.role,
+          channel: m.channel,
+          created_at: m.created_at,
+        })
+      }
+    }
+  }
+  return out.sort((a, b) => a.created_at - b.created_at)
+}
+
 /** Thread rollup: total / open / closed and a sales-vs-service domain split. */
 export function aggregateThreads(profile: string): ThreadStats {
   const stats: ThreadStats = { total: 0, open: 0, closed: 0, by_domain: {} }

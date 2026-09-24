@@ -24,8 +24,18 @@
 import { callCentralMcpTool } from './central-mcp'
 import { resolveVinOrgId } from './vin-client'
 import { readStudioConfig } from './studio-config'
-import { hasVinScope } from './customer-reports'
 import type { StudioConfig } from '../lib/studio-config'
+
+/**
+ * Whether the store is provisioned for live VinSolutions reads. Inlined (was
+ * imported from `customer-reports`) so this read-only counting module does NOT
+ * transitively pull `customer-reports → vin-watcher → automations/messaging-
+ * adapters` — the send path — into read-only consumers like the comms-preview
+ * runner. Identical logic to `customer-reports.hasVinScope`.
+ */
+function hasVinScope(config: StudioConfig): boolean {
+  return (config.federation?.read_scopes ?? []).some((s) => s.toLowerCase().includes('vin'))
+}
 
 const DAY_MS = 24 * 60 * 60 * 1000
 

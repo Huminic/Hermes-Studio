@@ -741,3 +741,28 @@
 - work/launch-cert/scripts/workspace_note_acceptance_snapshot_2026_06_15.cjs
 - work/launch-cert/scripts/workspace_polish_ui_readonly_check.cjs
 - work/launch-cert/scripts/workspace_safe_control_readonly_probe.cjs
+
+## N1 findings (2026-09-24)
+
+- **Read-only modules transitively import the SEND path via a constant.**
+  `customer-reports.ts` imports `WATCHER_AUTHOR` from `vin-watcher.ts`, and
+  `vin-watcher.ts` imports `automations.ts` + `messaging-adapters.ts` (the SMS
+  send path). Any module importing `customer-reports` therefore pulls the entire
+  send graph into its module graph — a hazard for "read-only" runners.
+  - Done in N1.2 (minimal, in-scope): `lead-opportunities.ts` imported
+    `customer-reports` ONLY for the trivial pure `hasVinScope`, dragging the send
+    path into every consumer (incl. the new comms-preview runner). Inlined
+    `hasVinScope` into `lead-opportunities.ts` (identical logic) and dropped the
+    import, so the runner's module graph is genuinely send-free (asserted by
+    `src/test/comms-preview-runner.test.ts`). lead-opportunities' 18 tests stay green.
+  - Follow-up (OUT OF SCOPE): move `WATCHER_AUTHOR` to a leaf constants module so
+    `customer-reports` (and other read paths) no longer import `vin-watcher`.
+
+- **`comms-preview` runner live derivations carry documented caveats** (all
+  surfaced in `<profile>-raw-counts.json`, never invented):
+  - `teamboxSent`/`teamboxReceived`: no dedicated Teambox aggregate helper —
+    approximated by non-sms outbound/inbound message direction counts.
+  - `leadsLeftBehind`: the "no outbound sms" sub-filter is NOT applied (per-lead
+    phone resolution is broker-capped); the value is an UPPER BOUND.
+  - `staleStatus` (same status >1 week): empty tonight — the lead-status
+    snapshot has no history yet.
