@@ -19,6 +19,7 @@ import path from 'node:path'
 import { buildAdfXml, type AdfLead } from './adf-xml'
 import { readStudioConfig } from './studio-config'
 import { recordCommsOutcome } from './comms-log'
+import type { DailyMgmtReport } from './daily-management-report'
 import {
   recordLeadNotify,
   wasLeadNotifiedWithin,
@@ -356,7 +357,7 @@ async function sendViaResendRaw(input: {
  * Colors, footer platform name, and support email come from the BRAND_*
  * constants above so the look matches current Nexxus output exactly.
  */
-function renderLeadCardHtml(input: {
+export function renderLeadCardHtml(input: {
   orgName: string
   headerTitle: string
   summaryText: string
@@ -718,13 +719,52 @@ export async function notifyDealer(input: {
   return { ...result, format }
 }
 
-function escapeHtml(s: string): string {
+export function escapeHtml(s: string): string {
   return s
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
+}
+
+/**
+ * Render the Daily AI Management report as an internal HTML email, reusing the
+ * shared branded card (renderLeadCardHtml) — NOT a forked template. The report
+ * lines become the card's two-column table; the store footnote + a "Sales only;
+ * generated <ISO>" line go in the footer. Returns subject/html/text; sending is
+ * the caller's job (send-daily-report.ts), so this stays pure and testable.
+ */
+export function renderDailyManagementEmail(input: {
+  report: DailyMgmtReport
+  storeName: string
+  /** ISO time the underlying figures were generated (from raw-counts.json). */
+  generatedAt: string
+}): { subject: string; html: string; text: string } {
+  const { report, storeName, generatedAt } = input
+  const subject = `Daily AI Management Report — ${storeName} — ${report.date}`
+  const details = report.lines.map((l) => ({
+    label: l.label,
+    value: escapeHtml(String(l.value)),
+  }))
+  const html = renderLeadCardHtml({
+    orgName: storeName,
+    headerTitle: 'Daily AI Management Report',
+    summaryText: `Overnight summary for <strong>${escapeHtml(storeName)}</strong> — ${escapeHtml(
+      report.date,
+    )}.`,
+    details,
+    footerNote: `${escapeHtml(report.footnote)}<br/>Sales only; generated ${escapeHtml(generatedAt)}.`,
+  })
+  const text = [
+    `Daily AI Management Report — ${storeName} — ${report.date}`,
+    '',
+    ...report.lines.map((l) => `${l.label}: ${l.value}`),
+    '',
+    report.footnote,
+    `Sales only; generated ${generatedAt}.`,
+  ].join('\n')
+  return { subject, html, text }
 }
 
 /** Lead/inbound event keys for notification routing (#207). */
