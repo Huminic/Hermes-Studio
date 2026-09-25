@@ -67,6 +67,8 @@ services:
       - studio-sessions:/app/.runtime
       # Profiles/skills/kanban — shared with hermes-agent so the Studio file listings work
       - hermes-state:/root/.hermes
+      # P3 recording fix: persist Vapi call audio on the 200 GB disk (host bind mount; reaped at 30d)
+      - /mnt/storage/recordings:/mnt/storage/recordings
     ports:
       - '127.0.0.1:8009:3000'
 
