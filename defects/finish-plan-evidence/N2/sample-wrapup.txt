@@ -1,0 +1,28 @@
+Serra Nissan
+Your end-of-day wrap-up
+
+Hi team,
+Here's how today went at Serra Nissan: 14 new leads, 12 texts sent, 5 replys back, and 1 still needs attention.
+
+  Leads today: 14 (up 3 vs yesterday)
+  AI texts sent: 12
+  Replies received: 5
+  Needs attention: 1
+
+Today's leads by source
+  Cars.com — leads 6
+  AutoTrader — leads 4
+  Website — leads 4
+
+Needs attention
+  Dana (Website) — waiting 3h, status New, type INTERNET
+
+Sold / lost today (cohort of today’s leads)
+  Today's cohort — sold 2, lost 1
+
+Open VinSolutions: https://apps.vinsolutions.com/
+
+Sales only (service excluded). Appointments and per-salesperson performance are not available via the VinSolutions API and are intentionally omitted.
+Generated 2026-09-25T23:30:00.000Z.
+
+— Caroline · Powered by Huminic

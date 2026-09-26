@@ -1,0 +1,24 @@
+Tony Serra Ford
+See what your team's been up to overnight
+
+Hi team,
+Overnight at Tony Serra Ford: 8 new leads came in (5 during the day, 3 after hours), 6 texts went out, and 2 leads are waiting on a salesperson.
+
+  New leads: 8 (up 2 vs prior 24h)
+  AI texts sent: 6
+  After-hours calls: 1
+  Needs attention: 2
+
+Needs attention
+  Marcus (Cars.com) — waiting 6h, status New, type INTERNET
+  Lead 902 (AutoTrader) — waiting 28h, status New, type PHONE
+
+AI coverage
+  Georgia (Your AI assistant) — after-hrs leads 3, avg reply 7m, day texts 4, active 30d 88
+
+Open VinSolutions: https://apps.vinsolutions.com/
+
+Sales only (service excluded). Appointments and per-salesperson performance are not available via the VinSolutions API and are intentionally omitted.
+Generated 2026-09-25T13:00:00.000Z.
+
+— Georgia · Powered by Huminic
