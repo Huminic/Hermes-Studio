@@ -874,6 +874,102 @@ export function renderDailyManagementEmail(input: {
   return { subject, html, text }
 }
 
+// ── Lead Source email (N2.2 — noon report on the shared report template) ──────
+
+const CTA_VINSOLUTIONS: Cta = { label: 'Open VinSolutions', url: 'https://apps.vinsolutions.com/' }
+
+/** True when a source label is an unresolved legacy VinSolutions id ("Source 3742136"). */
+function isUnnamedSource(source: string): boolean {
+  return /^Source \d+$/.test(source.trim())
+}
+
+export type LeadSourceEmailRow = {
+  source: string
+  leads24h: number
+  leads7d: number
+  leads30d: number
+  sold24h: number
+  sold7d: number
+  sold30d: number
+}
+
+/**
+ * Render the noon Lead Source Report as a branded report email. Tiles = leads
+ * 24h / 7d / 30d + sold 24h (cohort). Section = top-10 sources by 30d volume
+ * (identity + stats), remaining sources as a compact table. Unnamed (legacy id)
+ * sources render "Source <id>" with a footnote.
+ */
+export function renderLeadSourceEmail(input: {
+  storeName: string
+  agentName: string
+  date: string
+  generatedAt: string
+  /** Per-source rows (already sorted by 30d volume). */
+  rows: LeadSourceEmailRow[]
+  /** Window totals (from raw-counts when available, else summed rows). */
+  totals: { leads24h: number; leads7d: number; leads30d: number; sold24h: number }
+  cta?: Cta
+}): { subject: string; html: string; text: string } {
+  const { storeName, agentName, date, generatedAt, rows, totals } = input
+  const subject = `Lead Source Report — ${storeName} — ${date}`
+
+  const context =
+    `Here's where ${storeName}'s leads came from: ${totals.leads24h} in the last 24 hours, ` +
+    `${totals.leads7d} this week, ${totals.leads30d} this month, with ${totals.sold24h} sold in the last 24 hours.`
+
+  const tiles = [
+    { value: totals.leads24h, label: 'Leads 24h', dotColor: LEAD_DOT },
+    { value: totals.leads7d, label: 'Leads 7d', dotColor: '#0ea5e9' },
+    { value: totals.leads30d, label: 'Leads 30d', dotColor: CALL_DOT },
+    { value: totals.sold24h, label: 'Sold 24h', dotColor: TEXT_DOT },
+  ]
+
+  const top = rows.slice(0, 10)
+  const rest = rows.slice(10)
+  const sections: Section[] = [
+    {
+      title: 'Top sources (by 30 days)',
+      rows: top.map((r) => ({
+        primary: r.source,
+        stats: [
+          { value: r.leads24h, label: '24h', dotColor: LEAD_DOT },
+          { value: r.leads7d, label: '7d', dotColor: '#0ea5e9' },
+          { value: r.leads30d, label: '30d', dotColor: CALL_DOT },
+          { value: r.sold30d, label: 'sold', dotColor: TEXT_DOT },
+        ],
+      })),
+    },
+  ]
+  if (rest.length > 0) {
+    sections.push({
+      kind: 'table',
+      title: 'Other sources',
+      columns: ['Source', '24h', '7d', '30d', 'Sold'],
+      rows: rest.map((r) => [r.source, r.leads24h, r.leads7d, r.leads30d, r.sold30d]),
+    })
+  }
+
+  const footnotes: string[] = []
+  if (rows.some((r) => isUnnamedSource(r.source))) {
+    footnotes.push('Unnamed sources are legacy VinSolutions source ids.')
+  }
+  footnotes.push('Sales only (service excluded).')
+  footnotes.push(`Generated ${generatedAt}.`)
+
+  const { html, text } = renderReportEmail({
+    storeName,
+    agentName,
+    headline: 'Where your leads came from',
+    greeting: 'Hi team,',
+    context,
+    tiles,
+    sections,
+    cta: input.cta ?? CTA_VINSOLUTIONS,
+    footnotes,
+  })
+  return { subject, html, text }
+}
+
 /** Lead/inbound event keys for notification routing (#207). */
 export type NotificationEvent =
   | 'new_lead'
