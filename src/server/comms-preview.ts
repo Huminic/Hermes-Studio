@@ -22,7 +22,30 @@ import {
 import { buildTextReport, type TextReportInput } from './text-report'
 import type { LeadAlertBuckets } from './lead-aging'
 
-export type AlertBundle = LeadAlertBuckets & { staleStatus: string[] }
+/**
+ * Per-lead detail the runner attaches to each alert bucket so the report email
+ * can render "Needs attention" rows (identity + stats) instead of bare ids
+ * (N2.1). Read-only enrichment: firstName/source are resolved from the same VIN
+ * data, never invented. Optional so fixture bundles without it still validate.
+ */
+export type AlertLeadDetail = {
+  leadId: string
+  firstName: string | null
+  source: string | null
+  createdUtc: string | null
+  leadStatus: string | null
+  leadType: string | null
+}
+
+export type AlertBundle = LeadAlertBuckets & {
+  staleStatus: string[]
+  /** Per-bucket enriched rows (N2.1); absent in older/fixture bundles. */
+  details?: {
+    noStatus: AlertLeadDetail[]
+    unactionedOver5Min: AlertLeadDetail[]
+    sittingOver3Days: AlertLeadDetail[]
+  }
+}
 
 export type PreviewBundle = {
   profile: string

@@ -1,12 +1,17 @@
 #!/usr/bin/env npx tsx
 /**
- * Daily AI Management Report emailer (N1.3 — Serra comms recovery).
+ * Daily AI Management Report emailer (N1.3 → redesigned N2.1 — Serra comms recovery).
  *
- * Renders the Daily AI Management report (produced by comms-preview.ts into
- * <from>/<profile>-daily-management.json) as a branded HTML email using the
- * SHARED card template (lead-notifications.renderDailyManagementEmail — not a
- * fork) and, only with --send, delivers it through the existing Studio email
- * path (notifications.sendNotification → central-mcp Resend).
+ * Renders the Daily AI Management report as a branded report email using the
+ * SHARED report template (report-email.renderReportEmail via
+ * lead-notifications.renderDailyManagementEmail — not a fork) and, only with
+ * --send, delivers it through the existing Studio email path
+ * (notifications.sendNotification → central-mcp Resend).
+ *
+ * Reads the artifacts comms-preview.ts wrote into <from>:
+ *   <profile>-daily-management.json  (footnote + date)
+ *   <profile>-raw-counts.json        (KPI tile numbers, deltas, generatedAt)
+ *   <profile>-alerts.json            (Needs-attention rows; details when present)
  *
  * DRY-RUN by default: prints the recipients + rendered HTML and writes
  * <from>/<profile>-email.html. --send is required to actually email.
@@ -16,9 +21,18 @@
  */
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { renderDailyManagementEmail } from '../src/server/lead-notifications'
+import {
+  renderDailyManagementEmail,
+  type NeedsAttentionRow,
+} from '../src/server/lead-notifications'
 import { sendNotification } from '../src/server/notifications'
 import type { DailyMgmtReport } from '../src/server/daily-management-report'
+import type { AlertBundle, AlertLeadDetail } from '../src/server/comms-preview'
+import { businessHoursElapsedMs, DEFAULT_BUSINESS_HOURS } from '../src/server/lead-aging'
+import { deltaOf, type Delta as DeltaDir } from '../src/server/text-report'
+
+/** VinSolutions CRM home for the "Open VinSolutions" CTA (store-agnostic app URL). */
+const VINSOLUTIONS_HOME = 'https://apps.vinsolutions.com/'
 
 const USAGE = `send-daily-report.ts — email the Daily AI Management Report (DRY-RUN by default)
 
@@ -55,11 +69,163 @@ const defaultSender: SendFn = async (input) => {
   return r.ok ? { ok: true, email_id: r.email_id } : { ok: false, error: r.error }
 }
 
+/** Store agent voice (Caroline = Honda/Nissan, Georgia = Ford). */
+export function agentNameForProfile(profile: string): string {
+  return /ford/i.test(profile) ? 'Georgia' : 'Caroline'
+}
+
+/** Shape of the raw-counts artifact this emailer consumes (subset). */
+type RawCounts = {
+  generatedAt?: string
+  businessHours?: { tz?: string; startHour?: number; endHour?: number }
+  reportWindow?: { start?: string; end?: string }
+  dailyManagement?: {
+    leadsDuringDay?: number
+    leadsAfterHours?: number
+    afterHoursInboundCalls?: { value?: number } | number
+    textsSentOnBehalf?: number
+    businessHoursTextCount?: number
+    afterHoursAvgTimeToTextMin?: { value?: number | null } | number | null
+    activeLeads30d?: number
+  }
+  leadSource?: {
+    window24h?: { opportunities?: number }
+    prev24h?: { opportunities?: number }
+  }
+}
+
+function num(v: unknown, fallback = 0): number {
+  return typeof v === 'number' && Number.isFinite(v) ? v : fallback
+}
+function nested(v: { value?: number | null } | number | null | undefined): number | null {
+  if (v == null) return null
+  if (typeof v === 'number') return v
+  return v.value ?? null
+}
+
+const DELTA_MAP: Record<DeltaDir, 'up' | 'down' | 'even'> = { up: 'up', down: 'down', even: 'even' }
+
 /**
- * Load the report artifact, render the email, write the HTML preview, and (only
- * when `send`) deliver it. Pure over injected deps so it never sends in tests
- * unless a sender is exercised. Returns the rendered subject/html and whether a
- * send was attempted.
+ * Assemble the renderDailyManagementEmail input from the three artifacts. Pure
+ * over an injected reader so it never touches disk in tests. Missing artifacts
+ * degrade to zeros / no rows (never invents a number).
+ */
+export function assembleDailyEmailInput(opts: {
+  profile: string
+  fromDir: string
+  storeName: string
+  readFile: (path: string) => string
+  now: () => string
+}): Parameters<typeof renderDailyManagementEmail>[0] {
+  const { profile, fromDir, storeName, readFile, now } = opts
+  const report = JSON.parse(
+    readFile(join(fromDir, `${profile}-daily-management.json`)),
+  ) as DailyMgmtReport
+
+  let raw: RawCounts = {}
+  try {
+    raw = JSON.parse(readFile(join(fromDir, `${profile}-raw-counts.json`))) as RawCounts
+  } catch {
+    /* no raw-counts → zeros */
+  }
+  let alerts: AlertBundle | null = null
+  try {
+    alerts = JSON.parse(readFile(join(fromDir, `${profile}-alerts.json`))) as AlertBundle
+  } catch {
+    /* no alerts → no needs-attention rows */
+  }
+
+  const generatedAt = raw.generatedAt ?? now()
+  const dm = raw.dailyManagement ?? {}
+  const leadsDuringDay = num(dm.leadsDuringDay)
+  const leadsAfterHours = num(dm.leadsAfterHours)
+  const aiTextsSent = num(dm.textsSentOnBehalf)
+  const afterHoursCalls = num(nested(dm.afterHoursInboundCalls))
+  const businessHoursTexts = num(dm.businessHoursTextCount)
+  const avgTimeToTextMin = nested(dm.afterHoursAvgTimeToTextMin)
+  const activeLeads30d = num(dm.activeLeads30d)
+
+  // New-leads delta from the clean 24h vs prior-24h lead pull (real data).
+  let newLeadsDelta: { text: string; direction: 'up' | 'down' | 'even' } | undefined
+  const cur24 = raw.leadSource?.window24h?.opportunities
+  const prev24 = raw.leadSource?.prev24h?.opportunities
+  if (typeof cur24 === 'number' && typeof prev24 === 'number') {
+    const dir = DELTA_MAP[deltaOf(cur24, prev24)]
+    const diff = Math.abs(cur24 - prev24)
+    newLeadsDelta = { text: `${diff} vs prior 24h`, direction: dir }
+  }
+
+  // Needs-attention = union of unactioned>5min + sitting>3d.
+  const windowEndMs = raw.reportWindow?.end ? Date.parse(raw.reportWindow.end) : NaN
+  const bh = {
+    ...DEFAULT_BUSINESS_HOURS,
+    tz: raw.businessHours?.tz ?? DEFAULT_BUSINESS_HOURS.tz,
+    startHour: raw.businessHours?.startHour ?? DEFAULT_BUSINESS_HOURS.startHour,
+    endHour: raw.businessHours?.endHour ?? DEFAULT_BUSINESS_HOURS.endHour,
+  }
+
+  const needsAttention: NeedsAttentionRow[] = []
+  const seen = new Set<string>()
+  const details = alerts?.details
+  const pushDetail = (d: AlertLeadDetail) => {
+    if (!d.leadId || seen.has(d.leadId)) return
+    seen.add(d.leadId)
+    const createdMs = d.createdUtc ? Date.parse(d.createdUtc) : NaN
+    const hoursWaiting =
+      Number.isFinite(createdMs) && Number.isFinite(windowEndMs)
+        ? Math.round(businessHoursElapsedMs(createdMs, windowEndMs, bh) / 3_600_000)
+        : null
+    needsAttention.push({
+      leadId: d.leadId,
+      firstName: d.firstName,
+      source: d.source,
+      hoursWaiting,
+      status: d.leadStatus,
+      leadType: d.leadType,
+    })
+  }
+  if (details) {
+    for (const d of details.unactionedOver5Min) pushDetail(d)
+    for (const d of details.sittingOver3Days) pushDetail(d)
+  } else if (alerts) {
+    // Older bundle without enriched detail: bare ids only.
+    for (const id of [...alerts.unactionedOver5Min, ...alerts.sittingOver3Days]) {
+      if (!seen.has(id)) {
+        seen.add(id)
+        needsAttention.push({ leadId: id })
+      }
+    }
+  }
+
+  return {
+    storeName,
+    agentName: agentNameForProfile(profile),
+    date: report.date,
+    generatedAt,
+    tiles: {
+      leadsDuringDay,
+      leadsAfterHours,
+      aiTextsSent,
+      afterHoursCalls,
+      needsAttentionCount: needsAttention.length,
+      newLeadsDelta,
+    },
+    coverage: {
+      afterHoursLeadsHandled: leadsAfterHours,
+      avgTimeToTextMin,
+      businessHoursTexts,
+      activeLeads30d,
+    },
+    needsAttention,
+    footnote: report.footnote,
+    cta: { label: 'Open VinSolutions', url: VINSOLUTIONS_HOME },
+  }
+}
+
+/**
+ * Load the artifacts, render the email, write the HTML preview, and (only when
+ * `send`) deliver it. Pure over injected deps so it never sends in tests unless
+ * a sender is exercised.
  */
 export async function sendDailyReport(opts: {
   profile: string
@@ -73,24 +239,14 @@ export async function sendDailyReport(opts: {
   const writeFile = opts.deps?.writeFile ?? ((p: string, c: string) => writeFileSync(p, c))
   const now = opts.deps?.now ?? (() => new Date().toISOString())
 
-  const report = JSON.parse(readFile(join(opts.fromDir, `${opts.profile}-daily-management.json`))) as DailyMgmtReport
-
-  // Best-effort: reuse the generation time recorded by comms-preview's raw-counts.
-  let generatedAt = now()
-  try {
-    const raw = JSON.parse(readFile(join(opts.fromDir, `${opts.profile}-raw-counts.json`))) as {
-      generatedAt?: string
-    }
-    if (raw.generatedAt) generatedAt = raw.generatedAt
-  } catch {
-    // no raw-counts / unreadable → keep the now() fallback
-  }
-
-  const { subject, html, text } = renderDailyManagementEmail({
-    report,
+  const input = assembleDailyEmailInput({
+    profile: opts.profile,
+    fromDir: opts.fromDir,
     storeName: opts.storeName,
-    generatedAt,
+    readFile,
+    now,
   })
+  const { subject, html, text } = renderDailyManagementEmail(input)
 
   const htmlPath = join(opts.fromDir, `${opts.profile}-email.html`)
   writeFile(htmlPath, html)

@@ -14,11 +14,12 @@
  *     npx tsx scripts/comms-preview.ts --profile serra-ford --out /tmp/preview
  */
 import { readStudioConfig } from '../src/server/studio-config'
-import { resolveVinOrgId } from '../src/server/vin-client'
+import { resolveVinOrgId, resolveLeadNames } from '../src/server/vin-client'
 import {
   fetchAllLeads,
   fetchLeadSources,
   summarizeOpportunities,
+  resolveSourceLabel,
   SALES_LEAD_TYPES,
   type LeadSourceOpportunities,
 } from '../src/server/lead-opportunities'
@@ -27,6 +28,7 @@ import {
   writePreviewArtifacts,
   type PreviewInput,
   type PreviewRawCounts,
+  type AlertLeadDetail,
 } from '../src/server/comms-preview'
 import {
   splitByBusinessHours,
@@ -261,6 +263,41 @@ async function main() {
   }))
   const alertBuckets = evaluateLeadAlerts({ leads: alertLeads, now: end, businessHours: cfg })
 
+  // ── Enriched alert detail (N2.1) ────────────────────────────────────────────
+  // Resolve first names (capped broker reads) + source labels for the leads in
+  // the alert buckets so the report email's "Needs attention" section shows
+  // identities, not bare ids. Read-only; never invents a name (null when unknown).
+  const leadById = new Map<string, Record<string, unknown>>()
+  for (const l of salesLeads(leads30)) {
+    const id = str(l.leadId) ?? str(l.id)
+    if (id) leadById.set(id, l)
+  }
+  const alertIds = new Set<string>([
+    ...alertBuckets.noStatus,
+    ...alertBuckets.unactionedOver5Min,
+    ...alertBuckets.sittingOver3Days,
+  ])
+  const alertLeadRecords = [...alertIds]
+    .map((id) => leadById.get(id))
+    .filter((l): l is Record<string, unknown> => !!l)
+  const resolved = await resolveLeadNames(alertLeadRecords, { orgId: org.orgId })
+  const firstNameByLeadId = new Map<string, string | null>()
+  for (const r of resolved) {
+    const id = str(r.leadId) ?? str(r.id)
+    if (id) firstNameByLeadId.set(id, r.resolved?.firstName ?? null)
+  }
+  const detailFor = (id: string): AlertLeadDetail => {
+    const l = leadById.get(id)
+    return {
+      leadId: id,
+      firstName: firstNameByLeadId.get(id) ?? null,
+      source: l ? resolveSourceLabel(str(l.leadSource) ?? str(l.source) ?? 'Unknown', sourceNames) : null,
+      createdUtc: l ? str(l.createdUtc) : null,
+      leadStatus: l ? str(l.leadStatus) : null,
+      leadType: l ? leadTypeOf(l) || null : null,
+    }
+  }
+
   // ── Text report ─────────────────────────────────────────────────────────────
   const leadsToday = leadSplit.during + leadSplit.after
   const salesLost = reportLeads.filter((l) => str(l.leadStatusType) === 'LOST').length
@@ -304,6 +341,11 @@ async function main() {
       sittingOver3Days: alertBuckets.sittingOver3Days,
       // No lead-status snapshot history yet tonight → no same-status-over-1-week set.
       staleStatus: [],
+      details: {
+        noStatus: alertBuckets.noStatus.map(detailFor),
+        unactionedOver5Min: alertBuckets.unactionedOver5Min.map(detailFor),
+        sittingOver3Days: alertBuckets.sittingOver3Days.map(detailFor),
+      },
     },
   }
 

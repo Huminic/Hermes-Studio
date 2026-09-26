@@ -117,9 +117,10 @@ function cleanSourceName(name: string): string {
 /**
  * Resolve a raw lead-source value to a human label: the resolved name when the
  * id→name map has it, else "Source <id>" (never a raw API URL on screen), else
- * the raw value (already a plain name).
+ * the raw value (already a plain name). Exported so read-only consumers (the
+ * comms-preview runner enriching alert rows) resolve source names identically.
  */
-function resolveSourceLabel(raw: string, names?: Map<string, string>): string {
+export function resolveSourceLabel(raw: string, names?: Map<string, string>): string {
   const id = leadSourceIdOf(raw)
   if (id && names?.get(id)) return names.get(id) as string
   if (id) return `Source ${id}`

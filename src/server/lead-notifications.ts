@@ -19,7 +19,12 @@ import path from 'node:path'
 import { buildAdfXml, type AdfLead } from './adf-xml'
 import { readStudioConfig } from './studio-config'
 import { recordCommsOutcome } from './comms-log'
-import type { DailyMgmtReport } from './daily-management-report'
+import {
+  renderReportEmail,
+  type Delta,
+  type Cta,
+  type Section,
+} from './report-email'
 import {
   recordLeadNotify,
   wasLeadNotifiedWithin,
@@ -728,42 +733,144 @@ export function escapeHtml(s: string): string {
     .replace(/'/g, '&#39;')
 }
 
+// ── Daily AI Management email (N2.1 — rewritten on the shared report template) ─
+// Duane rejected the N1 version ("a list, not a report"). This renders the
+// KPI-tile + section design via renderReportEmail — NOT a fork. Pure/testable.
+
+const NA_DOT = '#d0342c'
+const TEXT_DOT = '#12a150'
+const LEAD_DOT = '#2f6df6'
+const CALL_DOT = '#7c3aed'
+const STATUS_DOT = '#f59e0b'
+const NEUTRAL_DOT = '#6b7280'
+
+function plural(n: number, word: string): string {
+  return n === 1 ? word : `${word}s`
+}
+
+/** Short, human status for the "status" stat. */
+function statusShort(status?: string | null): string {
+  const s = (status ?? '').trim()
+  if (!s) return 'no status'
+  if (s === 'ACTIVE_NEW_LEAD') return 'New'
+  return s
+    .toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/\bactive\b/, '')
+    .trim()
+    .replace(/^\w/, (c) => c.toUpperCase()) || s
+}
+
+export type DailyEmailTiles = {
+  leadsDuringDay: number
+  leadsAfterHours: number
+  aiTextsSent: number
+  afterHoursCalls: number
+  needsAttentionCount: number
+  /** Trend vs the prior period (optional — omitted when not derivable). */
+  newLeadsDelta?: Delta
+  aiTextsDelta?: Delta
+}
+
+export type DailyEmailCoverage = {
+  afterHoursLeadsHandled: number
+  avgTimeToTextMin: number | null
+  businessHoursTexts: number
+  activeLeads30d: number
+}
+
+export type NeedsAttentionRow = {
+  leadId: string
+  firstName?: string | null
+  source?: string | null
+  hoursWaiting?: number | null
+  status?: string | null
+  leadType?: string | null
+}
+
 /**
- * Render the Daily AI Management report as an internal HTML email, reusing the
- * shared branded card (renderLeadCardHtml) — NOT a forked template. The report
- * lines become the card's two-column table; the store footnote + a "Sales only;
- * generated <ISO>" line go in the footer. Returns subject/html/text; sending is
- * the caller's job (send-daily-report.ts), so this stays pure and testable.
+ * Render the Daily AI Management report as a branded report email (subject
+ * unchanged). Tiles = New leads (day+after, delta vs yesterday), AI texts sent,
+ * After-hours calls, Needs attention; a "Needs attention" section (up to 10
+ * leads) and an "AI coverage" section. The omission footnote appears ONCE.
  */
 export function renderDailyManagementEmail(input: {
-  report: DailyMgmtReport
   storeName: string
+  agentName: string
+  date: string
   /** ISO time the underlying figures were generated (from raw-counts.json). */
   generatedAt: string
+  tiles: DailyEmailTiles
+  coverage: DailyEmailCoverage
+  needsAttention: NeedsAttentionRow[]
+  /** Omission footnote from the report (rendered once). */
+  footnote: string
+  /** Optional CTA (e.g. "Open VinSolutions"). */
+  cta?: Cta
 }): { subject: string; html: string; text: string } {
-  const { report, storeName, generatedAt } = input
-  const subject = `Daily AI Management Report — ${storeName} — ${report.date}`
-  const details = report.lines.map((l) => ({
-    label: l.label,
-    value: escapeHtml(String(l.value)),
+  const { storeName, agentName, date, generatedAt, tiles, coverage } = input
+  const subject = `Daily AI Management Report — ${storeName} — ${date}`
+  const newLeads = tiles.leadsDuringDay + tiles.leadsAfterHours
+
+  const context =
+    `Overnight at ${storeName}: ${newLeads} new ${plural(newLeads, 'lead')} came in ` +
+    `(${tiles.leadsDuringDay} during the day, ${tiles.leadsAfterHours} after hours), ` +
+    `${tiles.aiTextsSent} ${plural(tiles.aiTextsSent, 'text')} went out, and ` +
+    `${tiles.needsAttentionCount} ${tiles.needsAttentionCount === 1 ? 'lead is' : 'leads are'} waiting on a salesperson.`
+
+  const tileList = [
+    { value: newLeads, label: 'New leads', dotColor: LEAD_DOT, delta: tiles.newLeadsDelta },
+    { value: tiles.aiTextsSent, label: 'AI texts sent', dotColor: TEXT_DOT, delta: tiles.aiTextsDelta },
+    { value: tiles.afterHoursCalls, label: 'After-hours calls', dotColor: CALL_DOT },
+    { value: tiles.needsAttentionCount, label: 'Needs attention', dotColor: NA_DOT },
+  ]
+
+  const naRows = input.needsAttention.slice(0, 10).map((r) => ({
+    primary: (r.firstName && r.firstName.trim()) || `Lead ${r.leadId}`,
+    secondary: r.source ?? undefined,
+    stats: [
+      { value: r.hoursWaiting == null ? 'n/a' : `${r.hoursWaiting}h`, label: 'waiting', dotColor: NA_DOT },
+      { value: statusShort(r.status), label: 'status', dotColor: STATUS_DOT },
+      { value: r.leadType ?? 'n/a', label: 'type', dotColor: LEAD_DOT },
+    ],
   }))
-  const html = renderLeadCardHtml({
-    orgName: storeName,
-    headerTitle: 'Daily AI Management Report',
-    summaryText: `Overnight summary for <strong>${escapeHtml(storeName)}</strong> — ${escapeHtml(
-      report.date,
-    )}.`,
-    details,
-    footerNote: `${escapeHtml(report.footnote)}<br/>Sales only; generated ${escapeHtml(generatedAt)}.`,
+
+  const sections: Section[] = [
+    { title: 'Needs attention', rows: naRows },
+    {
+      title: 'AI coverage',
+      rows: [
+        {
+          primary: agentName,
+          secondary: 'Your AI assistant',
+          stats: [
+            { value: coverage.afterHoursLeadsHandled, label: 'after-hrs leads', dotColor: CALL_DOT },
+            {
+              value: coverage.avgTimeToTextMin == null ? 'n/a' : `${coverage.avgTimeToTextMin}m`,
+              label: 'avg reply',
+              dotColor: TEXT_DOT,
+            },
+            { value: coverage.businessHoursTexts, label: 'day texts', dotColor: LEAD_DOT },
+            { value: coverage.activeLeads30d, label: 'active 30d', dotColor: NEUTRAL_DOT },
+          ],
+        },
+      ],
+    },
+  ]
+
+  const { html, text } = renderReportEmail({
+    storeName,
+    agentName,
+    headline: "See what your team's been up to overnight",
+    greeting: 'Hi team,',
+    context,
+    tiles: tileList,
+    sections,
+    cta: input.cta,
+    // The omission footnote appears ONCE; the generated line no longer repeats
+    // "Sales only" (fixes the N1 duplicate).
+    footnotes: [input.footnote, `Generated ${generatedAt}.`],
   })
-  const text = [
-    `Daily AI Management Report — ${storeName} — ${report.date}`,
-    '',
-    ...report.lines.map((l) => `${l.label}: ${l.value}`),
-    '',
-    report.footnote,
-    `Sales only; generated ${generatedAt}.`,
-  ].join('\n')
   return { subject, html, text }
 }
 
