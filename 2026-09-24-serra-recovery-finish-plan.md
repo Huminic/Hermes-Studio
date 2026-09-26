@@ -62,7 +62,7 @@ supervisor can verify each step from the outside. No customer contact happens in
   TextMagic, signs each store's dry-run CSV.
 
 ## Progress
-Progress: S0 DONE 2026-09-24 (4097cdcc4); N1 APPROVED 2026-09-24 ~01:20 CT at d6ffc352f (flags, preview runner, emailer; 1289 green); next = D1 deploy (needs Duane) → S4 artifacts → 08:00 CT report + Ford/Nissan catch-up. Reviews in defects/finish-plan-reviews/.
+Progress: S0 DONE (4097cdcc4); N1 APPROVED 2026-09-24 (d6ffc352f); D1 DEPLOYED 2026-09-25 (main@984884c7f); N2 APPROVED 2026-09-26 ~14:20 CT at 011655a72 (report email design, 4 deliveries, intro text; 1308 green); deadline moved to Monday 2026-09-28 08:00 CT; next = D2 deploy → live samples to Duane → activate Ford/Nissan → GO-Ford/GO-Nissan catch-up → Monday 08:00 report + intro texts. Reviews in defects/finish-plan-reviews/.
 
 ## Plan (tranches)
 
@@ -267,3 +267,85 @@ Dry-run by default: prints recipients + the rendered HTML to stdout and writes `
 --stat be8556ae2..HEAD`, the suite and build lines. Commit `finish(N1): catch-up flags, live preview runner,
 report emailer`. Print `READY <sha>`. If blocked, `BLOCKED: <reason>` + the question in
 `defects/finish-plan-questions.md`.
+
+
+## NIGHT TRANCHE 2 (added 2026-09-25 ~01:15 CT by Major)
+
+Context: N1 is deployed (main@984884c7f). Duane reviewed the first samples and rejected the email design
+("a list, not a report"). His manifest is FOUR deliveries per store per day, plus a one-time intro text.
+Everything stays dry-run by default. Same rules as N1: no docker, no sends, no push, no crontab.
+~90 minutes. Commit `wip(N2.x)` per step. Times below are narrative only; scripts take no clock.
+1. Morning — Daily AI Management Report (email)
+2. Noon — Lead Source Report (email)
+3. 18:30 CT — End-of-day Wrap-up (email)
+4. ~19:00 CT — Text-message wrap-up (SMS, Greeting|Data|Commentary|Outro, agent voice)
+
+### N2 — Report email design + the other three deliveries + intro text (opus)
+Read first: `src/server/lead-notifications.ts` (`renderLeadCardHtml`, BRAND_* constants,
+`renderDailyManagementEmail`), `scripts/send-daily-report.ts`, `scripts/comms-preview.ts`,
+`src/server/comms-preview.ts`, `src/server/text-report.ts`, `src/server/prelaunch-lock.ts`, and
+`src/server/messaging-adapters.ts` (`dispatchOutbound` — the outbound SMS path with CommGate + prelaunch lock).
+
+**DESIGN REFERENCE (must match):** `/tmp/email-template-ref/design-reference.png` — a light card on a
+grey page: small logo/wordmark top-left, a bold headline ("See what your team has been up to"), a one-line
+greeting + one-line context sentence, then a 2×2 grid of white KPI tiles (large number, colored dot +
+label), then a section headline and a row list where each row has an identity on the left (name + role)
+and four small stats on the right (number over dot+label), then one solid green CTA button, then a
+plain-text footer. Email-safe coding conventions (tables, inline CSS, no flex/grid, 600px column,
+system font stack) can be borrowed from `/tmp/email-template-ref/index.html` (a licensed template pack;
+copy PATTERNS and CSS, not its Lorem content or images). No external images except our logo if one is
+already hosted; dots are CSS-colored table cells, not images. Must render in Gmail web, Outlook desktop
+and iPhone Mail. Keep a plain-text alternative.
+
+**N2.1 — Report email template** (`src/server/report-email.ts`, new; used by every report email).
+Export `renderReportEmail({ storeName, agentName, headline, greeting, context, tiles, sections, cta?, footnotes })`:
+- header: Huminic wordmark (text) + store name; headline bold; greeting "Hi team," (or `--greeting-name`);
+  context sentence in the agent's voice with numbers filled from data, never invented
+  (e.g. "Overnight at Tony Serra Ford: 5 new leads came in, 0 were texted, 1 is waiting on a salesperson.").
+- tiles: 2×2 grid; each { value, label, dotColor, delta?: { text, direction: up|down|even } } — delta shown
+  small under the label, green ▲ / red ▼ / grey =.
+- sections: each { title, rows: [{ primary, secondary, stats: [{ value, label, dotColor }] }] } rendered
+  like the "Active team members" rows (identity left, up to four stats right). Also allow a simple
+  `table` section { title, columns, rows } for the noon source table.
+- cta: optional single green button { label, url }; use it for "Open VinSolutions" (link to the store's
+  VinSolutions CRM home) on every report.
+- footnotes: small grey text block; the omission footnote appears ONCE (fix N1's duplicate "Sales only").
+Rewrite `renderDailyManagementEmail` on it: tiles = New leads (day+after-hours, delta vs yesterday),
+AI texts sent (delta), After-hours calls, Needs attention (unactioned>5min + sitting>3d); section
+"Needs attention" = rows per lead (first name + source as identity; stats: hours waiting, status, lead
+type) up to 10 — the runner must include lead first names/sources for alert buckets (extend the alerts
+artifact in comms-preview with `{leadId, firstName, source, createdUtc, leadStatus}` per bucket, read-only);
+section "AI coverage" = one row (Georgia/Caroline as identity; stats: after-hours leads handled, avg
+time-to-text, business-hours texts, active leads 30d). Subject unchanged.
+Tests: renders tiles/sections/cta/footnotes; escapes HTML; single footnote; no external images.
+
+**N2.2 — Lead Source Report email** (`scripts/send-lead-source-report.ts`, new; same flags/dry-run as
+send-daily-report): reads `<from>/<profile>-lead-source.json`. Tiles = leads 24h, leads 7d, leads 30d,
+sold 24h (cohort). Section rows = top sources by 30d (identity: source name; stats: 24h, 7d, 30d, sold)
+for the top 10, then a compact table for the rest. Unnamed sources render "Source <id>" with the footnote
+"Unnamed sources are legacy VinSolutions source ids". Subject `Lead Source Report — <Store> — <date>`.
+
+**N2.3 — End-of-day Wrap-up email** (`scripts/send-daily-wrapup.ts`, new): add `--window wrapup` to
+`scripts/comms-preview.ts` = report-day 08:00 → now, writing the same artifact set with suffix `-wrapup`.
+Tiles = leads today (delta vs yesterday), AI texts sent today, replies received today (inbound sms),
+needs attention. Sections: "Today's leads by source" (rows, top 8), "Needs attention" (rows as N2.1),
+"Sold / lost today (cohort of today's leads)" as a 2-stat row. Subject `Daily Wrap-up — <Store> — <date>`.
+
+**N2.4 — Text-message wrap-up sender** (`scripts/send-text-report.ts`, new): reads
+`<from>/<profile>-text-report.txt` (`-wrapup` variant when `--window wrapup`), `--to +1…,+1…`; dry-run prints
+the exact SMS + recipients; `--send` sends through `dispatchOutbound` (so CommGate, the prelaunch lock and
+comms_log apply) from the store's number, one message per recipient, `bypassBusinessHours: false`.
+Refuse `--send` when `--to` is empty. Tests: dry-run calls no sender; `--send` calls the injected sender
+once per recipient with the exact text.
+
+**N2.5 — One-time intro text** (`scripts/send-intro-text.ts`, new): same sender/flags as N2.4;
+`--agent-name` per store (Honda "Caroline", Nissan "Caroline", Ford "Georgia" unless `comms.agent_name`
+exists in studio config — check and prefer config). Copy (exact):
+`Good morning! This is <Agent> with <Store>. Starting today I'll be texting you a short end-of-day wrap-up
+with key numbers on the dealership, and you'll see some new reports in your email. Over the coming weeks
+you'll be able to chat with me here too. Have a great day and let's get 'em!` Tests as N2.4.
+
+**Gate + finish:** full suite green (≥ 1289), `npx vite build` exit 0, evidence in
+`defects/finish-plan-evidence/N2.md` (test names, `--help` of each script, one rendered HTML sample per
+report from fixtures saved under `defects/finish-plan-evidence/N2/`), commit `finish(N2): report email
+design, lead-source + wrap-up emails, text senders, intro text`, print `READY <sha>`.
