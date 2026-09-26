@@ -130,13 +130,19 @@ export function writePreviewArtifacts(input: {
   outDir: string
   rawCounts: PreviewRawCounts
   writeFile?: WriteFileFn
+  /**
+   * File name prefix (default the profile slug). The wrap-up runner passes
+   * `<profile>-wrapup` so the end-of-day artifact set sits beside the morning
+   * one (N2.3).
+   */
+  namePrefix?: string
 }): { files: string[] } {
   const bundle = assemblePreviewBundle(input.bundle)
   const write = input.writeFile ?? ((p: string, c: string) => writeFileSync(p, c))
-  const profile = input.bundle.profile
+  const prefix = input.namePrefix ?? input.bundle.profile
   const files: string[] = []
   const emit = (suffix: string, contents: string) => {
-    const path = join(input.outDir, `${profile}-${suffix}`)
+    const path = join(input.outDir, `${prefix}-${suffix}`)
     write(path, contents)
     files.push(path)
   }

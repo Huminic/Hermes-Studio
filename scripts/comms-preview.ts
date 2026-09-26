@@ -49,20 +49,24 @@ const H = 60 * 60_000
 const DAY = 24 * H
 const VOICE_CHANNELS = new Set(['voice', 'vapi'])
 
-type Args = { profile: string; date: string | null; out: string; help: boolean }
+type Window = 'morning' | 'wrapup'
+type Args = { profile: string; date: string | null; out: string; window: Window; help: boolean }
 
 const USAGE = `comms-preview.ts — read-only live preview of the daily reports, text report and alerts
 
   --profile <p>     store profile (required)
   --date YYYY-MM-DD report day (default: today in the store's comms.business_hours tz)
+  --window <w>      morning (default): prev business day 08:00 → report-day 08:00
+                    wrapup: report-day 08:00 → now (end-of-day). Files get a -wrapup prefix.
   --out <dir>       output directory for the six artifacts (default: .)
   --help            this message
 
-Writes: <profile>-preview.txt, <profile>-daily-management.json, <profile>-lead-source.json,
-        <profile>-text-report.txt, <profile>-alerts.json, <profile>-raw-counts.json`
+Writes (morning): <profile>-preview.txt, <profile>-daily-management.json, <profile>-lead-source.json,
+        <profile>-text-report.txt, <profile>-alerts.json, <profile>-raw-counts.json
+Writes (wrapup):  the same set with a <profile>-wrapup- prefix`
 
 function parseArgs(argv: string[]): Args {
-  const a: Args = { profile: '', date: null, out: '.', help: false }
+  const a: Args = { profile: '', date: null, out: '.', window: 'morning', help: false }
   for (let i = 0; i < argv.length; i++) {
     const t = argv[i]
     if (t === '--help' || t === '-h') a.help = true
@@ -72,6 +76,8 @@ function parseArgs(argv: string[]): Args {
     else if (t.startsWith('--date=')) a.date = t.slice('--date='.length)
     else if (t === '--out') a.out = argv[++i]
     else if (t.startsWith('--out=')) a.out = t.slice('--out='.length)
+    else if (t === '--window') a.window = argv[++i] === 'wrapup' ? 'wrapup' : 'morning'
+    else if (t.startsWith('--window=')) a.window = t.slice('--window='.length) === 'wrapup' ? 'wrapup' : 'morning'
   }
   return a
 }
@@ -174,12 +180,18 @@ async function main() {
   const tz = cfg.tz
   const date = args.date ?? todayInTz(tz)
 
-  // Report window: previous business day 08:00 → report-day 08:00 (local), so the
+  // Morning window: previous business day 08:00 → report-day 08:00 (local), so the
   // overnight after-hours shift rolls into the morning report.
+  // Wrap-up window (N2.3): report-day 08:00 → now (end-of-day).
   const reportDayOpen = localMidnightOfDate(tz, date) + cfg.startHour * H
-  const end = reportDayOpen
-  let start = end - DAY
-  {
+  let start: number
+  let end: number
+  if (args.window === 'wrapup') {
+    start = reportDayOpen
+    end = Date.now()
+  } else {
+    end = reportDayOpen
+    start = end - DAY
     let dayMid = localMidnight(tz, end - 12 * H)
     for (let i = 0; i < 14; i++) {
       const open = dayMid + cfg.startHour * H
@@ -228,6 +240,7 @@ async function main() {
     (m) => m.direction === 'inbound' && VOICE_CHANNELS.has(m.channel) && !isWithinBusinessHours(m.created_at, cfg),
   ).length
   const outboundSms = winMessages.filter((m) => m.direction === 'outbound' && m.channel === 'sms')
+  const inboundSms = winMessages.filter((m) => m.direction === 'inbound' && m.channel === 'sms').length
   const businessHoursTextCount = outboundSms.filter((m) => isWithinBusinessHours(m.created_at, cfg)).length
   // No dedicated Teambox aggregate helper exists — approximate with non-sms
   // message direction counts (documented in raw-counts).
@@ -301,6 +314,7 @@ async function main() {
   // ── Text report ─────────────────────────────────────────────────────────────
   const leadsToday = leadSplit.during + leadSplit.after
   const salesLost = reportLeads.filter((l) => str(l.leadStatusType) === 'LOST').length
+  const salesSold = reportLeads.filter((l) => str(l.leadStatusType) === 'SOLD').length
   const needsAttention = alertBuckets.unactionedOver5Min.length + alertBuckets.sittingOver3Days.length
   const agentName = /ford/i.test(args.profile) ? 'Georgia' : 'Caroline'
 
@@ -368,6 +382,10 @@ async function main() {
       afterHoursAvgTimeToTextMin: { value: afterHoursAvgTimeToTextMin, pairs: timePairs.length },
       leadsLeftBehind: { value: leadsLeftBehind, rule: 'sales + ACTIVE_NEW_LEAD + created ≥24h before window end; "no outbound sms" filter NOT applied → upper bound' },
       activeLeads30d,
+      // N2.3 wrap-up inputs (inbound sms replies + sold/lost cohort of window leads).
+      repliesReceived: inboundSms,
+      soldToday: salesSold,
+      lostToday: salesLost,
     },
     leadSource: {
       window24h: { start: new Date(end - DAY).toISOString(), end: new Date(end).toISOString(), opportunities: s24.opportunities, sold: s24.sold },
@@ -386,8 +404,9 @@ async function main() {
     messagesInWindow: winMessages.length,
   }
 
-  const { files } = writePreviewArtifacts({ bundle: input, outDir: args.out, rawCounts })
-  console.log(`[comms-preview] ${args.profile} ${date}: wrote ${files.length} files to ${args.out}`)
+  const namePrefix = args.window === 'wrapup' ? `${args.profile}-wrapup` : args.profile
+  const { files } = writePreviewArtifacts({ bundle: input, outDir: args.out, rawCounts, namePrefix })
+  console.log(`[comms-preview] ${args.profile} ${date} (${args.window}): wrote ${files.length} files to ${args.out}`)
   for (const f of files) console.log(`  ${f}`)
 }
 

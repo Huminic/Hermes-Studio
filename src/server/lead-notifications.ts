@@ -970,6 +970,96 @@ export function renderLeadSourceEmail(input: {
   return { subject, html, text }
 }
 
+// ── End-of-day Wrap-up email (N2.3 — 18:30 delivery on the shared template) ───
+
+/**
+ * Render the End-of-day Wrap-up as a branded report email. Tiles = leads today
+ * (delta vs yesterday), AI texts sent today, replies received today (inbound
+ * sms), needs attention. Sections: today's leads by source (top 8), needs
+ * attention (as the daily), and a sold/lost cohort 2-stat row.
+ */
+export function renderWrapupEmail(input: {
+  storeName: string
+  agentName: string
+  date: string
+  generatedAt: string
+  tiles: {
+    leadsToday: number
+    aiTextsSent: number
+    repliesReceived: number
+    needsAttentionCount: number
+    leadsDelta?: Delta
+  }
+  /** Top sources today (source label + today's lead count). */
+  leadsBySource: Array<{ source: string; leads: number }>
+  needsAttention: NeedsAttentionRow[]
+  /** Cohort of today's leads. */
+  cohort: { sold: number; lost: number }
+  footnote: string
+  cta?: Cta
+}): { subject: string; html: string; text: string } {
+  const { storeName, agentName, date, generatedAt, tiles, cohort } = input
+  const subject = `Daily Wrap-up — ${storeName} — ${date}`
+
+  const context =
+    `Here's how today went at ${storeName}: ${tiles.leadsToday} new ${plural(tiles.leadsToday, 'lead')}, ` +
+    `${tiles.aiTextsSent} ${plural(tiles.aiTextsSent, 'text')} sent, ${tiles.repliesReceived} ${plural(tiles.repliesReceived, 'reply')} back, ` +
+    `and ${tiles.needsAttentionCount} still ${tiles.needsAttentionCount === 1 ? 'needs' : 'need'} attention.`
+
+  const tileList = [
+    { value: tiles.leadsToday, label: 'Leads today', dotColor: LEAD_DOT, delta: tiles.leadsDelta },
+    { value: tiles.aiTextsSent, label: 'AI texts sent', dotColor: TEXT_DOT },
+    { value: tiles.repliesReceived, label: 'Replies received', dotColor: '#0ea5e9' },
+    { value: tiles.needsAttentionCount, label: 'Needs attention', dotColor: NA_DOT },
+  ]
+
+  const naRows = input.needsAttention.slice(0, 10).map((r) => ({
+    primary: (r.firstName && r.firstName.trim()) || `Lead ${r.leadId}`,
+    secondary: r.source ?? undefined,
+    stats: [
+      { value: r.hoursWaiting == null ? 'n/a' : `${r.hoursWaiting}h`, label: 'waiting', dotColor: NA_DOT },
+      { value: statusShort(r.status), label: 'status', dotColor: STATUS_DOT },
+      { value: r.leadType ?? 'n/a', label: 'type', dotColor: LEAD_DOT },
+    ],
+  }))
+
+  const sections: Section[] = [
+    {
+      title: "Today's leads by source",
+      rows: input.leadsBySource.slice(0, 8).map((s) => ({
+        primary: s.source,
+        stats: [{ value: s.leads, label: 'leads', dotColor: LEAD_DOT }],
+      })),
+    },
+    { title: 'Needs attention', rows: naRows },
+    {
+      title: 'Sold / lost today (cohort of today’s leads)',
+      rows: [
+        {
+          primary: "Today's cohort",
+          stats: [
+            { value: cohort.sold, label: 'sold', dotColor: TEXT_DOT },
+            { value: cohort.lost, label: 'lost', dotColor: NA_DOT },
+          ],
+        },
+      ],
+    },
+  ]
+
+  const { html, text } = renderReportEmail({
+    storeName,
+    agentName,
+    headline: 'Your end-of-day wrap-up',
+    greeting: 'Hi team,',
+    context,
+    tiles: tileList,
+    sections,
+    cta: input.cta ?? CTA_VINSOLUTIONS,
+    footnotes: [input.footnote, `Generated ${generatedAt}.`],
+  })
+  return { subject, html, text }
+}
+
 /** Lead/inbound event keys for notification routing (#207). */
 export type NotificationEvent =
   | 'new_lead'

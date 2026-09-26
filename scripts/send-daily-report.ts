@@ -28,7 +28,7 @@ import {
 import { sendNotification } from '../src/server/notifications'
 import type { DailyMgmtReport } from '../src/server/daily-management-report'
 import type { AlertBundle, AlertLeadDetail } from '../src/server/comms-preview'
-import { businessHoursElapsedMs, DEFAULT_BUSINESS_HOURS } from '../src/server/lead-aging'
+import { businessHoursElapsedMs, DEFAULT_BUSINESS_HOURS, type BusinessHoursCfg } from '../src/server/lead-aging'
 import { deltaOf, type Delta as DeltaDir } from '../src/server/text-report'
 
 /** VinSolutions CRM home for the "Open VinSolutions" CTA (store-agnostic app URL). */
@@ -105,6 +105,66 @@ function nested(v: { value?: number | null } | number | null | undefined): numbe
 
 const DELTA_MAP: Record<DeltaDir, 'up' | 'down' | 'even'> = { up: 'up', down: 'down', even: 'even' }
 
+/** Business-hours config from a raw-counts businessHours block. */
+export function businessHoursFromRaw(bh?: {
+  tz?: string
+  startHour?: number
+  endHour?: number
+}): BusinessHoursCfg {
+  return {
+    ...DEFAULT_BUSINESS_HOURS,
+    tz: bh?.tz ?? DEFAULT_BUSINESS_HOURS.tz,
+    startHour: bh?.startHour ?? DEFAULT_BUSINESS_HOURS.startHour,
+    endHour: bh?.endHour ?? DEFAULT_BUSINESS_HOURS.endHour,
+  }
+}
+
+/**
+ * Build the "Needs attention" rows from the alerts artifact: the union of the
+ * unactioned>5min + sitting>3d buckets (deduped), up to the caller's slice.
+ * Uses the enriched per-lead detail when present (firstName/source/leadType);
+ * falls back to bare ids for older bundles. hoursWaiting = business-hours aging
+ * from createdUtc to windowEnd. Pure; never invents a name.
+ */
+export function needsAttentionFromAlerts(
+  alerts: AlertBundle | null,
+  bh: BusinessHoursCfg,
+  windowEndMs: number,
+): NeedsAttentionRow[] {
+  const rows: NeedsAttentionRow[] = []
+  const seen = new Set<string>()
+  const details = alerts?.details
+  const pushDetail = (d: AlertLeadDetail) => {
+    if (!d.leadId || seen.has(d.leadId)) return
+    seen.add(d.leadId)
+    const createdMs = d.createdUtc ? Date.parse(d.createdUtc) : NaN
+    const hoursWaiting =
+      Number.isFinite(createdMs) && Number.isFinite(windowEndMs)
+        ? Math.round(businessHoursElapsedMs(createdMs, windowEndMs, bh) / 3_600_000)
+        : null
+    rows.push({
+      leadId: d.leadId,
+      firstName: d.firstName,
+      source: d.source,
+      hoursWaiting,
+      status: d.leadStatus,
+      leadType: d.leadType,
+    })
+  }
+  if (details) {
+    for (const d of details.unactionedOver5Min) pushDetail(d)
+    for (const d of details.sittingOver3Days) pushDetail(d)
+  } else if (alerts) {
+    for (const id of [...alerts.unactionedOver5Min, ...alerts.sittingOver3Days]) {
+      if (!seen.has(id)) {
+        seen.add(id)
+        rows.push({ leadId: id })
+      }
+    }
+  }
+  return rows
+}
+
 /**
  * Assemble the renderDailyManagementEmail input from the three artifacts. Pure
  * over an injected reader so it never touches disk in tests. Missing artifacts
@@ -157,45 +217,8 @@ export function assembleDailyEmailInput(opts: {
 
   // Needs-attention = union of unactioned>5min + sitting>3d.
   const windowEndMs = raw.reportWindow?.end ? Date.parse(raw.reportWindow.end) : NaN
-  const bh = {
-    ...DEFAULT_BUSINESS_HOURS,
-    tz: raw.businessHours?.tz ?? DEFAULT_BUSINESS_HOURS.tz,
-    startHour: raw.businessHours?.startHour ?? DEFAULT_BUSINESS_HOURS.startHour,
-    endHour: raw.businessHours?.endHour ?? DEFAULT_BUSINESS_HOURS.endHour,
-  }
-
-  const needsAttention: NeedsAttentionRow[] = []
-  const seen = new Set<string>()
-  const details = alerts?.details
-  const pushDetail = (d: AlertLeadDetail) => {
-    if (!d.leadId || seen.has(d.leadId)) return
-    seen.add(d.leadId)
-    const createdMs = d.createdUtc ? Date.parse(d.createdUtc) : NaN
-    const hoursWaiting =
-      Number.isFinite(createdMs) && Number.isFinite(windowEndMs)
-        ? Math.round(businessHoursElapsedMs(createdMs, windowEndMs, bh) / 3_600_000)
-        : null
-    needsAttention.push({
-      leadId: d.leadId,
-      firstName: d.firstName,
-      source: d.source,
-      hoursWaiting,
-      status: d.leadStatus,
-      leadType: d.leadType,
-    })
-  }
-  if (details) {
-    for (const d of details.unactionedOver5Min) pushDetail(d)
-    for (const d of details.sittingOver3Days) pushDetail(d)
-  } else if (alerts) {
-    // Older bundle without enriched detail: bare ids only.
-    for (const id of [...alerts.unactionedOver5Min, ...alerts.sittingOver3Days]) {
-      if (!seen.has(id)) {
-        seen.add(id)
-        needsAttention.push({ leadId: id })
-      }
-    }
-  }
+  const bh = businessHoursFromRaw(raw.businessHours)
+  const needsAttention = needsAttentionFromAlerts(alerts, bh, windowEndMs)
 
   return {
     storeName,
