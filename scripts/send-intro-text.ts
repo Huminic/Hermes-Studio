@@ -13,9 +13,15 @@
  *     --to +15551230000 --store-name "Tony Serra Ford" [--agent-name Georgia] [--send]
  */
 import { readStudioConfig } from '../src/server/studio-config'
+import { recordLeadNotify, wasLeadNotifiedWithin } from '../src/server/messaging-hub-store'
 import { blastSms, type SmsSendFn, type BlastResult } from './sms-report-sender'
 import { agentNameForProfile } from './send-daily-report'
 import { resolveCellRecipients, resolveStoreName } from './report-recipients'
+
+/** Dedup marker key for the one-time intro text (per profile, per cell). */
+export function introMarkerKey(cell: string): string {
+  return `intro-text:${cell}`
+}
 
 const USAGE = `send-intro-text.ts — one-time intro SMS from the store agent (DRY-RUN by default)
 
@@ -24,6 +30,8 @@ const USAGE = `send-intro-text.ts — one-time intro SMS from the store agent (D
   --store-name "<Name>" display store name used in the copy (default: comms.reports.store_name, else profile)
   --agent-name <name>   override the agent name (default: comms.agent_name, else
                         Georgia for Ford / Caroline otherwise)
+  --force               resend even to cells that already got the intro (default:
+                        one-time — each cell is introduced at most once)
   --send                actually text (else dry-run: print the SMS + recipients)
   --help                this message`
 
@@ -31,6 +39,10 @@ export type SendIntroDeps = {
   sender?: SmsSendFn
   /** Injected agent name from studio config (comms.agent_name) for tests. */
   configAgentName?: string | null
+  /** One-time marker read: has this profile+cell already received the intro? */
+  wasSent?: (profile: string, cell: string) => boolean
+  /** One-time marker write: stamp a delivered intro for this profile+cell. */
+  markSent?: (profile: string, cell: string) => void
 }
 
 /**
@@ -63,22 +75,50 @@ export async function sendIntroText(opts: {
   storeName: string
   agentName?: string | null
   send: boolean
+  /** Resend to cells that already received the intro (default false — one-time). */
+  force?: boolean
   deps?: SendIntroDeps
-}): Promise<{ text: string; agentName: string; blast: BlastResult }> {
+}): Promise<{
+  text: string
+  agentName: string
+  blast: BlastResult
+  targets: string[]
+  skipped: string[]
+}> {
   const agentName = resolveIntroAgentName({
     profile: opts.profile,
     agentNameFlag: opts.agentName,
     configAgentName: opts.deps?.configAgentName,
   })
   const text = buildIntroText(agentName, opts.storeName)
+
+  const wasSent =
+    opts.deps?.wasSent ??
+    ((profile: string, cell: string) =>
+      wasLeadNotifiedWithin(profile, introMarkerKey(cell), Number.POSITIVE_INFINITY))
+  const markSent =
+    opts.deps?.markSent ??
+    ((profile: string, cell: string) => recordLeadNotify(profile, introMarkerKey(cell)))
+
+  // One-time: drop any cell already introduced unless --force.
+  const targets = opts.force ? opts.to : opts.to.filter((c) => !wasSent(opts.profile, c))
+  const skipped = opts.to.filter((c) => !targets.includes(c))
+
   const blast = await blastSms({
     profile: opts.profile,
-    to: opts.to,
+    to: targets,
     text,
     send: opts.send,
     sender: opts.deps?.sender,
   })
-  return { text, agentName, blast }
+
+  // Stamp the marker only for cells that actually went out (no error).
+  if (blast.sent) {
+    for (const r of blast.results) {
+      if (r.result && !r.result.error) markSent(opts.profile, r.to)
+    }
+  }
+  return { text, agentName, blast, targets, skipped }
 }
 
 type Args = {
@@ -87,14 +127,16 @@ type Args = {
   storeName: string
   agentName: string
   send: boolean
+  force: boolean
   help: boolean
 }
 
 function parseArgs(argv: string[]): Args {
-  const a: Args = { profile: '', to: [], storeName: '', agentName: '', send: false, help: false }
+  const a: Args = { profile: '', to: [], storeName: '', agentName: '', send: false, force: false, help: false }
   for (let i = 0; i < argv.length; i++) {
     const t = argv[i]
     if (t === '--send') a.send = true
+    else if (t === '--force') a.force = true
     else if (t === '--help' || t === '-h') a.help = true
     else if (t === '--profile') a.profile = argv[++i]
     else if (t.startsWith('--profile=')) a.profile = t.slice('--profile='.length)
@@ -136,18 +178,20 @@ async function main() {
     process.exit(1)
   }
 
-  const { text, agentName, blast } = await sendIntroText({
+  const { text, agentName, blast, targets, skipped } = await sendIntroText({
     profile: args.profile,
     to,
     storeName,
     agentName: args.agentName || null,
     send: args.send,
+    force: args.force,
     deps: { configAgentName: configAgentNameFor(args.profile) },
   })
 
   console.log(`\n=== ONE-TIME INTRO TEXT (${args.profile}, agent ${agentName}) ===`)
-  console.log(`mode:       ${args.send ? 'SEND' : 'DRY-RUN (no sms)'}`)
-  console.log(`recipients: ${to.length ? to.join(', ') : '(none)'}`)
+  console.log(`mode:       ${args.send ? 'SEND' : 'DRY-RUN (no sms)'}${args.force ? ' [--force]' : ''}`)
+  console.log(`recipients: ${targets.length ? targets.join(', ') : '(none)'}`)
+  if (skipped.length) console.log(`skipped:    ${skipped.join(', ')} (already introduced; use --force to resend)`)
   console.log(`\n--- SMS TEXT ---\n${text}\n`)
   if (blast.sent) {
     for (const r of blast.results) {
