@@ -1,0 +1,37 @@
+Serra management reports + alerts — crontab lines (N3.3 / N3.4)
+================================================================
+
+Major installs these; the builder never edits crontab. The server clock is UTC.
+Central Time in September is UTC-5 (CDT), so the CT delivery times below map to
+these UTC hours. Jobs run Monday–Saturday only (field 5 = 1-6); Sunday is dark.
+
+Set REPORT_PROFILES to the space/comma list of stores that should send (empty =
+nothing runs). Example: REPORT_PROFILES="tony-serra-ford serra-nissan".
+
+Each store still self-gates on comms.reports.enabled + a non-empty management
+audience, so a store left off in config is skipped even if it is listed here.
+
+  # ── Serra management reports (times are CT → UTC, Mon–Sat) ────────────────
+  # Morning  Daily AI Management Report   08:00 CT = 13:00 UTC
+  0 13 * * 1-6  REPORT_PROFILES="tony-serra-ford serra-nissan" /home/ubuntu/hermes-ops/serra-reports.sh morning  >> /home/ubuntu/hermes-ops/serra-reports.log 2>&1
+  # Noon     Lead Source Report           12:00 CT = 17:00 UTC
+  0 17 * * 1-6  REPORT_PROFILES="tony-serra-ford serra-nissan" /home/ubuntu/hermes-ops/serra-reports.sh noon     >> /home/ubuntu/hermes-ops/serra-reports.log 2>&1
+  # Wrap-up  End-of-day Wrap-up (email)   18:30 CT = 23:30 UTC
+  30 23 * * 1-6 REPORT_PROFILES="tony-serra-ford serra-nissan" /home/ubuntu/hermes-ops/serra-reports.sh wrapup   >> /home/ubuntu/hermes-ops/serra-reports.log 2>&1
+  # Text     End-of-day text wrap-up      19:00 CT = 00:00 UTC next day
+  0 0  * * 2-6  REPORT_PROFILES="tony-serra-ford serra-nissan" /home/ubuntu/hermes-ops/serra-reports.sh text     >> /home/ubuntu/hermes-ops/serra-reports.log 2>&1
+
+  # ── Nightly lead-status snapshot (N3.4) — no send, feeds same-status aging ─
+  # 04:00 UTC daily (late-night CT); runs every day so history is continuous.
+  0 4  * * *    REPORT_PROFILES="tony-serra-ford serra-nissan" /home/ubuntu/hermes-ops/serra-reports.sh snapshot >> /home/ubuntu/hermes-ops/serra-reports.log 2>&1
+
+Notes
+-----
+- The text job runs at 00:00 UTC, which is the NEXT calendar day in UTC, so its
+  weekday field is 2-6 (Tue–Sat UTC) to line up with the Mon–Sat CT business
+  week (Mon 19:00 CT = Tue 00:00 UTC … Sat 19:00 CT = Sun 00:00 UTC is excluded;
+  Saturday's text therefore is not sent by this line — adjust to 2-6,0 only if a
+  Saturday-evening text is wanted).
+- serra-reports.sh on the host is this repo's scripts/cron-serra-reports.sh
+  (Major copies it into ~/hermes-ops/ alongside the other wrappers).
+- When DST returns (CST, UTC-6) in November, shift each UTC hour +1.
