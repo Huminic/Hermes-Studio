@@ -38,6 +38,41 @@ const WORDMARK = 'HUMINIC'
 const FONT_STACK =
   "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
 
+/**
+ * Gradient banner (N2.6) — mostly deep purple blending discreetly into fuchsia
+ * toward one corner. `BANNER_BG` is the Outlook/legacy-client fallback (Outlook
+ * ignores CSS gradients); `bannerStyle()` layers the gradient on top of it.
+ */
+const BANNER_BG = '#4c1d95'
+const BANNER_INK = '#ffffff'
+const BANNER_MUTED = '#e4dcff'
+function bannerStyle(): string {
+  return `background:${BANNER_BG};background:linear-gradient(120deg, ${BANNER_BG} 0%, #6d28d9 55%, #c026d3 100%);`
+}
+
+/**
+ * Unified status palette (N2.6) — ONE scheme used everywhere (tile dots, table
+ * headers, and colored cells): waiting is amber under 24h and red at 24h+;
+ * a "New" status is blue; lead types are grey.
+ */
+export const STATUS_AMBER = '#f59e0b'
+export const STATUS_RED = '#d0342c'
+export const STATUS_BLUE = '#2f6df6'
+export const STATUS_GREY = '#6b7280'
+
+/** Cell color for a "waiting" duration in hours (amber < 24h, red ≥ 24h). */
+export function waitingColor(hours?: number | null): string {
+  if (hours == null) return MUTED
+  return hours >= 24 ? STATUS_RED : STATUS_AMBER
+}
+
+/** Cell color for a lead status ("New" → blue, otherwise ink). */
+export function statusColor(status?: string | null): string {
+  const s = (status ?? '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+  if (!s) return MUTED
+  return /\bnew\b/.test(s) ? STATUS_BLUE : INK
+}
+
 export function escapeHtml(s: string): string {
   return String(s)
     .replace(/&/g, '&amp;')
@@ -70,12 +105,28 @@ export type RowSection = {
   rows: Array<{ primary: string; secondary?: string; stats: Stat[] }>
 }
 
-/** A section rendered as a compact table (for the noon source overflow). */
+/** A table column header — a plain label, or a label that carries a color (N2.6). */
+export type TableColumn =
+  | string
+  | { label: string; color?: string; align?: 'left' | 'right' }
+
+/** A table cell — a plain value, or a value with a color/weight (N2.6). */
+export type TableCell =
+  | string
+  | number
+  | { value: string | number; color?: string; bold?: boolean }
+
+/**
+ * A section rendered as a compact table. Used for the noon source overflow and,
+ * since N2.6, the "Needs attention" and "AI coverage" tables — a header row
+ * whose column names carry the palette color, then plain (optionally colored)
+ * rows underneath. No per-cell dot labels.
+ */
 export type TableSection = {
   kind: 'table'
   title: string
-  columns: string[]
-  rows: Array<Array<string | number>>
+  columns: TableColumn[]
+  rows: TableCell[][]
 }
 
 export type Section = RowSection | TableSection
@@ -193,25 +244,40 @@ function rowSectionBlock(section: RowSection): string {
     </td></tr>`
 }
 
+/** Column label text (accepts the plain-string or object form). */
+function columnLabel(c: TableColumn): string {
+  return typeof c === 'string' ? c : c.label
+}
+
+/** Column alignment: explicit when given, else first column left / rest right. */
+function columnAlign(c: TableColumn, i: number): 'left' | 'right' {
+  if (typeof c !== 'string' && c.align) return c.align
+  return i === 0 ? 'left' : 'right'
+}
+
 function tableSectionBlock(section: TableSection): string {
   const head = section.columns
-    .map(
-      (c, i) =>
-        `<th align="${i === 0 ? 'left' : 'right'}" style="padding:6px 8px;font-size:12px;color:${MUTED};border-bottom:1px solid ${HAIRLINE};font-weight:600;">${escapeHtml(
-          c,
-        )}</th>`,
-    )
+    .map((c, i) => {
+      const color = typeof c === 'string' ? MUTED : c.color ?? MUTED
+      return `<th align="${columnAlign(c, i)}" style="padding:6px 8px;font-size:12px;color:${color};border-bottom:1px solid ${HAIRLINE};font-weight:700;">${escapeHtml(
+        columnLabel(c),
+      )}</th>`
+    })
     .join('')
   const body = section.rows
     .map(
       (row) =>
         `<tr>${row
-          .map(
-            (cell, i) =>
-              `<td align="${i === 0 ? 'left' : 'right'}" style="padding:6px 8px;font-size:13px;color:${INK};border-bottom:1px solid ${HAIRLINE};">${escapeHtml(
-                String(cell),
-              )}</td>`,
-          )
+          .map((cell, i) => {
+            const align = columnAlign(section.columns[i] ?? '', i)
+            const isObj = typeof cell === 'object' && cell !== null
+            const color = isObj && cell.color ? cell.color : INK
+            const weight = isObj && cell.bold ? 'font-weight:600;' : ''
+            const value = isObj ? cell.value : cell
+            return `<td align="${align}" style="padding:7px 8px;font-size:13px;color:${color};${weight}border-bottom:1px solid ${HAIRLINE};">${escapeHtml(
+              String(value),
+            )}</td>`
+          })
           .join('')}</tr>`,
     )
     .join('')
@@ -268,24 +334,22 @@ export function renderReportEmail(input: ReportEmailInput): { html: string; text
 <body style="margin:0;padding:0;font-family:${FONT_STACK};background:${PAGE_BG};">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${PAGE_BG};">
     <tr><td style="padding:28px 12px;">
-      <table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:${CARD_BG};border-radius:12px;border:1px solid ${HAIRLINE};">
-        <!-- Wordmark + store name -->
-        <tr><td style="padding:26px 34px 4px;">
-          <span style="font-size:14px;font-weight:800;letter-spacing:2px;color:${ACCENT};">${WORDMARK}</span>
-          <span style="font-size:14px;color:${MUTED};">&nbsp;&nbsp;${escapeHtml(input.storeName)}</span>
+      <table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:${CARD_BG};border-radius:12px;border:1px solid ${HAIRLINE};overflow:hidden;">
+        <!-- Logo: centered on the white card, no box or background behind it -->
+        <tr><td align="center" style="padding:26px 34px 20px;">
+          <span style="font-size:18px;font-weight:800;letter-spacing:3px;color:${ACCENT};">${WORDMARK}</span>
         </td></tr>
-        <!-- Headline -->
-        <tr><td style="padding:8px 34px 0;">
-          <div style="font-size:24px;font-weight:700;color:${INK};line-height:1.25;">${escapeHtml(
+        <!-- Gradient banner: store name + headline + one-sentence story, all white -->
+        <tr><td bgcolor="${BANNER_BG}" style="${bannerStyle()}padding:26px 34px;">
+          <div style="font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:${BANNER_MUTED};">${escapeHtml(
+            input.storeName,
+          )}</div>
+          <div style="margin-top:8px;font-size:23px;font-weight:700;color:${BANNER_INK};line-height:1.25;">${escapeHtml(
             input.headline,
           )}</div>
-        </td></tr>
-        <!-- Greeting + context -->
-        <tr><td style="padding:14px 34px 2px;">
-          <p style="margin:0;font-size:15px;color:${INK};">${escapeHtml(input.greeting)}</p>
-          <p style="margin:8px 0 0 0;font-size:15px;color:${MUTED};line-height:1.6;">${escapeHtml(
-            input.context,
-          )}</p>
+          <p style="margin:12px 0 0 0;font-size:14px;color:${BANNER_INK};line-height:1.6;">${escapeHtml(
+            input.greeting,
+          )} ${escapeHtml(input.context)}</p>
         </td></tr>
         ${tilesBlock(input.tiles)}
         ${input.sections.map(sectionBlock).join('')}
@@ -320,8 +384,15 @@ export function renderReportEmail(input: ReportEmailInput): { html: string; text
     t.push('')
     t.push(section.title)
     if (section.kind === 'table') {
-      t.push('  ' + section.columns.join(' | '))
-      for (const row of section.rows) t.push('  ' + row.join(' | '))
+      t.push('  ' + section.columns.map(columnLabel).join(' | '))
+      for (const row of section.rows) {
+        t.push(
+          '  ' +
+            row
+              .map((cell) => (typeof cell === 'object' && cell !== null ? cell.value : cell))
+              .join(' | '),
+        )
+      }
     } else {
       const rs = section as RowSection
       if (rs.rows.length === 0) t.push('  (nothing to flag)')

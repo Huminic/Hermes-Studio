@@ -21,9 +21,16 @@ import { readStudioConfig } from './studio-config'
 import { recordCommsOutcome } from './comms-log'
 import {
   renderReportEmail,
+  waitingColor,
+  statusColor,
+  STATUS_AMBER,
+  STATUS_RED,
+  STATUS_BLUE,
+  STATUS_GREY,
   type Delta,
   type Cta,
   type Section,
+  type TableCell,
 } from './report-email'
 import {
   recordLeadNotify,
@@ -741,8 +748,6 @@ const NA_DOT = '#d0342c'
 const TEXT_DOT = '#12a150'
 const LEAD_DOT = '#2f6df6'
 const CALL_DOT = '#7c3aed'
-const STATUS_DOT = '#f59e0b'
-const NEUTRAL_DOT = '#6b7280'
 
 function plural(n: number, word: string): string {
   return n === 1 ? word : `${word}s`
@@ -759,6 +764,63 @@ function statusShort(status?: string | null): string {
     .replace(/\bactive\b/, '')
     .trim()
     .replace(/^\w/, (c) => c.toUpperCase()) || s
+}
+
+/**
+ * "Needs attention" as a real table (N2.6): a header row whose Waiting / Status
+ * / Type columns carry the palette color, then plain rows underneath, cells
+ * colored by the ONE status scheme (waiting amber<24h / red≥24h, New blue, type
+ * grey). No per-cell dot labels. Up to 10 leads. Shared by the daily + wrap-up.
+ */
+function needsAttentionTable(rows: NeedsAttentionRow[]): Section {
+  return {
+    kind: 'table',
+    title: 'Needs attention',
+    columns: [
+      { label: 'Lead', align: 'left' },
+      { label: 'Source', align: 'left' },
+      { label: 'Waiting', color: STATUS_AMBER, align: 'left' },
+      { label: 'Status', color: STATUS_BLUE, align: 'left' },
+      { label: 'Type', color: STATUS_GREY, align: 'left' },
+    ],
+    rows: rows.slice(0, 10).map((r): TableCell[] => [
+      { value: (r.firstName && r.firstName.trim()) || `Lead ${r.leadId}`, bold: true },
+      r.source ?? 'n/a',
+      {
+        value: r.hoursWaiting == null ? 'n/a' : `${r.hoursWaiting}h`,
+        color: waitingColor(r.hoursWaiting),
+      },
+      { value: statusShort(r.status), color: statusColor(r.status) },
+      { value: r.leadType ?? 'n/a', color: STATUS_GREY },
+    ]),
+  }
+}
+
+/**
+ * "AI coverage" as a real table (N2.6): Agent · After-hours leads · Avg reply ·
+ * Day texts · Active 30d. One row for the store agent.
+ */
+function aiCoverageTable(agentName: string, coverage: DailyEmailCoverage): Section {
+  return {
+    kind: 'table',
+    title: 'AI coverage',
+    columns: [
+      { label: 'Agent', color: STATUS_BLUE, align: 'left' },
+      { label: 'After-hours leads', align: 'right' },
+      { label: 'Avg reply', align: 'right' },
+      { label: 'Day texts', align: 'right' },
+      { label: 'Active 30d', align: 'right' },
+    ],
+    rows: [
+      [
+        { value: agentName, bold: true, color: STATUS_BLUE },
+        coverage.afterHoursLeadsHandled,
+        coverage.avgTimeToTextMin == null ? 'n/a' : `${coverage.avgTimeToTextMin}m`,
+        coverage.businessHoursTexts,
+        coverage.activeLeads30d,
+      ],
+    ],
+  }
 }
 
 export type DailyEmailTiles = {
@@ -825,37 +887,9 @@ export function renderDailyManagementEmail(input: {
     { value: tiles.needsAttentionCount, label: 'Needs attention', dotColor: NA_DOT },
   ]
 
-  const naRows = input.needsAttention.slice(0, 10).map((r) => ({
-    primary: (r.firstName && r.firstName.trim()) || `Lead ${r.leadId}`,
-    secondary: r.source ?? undefined,
-    stats: [
-      { value: r.hoursWaiting == null ? 'n/a' : `${r.hoursWaiting}h`, label: 'waiting', dotColor: NA_DOT },
-      { value: statusShort(r.status), label: 'status', dotColor: STATUS_DOT },
-      { value: r.leadType ?? 'n/a', label: 'type', dotColor: LEAD_DOT },
-    ],
-  }))
-
   const sections: Section[] = [
-    { title: 'Needs attention', rows: naRows },
-    {
-      title: 'AI coverage',
-      rows: [
-        {
-          primary: agentName,
-          secondary: 'Your AI assistant',
-          stats: [
-            { value: coverage.afterHoursLeadsHandled, label: 'after-hrs leads', dotColor: CALL_DOT },
-            {
-              value: coverage.avgTimeToTextMin == null ? 'n/a' : `${coverage.avgTimeToTextMin}m`,
-              label: 'avg reply',
-              dotColor: TEXT_DOT,
-            },
-            { value: coverage.businessHoursTexts, label: 'day texts', dotColor: LEAD_DOT },
-            { value: coverage.activeLeads30d, label: 'active 30d', dotColor: NEUTRAL_DOT },
-          ],
-        },
-      ],
-    },
+    needsAttentionTable(input.needsAttention),
+    aiCoverageTable(agentName, coverage),
   ]
 
   const { html, text } = renderReportEmail({
@@ -1013,16 +1047,6 @@ export function renderWrapupEmail(input: {
     { value: tiles.needsAttentionCount, label: 'Needs attention', dotColor: NA_DOT },
   ]
 
-  const naRows = input.needsAttention.slice(0, 10).map((r) => ({
-    primary: (r.firstName && r.firstName.trim()) || `Lead ${r.leadId}`,
-    secondary: r.source ?? undefined,
-    stats: [
-      { value: r.hoursWaiting == null ? 'n/a' : `${r.hoursWaiting}h`, label: 'waiting', dotColor: NA_DOT },
-      { value: statusShort(r.status), label: 'status', dotColor: STATUS_DOT },
-      { value: r.leadType ?? 'n/a', label: 'type', dotColor: LEAD_DOT },
-    ],
-  }))
-
   const sections: Section[] = [
     {
       title: "Today's leads by source",
@@ -1031,7 +1055,7 @@ export function renderWrapupEmail(input: {
         stats: [{ value: s.leads, label: 'leads', dotColor: LEAD_DOT }],
       })),
     },
-    { title: 'Needs attention', rows: naRows },
+    needsAttentionTable(input.needsAttention),
     {
       title: 'Sold / lost today (cohort of today’s leads)',
       rows: [

@@ -2,23 +2,34 @@ Serra Nissan
 Where your leads came from
 
 Hi team,
-Here's where Serra Nissan's leads came from: 14 in the last 24 hours, 64 this week, 253 this month, with 1 sold in the last 24 hours.
+Here's where Serra Nissan's leads came from: 78 in the last 24 hours, 300 this week, 780 this month, with 2 sold in the last 24 hours.
 
-  Leads 24h: 14
-  Leads 7d: 64
-  Leads 30d: 253
-  Sold 24h: 1
+  Leads 24h: 78
+  Leads 7d: 300
+  Leads 30d: 780
+  Sold 24h: 2
 
 Top sources (by 30 days)
-  Cars.com — 24h 6, 7d 30, 30d 120, sold 18
-  AutoTrader — 24h 4, 7d 18, 30d 70, sold 9
-  Website — 24h 3, 7d 12, 30d 48, sold 4
-  Source 3742136 — 24h 1, 7d 4, 30d 15, sold 1
+  Src0 — 24h 12, 7d 48, 30d 120, sold 5
+  Src1 — 24h 11, 7d 44, 30d 110, sold 0
+  Src2 — 24h 10, 7d 40, 30d 100, sold 0
+  Src3 — 24h 9, 7d 36, 30d 90, sold 0
+  Src4 — 24h 8, 7d 32, 30d 80, sold 0
+  Src5 — 24h 7, 7d 28, 30d 70, sold 0
+  Src6 — 24h 6, 7d 24, 30d 60, sold 0
+  Src7 — 24h 5, 7d 20, 30d 50, sold 0
+  Src8 — 24h 4, 7d 16, 30d 40, sold 0
+  Src9 — 24h 3, 7d 12, 30d 30, sold 0
+
+Other sources
+  Source | 24h | 7d | 30d | Sold
+  Src10 | 2 | 8 | 20 | 0
+  Source 3742136 | 1 | 4 | 10 | 0
 
 Open VinSolutions: https://apps.vinsolutions.com/
 
 Unnamed sources are legacy VinSolutions source ids.
 Sales only (service excluded).
-Generated 2026-09-25T17:30:00.000Z.
+Generated 2026-09-27T17:30:00.000Z.
 
 — Caroline · Powered by Huminic

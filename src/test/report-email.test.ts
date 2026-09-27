@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest'
-import { renderReportEmail, type ReportEmailInput } from '../server/report-email'
+import {
+  renderReportEmail,
+  waitingColor,
+  statusColor,
+  STATUS_AMBER,
+  STATUS_RED,
+  STATUS_BLUE,
+  STATUS_GREY,
+  type ReportEmailInput,
+} from '../server/report-email'
 
 const base: ReportEmailInput = {
   storeName: 'Tony Serra Ford',
@@ -97,5 +106,68 @@ describe('renderReportEmail', () => {
     const { html } = renderReportEmail({ ...base, cta: { label: 'x', url: 'javascript:alert(1)' } })
     expect(html).not.toContain('javascript:alert(1)')
     expect(html).not.toContain('href="javascript')
+  })
+
+  // ── N2.6 design fixes ──────────────────────────────────────────────────────
+  it('N2.6: renders a gradient banner (with Outlook bgcolor fallback) holding store name, headline and story', () => {
+    const { html } = renderReportEmail(base)
+    // gradient + a solid bgcolor fallback for Outlook
+    expect(html).toContain('linear-gradient')
+    expect(html).toContain('bgcolor="#4c1d95"')
+    // the banner carries the store name, headline and story sentence
+    expect(html).toContain('Tony Serra Ford')
+    expect(html).toContain('See what your team has been up to')
+    expect(html).toContain('5 new leads came in')
+    // logo remains a text wordmark with no box/background image
+    expect(html).toContain('HUMINIC')
+    expect(html).not.toContain('<img')
+    expect(html).not.toContain('url(')
+  })
+
+  it('N2.6: table columns carry color and cells can be colored (no per-cell dots)', () => {
+    const { html } = renderReportEmail({
+      ...base,
+      sections: [
+        {
+          kind: 'table',
+          title: 'Needs attention',
+          columns: [
+            { label: 'Lead', align: 'left' },
+            { label: 'Waiting', color: STATUS_AMBER, align: 'left' },
+            { label: 'Status', color: STATUS_BLUE, align: 'left' },
+          ],
+          rows: [
+            [
+              { value: 'Jane', bold: true },
+              { value: '30h', color: STATUS_RED },
+              { value: 'New', color: STATUS_BLUE },
+            ],
+          ],
+        },
+      ],
+    })
+    // colored header + colored cell
+    expect(html).toContain(`color:${STATUS_AMBER}`)
+    expect(html).toContain(`color:${STATUS_RED}`)
+    expect(html).toContain(`color:${STATUS_BLUE}`)
+    expect(html).toContain('Waiting')
+    expect(html).toContain('30h')
+    // colored cell uses text color, not an inline dot span with a label
+    expect(html).toContain(`color:${STATUS_RED};`)
+  })
+
+  it('N2.6: waitingColor is amber under 24h, red at 24h or more', () => {
+    expect(waitingColor(4)).toBe(STATUS_AMBER)
+    expect(waitingColor(23.9)).toBe(STATUS_AMBER)
+    expect(waitingColor(24)).toBe(STATUS_RED)
+    expect(waitingColor(72)).toBe(STATUS_RED)
+    expect(waitingColor(null)).not.toBe(STATUS_RED)
+  })
+
+  it('N2.6: statusColor is blue for New', () => {
+    expect(statusColor('New')).toBe(STATUS_BLUE)
+    expect(statusColor('ACTIVE_NEW_LEAD')).toBe(STATUS_BLUE)
+    expect(statusColor('Contacted')).not.toBe(STATUS_BLUE)
+    expect(STATUS_GREY).toBe('#6b7280')
   })
 })

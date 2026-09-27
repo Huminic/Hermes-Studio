@@ -65,6 +65,13 @@ describe('renderDailyManagementEmail (N2.1 report design)', () => {
     expect(html.split('Sales only').length - 1).toBe(1)
     expect(html).toContain('Generated 2026-09-24T13:00:00.000Z')
     expect(text).toContain('New leads: 11')
+    // N2.6: Needs attention + AI coverage are real tables with the named columns
+    expect(html).toContain('<th')
+    expect(html).toContain('Waiting')
+    expect(html).toContain('Status')
+    expect(html).toContain('After-hours leads')
+    expect(html).toContain('Avg reply')
+    expect(html).toContain('Active 30d')
   })
 })
 
