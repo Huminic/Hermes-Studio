@@ -34,13 +34,14 @@ import {
   type SendFn,
   type SendResult,
 } from './send-daily-report'
+import { resolveEmailRecipients, resolveStoreName } from './report-recipients'
 
 const USAGE = `send-daily-wrapup.ts — email the End-of-day Wrap-up (DRY-RUN by default)
 
   --profile <p>         store profile (required)
   --from <dir>          directory written by comms-preview.ts --window wrapup (required)
-  --to a@x,b@y          comma-separated recipients (required for --send)
-  --store-name "<Name>" display store name for the subject/header (required)
+  --to a@x,b@y          comma-separated recipients (default: comms.management_audience.emails)
+  --store-name "<Name>" display store name (default: comms.reports.store_name, else profile)
   --send                actually send (else dry-run: print + write <from>/<profile>-wrapup-email.html)
   --help                this message`
 
@@ -211,26 +212,28 @@ async function main() {
     console.log(USAGE)
     process.exit(0)
   }
-  if (!args.profile || !args.from || !args.storeName) {
-    console.error('[send-daily-wrapup] --profile, --from and --store-name are required')
+  if (!args.profile || !args.from) {
+    console.error('[send-daily-wrapup] --profile and --from are required')
     process.exit(1)
   }
-  if (args.send && args.to.length === 0) {
-    console.error('[send-daily-wrapup] --send requires --to')
+  const to = resolveEmailRecipients(args.profile, args.to)
+  const storeName = resolveStoreName(args.profile, args.storeName)
+  if (args.send && to.length === 0) {
+    console.error('[send-daily-wrapup] --send requires --to or a configured management audience')
     process.exit(1)
   }
 
   const out = await sendDailyWrapup({
     profile: args.profile,
     fromDir: args.from,
-    to: args.to,
-    storeName: args.storeName,
+    to,
+    storeName,
     send: args.send,
   })
 
   console.log(`\n=== END-OF-DAY WRAP-UP EMAIL (${args.profile}) ===`)
   console.log(`mode:       ${args.send ? 'SEND' : 'DRY-RUN (no email)'}`)
-  console.log(`recipients: ${args.to.length ? args.to.join(', ') : '(none)'}`)
+  console.log(`recipients: ${to.length ? to.join(', ') : '(none)'}`)
   console.log(`subject:    ${out.subject}`)
   console.log(`html:       wrote ${out.htmlPath}`)
   console.log(`\n--- RENDERED HTML ---\n${out.html}`)

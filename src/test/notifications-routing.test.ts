@@ -157,4 +157,77 @@ describe('/api/customer/notifications round-trip', () => {
     } as never)
     expect(put.status).toBe(400)
   })
+
+  // N3.1 — the management-audience card round-trips through the same API.
+  it('PUT persists the management audience + switches and GET reads it back', async () => {
+    const h = await handlers()
+    const put = await h.PUT({
+      request: new Request('http://localhost/api/customer/notifications', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profile: PROFILE,
+          management_audience: {
+            emails: 'gm@serra.example\nowner@serra.example',
+            cells: '+15551230000\n+15559876543',
+            reportsEnabled: true,
+            alertsEnabled: true,
+          },
+        }),
+      }),
+    } as never)
+    expect(put.status).toBe(200)
+
+    // Existing keys survived; audience landed in studio.yaml.
+    const yaml = fs.readFileSync(
+      path.join(tmpHome, '.hermes', 'profiles', PROFILE, 'studio.yaml'),
+      'utf8',
+    )
+    expect(yaml).toContain('lead_recipient: bdc@serra.example')
+    expect(yaml).toContain('gm@serra.example')
+    expect(yaml).toContain('+15551230000')
+
+    const res = await h.GET({
+      request: new Request(
+        `http://localhost/api/customer/notifications?profile=${PROFILE}`,
+      ),
+    } as never)
+    const body = (await res.json()) as {
+      management_audience: {
+        emails: string[]
+        cells: string[]
+        reportsEnabled: boolean
+        alertsEnabled: boolean
+      }
+    }
+    expect(body.management_audience.emails).toEqual([
+      'gm@serra.example',
+      'owner@serra.example',
+    ])
+    expect(body.management_audience.cells).toEqual(['+15551230000', '+15559876543'])
+    expect(body.management_audience.reportsEnabled).toBe(true)
+    expect(body.management_audience.alertsEnabled).toBe(true)
+
+    // And readManagementAudience surfaces the same for the send scripts.
+    const { readManagementAudience } = await import('@/server/studio-config')
+    const aud = readManagementAudience(PROFILE)
+    expect(aud.emails).toEqual(['gm@serra.example', 'owner@serra.example'])
+    expect(aud.cells).toEqual(['+15551230000', '+15559876543'])
+    expect(aud.reportsEnabled).toBe(true)
+  })
+
+  it('PUT rejects a management audience with a non-E.164 cell', async () => {
+    const h = await handlers()
+    const put = await h.PUT({
+      request: new Request('http://localhost/api/customer/notifications', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profile: PROFILE,
+          management_audience: { emails: [], cells: '555-1230000', reportsEnabled: false, alertsEnabled: false },
+        }),
+      }),
+    } as never)
+    expect(put.status).toBe(400)
+  })
 })

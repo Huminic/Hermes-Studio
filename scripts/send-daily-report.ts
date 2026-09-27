@@ -30,6 +30,7 @@ import type { DailyMgmtReport } from '../src/server/daily-management-report'
 import type { AlertBundle, AlertLeadDetail } from '../src/server/comms-preview'
 import { businessHoursElapsedMs, DEFAULT_BUSINESS_HOURS, type BusinessHoursCfg } from '../src/server/lead-aging'
 import { deltaOf, type Delta as DeltaDir } from '../src/server/text-report'
+import { resolveEmailRecipients, resolveStoreName } from './report-recipients'
 
 /** VinSolutions CRM home for the "Open VinSolutions" CTA (store-agnostic app URL). */
 const VINSOLUTIONS_HOME = 'https://apps.vinsolutions.com/'
@@ -38,8 +39,8 @@ const USAGE = `send-daily-report.ts — email the Daily AI Management Report (DR
 
   --profile <p>         store profile (required)
   --from <dir>          directory written by comms-preview.ts (required)
-  --to a@x,b@y          comma-separated recipients (required for --send)
-  --store-name "<Name>" display store name for the subject/header (required)
+  --to a@x,b@y          comma-separated recipients (default: comms.management_audience.emails)
+  --store-name "<Name>" display store name (default: comms.reports.store_name, else profile)
   --send                actually send (else dry-run: print + write <from>/<profile>-email.html)
   --help                this message`
 
@@ -317,26 +318,29 @@ async function main() {
     console.log(USAGE)
     process.exit(0)
   }
-  if (!args.profile || !args.from || !args.storeName) {
-    console.error('[send-daily-report] --profile, --from and --store-name are required')
+  if (!args.profile || !args.from) {
+    console.error('[send-daily-report] --profile and --from are required')
     process.exit(1)
   }
-  if (args.send && args.to.length === 0) {
-    console.error('[send-daily-report] --send requires --to')
+  // N3.1: default recipients + store name from the store's management audience.
+  const to = resolveEmailRecipients(args.profile, args.to)
+  const storeName = resolveStoreName(args.profile, args.storeName)
+  if (args.send && to.length === 0) {
+    console.error('[send-daily-report] --send requires --to or a configured management audience')
     process.exit(1)
   }
 
   const out = await sendDailyReport({
     profile: args.profile,
     fromDir: args.from,
-    to: args.to,
-    storeName: args.storeName,
+    to,
+    storeName,
     send: args.send,
   })
 
   console.log(`\n=== DAILY AI MANAGEMENT REPORT EMAIL (${args.profile}) ===`)
   console.log(`mode:       ${args.send ? 'SEND' : 'DRY-RUN (no email)'}`)
-  console.log(`recipients: ${args.to.length ? args.to.join(', ') : '(none)'}`)
+  console.log(`recipients: ${to.length ? to.join(', ') : '(none)'}`)
   console.log(`subject:    ${out.subject}`)
   console.log(`html:       wrote ${out.htmlPath}`)
   console.log(`\n--- RENDERED HTML ---\n${out.html}`)

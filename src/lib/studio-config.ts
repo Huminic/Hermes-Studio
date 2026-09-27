@@ -555,6 +555,52 @@ const CommsSchema = z
      * call-back requests. Consumed by src/server/immediate-exclude.ts.
      */
     immediate_exclude_via: z.array(z.string()).optional(),
+    /**
+     * N3.1 — the ONE management audience per store: the same people (Duane,
+     * Durran, Don, Shelby) receive every report email, the wrap-up text, the
+     * intro text and the lead alerts. `emails` are validated addresses; `cells`
+     * are E.164 (+1…). This is the recipient list every `scripts/send-*.ts`
+     * defaults `--to` to. Customer texting is unaffected — this is management-only.
+     */
+    management_audience: z
+      .object({
+        emails: z.array(z.union([z.literal(''), z.string().email()])).optional().default([]),
+        cells: z
+          .array(z.union([z.literal(''), z.string().regex(/^\+[1-9]\d{6,14}$/)]))
+          .optional()
+          .default([]),
+      })
+      .optional()
+      .default({}),
+    /**
+     * N3.1 — report delivery switch (Daily AI Management, Lead Source, Wrap-up
+     * email + text). OFF by default so nothing sends until Major flips it per
+     * store. `tz` overrides business_hours.tz for report scheduling; `store_name`
+     * is the display name used in report subjects/headers (falls back to the
+     * profile slug when unset).
+     */
+    reports: z
+      .object({
+        enabled: z.boolean().optional().default(false),
+        tz: z.string().optional(),
+        store_name: z.string().optional(),
+      })
+      .optional()
+      .default({}),
+    /**
+     * N3.1 — lead-alert switch (lead-aging sentinel checks, addressed to the
+     * management_audience). OFF by default; enabled per store by Major.
+     */
+    alerts: z
+      .object({
+        enabled: z.boolean().optional().default(false),
+      })
+      .optional()
+      .default({}),
+    /** Frozen calendar dates (YYYY-MM-DD) for lead-aging + report business-hours. */
+    holidays: z.array(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)).optional().default([]),
+    /** Store AI agent voice used in report/intro copy (else per-profile default). */
+    agent_name: z.string().optional(),
   })
   .optional()
   .default({})

@@ -15,12 +15,13 @@
 import { readStudioConfig } from '../src/server/studio-config'
 import { blastSms, type SmsSendFn, type BlastResult } from './sms-report-sender'
 import { agentNameForProfile } from './send-daily-report'
+import { resolveCellRecipients, resolveStoreName } from './report-recipients'
 
 const USAGE = `send-intro-text.ts — one-time intro SMS from the store agent (DRY-RUN by default)
 
   --profile <p>         store profile (required)
-  --to +1..,+1..        comma-separated E.164 recipients (required for --send)
-  --store-name "<Name>" display store name used in the copy (required)
+  --to +1..,+1..        comma-separated E.164 recipients (default: comms.management_audience.cells)
+  --store-name "<Name>" display store name used in the copy (default: comms.reports.store_name, else profile)
   --agent-name <name>   override the agent name (default: comms.agent_name, else
                         Georgia for Ford / Caroline otherwise)
   --send                actually text (else dry-run: print the SMS + recipients)
@@ -124,19 +125,21 @@ async function main() {
     console.log(USAGE)
     process.exit(0)
   }
-  if (!args.profile || !args.storeName) {
-    console.error('[send-intro-text] --profile and --store-name are required')
+  if (!args.profile) {
+    console.error('[send-intro-text] --profile is required')
     process.exit(1)
   }
-  if (args.send && args.to.length === 0) {
-    console.error('[send-intro-text] --send requires --to (refusing to send to nobody)')
+  const to = resolveCellRecipients(args.profile, args.to)
+  const storeName = resolveStoreName(args.profile, args.storeName)
+  if (args.send && to.length === 0) {
+    console.error('[send-intro-text] --send requires --to or configured management cells (refusing to send to nobody)')
     process.exit(1)
   }
 
   const { text, agentName, blast } = await sendIntroText({
     profile: args.profile,
-    to: args.to,
-    storeName: args.storeName,
+    to,
+    storeName,
     agentName: args.agentName || null,
     send: args.send,
     deps: { configAgentName: configAgentNameFor(args.profile) },
@@ -144,7 +147,7 @@ async function main() {
 
   console.log(`\n=== ONE-TIME INTRO TEXT (${args.profile}, agent ${agentName}) ===`)
   console.log(`mode:       ${args.send ? 'SEND' : 'DRY-RUN (no sms)'}`)
-  console.log(`recipients: ${args.to.length ? args.to.join(', ') : '(none)'}`)
+  console.log(`recipients: ${to.length ? to.join(', ') : '(none)'}`)
   console.log(`\n--- SMS TEXT ---\n${text}\n`)
   if (blast.sent) {
     for (const r of blast.results) {

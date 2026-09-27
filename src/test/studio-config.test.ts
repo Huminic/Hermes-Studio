@@ -169,6 +169,82 @@ autonomous_reply_defaults:
 `)
     expect(result.ok).toBe(false)
   })
+
+  // N3.1 — management audience + report/alert switches.
+  it('parses comms.management_audience + reports/alerts switches', () => {
+    const result = parseStudioConfig(`
+branding:
+  persona_name: x
+comms:
+  management_audience:
+    emails:
+      - gm@dealer.com
+      - owner@dealer.com
+    cells:
+      - "+15551230000"
+      - "+15559876543"
+  reports:
+    enabled: true
+    store_name: Tony Serra Ford
+  alerts:
+    enabled: true
+  holidays:
+    - "2026-12-25"
+`)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.config.comms.management_audience.emails).toEqual([
+        'gm@dealer.com',
+        'owner@dealer.com',
+      ])
+      expect(result.config.comms.management_audience.cells).toEqual([
+        '+15551230000',
+        '+15559876543',
+      ])
+      expect(result.config.comms.reports.enabled).toBe(true)
+      expect(result.config.comms.reports.store_name).toBe('Tony Serra Ford')
+      expect(result.config.comms.alerts.enabled).toBe(true)
+      expect(result.config.comms.holidays).toEqual(['2026-12-25'])
+    }
+  })
+
+  it('defaults comms.management_audience/reports/alerts when absent', () => {
+    const result = parseStudioConfig(`
+branding:
+  persona_name: x
+`)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.config.comms.management_audience.emails).toEqual([])
+      expect(result.config.comms.management_audience.cells).toEqual([])
+      expect(result.config.comms.reports.enabled).toBe(false)
+      expect(result.config.comms.alerts.enabled).toBe(false)
+    }
+  })
+
+  it('rejects an invalid management_audience email', () => {
+    const result = parseStudioConfig(`
+branding:
+  persona_name: x
+comms:
+  management_audience:
+    emails:
+      - not-an-email
+`)
+    expect(result.ok).toBe(false)
+  })
+
+  it('rejects a non-E.164 management_audience cell', () => {
+    const result = parseStudioConfig(`
+branding:
+  persona_name: x
+comms:
+  management_audience:
+    cells:
+      - "555-123-0000"
+`)
+    expect(result.ok).toBe(false)
+  })
 })
 
 describe('defaultStudioConfig', () => {

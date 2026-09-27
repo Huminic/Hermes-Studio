@@ -126,6 +126,77 @@ export function updateNotificationRouting(
   return res.ok ? { ok: true, routing } : res
 }
 
+export type ManagementAudience = {
+  emails: Array<string>
+  cells: Array<string>
+  reportsEnabled: boolean
+  alertsEnabled: boolean
+  /** Report-scheduling tz override (else business_hours.tz). */
+  tz?: string
+  /** Display store name for report subjects/headers (else the profile slug). */
+  storeName?: string
+}
+
+/**
+ * Read a profile's management audience + report/alert switches from studio.yaml
+ * (N3.1). Fail-safe: an unreadable/absent config yields empty lists + both
+ * switches off, never throws.
+ */
+export function readManagementAudience(profile: string): ManagementAudience {
+  try {
+    const comms = readStudioConfig(profile).config.comms
+    const ma = comms?.management_audience ?? { emails: [], cells: [] }
+    return {
+      emails: (ma.emails ?? []).filter((e): e is string => typeof e === 'string' && e.length > 0),
+      cells: (ma.cells ?? []).filter((c): c is string => typeof c === 'string' && c.length > 0),
+      reportsEnabled: comms?.reports?.enabled ?? false,
+      alertsEnabled: comms?.alerts?.enabled ?? false,
+      tz: comms?.reports?.tz,
+      storeName: comms?.reports?.store_name,
+    }
+  } catch {
+    return { emails: [], cells: [], reportsEnabled: false, alertsEnabled: false }
+  }
+}
+
+export type ManagementAudienceInput = {
+  emails: Array<string>
+  cells: Array<string>
+  reportsEnabled: boolean
+  alertsEnabled: boolean
+}
+
+/**
+ * Persist the per-profile management audience + report/alert switches into
+ * studio.yaml (N3.1). Validates against the schema (emails + E.164 cells) via
+ * mutateStudioYaml, leaving every other key intact.
+ */
+export function updateManagementAudience(
+  profile: string,
+  input: ManagementAudienceInput,
+): { ok: true } | { ok: false; error: string } {
+  return mutateStudioYaml(profile, (obj) => {
+    const comms =
+      obj.comms && typeof obj.comms === 'object'
+        ? (obj.comms as Record<string, unknown>)
+        : {}
+    comms.management_audience = { emails: input.emails, cells: input.cells }
+    const reports =
+      comms.reports && typeof comms.reports === 'object'
+        ? (comms.reports as Record<string, unknown>)
+        : {}
+    reports.enabled = input.reportsEnabled
+    comms.reports = reports
+    const alerts =
+      comms.alerts && typeof comms.alerts === 'object'
+        ? (comms.alerts as Record<string, unknown>)
+        : {}
+    alerts.enabled = input.alertsEnabled
+    comms.alerts = alerts
+    obj.comms = comms
+  })
+}
+
 export type DashboardCardInput = {
   title: string
   source: string

@@ -15,8 +15,47 @@ import {
   isAuthorizedForProfile,
   resolveSession,
 } from '../../../server/customer-auth'
-import { readStudioConfig, updateNotificationRouting } from '../../../server/studio-config'
+import {
+  readStudioConfig,
+  updateNotificationRouting,
+  readManagementAudience,
+  updateManagementAudience,
+} from '../../../server/studio-config'
 import { NotificationEvents } from '../../../lib/studio-config'
+
+const E164_RE = /^\+[1-9]\d{6,14}$/
+
+/**
+ * Normalize + validate the management-audience block (N3.1). Emails must contain
+ * '@'; cells must be E.164 (+1…). Blank lines are dropped. Returns the cleaned
+ * lists + switches, or an error naming the first bad entry.
+ */
+function normalizeAudience(
+  raw: unknown,
+):
+  | { ok: true; emails: string[]; cells: string[]; reportsEnabled: boolean; alertsEnabled: boolean }
+  | { ok: false; error: string } {
+  const o = (raw ?? {}) as Record<string, unknown>
+  const toList = (v: unknown): string[] =>
+    (Array.isArray(v) ? v : typeof v === 'string' ? v.split(/[\n,]/) : [])
+      .map((s) => String(s).trim())
+      .filter(Boolean)
+  const emails = toList(o.emails)
+  const cells = toList(o.cells)
+  for (const e of emails) {
+    if (!e.includes('@')) return { ok: false, error: `"${e}" is not a valid email` }
+  }
+  for (const c of cells) {
+    if (!E164_RE.test(c)) return { ok: false, error: `"${c}" is not a valid E.164 phone (+1…)` }
+  }
+  return {
+    ok: true,
+    emails,
+    cells,
+    reportsEnabled: o.reportsEnabled === true,
+    alertsEnabled: o.alertsEnabled === true,
+  }
+}
 
 type RuleInput = {
   event: string
@@ -71,6 +110,7 @@ export const Route = createFileRoute('/api/customer/notifications')({
           return json({ ok: false, error: 'Forbidden' }, { status: 403 })
         }
         const { config } = readStudioConfig(profile)
+        const audience = readManagementAudience(profile)
         return json({
           ok: true,
           routing: config.notifications.routing ?? [],
@@ -80,6 +120,13 @@ export const Route = createFileRoute('/api/customer/notifications')({
           lead_recipient: config.notifications.lead_recipient ?? null,
           lead_format: config.notifications.lead_format ?? 'email',
           known_events: NotificationEvents,
+          // N3.1 — the ONE management audience (reports + wrap-up text + alerts).
+          management_audience: {
+            emails: audience.emails,
+            cells: audience.cells,
+            reportsEnabled: audience.reportsEnabled,
+            alertsEnabled: audience.alertsEnabled,
+          },
         })
       },
       PUT: async ({ request }) => {
@@ -97,15 +144,55 @@ export const Route = createFileRoute('/api/customer/notifications')({
         if (!isAuthorizedForProfile(session, profile)) {
           return json({ ok: false, error: 'Forbidden' }, { status: 403 })
         }
-        const normalized = normalizeRouting(body.routing)
-        if (!normalized.ok) {
-          return json({ ok: false, error: normalized.error }, { status: 400 })
+        const hasRouting = 'routing' in body
+        const hasAudience = 'management_audience' in body
+        if (!hasRouting && !hasAudience) {
+          return json({ ok: false, error: 'nothing to save' }, { status: 400 })
         }
-        const result = updateNotificationRouting(profile, normalized.rules)
-        if (!result.ok) {
-          return json({ ok: false, error: result.error }, { status: 400 })
+
+        let savedRouting: Array<RuleInput> | undefined
+        if (hasRouting) {
+          const normalized = normalizeRouting(body.routing)
+          if (!normalized.ok) {
+            return json({ ok: false, error: normalized.error }, { status: 400 })
+          }
+          const result = updateNotificationRouting(profile, normalized.rules)
+          if (!result.ok) {
+            return json({ ok: false, error: result.error }, { status: 400 })
+          }
+          savedRouting = result.routing as Array<RuleInput>
         }
-        return json({ ok: true, routing: result.routing })
+
+        let savedAudience:
+          | { emails: string[]; cells: string[]; reportsEnabled: boolean; alertsEnabled: boolean }
+          | undefined
+        if (hasAudience) {
+          const norm = normalizeAudience(body.management_audience)
+          if (!norm.ok) {
+            return json({ ok: false, error: norm.error }, { status: 400 })
+          }
+          const res = updateManagementAudience(profile, {
+            emails: norm.emails,
+            cells: norm.cells,
+            reportsEnabled: norm.reportsEnabled,
+            alertsEnabled: norm.alertsEnabled,
+          })
+          if (!res.ok) {
+            return json({ ok: false, error: res.error }, { status: 400 })
+          }
+          savedAudience = {
+            emails: norm.emails,
+            cells: norm.cells,
+            reportsEnabled: norm.reportsEnabled,
+            alertsEnabled: norm.alertsEnabled,
+          }
+        }
+
+        return json({
+          ok: true,
+          ...(savedRouting ? { routing: savedRouting } : {}),
+          ...(savedAudience ? { management_audience: savedAudience } : {}),
+        })
       },
     },
   },

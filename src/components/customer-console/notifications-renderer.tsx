@@ -66,6 +66,14 @@ export function CustomerNotificationsRenderer({
   const [err, setErr] = useState<string | null>(null)
   const [testingTo, setTestingTo] = useState<string | null>(null)
   const [testMsg, setTestMsg] = useState<string | null>(null)
+  // N3.1 — management audience (reports + wrap-up text + alerts).
+  const [audEmails, setAudEmails] = useState('')
+  const [audCells, setAudCells] = useState('')
+  const [reportsEnabled, setReportsEnabled] = useState(false)
+  const [alertsEnabled, setAlertsEnabled] = useState(false)
+  const [savingAud, setSavingAud] = useState(false)
+  const [audMsg, setAudMsg] = useState<string | null>(null)
+  const [audErr, setAudErr] = useState<string | null>(null)
 
   useEffect(() => {
     let alive = true
@@ -79,6 +87,11 @@ export function CustomerNotificationsRenderer({
           setKnown(d.known_events ?? [])
           setLeadRecipient(d.lead_recipient ?? null)
           setLeadFormat(d.lead_format === 'adf-xml' ? 'adf-xml' : 'email')
+          const ma = d.management_audience ?? {}
+          setAudEmails((ma.emails ?? []).join('\n'))
+          setAudCells((ma.cells ?? []).join('\n'))
+          setReportsEnabled(ma.reportsEnabled === true)
+          setAlertsEnabled(ma.alertsEnabled === true)
         } else {
           setErr(d.error ?? 'Failed to load')
         }
@@ -159,6 +172,42 @@ export function CustomerNotificationsRenderer({
     }
   }
 
+  async function saveAudience() {
+    setSavingAud(true)
+    setAudMsg(null)
+    setAudErr(null)
+    try {
+      const res = await fetch('/api/customer/notifications', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profile,
+          management_audience: {
+            emails: audEmails,
+            cells: audCells,
+            reportsEnabled,
+            alertsEnabled,
+          },
+        }),
+      })
+      const d = await res.json()
+      if (d.ok) {
+        setAudMsg('Saved.')
+        const ma = d.management_audience ?? {}
+        setAudEmails((ma.emails ?? []).join('\n'))
+        setAudCells((ma.cells ?? []).join('\n'))
+        setReportsEnabled(ma.reportsEnabled === true)
+        setAlertsEnabled(ma.alertsEnabled === true)
+      } else {
+        setAudErr(d.error ?? 'Save failed')
+      }
+    } catch {
+      setAudErr('Save failed')
+    } finally {
+      setSavingAud(false)
+    }
+  }
+
   if (loading) {
     return <div className="p-6 text-sm opacity-60">Loading notifications…</div>
   }
@@ -173,6 +222,66 @@ export function CustomerNotificationsRenderer({
           Each rule is “when <em>this</em> happens, notify <em>this person</em>.”
         </p>
       </header>
+
+      {/* N3.1 — Management audience card: the ONE list that gets every report,
+          the wrap-up text, the intro text and the lead alerts. */}
+      <div className="rounded-lg border border-slate-200 bg-white p-4">
+        <h3 className="text-sm font-semibold text-slate-900">Management audience</h3>
+        <p className="mt-1 text-xs text-slate-500">
+          The people who receive the daily reports (email), the end-of-day wrap-up
+          text, and lead alerts. One list per store. Emails and cell numbers, one
+          per line. Cells must be in +1 format (E.164).
+        </p>
+        <div className="mt-3 grid gap-4 sm:grid-cols-2">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            Report emails
+            <textarea
+              className="min-h-[88px] w-full rounded-md border border-slate-200 bg-white px-2 py-1 font-normal text-slate-900"
+              placeholder={'gm@dealer.com\nowner@dealer.com'}
+              value={audEmails}
+              onChange={(e) => setAudEmails(e.target.value)}
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            Wrap-up / alert cell numbers
+            <textarea
+              className="min-h-[88px] w-full rounded-md border border-slate-200 bg-white px-2 py-1 font-normal text-slate-900"
+              placeholder={'+15551230000\n+15559876543'}
+              value={audCells}
+              onChange={(e) => setAudCells(e.target.value)}
+            />
+          </label>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-4">
+          <label className="flex items-center gap-2 text-xs text-slate-700">
+            <input
+              type="checkbox"
+              checked={reportsEnabled}
+              onChange={(e) => setReportsEnabled(e.target.checked)}
+            />
+            Send scheduled reports
+          </label>
+          <label className="flex items-center gap-2 text-xs text-slate-700">
+            <input
+              type="checkbox"
+              checked={alertsEnabled}
+              onChange={(e) => setAlertsEnabled(e.target.checked)}
+            />
+            Send lead alerts
+          </label>
+          <button
+            type="button"
+            className="rounded-md px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+            style={{ background: PRIMARY }}
+            onClick={saveAudience}
+            disabled={savingAud}
+          >
+            {savingAud ? 'Saving…' : 'Save audience'}
+          </button>
+          {audMsg && <span className="text-xs text-emerald-700">{audMsg}</span>}
+          {audErr && <span className="text-xs text-rose-700">{audErr}</span>}
+        </div>
+      </div>
 
       {leadRecipient && rules.length === 0 && (
         <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">

@@ -15,12 +15,13 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { blastSms, type SmsSendFn, type BlastResult } from './sms-report-sender'
+import { resolveCellRecipients } from './report-recipients'
 
 const USAGE = `send-text-report.ts — text the agent-voice wrap-up report (DRY-RUN by default)
 
   --profile <p>     store profile (required)
   --from <dir>      directory written by comms-preview.ts (required)
-  --to +1..,+1..    comma-separated E.164 recipients (required for --send)
+  --to +1..,+1..    comma-separated E.164 recipients (default: comms.management_audience.cells)
   --window <w>      morning (default) reads <profile>-text-report.txt;
                     wrapup reads <profile>-wrapup-text-report.txt
   --send            actually text (else dry-run: print the SMS + recipients)
@@ -99,22 +100,23 @@ async function main() {
     console.error('[send-text-report] --profile and --from are required')
     process.exit(1)
   }
-  if (args.send && args.to.length === 0) {
-    console.error('[send-text-report] --send requires --to (refusing to send to nobody)')
+  const to = resolveCellRecipients(args.profile, args.to)
+  if (args.send && to.length === 0) {
+    console.error('[send-text-report] --send requires --to or configured management cells (refusing to send to nobody)')
     process.exit(1)
   }
 
   const { text, blast } = await sendTextReport({
     profile: args.profile,
     fromDir: args.from,
-    to: args.to,
+    to,
     window: args.window,
     send: args.send,
   })
 
   console.log(`\n=== TEXT WRAP-UP (${args.profile}, ${args.window}) ===`)
   console.log(`mode:       ${args.send ? 'SEND' : 'DRY-RUN (no sms)'}`)
-  console.log(`recipients: ${args.to.length ? args.to.join(', ') : '(none)'}`)
+  console.log(`recipients: ${to.length ? to.join(', ') : '(none)'}`)
   console.log(`\n--- SMS TEXT ---\n${text}\n`)
   if (blast.sent) {
     for (const r of blast.results) {
