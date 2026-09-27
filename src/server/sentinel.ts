@@ -59,8 +59,18 @@ import {
 import { sampleHostStats, formatUptime, type HostStats } from './host-stats'
 import { runDailyBackup, type BackupReport } from './sentinel-backup'
 import { reapOldRecordings } from './call-recording'
-import { readStudioConfig } from './studio-config'
+import { readStudioConfig, readManagementAudience } from './studio-config'
 import { resolveVinOrgId } from './vin-client'
+import {
+  fetchAllLeads,
+  fetchLeadSources,
+  resolveSourceLabel,
+  SALES_LEAD_TYPES,
+} from './lead-opportunities'
+import { recordLeadNotify, wasLeadNotifiedWithin } from './messaging-hub-store'
+import { dispatchLeadAlerts, type AlertLead } from './lead-alert-dispatch'
+import { DEFAULT_BUSINESS_HOURS, type BusinessHoursCfg } from './lead-aging'
+import { findStaleStatus, snapshotDate } from './lead-status-snapshot'
 
 export type Severity = 'info' | 'warning' | 'critical'
 
@@ -1596,7 +1606,128 @@ export const wikiNodeIntegrityCheck: SentinelCheck = {
   },
 }
 
+// ── N3.4 — lead-aging alerts to the management audience ──────────────────────
+
+const LEAD_ALERT_DAY_MS = 24 * 60 * 60_000
+
+function str(v: unknown): string | null {
+  if (typeof v === 'string' && v.trim()) return v.trim()
+  if (typeof v === 'number') return String(v)
+  return null
+}
+
+function parseHour(hhmm: string | undefined, fallback: number): number {
+  if (!hhmm) return fallback
+  const h = parseInt(hhmm.split(':')[0] ?? '', 10)
+  return Number.isFinite(h) ? h : fallback
+}
+
+/** Business-hours config for a profile from comms.business_hours + comms.holidays. */
+function businessHoursForProfile(profile: string): BusinessHoursCfg {
+  try {
+    const comms = readStudioConfig(profile).config.comms as
+      | { business_hours?: { tz?: string; start?: string; end?: string }; holidays?: string[] }
+      | undefined
+    const bh = comms?.business_hours ?? {}
+    return {
+      tz: bh.tz ?? DEFAULT_BUSINESS_HOURS.tz,
+      startHour: parseHour(bh.start, DEFAULT_BUSINESS_HOURS.startHour),
+      endHour: parseHour(bh.end, DEFAULT_BUSINESS_HOURS.endHour),
+      businessWeekdays: new Set(DEFAULT_BUSINESS_HOURS.businessWeekdays),
+      holidays: new Set(comms?.holidays ?? []),
+    }
+  } catch {
+    return { ...DEFAULT_BUSINESS_HOURS, holidays: new Set() }
+  }
+}
+
+/**
+ * Lead-aging alerts (AC5 / N3.4). Registered per profile, gated by
+ * comms.alerts.enabled and delivered ONLY inside business hours to the store's
+ * management_audience.emails (NOT the operator). Deduped by (profile, bucket,
+ * leadId) per day via the lead_notify_log ledger. The heavy VIN pull happens
+ * ONLY after the enable/recipient/business-hours gates pass (dispatchLeadAlerts
+ * calls fetchLeads lazily), so a disabled store costs nothing. Returns [] to the
+ * generic Sentinel feed — the store-addressed email IS the alert.
+ */
+export const leadAgingAlertCheck: SentinelCheck = {
+  name: 'lead-aging-alerts',
+  category: 'lead-aging',
+  scope: 'profile',
+  async run({ profile, now }) {
+    if (!profile) return []
+    const audience = readManagementAudience(profile)
+    const cfg = businessHoursForProfile(profile)
+    const agentName = /ford/i.test(profile) ? 'Georgia' : 'Caroline'
+
+    const fetchLeads = async (): Promise<AlertLead[]> => {
+      const org = resolveVinOrgId(profile, readStudioConfig(profile).config)
+      if (!org.ok || !org.orgId) return []
+      const end = now
+      const start = end - 30 * LEAD_ALERT_DAY_MS
+      const fetched = await fetchAllLeads({
+        orgId: org.orgId,
+        startDate: new Date(start).toISOString(),
+        endDate: new Date(end).toISOString(),
+      })
+      if (!fetched.ok) return []
+      const sources = await fetchLeadSources({ orgId: org.orgId })
+      return fetched.leads
+        .filter((l) => SALES_LEAD_TYPES.has((str(l.leadType) ?? str(l.lead_type) ?? '').toUpperCase()))
+        .map((l) => ({
+          leadId: str(l.leadId) ?? str(l.id) ?? '',
+          leadStatus: str(l.leadStatus),
+          leadStatusType: str(l.leadStatusType),
+          createdUtc: str(l.createdUtc),
+          source: resolveSourceLabel(str(l.leadSource) ?? str(l.source) ?? 'Unknown', sources),
+          // Name resolution is capped/heavy; the row falls back to "Lead <id>".
+          firstName: null,
+        }))
+    }
+
+    // "Same status >1 week": flagged only when 8 consecutive daily snapshots
+    // exist (empty until history accumulates). Best-effort; never blocks alerts.
+    let staleStatus: string[] = []
+    if (audience.alertsEnabled) {
+      try {
+        const dates = Array.from({ length: 8 }, (_, i) =>
+          snapshotDate(now - (7 - i) * LEAD_ALERT_DAY_MS, cfg.tz),
+        )
+        staleStatus = findStaleStatus(openBrain(profile), dates)
+      } catch {
+        staleStatus = []
+      }
+    }
+
+    try {
+      await dispatchLeadAlerts({
+        profile,
+        storeName: audience.storeName ?? profile,
+        agentName,
+        emails: audience.emails,
+        alertsEnabled: audience.alertsEnabled,
+        businessHours: cfg,
+        deps: {
+          fetchLeads,
+          sendEmail: async (i) => {
+            const r = await sendNotification(i)
+            return { ok: r.ok, error: r.ok ? undefined : r.error }
+          },
+          wasAlerted: (key) => wasLeadNotifiedWithin(profile, key, Number.POSITIVE_INFINITY, now),
+          markAlerted: (key) => recordLeadNotify(profile, key, now),
+          now,
+          staleStatus,
+        },
+      })
+    } catch {
+      // Never let a lead-alert failure break the Sentinel pass.
+    }
+    return []
+  },
+}
+
 export const DEFAULT_CHECKS: Array<SentinelCheck> = [
+  leadAgingAlertCheck,
   commsCronLivenessCheck,
   threadSlaCheck,
   integrationHealthCheck,
