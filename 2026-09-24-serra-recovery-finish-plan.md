@@ -62,7 +62,7 @@ supervisor can verify each step from the outside. No customer contact happens in
   TextMagic, signs each store's dry-run CSV.
 
 ## Progress
-Progress: S0 DONE (4097cdcc4); N1 APPROVED 2026-09-24 (d6ffc352f); D1 DEPLOYED 2026-09-25 (main@984884c7f); N2 APPROVED 2026-09-26 ~14:20 CT at 011655a72 (report email design, 4 deliveries, intro text; 1308 green); deadline moved to Monday 2026-09-28 08:00 CT; next = D2 deploy → live samples to Duane → activate Ford/Nissan → GO-Ford/GO-Nissan catch-up → Monday 08:00 report + intro texts. Reviews in defects/finish-plan-reviews/.
+Progress: N1, N2, N2.6 (a3bfe1796), N3 (17010a383) APPROVED; D1 deployed 2026-09-25; go-live Monday 2026-09-28 08:00 CT; next = D2 deploy → test battery to Duane → battery to Durran → audience config + activate + crontab → smoke → Duane authorizes. Reviews in defects/finish-plan-reviews/.
 
 ## Plan (tranches)
 
