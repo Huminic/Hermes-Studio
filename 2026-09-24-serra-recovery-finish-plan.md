@@ -349,3 +349,77 @@ you'll be able to chat with me here too. Have a great day and let's get 'em!` Te
 `defects/finish-plan-evidence/N2.md` (test names, `--help` of each script, one rendered HTML sample per
 report from fixtures saved under `defects/finish-plan-evidence/N2/`), commit `finish(N2): report email
 design, lead-source + wrap-up emails, text senders, intro text`, print `READY <sha>`.
+
+### N2.6 — Design fixes from Duane's review (2026-09-26)
+1. Header: the logo sits centered on the white card with NO box or background behind it (if a hosted
+   transparent Huminic logo exists in the codebase or BRAND_* constants use it; otherwise the centered
+   wordmark). Directly under it, a full-width gradient banner: mostly deep purple, blending discreetly into
+   fuchsia toward one corner (linear-gradient with a bgcolor fallback for Outlook). The banner holds the
+   store name, the report headline and the one-sentence story, all in white. Tiles start below the banner.
+2. "Needs attention" and "AI coverage" become real tables: a header row whose column names carry the
+   color (colored text or a colored dot beside the header label), then plain rows underneath. Needs
+   attention columns: Lead · Source · Waiting · Status · Type. AI coverage columns: Agent · After-hours
+   leads · Avg reply · Day texts · Active 30d. No per-cell dot labels.
+3. Status colors reworked into one scheme used everywhere: waiting = amber under 24h, red at 24h or more;
+   status New = blue; lead types grey. Tile dots follow the same palette.
+4. Apply to all three emails (morning, noon, wrap-up). Re-render the fixture samples to
+   `defects/finish-plan-evidence/N2/render-*.png`, tests green, commit `finish(N2.6): design fixes`.
+
+
+## NIGHT TRANCHE 3 — real wiring (added 2026-09-26 evening CT by Major)
+
+Context: N2 + N2.6 give us the four deliveries as CLI scripts with `--to`. Duane's decision: ONE management
+audience per store — the same four people (Duane, Durran, Don, Shelby) get every report, the wrap-up text,
+the intro text and the alerts. Customer texting (catch-up, 72h follow-ups, new-lead texts, replies) is
+untouched. Monday 2026-09-28 08:00 CT is go-live. Same rules: no docker, no sends, no push, no crontab
+EDITS (you may add a cron FILE to the repo; Major installs it). Commit `wip(N3.x)` per step.
+
+### N3 — Recipients from store config, scheduler, alerts routing, weekend windows (opus)
+Read first: `src/lib/studio-config.ts` (CommsSchema / notifications routing), the notifications routing
+UI + API under `src/routes/api/customer/notifications*` and `src/routes/customer/*notifications*`,
+`src/server/notifications.ts`, `src/server/sentinel.ts` (`DEFAULT_CHECKS`, alert delivery),
+`src/server/lead-aging.ts`, `scripts/comms-preview.ts`, the four `scripts/send-*.ts`, and
+`scripts/cron-catchup-followup.sh` (the pattern for docker-exec cron wrappers).
+
+**N3.1 — Management audience in store config + UI.** Add to `CommsSchema` (per store):
+`comms.management_audience: { emails: string[], cells: string[] (E.164) }` and
+`comms.reports: { enabled: boolean, tz?: string }`, `comms.alerts: { enabled: boolean }`.
+Expose both in the EXISTING customer notifications settings page (same place the routing matrix lives;
+add a "Management audience" card with two textareas + the two enable toggles), saved through the existing
+notifications API (tenant-scoped; validate emails + E.164). Every `scripts/send-*.ts` defaults `--to` to
+the profile's `management_audience` (emails for email scripts, cells for text scripts); an explicit `--to`
+still overrides. Tests: schema accepts/rejects; scripts pick up config when `--to` is absent; UI route
+test that the card round-trips.
+
+**N3.2 — Report windows.** In `scripts/comms-preview.ts`: the MORNING window = previous business-day
+CLOSE (comms.business_hours end, Mon–Sat, skipping Sunday/holidays) → report-day OPEN, so Monday covers
+Saturday 19:00 → Monday 08:00 and never repeats Saturday's wrap-up. WRAPUP window = report-day OPEN → now.
+Lead Source windows unchanged (24h/7d/30d to report-day open). Raw-counts records both bounds. Tests
+with a Monday and a Tuesday fixture.
+
+**N3.3 — Scheduler.** Add `scripts/cron-serra-reports.sh` (docker-exec wrapper like
+cron-catchup-followup.sh) taking `<job>` ∈ morning|noon|wrapup|text and iterating
+`REPORT_PROFILES` (space/comma list; default EMPTY so nothing runs until Major sets it). Each job runs
+comms-preview for the right window into `/tmp/reports/<profile>/<date>/`, then the matching send script
+with `--send` using the config audience, and skips when `comms.reports.enabled` is false or the audience
+is empty. Log one line per profile per job to stdout. Add `docs/serra-reports-cron.txt` with the exact
+crontab lines (server is UTC; CT = UTC-5 in September): morning 13:00, noon 17:00, wrapup 23:30, text
+00:00 next day UTC; Mon–Sat only (`1-6`). No crontab edit by the builder.
+
+**N3.4 — Alerts routing.** Register the lead-aging checks (`lead-aging.ts` buckets: no-status,
+unactioned >5 min, sitting >3 days; same-status >1 week when the snapshot has history) as sentinel checks
+scoped per profile, gated by `comms.alerts.enabled`, business-hours-linear aging Mon–Sat 08:00–19:00 CT,
+deduped by (profile, bucket, leadId) so a lead alerts once per bucket per day. Deliver through the
+existing sentinel alert path but addressed to `management_audience.emails` (email) — subject
+`Lead alert — <Store>: <n> leads need attention`, body a short table (lead, source, waiting, status).
+Nightly `lead-status-snapshot` job added to the same cron wrapper (`snapshot` job, 04:00 UTC). Tests:
+gating, dedup, addressing.
+
+**N3.5 — Intro text is one-time.** `send-intro-text.ts` records each (profile, cell) it sent to in the
+profile's messaging-hub (a `comms_log`/metadata marker) and refuses to resend to the same cell unless
+`--force`. Test it.
+
+**Gate + finish:** full suite green (≥ 1308 + N2.6's tests), `npx vite build` exit 0, evidence in
+`defects/finish-plan-evidence/N3.md` (test names, the cron file, a screenshot or route-test output of the
+settings card), commit `finish(N3): audience config + UI, scheduler, alerts routing, weekend windows`,
+print `READY <sha>`.
