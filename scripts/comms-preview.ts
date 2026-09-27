@@ -56,8 +56,8 @@ const USAGE = `comms-preview.ts — read-only live preview of the daily reports,
 
   --profile <p>     store profile (required)
   --date YYYY-MM-DD report day (default: today in the store's comms.business_hours tz)
-  --window <w>      morning (default): prev business day 08:00 → report-day 08:00
-                    wrapup: report-day 08:00 → now (end-of-day). Files get a -wrapup prefix.
+  --window <w>      morning (default): prev business-day CLOSE → report-day OPEN
+                    wrapup: report-day OPEN → now (end-of-day). Files get a -wrapup prefix.
   --out <dir>       output directory for the six artifacts (default: .)
   --help            this message
 
@@ -140,6 +140,43 @@ function dayOfYear(dateStr: string): number {
   return Math.floor((d.getTime() - start.getTime()) / DAY)
 }
 
+/**
+ * Report window bounds (N3.2). Both are ms.
+ *
+ * MORNING: previous business-day CLOSE → report-day OPEN. The previous business
+ * day is the most recent day before report-day that is a business weekday and
+ * not a holiday (Sunday/holidays skipped), so a Monday report covers Saturday
+ * 19:00 → Monday 08:00 and never repeats Saturday's wrap-up. WRAPUP: report-day
+ * OPEN → now. Pure over the injected cfg + clock so Monday/Tuesday are testable.
+ */
+export function computeReportWindow(opts: {
+  date: string
+  window: Window
+  cfg: BusinessHoursCfg
+  now: number
+}): { start: number; end: number } {
+  const { date, window, cfg, now } = opts
+  const tz = cfg.tz
+  const reportDayOpen = localMidnightOfDate(tz, date) + cfg.startHour * H
+  if (window === 'wrapup') {
+    return { start: reportDayOpen, end: now }
+  }
+  const end = reportDayOpen
+  // Default fallback: a plain 24h look-back if no business day is found.
+  let start = end - DAY
+  let dayMid = localMidnight(tz, end - 12 * H) // previous calendar day's midnight
+  for (let i = 0; i < 14; i++) {
+    // A day is a business day iff its open hour is inside business hours
+    // (business weekday, not a holiday). Take that day's CLOSE as the start.
+    if (isWithinBusinessHours(dayMid + cfg.startHour * H, cfg)) {
+      start = dayMid + cfg.endHour * H
+      break
+    }
+    dayMid = localMidnight(tz, dayMid - 12 * H)
+  }
+  return { start, end }
+}
+
 function toSourceSummary(rows: Array<LeadSourceOpportunities>) {
   return rows.map((r) => ({ lead_source: r.lead_source, opportunities: r.opportunities, sold: r.sold }))
 }
@@ -180,28 +217,10 @@ async function main() {
   const tz = cfg.tz
   const date = args.date ?? todayInTz(tz)
 
-  // Morning window: previous business day 08:00 → report-day 08:00 (local), so the
-  // overnight after-hours shift rolls into the morning report.
-  // Wrap-up window (N2.3): report-day 08:00 → now (end-of-day).
-  const reportDayOpen = localMidnightOfDate(tz, date) + cfg.startHour * H
-  let start: number
-  let end: number
-  if (args.window === 'wrapup') {
-    start = reportDayOpen
-    end = Date.now()
-  } else {
-    end = reportDayOpen
-    start = end - DAY
-    let dayMid = localMidnight(tz, end - 12 * H)
-    for (let i = 0; i < 14; i++) {
-      const open = dayMid + cfg.startHour * H
-      if (open < end && isWithinBusinessHours(open, cfg)) {
-        start = open
-        break
-      }
-      dayMid = localMidnight(tz, dayMid - 12 * H)
-    }
-  }
+  // N3.2 windows: MORNING = previous business-day CLOSE → report-day OPEN (so
+  // the overnight/weekend after-hours shift rolls in and Saturday's wrap-up is
+  // never repeated on Monday); WRAP-UP = report-day OPEN → now.
+  const { start, end } = computeReportWindow({ date, window: args.window, cfg, now: Date.now() })
 
   const org = resolveVinOrgId(args.profile, config)
   if (!org.ok) {
