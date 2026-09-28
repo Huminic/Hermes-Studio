@@ -192,6 +192,7 @@ async function main() {
     now,
     config,
     followupAutomationId: followup.id,
+    waitHours: followup.wait_hours,
     days: args.days ?? undefined,
     salesOnly: !args.includeService,
     since: args.since ?? undefined,
@@ -207,6 +208,7 @@ async function main() {
   console.log(`scope:       ${args.includeService ? 'ALL lead types' : 'SALES only (SERVICE/PARTS excluded)'}`)
   console.log(`window:      ${res.startDate} .. ${res.endDate}`)
   console.log(`automation:  ${followup.name} (${followup.id})`)
+  console.log(`due cutoff:  ${res.waitHours}h (lead_followup wait_hours; 72h fallback)`)
   console.log(
     `follow-up window: ${res.windowOpen ? 'OPEN' : 'CLOSED'}` +
       (res.windowOpen ? '' : ` — next opens ${fmtTs(res.nextOpenMs)}`),
@@ -219,7 +221,7 @@ async function main() {
   if (args.excludeSources.length) console.log(`exclude src:  ${args.excludeSources.join(', ')}`)
   if (args.skipTextedSince) console.log(`skip texted:  since ${args.skipTextedSince}`)
   console.log(
-    `polled=${res.polledTotal} active=${res.activeCount} due(24h)=${res.dueCount} sales=${res.salesCount} ` +
+    `polled=${res.polledTotal} active=${res.activeCount} due=${res.dueCount} sales=${res.salesCount} ` +
       `candidates=${res.candidates.length} dropped=${res.dropped.length}` +
       (args.limit != null ? ` (limited to ${limited.length})` : ''),
   )
@@ -244,6 +246,7 @@ async function main() {
     const summary = {
       profile: args.profile,
       window: { start: res.startDate, end: res.endDate },
+      dueCutoffHours: res.waitHours,
       since: args.since ?? null,
       excludeSources: args.excludeSources,
       skipTextedSince: args.skipTextedSince ?? null,

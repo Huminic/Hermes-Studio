@@ -24,9 +24,21 @@ import type { StudioConfig } from '../lib/studio-config'
 import { callCentralMcpTool } from './central-mcp'
 import { type CallFn, fetchLeadsPaged, isValidSmsE164, leadVehicle, str } from './catchup-common'
 
-/** 24 hours in ms — the follow-up anniversary offset. */
-export const FOLLOWUP_AFTER_MS = 24 * 60 * 60_000
+/**
+ * @deprecated The follow-up due cutoff is now derived per-profile from the ACTIVE
+ * `lead_followup` automation's `wait_hours` (see `gatherFollowupCandidates`, which
+ * takes `waitHours`). This constant remains only as the 72h fallback alias for any
+ * caller not yet passing `waitHours`.
+ */
+export const FOLLOWUP_AFTER_MS = 72 * 60 * 60_000
 const DEFAULT_DAYS = 7
+/** Follow-up due cutoff (hours) used when the automation's `wait_hours` is missing or 0. */
+const DEFAULT_FOLLOWUP_WAIT_HOURS = 72
+
+/** Resolve the follow-up due cutoff in hours: the automation's `wait_hours`, else 72h. */
+function resolveWaitHours(waitHours?: number): number {
+  return waitHours && waitHours > 0 ? waitHours : DEFAULT_FOLLOWUP_WAIT_HOURS
+}
 
 export type FollowupCandidate = {
   leadId: string | null
@@ -59,6 +71,8 @@ export type FollowupGatherResult = {
   orgId: string | null
   polledTotal: number
   activeCount: number
+  /** Due cutoff applied (hours): the profile's lead_followup wait_hours, else 72h. */
+  waitHours: number
   dueCount: number
   /** Due, sales-scoped leads that survived the since/exclude filters. */
   salesCount: number
@@ -123,6 +137,9 @@ export async function gatherFollowupCandidates(input: {
   config: StudioConfig
   /** Follow-up (lead_followup/sms) automation id — used by the default dedup check. */
   followupAutomationId?: string
+  /** Follow-up due cutoff in hours (the ACTIVE lead_followup wait_hours). A lead is
+   * "due" once this many hours have elapsed since createdUtc. Missing or 0 ⇒ 72h. */
+  waitHours?: number
   /** Look-back window in days (default 7). */
   days?: number
   /** When true (default), exclude SERVICE/PARTS leads — the follow-up is spoken by
@@ -141,6 +158,8 @@ export async function gatherFollowupCandidates(input: {
 }): Promise<FollowupGatherResult> {
   const salesOnly = input.salesOnly ?? true
   const now = input.now ?? Date.now()
+  const waitHours = resolveWaitHours(input.waitHours)
+  const dueCutoffMs = waitHours * 60 * 60_000
   const call = input.deps?.call ?? callCentralMcpTool
   const hasRun =
     input.deps?.hasRun ??
@@ -167,6 +186,7 @@ export async function gatherFollowupCandidates(input: {
   const win = followupWindowState(input.config.comms, now)
 
   const base = {
+    waitHours,
     windowOpen: win.open,
     nextOpenMs: win.nextOpenMs,
     startDate,
@@ -204,17 +224,30 @@ export async function gatherFollowupCandidates(input: {
   }
   const raw = fetched.leads
 
+  const dropped: FollowupDrop[] = []
+
   // ALL active leads (any active status) — the follow-up is not new-only.
   const active = raw.filter((l) => str(l.leadStatusType) === 'ACTIVE')
-  // Due = 24h anniversary passed.
+  // Due = the follow-up cutoff (profile wait_hours, default 72h) has elapsed since
+  // createdUtc. Leads not yet due are COUNTED (dropped with a reason), not silent.
   const due = active.filter((l) => {
     const created = str(l.createdUtc)
     if (!created) return false
     const t = Date.parse(created)
-    return Number.isFinite(t) && t + FOLLOWUP_AFTER_MS <= now
+    if (!Number.isFinite(t)) return false
+    if (t + dueCutoffMs > now) {
+      dropped.push({
+        leadId: str(l.leadId) ?? str(l.id),
+        phone: null,
+        reason: `not yet due (${waitHours}h)`,
+        leadType: str(l.leadType),
+        createdUtc: created,
+        leadSource: resolveLeadSourceName(l, sourceNames),
+      })
+      return false
+    }
+    return true
   })
-
-  const dropped: FollowupDrop[] = []
 
   // Filter the due leads: --since floor → sales-only (SERVICE/PARTS) → --exclude-source.
   const sendable = due.filter((l) => {
@@ -310,7 +343,7 @@ export async function gatherFollowupCandidates(input: {
       leadType,
       leadSource,
       createdUtc: created,
-      anniversaryMs: created ? Date.parse(created) + FOLLOWUP_AFTER_MS : now,
+      anniversaryMs: created ? Date.parse(created) + dueCutoffMs : now,
     })
   }
 

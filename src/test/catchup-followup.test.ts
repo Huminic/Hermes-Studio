@@ -80,6 +80,7 @@ describe('gatherFollowupCandidates', () => {
       profile: 'serra-honda',
       now: NOW,
       config: CONFIG,
+      waitHours: 24,
       deps: { call: fakeCall(leads, contacts), hasRun: () => false },
     })
     expect(res.polledTotal).toBe(4)
@@ -104,6 +105,7 @@ describe('gatherFollowupCandidates', () => {
       profile: 'serra-honda',
       now: NOW,
       config: CONFIG,
+      waitHours: 24,
       deps: { call: fakeCall(leads, contacts), hasRun: () => false },
     })
     expect(res.candidates.map((c) => c.phone).sort()).toEqual(['+12055550104', '+17313946907'])
@@ -120,6 +122,7 @@ describe('gatherFollowupCandidates', () => {
       now: NOW,
       config: CONFIG,
       salesOnly: false,
+      waitHours: 24,
       deps: { call: fakeCall(leads, { '101': { firstName: 'Sam', phone: '7313946907' } }), hasRun: () => false },
     })
     expect(res.candidates.map((c) => c.phone)).toEqual(['+17313946907'])
@@ -132,6 +135,7 @@ describe('gatherFollowupCandidates', () => {
       profile: 'serra-honda',
       now: NOW,
       config: CONFIG,
+      waitHours: 24,
       deps: {
         call: fakeCall(leads, { '101': { firstName: 'Ann', phone: '7313946907' } }),
         hasRun: () => false,
@@ -151,6 +155,7 @@ describe('gatherFollowupCandidates', () => {
       profile: 'serra-honda',
       now: NOW,
       config: CONFIG,
+      waitHours: 24,
       deps: { call: fakeCall(leads, contacts), hasRun: (h) => done.has(h) },
     })
     expect(res.candidates.map((c) => c.phone)).toEqual(['+12055550104'])
@@ -161,15 +166,16 @@ describe('gatherFollowupCandidates', () => {
     })
   })
 
-  it('computes the anniversary as created + 24h', async () => {
-    const created = NOW - 30 * H
-    const leads = [lead(1, 'ACTIVE', 101, 30 * H)]
+  it('computes the anniversary as created + the due cutoff (72h default)', async () => {
+    const created = NOW - 80 * H
+    const leads = [lead(1, 'ACTIVE', 101, 80 * H)] // 80h ago → due at the 72h default
     const res = await gatherFollowupCandidates({
       profile: 'serra-honda',
       now: NOW,
       config: CONFIG,
       deps: { call: fakeCall(leads, { '101': { phone: '7313946907' } }), hasRun: () => false },
     })
+    expect(res.waitHours).toBe(72)
     expect(res.candidates[0].anniversaryMs).toBe(created + FOLLOWUP_AFTER_MS)
   })
 
@@ -244,6 +250,7 @@ describe('gatherFollowupCandidates — N1.1 flags', () => {
       profile: 'serra-honda',
       now: NOW,
       config: CONFIG,
+      waitHours: 24,
       excludeSources: ['service dept'],
       sourceNames: new Map([
         ['555', 'Service Dept'],
@@ -268,6 +275,7 @@ describe('gatherFollowupCandidates — N1.1 flags', () => {
       profile: 'serra-honda',
       now: NOW,
       config: CONFIG,
+      waitHours: 24,
       excludeSources: ['999'],
       deps: {
         call: fakeCall(leads, { '101': { firstName: 'Ann', phone: '7313946907' } }),
@@ -294,6 +302,7 @@ describe('gatherFollowupCandidates — N1.1 flags', () => {
       profile: 'serra-honda',
       now: NOW,
       config: CONFIG,
+      waitHours: 24,
       skipTextedSince: '2026-08-15',
       deps: {
         call: fakeCall(leads, contacts),
@@ -323,6 +332,7 @@ describe('gatherFollowupCandidates — N1.1 flags', () => {
       profile: 'serra-honda',
       now: NOW,
       config: CONFIG,
+      waitHours: 24,
       sourceNames: new Map([['777', 'Cars.com']]),
       deps: { call: fakeCall(leads, contacts), hasRun: () => false },
     })
@@ -330,5 +340,73 @@ describe('gatherFollowupCandidates — N1.1 flags', () => {
     expect(res.salesCount).toBe(1)
     expect(res.candidates).toHaveLength(1)
     expect(res.candidates[0].leadSource).toBe('Cars.com')
+  })
+})
+
+describe('gatherFollowupCandidates — N4 due cutoff from wait_hours', () => {
+  const contacts = { '101': { firstName: 'Ann', phone: '7313946907' } }
+
+  it('a 30h-old lead is NOT due at the 72h default and is COUNTED as not-yet-due', async () => {
+    const leads = [lead(1, 'ACTIVE', 101, 30 * H)]
+    const res = await gatherFollowupCandidates({
+      profile: 'serra-honda',
+      now: NOW,
+      config: CONFIG,
+      deps: { call: fakeCall(leads, contacts), hasRun: () => false },
+    })
+    expect(res.waitHours).toBe(72)
+    expect(res.dueCount).toBe(0)
+    expect(res.candidates).toHaveLength(0)
+    expect(res.dropped).toContainEqual(
+      expect.objectContaining({ leadId: '1', reason: 'not yet due (72h)' }),
+    )
+  })
+
+  it('the same 30h-old lead IS due at a 24h wait_hours', async () => {
+    const leads = [lead(1, 'ACTIVE', 101, 30 * H)]
+    const res = await gatherFollowupCandidates({
+      profile: 'serra-honda',
+      now: NOW,
+      config: CONFIG,
+      waitHours: 24,
+      deps: { call: fakeCall(leads, contacts), hasRun: () => false },
+    })
+    expect(res.waitHours).toBe(24)
+    expect(res.dueCount).toBe(1)
+    expect(res.candidates.map((c) => c.phone)).toEqual(['+17313946907'])
+  })
+
+  it('an 80h-old lead is a candidate at the 72h default', async () => {
+    const leads = [lead(1, 'ACTIVE', 101, 80 * H)]
+    const res = await gatherFollowupCandidates({
+      profile: 'serra-honda',
+      now: NOW,
+      config: CONFIG,
+      waitHours: 72,
+      deps: { call: fakeCall(leads, contacts), hasRun: () => false },
+    })
+    expect(res.waitHours).toBe(72)
+    expect(res.dueCount).toBe(1)
+    expect(res.candidates.map((c) => c.phone)).toEqual(['+17313946907'])
+  })
+
+  it('falls back to 72h when wait_hours is 0', async () => {
+    const leads = [
+      lead(1, 'ACTIVE', 101, 80 * H), // due at 72h
+      lead(2, 'ACTIVE', 102, 30 * H), // not due at 72h
+    ]
+    const res = await gatherFollowupCandidates({
+      profile: 'serra-honda',
+      now: NOW,
+      config: CONFIG,
+      waitHours: 0,
+      deps: { call: fakeCall(leads, contacts), hasRun: () => false },
+    })
+    expect(res.waitHours).toBe(72)
+    expect(res.dueCount).toBe(1)
+    expect(res.candidates.map((c) => c.phone)).toEqual(['+17313946907'])
+    expect(res.dropped).toContainEqual(
+      expect.objectContaining({ leadId: '2', reason: 'not yet due (72h)' }),
+    )
   })
 })
