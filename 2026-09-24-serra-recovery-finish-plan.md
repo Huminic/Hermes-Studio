@@ -423,3 +423,17 @@ profile's messaging-hub (a `comms_log`/metadata marker) and refuses to resend to
 `defects/finish-plan-evidence/N3.md` (test names, the cron file, a screenshot or route-test output of the
 settings card), commit `finish(N3): audience config + UI, scheduler, alerts routing, weekend windows`,
 print `READY <sha>`.
+
+## N4 — 72-hour follow-up cutoff (added 2026-09-27 ~21:45 CT by Major; HIGHEST PRIORITY, ~30 min)
+Duane rule: the 2nd (follow-up) message goes at 72 hours, never 24. Today `FOLLOWUP_AFTER_MS` is a
+hard-coded 24h constant used as the DUE cutoff in `src/server/catchup-followup.ts` (and anywhere else it
+is imported). Change: the due cutoff = the ACTIVE `lead_followup` automation `wait_hours` for that
+profile (hours → ms), falling back to 72h when the value is missing or 0; keep the exported constant only
+as a deprecated alias set to 72h. `gatherFollowupCandidates` takes `waitHours` (script passes
+`followup.wait_hours`), reports it in the dry-run header (`due cutoff: <n>h`) and in the CSV summary, and
+drops younger leads with reason `not yet due (<n>h)` so they are COUNTED, not silent. `anniversaryMs`
+uses the same value. Also rename the dry-run label `due(24h)` to `due`. Tests: a 30h-old lead is NOT a
+candidate at 72h and IS at 24h; a 80h-old lead is a candidate at 72h; fallback to 72 when wait_hours is 0.
+Same rules: no docker, no sends, no push, no crontab. Full suite green, vite build green, evidence in
+`defects/finish-plan-evidence/N4.md`, commit `finish(N4): follow-up due cutoff from wait_hours (72h)`,
+print `READY <sha>`.
