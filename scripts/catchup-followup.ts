@@ -30,6 +30,12 @@ import {
 import { resolveVinOrgId } from '../src/server/vin-client'
 import { fetchLeadSources } from '../src/server/lead-opportunities'
 import { sendAutomationNow } from '../src/server/automations'
+import { deleteAutomationRun } from '../src/server/messaging-hub-store'
+import {
+  runCatchupSends,
+  effectivePerMinute,
+  DEFAULT_SMS_PER_MINUTE_CAP,
+} from '../src/server/catchup-send'
 import {
   prelaunchLockEngaged,
   prelaunchAllowList,
@@ -47,6 +53,7 @@ type Args = {
   excludeSources: string[]
   skipTextedSince: string | null
   csv: string | null
+  perMinute: number | null
   help: boolean
 }
 
@@ -64,6 +71,8 @@ const USAGE = `catchup-followup.ts — 24-hour follow-up catch-up (DRY-RUN by de
   --csv <path>             dry-run only: write a decision CSV + <path>.summary.json
   --include-service        include SERVICE/PARTS leads (default sales-only)
   --limit <n>              cap the recipient list
+  --per-minute <n>         pace sends to at most n/min (override DOWNWARD only; the
+                           default stays one below the profile SMS per-minute cap)
   --ignore-window          send outside the A2P window (locked self-test only)
   --help                   this message`
 
@@ -79,6 +88,7 @@ function parseArgs(argv: string[]): Args {
     excludeSources: [],
     skipTextedSince: null,
     csv: null,
+    perMinute: null,
     help: false,
   }
   for (let i = 0; i < argv.length; i++) {
@@ -101,6 +111,8 @@ function parseArgs(argv: string[]): Args {
     else if (t.startsWith('--skip-texted-since=')) a.skipTextedSince = t.slice('--skip-texted-since='.length)
     else if (t === '--csv') a.csv = argv[++i]
     else if (t.startsWith('--csv=')) a.csv = t.slice('--csv='.length)
+    else if (t === '--per-minute') a.perMinute = Number(argv[++i])
+    else if (t.startsWith('--per-minute=')) a.perMinute = Number(t.slice('--per-minute='.length))
   }
   return a
 }
@@ -302,34 +314,65 @@ async function main() {
     )
   }
 
-  let sent = 0
-  let blocked = 0
-  let failed = 0
+  // Prelaunch allowlist gate first — a locked-out number never counts against pacing.
+  const sendable = []
+  let prelaunchSkipped = 0
   for (const c of limited) {
     if (prelaunchLockEngaged() && !allowedByPrelaunchLock(c.phone)) {
       console.log(`  SKIP (prelaunch-locked): ${c.phone}`)
+      prelaunchSkipped++
       continue
     }
-    const outcome = await sendAutomationNow({
-      profile: args.profile,
-      automation: followup,
-      isFirst: false,
-      lead: {
-        contact_handle: c.phone,
-        handles: { sms: c.phone },
-        first_name: c.firstName,
-        vehicle: c.vehicle,
-        source: 'catchup-followup',
-      },
-      now,
-      config,
-    })
-    if (outcome.action === 'sent') sent++
-    else if (outcome.action === 'blocked') blocked++
-    else if (outcome.action === 'failed') failed++
-    console.log(`  ${outcome.action.toUpperCase()}: ${c.phone} — ${outcome.reason}`)
+    sendable.push(c)
   }
-  console.log(`\n[catchup-followup] done. sent=${sent} blocked=${blocked} failed=${failed}`)
+
+  // Pace under the profile SMS per-minute cap (default 5): send at most (cap-1)/min,
+  // lowered further by --per-minute. Keeps CommGate from rejecting a burst as
+  // `rate-cap-exceeded` (which would otherwise strand recipients mid-run).
+  const cap = config.comms?.rate_caps?.sms?.per_minute ?? DEFAULT_SMS_PER_MINUTE_CAP
+  const perMinute = effectivePerMinute(cap, args.perMinute)
+
+  const summary = await runCatchupSends({
+    items: sendable.map((c) => ({
+      phone: c.phone,
+      firstName: c.firstName,
+      vehicle: c.vehicle,
+      leadId: c.leadId,
+    })),
+    perMinute,
+    deps: {
+      send: (item) =>
+        sendAutomationNow({
+          profile: args.profile,
+          automation: followup,
+          isFirst: false,
+          lead: {
+            contact_handle: item.phone,
+            handles: { sms: item.phone },
+            first_name: item.firstName ?? null,
+            vehicle: item.vehicle ?? null,
+            source: 'catchup-followup',
+          },
+          now,
+          config,
+        }),
+      deleteRun: (id) => deleteAutomationRun(args.profile, id),
+    },
+  })
+
+  const blockedLines = Object.entries(summary.blockedByReason)
+    .map(([reason, n]) => `${n}× ${reason}`)
+    .join(', ')
+  console.log(
+    `\n[catchup-followup] done. sent=${summary.sent} ` +
+      `blocked=${Object.values(summary.blockedByReason).reduce((a, b) => a + b, 0)}` +
+      (blockedLines ? ` (${blockedLines})` : '') +
+      ` failed=${summary.failed} retried=${summary.retried} skipped=${summary.skipped}` +
+      (prelaunchSkipped ? ` prelaunch-skipped=${prelaunchSkipped}` : ''),
+  )
+  console.log(
+    `[catchup-followup] remaining (rate-capped + failed, re-run to catch): ${summary.remaining}`,
+  )
 }
 
 main()

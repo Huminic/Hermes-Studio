@@ -99,6 +99,10 @@ export type AutomationOutcome = {
   reason: string
   channel?: string
   thread_id?: string | null
+  /** When action==='blocked', the CommGate rule that fired (e.g. rate-cap-exceeded). */
+  gate_rule?: string | null
+  /** The automation_runs ledger row id created for this fire (when one was written). */
+  run_id?: string | null
 }
 
 /** Best-effort Brain/InfoStore record of an automation fire. Never throws. */
@@ -146,7 +150,12 @@ async function gatedSend(input: {
   vehicle: string | null
   isFirst: boolean
   dispatch: Dispatch
-}): Promise<{ status: AdapterResult['status']; via: string; thread_id: string }> {
+}): Promise<{
+  status: AdapterResult['status']
+  via: string
+  thread_id: string
+  gate_rule: string | null
+}> {
   const { profile, automation, handle, firstName, dealer, vehicle, isFirst, dispatch } =
     input
   const name = firstName ?? 'there'
@@ -178,7 +187,12 @@ async function gatedSend(input: {
         reason: 'prelaunch-locked',
       },
     })
-    return { status: 'blocked', via: `${automation.channel}-prelaunch`, thread_id: thread.id }
+    return {
+      status: 'blocked',
+      via: `${automation.channel}-prelaunch`,
+      thread_id: thread.id,
+      gate_rule: 'prelaunch-locked',
+    }
   }
 
   let res: AdapterResult
@@ -211,7 +225,7 @@ async function gatedSend(input: {
       error: res.error ?? null,
     },
   })
-  return { status: res.status, via: res.via, thread_id: thread.id }
+  return { status: res.status, via: res.via, thread_id: thread.id, gate_rule: res.gate_rule ?? null }
 }
 
 /**
@@ -329,6 +343,8 @@ export async function sendAutomationNow(input: {
     reason: `${input.isFirst ? 'immediate' : 'follow-up'} send via ${sent.via} (${sent.status})`,
     channel: automation.channel,
     thread_id: sent.thread_id,
+    gate_rule: sent.gate_rule,
+    run_id: run.id,
   }
 }
 

@@ -2764,6 +2764,21 @@ export function updateAutomationRunStatus(
 }
 
 /**
+ * Delete a single automation run row. Used by the catch-up send loop to remove a
+ * ledger row left by a RETRYABLE outcome (rate-cap-exceeded block or a failed
+ * send) so the recipient is not falsely treated as "already followed up" on the
+ * next catch-up run. Terminal blocks (opt-out/DNC/consent/invalid) keep their row.
+ */
+export function deleteAutomationRun(profile: string, id: string): void {
+  const db = getDb(profile)
+  if (db) {
+    db.prepare(`DELETE FROM automation_runs WHERE id=? AND profile=?`).run(id, profile)
+  } else {
+    getStore(profile).automationRuns.delete(id)
+  }
+}
+
+/**
  * Did the contact send ANY inbound message (on any of these handles' threads)
  * at or after `sinceMs`? The stop-on-reply signal for the flow engine. Reuses
  * the hub thread model: a reply lands as an inbound message on the contact's

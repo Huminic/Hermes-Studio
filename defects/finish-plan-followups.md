@@ -766,3 +766,14 @@
     phone resolution is broker-capped); the value is an UPPER BOUND.
   - `staleStatus` (same status >1 week): empty tonight — the lead-status
     snapshot has no history yet.
+
+- **`processNewLead` immediate send shares the N5 rate-cap/failed ledger bug** (noted
+  by N5, NOT fixed per N5 rule 2). `processNewLead` → `sendImmediateAutomation` →
+  `sendAutomationNow` writes an `automation_runs` row before the gated send and, on a
+  rate-cap-exceeded block or a failed dispatch, leaves that row (status 'skipped'/'failed').
+  Because `hasAutomationRun` matches ANY row, a `new_lead` immediate that was only
+  rate-capped/failed would be treated as "already processed" and never retried. N5 fixed
+  this for the catch-up path (delete the row for those outcomes in the catch-up send loop)
+  but deliberately did NOT change `sendAutomationNow`/`hasAutomationRun`, to avoid altering
+  the immediate-send behaviour. Follow-up: decide whether `processNewLead` should apply the
+  same retryable-ledger cleanup, or whether the vin-watcher retry cadence already covers it.
