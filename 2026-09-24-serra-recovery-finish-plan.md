@@ -437,3 +437,22 @@ candidate at 72h and IS at 24h; a 80h-old lead is a candidate at 72h; fallback t
 Same rules: no docker, no sends, no push, no crontab. Full suite green, vite build green, evidence in
 `defects/finish-plan-evidence/N4.md`, commit `finish(N4): follow-up due cutoff from wait_hours (72h)`,
 print `READY <sha>`.
+
+## N5 — Catch-up pacing + honest ledger (added 2026-09-29 14:20 CT by Major; BLOCKING the live catch-up, ~30 min)
+Observed live (Ford tranche 1, --limit 10): 5 sent, 4 blocked by CommGate `rate-cap-exceeded` ("sms per-minute
+cap reached (5/5)"), 1 failed ("terminated"). All 10 got an `automation_runs` row (sent/skipped/failed) and
+`hasAutomationRun` matches ANY row, so the 5 unsent people are now treated as "already followed up".
+Fix, smallest coherent change:
+1. `scripts/catchup-followup.ts` send loop: pace sends to stay under the profile per-minute SMS cap (read
+   the cap the gate uses; default 5) — send at most (cap - 1) per rolling 60s, sleeping between sends; print
+   `pacing: <n>/min`. Add `--per-minute <n>` to override downward only.
+2. A send that ends `blocked` with gate_rule `rate-cap-exceeded`, or `failed`, must NOT leave a ledger row that
+   blocks a retry: either do not write the row for those outcomes, or make the catch-up dedup
+   (`hasRun` in `gatherFollowupCandidates`) count only rows whose status is `sent`. Do not change behaviour for
+   other callers of `hasAutomationRun` unless they have the same bug — if they do, note it in followups, do not fix.
+   Blocks for real reasons (opt-out, DNC, consent, invalid number) stay final and stay counted.
+3. On `failed`, retry that recipient ONCE after 20s before giving up; report `retried`.
+4. End-of-run summary prints sent / blocked-by-reason / failed / retried and the remaining candidate count.
+Tests for 1-3 with injected sender + clock. Same rules: no docker, no sends, no push, no crontab, no DB writes.
+Full suite + vite build green, evidence `defects/finish-plan-evidence/N5.md`, commit
+`finish(N5): catch-up pacing + retryable ledger`, print `READY <sha>`.
