@@ -35,6 +35,7 @@ import {
   runCatchupSends,
   effectivePerMinute,
   DEFAULT_SMS_PER_MINUTE_CAP,
+  DEFAULT_SMS_PER_HOUR_CAP,
 } from '../src/server/catchup-send'
 import {
   prelaunchLockEngaged,
@@ -331,6 +332,11 @@ async function main() {
   // `rate-cap-exceeded` (which would otherwise strand recipients mid-run).
   const cap = config.comms?.rate_caps?.sms?.per_minute ?? DEFAULT_SMS_PER_MINUTE_CAP
   const perMinute = effectivePerMinute(cap, args.perMinute)
+  // N6: stop cleanly before the per-hour SMS cap or the A2P window close, rather
+  // than firing sends the gate would only reject (which strands recipients and,
+  // pre-N6, left ledger/outbound rows that looked like real texts).
+  const perHour = config.comms?.rate_caps?.sms?.per_hour ?? DEFAULT_SMS_PER_HOUR_CAP
+  const windowCloseMs = args.ignoreWindow ? null : res.windowCloseMs
 
   const summary = await runCatchupSends({
     items: sendable.map((c) => ({
@@ -340,6 +346,8 @@ async function main() {
       leadId: c.leadId,
     })),
     perMinute,
+    perHour,
+    windowCloseMs,
     deps: {
       send: (item) =>
         sendAutomationNow({
@@ -370,8 +378,11 @@ async function main() {
       ` failed=${summary.failed} retried=${summary.retried} skipped=${summary.skipped}` +
       (prelaunchSkipped ? ` prelaunch-skipped=${prelaunchSkipped}` : ''),
   )
+  if (summary.stoppedReason) {
+    console.log(`[catchup-followup] stopped early: ${summary.stoppedReason}`)
+  }
   console.log(
-    `[catchup-followup] remaining (rate-capped + failed, re-run to catch): ${summary.remaining}`,
+    `[catchup-followup] remaining (un-sent + rate/window-capped + failed, re-run to catch): ${summary.remaining}`,
   )
 }
 

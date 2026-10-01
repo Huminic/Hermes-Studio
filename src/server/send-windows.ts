@@ -71,6 +71,13 @@ export type WindowState = {
    * how the catch-up scripts already guard). See issues.md (nextOpenMs DST debt).
    */
   nextOpenMs: number | null
+  /**
+   * Approximate epoch-ms the CURRENTLY-open window closes (null when closed).
+   * Same DISPLAY-only, non-DST-exact caveat as `nextOpenMs`. The catch-up send
+   * loop uses it to STOP cleanly before the window shuts rather than firing sends
+   * the comms-gate would reject with `outside-business-hours` (N6).
+   */
+  nextCloseMs: number | null
 }
 
 /**
@@ -84,10 +91,19 @@ export function windowState(
   tz: string,
   nowMs: number,
 ): WindowState {
-  if (!windows.length) return { open: false, nextOpenMs: null }
+  if (!windows.length) return { open: false, nextOpenMs: null, nextCloseMs: null }
 
   const cur = minutesOfDay(tz, nowMs)
-  if (windows.some((w) => insideWindow(cur, w))) return { open: true, nextOpenMs: null }
+  const anchor = nowMs - (nowMs % 60_000)
+  const secondsWithinMinute = secondsOfMinute(tz, nowMs)
+  const openWindows = windows.filter((w) => insideWindow(cur, w))
+  if (openWindows.length) {
+    // Open: the window closes `minutesUntilEnd` from now — the LATEST end across
+    // any overlapping open windows (so an overlap keeps us open to the last one).
+    const bestEndDelta = Math.max(...openWindows.map((w) => minutesUntilEnd(cur, w)))
+    const nextCloseMs = anchor + bestEndDelta * 60_000 - secondsWithinMinute * 1000
+    return { open: true, nextOpenMs: null, nextCloseMs }
+  }
 
   // Find the smallest positive minute-delta to a window start, today or tomorrow.
   let bestDelta = Infinity
@@ -98,14 +114,20 @@ export function windowState(
       if (delta > 0 && delta < bestDelta) bestDelta = delta
     }
   }
-  if (!Number.isFinite(bestDelta)) return { open: false, nextOpenMs: null }
+  if (!Number.isFinite(bestDelta)) return { open: false, nextOpenMs: null, nextCloseMs: null }
 
   // Convert the minute-delta to an absolute instant by anchoring on the current
   // minute boundary in the target tz (drop seconds/millis so equality is exact).
-  const anchor = nowMs - (nowMs % 60_000)
-  const secondsWithinMinute = secondsOfMinute(tz, nowMs)
   const nextOpenMs = anchor + bestDelta * 60_000 - secondsWithinMinute * 1000
-  return { open: false, nextOpenMs }
+  return { open: false, nextOpenMs, nextCloseMs: null }
+}
+
+/** Minutes from `cur` (minute-of-day) until window `w` ends (handles wraparound). */
+function minutesUntilEnd(cur: number, w: SendWindow): number {
+  const end = hm(w.end)
+  let d = end - cur
+  if (d <= 0) d += MINUTES_PER_DAY
+  return d
 }
 
 /** Seconds component of the current wall-clock minute in `tz` (for exact anchoring). */

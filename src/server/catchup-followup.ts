@@ -80,6 +80,9 @@ export type FollowupGatherResult = {
   dropped: FollowupDrop[]
   windowOpen: boolean
   nextOpenMs: number | null
+  /** Epoch-ms the A2P send window closes (null when closed) — the send loop stops
+   * cleanly before this instant instead of firing sends the gate would block. */
+  windowCloseMs: number | null
   startDate: string
   endDate: string
   skipped?: string
@@ -189,6 +192,7 @@ export async function gatherFollowupCandidates(input: {
     waitHours,
     windowOpen: win.open,
     nextOpenMs: win.nextOpenMs,
+    windowCloseMs: win.nextCloseMs,
     startDate,
     endDate,
   }

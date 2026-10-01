@@ -52,6 +52,19 @@ describe('windowState', () => {
     expect(s.open).toBe(false)
     expect(s.nextOpenMs).toBe(ctSummer('08:00'))
   })
+  it('reports nextCloseMs = the open window end (and null when closed)', () => {
+    // Inside the follow-up window (08:00–21:00): closes at 21:00 today.
+    const open = windowState(DEFAULT_FOLLOWUP_WINDOWS, CT, ctSummer('20:30'))
+    expect(open.open).toBe(true)
+    expect(open.nextCloseMs).toBe(ctSummer('21:00'))
+    // Inside the evening immediate window (18:00–20:00): closes at 20:00.
+    const evening = windowState(IMMEDIATE, CT, ctSummer('19:00'))
+    expect(evening.nextCloseMs).toBe(ctSummer('20:00'))
+    // Closed → nextCloseMs is null.
+    const closed = windowState(IMMEDIATE, CT, ctSummer('09:30'))
+    expect(closed.open).toBe(false)
+    expect(closed.nextCloseMs).toBeNull()
+  })
   it('treats window start as inclusive and end as exclusive', () => {
     expect(windowState(IMMEDIATE, CT, ctSummer('08:00')).open).toBe(true)
     expect(windowState(IMMEDIATE, CT, ctSummer('09:00')).open).toBe(false)

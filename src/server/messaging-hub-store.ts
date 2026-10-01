@@ -2813,12 +2813,20 @@ export function hasInboundSince(
 }
 
 /**
- * Did the store send ANY outbound SMS to one of these handles at or after
- * `sinceMs`? Read-only. Used by the catch-up gather's `--skip-texted-since`
- * floor to avoid re-texting a customer who was already reached through the
- * reply path (which the automation ledger does NOT record). Matches on the
- * thread contact_handle + message direction='outbound' + channel='sms'.
+ * Did the store actually DELIVER an outbound SMS to one of these handles at or
+ * after `sinceMs`? Read-only. Used by the catch-up gather's `--skip-texted-since`
+ * floor to avoid re-texting a customer who was already reached through the reply
+ * path (which the automation ledger does NOT record). Matches on the thread
+ * contact_handle + message direction='outbound' + channel='sms'.
+ *
+ * A send that was blocked by the comms-gate or failed at the adapter still writes
+ * an outbound `messages` row (with `metadata.adapter_status` 'blocked'/'failed'),
+ * but the customer was NEVER texted — counting it would wrongly skip a recipient
+ * who still owes a message. So rows whose `adapter_status` is blocked/failed are
+ * IGNORED here; only delivered/sent (or status-less legacy) outbound counts (N6).
  */
+const UNDELIVERED_ADAPTER_STATUSES = new Set(['blocked', 'failed'])
+
 export function hasOutboundSmsSince(
   profile: string,
   handles: Array<string>,
@@ -2833,7 +2841,9 @@ export function hasOutboundSmsSince(
       .prepare(
         `SELECT 1 FROM messages m JOIN threads t ON t.id = m.thread_id
          WHERE t.profile=? AND t.contact_handle IN (${placeholders})
-           AND m.direction='outbound' AND m.channel='sms' AND m.created_at >= ? LIMIT 1`,
+           AND m.direction='outbound' AND m.channel='sms' AND m.created_at >= ?
+           AND COALESCE(json_extract(m.metadata, '$.adapter_status'), '') NOT IN ('blocked','failed')
+         LIMIT 1`,
       )
       .get(profile, ...uniq, sinceMs) as { 1: number } | undefined
     return !!row
@@ -2841,7 +2851,10 @@ export function hasOutboundSmsSince(
   for (const t of getStore(profile).threads.values()) {
     if (!uniq.includes(t.contact_handle)) continue
     for (const m of t.messages) {
-      if (m.direction === 'outbound' && m.channel === 'sms' && m.created_at >= sinceMs) return true
+      if (m.direction !== 'outbound' || m.channel !== 'sms' || m.created_at < sinceMs) continue
+      const status = m.metadata?.adapter_status
+      if (typeof status === 'string' && UNDELIVERED_ADAPTER_STATUSES.has(status)) continue
+      return true
     }
   }
   return false

@@ -4,6 +4,7 @@ import {
   effectivePerMinute,
   FAILED_RETRY_DELAY_MS,
   RATE_CAP_RULE,
+  WINDOW_CLOSED_RULE,
   type CatchupSendItem,
   type CatchupSendOutcome,
 } from '../server/catchup-send'
@@ -88,6 +89,22 @@ describe('runCatchupSends — retryable ledger cleanup', () => {
     expect(summary.remaining).toBe(1)
   })
 
+  it('deletes the ledger row for an outside-business-hours block (N6 retryable)', async () => {
+    const { send } = scriptedSender([
+      { action: 'blocked', reason: 'outside business hours', gate_rule: WINDOW_CLOSED_RULE },
+    ])
+    const deleteRun = vi.fn()
+    const summary = await runCatchupSends({
+      items: [item('+1a')],
+      perMinute: 4,
+      deps: { send, deleteRun, sleep: async () => {}, log: () => {} },
+    })
+    expect(deleteRun).toHaveBeenCalledWith('run-0')
+    expect(summary.blockedByReason[WINDOW_CLOSED_RULE]).toBe(1)
+    // a window-closed block leaves the recipient still owed a message
+    expect(summary.remaining).toBe(1)
+  })
+
   it('KEEPS the ledger row for a terminal block (opt-out stays final)', async () => {
     const { send } = scriptedSender([
       { action: 'blocked', reason: 'recipient opted out', gate_rule: 'opt-out' },
@@ -155,6 +172,60 @@ describe('runCatchupSends — retry on failure', () => {
     expect(summary.retried).toBe(1)
     expect(summary.failed).toBe(1)
     expect(summary.remaining).toBe(1)
+  })
+})
+
+describe('runCatchupSends — clean stop (N6.2)', () => {
+  /** A clock that advances by whatever the injected sleep is handed. */
+  function fakeClock() {
+    let t = 0
+    const now = () => t
+    const sleep = async (ms: number) => {
+      t += ms
+    }
+    return { now, sleep }
+  }
+
+  it('STOPS cleanly once the window has closed, leaving the rest owed', async () => {
+    const { send, calls } = scriptedSender([{ action: 'sent', reason: 'ok' }])
+    const { now, sleep } = fakeClock() // gap at perMinute 4 = 15000ms
+    const summary = await runCatchupSends({
+      items: [item('+1a'), item('+1b'), item('+1c')],
+      perMinute: 4,
+      windowCloseMs: 20_000, // closes after the 2nd send (clock 30000 >= 20000)
+      deps: { send, now, sleep, deleteRun: () => {}, log: () => {} },
+    })
+    expect(calls).toEqual(['+1a', '+1b']) // 3rd never attempted
+    expect(summary.sent).toBe(2)
+    expect(summary.stoppedReason).toMatch(/window closing — 1 remaining/)
+    expect(summary.remaining).toBe(1) // the un-attempted recipient
+  })
+
+  it('STOPS cleanly once the per-hour cap is reached', async () => {
+    const { send, calls } = scriptedSender([{ action: 'sent', reason: 'ok' }])
+    const { now, sleep } = fakeClock()
+    const summary = await runCatchupSends({
+      items: [item('+1a'), item('+1b'), item('+1c'), item('+1d')],
+      perMinute: 4,
+      perHour: 2, // stop before the 3rd send
+      deps: { send, now, sleep, deleteRun: () => {}, log: () => {} },
+    })
+    expect(calls).toEqual(['+1a', '+1b'])
+    expect(summary.sent).toBe(2)
+    expect(summary.stoppedReason).toMatch(/hourly cap reached — 2 remaining/)
+    expect(summary.remaining).toBe(2)
+  })
+
+  it('does not stop when no window/hour limit is given (back-compat)', async () => {
+    const { send, calls } = scriptedSender([{ action: 'sent', reason: 'ok' }])
+    const summary = await runCatchupSends({
+      items: [item('+1a'), item('+1b')],
+      perMinute: 4,
+      deps: { send, sleep: async () => {}, log: () => {} },
+    })
+    expect(calls).toHaveLength(2)
+    expect(summary.stoppedReason).toBeNull()
+    expect(summary.remaining).toBe(0)
   })
 })
 

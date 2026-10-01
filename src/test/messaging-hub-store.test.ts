@@ -174,6 +174,61 @@ describe('messaging-hub-store threads', () => {
     expect(events.some((e) => e.type === 'message_appended')).toBe(true)
   })
 
+  it('hasOutboundSmsSince ignores blocked/failed outbound rows (N6.3)', async () => {
+    const { getOrCreateThread, appendMessage, hasOutboundSmsSince } = await import(
+      '@/server/messaging-hub-store'
+    )
+    const phone = '+15551234567'
+    const t = getOrCreateThread({
+      profile: 'huminic',
+      domain: 'sms',
+      channel: 'sms',
+      contact_handle: phone,
+    })
+    const append = (status?: string) =>
+      appendMessage({
+        thread_id: t.id,
+        direction: 'outbound',
+        role: 'assistant',
+        channel: 'sms',
+        content: 'hi',
+        author: 'huminic',
+        metadata: status ? { adapter_status: status } : {},
+      })
+
+    // Only blocked/failed outbound so far → the customer was never texted.
+    append('blocked')
+    append('failed')
+    expect(hasOutboundSmsSince('huminic', [phone], 0)).toBe(false)
+
+    // A delivered send counts.
+    append('sent')
+    expect(hasOutboundSmsSince('huminic', [phone], 0)).toBe(true)
+  })
+
+  it('hasOutboundSmsSince still counts a status-less legacy outbound row (N6.3)', async () => {
+    const { getOrCreateThread, appendMessage, hasOutboundSmsSince } = await import(
+      '@/server/messaging-hub-store'
+    )
+    const phone = '+15559990000'
+    const t = getOrCreateThread({
+      profile: 'huminic',
+      domain: 'sms',
+      channel: 'sms',
+      contact_handle: phone,
+    })
+    appendMessage({
+      thread_id: t.id,
+      direction: 'outbound',
+      role: 'assistant',
+      channel: 'sms',
+      content: 'hi',
+      author: 'huminic',
+      // no adapter_status (legacy / reply-path row) → counts as texted
+    })
+    expect(hasOutboundSmsSince('huminic', [phone], 0)).toBe(true)
+  })
+
   it('deletes a thread without deleting campaign delivery history', async () => {
     const { subscribeMessaging } = await import('@/server/messaging-hub-bus')
     const events: Array<{ type: string; status?: string }> = []
