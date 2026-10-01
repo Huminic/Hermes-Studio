@@ -456,3 +456,19 @@ Fix, smallest coherent change:
 Tests for 1-3 with injected sender + clock. Same rules: no docker, no sends, no push, no crontab, no DB writes.
 Full suite + vite build green, evidence `defects/finish-plan-evidence/N5.md`, commit
 `finish(N5): catch-up pacing + retryable ledger`, print `READY <sha>`.
+
+## N6 — Retryable window/hour blocks + honest skip-texted filter (added 2026-09-30 21:20 CT by Major; ~30 min)
+Observed live (Ford tranche 4): 4 blocks `rate-cap-exceeded` (per-HOUR cap 60/60) and 51 blocks
+`outside-business-hours` (the 21:00 CT cutoff arrived mid-run). The 51 left `automation_runs` rows
+(status skipped) and every block/failure left an outbound `messages` row with adapter_status blocked/failed,
+which `--skip-texted-since` (`hasOutboundSmsSince`) then counts as a real text. Major cleaned both by hand.
+Fix:
+1. In the catch-up send loop treat `outside-business-hours` exactly like `rate-cap-exceeded` (retryable:
+   remove its ledger row). Terminal blocks (opt-out/DNC/consent/invalid/blacklist) unchanged.
+2. Before sending, if the per-hour cap would be exceeded or the window closes within the pacing time,
+   STOP the run cleanly ("window closing / hourly cap reached — N remaining, re-run later") instead of
+   attempting sends that will be blocked.
+3. `hasOutboundSmsSince` (and thus `--skip-texted-since`) must ignore outbound rows whose metadata has
+   adapter_status blocked or failed — only delivered/sent outbound counts as "texted".
+Tests for 1-3. Same rules: no docker, no sends, no push, no crontab, no DB writes. Full suite + build green,
+evidence `defects/finish-plan-evidence/N6.md`, commit `finish(N6): retryable window/hour blocks + honest skip-texted`, print `READY <sha>`.
